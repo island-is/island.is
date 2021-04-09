@@ -22,7 +22,10 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('api-resource') ? 'active' : ''
               }
             >
-              {translation.resourcesTabs['apiResource'].text}
+              {
+                translation.navigations['resourcesTabs'].items['apiResource']
+                  .text
+              }
             </a>
           </Link>
         </li>
@@ -35,7 +38,7 @@ const ResourcesTabsNav: React.FC = () => {
             <a
               className={router?.pathname.includes('api-scope') ? 'active' : ''}
             >
-              {translation.resourcesTabs['apiScope'].text}
+              {translation.navigations['resourcesTabs'].items['apiScope'].text}
             </a>
           </Link>
         </li>
@@ -50,7 +53,11 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('identity-resource') ? 'active' : ''
               }
             >
-              {translation.resourcesTabs['identityResource'].text}
+              {
+                translation.navigations['resourcesTabs'].items[
+                  'identityResource'
+                ].text
+              }
             </a>
           </Link>
         </li>

@@ -23,7 +23,7 @@ const Nav: React.FC = () => {
         <li className="nav__container">
           <Link href="/">
             <a className={router?.pathname === '/' ? 'active' : ''}>
-              {translation.navigation['home'].text}
+              {translation.navigations['navigation'].items['home'].text}
             </a>
           </Link>
         </li>
@@ -37,7 +37,7 @@ const Nav: React.FC = () => {
                   : ''
               }
             >
-              {translation.navigation['clients'].text}
+              {translation.navigations['navigation'].items['clients'].text}
             </a>
           </Link>
         </li>
@@ -46,21 +46,21 @@ const Nav: React.FC = () => {
             <a
               className={router?.pathname.includes('resource') ? 'active' : ''}
             >
-              {translation.navigation['resources'].text}
+              {translation.navigations['navigation'].items['resources'].text}
             </a>
           </Link>
         </li>
         <li className="nav__container">
           <Link href="/users">
             <a className={router?.pathname === '/users' ? 'active' : ''}>
-              {translation.navigation['users'].text}
+              {translation.navigations['navigation'].items['users'].text}
             </a>
           </Link>
         </li>
         <li className="nav__container">
           <Link href="/admin">
             <a className={router?.pathname.includes('admin') ? 'active' : ''}>
-              {translation.navigation['admin'].text}
+              {translation.navigations['navigation'].items['admin'].text}
             </a>
           </Link>
         </li>

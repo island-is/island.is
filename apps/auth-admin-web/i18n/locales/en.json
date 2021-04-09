@@ -5,91 +5,116 @@
     "loginButton": "Login",
     "logoutButton": "Logout"
   },
-  "navigation": {
-    "home": {
-      "text": "Home"
+  "navigations": {
+    "navigation": {
+      "items": {
+        "home": {
+          "text": "Home"
+        },
+        "clients": {
+          "text": "Clients"
+        },
+        "resources": {
+          "text": "Resources"
+        },
+        "users": {
+          "text": "Users"
+        },
+        "admin": {
+          "text": "Admin control"
+        }
+      }
     },
-    "clients": {
-      "text": "Clients"
+    "clientSteps": {
+      "items": {
+        "client": {
+          "text": "Client Settings"
+        },
+        "clientRedirectUri": {
+          "text": "Redirect Uri"
+        },
+        "clientIdpRestrictions": {
+          "text": "Identity Providers"
+        },
+        "clientPostLogoutRedirectUri": {
+          "text": "Post Logout Uris"
+        },
+        "clientAllowedCorsOrigin": {
+          "text": "Cors Origins"
+        },
+        "clientGrantTypes": {
+          "text": "Grant types"
+        },
+        "clientAllowedScopes": {
+          "text": "Scopes"
+        },
+        "clientClaims": {
+          "text": "Claims"
+        },
+        "clientSecret": {
+          "text": "Secrets"
+        }
+      }
     },
-    "resources": {
-      "text": "Resources"
+    "apiResourceSteps": {
+      "items": {
+        "apiResourceBasics": {
+          "text": "Api resource basics"
+        },
+        "apiResourceScopes": {
+          "text": "Api resource scopes"
+        },
+        "apiResourceSecrets": {
+          "text": "Api resource secrets"
+        },
+        "apiResourceUserClaims": {
+          "text": "Api resource user claims"
+        }
+      }
     },
-    "users": {
-      "text": "Users"
+    "apiScopeSteps": {
+      "items": {
+        "apiScope": {
+          "text": "Api Scope"
+        },
+        "claims": {
+          "text": "Claims"
+        }
+      }
     },
-    "admin": {
-      "text": "Admin control"
-    }
-  },
-  "clientSteps": {
-    "client": {
-      "text": "Client Settings"
+    "identityResourceSteps": {
+      "items": {
+        "identityResource": {
+          "text": "Identity Resource"
+        },
+        "claims": {
+          "text": "Claims"
+        }
+      }
     },
-    "clientRedirectUri": {
-      "text": "Redirect Uri"
+    "resourcesTabs": {
+      "items": {
+        "apiResource": {
+          "text": "Api Resources"
+        },
+        "apiScope": {
+          "text": "Api Scopes"
+        },
+        "identityResource": {
+          "text": "Identity Resources"
+        }
+      }
     },
-    "clientIdpRestrictions": {
-      "text": "Identity Providers"
-    },
-    "clientPostLogoutRedirectUri": {
-      "text": "Post Logout Uris"
-    },
-    "clientAllowedCorsOrigin": {
-      "text": "Cors Origins"
-    },
-    "clientGrantTypes": {
-      "text": "Grant types"
-    },
-    "clientAllowedScopes": {
-      "text": "Scopes"
-    },
-    "clientClaims": {
-      "text": "Claims"
-    },
-    "clientSecret": {
-      "text": "Secrets"
-    }
-  },
-  "apiResourceSteps": {
-    "apiResourceBasics": {
-      "text": "Api resource basics"
-    },
-    "apiResourceScopes": {
-      "text": "Api resource scopes"
-    },
-    "apiResourceSecrets": {
-      "text": "Api resource secrets"
-    },
-    "apiResourceUserClaims": {
-      "text": "Api resource user claims"
-    }
-  },
-  "apiScopeSteps": {
-    "apiScope": {
-      "text": "Api Scope"
-    },
-    "claims": {
-      "text": "Claims"
-    }
-  },
-  "identityResourceSteps": {
-    "identityResource": {
-      "text": "Identity Resource"
-    },
-    "claims": {
-      "text": "Claims"
-    }
-  },
-  "resourcesTabs": {
-    "apiResource": {
-      "text": "Api Resources"
-    },
-    "apiScope": {
-      "text": "Api Scopes"
-    },
-    "identityResource": {
-      "text": "Identity Resources"
+    "clientTabNav": {
+      "items": {
+        "basicForm": {
+          "text": "Simple Form",
+          "title": "Simple form for easily creating a client"
+        },
+        "detailedForm": {
+          "text": "Detailed form"
+        }
+      }
     }
   },
   "paginator": {

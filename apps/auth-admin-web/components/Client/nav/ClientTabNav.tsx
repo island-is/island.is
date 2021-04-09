@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ClientTab } from '../../../entities/common/ClientTab'
-import HelpBox from '../../common/HelpBox'
+import TranslationUtils from './../../../utils/translation.utils'
+import { Translation } from './../../../entities/common/Translation'
 
 interface Props {
   handleTabChange: (tab: ClientTab) => void
@@ -12,6 +13,7 @@ const ClientTabNav: React.FC<Props> = ({
   activeTab: activetab,
   children,
 }) => {
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
   return (
     <div className="client-tab-nav">
       <nav className="client-tab-nav__nav">
@@ -21,9 +23,11 @@ const ClientTabNav: React.FC<Props> = ({
               type="button"
               onClick={() => handleTabChange(ClientTab.BasicForm)}
               className={activetab === ClientTab.BasicForm ? 'active' : ''}
-              title="Simple form for easily creating a client"
+              title={
+                translation.navigations['clientTabNav'].items['basicForm'].title
+              }
             >
-              Simple Form
+              {translation.navigations['clientTabNav'].items['basicForm'].text}
             </button>
           </li>
           <li className={activetab === ClientTab.DetailedForm ? 'active' : ''}>
@@ -31,9 +35,15 @@ const ClientTabNav: React.FC<Props> = ({
               type="button"
               onClick={() => handleTabChange(ClientTab.DetailedForm)}
               className={activetab === ClientTab.DetailedForm ? 'active' : ''}
-              title="Detailed form for creating a client"
+              title={
+                translation.navigations['clientTabNav'].items['detailedForm']
+                  .title
+              }
             >
-              Detailed form
+              {
+                translation.navigations['clientTabNav'].items['detailedForm']
+                  .text
+              }
             </button>
           </li>
         </ul>

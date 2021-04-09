@@ -24,7 +24,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
-              {translation.clientSteps['client'].text}
+              {translation.navigations['clientSteps'].items['client'].text}
             </button>
           </li>
           <li>
@@ -35,7 +35,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientRedirectUri ? 'active' : ''
               }
             >
-              {translation.clientSteps['clientRedirectUri'].text}
+              {
+                translation.navigations['clientSteps'].items[
+                  'clientRedirectUri'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -46,7 +50,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientIdpRestrictions ? 'active' : ''
               }
             >
-              {translation.clientSteps['clientIdpRestrictions'].text}
+              {
+                translation.navigations['clientSteps'].items[
+                  'clientIdpRestrictions'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -61,7 +69,11 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              {translation.clientSteps['clientPostLogoutRedirectUri'].text}
+              {
+                translation.navigations['clientSteps'].items[
+                  'clientPostLogoutRedirectUri'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -76,7 +88,11 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              {translation.clientSteps['clientAllowedCorsOrigin'].text}
+              {
+                translation.navigations['clientSteps'].items[
+                  'clientAllowedCorsOrigin'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -87,7 +103,10 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientGrantTypes ? 'active' : ''
               }
             >
-              {translation.clientSteps['clientGrantTypes'].text}
+              {
+                translation.navigations['clientSteps'].items['clientGrantTypes']
+                  .text
+              }
             </button>
           </li>
           <li>
@@ -98,7 +117,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientAllowedScopes ? 'active' : ''
               }
             >
-              {translation.clientSteps['clientAllowedScopes'].text}
+              {
+                translation.navigations['clientSteps'].items[
+                  'clientAllowedScopes'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -107,7 +130,10 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientClaims)}
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
-              {translation.clientSteps['clientClaims'].text}
+              {
+                translation.navigations['clientSteps'].items['clientClaims']
+                  .text
+              }
             </button>
           </li>
           <li>
@@ -116,7 +142,10 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientSecret)}
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
-              {translation.clientSteps['clientSecret'].text}
+              {
+                translation.navigations['clientSteps'].items['clientSecret']
+                  .text
+              }
             </button>
           </li>
         </ul>

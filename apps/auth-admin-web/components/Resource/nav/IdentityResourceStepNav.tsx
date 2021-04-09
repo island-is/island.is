@@ -30,7 +30,11 @@ const IdentityResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              {translation.identityResourceSteps['identityResource'].text}
+              {
+                translation.navigations['identityResourceSteps'].items[
+                  'identityResource'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -41,7 +45,10 @@ const IdentityResourceStepNav: React.FC<Props> = ({
                 activeStep === IdentityResourceStep.Claims ? 'active' : ''
               }
             >
-              {translation.identityResourceSteps['claims'].text}
+              {
+                translation.navigations['identityResourceSteps'].items['claims']
+                  .text
+              }
             </button>
           </li>
         </ul>

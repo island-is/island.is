@@ -2,12 +2,7 @@ export class Translation {
   formPages: FormPage[]
   listPages: ListPage[]
   header: HeaderTranslation
-  navigation: Record<string, NavigationItem>
-  clientSteps: Record<string, NavigationItem>
-  apiResourceSteps: Record<string, NavigationItem>
-  apiScopeSteps: Record<string, NavigationItem>
-  identityResourceSteps: Record<string, NavigationItem>
-  resourcesTabs: Record<string, NavigationItem>
+  navigations: Record<string, Navigation>
   paginator: Paginator
   version: string
 }
@@ -27,6 +22,10 @@ export class FormPage {
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation
+}
+
+export class Navigation {
+  items: Record<string, NavigationItem>
 }
 
 export class Paginator {
@@ -63,6 +62,7 @@ export class HeaderTranslation {
 
 export class NavigationItem {
   text: string
+  title?: string
 }
 
 export class ColumnHeader {

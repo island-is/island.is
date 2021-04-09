@@ -29,7 +29,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceBasics ? 'active' : ''
               }
             >
-              {translation.apiResourceSteps['apiResourceBasics'].text}
+              {
+                translation.navigations['apiResourceSteps'].items[
+                  'apiResourceBasics'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -42,7 +46,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceScopes ? 'active' : ''
               }
             >
-              {translation.apiResourceSteps['apiResourceScopes'].text}
+              {
+                translation.navigations['apiResourceSteps'].items[
+                  'apiResourceScopes'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -57,7 +65,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              {translation.apiResourceSteps['apiResourceSecrets'].text}
+              {
+                translation.navigations['apiResourceSteps'].items[
+                  'apiResourceSecrets'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -72,7 +84,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              {translation.apiResourceSteps['apiResourceUserClaims'].text}
+              {
+                translation.navigations['apiResourceSteps'].items[
+                  'apiResourceUserClaims'
+                ].text
+              }
             </button>
           </li>
         </ul>
