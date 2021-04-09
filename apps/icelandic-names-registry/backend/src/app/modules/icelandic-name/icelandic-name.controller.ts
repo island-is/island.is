@@ -71,6 +71,16 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
+  @Get('search/:q')
+  @ApiOkResponse({
+    type: IcelandicName,
+    isArray: true,
+    description: 'Gets all icelandic names by search.',
+  })
+  async getBySearch(@Param('q') q: string): Promise<IcelandicName[]> {
+    return await this.icelandicNameService.getBySearch(q)
+  }
+
   @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
   @Patch(':id')
   @ApiOkResponse()

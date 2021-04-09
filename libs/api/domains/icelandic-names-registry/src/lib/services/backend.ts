@@ -10,7 +10,7 @@ import { environment } from '../environments'
 class BackendAPI extends RESTDataSource {
   constructor() {
     super()
-    this.initialize({} as DataSourceConfig<any>)
+    this.initialize({} as DataSourceConfig<void>)
     this.baseURL = `${environment.backendUrl}/api/icelandic-names-registry`
   }
 
@@ -26,16 +26,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`/initial-letter/${initialLetter}`)
   }
 
-  updateById(id: number, body: object): Promise<IcelandicName> {
-    return this.patch(`/${id}`, body)
-  }
-
-  create(body: object): Promise<IcelandicName> {
-    return this.put(`/`, body)
-  }
-
-  deleteById(id: number): Promise<void> {
-    return this.delete(`/${id}`)
+  getBySearch(q: string): Promise<IcelandicName[]> {
+    return this.get(`/search/${q}`)
   }
 }
 
