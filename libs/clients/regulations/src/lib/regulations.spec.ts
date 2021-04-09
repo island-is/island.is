@@ -53,7 +53,7 @@ const regulationsUrl = (path: string) =>
 
 const handlers = [
   rest.get(
-    regulationsUrl('/regulation/nr/:condition/original'),
+    regulationsUrl('/regulation/:condition/original'),
     (req, res, ctx) => {
       const { params } = req
       const response = createRegulationResponse(params.condition)
