@@ -8,22 +8,16 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  Link,
   Navigation,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './OrganizationWrapper.treat'
 import NextLink from 'next/link'
-import {
-  HeadWithSocialSharing,
-  Main,
-  OrganizationFooter,
-  Sticky,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
+import { DefaultHeader } from './Themes/DefaultTheme'
 
 interface NavigationData {
   title: string
@@ -44,6 +38,32 @@ interface WrapperProps {
   minimal?: boolean
 }
 
+interface HeaderProps {
+  organizationPage: OrganizationPage
+}
+
+export const lightThemes = ['digital_iceland']
+
+const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennHeader organizationPage={organizationPage} />
+    case 'digital_iceland':
+      return <DigitalIcelandHeader organizationPage={organizationPage} />
+    default:
+      return <DefaultHeader organizationPage={organizationPage} />
+  }
+}
+
+const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennFooter organizationPage={organizationPage} />
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -53,11 +73,17 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   mainContent,
   sidebarContent,
   navigationData,
-  fullWidthContent = false,
   children,
   minimal = false,
+  fullWidthContent = false,
 }) => {
-  const isMobile = useWindowSize().width < theme.breakpoints.md
+  const secondaryNavList: NavigationItem[] = organizationPage.secondaryMenu?.childrenLinks.map(
+    ({ text, url }) => ({
+      title: text,
+      href: url,
+      active: text === pageTitle,
+    }),
+  )
 
   return (
     <>
@@ -65,68 +91,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         title={pageTitle}
         description={pageDescription}
         imageUrl={pageFeaturedImage?.url}
+        imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg}>
-        <Box className={styles.headerWrapper}>
-          <SidebarLayout
-            sidebarContent={
-              !!organizationPage.organization.logo &&
-              !minimal && (
-                <Link href="#">
-                  <Box
-                    borderRadius="circle"
-                    className={styles.iconCircle}
-                    background="white"
-                  >
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  </Box>
-                </Link>
-              )
-            }
-          >
-            <Hidden above="sm">
-              <Link href="#">
-                <Box
-                  borderRadius="circle"
-                  className={styles.iconCircle}
-                  background="white"
-                >
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                </Box>
-              </Link>
-            </Hidden>
-            <Box
-              marginTop={[2, 2, 6]}
-              textAlign={['center', 'center', 'right']}
-            >
-              <Text variant="h1" color="white">
-                {organizationPage.title}
-              </Text>
-            </Box>
-          </SidebarLayout>
-        </Box>
-      </Box>
+      <OrganizationHeader organizationPage={organizationPage} />
       <Main>
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}
             paddingBottom={[4, 4, 4]}
             isSticky={false}
+            fullWidthContent={fullWidthContent}
             sidebarContent={
               <Sticky>
                 <Navigation
                   baseId="pageNav"
-                  isMenuDialog={isMobile}
                   items={navigationData.items}
                   title={navigationData.title}
                   activeItemTitle={navigationData.activeItemTitle}
@@ -138,6 +118,24 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
+                {organizationPage.secondaryMenu && (
+                  <Box marginTop={3}>
+                    <Navigation
+                      colorScheme="purple"
+                      baseId="secondarynav"
+                      activeItemTitle={pageTitle}
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  </Box>
+                )}
                 {sidebarContent}
               </Sticky>
             }
@@ -146,7 +144,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNav"
-                  isMenuDialog={isMobile}
+                  isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
                   activeItemTitle={navigationData.activeItemTitle}
@@ -159,22 +157,53 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
               </Box>
+              {organizationPage.secondaryMenu && (
+                <Box marginY={2}>
+                  <Navigation
+                    colorScheme="purple"
+                    baseId="secondarynav"
+                    isMenuDialog={true}
+                    title={organizationPage.secondaryMenu.name}
+                    items={secondaryNavList}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                </Box>
+              )}
             </Hidden>
-            <Breadcrumbs
-              items={breadcrumbItems ?? []}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href}>{link}</NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-            <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
-              <Text variant="intro">{organizationPage.description}</Text>
-            </Box>
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
+                >
+                  <Breadcrumbs
+                    items={breadcrumbItems ?? []}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                  {pageDescription && (
+                    <Box paddingTop={[2, 2, 5]}>
+                      <Text variant="intro">{pageDescription}</Text>
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
             <Hidden above="sm">{sidebarContent}</Hidden>
-            <Box paddingTop={4}>{mainContent ?? children}</Box>
+            <Box paddingTop={fullWidthContent ? 0 : 4}>
+              {mainContent ?? children}
+            </Box>
           </SidebarLayout>
         )}
         {!!mainContent && children}

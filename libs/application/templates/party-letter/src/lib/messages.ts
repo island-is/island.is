@@ -59,8 +59,95 @@ export const m: MessageDir = {
     },
     linkDescription: {
       id: 'ple.application:recommendations.link.description',
-      defaultMessage: 'Hér er hlekkur til að senda út á fólk',
+      defaultMessage: 'Hér er hlekkur til að senda út á meðmælendur',
       description: 'Recommendations link description',
+    },
+    copyLinkButton: {
+      id: 'ple.application:recommendations.link.button',
+      defaultMessage: 'Afrita hlekk',
+      description: 'Copy link button',
+    },
+    nameCount: {
+      id: 'ple.application:recommendations.name.count',
+      defaultMessage: 'nafn á lista (300)',
+      description: 'X name on list',
+    },
+    namesCount: {
+      id: 'ple.application:recommendations.names.count',
+      defaultMessage: 'nöfn á lista (300)',
+      description: 'X names on list',
+    },
+    invalidSignatures: {
+      id: 'ple.application:recommendations.invalid.signatures',
+      defaultMessage: 'Sjá einungis meðmæli í vafa',
+      description: 'Only show invalid signatures',
+    },
+    searchbar: {
+      id: 'ple.application:recommendations.search',
+      defaultMessage: 'Leitaðu hér',
+      description: 'Searchbar placeholder',
+    },
+    thDate: {
+      id: 'ple.application:recommendations.th.date',
+      defaultMessage: 'Dags skráð',
+      description: 'Table header date',
+    },
+    thName: {
+      id: 'ple.application:recommendations.th.name',
+      defaultMessage: 'Nafn',
+      description: 'Table header name',
+    },
+    thNationalNumber: {
+      id: 'ple.application:recommendations.th.nationalnumber',
+      defaultMessage: 'Kennitala',
+      description: 'Table header national number',
+    },
+    thAddress: {
+      id: 'ple.application:recommendations.th.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Table header address',
+    },
+    includePapers: {
+      id: 'ple.application:recommendations.includePapers',
+      defaultMessage: 'Ég ætla skila inn meðmælum á pappír*',
+      description: 'Include paper signatures',
+    },
+    includePapersDisclaimerPt1: {
+      id: 'ple.application:recommendations.includePapers.disclaimer1',
+      defaultMessage:
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+      description: 'Include paper signatures disclaimer part 1',
+    },
+    includePapersDisclaimerPt2: {
+      id: 'ple.application:recommendations.includePapers.disclaimer2',
+      defaultMessage:
+        '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
+      description: 'Include paper signatures disclaimer part 2',
+    },
+    noPaper: {
+      id: 'ple.application:recommendations.paper.no',
+      defaultMessage: 'Nei, ég er ekki með meðmælendur á pappír',
+      description: 'No paper signatures',
+    },
+    yesPaper: {
+      id: 'ple.application:recommendations.paper.yes',
+      defaultMessage: 'Já, ég er með meðmælendur á pappír',
+      description: 'Yes paper signatures',
+    },
+    fileUploadHeader: {
+      id: 'ple.application:recommendations.fileupload.header',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Header for file upload',
+    },
+    uploadDescription: {
+      id: 'ple.application:recommendations.fileupload.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .xlsx',
+      description: 'Description for file upload',
+    },
+    uploadButtonLabel: {
+      id: 'ple.application:recommendations.fileupload.label',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Label for file upload',
     },
   }),
   selectSSD: defineMessages({
@@ -152,7 +239,7 @@ export const m: MessageDir = {
     },
     includePapers: {
       id: 'ple.application:overview.include.papers',
-      defaultMessage: 'Ég er líka með meðmælendur á pappír',
+      defaultMessage: 'Meðmælendur á pappír',
       description: 'Overview label for include papers checkbox',
     },
     submitButton: {
