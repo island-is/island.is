@@ -13,12 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import {
-  LawChapterTree,
-  Ministry,
-  RegName,
-  RegulationHomeTexts,
-} from './mockData'
+import { LawChapterTree, Ministry } from './Regulations.types'
+import { RegulationHomeTexts } from './Regulations.mock'
 import { OptionTypeBase, ValueType } from 'react-select'
 
 // ---------------------------------------------------------------------------
@@ -123,7 +119,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
   const router = useRouter()
-  const [advancedActive, setAdvancedActive] = useState(false);
+  const [advancedActive, setAdvancedActive] = useState(false)
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -207,64 +203,73 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             paddingTop={[1, 1, 0]}
             paddingBottom={[3, 3, 0]}
           >
-            <Button variant="text" size="small" icon="chevronDown" onClick={() => {
-              setAdvancedActive(!advancedActive);
-            }}>
+            <Button
+              variant="text"
+              size="small"
+              icon="chevronDown"
+              onClick={() => {
+                setAdvancedActive(!advancedActive)
+              }}
+            >
               Ýtarlegri leit{' '}
             </Button>
           </GridColumn>
         </GridRow>
-        {advancedActive && <GridRow>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '3/12', '2/12']}
-            offset={['0', '0', '0', '0', '1/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="year"
-              isSearchable
-              label={txt('searchYearLabel')}
-              placeholder={txt('searchYearPlaceholder')}
-              value={findValueOption(yearOptions, filters.year)}
-              options={yearOptions}
-              onChange={(option) => doSearch('year', getRSValue(option) || '')}
-              size="sm"
-            />
-          </GridColumn>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="ch"
-              isSearchable
-              label={txt('searchChapterLabel')}
-              placeholder={txt('searchChapterPlaceholder')}
-              value={findValueOption(lawChapterOptions, filters.ch)}
-              options={lawChapterOptions}
-              onChange={(option) => doSearch('ch', getRSValue(option) || '')}
-              size="sm"
-            />
-          </GridColumn>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="rn"
-              isSearchable
-              label={txt('searchMinistryLabel')}
-              placeholder={txt('searchMinistryPlaceholder')}
-              value={findValueOption(ministryOptions, filters.rn)}
-              options={ministryOptions}
-              onChange={(option) => doSearch('rn', getRSValue(option) || '')}
-              size="sm"
-            />
-          </GridColumn>
-        </GridRow>}
+        {advancedActive && (
+          <GridRow>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '3/12', '2/12']}
+              offset={['0', '0', '0', '0', '1/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="year"
+                isSearchable
+                label={txt('searchYearLabel')}
+                placeholder={txt('searchYearPlaceholder')}
+                value={findValueOption(yearOptions, filters.year)}
+                options={yearOptions}
+                onChange={(option) =>
+                  doSearch('year', getRSValue(option) || '')
+                }
+                size="sm"
+              />
+            </GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="ch"
+                isSearchable
+                label={txt('searchChapterLabel')}
+                placeholder={txt('searchChapterPlaceholder')}
+                value={findValueOption(lawChapterOptions, filters.ch)}
+                options={lawChapterOptions}
+                onChange={(option) => doSearch('ch', getRSValue(option) || '')}
+                size="sm"
+              />
+            </GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="rn"
+                isSearchable
+                label={txt('searchMinistryLabel')}
+                placeholder={txt('searchMinistryPlaceholder')}
+                value={findValueOption(ministryOptions, filters.rn)}
+                options={ministryOptions}
+                onChange={(option) => doSearch('rn', getRSValue(option) || '')}
+                size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+        )}
       </GridContainer>
 
       {/* <Checkbox

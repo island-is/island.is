@@ -3,7 +3,8 @@ import { Link, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from './regulationUtils'
 
-import { RegulationPageTexts, RegulationRedirect } from './mockData'
+import { RegulationRedirect } from './Regulations.types'
+import { RegulationPageTexts } from './Regulations.mock'
 import { useNamespace } from '@island.is/web/hooks'
 
 export type RegulationRedirectMessageProps = {

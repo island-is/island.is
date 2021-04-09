@@ -1,11 +1,10 @@
 import {
-  regulationPageTexts,
   Regulation,
   RegulationRedirect,
-  RegulationPageTexts,
   ISODate,
   RegName,
-} from './mockData'
+} from './Regulations.types'
+import { RegulationPageTexts } from './Regulations.mock'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -150,14 +149,6 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const earlierDate = isCustomDiff
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
-
-  // console.log('FOOBAR', {
-  //   name,
-  //   viewType,
-  //   date,
-  //   isCustomDiff,
-  //   earlierDate,
-  // })
 
   const [texts, regulation] = await Promise.all([
     await getUiTexts<RegulationPageTexts>(

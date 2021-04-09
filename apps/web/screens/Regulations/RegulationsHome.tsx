@@ -1,12 +1,14 @@
 import {
-  regulationsSearchResults,
-  homeTexts,
   Ministry,
   LawChapterTree,
-  RegulationHomeTexts,
   RegulationListItem,
   MinistryFull,
-} from './mockData'
+} from './Regulations.types'
+
+import {
+  RegulationHomeTexts,
+  regulationsSearchResults,
+} from './Regulations.mock'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -26,8 +28,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { RichText, richText } from '@island.is/island-ui/contentful'
 import {
   RegulationSearchFilters,
   RegulationsSearchSection,
@@ -36,8 +36,6 @@ import { shuffle } from 'lodash'
 import { getParams, useRegulationLinkResolver } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
   GetRegulationsQuery,
   QueryGetRegulationsArgs,
   GetRegulationsYearsQuery,
@@ -46,14 +44,11 @@ import {
   QueryGetRegulationsLawChaptersArgs,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
   GET_REGULATIONS_LAWCHAPTERS_QUERY,
   GET_REGULATIONS_MINISTRIES_QUERY,
   GET_REGULATIONS_QUERY,
   GET_REGULATIONS_YEARS_QUERY,
 } from '../queries'
-import { log } from 'xstate/lib/actions'
-import { useI18n } from '../../i18n'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -74,9 +69,6 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
     throw new CustomNextError(404, 'Not found')
   }
 
-  const {
-    t: { regulations: t, routes },
-  } = useI18n()
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
@@ -133,11 +125,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn
-                span="12/12"
-                paddingTop={0}
-                paddingBottom={[4, 4, 4]}
-              >
+              <GridColumn span="12/12" paddingTop={0} paddingBottom={[4, 4, 4]}>
                 <RegulationsSearchSection
                   searchFilters={props.searchQuery}
                   lawChapters={props.lawChapters}
@@ -259,6 +247,3 @@ RegulationsHome.getInitialProps = async (ctx) => {
 }
 
 export default withMainLayout(RegulationsHome)
-
-// // @ts-expect-error  (Make sure we're in strict mode)
-// const text: string = ({} as { bar?: string }).bar

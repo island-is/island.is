@@ -1,4 +1,5 @@
-import { RegName, RegulationPageTexts } from './mockData'
+import { RegName } from './Regulations.types'
+import { RegulationPageTexts } from './Regulations.mock'
 
 import React, { FC } from 'react'
 import {

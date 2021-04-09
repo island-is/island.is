@@ -1,4 +1,5 @@
-import { RegulationPageTexts, Regulation, ISODate } from './mockData'
+import { Regulation, ISODate } from './Regulations.types'
+import { RegulationPageTexts } from './Regulations.mock'
 
 import * as s from './RegulationDisplay.treat'
 
@@ -59,12 +60,6 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
     } as const,
     ...history,
   ]
-
-  console.log('FOOBAR', {
-    effectiveDate: regulation.effectiveDate,
-    timelineDate: regulation.timelineDate,
-    showingDiff: regulation.showingDiff || null,
-  })
 
   const diffView = !!regulation.showingDiff
   const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
