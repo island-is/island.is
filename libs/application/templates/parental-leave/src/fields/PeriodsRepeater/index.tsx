@@ -21,7 +21,9 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   }
   const dobDate = new Date(dob)
 
-  const editable = application.state === 'draft'
+  const editable =
+    application.state === 'draft' || application.state === 'editOrAddPeriods'
+
   return (
     <Box>
       <FieldDescription

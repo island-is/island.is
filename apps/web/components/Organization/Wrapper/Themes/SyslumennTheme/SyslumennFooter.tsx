@@ -8,7 +8,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './OrganizationFooter.treat'
+import * as styles from './SyslumennFooter.treat'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 
@@ -16,7 +16,7 @@ interface FooterProps {
   organizationPage: OrganizationPage
 }
 
-export const OrganizationFooter: React.FC<FooterProps> = ({
+export const SyslumennFooter: React.FC<FooterProps> = ({
   organizationPage,
 }) => {
   return (

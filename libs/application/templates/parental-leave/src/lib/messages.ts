@@ -25,6 +25,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Almennar upplýsingar',
       description: 'Applicant information',
     },
+    dateOfBirthNotAvailable: {
+      id: 'pl.application:externalData.dobNotAvailable',
+      defaultMessage:
+        'Gat ekki sótt fæðingardaginn. Vinsamlegast reyndu aftur síðar.',
+      description:
+        'Could not retrieve the date of birth. Please try again later.',
+    },
     externalDataSubSection: {
       id: 'pl.application:externalData.subSection',
       defaultMessage: 'Sækja gögn',
@@ -861,6 +868,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn þín er samþykkt',
       description: 'Your application is in approved',
     },
+    estimatedBirthDate: {
+      id: 'pl.application:review.estimatedBirthDate',
+      defaultMessage: 'Áætlaður fæðingardagur',
+      description: 'Estimated date of birth',
+    },
     desc: {
       id: 'pl.application:review.desc',
       defaultMessage: 'Hér að neðan eru skrefin sem gerast næst.',
@@ -949,6 +961,93 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
+    },
+  }),
+
+  draftFlow: defineMessages({
+    draftNotApprovedTitle: {
+      id: 'pl.application:draftFlow.requiresAction.title',
+      defaultMessage: 'Your application was not approved',
+      description: 'Your application was not approved',
+    },
+    draftNotApprovedOtherParentDesc: {
+      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      defaultMessage: 'The other parent did not approve your request.',
+      description: 'The other parent did not approve your request.',
+    },
+    draftNotApprovedEmployerDesc: {
+      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      defaultMessage: 'Your employer did not approve your application.',
+      description: 'Your employer did not approve your application.',
+    },
+    draftNotApprovedVMLSTDesc: {
+      id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
+      defaultMessage: 'Vinnumalastofnun did not approve your application.',
+      description: 'Vinnumalastofnun did not approve your application.',
+    },
+    modifyDraftDesc: {
+      id: 'pl.application:draftFlow.modifyDesc',
+      defaultMessage:
+        'You can make edits to your application and re-submit for consideration.',
+      description:
+        'You can make edits to your application and re-submit for consideration.',
+    },
+    modifyDraftButton: {
+      id: 'pl.application:draftFlow.modifyDraftButton',
+      defaultMessage: 'Make changes',
+      description: 'Make changes',
+    },
+  }),
+
+  editFlow: defineMessages({
+    // For EditFlowInReviewSteps
+    employerApprovesTitle: {
+      id: 'pl.application:editFlow.employer.approves.title',
+      defaultMessage: 'Vinnuveitandi samþykkir breytingar þínar á tímabilinu',
+      description: 'Employer approves your period edits',
+    },
+    employerApprovesDesc: {
+      id: 'pl.application:editFlow.employer.approves.desc',
+      defaultMessage:
+        'Vinnuveitandi þinn mun staðfesta breytingarnar sem þú gerðir á foreldraorlofstímabilinu þínu.',
+      description:
+        'Your employer will confirm the edits you made to your your parental leave periods.',
+    },
+
+    // For Requires Action screen (when edits are not approved)
+    editsNotApprovedTitle: {
+      id: 'pl.application:editFlow.requiresAction.title',
+      defaultMessage: 'Your edits were not approved',
+      description: 'Your edits were not approved',
+    },
+    editsNotApprovedEmployerDesc: {
+      id: 'pl.application:editFlow.requiresAction.employerDesc',
+      defaultMessage:
+        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+      description:
+        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+    },
+    editsNotApprovedVMLSTDesc: {
+      id: 'pl.application:editFlow.requiresAction.VMLSTDesc',
+      defaultMessage:
+        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
+      description:
+        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
+    },
+    editsNotApprovedCTA: {
+      id: 'pl.application:editFlow.requiresAction.CTA',
+      defaultMessage: 'What action would you like to take?',
+      description: 'What action would you like to take?',
+    },
+    editsNotApprovedEditButton: {
+      id: 'pl.application:editFlow.requiresAction.editButtonLabel',
+      defaultMessage: 'Modify my edits and re-submit',
+      description: 'Modify my edits and re-submit',
+    },
+    editsNotApprovedDiscardButton: {
+      id: 'pl.application:editFlow.requiresAction.discardButtonLabel',
+      defaultMessage: 'Discard my edits',
+      description: 'Discard my edits',
     },
   }),
 

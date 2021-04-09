@@ -13,7 +13,7 @@ const argv = yargs
     demandOption: true,
     requiresArg: true,
     type: 'string'
-  })  
+  })
   .option('type', {
     alias: 't',
     choices: ['next', 'react'],
@@ -40,7 +40,7 @@ const argv = yargs
     description: 'Base path of the app if it is deployed to a sub-folder.',
     requiresArg: true,
     type: 'string'
-  }) 
+  })
   .option('ci', {
     alias: 'c',
     description: 'Flag to indicate if the script is being run from CI platform.',
@@ -73,7 +73,7 @@ const CMD = {
     '-b', argv['base-path']
   ],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production${
-      argv.ci ? 
+      argv.ci ?
         ` --record --group=${argv.name}` :
         ''
     }${
