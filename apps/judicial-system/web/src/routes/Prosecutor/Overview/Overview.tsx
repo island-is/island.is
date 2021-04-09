@@ -327,24 +327,24 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                <AccordionItem
-                  id="id_5"
-                  label={`Rannsóknargögn ${
-                    workingCase.files ? `(${workingCase.files.length})` : ''
-                  }`}
-                  labelVariant="h3"
-                >
-                  {workingCase.files?.map((file, index) => (
-                    <Box marginBottom={3}>
-                      <CaseFile
-                        name={`${index + 1}. ${file.name}`}
-                        size={file.size}
-                        uploadedAt={file.modified}
-                        link=""
-                      />
-                    </Box>
-                  ))}
-                </AccordionItem>
+                {workingCase.files && (
+                  <AccordionItem
+                    id="id_5"
+                    label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
+                    labelVariant="h3"
+                  >
+                    {workingCase.files?.map((file, index) => (
+                      <Box marginBottom={3}>
+                        <CaseFile
+                          name={`${index + 1}. ${file.name}`}
+                          size={file.size}
+                          uploadedAt={file.modified}
+                          link=""
+                        />
+                      </Box>
+                    ))}
+                  </AccordionItem>
+                )}
                 <AccordionItem
                   id="id_6"
                   label="Athugasemdir vegna málsmeðferðar"

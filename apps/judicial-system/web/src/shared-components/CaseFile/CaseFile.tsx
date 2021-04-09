@@ -18,7 +18,7 @@ const CaseFile: React.FC<Props> = (props) => {
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
 
   return (
-    <BlueBox>
+    <BlueBox size="small">
       <Box display="flex" justifyContent="spaceBetween">
         <Box display="flex" alignItems="center">
           <Box marginRight={1}>
