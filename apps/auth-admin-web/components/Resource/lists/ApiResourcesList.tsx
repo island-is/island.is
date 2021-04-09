@@ -131,7 +131,7 @@ const ApiResourcesList: React.FC = () => {
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
                   <label htmlFor="search" className="api-resources-list__label">
-                    {translation.searchLabel}
+                    {translation.search.label}
                   </label>
                   <input
                     id="search"
