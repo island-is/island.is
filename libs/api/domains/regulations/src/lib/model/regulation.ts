@@ -1,3 +1,4 @@
+import { ISODate, RegName } from '@island.is/clients/regulations'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LawChapterModel } from './lawChapter'
 import { MinistryModel } from './ministry'
@@ -5,9 +6,9 @@ import { MinistryModel } from './ministry'
 @ObjectType()
 class RegulationHistoryItemModel {
   @Field(() => Date, { nullable: true })
-  date!: string
+  date!: string // ISODate
   @Field()
-  name!: string
+  name!: string // RegName
   @Field()
   title!: string
   @Field()
@@ -17,13 +18,13 @@ class RegulationHistoryItemModel {
 @ObjectType()
 class RegulationEffectModel {
   @Field(() => Date, { nullable: true })
-  date!: string
+  date!: string // ISODate
   @Field()
-  name!: string
+  name!: string // RegName
   @Field()
   title!: string
   @Field()
-  effect!: string
+  effect!: 'amend' | 'repeal'
 }
 
 @ObjectType()
@@ -37,27 +38,27 @@ class RegulationAppendix {
 @ObjectType()
 class ShowingDiffModel {
   @Field(() => Date, { nullable: true })
-  from!: string
+  from!: string // ISODate
   @Field(() => Date, { nullable: true })
-  to!: string
+  to!: string // ISODate
 }
 
 @ObjectType()
 export class RegulationModel {
   @Field()
-  type!: string
+  type!: 'base' | 'amend'
   @Field()
-  name!: string
+  name!: string // RegName
   @Field()
   title!: string
   @Field()
   text!: string
   @Field(() => Date, { nullable: true })
-  publishedDate!: string
+  publishedDate!: string // ISODate
   @Field(() => Date, { nullable: true })
-  signatureDate!: string
+  signatureDate!: string // ISODate
   @Field(() => Date, { nullable: true })
-  effectiveDate!: string
+  effectiveDate!: string // ISODate
   @Field((type) => [RegulationAppendix])
   appendixes!: Array<RegulationAppendix>
   @Field({ nullable: true })
@@ -75,7 +76,7 @@ export class RegulationModel {
   @Field((type) => [RegulationEffectModel])
   effects?: Array<RegulationEffectModel>
   @Field(() => Date, { nullable: true })
-  timelineDate?: string
+  timelineDate?: string // ISODate
   @Field((type) => ShowingDiffModel, { nullable: true })
   showingDiff?: ShowingDiffModel
 }

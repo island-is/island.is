@@ -44,6 +44,10 @@ export const GET_REGULATION_QUERY = gql`
         effect
       }
       timelineDate
+      showingDiff {
+        from
+        to
+      }
     }
   }
 `

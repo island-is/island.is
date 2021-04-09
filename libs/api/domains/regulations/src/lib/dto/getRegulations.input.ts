@@ -6,6 +6,7 @@ export class GetRegulationsInput {
   @Field()
   @IsString()
   type!: 'newest'
+
   @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
