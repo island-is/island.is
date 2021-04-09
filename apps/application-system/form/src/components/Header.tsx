@@ -24,7 +24,7 @@ const Header: FC = () => {
     <UIHeader
       authenticated={isAuthenticated}
       userName={userInfo?.profile?.name}
-      language={lang || 'is'}
+      language={(lang ?? 'is') === 'is' ? 'EN' : 'IS'}
       switchLanguage={() => changeLanguage(lang === 'is' ? 'en' : 'is')}
       onLogout={signOutUser}
     />

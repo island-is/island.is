@@ -1,6 +1,7 @@
 export * from './lib/auth.module'
 export * from './lib/jwt.strategy'
 export * from './lib/scopes.decorator'
+export * from './lib/current-locale.decorator'
 export * from './lib/current-user.decorator'
 export * from './lib/scopes.guard'
 export * from './lib/ids-auth.guard'

@@ -6,10 +6,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
 import { ApiActions } from '../shared'
+import { m } from './messages'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -53,7 +55,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: 'Reference application',
+  name: m.name,
+  translation: ApplicationConfigurations.ExampleForm.translation,
   dataSchema: ExampleSchema,
   stateMachineConfig: {
     initial: 'draft',
@@ -61,6 +64,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
+          title: m.draftTitle,
+          description: m.draftDescription,
           progress: 0.25,
           roles: [
             {

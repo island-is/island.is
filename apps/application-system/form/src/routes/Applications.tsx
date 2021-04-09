@@ -26,21 +26,22 @@ import { NotFound } from '@island.is/application/ui-shell'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
-import useAuth from '../hooks/useAuth'
-
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { userInfo } = useAuth()
-  const { formatMessage } = useLocale()
-  const nationalRegistryId = userInfo?.profile?.nationalId
+  const { lang, formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useQuery(
+  const { data, loading, error: applicationsError, refetch } = useQuery(
     APPLICATION_APPLICATIONS,
     {
+      context: {
+        headers: {
+          locale: lang,
+        },
+      },
       variables: {
         input: { typeId: type },
       },
@@ -72,6 +73,10 @@ export const Applications: FC = () => {
       createApplication()
     }
   }, [type, data])
+
+  useEffect(() => {
+    refetch?.()
+  }, [lang])
 
   if (!type || applicationsError) {
     return (
@@ -108,13 +113,13 @@ export const Applications: FC = () => {
 
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
-                (application: Application) => {
+                (application: Application, index: number) => {
                   const isComplete =
                     application.status === ApplicationStatus.COMPLETED
 
                   return (
                     <ActionCard
-                      key={application.id}
+                      key={`${application.id}-${index}`}
                       date={format(
                         new Date(application.modified),
                         dateFormat.is,
@@ -127,7 +132,9 @@ export const Applications: FC = () => {
                         outlined: false,
                       }}
                       heading={application.name || application.typeId}
-                      text={application.applicant}
+                      text={
+                        application.stateDescription ?? application.applicant
+                      }
                       cta={{
                         label: formatMessage(coreMessages.buttonNext),
                         variant: 'ghost',

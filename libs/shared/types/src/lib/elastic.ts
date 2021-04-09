@@ -41,7 +41,7 @@ export interface SearchResponse<ResponseSource, ResponseAggregation = any> {
 }
 
 export interface GetByIdResponse<ResponseSource = any> {
-  _index: SearchIndex
+  _index: string
   _type: string
   _id: string
   _version: number

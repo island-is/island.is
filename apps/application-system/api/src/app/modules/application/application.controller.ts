@@ -92,6 +92,10 @@ import {
   name: 'authorization',
   description: 'Bearer token authorization',
 })
+@ApiHeader({
+  name: 'locale',
+  description: 'Front-end language selected',
+})
 @Controller()
 export class ApplicationController {
   constructor(

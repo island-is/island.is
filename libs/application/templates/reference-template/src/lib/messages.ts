@@ -1,6 +1,21 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  name: {
+    id: 'example.application:name',
+    defaultMessage: 'Umsókn um tilvísunar sniðmát',
+    description: `Application's name`,
+  },
+  draftTitle: {
+    id: 'example.application:draft.title',
+    defaultMessage: 'Drög',
+    description: 'First state title',
+  },
+  draftDescription: {
+    id: 'example.application:draft.description',
+    defaultMessage: 'Notendur hafa ekkert að gera á þessu stigi',
+    description: 'Description of the state',
+  },
   introSection: {
     id: 'example.application:intro.section',
     defaultMessage: 'Upplýsingar',
@@ -22,7 +37,7 @@ export const m = defineMessages({
     defaultMessage: 'Um þig',
     description: 'Some description',
   },
-  name: {
+  personName: {
     id: 'example.application:person.name',
     defaultMessage: 'Nafn',
     description: 'Some description',

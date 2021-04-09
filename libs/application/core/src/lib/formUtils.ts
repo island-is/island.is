@@ -207,8 +207,6 @@ export type MessageFormatter = (
   values?: StaticTextObject['values'],
 ) => string
 
-type ValueOf<T> = T[keyof T]
-
 const handleMessageFormatting = (
   message: StaticText,
   formatMessage: MessageFormatter,

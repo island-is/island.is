@@ -20,6 +20,7 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+import { StaticText } from '../types/Form'
 
 enum FinalStates {
   REJECTED = 'rejected',
@@ -70,6 +71,16 @@ export class ApplicationTemplateHelper<
     }
 
     return ApplicationStatus.IN_PROGRESS
+  }
+
+  getApplicationStateInfo(
+    stateKey: string = this.application.state,
+  ): { title?: StaticText; description?: StaticText } {
+    return {
+      title: this.template.stateMachineConfig.states[stateKey]?.meta?.title,
+      description: this.template.stateMachineConfig.states[stateKey]?.meta
+        ?.description,
+    }
   }
 
   getApplicationProgress(stateKey: string = this.application.state): number {

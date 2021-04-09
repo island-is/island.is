@@ -7,7 +7,7 @@ import {
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
-import { Form, FormText } from './Form'
+import { Form, FormText, StaticText } from './Form'
 import { Application } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
@@ -62,6 +62,8 @@ export interface ApplicationTemplateAPIAction {
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
+  title?: StaticText
+  description?: StaticText
   progress?: number
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction

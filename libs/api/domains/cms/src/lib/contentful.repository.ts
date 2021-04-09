@@ -57,6 +57,7 @@ export class ContentfulRepository {
     query: ContentfulQuery,
   ): Result<Fields> {
     let code = languageCode ?? 'is-IS'
+
     if (localeMap[code]) {
       code = localeMap[code]
     }

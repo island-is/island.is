@@ -70,7 +70,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
       )}
 
       <Stack space={2}>
-        {applications.map((application: Application) => {
+        {applications.map((application: Application, index: number) => {
           const isComplete = application.progress === 1
           const slug = getSlugFromType(application.typeId)
 
@@ -80,7 +80,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
           return (
             <ActionCard
-              key={application.id}
+              key={`${application.id}-${index}`}
               date={format(new Date(application.modified), formattedDate)}
               heading={application.name || application.typeId}
               tag={{
@@ -101,9 +101,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                   window.open(`${baseUrlForm}/${slug}/${application.id}`),
               }}
               text={
-                isComplete
+                application.stateDescription ??
+                (isComplete
                   ? formatMessage(m.cardStatusCopyDone)
-                  : formatMessage(m.cardStatusCopyInProgress)
+                  : formatMessage(m.cardStatusCopyInProgress))
               }
               progressMeter={{
                 active: !isComplete,

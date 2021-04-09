@@ -34,6 +34,12 @@ export class Application {
   @Field(() => String)
   state!: string
 
+  @Field(() => String, { nullable: true })
+  stateTitle?: string
+
+  @Field(() => String, { nullable: true })
+  stateDescription?: string
+
   @Field(() => graphqlTypeJson, { nullable: true })
   attachments?: object
 

@@ -11,7 +11,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
@@ -29,7 +29,7 @@ export const ReviewApplication: Form = buildForm({
             buildDividerField({ title: 'Umsækjandi' }),
             buildTextField({
               id: 'person.name',
-              title: m.name,
+              title: m.personName,
               disabled: true,
             }),
             buildTextField({

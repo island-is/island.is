@@ -10,5 +10,6 @@ export class GetTranslationsInput {
 
   @Field()
   @IsString()
-  lang: string
+  @IsOptional()
+  lang?: string
 }

@@ -190,10 +190,17 @@ export class ElasticService {
     })
 
     const results = await Promise.all(requests)
-    return results.reduce((groupedResults: Record<string, RankEvaluationResponse<searchTermUnion>>, result, index) => {
-      groupedResults[metrics[index]] = result
-      return groupedResults
-    }, {})
+    return results.reduce(
+      (
+        groupedResults: Record<string, RankEvaluationResponse<searchTermUnion>>,
+        result,
+        index,
+      ) => {
+        groupedResults[metrics[index]] = result
+        return groupedResults
+      },
+      {},
+    )
   }
 
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {

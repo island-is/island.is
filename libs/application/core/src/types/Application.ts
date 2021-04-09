@@ -20,6 +20,8 @@ export interface FormValue {
 export interface Application {
   id: string
   state: string
+  stateTitle?: string
+  stateDescription?: string
   applicant: string
   assignees: string[]
   typeId: ApplicationTypes
