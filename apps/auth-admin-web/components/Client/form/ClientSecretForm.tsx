@@ -34,7 +34,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
   const [infoModalIsOpen, setInfoModalIsOpen] = useState(false)
   const [secretValue, setSecretValue] = useState<string>('')
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientSecretForm'),
   )
   const [secretToRemove, setSecretToRemove] = useState<ClientSecret>(

@@ -36,7 +36,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
   const [secretToRemove, setSecretToRemove] = useState<ApiResourceSecret>(
     new ApiResourceSecret(),
   )
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ApiResourceSecretForm'),
   )
 

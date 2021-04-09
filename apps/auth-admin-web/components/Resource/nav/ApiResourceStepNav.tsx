@@ -13,9 +13,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation, setTranslation] = useState<Translation>(
-    TranslationUtils.getTranslation(),
-  )
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
 
   return (
     <div>

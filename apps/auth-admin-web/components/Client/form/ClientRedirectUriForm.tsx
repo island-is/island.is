@@ -32,7 +32,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [uriToRemove, setUriToRemove] = React.useState('')
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientRedirectUriForm'),
   )
 

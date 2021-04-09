@@ -13,9 +13,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation, setTranslation] = useState<Translation>(
-    TranslationUtils.getTranslation(),
-  )
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
   return (
     <div>
       <nav className="identity-resource-step-nav">

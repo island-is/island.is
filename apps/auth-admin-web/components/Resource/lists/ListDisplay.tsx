@@ -27,7 +27,7 @@ const ResourceListDisplay: React.FC<Props> = ({
   edit,
   remove,
 }) => {
-  const [translation, setTranslation] = useState<ListPage>(
+  const [translation] = useState<ListPage>(
     TranslationUtils.getListPage('ResourceListDisplay'),
   )
 

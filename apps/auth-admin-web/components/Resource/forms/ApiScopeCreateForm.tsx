@@ -21,7 +21,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ApiScopeCreateForm'),
   )
 

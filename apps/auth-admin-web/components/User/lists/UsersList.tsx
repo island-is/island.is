@@ -27,7 +27,7 @@ const UsersList: React.FC = () => {
   const [showNotFound, setShowNotFound] = useState<boolean>(false)
   const { handleSubmit, register, errors, formState } = useForm()
   const { isSubmitting } = formState
-  const [translation, setTranslation] = useState<ListPage>(
+  const [translation] = useState<ListPage>(
     TranslationUtils.getListPage('UsersList'),
   )
 

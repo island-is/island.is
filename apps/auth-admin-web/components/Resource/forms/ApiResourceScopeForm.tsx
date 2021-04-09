@@ -32,7 +32,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ApiResourceScopeForm'),
   )
 

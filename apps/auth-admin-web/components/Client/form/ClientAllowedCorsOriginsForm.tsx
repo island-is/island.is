@@ -35,7 +35,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('')
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientAllowedCorsOriginsForm'),
   )
 

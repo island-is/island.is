@@ -7,9 +7,7 @@ import { Translation } from './../../../entities/common/Translation'
 
 const ResourcesTabsNav: React.FC = () => {
   const router = useRouter()
-  const [translation, setTranslation] = useState<Translation>(
-    TranslationUtils.getTranslation(),
-  )
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
   return (
     <nav className="resource-tab-nav">
       <ul>

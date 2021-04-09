@@ -15,7 +15,7 @@ const IdentityResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
-  const [translation, setTranslation] = useState<ListPage>(
+  const [translation] = useState<ListPage>(
     TranslationUtils.getListPage('IdentityResourcesList'),
   )
   const edit = (resource: IdentityResourceDTO) => {

@@ -20,7 +20,7 @@ const ApiResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
-  const [translation, setTranslation] = useState<ListPage>(
+  const [translation] = useState<ListPage>(
     TranslationUtils.getListPage('ApiResourcesList'),
   )
 

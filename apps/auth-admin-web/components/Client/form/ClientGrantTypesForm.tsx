@@ -18,7 +18,7 @@ interface Props {
 
 const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientGrantTypesForm'),
   )
   useEffect(() => {

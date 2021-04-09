@@ -11,9 +11,7 @@ import TranslationUtils from './../../utils/translation.utils'
 const Nav: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
-  const [translation, setTranslation] = useState<Translation>(
-    TranslationUtils.getTranslation(),
-  )
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
 
   if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>

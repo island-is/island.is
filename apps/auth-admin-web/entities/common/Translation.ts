@@ -30,8 +30,8 @@ export class FormPage {
 }
 
 export class Paginator {
-  nextButton: string,
-  backButton: string,
+  nextButton: string
+  backButton: string
   count: string
 }
 

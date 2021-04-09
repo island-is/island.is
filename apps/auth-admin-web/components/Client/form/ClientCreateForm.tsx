@@ -36,7 +36,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientCreateForm'),
   )
 

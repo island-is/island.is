@@ -5,7 +5,6 @@ import ContentWrapper from '../components/Layout/ContentWrapper'
 import { isLoggedIn } from './../utils/auth.utils'
 import { useSession } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
-import { LOCALE_KEY } from '../i18n/locales'
 
 const Home: React.FC = () => {
   const [session, loading] = useSession()

@@ -18,7 +18,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,
   )
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientIdpRestrictionsForm'),
   )
 

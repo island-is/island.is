@@ -18,7 +18,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
   const [claimLength, setClaimLength] = useState<number>(0)
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('UserClaimCreateForm'),
   )
 

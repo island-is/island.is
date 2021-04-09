@@ -10,9 +10,7 @@ import { Translation } from './../../entities/common/Translation'
 const Header: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
-  const [translation, setTranslation] = useState<Translation>(
-    TranslationUtils.getTranslation(),
-  )
+  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
 
   useEffect(() => {
     if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {

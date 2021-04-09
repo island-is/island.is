@@ -27,7 +27,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
   } = useForm<ClientClaimDTO>()
   const { isSubmitting } = formState
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ClientClaimForm'),
   )
   const [claimToRemove, setClaimToRemove] = useState<ClientClaimDTO>(

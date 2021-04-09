@@ -17,7 +17,7 @@ interface Props {
 
 const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([])
-  const [translation, setTranslation] = useState<FormPage>(
+  const [translation] = useState<FormPage>(
     TranslationUtils.getFormPage('ApiScopeUserClaimsForm'),
   )
   useEffect(() => {
