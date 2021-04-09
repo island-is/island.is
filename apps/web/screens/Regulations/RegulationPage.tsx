@@ -171,7 +171,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then(
         (res) =>
-          Object.values(res.data ?? {})[0] as
+          res.data?.getRegulation as
             | Regulation
             | RegulationRedirect
             | undefined,
