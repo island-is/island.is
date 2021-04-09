@@ -39,6 +39,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   locale = 'en',
   minDate,
   maxDate,
+  excludeDates,
   selected,
   disabled = false,
   hasError = false,
@@ -88,6 +89,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           locale={currentLanguage.locale}
           minDate={minDate}
           maxDate={maxDate}
+          excludeDates={excludeDates}
           dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
