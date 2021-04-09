@@ -1,6 +1,7 @@
 import React, { FC, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
+  Button,
   Checkbox,
   Filter,
   FilterInput,
@@ -122,6 +123,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
   const router = useRouter()
+  const [advancedActive, setAdvancedActive] = useState(false);
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -186,10 +188,10 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
       onFilterClear={clearSearch}
     >
       <GridContainer>
-        <GridRow>
+        <GridRow alignItems="center">
           <GridColumn
-            span={['1/1', '1/1', '8/12', '6/12']}
-            offset={['0', '0', '0', '1/12']}
+            span={['1/1', '1/1', '9/12', '7/12', '6/12']}
+            offset={['0', '0', '0', '0', '1/12']}
             paddingTop={0}
             paddingBottom={0}
           >
@@ -201,21 +203,23 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             />
           </GridColumn>
           <GridColumn
-            span={['1/1', '1/1', '2/12']}
-            paddingTop={0}
-            paddingBottom={0}
+            span={['1/1', '1/1', '3/12']}
+            paddingTop={[1, 1, 0]}
+            paddingBottom={[3, 3, 0]}
           >
-            smu
+            <Button variant="text" size="small" icon="chevronDown" onClick={() => {
+              setAdvancedActive(!advancedActive);
+            }}>
+              Ýtarlegri leit{' '}
+            </Button>
           </GridColumn>
         </GridRow>
-      </GridContainer>
-      <GridContainer>
-        <GridRow>
+        {advancedActive && <GridRow>
           <GridColumn
-            span={['1/1', '1/1', '2/12']}
-            offset={['0', '0', '0', '1/12']}
-            paddingTop={0}
-            paddingBottom={0}
+            span={['1/1', '1/1', '4/12', '3/12', '2/12']}
+            offset={['0', '0', '0', '0', '1/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
           >
             <Select
               name="year"
@@ -229,9 +233,9 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             />
           </GridColumn>
           <GridColumn
-            span={['1/1', '1/1', '3/12']}
-            paddingTop={0}
-            paddingBottom={0}
+            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
           >
             <Select
               name="ch"
@@ -245,9 +249,9 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             />
           </GridColumn>
           <GridColumn
-            span={['1/1', '1/1', '3/12']}
-            paddingTop={0}
-            paddingBottom={0}
+            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
           >
             <Select
               name="rn"
@@ -260,7 +264,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
               size="sm"
             />
           </GridColumn>
-        </GridRow>
+        </GridRow>}
       </GridContainer>
 
       {/* <Checkbox

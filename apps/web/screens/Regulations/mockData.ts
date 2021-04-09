@@ -99,7 +99,7 @@ export const allLawChaptersTree: LawChapterTree = [
 
 export type RegulationListItem = {
   /** Publication name */
-  name: string
+  name: RegName
   /** The title of the Regulation */
   title: string
   /** The ministry that the regulation is linked to */

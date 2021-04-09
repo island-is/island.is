@@ -78,7 +78,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
     t: { regulations: t, routes },
   } = useI18n()
   const txt = useNamespace(props.texts)
-  const { linkToRegulation } = useRegulationLinkResolver()
+  const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -86,13 +86,16 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       <Breadcrumbs
         items={[
           {
-            title: 'Ísland.is',
-            typename: 'homepage',
-            href: '/',
+            title: txt('crumbs_1'),
+            href: linkResolver('homepage').href,
           },
           {
-            title: 'Reglugerðir',
-            href: '/reglugerdir',
+            title: txt('crumbs_2'),
+            href: linkResolver('article').href,
+          },
+          {
+            title: txt('crumbs_3'),
+            href: linkResolver('regulationshome').href,
           },
         ]}
       />
@@ -106,10 +109,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           <GridContainer>
             <GridRow>
               <GridColumn
-                offset={['0', '0', '0', '1/12']}
-                span={['1/1', '1/1', '1/1', '7/12']}
+                offset={['0', '0', '0', '0', '1/12']}
+                span={['1/1', '1/1', '1/1', '9/12', '7/12']}
                 paddingTop={[0, 0, 0, 8]}
-                paddingBottom={[4, 4, 4, 1]}
+                paddingBottom={[4, 4, 4, 4, 1]}
               >
                 {breadCrumbs}
                 <Text as="h1" variant="h1" marginTop={2}>
@@ -131,20 +134,20 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             </GridRow>
             <GridRow>
               <GridColumn
-                span={['1/1', '1/1', '1/1', '8/12']}
-                offset={['0', '0', '0', '1/12']}
+                span="12/12"
                 paddingTop={0}
-                paddingBottom={[2, 2, 4, 6]}
-              ></GridColumn>
+                paddingBottom={[4, 4, 4]}
+              >
+                <RegulationsSearchSection
+                  searchFilters={props.searchQuery}
+                  lawChapters={props.lawChapters}
+                  ministries={props.ministries}
+                  years={props.years}
+                  texts={props.texts}
+                />
+              </GridColumn>
             </GridRow>
           </GridContainer>
-          <RegulationsSearchSection
-            searchFilters={props.searchQuery}
-            lawChapters={props.lawChapters}
-            ministries={props.ministries}
-            years={props.years}
-            texts={props.texts}
-          />
         </>
       }
       details={
