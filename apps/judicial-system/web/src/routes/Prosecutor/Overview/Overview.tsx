@@ -328,6 +328,17 @@ export const Overview: React.FC = () => {
                 </AccordionItem>
                 <AccordionItem
                   id="id_5"
+                  label={`Rannsóknargögn ${
+                    workingCase.files ? `(${workingCase.files.length})` : ''
+                  }`}
+                  labelVariant="h3"
+                >
+                  {workingCase.files?.map((file) => (
+                    <Text>{file.name}</Text>
+                  ))}
+                </AccordionItem>
+                <AccordionItem
+                  id="id_6"
                   label="Athugasemdir vegna málsmeðferðar"
                   labelVariant="h3"
                 >
