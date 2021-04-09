@@ -34,7 +34,8 @@ export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
                     <Text variant="h2" as="h2" marginBottom={3}>
                       {tab.contentTitle}
                     </Text>
-                    {tab.body && renderSlices(tab.body as SliceType)}
+                    {tab.body &&
+                      renderSlices((tab.body as unknown) as SliceType)}
                   </Box>
                 </GridColumn>
               </GridRow>
