@@ -189,6 +189,9 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   // This would be more in line with the intended difference between
   // viewTypes `"d"` and `"on"`
 
+  // TODO: Consider adding the same validation + redirect behavior
+  // for `earlierDate`s
+
   const urlDate = viewType === 'on' ? date : undefined
 
   return {
