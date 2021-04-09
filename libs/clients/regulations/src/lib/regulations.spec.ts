@@ -2,7 +2,12 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
-import { demoRegulation, Regulation, demoRegName } from './regulations.types'
+import {
+  demoRegulation,
+  Regulation,
+  demoRegName,
+  RegName,
+} from './regulations.types'
 
 // MOCK START
 enum expectedResult {
@@ -89,14 +94,21 @@ describe('getRegulation', () => {
   })
 
   it('should throw on error', async () => {
+    // @ts-expect-error  (testing bad input)
+    const emptyName: RegName = ''
+    // @ts-expect-error  (testing bad input)
+    const badName: RegName = 'NNNN-NNNN'
+    // @ts-expect-error  (testing bad input)
+    const watName: RegName = expectedResult.SERVER_ERROR
+
     await expect(
-      regulationsService.getRegulation('original', ''),
+      regulationsService.getRegulation('original', emptyName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation('original', 'NNNN-NNNN'),
+      regulationsService.getRegulation('original', badName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation('original', expectedResult.SERVER_ERROR),
+      regulationsService.getRegulation('original', watName),
     ).rejects.toThrow()
   })
 })
