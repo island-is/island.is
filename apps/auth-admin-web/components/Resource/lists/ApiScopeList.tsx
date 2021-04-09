@@ -6,6 +6,8 @@ import ResourceListDisplay from './ListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import { ApiScope } from '../../../entities/models/api-scope.model'
 import ConfirmModal from '../../common/ConfirmModal'
+import TranslationUtils from './../../../utils/translation.utils'
+import { ListPage } from './../../../entities/common/Translation'
 
 const ApiScopeList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -15,7 +17,9 @@ const ApiScopeList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [scopeToRemove, setScopeToRemove] = React.useState('')
-
+  const [translation, setTranslation] = useState<ListPage>(
+    TranslationUtils.getListPage('ApiScopeList'),
+  )
   const edit = (apiScope: ApiScopeDTO) => {
     router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`)
   }
@@ -64,8 +68,7 @@ const ApiScopeList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to archive this Api scope:{' '}
-        <span>{scopeToRemove}</span>
+        {translation.removeConfirmation}:<span>{scopeToRemove}</span>
       </p>
     )
   }
@@ -74,8 +77,8 @@ const ApiScopeList: React.FC = () => {
     <div>
       <ResourceListDisplay
         list={apiScopes}
-        header={'Api scopes'}
-        linkHeader={'Create new Api scope'}
+        header={translation.title}
+        linkHeader={translation.createNewItem}
         createUri={'/resource/api-scope'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}

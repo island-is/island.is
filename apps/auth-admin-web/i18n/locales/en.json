@@ -19,9 +19,16 @@
           "headerText": "National Id"
         },
         "contactEmail": {
-          "headerText": "ContactEmail"
+          "headerText": "Contact Email"
         }
       }
+    },
+    {
+      "id": "ApiScopeList",
+      "removeConfirmation": "Are you sure want to archive this Api scope",
+      "removeButton": "Delete",
+      "title": "Api scopes",
+      "createNewItem": "Create new Api scope"
     }
   ],
   "formPages": [
