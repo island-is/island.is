@@ -368,6 +368,7 @@ export const StepTwo: React.FC = () => {
                 }
                 timeLabel="Ósk um tíma (kk:mm)"
                 locked={workingCase.courtDate !== null}
+                minDate={new Date()}
                 required
               />
               {workingCase.courtDate && (
