@@ -10,6 +10,7 @@ import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
@@ -70,6 +71,9 @@ export const useS3Upload = (workingCase?: Case) => {
       } else {
         file.status = 'error'
         updateFile(file)
+        setUploadErrorMessage(
+          'Ekki tókst að hlaða upp öllum skránum. Vinsamlega reynið aftur',
+        )
       }
     })
 
@@ -147,6 +151,9 @@ export const useS3Upload = (workingCase?: Case) => {
         })
         .catch((reason) => {
           // TODO: Log to sentry
+          setUploadErrorMessage(
+            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+          )
           console.log(reason)
         })
     }
@@ -154,6 +161,7 @@ export const useS3Upload = (workingCase?: Case) => {
 
   // Event handlers
   const onChange = (newFiles: File[], isRetry?: boolean) => {
+    setUploadErrorMessage(undefined)
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
@@ -161,7 +169,11 @@ export const useS3Upload = (workingCase?: Case) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const presignedPost = await createPresignedPost(file.name)
+      const presignedPost = await createPresignedPost(file.name).catch(() =>
+        setUploadErrorMessage(
+          'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+        ),
+      )
 
       if (!presignedPost) {
         return
@@ -175,6 +187,8 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   const onRemove = (file: UploadFile) => {
+    setUploadErrorMessage(undefined)
+
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -195,13 +209,17 @@ export const useS3Upload = (workingCase?: Case) => {
         .catch((res) => {
           // TODO: Log to Sentry and display an error message.
           console.log(res.graphQLErrors)
+          setUploadErrorMessage(
+            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+          )
         })
     }
   }
 
   const onRetry = (file: UploadFile) => {
+    setUploadErrorMessage(undefined)
     onChange([file as File], true)
   }
 
-  return { files, onChange, onRemove, onRetry }
+  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
 }
