@@ -109,12 +109,12 @@ const Overview = ({
           return response.data?.requestFileSignature?.documentToken
         })
         .catch((error: ApolloError) => {
+          console.log('error', error.graphQLErrors[0].extensions?.code)
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
             error: error.graphQLErrors[0].extensions?.code ?? 500,
           })
-          throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
       if (documentToken) {
         dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
@@ -136,7 +136,6 @@ const Overview = ({
               status: FileSignatureStatus.UPLOAD_ERROR,
               error: error.graphQLErrors[0].extensions?.code ?? 500,
             })
-            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
 
         if (success) {
