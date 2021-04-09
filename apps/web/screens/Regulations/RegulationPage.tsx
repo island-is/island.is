@@ -52,11 +52,23 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
 }
 
 const viewTypes = {
+  /*+ renders the current regulation text - This is the deafult view type. */
   current: 1,
+  /** renders the original regulation text - same as /d/%{original.publicationDate} */
   original: 1,
+  /** renders the diff between original and current */
   diff: 1,
+  /** renders the regulation text as it was on a given date.
+   * Accepts diff and diff/earlierDate suffixes
+   *
+   * Dates that don't match up with any date in the regulation's change-history
+   * may result in a redirect to the actual change-history date. (??)
+   */
   d: 1,
-  on: 1, // same as d, except for explicit permalinks for a given day!
+  /** Same as `d` above, except that its intended for explicit permalinks
+   * and never results in a "corrective" redirect
+   */
+  on: 1,
 }
 export type ViewType = keyof typeof viewTypes
 
@@ -178,6 +190,14 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (!regulation) {
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
+
+  // TODO: Consider then comparing `date` and `regulation.effectiveDate`
+  // if `viewType === "d"` ... and if they differ then redirect
+  // the browser to `/d/${regulation.effectiveDate}/etc...`
+  //
+  // This would be more in line with the intended difference between
+  // viewTypes `"d"` and `"on"`
+
   const urlDate = viewType === 'on' ? date : undefined
 
   return {
