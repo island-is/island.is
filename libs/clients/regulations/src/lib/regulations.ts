@@ -48,14 +48,23 @@ export class RegulationsService extends RESTDataSource {
     isCustomDiff?: boolean,
     earlierDate?: ISODate | 'original',
   ): Promise<Regulation | RegulationRedirect | null> {
-    const route = `regulation/nr/${name}/${viewType}${
-      viewType === 'd' && date ? '/' + date : ''
-    }${viewType === 'd' && isCustomDiff ? '/diff' : ''}${
-      isCustomDiff && earlierDate ? '/' + earlierDate : ''
-    }`
+    let params: string = viewType
 
+    if (viewType === 'd') {
+      if (date) {
+        params = 'd/' + date
+        if (isCustomDiff) {
+          params = '/diff' + (earlierDate ? '/' + earlierDate : '')
+        }
+      } else {
+        // Treat `viewType` 'd' with no `date` as 'current'
+        // ...either that or throwing an error...
+        // ...or tightening the type signature to prevent that happening.
+        params = 'current'
+      }
+    }
     const response = await this.get<Regulation | RegulationRedirect | null>(
-      route,
+      `/regulation/${name}/${params}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
