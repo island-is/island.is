@@ -73,6 +73,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   })
 
   const diffView = !!regulation.showingDiff
+  const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
 
   return (
     <RegulationLayout
@@ -80,7 +81,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       texts={props.texts}
       main={
         <>
-          {history.length > 0 && (
+          {history.length > 0 && !viewingOriginal && (
             <Link
               href={linkToRegulation(regulation.name, {
                 diff: !diffView,
@@ -112,6 +113,15 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                   ) : (
                     ''
                   )}
+                </>
+              ) : viewingOriginal ? (
+                <>
+                  <Ball type="red" />
+                  Upprunaleg útgáfa reglugerðar
+                  {' – '}
+                  <span className={s.metaDate}>
+                    sem gók gildi þann {formatDate(regulation.timelineDate)}
+                  </span>
                 </>
               ) : regulation.timelineDate > today ? (
                 <>
