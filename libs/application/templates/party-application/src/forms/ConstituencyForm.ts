@@ -26,8 +26,8 @@ export const ConstituencyForm: Form = buildForm({
           title: m.constituencySection.selectConstituency,
           width: 'half',
           largeButtons: true,
+          defaultValue: '',
           options: [
-            // todo get constituencies elsewhere?
             { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
             { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
             {

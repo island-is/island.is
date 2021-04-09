@@ -8,7 +8,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
-import { isCompany } from 'kennitala'
+import { m } from './messages'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -20,9 +20,12 @@ enum Roles {
   SIGNATUREE = 'signaturee',
 }
 const dataSchema = z.object({
-  companyNationalId: z.string().refine((x) => (x ? isCompany(x) : false)),
-  partyName: z.string(),
-  signatures: z.array(z.string()),
+  constituency: z
+    .string()
+    .refine((v) => v, m.validation.selectConstituency.defaultMessage as string),
+  approveDisclaimer: z.boolean().refine((v) => v, {
+    message: m.validation.approveTerms.defaultMessage as string,
+  }),
 })
 
 const PartyApplicationTemplate: ApplicationTemplate<

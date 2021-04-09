@@ -32,10 +32,6 @@ export const m: MessageDir = {
       description: 'Description of confirmation',
     },
   }),
-  /*
-  
-Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.
-  */
   disclaimerSection: defineMessages({
     title: {
       id: 'pa.application:disclaimerSection.title',
@@ -361,6 +357,18 @@ Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum
       id: 'ple.application:signed.button.partylist',
       defaultMessage: 'Skoða lista',
       description: 'Button to party list',
+    },
+  }),
+  validation: defineMessages({
+    title: {
+      id: 'pa.application:validation.select.constituency',
+      defaultMessage: 'Vinsamlegast veldu kjördæmi',
+      description: 'Select constituency',
+    },
+    approvedTitle: {
+      id: 'pa.application:validation.approve.terms',
+      defaultMessage: 'Vinsamlegast samþykktu skilmála',
+      description: 'Approve terms and conditions',
     },
   }),
 }
