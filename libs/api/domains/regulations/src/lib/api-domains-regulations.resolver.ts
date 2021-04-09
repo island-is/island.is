@@ -15,8 +15,6 @@ import {
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
-import { GetRegulationsYearsInput } from './dto/getRegulationsYears.input'
-import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistries.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { RegulationModel } from './model/regulation'
 import { RegulationsModel } from './model/regulations'
@@ -53,17 +51,13 @@ export class RegulationsResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationsYears(
-    @Args('input') input: GetRegulationsYearsInput,
-  ): Promise<RegulationYears | null> {
-    return this.regulationsService.getRegulationsYears(input.year)
+  getRegulationsYears(): Promise<RegulationYears | null> {
+    return this.regulationsService.getRegulationsYears()
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationsMinistries(
-    @Args('input') input: GetRegulationsMinistriesInput,
-  ): Promise<RegulationMinistries | null> {
-    return this.regulationsService.getRegulationsMinistries(input.slug)
+  getRegulationsMinistries(): Promise<RegulationMinistries | null> {
+    return this.regulationsService.getRegulationsMinistries()
   }
 
   @Query(() => graphqlTypeJson)

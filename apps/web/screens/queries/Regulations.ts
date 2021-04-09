@@ -75,14 +75,14 @@ export const GET_REGULATIONS_QUERY = gql`
 `
 */
 export const GET_REGULATIONS_YEARS_QUERY = gql`
-  query GetRegulationsYears($input: GetRegulationsYearsInput!) {
-    getRegulationsYears(input: $input)
+  query GetRegulationsYears {
+    getRegulationsYears
   }
 `
 
 export const GET_REGULATIONS_MINISTRIES_QUERY = gql`
-  query GetRegulationsMinistries($input: GetRegulationsMinistriesInput!) {
-    getRegulationsMinistries(input: $input)
+  query GetRegulationsMinistries {
+    getRegulationsMinistries
   }
 `
 

@@ -76,16 +76,14 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsYears(year?: number): Promise<RegulationYears | null> {
+  async getRegulationsYears(): Promise<RegulationYears | null> {
     const response = await this.get<RegulationYears | null>(`years`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })
     return response
   }
 
-  async getRegulationsMinistries(
-    slug?: string,
-  ): Promise<RegulationMinistries | null> {
+  async getRegulationsMinistries(): Promise<RegulationMinistries | null> {
     const response = await this.get<RegulationMinistries | null>(`ministries`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })

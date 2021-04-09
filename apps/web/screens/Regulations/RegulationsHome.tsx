@@ -41,9 +41,7 @@ import {
   GetRegulationsQuery,
   QueryGetRegulationsArgs,
   GetRegulationsYearsQuery,
-  QueryGetRegulationsYearsArgs,
   GetRegulationsMinistriesQuery,
-  QueryGetRegulationsMinistriesArgs,
   GetRegulationsLawChaptersQuery,
   QueryGetRegulationsLawChaptersArgs,
 } from '@island.is/web/graphql/schema'
@@ -269,24 +267,14 @@ RegulationsHome.getInitialProps = async (ctx) => {
           .then((res) => res.data?.getRegulations.data as RegulationListItem[]),
 
     apolloClient
-      .query<GetRegulationsYearsQuery, QueryGetRegulationsYearsArgs>({
+      .query<GetRegulationsYearsQuery>({
         query: GET_REGULATIONS_YEARS_QUERY,
-        variables: {
-          input: {
-            year: 0, // TODO: remove this
-          },
-        },
       })
       .then((res) => res.data?.getRegulationsYears as Array<number>),
 
     apolloClient
-      .query<GetRegulationsMinistriesQuery, QueryGetRegulationsMinistriesArgs>({
+      .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
-        variables: {
-          input: {
-            slug: '', // TODO: remove this
-          },
-        },
       })
       .then((res) => res.data?.getRegulationsMinistries as Array<MinistryFull>),
 
