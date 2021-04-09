@@ -1,5 +1,29 @@
 {
   "version": "1",
+  "listPages": [
+    {
+      "id": "ApiResourcesList",
+      "removeConfirmation": "Are you sure want to archive this Api resource",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Api resources",
+      "createNewItem": "Create new Api resource",
+      "searchLabel": "National Id or Resource name",
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "contactEmail": {
+          "headerText": "ContactEmail"
+        }
+      }
+    }
+  ],
   "formPages": [
     {
       "id": "IdentityResourceCreateForm",

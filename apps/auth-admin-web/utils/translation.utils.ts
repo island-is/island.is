@@ -20,7 +20,13 @@ class TranslationUtils {
   public static getFormPage(id: string) {
     if (this.language() === 'en') {
       const item = TranslationUtils.english().formPages.find((x) => x.id === id)
-      console.log(item)
+      return item
+    }
+  }
+
+  public static getListPage(id: string) {
+    if (this.language() === 'en') {
+      const item = TranslationUtils.english().listPages.find((x) => x.id === id)
       return item
     }
   }

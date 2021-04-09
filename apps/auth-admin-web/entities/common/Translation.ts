@@ -1,5 +1,6 @@
 export class Translation {
   formPages: FormPage[]
+  listPages: ListPage[]
   version: string
 }
 
@@ -18,6 +19,24 @@ export class FormPage {
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation
+}
+
+export class ListPage {
+  id: string
+  title: string
+  createNewItem: string
+  searchLabel: string
+  searchPlaceholder?: string
+  searchButton: string
+  removeConfirmation: string
+  removeButton: string
+  editButton: string
+  exportButton: string
+  columns: Record<string, ColumnHeader>
+}
+
+export class ColumnHeader {
+  headerText: string
 }
 
 export class FormItem {
