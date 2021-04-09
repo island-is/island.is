@@ -160,3 +160,11 @@ export const DeleteFileMutation = gql`
     }
   }
 `
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
+    }
+  }
+`
