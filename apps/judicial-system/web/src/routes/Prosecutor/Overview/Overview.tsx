@@ -25,6 +25,7 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
+  CaseFile,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -334,7 +335,14 @@ export const Overview: React.FC = () => {
                   labelVariant="h3"
                 >
                   {workingCase.files?.map((file) => (
-                    <Text>{file.name}</Text>
+                    <Box marginBottom={3}>
+                      <CaseFile
+                        name={file.name}
+                        size={file.size}
+                        uploadedAt={new Date(file.modified)}
+                        link=""
+                      />
+                    </Box>
                   ))}
                 </AccordionItem>
                 <AccordionItem
