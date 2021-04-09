@@ -246,6 +246,9 @@
     "email-service": {
       "tags": []
     },
+    "endorsement-system": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },

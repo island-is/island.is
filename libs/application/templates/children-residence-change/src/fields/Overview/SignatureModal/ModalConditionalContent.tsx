@@ -1,31 +1,36 @@
 import React from 'react'
-import { FileSignatureStatus } from '../fileSignatureReducer'
+import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
 import ErrorMessage from './ErrorMessage'
 import ControlCode from './ControlCode'
 import Skeleton from './SkeletonLoader'
 
 interface SignatureModalProps {
-  signatureStatus: FileSignatureStatus
+  fileSignatureState: ReducerState
   onClose: () => void
   controlCode: string
 }
 
-const ModalCondidionalContent = ({
+const ModalConditionalContent = ({
+  fileSignatureState,
   controlCode,
-  signatureStatus,
   onClose,
 }: SignatureModalProps) => {
-  switch (signatureStatus) {
+  switch (fileSignatureState.status) {
     case FileSignatureStatus.REQUEST:
       return <Skeleton />
     case FileSignatureStatus.UPLOAD:
       return <ControlCode controlCode={controlCode} />
     case FileSignatureStatus.REQUEST_ERROR:
     case FileSignatureStatus.UPLOAD_ERROR:
-      return <ErrorMessage onClose={onClose} />
+      return (
+        <ErrorMessage
+          errorCode={fileSignatureState.errorCode}
+          onClose={onClose}
+        />
+      )
     default:
       return null
   }
 }
 
-export default ModalCondidionalContent
+export default ModalConditionalContent
