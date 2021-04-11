@@ -36,9 +36,6 @@ const AccordionSlice = dynamic(() =>
 const TimelineSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.TimelineSlice),
 )
-const MailingListSignupSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
-)
 
 const LogoListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LogoListSlice),
@@ -82,8 +79,6 @@ const renderSlice = (slice, namespace) => {
       return <AccordionSlice slice={slice} />
     case 'TimelineSlice':
       return <TimelineSlice slice={slice} />
-    case 'MailingListSignupSlice':
-      return <MailingListSignupSlice slice={slice} namespace={namespace} />
     case 'LogoListSlice':
       return <LogoListSlice slice={slice} />
     case 'TabSection':
