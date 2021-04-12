@@ -15,6 +15,7 @@ export class FormControl {
   editTitle?: string
   help: string
   conditionalHelp?: string
+  errorMessage?: string
   saveButton: string
   cancelButton: string
   addButton?: string
@@ -22,6 +23,8 @@ export class FormControl {
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation
+  infoEdit?: string
+  infoCreate?: string
 }
 
 export class Navigation {

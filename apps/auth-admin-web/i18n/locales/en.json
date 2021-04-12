@@ -398,8 +398,33 @@
         },
         "value": {
           "label": "Value",
-          "placeholder": "island-is-1",
-          "helpText": "The key of the item that is being translated",
+          "placeholder": "Some text value",
+          "helpText": "The translated text in the selected language",
+          "errorMessage": "The key is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "TranslationCreateFormDropdown",
+      "title": "Create new Translation",
+      "editTitle": "Edit translation",
+      "help": "Add new translation by filling out the form",
+      "conditionalHelp": "The item you are creating needs to be saved before creating translations",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "infoEdit": "Translation has been updated for ",
+      "infoCreate": "Translation has been created for ",
+      "errorMessage": "Value is required and need to be in the right format",
+      "fields": {
+        "language": {
+          "label": "Language",
+          "helpText": "The language for this translation (iso key in the select box for this language)",
+          "errorMessage": "Language is required"
+        },
+        "value": {
+          "label": "Value",
+          "placeholder": "Some text value",
+          "helpText": "The translated text in the selected language",
           "errorMessage": "The key is required and needs to be in the right format"
         }
       }
