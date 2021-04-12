@@ -10,9 +10,9 @@ import Layout from '../components/Layout/Layout'
 import * as styles from './App.treat'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
 import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
-// import { ServicePortalPath } from '@island.is/service-portal/core'
-// import { GlobalModules } from '../components/GlobalModules/GlobalModules'
-// import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
+import TableList from '../components/TableList/TableList'
+import EditModal from '../components/EditModal/EditModal'
+import EditForm from '../components/EditForm/EditForm'
 
 import Paths from '../constants'
 
@@ -43,7 +43,9 @@ export const App = () => {
                       <Layout>
                         <Switch>
                           <Route exact path={Paths.MinarSidurRoot}>
-                            <div>logged in</div>
+                            <TableList />
+                            <EditModal />
+                            <EditForm />
                           </Route>
                         </Switch>
                       </Layout>

@@ -3,6 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 
 export const layoutWrapper = style({
+  background: theme.color.blue100,
   minHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px)`,
 })
 
