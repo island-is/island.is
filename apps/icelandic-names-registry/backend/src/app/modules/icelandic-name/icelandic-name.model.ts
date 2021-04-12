@@ -9,17 +9,13 @@ import {
 
 import {
   IcelandicName as TIcelandicName,
-  EnumNameType,
-  EnumStatusType,
   NameType,
   StatusType,
 } from '@island.is/icelandic-names-registry-types'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum } from 'class-validator'
 
 @Table({
   tableName: 'icelandic_names',
-  timestamps: true,
 })
 export class IcelandicName
   extends Model<IcelandicName>
@@ -43,7 +39,6 @@ export class IcelandicName
     type: DataType.STRING,
     allowNull: false,
   })
-  @IsEnum(EnumNameType)
   @ApiProperty()
   type!: NameType
 
@@ -51,7 +46,6 @@ export class IcelandicName
     type: DataType.STRING,
     allowNull: false,
   })
-  @IsEnum(EnumStatusType)
   @ApiProperty()
   status!: StatusType
 
@@ -59,36 +53,30 @@ export class IcelandicName
     type: DataType.STRING,
     allowNull: true,
   })
-  description!: string
+  description!: string | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  verdict!: string
+  verdict!: string | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  visible!: boolean
+  visible!: boolean | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  url!: string
+  url!: string | null
 
-  @Column({
-    allowNull: true,
-  })
   @CreatedAt
   readonly created!: Date
 
-  @Column({
-    allowNull: true,
-  })
   @UpdatedAt
   readonly modified!: Date
 }
