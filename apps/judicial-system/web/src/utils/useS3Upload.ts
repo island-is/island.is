@@ -65,15 +65,22 @@ export const useS3Upload = (workingCase?: Case) => {
       }
     })
 
+    request.upload.addEventListener('error', (evt) => {
+      if (evt.lengthComputable) {
+        file.percent = 0
+        file.status = 'error'
+
+        updateFile(file)
+      }
+    })
+
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
         addFileToCase(file)
       } else {
         file.status = 'error'
+        file.percent = 0
         updateFile(file)
-        setUploadErrorMessage(
-          'Ekki tókst að hlaða upp öllum skránum. Vinsamlega reynið aftur',
-        )
       }
     })
 
@@ -109,7 +116,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const newFiles = [...filesRef.current]
 
     const updatedFiles = newFiles.map((newFile) => {
-      return newFile.id === file.id ? file : newFile
+      return newFile.key === file.key ? file : newFile
     })
 
     setFiles(updatedFiles)
