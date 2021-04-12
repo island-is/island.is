@@ -124,6 +124,30 @@
   },
   "listControls": [
     {
+      "id": "AdminUsersList",
+      "removeConfirmation": "Are you sure want to delete this admin user:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Admin UI users",
+      "createNewItem": "Create new Admin UI User",
+      "search": {
+        "label": "National Id"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "email": {
+          "headerText": "Email"
+        },
+        "scope": {
+          "headerText": "Scope"
+        }
+      }
+    },
+    {
       "id": "ClientsList",
       "removeConfirmation": "Are you sure want to archive this client",
       "removeButton": "Archive",
