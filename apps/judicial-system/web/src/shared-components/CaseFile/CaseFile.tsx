@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text, UploadFile } from '@island.is/island-ui/core'
 import BlueBox from '../BlueBox/BlueBox'
 import { kb } from '../../utils/stepHelper'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -11,11 +11,11 @@ interface Props {
   name: string
   size: number
   uploadedAt: string
-  link: string
+  onOpen: () => void
 }
 
 const CaseFile: React.FC<Props> = (props) => {
-  const { name, size, uploadedAt } = props
+  const { name, size, uploadedAt, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
 
@@ -39,7 +39,7 @@ const CaseFile: React.FC<Props> = (props) => {
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
             </Box>
           )}
-          <Tag variant="darkerBlue" onClick={() => console.log('TODO')}>
+          <Tag variant="darkerBlue" onClick={onOpen}>
             Opna
           </Tag>
         </Box>
