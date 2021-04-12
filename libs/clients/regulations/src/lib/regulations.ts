@@ -3,7 +3,7 @@ import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
   ISODate,
-  RegName,
+  RegQueryName,
   Regulation,
   RegulationLawChapterTree,
   RegulationMinistryList,
@@ -43,7 +43,7 @@ export class RegulationsService extends RESTDataSource {
 */
   async getRegulation(
     viewType: 'current' | 'diff' | 'original' | 'd',
-    name: RegName,
+    name: RegQueryName,
     date?: ISODate,
     isCustomDiff?: boolean,
     earlierDate?: ISODate | 'original',

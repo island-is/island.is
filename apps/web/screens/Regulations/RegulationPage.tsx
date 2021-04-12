@@ -3,6 +3,7 @@ import {
   RegulationRedirect,
   ISODate,
   RegName,
+  RegQueryName,
 } from './Regulations.types'
 import { RegulationPageTexts } from './Regulations.mock'
 
@@ -75,9 +76,11 @@ export type ViewType = keyof typeof viewTypes
  *
  * Returns a fully zero-padded number.
  */
-const assertName = (slug: string): RegName => {
+const assertName = (slug: string): RegQueryName => {
   if (/\d{1,4}-\d{4}/.test(slug)) {
-    return (slug.length === 9 ? slug : ('000' + slug).substr(-9)) as RegName
+    return (slug.length === 9
+      ? slug
+      : ('000' + slug).substr(-9)) as RegQueryName
   }
   throw new CustomNextError(404)
 }
