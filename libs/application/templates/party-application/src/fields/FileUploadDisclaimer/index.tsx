@@ -10,10 +10,10 @@ const FileUploadDisclaimer: FC<FieldBaseProps> = () => {
   return (
     <Box paddingLeft={5} marginBottom={2}>
       <Text variant="small">
-        {formatMessage(m.recommendations.includePapersDisclaimerPt1)}
+        {formatMessage(m.collectEndorsements.includePapersDisclaimerPt1)}
       </Text>
       <Text variant="small">
-        {formatMessage(m.recommendations.includePapersDisclaimerPt2)}
+        {formatMessage(m.collectEndorsements.includePapersDisclaimerPt2)}
       </Text>
     </Box>
   )

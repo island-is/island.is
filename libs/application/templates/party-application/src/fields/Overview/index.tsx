@@ -56,8 +56,8 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(m.overviewSection.emailLabel)}
         </Text>
         <Input
-          id="payments.bank"
-          name="payments.bank"
+          id="email"
+          name="email"
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}

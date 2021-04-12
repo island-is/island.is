@@ -1,37 +1,34 @@
 import {
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildCheckboxField,
   buildCustomField,
   buildSection,
   buildSubmitField,
-  buildTextField,
   buildFileUploadField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
-export const ApplicationForm: Form = buildForm({
-  id: 'ApplicationDraft',
+export const CollectEndorsementsForm: Form = buildForm({
+  id: 'CollectEndorsement',
   title: m.constituencySection.title,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'signatures',
-      title: m.gatherSignatures.title,
+      id: 'endorsementSection',
+      title: m.endorsementList.title,
       children: [
         buildMultiField({
-          id: 'overview',
-          title: m.gatherSignatures.title,
+          id: 'endorsements',
+          title: m.endorsementList.title,
           children: [
             buildCustomField({
-              id: 'signatures',
-              title: m.gatherSignatures.title,
-              component: 'Signatures',
+              id: 'endorsements',
+              title: m.endorsementList.title,
+              component: 'EndorsementList',
             }),
-
             buildCheckboxField({
               id: 'includePapers',
               title: '',
@@ -39,14 +36,14 @@ export const ApplicationForm: Form = buildForm({
               options: [
                 {
                   value: 'yes',
-                  label: m.recommendations.includePapers,
+                  label: m.collectEndorsements.includePapers,
                 },
               ],
               defaultValue: '',
             }),
             buildCustomField({
               id: 'fileUploadDisclaimer',
-              title: m.recommendations.title,
+              title: m.collectEndorsements.title,
               component: 'FileUploadDisclaimer',
             }),
             buildFileUploadField({
@@ -56,9 +53,9 @@ export const ApplicationForm: Form = buildForm({
               introduction: '',
               maxSize: 10000000,
               uploadAccept: '.xlsx',
-              uploadHeader: m.recommendations.fileUploadHeader,
-              uploadDescription: m.recommendations.uploadDescription,
-              uploadButtonLabel: m.recommendations.uploadButtonLabel,
+              uploadHeader: m.collectEndorsements.fileUploadHeader,
+              uploadDescription: m.collectEndorsements.uploadDescription,
+              uploadButtonLabel: m.collectEndorsements.uploadButtonLabel,
             }),
           ],
         }),
@@ -93,9 +90,9 @@ export const ApplicationForm: Form = buildForm({
           ],
         }),
         buildCustomField({
-          id: 'conclusion',
-          title: m.conclusion.title,
-          component: 'Conclusion',
+          id: 'applicationApproved',
+          title: m.applicationApproved.title,
+          component: 'PartyApplicationApproved',
         }),
       ],
     }),

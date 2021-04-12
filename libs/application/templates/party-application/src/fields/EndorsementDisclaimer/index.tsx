@@ -4,7 +4,7 @@ import { Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const SignatureDisclaimer: FC<FieldBaseProps> = ({ application }) => {
+const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const partyLetter = 'K'
@@ -13,23 +13,23 @@ const SignatureDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   return (
     <>
       <Text variant="h2" marginBottom={3}>
-        {`${formatMessage(m.signatureDisclaimer.title)} (${partyLetter})`}
+        {`${formatMessage(m.endorsementDisclaimer.title)} (${partyLetter})`}
       </Text>
       <Text marginBottom={2}>
         {`${formatMessage(
-          m.signatureDisclaimer.part1,
-        )} ${constituency} ${formatMessage(m.signatureDisclaimer.part2)} `}
+          m.endorsementDisclaimer.messagePt1,
+        )} ${constituency} ${formatMessage(m.endorsementDisclaimer.messagePt2)} `}
       </Text>
       <Text>
-        {formatMessage(m.signatureDisclaimer.part3)}
+        {formatMessage(m.endorsementDisclaimer.partyLetter)}
         <strong>{` ${partyLetter} `}</strong>
       </Text>
       <Text>
-        {formatMessage(m.signatureDisclaimer.part4)}
+        {formatMessage(m.endorsementDisclaimer.partyName)}
         <strong>{` ${partyName} `}</strong>
       </Text>
     </>
   )
 }
 
-export default SignatureDisclaimer
+export default EndorsementDisclaimer

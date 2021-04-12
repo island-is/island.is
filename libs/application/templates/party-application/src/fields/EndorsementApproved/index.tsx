@@ -5,25 +5,26 @@ import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const Conclusion: FC<FieldBaseProps> = () => {
+const EndorsementApproved: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       <Box marginBottom={12}>
+        Hello
         <Approved
-          title={formatMessage(m.signedConclusion.approvedTitle)}
-          subtitle={formatMessage(m.signedConclusion.approvedSubtitle)}
+          title={formatMessage(m.endorsementApproved.cardTitle)}
+          subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
         />
       </Box>
       <Box display="flex" justifyContent="spaceBetween" alignItems="center">
         {/* todo: add actions/links */}
         <Button variant="ghost">
-          {formatMessage(m.signedConclusion.myPagesButton)}
+          {formatMessage(m.endorsementApproved.myPagesButton)}
         </Button>
         <Box>
           <Button variant="text" icon="arrowForward" iconType="filled">
-            {formatMessage(m.signedConclusion.partyListButton)}
+            {formatMessage(m.endorsementApproved.partyListButton)}
           </Button>
         </Box>
       </Box>
@@ -31,4 +32,4 @@ const Conclusion: FC<FieldBaseProps> = () => {
   )
 }
 
-export default Conclusion
+export default EndorsementApproved

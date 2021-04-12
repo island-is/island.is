@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import RecommendationTable from './RecommendationTable'
+import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
@@ -47,7 +47,7 @@ const SIGNATURES = [
   },
 ]
 
-const Signatures: FC<FieldBaseProps> = ({ application }) => {
+const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -56,15 +56,15 @@ const Signatures: FC<FieldBaseProps> = ({ application }) => {
 
   const namesCountString = formatMessage(
     SIGNATURES.length > 1
-      ? formatMessage(m.gatherSignatures.namesCount)
-      : formatMessage(m.gatherSignatures.nameCount),
+      ? formatMessage(m.endorsementList.namesCount)
+      : formatMessage(m.endorsementList.nameCount),
   )
 
   return (
     <Box marginBottom={8}>
       <CopyLink
         linkUrl="www.island.is/listabókstafur/128877634/"
-        buttonTitle={formatMessage(m.gatherSignatures.copyLinkButton)}
+        buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
       <Text variant="h3">{`${SIGNATURES.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>
@@ -75,7 +75,7 @@ const Signatures: FC<FieldBaseProps> = ({ application }) => {
           marginBottom={3}
         >
           <Checkbox
-            label={formatMessage(m.gatherSignatures.invalidSignatures)}
+            label={formatMessage(m.endorsementList.invalidSignatures)}
             checked={showWarning}
             onChange={() => {
               setShowWarning(!showWarning)
@@ -87,7 +87,7 @@ const Signatures: FC<FieldBaseProps> = ({ application }) => {
           />
           <Input
             name="searchbar"
-            placeholder={formatMessage(m.gatherSignatures.searchbar)}
+            placeholder={formatMessage(m.endorsementList.searchbar)}
             icon="search"
             backgroundColor="blue"
             size="sm"
@@ -101,14 +101,11 @@ const Signatures: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
         {signatures && signatures.length > 0 && (
-          <RecommendationTable
-            application={application}
-            signatures={signatures}
-          />
+          <EndorsementTable application={application} signatures={signatures} />
         )}
       </Box>
     </Box>
   )
 }
 
-export default Signatures
+export default EndorsementList

@@ -5,15 +5,15 @@ import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const Conclusion: FC<FieldBaseProps> = () => {
+const PartyApplicationApproved: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       <Box marginBottom={3}>
         <Approved
-          title={formatMessage(m.conclusion.approvedTitle)}
-          subtitle={formatMessage(m.conclusion.approvedSubtitle)}
+          title={formatMessage(m.applicationApproved.approvedTitle)}
+          subtitle={formatMessage(m.applicationApproved.approvedSubtitle)}
         />
       </Box>
       <Box
@@ -4120,4 +4120,4 @@ const Conclusion: FC<FieldBaseProps> = () => {
   )
 }
 
-export default Conclusion
+export default PartyApplicationApproved

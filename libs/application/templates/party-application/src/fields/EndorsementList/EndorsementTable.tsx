@@ -12,12 +12,12 @@ export interface Signature {
   hasWarning?: boolean
 }
 
-interface RecommendationProps {
+interface EndorsementTableProps {
   application: Application
   signatures?: Signature[]
 }
 
-const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
+const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
   const { formatMessage } = useLocale()
   const renderRow = (signature: Signature, index: number) => {
     const cell = Object.entries(signature)
@@ -45,7 +45,7 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
                         color="yellow600"
                         iconSize="medium"
                         text={formatMessage(
-                          m.gatherSignatures.signatureInvalid,
+                          m.endorsementList.signatureInvalid,
                         )}
                       />
                     </Box>
@@ -67,13 +67,13 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>{formatMessage(m.gatherSignatures.thDate)}</T.HeadData>
-          <T.HeadData>{formatMessage(m.gatherSignatures.thName)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementList.thDate)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementList.thName)}</T.HeadData>
           <T.HeadData>
-            {formatMessage(m.gatherSignatures.thNationalNumber)}
+            {formatMessage(m.endorsementList.thNationalNumber)}
           </T.HeadData>
           <T.HeadData box={{ textAlign: 'right' }}>
-            {formatMessage(m.gatherSignatures.thAddress)}
+            {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
         </T.Row>
       </T.Head>
@@ -86,4 +86,4 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
   )
 }
 
-export default RecommendationTable
+export default EndorsementTable

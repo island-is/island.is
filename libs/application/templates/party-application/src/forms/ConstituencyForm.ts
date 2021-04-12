@@ -13,8 +13,8 @@ import {
 import { m } from '../lib/messages'
 
 export const ConstituencyForm: Form = buildForm({
-  id: 'ApplicationDraft',
-  title: 'Framboð í kjördæmi',
+  id: 'Constitunecy',
+  title: m.constituencySection.title,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -94,9 +94,9 @@ export const ConstituencyForm: Form = buildForm({
           ],
         }),
         buildCustomField({
-          id: 'overviewComponent',
-          title: m.gatherSignatures.title,
-          component: 'Signatures',
+          id: 'collectEndorsements',
+          title: m.endorsementList.title,
+          component: 'EndorsementList',
         }),
       ],
     }),

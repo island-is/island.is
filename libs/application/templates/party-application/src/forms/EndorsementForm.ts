@@ -20,14 +20,14 @@ const fullName = (externalData: ExternalData) => {
   return fullName ?? ''
 }
 
-export const ReviewApplication: Form = buildForm({
-  id: 'Collect signatures',
-  title: m.collectSignatures.applicationTitle,
+export const EndorsementApplication: Form = buildForm({
+  id: 'Endorse',
+  title: m.collectEndorsements.applicationTitle,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      title: m.collectSignatures.stepTitle,
+      title: m.collectEndorsements.stepTitle,
       children: [
         buildMultiField({
           id: 'about',
@@ -36,13 +36,13 @@ export const ReviewApplication: Form = buildForm({
             buildCustomField({
               id: 'disclaimer',
               title: '',
-              component: 'SignatureDisclaimer',
+              component: 'EndorsementDisclaimer',
             }),
             buildTextField({
               id: 'signature',
-              title: m.collectSignatures.nameInput,
+              title: m.collectEndorsements.nameInput,
               variant: 'text',
-              placeholder: m.collectSignatures.nameInput,
+              placeholder: m.collectEndorsements.nameInput,
               backgroundColor: 'blue',
               width: 'half',
               defaultValue: (application: Application) =>
@@ -52,11 +52,11 @@ export const ReviewApplication: Form = buildForm({
             buildSubmitField({
               id: 'sign',
               placement: 'footer',
-              title: m.collectSignatures.submitButton,
+              title: m.collectEndorsements.submitButton,
               actions: [
                 {
                   event: 'APPROVE',
-                  name: m.collectSignatures.submitButton,
+                  name: m.collectEndorsements.submitButton,
                   type: 'primary',
                 },
               ],
@@ -64,9 +64,9 @@ export const ReviewApplication: Form = buildForm({
           ],
         }),
         buildCustomField({
-          id: 'disclaimer',
-          title: '',
-          component: 'SignedConclusion',
+          id: 'approved',
+          title: m.endorsementApproved.title,
+          component: 'EndorsementApproved',
         }),
       ],
     }),

@@ -59,11 +59,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'collectSignatures',
+            target: 'collectEndorsements',
           },
         },
       },
-      collectSignatures: {
+      collectEndorsements: {
         meta: {
           name: 'In Review',
           progress: 0.75,
@@ -71,19 +71,19 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((val) =>
-                  Promise.resolve(val.ApplicationForm),
+                import('../forms/CollectEndorsementsForm').then((val) =>
+                  Promise.resolve(val.CollectEndorsementsForm),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
               ],
-              read: 'all',
+              write: 'all',
             },
             {
               id: Roles.SIGNATUREE,
               formLoader: () =>
-                import('../forms/CollectSignatures').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementApplication),
                 ),
               read: 'all',
             },
@@ -100,6 +100,14 @@ const PartyApplicationTemplate: ApplicationTemplate<
           name: 'Approved',
           progress: 1,
           roles: [
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementApproved').then((val) =>
+                  Promise.resolve(val.EndorsementApproved),
+                ),
+              read: 'all',
+            },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
