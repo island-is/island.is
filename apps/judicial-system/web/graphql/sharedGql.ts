@@ -91,7 +91,7 @@ export const CaseQuery = gql`
         id
         name
         size
-        modified
+        created
       }
     }
   }

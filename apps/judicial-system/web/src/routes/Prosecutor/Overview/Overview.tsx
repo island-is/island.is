@@ -338,7 +338,7 @@ export const Overview: React.FC = () => {
                         <CaseFile
                           name={`${index + 1}. ${file.name}`}
                           size={file.size}
-                          uploadedAt={file.modified}
+                          uploadedAt={file.created}
                           link=""
                         />
                       </Box>

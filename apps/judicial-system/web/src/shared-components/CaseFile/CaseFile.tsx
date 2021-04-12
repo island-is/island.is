@@ -5,6 +5,8 @@ import { kb } from '../../utils/stepHelper'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import isValid from 'date-fns/isValid'
 
+import * as styles from './CaseFile.treat'
+
 interface Props {
   name: string
   size: number
@@ -21,9 +23,11 @@ const CaseFile: React.FC<Props> = (props) => {
     <BlueBox size="small">
       <Box display="flex" justifyContent="spaceBetween">
         <Box display="flex" alignItems="center">
-          <Box marginRight={1}>
-            <Text fontWeight="semiBold">{name}</Text>
-          </Box>
+          <div className={styles.CaseFileNameContainer}>
+            <Text fontWeight="semiBold" truncate>
+              {name}
+            </Text>
+          </div>
           <Text>{`(${kb(size)}KB)`}</Text>
         </Box>
         <Box display="flex" alignItems="center">
