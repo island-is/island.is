@@ -44,13 +44,17 @@ export type RegulationMinistry = {
   slug: string
   /** False if this ministry is not current */
   current: boolean
+}
+
+export type RegulationMinistryListItem = RegulationMinistry & {
   /** Optional sorting weight hint.
    *
    * Lower numbers first, undefined/null last.
    */
   order?: number | null
 }
-export type RegulationMinistries = ReadonlyArray<RegulationMinistry>
+
+export type RegulationMinistryList = ReadonlyArray<RegulationMinistryListItem>
 
 // ---------------------------------------------------------------------------
 

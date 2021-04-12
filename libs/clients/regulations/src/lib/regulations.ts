@@ -6,7 +6,7 @@ import {
   RegName,
   Regulation,
   RegulationLawChapterTree,
-  RegulationMinistries,
+  RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
@@ -93,10 +93,13 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(): Promise<RegulationMinistries | null> {
-    const response = await this.get<RegulationMinistries | null>(`ministries`, {
-      cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-    })
+  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
+    const response = await this.get<RegulationMinistryList | null>(
+      `ministries`,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
     return response
   }
 

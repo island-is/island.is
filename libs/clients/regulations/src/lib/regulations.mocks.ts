@@ -3,7 +3,7 @@ import {
   RegName,
   RegQueryName,
   Regulation,
-  RegulationMinistries,
+  RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
@@ -14,7 +14,7 @@ export const demoRegName = '0244/2021'.replace('/', '-') as RegQueryName
 
 export const demoRegulationsYears: RegulationYears = [2020, 2021]
 
-export const demoRegulationsMinistries: RegulationMinistries = [
+export const demoRegulationsMinistries: RegulationMinistryList = [
   {
     current: true,
     name: 'Forsætisráðuneyti',

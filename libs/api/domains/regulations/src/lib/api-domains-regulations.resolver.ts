@@ -6,7 +6,7 @@ import {
   RegulationSearchResults,
   Regulation,
   ISODate,
-  RegulationMinistries,
+  RegulationMinistryList,
   RegulationYears,
   RegulationLawChapter,
   RegulationLawChapterTree,
@@ -56,7 +56,7 @@ export class RegulationsResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationsMinistries(): Promise<RegulationMinistries | null> {
+  getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
     return this.regulationsService.getRegulationsMinistries()
   }
 
