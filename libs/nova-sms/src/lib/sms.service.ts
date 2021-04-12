@@ -120,12 +120,12 @@ export class SmsService extends RESTDataSource {
     }
   }
 
-  sendSms(mobileNumber: string, message: string): Promise<NovaResponse> {
-    this.logger.debug(`Sending sms to ${mobileNumber} with message ${message}`)
+  sendSms(mobileNumbers: string, message: string): Promise<NovaResponse> {
+    this.logger.debug(`Sending sms to ${mobileNumbers} with message ${message}`)
 
     const body = {
       request: {
-        Recipients: [mobileNumber],
+        Recipients: mobileNumbers.split(','),
         SenderName: 'Island.is',
         SmsText: message,
         IsFlash: false,
