@@ -115,6 +115,38 @@
           "text": "Detailed form"
         }
       }
+    },
+    "adminTabNav": {
+      "items": {
+        "adminUsers": {
+          "text": "Admin Users",
+          "title": "List of Admin Users"
+        },
+        "idpProviders": {
+          "text": "Identity Providers",
+          "title": "List of Identity Providers"
+        },
+        "grantTypes": {
+          "text": "Grant Types",
+          "title": "List of Grant Types"
+        },
+        "ipNumbersControl": {
+          "text": "IP Addresses",
+          "title": "White and blacklisting of IP Addresses"
+        },
+        "logs": {
+          "text": "Logs",
+          "title": "IDS logging"
+        },
+        "language": {
+          "text": "Language",
+          "title": "List of languages"
+        },
+        "translation": {
+          "text": "Translations",
+          "title": "List of Translations"
+        }
+      }
     }
   },
   "paginator": {
@@ -123,6 +155,35 @@
     "count": "Count"
   },
   "listControls": [
+    {
+      "id": "TranslationList",
+      "removeConfirmation": "Are you sure want to delete this Translation:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Translations",
+      "createNewItem": "Create new Translation",
+      "search": {
+        "label": "Text value"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "language": {
+          "headerText": "Language"
+        },
+        "key": {
+          "headerText": "Key"
+        },
+        "className": {
+          "headerText": "Class Name"
+        },
+        "property": {
+          "headerText": "Property"
+        },
+        "value": {
+          "headerText": "Value"
+        }
+      }
+    },
     {
       "id": "LanguageList",
       "removeConfirmation": "Are you sure want to delete this language:",

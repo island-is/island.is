@@ -12,7 +12,7 @@ export class TranslationService extends BaseService {
     page: number,
     count: number,
   ): Promise<{
-    rows: any[]
+    rows: Translation[]
     count: number
   } | null> {
     return BaseService.GET(
