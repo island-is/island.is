@@ -37,5 +37,6 @@ export default {
     region: process.env.S3_REGION,
     bucket: process.env.S3_BUCKET,
     timeToLivePost: process.env.S3_TIME_TO_LIVE_POST,
+    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET,
   },
 }

@@ -1,5 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
+import { InterviewFieldIds } from '../types'
 
 const parentContactInfo = z.object({
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
@@ -11,6 +12,10 @@ const parentContactInfo = z.object({
 const terms = z
   .array(z.string())
   .length(3, error.validation.approveTerms.defaultMessage)
+
+const interview = z.enum(['yes', 'no']).refine((v) => v, {
+  message: error.validation.interview.defaultMessage,
+})
 
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
@@ -40,9 +45,8 @@ export const dataSchema = z.object({
         error.validation.durationDate.defaultMessage,
       ),
   }),
-  interview: z.enum(['yes', 'no']).refine((v) => v, {
-    message: error.validation.interview.defaultMessage,
-  }),
+  [InterviewFieldIds.parentA]: interview,
+  [InterviewFieldIds.parentB]: interview,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

@@ -107,7 +107,10 @@ export class ChildrenResidenceChangeService {
     const durationType = answers.selectDuration?.type
     const durationDate = answers.selectDuration?.date
     const extraData = {
-      interviewRequested: answers.interview,
+      interviewRequestedParentA:
+        answers.interviewParentA === 'yes' ? applicant.nationalId : '',
+      interviewRequestedParentB:
+        answers.interviewParentB === 'yes' ? otherParent.nationalId : '',
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate

@@ -16,6 +16,7 @@ import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -176,4 +177,17 @@ export const getOtherParentOptions = (application: Application) => {
   }
 
   return options
+}
+
+export const getAllPeriodDates = (periods: Period[]) => {
+  const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
+
+  const dates = filledPeriods.flatMap((period) =>
+    eachDayOfInterval({
+      start: new Date(period.startDate),
+      end: new Date(period.endDate),
+    }),
+  )
+
+  return dates.map((d) => new Date(d))
 }

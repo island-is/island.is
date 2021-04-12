@@ -40,4 +40,40 @@ export const signatureModal = {
       description: 'Signature default error message',
     },
   }),
+  userCancelledWarning: defineMessages({
+    title: {
+      id: 'crc.application:signatureModal.userCancelledWarning.title',
+      defaultMessage: 'Hætt var við undirritun',
+      description: 'User cancelled request warning title',
+    },
+    message: {
+      id: 'crc.application:signatureModal.userCancelledWarning.message',
+      defaultMessage: 'Auðkenning ekki kláruð.',
+      description: 'Signature user cancelled request warning message',
+    },
+  }),
+  timeOutWarning: defineMessages({
+    title: {
+      id: 'crc.application:signatureModal.timeOutWarning.title',
+      defaultMessage: 'Svar barst ekki',
+      description: 'Signature time out warning title',
+    },
+    message: {
+      id: 'crc.application:signatureModal.timeOutWarning.timeOut',
+      defaultMessage: 'Auðkenning rann út á tíma',
+      description: 'Signature request timed out warning message',
+    },
+  }),
+  noElectronicIdError: defineMessages({
+    title: {
+      id: 'crc.application:signatureModal.noElectronicIdError.title',
+      defaultMessage: 'Enginn rafræn skilríki fundust',
+      description: 'No electronic id connected to phone number error title',
+    },
+    message: {
+      id: 'crc.application:signatureModal.noElectronicIdError.messsage',
+      defaultMessage: 'Símanúmer fannst ekki.',
+      description: 'No electronic id connected to phone number error message',
+    },
+  }),
 }

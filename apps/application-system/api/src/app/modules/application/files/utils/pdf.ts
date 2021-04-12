@@ -164,7 +164,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.BOLD_FONT,
     PdfConstants.SUB_HEADER_FONT_SIZE,
     PdfConstants.NORMAL_LINE_GAP,
-    'Lögheimilsbreyting:',
+    'Lögheimilisbreyting',
   )
 
   addToDoc(
