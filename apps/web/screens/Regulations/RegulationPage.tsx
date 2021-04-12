@@ -169,6 +169,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
             name,
             date,
             isCustomDiff,
+            earlierDate,
           },
         },
       })
