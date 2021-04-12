@@ -6,9 +6,8 @@ import {
   FileStorageConfig,
 } from './file-storage.configuration'
 import AmazonS3URI from 'amazon-s3-uri'
-const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 
-// Todo: modify the expire time
+const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
 
 @Injectable()
