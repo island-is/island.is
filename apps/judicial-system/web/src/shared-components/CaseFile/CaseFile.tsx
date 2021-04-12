@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Tag, Text, UploadFile } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import BlueBox from '../BlueBox/BlueBox'
 import { kb } from '../../utils/stepHelper'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
