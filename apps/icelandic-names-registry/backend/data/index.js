@@ -31,6 +31,10 @@ const remapped = data.map((x) => {
       // reset empty values to null
       x[k] = null
     }
+
+    if (k === 'icelandic_name') {
+      x[k] = x[k].toLowerCase()
+    }
   })
 
   // make db create id for record

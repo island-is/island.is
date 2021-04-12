@@ -1,2 +1,2 @@
-export * from './body.dto'
-export * from './params.dto'
+export * from './createIcelandicNameBody.dto'
+export * from './updateIcelandicNameBody.dto'

@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Patch,
-  Put,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -25,14 +25,14 @@ import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
 import { IcelandicName } from './icelandic-name.model'
-import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
+import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
 
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
   constructor(private readonly icelandicNameService: IcelandicNameService) {}
 
-  @Get('all')
+  @Get()
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -88,7 +88,7 @@ export class IcelandicNameController {
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
-    @Body() body: UpdateIcelandicNameBody,
+    @Body() body: UpdateIcelandicNameBodyDto,
   ): Promise<IcelandicName> {
     const [
       affectedRows,
@@ -103,7 +103,7 @@ export class IcelandicNameController {
   }
 
   @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
-  @Put()
+  @Post()
   @ApiBearerAuth()
   @HttpCode(201)
   @ApiCreatedResponse({
@@ -114,7 +114,7 @@ export class IcelandicNameController {
     status: 400,
     description: 'The request data was missing or had invalid values.',
   })
-  createName(@Body() body: CreateIcelandicNameBody): Promise<IcelandicName> {
+  createName(@Body() body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
     return this.icelandicNameService.createName(body)
   }
 
