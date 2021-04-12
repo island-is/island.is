@@ -1,13 +1,13 @@
 export type IcelandicName = {
   id: number
-  icelandic_name: string
-  type: string
-  status: string
-  visible: boolean
-  description: string
-  url: string
-  created: Date
-  modified: Date
+  icelandicName: string
+  type: string | null
+  status: string | null
+  visible: boolean | null
+  description: string | null
+  url: string | null
+  created: Date | null
+  modified: Date | null
 }
 
 export enum EnumNameType {
@@ -26,3 +26,10 @@ export enum EnumStatusType {
 
 export type NameType = 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
 export type StatusType = 'Haf' | 'Sam' | 'Óaf'
+
+export interface IcelandicNamesRegistryOptions {
+  backendUrl: string
+}
+
+export const ICELANDIC_NAMES_REGISTRY_OPTIONS =
+  'ICELANDIC_NAMES_REGISTRY_OPTIONS'

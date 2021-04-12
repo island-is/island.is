@@ -37,7 +37,7 @@ export class IcelandicName
     allowNull: false,
   })
   @ApiProperty()
-  icelandic_name!: string
+  icelandicName!: string
 
   @Column({
     type: DataType.STRING,

@@ -12,7 +12,7 @@ describe('IcelandicNameController', () => {
 
   const icelandicName = {
     id: 1,
-    icelandic_name: 'Laqueesha',
+    icelandicName: 'Laqueesha',
     type: 'ST',
     status: 'Haf',
     visible: true,
@@ -23,7 +23,7 @@ describe('IcelandicNameController', () => {
   }
 
   const icelandicNameDto: CreateIcelandicNameBody = {
-    icelandic_name: 'Laqueesha',
+    icelandicName: 'Laqueesha',
     type: 'ST',
     status: 'Haf',
     visible: true,

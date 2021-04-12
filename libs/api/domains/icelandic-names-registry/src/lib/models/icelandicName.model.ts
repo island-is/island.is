@@ -7,26 +7,26 @@ export class IcelandicName implements TIcelandicName {
   id!: number
 
   @Field()
-  icelandic_name!: string
+  icelandicName!: string
 
   @Field({ nullable: true })
-  type!: string
+  type!: string | null
 
   @Field({ nullable: true })
-  status!: string
+  status!: string | null
 
   @Field({ nullable: true })
-  visible!: boolean
+  visible!: boolean | null
 
   @Field({ nullable: true })
-  description!: string
+  description!: string | null
 
   @Field({ nullable: true })
-  url!: string
+  url!: string | null
 
   @Field({ nullable: true })
-  created!: Date
+  created!: Date | null
 
   @Field({ nullable: true })
-  modified!: Date
+  modified!: Date | null
 }

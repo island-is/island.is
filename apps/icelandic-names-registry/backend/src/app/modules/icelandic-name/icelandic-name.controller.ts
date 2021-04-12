@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -83,6 +84,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
@@ -102,6 +104,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
   @Put()
+  @ApiBearerAuth()
   @HttpCode(201)
   @ApiCreatedResponse({
     description: 'The name has been successfully created.',
@@ -117,6 +120,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
   @Delete(':id')
+  @ApiBearerAuth()
   @HttpCode(204)
   @ApiNoContentResponse({
     description: 'The name has been successfully deleted.',

@@ -19,7 +19,7 @@ export class IcelandicNameService {
     this.logger.debug('Getting all icelandic names')
 
     return this.icelandicNameModel.findAll({
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
       raw: true,
     })
   }
@@ -31,14 +31,14 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       where: {
-        icelandic_name: {
+        icelandicName: {
           [Op.or]: {
             [Op.startsWith]: initialLetter.toLowerCase(),
             [Op.startsWith]: initialLetter.toUpperCase(),
           },
         },
       },
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
     })
   }
 
@@ -47,11 +47,11 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       where: {
-        icelandic_name: {
+        icelandicName: {
           [Op.iLike]: `%${q.trim()}%`,
         },
       },
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
     })
   }
 

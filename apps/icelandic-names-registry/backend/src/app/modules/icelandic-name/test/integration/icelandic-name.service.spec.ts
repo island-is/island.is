@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 describe('create', () => {
   const icelandicNameDto: CreateIcelandicNameBody = {
-    icelandic_name: 'Laqueesha',
+    icelandicName: 'Laqueesha',
     type: 'ST',
     status: 'Haf',
     visible: true,
@@ -26,7 +26,7 @@ describe('create', () => {
     const result = await icelandicNameService.createName(icelandicNameDto)
 
     expect(result.id).toEqual(1)
-    expect(result.icelandic_name).toEqual(icelandicNameDto.icelandic_name)
+    expect(result.icelandicName).toEqual(icelandicNameDto.icelandicName)
     expect(result.type).toEqual(icelandicNameDto.type)
     expect(result.status).toEqual(icelandicNameDto.status)
     expect(result.visible).toEqual(icelandicNameDto.visible)
