@@ -4,6 +4,8 @@ import { ErrorMessage } from '@hookform/error-message'
 import { useForm } from 'react-hook-form'
 import ValidationUtils from './../../../utils/validation.utils'
 import { UserClaimDTO } from './../../../entities/dtos/user-claim-dto'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   resourceName: string
@@ -16,8 +18,9 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
   const [claimLength, setClaimLength] = useState<number>(0)
-
-  useEffect(() => {}, [])
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('UserClaimCreateForm'),
+  )
 
   const save = (data: UserClaimDTO): void => {
     props.handleSave(data.claimName)
@@ -45,7 +48,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
           title={`Create new claim`}
         >
           <i className="icon__new"></i>
-          <span>Create new Claim</span>
+          <span>{localization.title}</span>
         </a>
       </div>
 
@@ -55,11 +58,11 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
         }`}
       >
         <div className="user-claim-create-form__container">
-          <h1>Create new User Claim</h1>
+          <h1>{localization.title}</h1>
 
           <div className="user-claim-create-form__container__form">
             <div className="user-claim-create-form__help">
-              Create a new claim if needed for this resource
+              {localization.help}
             </div>
 
             <form onSubmit={handleSubmit(save)}>
@@ -69,14 +72,15 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     className="user-claim-create-form__label"
                     htmlFor="claimName"
                   >
-                    Claim Name
+                    {localization.fields['claimName'].label}
                   </label>
                   <input
                     id="claimName"
                     type="text"
                     name="claimName"
                     className="user-claim-create-form__input"
-                    title={`Write a name for the claim. It needs to be one word without special characters`}
+                    placeholder={localization.fields['claimName'].placeholder}
+                    title={localization.fields['claimName'].helpText}
                     onChange={(e) => checkAvailability(e.target.value)}
                     ref={register({
                       required: true,
@@ -92,16 +96,14 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <HelpBox
-                    helpText={
-                      'Write a name for the claim. It needs to be one word without special characters'
-                    }
+                    helpText={localization.fields['claimName'].helpText}
                   />
 
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="claimName"
-                    message="Claim name is required and needs to be in the right format"
+                    message={localization.fields['claimName'].errorMessage}
                   />
                 </div>
               </div>
@@ -114,7 +116,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     value="Cancel"
                     onClick={(e) => setVisible(false)}
                   >
-                    Cancel
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="user-claim-create-form__button__container">
@@ -124,7 +126,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     value="Save"
                     disabled={!isAvailable}
                   >
-                    Save
+                    {localization.saveButton}
                   </button>
                 </div>
               </div>
