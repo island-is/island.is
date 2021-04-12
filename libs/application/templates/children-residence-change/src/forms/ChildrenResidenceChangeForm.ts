@@ -193,7 +193,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   backgroundColor: 'blue',
                   defaultValue: ({
                     externalData: { userProfile },
-                  }: CRCApplication) => userProfile?.data?.email,
+                  }: CRCApplication) => userProfile?.data?.email || '',
                 }),
                 buildTextField({
                   id: 'parentA.phoneNumber',
@@ -203,7 +203,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   backgroundColor: 'blue',
                   defaultValue: ({
                     externalData: { userProfile },
-                  }: CRCApplication) => userProfile?.data?.mobilePhoneNumber,
+                  }: CRCApplication) =>
+                    userProfile?.data?.mobilePhoneNumber || '',
                 }),
               ],
             }),
