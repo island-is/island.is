@@ -38,12 +38,9 @@ export async function generateResidenceChangePdf(
     'p',
     { locale: is },
   )
-  const {
-    durationType,
-    durationDate,
-    residenceChangeReason,
-    selectedChildren,
-  } = answers
+  const { selectDuration, residenceChangeReason, selectedChildren } = answers
+  const durationType = selectDuration?.type
+  const durationDate = selectDuration?.date
   const reason = residenceChangeReason
   const childrenAppliedFor = getSelectedChildrenFromExternalData(
     applicant.children,

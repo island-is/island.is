@@ -104,13 +104,14 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
-    const durationType = answers.durationType as string
+    const durationType = answers.selectDuration?.type
+    const durationDate = answers.selectDuration?.date
     const extraData = {
       interviewRequested: answers.interview,
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
-        durationType === 'temporary' && answers.durationDate
-          ? formatDate(answers.durationDate)
+        durationType === 'temporary' && durationDate
+          ? formatDate(durationDate)
           : durationType,
     }
 
