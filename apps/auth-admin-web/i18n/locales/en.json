@@ -124,6 +124,29 @@
   },
   "listControls": [
     {
+      "id": "LanguageList",
+      "removeConfirmation": "Are you sure want to delete this language:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Languages",
+      "createNewItem": "Create new language",
+      "search": {
+        "label": "IDP name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "isoKey": {
+          "headerText": "Iso Key"
+        },
+        "description": {
+          "headerText": "Description"
+        },
+        "englishDescription": {
+          "headerText": "English Description"
+        }
+      }
+    },
+    {
       "id": "IdpProvidersList",
       "removeConfirmation": "Are you sure want to delete this IDP Provider:",
       "removeButton": "Delete",
