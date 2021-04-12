@@ -124,6 +124,29 @@
   },
   "listControls": [
     {
+      "id": "IdpProvidersList",
+      "removeConfirmation": "Are you sure want to delete this IDP Provider:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Identity Providers",
+      "createNewItem": "Create new Identity Provider",
+      "search": {
+        "label": "IDP name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        },
+        "level": {
+          "headerText": "Level"
+        }
+      }
+    },
+    {
       "id": "GrantTypesList",
       "removeConfirmation": "Are you sure want to delete this Grant Type:",
       "removeButton": "Delete",

@@ -46,7 +46,7 @@ const GrantTypesList: React.FC = () => {
   }
 
   const deleteGrantType = async (): Promise<void> => {
-    const response = await GrantTypeService.delete(this.state.grantTypeToRemove)
+    const response = await GrantTypeService.delete(grantTypeToRemove)
     if (response) {
       getGrantTypes(searchString, page, count)
     }
@@ -159,7 +159,7 @@ const GrantTypesList: React.FC = () => {
                               grantType.archived ? ' hidden' : ''
                             }`}
                             title={localization.removeButton}
-                            onClick={() => this.confirmDelete(grantType.name)}
+                            onClick={() => confirmDelete(grantType.name)}
                           >
                             <i className="icon__delete"></i>
                             <span>{localization.removeButton}</span>
