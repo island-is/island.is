@@ -2,10 +2,24 @@ import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
 import { ZodError } from 'zod'
 import isNumber from 'lodash/isNumber'
+import set from 'lodash/set'
+import merge from 'lodash/merge'
 import { AnswerValidationError } from './AnswerValidator'
 
 interface SchemaValidationError {
   [key: string]: string
+}
+
+function populateObjectError(
+  currentError: SchemaValidationError | undefined,
+  newError: ZodError | undefined,
+  pathToError: string,
+): SchemaValidationError {
+  const newErrorObject = set({}, pathToError, newError?.errors[0].message)
+  if (currentError) {
+    return merge(currentError, newErrorObject)
+  }
+  return newErrorObject
 }
 
 function populateError(
@@ -13,9 +27,10 @@ function populateError(
   newError: ZodError | undefined,
   pathToError: string,
 ): SchemaValidationError | undefined {
-  console.log('currentError', currentError)
-  console.log('newError', newError)
-  console.log('pathToError', pathToError)
+  const isObject = pathToError.includes('.')
+  if (isObject) {
+    return populateObjectError(currentError, newError, pathToError)
+  }
   if (newError === undefined) {
     return currentError
   }
@@ -24,7 +39,10 @@ function populateError(
     return { [pathToError]: newError.errors[0].message }
   }
 
-  return { ...currentError, [pathToError]: newError.errors[0].message }
+  return {
+    ...currentError,
+    [pathToError]: newError.errors[0].message,
+  }
 }
 
 function constructPath(currentPath: string, newKey: string) {
@@ -73,16 +91,16 @@ function partialSchemaValidation(
           }
         })
       } else if (typeof answer === 'object') {
+        const objectError = populateError(error, e, newPath)
         error = partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],
-          error,
+          objectError,
           newPath,
         )
       }
     }
   })
-
   return error
 }
 
