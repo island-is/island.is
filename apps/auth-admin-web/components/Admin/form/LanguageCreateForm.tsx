@@ -6,6 +6,8 @@ import ValidationUtils from '../../../utils/validation.utils'
 import { LanguageDTO } from '../../../entities/dtos/language.dto'
 import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 
 interface Props {
   language: LanguageDTO
@@ -21,6 +23,9 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [translation] = useState<FormPage>(
+    TranslationUtils.getFormPage('LanguageCreateForm'),
+  )
   const language = props.language
 
   useEffect(() => {
@@ -60,11 +65,9 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
     <div className="language-create-form">
       <div className="language-create-form__wrapper">
         <div className="language-create-form__container">
-          <h1>{isEditing ? 'Edit Language' : 'Create a new Language'}</h1>
+          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="language-create-form__container__form">
-            <div className="language-create-form__help">
-              Add new language by filling out the form
-            </div>
+            <div className="language-create-form__help">{translation.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="language-create-form__container__fields">
                 <div className="language-create-form__container__field">
@@ -72,7 +75,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     className="language-create-form__label"
                     htmlFor="isoKey"
                   >
-                    ISO 639-1 key
+                    {translation.fields['isoKey'].label}
                   </label>
                   <input
                     id="isoKey"
@@ -86,17 +89,17 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={language.isoKey}
                     className="language-create-form__input"
-                    placeholder="is"
+                    placeholder={translation.fields['isoKey'].placeholder}
                     maxLength={2}
-                    title="The iso key (identifier)  for this language"
+                    title={translation.fields['isoKey'].helpText}
                     readOnly={isEditing}
                   />
-                  <HelpBox helpText="The iso key (identifier) for this language" />
+                  <HelpBox helpText={translation.fields['isoKey'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="language.isoKey"
-                    message="The iso key must 2 characters"
+                    message={translation.fields['isoKey'].errorMessage}
                   />
                 </div>
 
@@ -105,7 +108,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     className="language-create-form__label"
                     htmlFor="description"
                   >
-                    Language name
+                    {translation.fields['description'].label}
                   </label>
                   <input
                     id="description"
@@ -117,16 +120,18 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     name="language.description"
                     defaultValue={language.description ?? ''}
                     className="language-create-form__input"
-                    title="The language name in it's own language"
-                    placeholder="Íslenska"
+                    title={translation.fields['description'].helpText}
+                    placeholder={translation.fields['description'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="language.description"
-                    message="Language name is required and needs to be in the right format"
+                    message={translation.fields['description'].errorMessage}
                   />
-                  <HelpBox helpText="The language name in it's own language" />
+                  <HelpBox
+                    helpText={translation.fields['description'].helpText}
+                  />
                 </div>
 
                 <div className="language-create-form__container__field">
@@ -134,7 +139,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     className="language-create-form__label"
                     htmlFor="englishDescription"
                   >
-                    Language name in English
+                    {translation.fields['englishDescription'].label}
                   </label>
                   <input
                     id="englishDescription"
@@ -146,16 +151,22 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     name="language.englishDescription"
                     defaultValue={language.englishDescription ?? ''}
                     className="language-create-form__input"
-                    title="The language name in English"
-                    placeholder="Icelandic"
+                    title={translation.fields['englishDescription'].helpText}
+                    placeholder={
+                      translation.fields['englishDescription'].placeholder
+                    }
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="language.englishDescription"
-                    message="The language name in English"
+                    message={
+                      translation.fields['englishDescription'].errorMessage
+                    }
                   />
-                  <HelpBox helpText="The email of the admin user" />
+                  <HelpBox
+                    helpText={translation.fields['englishDescription'].helpText}
+                  />
                 </div>
               </div>
 
@@ -166,7 +177,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    Cancel
+                    {translation.cancelButton}
                   </button>
                 </div>
                 <div className="language-create-form__button__container">
@@ -174,7 +185,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="language-create-form__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    value={translation.saveButton}
                   />
                 </div>
               </div>

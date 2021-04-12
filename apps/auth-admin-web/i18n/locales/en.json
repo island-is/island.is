@@ -332,6 +332,40 @@
       }
     },
     {
+      "id": "LanguageCreateForm",
+      "title": "Edit Language",
+      "editTitle": "Create a new Language",
+      "help": "Add new language by filling out the form",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "isoKey": {
+          "label": "ISO 639-1 key",
+          "placeholder": "is",
+          "helpText": "The iso key (identifier)  for this language",
+          "errorMessage": "The iso key must 2 characters"
+        },
+        "description": {
+          "label": "Language name",
+          "placeholder": "Íslenska",
+          "helpText": "The language name in it's own language",
+          "errorMessage": "Language name is required and needs to be in the right format"
+        },
+        "englishDescription": {
+          "label": "Language name in English",
+          "placeholder": "Icelandic",
+          "helpText": "The language name in English",
+          "errorMessage": "Language name in English is required and needs to be in the right format"
+        },
+        "level": {
+          "label": "Level",
+          "placeholder": "4",
+          "helpText": "The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security",
+          "errorMessage": "Level is required and needs to be a number from 1-4"
+        }
+      }
+    },
+    {
       "id": "IdentityResourceCreateForm",
       "title": "Create Identity Resource",
       "editTitle": "Edit Identity Resource",
