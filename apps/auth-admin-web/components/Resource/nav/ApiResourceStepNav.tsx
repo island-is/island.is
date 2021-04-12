@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: ApiResourceStep) => void
@@ -11,6 +13,10 @@ const ApiResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
+
   return (
     <div>
       <nav className="api-resource-step-nav">
@@ -25,7 +31,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceBasics ? 'active' : ''
               }
             >
-              Api resource basics
+              {
+                localization.navigations['apiResourceSteps'].items[
+                  'apiResourceBasics'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -38,7 +48,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceScopes ? 'active' : ''
               }
             >
-              Api resource scopes
+              {
+                localization.navigations['apiResourceSteps'].items[
+                  'apiResourceScopes'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -53,7 +67,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Api resource secrets
+              {
+                localization.navigations['apiResourceSteps'].items[
+                  'apiResourceSecrets'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -68,7 +86,11 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Api resource user claims
+              {
+                localization.navigations['apiResourceSteps'].items[
+                  'apiResourceUserClaims'
+                ].text
+              }
             </button>
           </li>
         </ul>
