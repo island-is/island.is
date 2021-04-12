@@ -20,10 +20,9 @@ export type ValidAnswers = 'permanent' | 'temporary' | undefined
 const Duration = ({ application, errors }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
-  console.log('errors from component', errors)
 
-  const durationTypeError = errors?.[typeInput] as string
-  const durationDateError = errors?.[dateInput] as string
+  const durationTypeError = errors?.selectDuration?.type
+  const durationDateError = errors?.selectDuration?.date
 
   const [statefulAnswer, setStatefulAnswer] = useState<string | undefined>(
     application.answers?.selectDuration?.type,

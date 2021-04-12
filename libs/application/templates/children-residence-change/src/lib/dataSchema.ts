@@ -29,17 +29,17 @@ export const dataSchema = z.object({
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
   selectDuration: z.object({
-    type: z.string(),
-    date: z.string(),
+    type: z
+      .enum(['permanent', 'temporary'])
+      .refine((v) => v, error.validation.durationType.defaultMessage),
+    date: z
+      .string()
+      .optional()
+      .refine(
+        (v) => v && v !== '',
+        error.validation.durationDate.defaultMessage,
+      ),
   }),
-  // durationType: z
-  //   .enum(['permanent', 'temporary'])
-  //   .optional()
-  //   .refine((v) => v, error.validation.durationType.defaultMessage),
-  // durationDate: z
-  //   .string()
-  //   .optional()
-  //   .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),
