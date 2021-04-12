@@ -4215,7 +4215,7 @@
             }
           }
         },
-        "e2e-no-ci": {
+        "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -d dist/apps/judicial-system/web"
