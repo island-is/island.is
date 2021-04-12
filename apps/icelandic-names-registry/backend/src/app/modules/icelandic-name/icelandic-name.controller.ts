@@ -8,10 +8,11 @@ import {
   NotFoundException,
   Param,
   Patch,
-  Put,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -19,19 +20,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 
 import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
 import { IcelandicName } from './icelandic-name.model'
-import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
+import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
 
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
   constructor(private readonly icelandicNameService: IcelandicNameService) {}
 
-  @Get('all')
+  @Get()
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -81,12 +82,13 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
-    @Body() body: UpdateIcelandicNameBody,
+    @Body() body: UpdateIcelandicNameBodyDto,
   ): Promise<IcelandicName> {
     const [
       affectedRows,
@@ -100,8 +102,9 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
-  @Put()
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @Post()
+  @ApiBearerAuth()
   @HttpCode(201)
   @ApiCreatedResponse({
     description: 'The name has been successfully created.',
@@ -111,12 +114,13 @@ export class IcelandicNameController {
     status: 400,
     description: 'The request data was missing or had invalid values.',
   })
-  createName(@Body() body: CreateIcelandicNameBody): Promise<IcelandicName> {
+  createName(@Body() body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
     return this.icelandicNameService.createName(body)
   }
 
-  @UseGuards(IdsAuthGuard, ScopesGuard, NationalIdGuard)
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Delete(':id')
+  @ApiBearerAuth()
   @HttpCode(204)
   @ApiNoContentResponse({
     description: 'The name has been successfully deleted.',

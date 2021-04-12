@@ -11,23 +11,20 @@ export class NationalIdGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const userNationalId = this.getUserNationalId(context)
 
-    const ids = environment.allowedNationalIds?.split(',')
-
-    if (!ids?.includes(userNationalId)) {
+    if (!userNationalId) {
       return false
     }
 
-    return true
+    const ids = environment.allowedNationalIds.split(',')
+
+    return ids.includes(userNationalId)
   }
 
-  private getUserNationalId(context: ExecutionContext): string {
+  private getUserNationalId(context: ExecutionContext): string | void {
     const request = context.getArgs()[0]
 
     if (request) {
       return request.user.nationalId
-    } else {
-      const ctx = GqlExecutionContext.create(context)
-      return ctx.getContext().req.user.nationalId
     }
   }
 }

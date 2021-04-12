@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
 
-import { CreateIcelandicNameBody, UpdateIcelandicNameBody } from './dto'
-import { IcelandicName } from './icelandic-name.model'
+import { CreateIcelandicNameBodyDto, UpdateIcelandicNameBodyDto } from './dto'
+import IcelandicName from './icelandic-name.model'
 
 @Injectable()
 export class IcelandicNameService {
@@ -19,7 +19,7 @@ export class IcelandicNameService {
     this.logger.debug('Getting all icelandic names')
 
     return this.icelandicNameModel.findAll({
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
       raw: true,
     })
   }
@@ -31,14 +31,11 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       where: {
-        icelandic_name: {
-          [Op.or]: {
-            [Op.startsWith]: initialLetter.toLowerCase(),
-            [Op.startsWith]: initialLetter.toUpperCase(),
-          },
+        icelandicName: {
+          [Op.startsWith]: initialLetter.toLowerCase(),
         },
       },
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
     })
   }
 
@@ -47,11 +44,11 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       where: {
-        icelandic_name: {
+        icelandicName: {
           [Op.iLike]: `%${q.trim()}%`,
         },
       },
-      order: ['icelandic_name'],
+      order: ['icelandicName'],
     })
   }
 
@@ -67,7 +64,7 @@ export class IcelandicNameService {
 
   updateNameById(
     id: number,
-    body: UpdateIcelandicNameBody,
+    body: UpdateIcelandicNameBodyDto,
   ): Promise<[number, IcelandicName[]]> {
     this.logger.debug(`Updating name by id: ${id}`)
 
@@ -77,10 +74,12 @@ export class IcelandicNameService {
     })
   }
 
-  createName(body: CreateIcelandicNameBody): Promise<IcelandicName> {
+  createName(body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
     this.logger.debug(`Creating new name`)
 
-    return this.icelandicNameModel.create(body)
+    return this.icelandicNameModel.create(body, {
+      raw: true,
+    })
   }
 
   deleteById(id: number): Promise<number> {

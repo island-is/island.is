@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 
+import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
 import { IcelandicNameController } from '../../icelandic-name.controller'
 import { IcelandicNameService } from '../../icelandic-name.service'
 import { IcelandicName } from '../../icelandic-name.model'
-import { CreateIcelandicNameBody } from '../../dto'
+import { CreateIcelandicNameBodyDto } from '../../dto'
 
 describe('IcelandicNameController', () => {
   let icelandicNameController: IcelandicNameController
@@ -12,7 +13,7 @@ describe('IcelandicNameController', () => {
 
   const icelandicName = {
     id: 1,
-    icelandic_name: 'Laqueesha',
+    icelandicName: 'Laqueesha',
     type: 'ST',
     status: 'Haf',
     visible: true,
@@ -22,10 +23,10 @@ describe('IcelandicNameController', () => {
     modified: new Date().toISOString(),
   }
 
-  const icelandicNameDto: CreateIcelandicNameBody = {
-    icelandic_name: 'Laqueesha',
-    type: 'ST',
-    status: 'Haf',
+  const icelandicNameDto: CreateIcelandicNameBodyDto = {
+    icelandicName: 'Laqueesha',
+    type: 'ST' as NameType,
+    status: 'Haf' as StatusType,
     visible: true,
     verdict: 'verdict',
     url: 'url',

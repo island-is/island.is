@@ -1,30 +1,55 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.sequelize.query(`
-      BEGIN;
-
-        CREATE TABLE icelandic_names (
-          id SERIAL PRIMARY KEY,
-          icelandic_name VARCHAR NOT NULL,
-          status VARCHAR DEFAULT NULL,
-          visible BOOLEAN DEFAULT FALSE,
-          type VARCHAR DEFAULT NULL,
-          description VARCHAR DEFAULT NULL,
-          verdict VARCHAR DEFAULT NULL,
-          url VARCHAR DEFAULT NULL,
-          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
-          modified TIMESTAMP WITH TIME ZONE
-        );
-
-      COMMIT;
-    `)
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.createTable('icelandic_names', {
+      id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      icelandic_name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      type: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      visible: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      verdict: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      url: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      created: {
+        type: 'TIMESTAMP WITH TIME ZONE',
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false,
+      },
+      modified: {
+        type: 'TIMESTAMP WITH TIME ZONE',
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false,
+      },
+    })
   },
 
   down: (queryInterface) => {
-    return queryInterface.sequelize.query(`
-      DROP TABLE icelandic_names;
-    `)
+    return queryInterface.dropTable('icelandic_names')
   },
 }
