@@ -5,6 +5,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   DefaultEvents,
+  Application,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
@@ -124,8 +125,14 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(): ApplicationRole {
-    return 'applicant'
+  mapUserToRole(
+    nationalRegistryIdOfAuthenticatedUser: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalRegistryIdOfAuthenticatedUser === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 
