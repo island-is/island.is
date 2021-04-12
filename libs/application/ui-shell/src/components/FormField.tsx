@@ -38,8 +38,6 @@ const FormField: FC<{
   const error = getValueViaPath(errors, field.id, undefined) as
     | string
     | undefined
-  console.log('errors from formfield', errors)
-  console.log('single from formfield', error)
   const fieldProps: FieldBaseProps = {
     application,
     setBeforeSubmitCallback,
