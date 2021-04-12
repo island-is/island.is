@@ -19,7 +19,11 @@ export class AwsS3Service {
         {
           Bucket: environment.files.bucket,
           Expires: +environment.files.timeToLivePost, // convert to number with +
-          Fields: { key },
+          Fields: {
+            key,
+            'content-type': '',
+            'Content-Disposition': 'inline',
+          },
         },
         (err, data) => {
           if (err) {
