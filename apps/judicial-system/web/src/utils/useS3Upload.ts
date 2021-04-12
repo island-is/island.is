@@ -70,10 +70,8 @@ export const useS3Upload = (workingCase?: Case) => {
         addFileToCase(file)
       } else {
         file.status = 'error'
+        file.percent = 0
         updateFile(file)
-        setUploadErrorMessage(
-          'Ekki tókst að hlaða upp öllum skránum. Vinsamlega reynið aftur',
-        )
       }
     })
 
@@ -109,7 +107,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const newFiles = [...filesRef.current]
 
     const updatedFiles = newFiles.map((newFile) => {
-      return newFile.id === file.id ? file : newFile
+      return newFile.name === file.name ? file : newFile
     })
 
     setFiles(updatedFiles)
