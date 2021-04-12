@@ -124,6 +124,26 @@
   },
   "listControls": [
     {
+      "id": "GrantTypesList",
+      "removeConfirmation": "Are you sure want to delete this Grant Type:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Grant Types",
+      "createNewItem": "Create new Grant Type",
+      "search": {
+        "label": "Grant Type name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        }
+      }
+    },
+    {
       "id": "AdminUsersList",
       "removeConfirmation": "Are you sure want to delete this admin user:",
       "removeButton": "Delete",
@@ -134,7 +154,6 @@
         "label": "National Id"
       },
       "searchButton": "Search",
-      "exportButton": "Export",
       "columns": {
         "nationalId": {
           "headerText": "National Id"
