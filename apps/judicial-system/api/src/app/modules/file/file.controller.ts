@@ -13,52 +13,30 @@ import {
 } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { JwtInjectBearerAuthGuard } from '@island.is/judicial-system/auth'
+import {
+  CurrentHttpUser,
+  JwtInjectBearerAuthGuard,
+} from '@island.is/judicial-system/auth'
+import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { AuditService } from '../audit'
 
 @UseGuards(JwtInjectBearerAuthGuard)
-@Controller('api')
+@Controller('api/case/:id')
 export class FileController {
   constructor(
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  @Get('case/:id/ruling')
-  @Header('Content-Type', 'application/pdf')
-  async getRulingPdf(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
-
-    const headers = new Headers()
-    headers.set('Content-Type', 'application/pdf')
-    headers.set('authorization', req.headers.authorization as string)
-    headers.set('cookie', req.headers.cookie as string)
-
-    const result = await fetch(
-      `${environment.backend.url}/api/case/${id}/ruling`,
-      { headers },
-    )
-
-    if (!result.ok) {
-      return res.status(result.status).json(result.statusText)
-    }
-
-    const stream = result.body
-
-    res.header('Content-length', result.headers.get('Content-Length') as string)
-
-    return stream.pipe(res)
-  }
-
-  @Get('case/:id/request')
+  @Get('request')
   @Header('Content-Type', 'application/pdf')
   async getRequestPdf(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -82,6 +60,47 @@ export class FileController {
 
     res.header('Content-length', result.headers.get('Content-Length') as string)
 
-    return stream.pipe(res)
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.GET_REQUEST_PDF,
+      stream.pipe(res),
+      id,
+    )
+  }
+
+  @Get('ruling')
+  @Header('Content-Type', 'application/pdf')
+  async getRulingPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
+
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/pdf')
+    headers.set('authorization', req.headers.authorization as string)
+    headers.set('cookie', req.headers.cookie as string)
+
+    const result = await fetch(
+      `${environment.backend.url}/api/case/${id}/ruling`,
+      { headers },
+    )
+
+    if (!result.ok) {
+      return res.status(result.status).json(result.statusText)
+    }
+
+    const stream = result.body
+
+    res.header('Content-length', result.headers.get('Content-Length') as string)
+
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.GET_RULING_PDF,
+      stream.pipe(res),
+      id,
+    )
   }
 }

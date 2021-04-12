@@ -164,6 +164,9 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -177,6 +180,9 @@
       "tags": []
     },
     "application-templates-reference-template": {
+      "tags": []
+    },
+    "application-ui-components": {
       "tags": []
     },
     "application-ui-fields": {
@@ -199,6 +205,12 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-document-provider": {
+      "tags": []
+    },
+    "clients-documents": {
       "tags": []
     },
     "clients-mms": {
@@ -237,7 +249,13 @@
     "dokobit-signing": {
       "tags": []
     },
+    "download-service": {
+      "tags": []
+    },
     "email-service": {
+      "tags": []
+    },
+    "endorsement-system": {
       "tags": []
     },
     "feature-flags": {
@@ -459,9 +477,6 @@
     "shared-mocking": {
       "tags": []
     },
-    "shared-table": {
-      "tags": []
-    },
     "shared-types": {
       "tags": []
     },
@@ -479,6 +494,9 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "system-e2e": {
       "tags": []
     },
     "utils-api": {
