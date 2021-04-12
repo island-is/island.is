@@ -33,8 +33,12 @@ export class GetIcelandicNameBySearchInput {
 @InputType()
 export class IcelandicNameBody {
   @Field()
+  @IsNumber()
+  id!: number
+
+  @Field()
   @IsString()
-  icelandic_name!: string
+  icelandicName!: string
 
   @Field()
   @IsString()

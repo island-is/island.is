@@ -13,7 +13,7 @@ export class UpdateIcelandicNameBody {
   @IsString()
   @IsOptional()
   @ApiProperty()
-  readonly icelandic_name?: string
+  readonly icelandicName?: string
 
   @IsOptional()
   @ApiProperty()
@@ -51,7 +51,7 @@ export class UpdateIcelandicNameBody {
 export class CreateIcelandicNameBody {
   @IsString()
   @ApiProperty()
-  readonly icelandic_name!: string
+  readonly icelandicName!: string
 
   @ApiProperty()
   @IsString()
