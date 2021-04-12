@@ -3248,7 +3248,9 @@
             "outputPath": "dist/apps/icelandic-names-registry/backend",
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
             "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
-            "assets": ["apps/icelandic-names-registry/backend/src/assets"]
+            "assets": ["apps/icelandic-names-registry/backend/src/assets"],
+            "webpackConfig": "apps/icelandic-names-registry/backend/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {

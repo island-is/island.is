@@ -27,6 +27,6 @@ export type IcelandicName = {
   visible: boolean | null
   description: string | null
   url: string | null
-  created: Date | null
-  modified: Date | null
+  created: Date
+  modified: Date
 }

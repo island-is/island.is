@@ -12,7 +12,6 @@ import {
   NameType,
   StatusType,
 } from '@island.is/icelandic-names-registry-types'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'icelandic_names',
@@ -25,28 +24,24 @@ export class IcelandicName
     autoIncrement: true,
     primaryKey: true,
   })
-  @ApiProperty()
   id!: number
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
   icelandicName!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
   type!: NameType
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
   status!: StatusType
 
   @Column({
@@ -65,7 +60,6 @@ export class IcelandicName
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
   visible!: boolean | null
 
   @Column({

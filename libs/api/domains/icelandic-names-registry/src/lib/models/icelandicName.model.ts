@@ -1,32 +1,46 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IcelandicName as TIcelandicName } from '@island.is/icelandic-names-registry-types'
+import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator'
+
+import {
+  IcelandicName as TIcelandicName,
+  NameType,
+  StatusType,
+} from '@island.is/icelandic-names-registry-types'
 
 @ObjectType()
 export class IcelandicName implements TIcelandicName {
   @Field()
+  @IsNumber()
   id!: number
 
   @Field()
+  @IsString()
   icelandicName!: string
 
-  @Field({ nullable: true })
-  type!: string | null
+  @Field(() => String, { nullable: true })
+  @IsEnum(NameType)
+  type!: NameType | null
+
+  @Field(() => String, { nullable: true })
+  @IsEnum(StatusType)
+  status!: StatusType | null
 
   @Field({ nullable: true })
-  status!: string | null
-
-  @Field({ nullable: true })
+  @IsBoolean()
   visible!: boolean | null
 
   @Field({ nullable: true })
+  @IsString()
   description!: string | null
 
   @Field({ nullable: true })
+  @IsString()
   url!: string | null
 
-  @Field({ nullable: true })
-  created!: Date | null
+  @Field()
+  @IsString()
+  created!: Date
 
-  @Field({ nullable: true })
-  modified!: Date | null
+  @Field()
+  modified!: Date
 }
