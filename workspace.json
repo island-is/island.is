@@ -2514,7 +2514,7 @@
       }
     },
     "clients-rsk-v1": {
-      "root": "libs/clients/v1/rsk",
+      "root": "libs/clients/rsk/v1",
       "sourceRoot": "libs/clients/rsk/v1/src",
       "projectType": "library",
       "schematics": {},

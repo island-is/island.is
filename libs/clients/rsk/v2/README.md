@@ -1,4 +1,4 @@
-# RSK v2
+# RSK V2
 
 This library was generated with [Nx](https://nx.dev).
 
