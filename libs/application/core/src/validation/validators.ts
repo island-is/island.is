@@ -15,7 +15,13 @@ function populateObjectError(
   newError: ZodError | undefined,
   pathToError: string,
 ): SchemaValidationError {
-  const newErrorObject = set({}, pathToError, newError?.errors[0].message)
+  const errorMessage = newError?.errors?.[0].message
+  const customPath = newError?.errors?.[0].path
+  const newErrorObject = set(
+    {},
+    customPath && customPath.length > 1 ? customPath : pathToError,
+    errorMessage,
+  )
   if (currentError) {
     return merge(currentError, newErrorObject)
   }
