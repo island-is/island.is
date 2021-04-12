@@ -135,9 +135,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     name="admin.email"
                     message={translation.fields['email'].errorMessage}
                   />
-                  <HelpBox
-                    helpText={translation.fields['email'].errorMessage}
-                  />
+                  <HelpBox helpText={translation.fields['email'].helpText} />
                 </div>
 
                 <div className="admin-user-create-form__container__field">

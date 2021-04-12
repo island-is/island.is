@@ -276,6 +276,62 @@
       }
     },
     {
+      "id": "GrantTypeCreateForm",
+      "title": "Create a new Grant Type",
+      "editTitle": "Edit Grant Type",
+      "help": "Add or edit a Grant Type",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "grant-example",
+          "helpText": "The unique name of the Grant Type",
+          "errorMessage": "Name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Grant type description",
+          "helpText": "Grant type description",
+          "errorMessage": "Description is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "IdpProviderCreateForm",
+      "title": "Create a new Idp Provider",
+      "editTitle": "Edit Idp Provider",
+      "help": "Add or edit a IDP Provider",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "provider_name",
+          "helpText": "The unique name of the provider with no spaces or symbols",
+          "errorMessage": "Name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Auth-App from Example Firm",
+          "helpText": "Short description about this Identity Provider. This will be used as an label in the IDP Restriction form",
+          "errorMessage": "Description is required and needs to be in the right format"
+        },
+        "helptext": {
+          "label": "Help Text",
+          "placeholder": "Add this provider to be able to connect with an App from Example Firm",
+          "helpText": "This text will be shown in the form where users to the Admin UI select this Identity Provider",
+          "errorMessage": "Help text is required and needs to be in the right format"
+        },
+        "level": {
+          "label": "Level",
+          "placeholder": "4",
+          "helpText": "The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security",
+          "errorMessage": "Level is required and needs to be a number from 1-4"
+        }
+      }
+    },
+    {
       "id": "IdentityResourceCreateForm",
       "title": "Create Identity Resource",
       "editTitle": "Edit Identity Resource",
