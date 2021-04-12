@@ -76,6 +76,7 @@ export const Overview: React.FC = () => {
         caseId: workingCase?.id,
       },
     },
+    skip: !workingCase?.id || !openFileId,
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
