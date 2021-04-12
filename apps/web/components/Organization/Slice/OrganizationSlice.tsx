@@ -3,6 +3,7 @@ import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import { RichText } from '../../RichText/RichText'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -35,6 +36,23 @@ const AccordionSlice = dynamic(() =>
 const TimelineSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.TimelineSlice),
 )
+
+const LogoListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LogoListSlice),
+)
+
+const TabSectionSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TabSectionSlice),
+)
+
+const BulletListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.BulletListSlice),
+)
+
+const StorySlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.StorySlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -61,8 +79,16 @@ const renderSlice = (slice, namespace) => {
       return <AccordionSlice slice={slice} />
     case 'TimelineSlice':
       return <TimelineSlice slice={slice} />
+    case 'LogoListSlice':
+      return <LogoListSlice slice={slice} />
+    case 'TabSection':
+      return <TabSectionSlice slice={slice} />
+    case 'BulletListSlice':
+      return <BulletListSlice slice={slice} />
+    case 'StorySlice':
+      return <StorySlice slice={slice} />
     default:
-      return <></>
+      return <RichText body={[slice]} />
   }
 }
 

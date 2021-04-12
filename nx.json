@@ -210,6 +210,9 @@
     "clients-document-provider": {
       "tags": []
     },
+    "clients-documents": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -244,6 +247,9 @@
       "tags": []
     },
     "dokobit-signing": {
+      "tags": []
+    },
+    "download-service": {
       "tags": []
     },
     "email-service": {
