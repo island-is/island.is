@@ -366,6 +366,45 @@
       }
     },
     {
+      "id": "TranslationCreateForm",
+      "title": "Edit Translation",
+      "editTitle": "Create a new Translation",
+      "help": "Add new translation by filling out the form",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "language": {
+          "label": "Language",
+          "helpText": "The language for this translation (iso key in the select box for this language)",
+          "errorMessage": "Language is required"
+        },
+        "className": {
+          "label": "Class Name",
+          "placeholder": "Client",
+          "helpText": "The name of the class (entity/model) that this translation belongs to",
+          "errorMessage": "The class name is required and needs to be in the right format"
+        },
+        "property": {
+          "label": "Property",
+          "placeholder": "description",
+          "helpText": "The property with in the class that is being translated",
+          "errorMessage": "The property is required and needs to be in the right format"
+        },
+        "key": {
+          "label": "Key",
+          "placeholder": "island-is-1",
+          "helpText": "The key of the item that is being translated",
+          "errorMessage": "The key is required and needs to be in the right format"
+        },
+        "value": {
+          "label": "Value",
+          "placeholder": "island-is-1",
+          "helpText": "The key of the item that is being translated",
+          "errorMessage": "The key is required and needs to be in the right format"
+        }
+      }
+    },
+    {
       "id": "IdentityResourceCreateForm",
       "title": "Create Identity Resource",
       "editTitle": "Edit Identity Resource",
