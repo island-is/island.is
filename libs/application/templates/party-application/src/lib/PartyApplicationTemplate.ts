@@ -15,6 +15,12 @@ type ReferenceTemplateEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
 
+enum States {
+  DRAFT = 'draft',
+  COLLECT_SIGNATURES = 'collectSignatures',
+  APPROVED = 'approved',
+}
+
 enum Roles {
   APPLICANT = 'applicant',
   SIGNATUREE = 'signaturee',
@@ -37,9 +43,9 @@ const PartyApplicationTemplate: ApplicationTemplate<
   name: 'Framboð',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'draft',
           progress: 0.25,
@@ -59,11 +65,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'collectEndorsements',
+            target: States.COLLECT_SIGNATURES,
           },
         },
       },
-      collectEndorsements: {
+      [States.COLLECT_SIGNATURES]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
@@ -91,11 +97,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         on: {
           APPROVE: {
-            target: 'approved',
+            target: States.APPROVED,
           },
         },
       },
-      approved: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
@@ -120,16 +126,22 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
       },
-    },
+    }, // urlið úr browsernum
   },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === 'inReview') {
+    // TODO: Applicant can recommend his own list
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    } else if (application.state === States.COLLECT_SIGNATURES) {
+      // TODO: Maybe display collection as closed in final state for signaturee
+      // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE
+    } else {
+      return undefined
     }
-    return Roles.APPLICANT
   },
 }
 
