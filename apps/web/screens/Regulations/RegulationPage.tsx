@@ -99,7 +99,7 @@ const assertDiff = (diff: string): true | undefined => {
   throw new CustomNextError(404)
 }
 
-const isISODate = (maybeISODate: string): boolean =>
+const smellsLikeISODate = (maybeISODate: string): boolean =>
   /\d{4}-\d{2}-\d{2}/.test(maybeISODate)
 
 const assertDate = (
@@ -107,7 +107,7 @@ const assertDate = (
   viewType?: ViewType,
 ): ISODate | undefined => {
   if (viewType === undefined || viewType === 'd') {
-    if (isISODate(maybeISODate)) {
+    if (smellsLikeISODate(maybeISODate)) {
       const date = new Date(maybeISODate).toISOString().substr(0, 10) as ISODate
       if (date === maybeISODate) {
         return date
