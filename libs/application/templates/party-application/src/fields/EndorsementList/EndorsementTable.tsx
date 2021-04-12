@@ -44,9 +44,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
                       <Tooltip
                         color="yellow600"
                         iconSize="medium"
-                        text={formatMessage(
-                          m.endorsementList.signatureInvalid,
-                        )}
+                        text={formatMessage(m.endorsementList.signatureInvalid)}
                       />
                     </Box>
                   </Box>

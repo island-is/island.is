@@ -18,7 +18,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       <Text marginBottom={2}>
         {`${formatMessage(
           m.endorsementDisclaimer.messagePt1,
-        )} ${constituency} ${formatMessage(m.endorsementDisclaimer.messagePt2)} `}
+        )} ${constituency} ${formatMessage(
+          m.endorsementDisclaimer.messagePt2,
+        )} `}
       </Text>
       <Text>
         {formatMessage(m.endorsementDisclaimer.partyLetter)}
