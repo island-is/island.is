@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ApiScopeStep } from '../../../entities/common/ApiScopeStep'
-import TranslationUtils from './../../../utils/translation.utils'
-import { Translation } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: ApiScopeStep) => void
@@ -13,7 +13,9 @@ const IdentityResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   return (
     <div>
@@ -25,7 +27,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ApiScopeStep.ApiScope)}
               className={activeStep === ApiScopeStep.ApiScope ? 'active' : ''}
             >
-              {translation.navigations['apiScopeSteps'].items['apiScope'].text}
+              {localization.navigations['apiScopeSteps'].items['apiScope'].text}
             </button>
           </li>
           <li>
@@ -34,7 +36,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ApiScopeStep.Claims)}
               className={activeStep === ApiScopeStep.Claims ? 'active' : ''}
             >
-              {translation.navigations['apiScopeSteps'].items['claims'].text}
+              {localization.navigations['apiScopeSteps'].items['claims'].text}
             </button>
           </li>
         </ul>

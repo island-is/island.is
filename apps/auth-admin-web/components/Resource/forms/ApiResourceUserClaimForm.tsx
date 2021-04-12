@@ -3,8 +3,8 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
 import UserClaimCreateForm from './UserClaimCreateForm'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   apiResourceName: string
@@ -17,8 +17,8 @@ interface Props {
 
 const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([])
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ApiResourceUserClaimsForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ApiResourceUserClaimsForm'),
   )
   useEffect(() => {
     getAllAvailableClaims()
@@ -77,11 +77,11 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
     <div className="api-resource-user-claims">
       <div className="api-resource-user-claims__wrapper">
         <div className="api-resource-user-claims__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
 
           <div className="api-resource-user-claims__container__form">
             <div className="api-resource-user-claims__help">
-              {translation.help}
+              {localization.help}
             </div>
             <UserClaimCreateForm
               resourceName={props.apiResourceName}
@@ -116,9 +116,9 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title={translation.noActiveConnections?.title}
+              title={localization.noActiveConnections?.title}
               show={!props.claims || props.claims.length === 0}
-              helpText={translation.noActiveConnections?.helpText}
+              helpText={localization.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="api-resource-user-claims__buttons__container">
@@ -128,7 +128,7 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
                   className="api-resource-user-claims__button__cancel"
                   onClick={props.handleBack}
                 >
-                  {translation.cancelButton}
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="api-resource-user-claims__button__container">
@@ -138,7 +138,7 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
                   value="Next"
                   onClick={props.handleNext}
                 >
-                  {translation.saveButton}
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

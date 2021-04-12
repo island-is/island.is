@@ -9,8 +9,8 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   apiResourceName: string
@@ -32,8 +32,8 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ApiResourceScopeForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ApiResourceScopeForm'),
   )
 
   const add = async (data: ApiResourceScopeDTO) => {
@@ -94,7 +94,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}:<span>{scopeForDelete}</span>
+        {localization.removeConfirmation}:<span>{scopeForDelete}</span>
       </p>
     )
   }
@@ -103,10 +103,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
     <div className="api-resource-scope-form">
       <div className="api-resource-scope-form__wrapper">
         <div className="api-resource-scope-form__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-              {translation.help}
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">
@@ -115,13 +115,13 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-scope-form__label"
                     htmlFor="scopeName"
                   >
-                    {translation.fields['scopeName'].label}
+                    {localization.fields['scopeName'].label}
                   </label>
                   <select
                     id="scopeName"
                     className="api-resource-scope-form__select"
                     name="scopeName"
-                    title={translation.fields['scopeName'].helpText}
+                    title={localization.fields['scopeName'].helpText}
                     ref={register({
                       required: true,
                       validate: ValidationUtils.validateScope,
@@ -133,19 +133,19 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     })}
                   </select>
                   <HelpBox
-                    helpText={translation.fields['scopeName'].helpText}
+                    helpText={localization.fields['scopeName'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="scopeName"
-                    message={translation.fields['scopeName'].errorMessage}
+                    message={localization.fields['scopeName'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="api-resource-scope-form__button__add"
                     disabled={isSubmitting}
-                    value={translation.addButton}
+                    value={localization.addButton}
                   />
                 </div>
                 <div
@@ -182,9 +182,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title={translation.noActiveConnections?.title}
+                title={localization.noActiveConnections?.title}
                 show={!props.scopes || props.scopes.length === 0}
-                helpText={translation.noActiveConnections?.helpText}
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -192,7 +192,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{translation.sectionTitle1}</h3>
+                <h3>{localization.sectionTitle1}</h3>
                 {props.scopes?.map((scope: string) => {
                   return (
                     <div
@@ -208,7 +208,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                           title="Remove"
                         >
                           <i className="icon__delete"></i>
-                          <span>{translation.removeButton}</span>
+                          <span>{localization.removeButton}</span>
                         </button>
                       </div>
                     </div>
@@ -223,7 +223,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-scope-form__button__cancel"
                     onClick={props.handleBack}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="api-resource-scope-form__button__container">
@@ -232,7 +232,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-scope-form__button__save"
                     onClick={props.handleNext}
                   >
-                    {translation.saveButton}
+                    {localization.saveButton}
                   </button>
                 </div>
               </div>

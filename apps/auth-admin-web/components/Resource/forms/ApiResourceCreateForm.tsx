@@ -6,8 +6,8 @@ import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   handleSave?: (object: ApiResourcesDTO) => void
@@ -26,8 +26,8 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ResourceCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ResourceCreateForm'),
   )
 
   useEffect(() => {
@@ -67,9 +67,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
     <div className="api-resource-form">
       <div className="api-resource-form__wrapper">
         <div className="api-resource-form__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="api-resource-form__container__form">
-            <div className="api-resource-form__help">{translation.help}</div>
+            <div className="api-resource-form__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-resource-form__container__fields">
                 <div className="api-resource-form__container__field">
@@ -77,7 +77,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__label"
                     htmlFor="nationalId"
                   >
-                    {translation.fields['nationalId'].label}
+                    {localization.fields['nationalId'].label}
                   </label>
                   <input
                     type="text"
@@ -90,23 +90,23 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     })}
                     defaultValue={props.apiResource.nationalId}
                     className="api-resource-form__input"
-                    placeholder={translation.fields['nationalId'].placeholder}
+                    placeholder={localization.fields['nationalId'].placeholder}
                     maxLength={10}
-                    title={translation.fields['nationalId'].helpText}
+                    title={localization.fields['nationalId'].helpText}
                   />
                   <HelpBox
-                    helpText={translation.fields['nationalId'].helpText}
+                    helpText={localization.fields['nationalId'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="nationalId"
-                    message={translation.fields['nationalId'].helpText}
+                    message={localization.fields['nationalId'].helpText}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
                   <label className="client-basic__label" htmlFor="contactEmail">
-                    {translation.fields['contactEmail'].label}
+                    {localization.fields['contactEmail'].label}
                   </label>
                   <input
                     id="contactEmail"
@@ -118,22 +118,24 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="contactEmail"
                     defaultValue={props.apiResource.contactEmail ?? ''}
                     className="api-resource-form__input"
-                    title={translation.fields['contactEmail'].helpText}
-                    placeholder={translation.fields['contactEmail'].placeholder}
+                    title={localization.fields['contactEmail'].helpText}
+                    placeholder={
+                      localization.fields['contactEmail'].placeholder
+                    }
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="contactEmail"
-                    message={translation.fields['contactEmail'].errorMessage}
+                    message={localization.fields['contactEmail'].errorMessage}
                   />
                   <HelpBox
-                    helpText={translation.fields['contactEmail'].helpText}
+                    helpText={localization.fields['contactEmail'].helpText}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
                   <label htmlFor="name" className="api-resource-form__label">
-                    {translation.fields['name'].label}
+                    {localization.fields['name'].label}
                   </label>
                   <input
                     ref={register({
@@ -147,8 +149,8 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.apiResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
-                    title={translation.fields['name'].helpText}
-                    placeholder={translation.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
+                    placeholder={localization.fields['name'].placeholder}
                   />
                   <div
                     className={`api-resource-form__container__field__available ${
@@ -156,15 +158,15 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
                     {available
-                      ? translation.fields['name'].available
-                      : translation.fields['name'].unAvailable}
+                      ? localization.fields['name'].available
+                      : localization.fields['name'].unAvailable}
                   </div>
-                  <HelpBox helpText={translation.fields['name'].helpText} />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="name"
-                    message={translation.fields['name'].errorMessage}
+                    message={localization.fields['name'].errorMessage}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
@@ -172,7 +174,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="displayName"
                     className="api-resource-form__label"
                   >
-                    {translation.fields['displayName'].label}
+                    {localization.fields['displayName'].label}
                   </label>
                   <input
                     ref={register({
@@ -184,17 +186,17 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.displayName}
-                    title={translation.fields['displayName'].helpText}
-                    placeholder={translation.fields['displayName'].placeholder}
+                    title={localization.fields['displayName'].helpText}
+                    placeholder={localization.fields['displayName'].placeholder}
                   />
                   <HelpBox
-                    helpText={translation.fields['displayName'].helpText}
+                    helpText={localization.fields['displayName'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message={translation.fields['displayName'].errorMessage}
+                    message={localization.fields['displayName'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="apiresource"
@@ -208,7 +210,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="description"
                     className="api-resource-form__label"
                   >
-                    {translation.fields['description'].label}
+                    {localization.fields['description'].label}
                   </label>
                   <input
                     ref={register({
@@ -220,16 +222,16 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     defaultValue={props.apiResource.description}
                     className="api-resource-form__input"
-                    title={translation.fields['description'].helpText}
+                    title={localization.fields['description'].helpText}
                   />
                   <HelpBox
-                    helpText={translation.fields['description'].helpText}
+                    helpText={localization.fields['description'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="description"
-                    message={translation.fields['description'].errorMessage}
+                    message={localization.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="apiresource"
@@ -241,7 +243,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
 
                 <div className="api-resource-form__container__checkbox__field">
                   <label htmlFor="enabled" className="api-resource-form__label">
-                    {translation.fields['enabled'].label}
+                    {localization.fields['enabled'].label}
                   </label>
                   <input
                     ref={register}
@@ -250,9 +252,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     defaultChecked={props.apiResource.enabled}
                     className="api-resource-form__checkbox"
-                    title={translation.fields['enabled'].helpText}
+                    title={localization.fields['enabled'].helpText}
                   />
-                  <HelpBox helpText={translation.fields['enabled'].helpText} />
+                  <HelpBox helpText={localization.fields['enabled'].helpText} />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">
@@ -260,7 +262,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="showInDiscoveryDocument"
                     className="api-resource-form__label"
                   >
-                    {translation.fields['showInDiscoveryDocument'].label}
+                    {localization.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
                     ref={register}
@@ -270,12 +272,12 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.apiResource.showInDiscoveryDocument}
                     className="api-resource-form__checkbox"
                     title={
-                      translation.fields['showInDiscoveryDocument'].helpText
+                      localization.fields['showInDiscoveryDocument'].helpText
                     }
                   />
                   <HelpBox
                     helpText={
-                      translation.fields['showInDiscoveryDocument'].helpText
+                      localization.fields['showInDiscoveryDocument'].helpText
                     }
                   />
                 </div>
@@ -287,7 +289,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       className="api-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >
-                      {translation.cancelButton}
+                      {localization.cancelButton}
                     </button>
                   </div>
                   <div className="api-resource-form__button__container">
@@ -295,7 +297,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="api-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value={translation.saveButton}
+                      value={localization.saveButton}
                     />
                   </div>
                 </div>

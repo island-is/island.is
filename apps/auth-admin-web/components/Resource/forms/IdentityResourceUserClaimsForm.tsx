@@ -3,8 +3,8 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
 import UserClaimCreateForm from './UserClaimCreateForm'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   identityResourceName: string
   claims?: string[]
@@ -16,8 +16,8 @@ interface Props {
 
 const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([])
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('IdentityResourceUserClaims'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('IdentityResourceUserClaims'),
   )
 
   useEffect(() => {
@@ -77,11 +77,11 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
     <div className="identity-resource-user-claims">
       <div className="identity-resource-user-claims__wrapper">
         <div className="identity-resource-user-claims__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
 
           <div className="identity-resource-user-claims__container__form">
             <div className="identity-resource-user-claims__help">
-              {translation.help}
+              {localization.help}
             </div>
             <UserClaimCreateForm
               resourceName={props.identityResourceName}
@@ -116,9 +116,9 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title={translation.noActiveConnections?.title}
+              title={localization.noActiveConnections?.title}
               show={!props.claims || props.claims.length === 0}
-              helpText={translation.noActiveConnections?.helpText}
+              helpText={localization.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="identity-resource-user-claims__buttons__container">
@@ -128,7 +128,7 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
                   className="identity-resource-user-claims__button__cancel"
                   onClick={props.handleBack}
                 >
-                  {translation.cancelButton}
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="identity-resource-user-claims__button__container">
@@ -138,7 +138,7 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
                   value="Next"
                   onClick={props.handleNext}
                 >
-                  {translation.saveButton}
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

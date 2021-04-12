@@ -3,14 +3,15 @@ import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import { isLoggedIn, login, logout } from '../../utils/auth.utils'
 import { SessionInfo } from './../../entities/common/SessionInfo'
-import { LOCALE_KEY } from './../../i18n/locales'
-import TranslationUtils from './../../utils/translation.utils'
-import { Translation } from './../../entities/common/Translation'
+import LocalizationUtils from '../../utils/localization.utils'
+import { Localization } from '../../entities/common/Localization'
 
 const Header: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   useEffect(() => {
     if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header__container__logo">
-        <h1>{translation.header.title}</h1>
+        <h1>{localization.header.title}</h1>
       </div>
       <div className="header__container__options">
         {isLoggedIn((session as unknown) as SessionInfo, loading) && (
@@ -35,7 +36,7 @@ const Header: React.FC = () => {
                 className="header__button__logout"
                 onClick={() => logout((session as unknown) as SessionInfo)}
               >
-                {translation.header.logoutButton}
+                {localization.header.logoutButton}
               </button>
             </div>
           </div>
@@ -47,7 +48,7 @@ const Header: React.FC = () => {
               className="header__button__login"
               onClick={() => login()}
             >
-              {translation.header.loginButton}
+              {localization.header.loginButton}
             </button>
           </div>
         )}

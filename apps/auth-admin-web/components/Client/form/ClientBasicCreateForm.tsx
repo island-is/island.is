@@ -8,8 +8,8 @@ import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: Client) => void
@@ -33,8 +33,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientCreateForm'),
   )
 
   useEffect(() => {
@@ -94,21 +94,21 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       <div className="detail-container">
         <div className="detail-title">
           {
-            translation.fields['clientType'].selectItems[clientType]
+            localization.fields['clientType'].selectItems[clientType]
               .selectItemText
           }
         </div>
         <div
           className={`detail-flow${
-            translation.fields['clientType'].selectItems[clientType].flow
+            localization.fields['clientType'].selectItems[clientType].flow
               ? ' show'
               : ' hidden'
           }`}
         >
-          {translation.fields['clientType'].selectItems[clientType].flow}
+          {localization.fields['clientType'].selectItems[clientType].flow}
         </div>
         <div className="detail-description">
-          {translation.fields['clientType'].selectItems[clientType].helpText}
+          {localization.fields['clientType'].selectItems[clientType].helpText}
         </div>
       </div>
     )
@@ -160,28 +160,28 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     <div className="client-basic">
       <div className="client-basic__wrapper">
         <div className="client-basic__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="client-basic__container__form">
-            <div className="client-basic__help">{translation.help}</div>
+            <div className="client-basic__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client-basic__container__fields">
                 <div className={clientTypeSelected ? '' : 'field-with-details'}>
                   <div className="client-basic__container__field">
                     <label className="client-basic__label" htmlFor="clientType">
-                      {translation.fields['clientType'].label}
+                      {localization.fields['clientType'].label}
                     </label>
                     <select
                       id="clientType"
                       name="client.clientType"
                       ref={register({ required: true })}
-                      title={translation.fields['clientType'].helpText}
+                      title={localization.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
                       onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
                         {
-                          translation.fields['clientType'].selectItems['']
+                          localization.fields['clientType'].selectItems['']
                             .selectItemText
                         }
                       </option>
@@ -190,7 +190,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'spa'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['spa']
+                          localization.fields['clientType'].selectItems['spa']
                             .selectItemText
                         }
                       </option>
@@ -199,8 +199,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'native'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['native']
-                            .selectItemText
+                          localization.fields['clientType'].selectItems[
+                            'native'
+                          ].selectItemText
                         }
                       </option>
                       <option
@@ -208,7 +209,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'web'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['web']
+                          localization.fields['clientType'].selectItems['web']
                             .selectItemText
                         }
                       </option>
@@ -217,7 +218,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'machine'}
                       >
                         {
-                          translation.fields['clientType'].selectItems[
+                          localization.fields['clientType'].selectItems[
                             'machine'
                           ].selectItemText
                         }
@@ -228,8 +229,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         disabled
                       >
                         {
-                          translation.fields['clientType'].selectItems['device']
-                            .selectItemText
+                          localization.fields['clientType'].selectItems[
+                            'device'
+                          ].selectItemText
                         }
                       </option>
                     </select>
@@ -239,7 +241,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="client.clientType"
-                      message={translation.fields['clientType'].errorMessage}
+                      message={localization.fields['clientType'].errorMessage}
                     />
                     <div
                       className={`client__container__field__details${
@@ -254,7 +256,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client-basic__container__field">
                     <label className="client-basic__label" htmlFor="nationalId">
-                      {translation.fields['nationalId'].label}
+                      {localization.fields['nationalId'].label}
                     </label>
                     <input
                       id="nationalId"
@@ -268,18 +270,20 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.nationalId}
                       className="client-basic__input"
-                      placeholder={translation.fields['nationalId'].placeholder}
+                      placeholder={
+                        localization.fields['nationalId'].placeholder
+                      }
                       maxLength={10}
-                      title={translation.fields['nationalId'].helpText}
+                      title={localization.fields['nationalId'].helpText}
                     />
                     <HelpBox
-                      helpText={translation.fields['nationalId'].helpText}
+                      helpText={localization.fields['nationalId'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.nationalId"
-                      message={translation.fields['nationalId'].errorMessage}
+                      message={localization.fields['nationalId'].errorMessage}
                     />
                   </div>
                   <div className="client-basic__container__field">
@@ -287,7 +291,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       className="client-basic__label"
                       htmlFor="contactEmail"
                     >
-                      {translation.fields['contactEmail'].label}
+                      {localization.fields['contactEmail'].label}
                     </label>
                     <input
                       id="contactEmail"
@@ -299,24 +303,24 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client-basic__input"
-                      title={translation.fields['contactEmail'].helpText}
+                      title={localization.fields['contactEmail'].helpText}
                       placeholder={
-                        translation.fields['contactEmail'].placeholder
+                        localization.fields['contactEmail'].placeholder
                       }
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.contactEmail"
-                      message={translation.fields['contactEmail'].errorMessage}
+                      message={localization.fields['contactEmail'].errorMessage}
                     />
                     <HelpBox
-                      helpText={translation.fields['contactEmail'].helpText}
+                      helpText={localization.fields['contactEmail'].helpText}
                     />
                   </div>
                   <div className="client-basic__container__field">
                     <label className="client-basic__label" htmlFor="clientId">
-                      {translation.fields['clientId'].label}
+                      {localization.fields['clientId'].label}
                     </label>
                     <input
                       id="clientId"
@@ -328,9 +332,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientId}
                       className="client-basic__input"
-                      placeholder={translation.fields['clientId'].placeholder}
+                      placeholder={localization.fields['clientId'].placeholder}
                       onChange={(e) => checkAvailability(e.target.value)}
-                      title={translation.fields['clientId'].helpText}
+                      title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
                     />
                     <div
@@ -339,23 +343,23 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
                     >
                       {available
-                        ? translation.fields['clientId'].available
-                        : translation.fields['clientId'].unAvailable}
+                        ? localization.fields['clientId'].available
+                        : localization.fields['clientId'].unAvailable}
                     </div>
                     <HelpBox
-                      helpText={translation.fields['clientId'].helpText}
+                      helpText={localization.fields['clientId'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message={translation.fields['clientId'].errorMessage}
+                      message={localization.fields['clientId'].errorMessage}
                     />
                   </div>
                   <div className="field-with-details">
                     <div className="client-basic__container__field">
                       <label className="client-basic__label" htmlFor="baseUrl">
-                        {translation.fields['baseUrl'].label}
+                        {localization.fields['baseUrl'].label}
                       </label>
                       <input
                         id="baseUrl"
@@ -367,20 +371,20 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
-                        placeholder={translation.fields['baseUrl'].placeholder}
-                        title={translation.fields['baseUrl'].helpText}
+                        placeholder={localization.fields['baseUrl'].placeholder}
+                        title={localization.fields['baseUrl'].helpText}
                         onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
                         onBlur={() => setShowBaseUrlInfo(false)}
                       />
                       <HelpBox
-                        helpText={translation.fields['baseUrl'].helpText}
+                        helpText={localization.fields['baseUrl'].helpText}
                       />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message={translation.fields['baseUrl'].errorMessage}
+                        message={localization.fields['baseUrl'].errorMessage}
                       />
                       <div
                         className={`client-basic__container__field__details${
@@ -388,13 +392,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         }`}
                       >
                         <div className="detail-title">
-                          {translation.fields['baseUrl'].popUpTitle}
+                          {localization.fields['baseUrl'].popUpTitle}
                         </div>
                         <div className="detail-uri">
                           {callbackUri}/signin-oidc
                         </div>
                         <div className="detail-link">
-                          {translation.fields['baseUrl'].popUpDescription}
+                          {localization.fields['baseUrl'].popUpDescription}
                         </div>
                       </div>
                     </div>
@@ -408,7 +412,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="client-basic__button__container">
@@ -416,7 +420,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="client-basic__button__save"
                     disabled={isSubmitting || !available}
-                    value={translation.saveButton}
+                    value={localization.saveButton}
                   />
                 </div>
               </div>

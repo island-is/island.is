@@ -7,8 +7,8 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   clientId: string
   defaultUrl?: string
@@ -31,8 +31,8 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [uriToRemove, setUriToRemove] = React.useState('')
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientPostLogoutRedirectUriForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientPostLogoutRedirectUriForm'),
   )
 
   const add = async (data: ClientPostLogoutRedirectUriDTO) => {
@@ -80,7 +80,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}:<span>{uriToRemove}</span>
+        {localization.removeConfirmation}:<span>{uriToRemove}</span>
       </p>
     )
   }
@@ -90,11 +90,11 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
       <div className="client-post-logout">
         <div className="client-post-logout__wrapper">
           <div className="client-post-logout__container">
-            <h1>{translation.title}</h1>
+            <h1>{localization.title}</h1>
             <div className="client-post-logout__container__form">
               <div
                 className="client-post-logout__help"
-                dangerouslySetInnerHTML={{ __html: translation.help }}
+                dangerouslySetInnerHTML={{ __html: localization.help }}
               ></div>
               <form id="postLogoutForm" onSubmit={handleSubmit(add)}>
                 <div className="client-post-logout__container__fields">
@@ -103,7 +103,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-post-logout__label"
                       htmlFor="redirectUri"
                     >
-                      {translation.fields['redirectUri'].label}
+                      {localization.fields['redirectUri'].label}
                     </label>
                     <input
                       id="redirectUri"
@@ -116,30 +116,30 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       defaultValue={defaultUrl}
                       className="client-post-logout__input"
                       placeholder={
-                        translation.fields['redirectUri'].placeholder
+                        localization.fields['redirectUri'].placeholder
                       }
-                      title={translation.fields['redirectUri'].helpText}
+                      title={localization.fields['redirectUri'].helpText}
                     />
                     <HelpBox helpText="Users can be returned to this URL after logging out. These protocols rely upon TLS in production" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="redirectUri"
-                      message={translation.fields['redirectUri'].errorMessage}
+                      message={localization.fields['redirectUri'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-post-logout__button__add"
                       disabled={isSubmitting}
-                      value={translation.addButton}
+                      value={localization.addButton}
                     />
                   </div>
                 </div>
 
                 <NoActiveConnections
-                  title={translation.noActiveConnections?.title}
+                  title={localization.noActiveConnections?.title}
                   show={!props.uris || props.uris.length === 0}
-                  helpText={translation.noActiveConnections?.helpText}
+                  helpText={localization.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div
@@ -147,7 +147,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                   }`}
                 >
-                  <h3>{translation.sectionTitle1}</h3>
+                  <h3>{localization.sectionTitle1}</h3>
                   {props.uris?.map((uri: string) => {
                     return (
                       <div
@@ -160,10 +160,10 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                             type="button"
                             onClick={() => confirmRemove(uri)}
                             className="client-post-logout__container__list__button__remove"
-                            title={translation.removeButton}
+                            title={localization.removeButton}
                           >
                             <i className="icon__delete"></i>
-                            <span>{translation.removeButton}</span>
+                            <span>{localization.removeButton}</span>
                           </button>
                         </div>
                       </div>
@@ -178,7 +178,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-post-logout__button__cancel"
                       onClick={props.handleBack}
                     >
-                      {translation.cancelButton}
+                      {localization.cancelButton}
                     </button>
                   </div>
                   <div className="client-post-logout__button__container">
@@ -187,7 +187,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-post-logout__button__save"
                       onClick={props.handleNext}
                     >
-                      {translation.saveButton}
+                      {localization.saveButton}
                     </button>
                   </div>
                 </div>

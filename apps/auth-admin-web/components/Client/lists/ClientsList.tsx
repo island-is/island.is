@@ -6,8 +6,8 @@ import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
 import { downloadCSV } from '../../../utils/csv.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { ListPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const ClientsList: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([])
@@ -17,8 +17,8 @@ const ClientsList: React.FC = () => {
   const [count, setCount] = useState(0)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [searchString, setSearchString] = useState<string>('')
-  const [translation] = useState<ListPage>(
-    TranslationUtils.getListPage('ClientsList'),
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ClientsList'),
   )
 
   const getClients = async (
@@ -73,7 +73,7 @@ const ClientsList: React.FC = () => {
   const setHeaderElement = (): JSX.Element => {
     return (
       <p>
-        {translation.removeConfirmation}:<span>{clientToRemove}</span>
+        {localization.removeConfirmation}:<span>{clientToRemove}</span>
       </p>
     )
   }
@@ -102,20 +102,20 @@ const ClientsList: React.FC = () => {
       <div className="clients">
         <div className="clients__wrapper">
           <div className="clients__container">
-            <h1>{translation.title}</h1>
+            <h1>{localization.title}</h1>
             <div className="clients__container__options">
               <div className="clients__container__options__button">
                 <Link href={'/client'}>
                   <a className="clients__button__new">
                     <i className="icon__new"></i>
-                    {translation.createNewItem}
+                    {localization.createNewItem}
                   </a>
                 </Link>
               </div>
               <form onSubmit={search}>
                 <div className="clients__container__options__search">
                   <label htmlFor="search" className="clients__label">
-                    {translation.search?.label}
+                    {localization.search?.label}
                   </label>
                   <input
                     id="search"
@@ -124,7 +124,7 @@ const ClientsList: React.FC = () => {
                     onChange={handleSearchChange}
                   ></input>
                   <button type="submit" className="clients__button__search">
-                    {translation.searchButton}
+                    {localization.searchButton}
                   </button>
                 </div>
               </form>
@@ -133,10 +133,10 @@ const ClientsList: React.FC = () => {
               <table className="clients__table">
                 <thead>
                   <tr>
-                    <th>{translation.columns['clientId'].headerText}</th>
-                    <th>{translation.columns['nationalId'].headerText}</th>
-                    <th>{translation.columns['contactEmail'].headerText}</th>
-                    <th>{translation.columns['clientType'].headerText}</th>
+                    <th>{localization.columns['clientId'].headerText}</th>
+                    <th>{localization.columns['nationalId'].headerText}</th>
+                    <th>{localization.columns['contactEmail'].headerText}</th>
+                    <th>{localization.columns['clientType'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -162,10 +162,10 @@ const ClientsList: React.FC = () => {
                               className={`clients__button__edit${
                                 client.archived ? ' hidden' : ''
                               }`}
-                              title={translation.editButton}
+                              title={localization.editButton}
                             >
                               <i className="icon__edit"></i>
-                              <span>{translation.editButton}</span>
+                              <span>{localization.editButton}</span>
                             </button>
                           </Link>
                         </td>
@@ -175,11 +175,11 @@ const ClientsList: React.FC = () => {
                             className={`clients__button__delete${
                               client.archived ? ' hidden' : ''
                             }`}
-                            title={translation.removeButton}
+                            title={localization.removeButton}
                             onClick={() => confirmArchive(client.clientId)}
                           >
                             <i className="icon__delete"></i>
-                            <span>{translation.removeButton}</span>
+                            <span>{localization.removeButton}</span>
                           </button>
                         </td>
                       </tr>
@@ -193,7 +193,7 @@ const ClientsList: React.FC = () => {
                 <div className="clients__container__export__container__button">
                   <button type="button" onClick={() => exportCsv()}>
                     <i className="icon__export__csv" aria-hidden="true"></i>
-                    <span>{translation.exportButton}</span>
+                    <span>{localization.exportButton}</span>
                   </button>
                 </div>
               </div>
@@ -210,7 +210,7 @@ const ClientsList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={archive}
-        confirmationText={translation.removeButton}
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )

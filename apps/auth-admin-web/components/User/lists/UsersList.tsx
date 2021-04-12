@@ -8,8 +8,8 @@ import { UserService } from '../../../services/UserService'
 import UserIdentity from './../../../entities/models/user-identity.model'
 import { Claim } from './../../../entities/models/claim.model'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { ListPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 interface ClaimShow {
   subjectId: string
@@ -27,8 +27,8 @@ const UsersList: React.FC = () => {
   const [showNotFound, setShowNotFound] = useState<boolean>(false)
   const { handleSubmit, register, errors, formState } = useForm()
   const { isSubmitting } = formState
-  const [translation] = useState<ListPage>(
-    TranslationUtils.getListPage('UsersList'),
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('UsersList'),
   )
 
   const getIndex = (subjectId: string): number => {
@@ -88,13 +88,13 @@ const UsersList: React.FC = () => {
     <div className="users">
       <div className="users__wrapper">
         <div className="users__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
           <div className="users__container__form">
             <form onSubmit={handleSubmit(getUser)}>
               <div className="users__container__fields">
                 <div className="users__container__field">
                   <label className="users__label" htmlFor="search">
-                    {translation.search.label}
+                    {localization.search.label}
                   </label>
                   <input
                     id="search"
@@ -106,18 +106,18 @@ const UsersList: React.FC = () => {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
-                    placeholder={translation.search.placeholder}
+                    placeholder={localization.search.placeholder}
                   />
-                  <HelpBox helpText={translation.search.helpText} />
+                  <HelpBox helpText={localization.search.helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="id"
-                    message={translation.search.errorMessage}
+                    message={localization.search.errorMessage}
                   />
                   <input
                     type="submit"
-                    value={translation.searchButton}
+                    value={localization.searchButton}
                     disabled={isSubmitting}
                     className="users__button__search"
                   />
@@ -131,14 +131,16 @@ const UsersList: React.FC = () => {
               users && users.length > 0 ? 'show' : 'hidden'
             }`}
           >
-            <h3>{translation.sectionTitle1}</h3>
+            <h3>{localization.sectionTitle1}</h3>
             <table className="users__table">
               <thead>
                 <tr>
-                  <th>{translation.columns['subjectId'].headerText}</th>
-                  <th>{translation.columns['name'].headerText}</th>
-                  <th>{translation.columns['providerName'].headerText}</th>
-                  <th>{translation.columns['providerSubjectId'].headerText}</th>
+                  <th>{localization.columns['subjectId'].headerText}</th>
+                  <th>{localization.columns['name'].headerText}</th>
+                  <th>{localization.columns['providerName'].headerText}</th>
+                  <th>
+                    {localization.columns['providerSubjectId'].headerText}
+                  </th>
                   <th colSpan={2}></th>
                 </tr>
               </thead>
@@ -156,7 +158,7 @@ const UsersList: React.FC = () => {
                           className="users__button__view"
                           onClick={() => handleShowClaimsClicked(user)}
                         >
-                          {translation.viewButton}
+                          {localization.viewButton}
                         </button>
 
                         <div
@@ -194,13 +196,13 @@ const UsersList: React.FC = () => {
                           onClick={() => toggleActive(user)}
                           title={
                             user.active
-                              ? translation.active
-                              : translation.deactivated
+                              ? localization.active
+                              : localization.deactivated
                           }
                         >
                           {user.active
-                            ? translation.deactivateButton
-                            : translation.activateButton}
+                            ? localization.deactivateButton
+                            : localization.activateButton}
                         </button>
                       </td>
                     </tr>
@@ -211,7 +213,7 @@ const UsersList: React.FC = () => {
           </div>
           {showNotFound && (
             <NotFound title="User Identity not found">
-              {translation.notFound}: {id}
+              {localization.notFound}: {id}
             </NotFound>
           )}
         </div>

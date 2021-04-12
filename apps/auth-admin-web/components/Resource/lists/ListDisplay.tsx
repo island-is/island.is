@@ -3,8 +3,8 @@
 import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
-import TranslationUtils from './../../../utils/translation.utils'
-import { ListPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 interface Props {
   list: any
@@ -27,8 +27,8 @@ const ResourceListDisplay: React.FC<Props> = ({
   edit,
   remove,
 }) => {
-  const [translation] = useState<ListPage>(
-    TranslationUtils.getListPage('ResourceListDisplay'),
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ResourceListDisplay'),
   )
 
   return (
@@ -52,8 +52,8 @@ const ResourceListDisplay: React.FC<Props> = ({
               <table className="identity-resources__table">
                 <thead>
                   <tr>
-                    <th>{translation.columns['name'].headerText}</th>
-                    <th>{translation.columns['displayName'].headerText}</th>
+                    <th>{localization.columns['name'].headerText}</th>
+                    <th>{localization.columns['displayName'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -73,10 +73,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => edit(resource)}
-                            title={translation.editButton}
+                            title={localization.editButton}
                           >
                             <i className="icon__edit"></i>
-                            <span>{translation.editButton}</span>
+                            <span>{localization.editButton}</span>
                           </button>
                         </td>
                         <td className="identity-resources__table__button">
@@ -86,10 +86,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => remove(resource.name)}
-                            title={translation.removeButton}
+                            title={localization.removeButton}
                           >
                             <i className="icon__delete"></i>
-                            <span>{translation.removeButton}</span>
+                            <span>{localization.removeButton}</span>
                           </button>
                         </td>
                       </tr>

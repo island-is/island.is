@@ -1,13 +1,13 @@
-export class Translation {
-  formPages: FormPage[]
-  listPages: ListPage[]
+export class Localization {
+  formControls: FormControl[]
+  listControls: ListControl[]
   header: HeaderTranslation
   navigations: Record<string, Navigation>
   paginator: Paginator
   version: string
 }
 
-export class FormPage {
+export class FormControl {
   id: string
   fields: Record<string, FormItem>
   title: string
@@ -34,7 +34,7 @@ export class Paginator {
   count: string
 }
 
-export class ListPage {
+export class ListControl {
   id: string
   title: string
   createNewItem?: string

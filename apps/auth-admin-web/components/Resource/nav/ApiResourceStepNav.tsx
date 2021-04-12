@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
-import TranslationUtils from './../../../utils/translation.utils'
-import { Translation } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: ApiResourceStep) => void
@@ -13,7 +13,9 @@ const ApiResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   return (
     <div>
@@ -30,7 +32,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['apiResourceSteps'].items[
+                localization.navigations['apiResourceSteps'].items[
                   'apiResourceBasics'
                 ].text
               }
@@ -47,7 +49,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['apiResourceSteps'].items[
+                localization.navigations['apiResourceSteps'].items[
                   'apiResourceScopes'
                 ].text
               }
@@ -66,7 +68,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['apiResourceSteps'].items[
+                localization.navigations['apiResourceSteps'].items[
                   'apiResourceSecrets'
                 ].text
               }
@@ -85,7 +87,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['apiResourceSteps'].items[
+                localization.navigations['apiResourceSteps'].items[
                   'apiResourceUserClaims'
                 ].text
               }

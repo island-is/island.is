@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ClientStep } from '../../../entities/common/ClientStep'
-import TranslationUtils from './../../../utils/translation.utils'
-import { Translation } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: ClientStep) => void
@@ -13,7 +13,9 @@ const ClientStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <div>
       <nav className="client-step-nav">
@@ -24,7 +26,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
-              {translation.navigations['clientSteps'].items['client'].text}
+              {localization.navigations['clientSteps'].items['client'].text}
             </button>
           </li>
           <li>
@@ -36,7 +38,7 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items[
+                localization.navigations['clientSteps'].items[
                   'clientRedirectUri'
                 ].text
               }
@@ -51,7 +53,7 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items[
+                localization.navigations['clientSteps'].items[
                   'clientIdpRestrictions'
                 ].text
               }
@@ -70,7 +72,7 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items[
+                localization.navigations['clientSteps'].items[
                   'clientPostLogoutRedirectUri'
                 ].text
               }
@@ -89,7 +91,7 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items[
+                localization.navigations['clientSteps'].items[
                   'clientAllowedCorsOrigin'
                 ].text
               }
@@ -104,8 +106,9 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items['clientGrantTypes']
-                  .text
+                localization.navigations['clientSteps'].items[
+                  'clientGrantTypes'
+                ].text
               }
             </button>
           </li>
@@ -118,7 +121,7 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['clientSteps'].items[
+                localization.navigations['clientSteps'].items[
                   'clientAllowedScopes'
                 ].text
               }
@@ -131,7 +134,7 @@ const ClientStepNav: React.FC<Props> = ({
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
               {
-                translation.navigations['clientSteps'].items['clientClaims']
+                localization.navigations['clientSteps'].items['clientClaims']
                   .text
               }
             </button>
@@ -143,7 +146,7 @@ const ClientStepNav: React.FC<Props> = ({
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
               {
-                translation.navigations['clientSteps'].items['clientSecret']
+                localization.navigations['clientSteps'].items['clientSecret']
                   .text
               }
             </button>

@@ -5,8 +5,8 @@ import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import { GrantTypeService } from '../../../services/GrantTypeService'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -18,8 +18,8 @@ interface Props {
 
 const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientGrantTypesForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientGrantTypesForm'),
   )
   useEffect(() => {
     getGrantTypes()
@@ -70,10 +70,10 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     <div className="client-grant-types">
       <div className="client-grant-types__wrapper">
         <div className="client-grant-types__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
 
           <div className="client-grant-types__container__form">
-            <div className="client-grant-types__help">{translation.help}</div>
+            <div className="client-grant-types__help">{localization.help}</div>
             <div className="client-grant-types__container__fields">
               {grantTypes?.map((grantType: GrantType) => {
                 return (
@@ -106,9 +106,9 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title={translation.noActiveConnections?.title}
+              title={localization.noActiveConnections?.title}
               show={!props.grantTypes || props.grantTypes.length === 0}
-              helpText={translation.noActiveConnections?.helpText}
+              helpText={localization.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="client-grant-types__buttons__container">
@@ -118,7 +118,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                   className="client-grant-types__button__cancel"
                   onClick={props.handleBack}
                 >
-                  {translation.cancelButton}
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="client-grant-types__button__container">
@@ -128,7 +128,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                   value="Next"
                   onClick={props.handleNext}
                 >
-                  {translation.saveButton}
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

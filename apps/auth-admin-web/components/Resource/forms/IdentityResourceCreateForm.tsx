@@ -6,8 +6,8 @@ import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
-import { FormPage } from './../../../entities/common/Translation'
-import TranslationUtils from './../../../utils/translation.utils'
+import { FormControl } from '../../../entities/common/Localization'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -26,8 +26,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('IdentityResourceCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('IdentityResourceCreateForm'),
   )
 
   useEffect(() => {
@@ -67,10 +67,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     <div className="identity-resource-form">
       <div className="identity-resource-form__wrapper">
         <div className="identity-resource-form__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="identity-resource-form__container__form">
             <div className="identity-resource-form__help">
-              {translation.help}
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource-form__container__fields">
@@ -79,7 +79,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="name"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['name'].label}
+                    {localization.fields['name'].label}
                   </label>
                   <input
                     ref={register({
@@ -93,7 +93,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
-                    placeholder={translation.fields['name'].placeholder}
+                    placeholder={localization.fields['name'].placeholder}
                   />
                   <div
                     className={`identity-resource-form__container__field__available ${
@@ -101,15 +101,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
                     {available
-                      ? translation.fields['name'].available
-                      : translation.fields['name'].unAvailable}
+                      ? localization.fields['name'].available
+                      : localization.fields['name'].unAvailable}
                   </div>
-                  <HelpBox helpText={translation.fields['name'].helpText} />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="name"
-                    message={translation.fields['name'].errorMessage}
+                    message={localization.fields['name'].errorMessage}
                   />
                 </div>
                 <div className="identity-resource-form__container__field">
@@ -117,7 +117,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="displayName"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['displayName'].label}
+                    {localization.fields['displayName'].label}
                   </label>
                   <input
                     ref={register({
@@ -129,17 +129,17 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
-                    placeholder={translation.fields['displayName'].placeholder}
-                    title={translation.fields['displayName'].helpText}
+                    placeholder={localization.fields['displayName'].placeholder}
+                    title={localization.fields['displayName'].helpText}
                   />
                   <HelpBox
-                    helpText={translation.fields['displayName'].helpText}
+                    helpText={localization.fields['displayName'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message={translation.fields['displayName'].errorMessage}
+                    message={localization.fields['displayName'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="identityresource"
@@ -153,7 +153,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="description"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['description'].label}
+                    {localization.fields['description'].label}
                   </label>
                   <input
                     ref={register({
@@ -165,17 +165,17 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     defaultValue={props.identityResource.description}
                     className="identity-resource-form__input"
-                    placeholder={translation.fields['description'].placeholder}
-                    title={translation.fields['description'].helpText}
+                    placeholder={localization.fields['description'].placeholder}
+                    title={localization.fields['description'].helpText}
                   />
                   <HelpBox
-                    helpText={translation.fields['description'].helpText}
+                    helpText={localization.fields['description'].helpText}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="description"
-                    message={translation.fields['description'].errorMessage}
+                    message={localization.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="identityresource"
@@ -190,7 +190,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="enabled"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['enabled'].label}
+                    {localization.fields['enabled'].label}
                   </label>
                   <input
                     ref={register}
@@ -199,9 +199,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     defaultChecked={props.identityResource.enabled}
                     className="identity-resource-form__checkbox"
-                    title={translation.fields['enabled'].helpText}
+                    title={localization.fields['enabled'].helpText}
                   />
-                  <HelpBox helpText={translation.fields['enabled'].helpText} />
+                  <HelpBox helpText={localization.fields['enabled'].helpText} />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
@@ -209,7 +209,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="showInDiscoveryDocument"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['showInDiscoveryDocument'].label}
+                    {localization.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
                     ref={register}
@@ -221,12 +221,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     }
                     className="identity-resource-form__checkbox"
                     title={
-                      translation.fields['showInDiscoveryDocument'].helpText
+                      localization.fields['showInDiscoveryDocument'].helpText
                     }
                   />
                   <HelpBox
                     helpText={
-                      translation.fields['showInDiscoveryDocument'].helpText
+                      localization.fields['showInDiscoveryDocument'].helpText
                     }
                   />
                 </div>
@@ -236,7 +236,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="emphasize"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['emphasize'].label}
+                    {localization.fields['emphasize'].label}
                   </label>
                   <input
                     ref={register}
@@ -245,10 +245,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
-                    title={translation.fields['emphasize'].helpText}
+                    title={localization.fields['emphasize'].helpText}
                   />
                   <HelpBox
-                    helpText={translation.fields['emphasize'].helpText}
+                    helpText={localization.fields['emphasize'].helpText}
                   />
                 </div>
 
@@ -257,7 +257,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="required"
                     className="identity-resource-form__label"
                   >
-                    {translation.fields['required'].label}
+                    {localization.fields['required'].label}
                   </label>
                   <input
                     ref={register}
@@ -266,20 +266,22 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.identityResource.required}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
-                    title={translation.fields['required'].helpText}
+                    title={localization.fields['required'].helpText}
                   />
-                  <HelpBox helpText={translation.fields['required'].helpText} />
+                  <HelpBox
+                    helpText={localization.fields['required'].helpText}
+                  />
                 </div>
 
                 <section className="api-scope__section">
-                  <h3>{translation.sectionTitle1}</h3>
+                  <h3>{localization.sectionTitle1}</h3>
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
                       htmlFor="grantToLegalGuardians"
                       className="api-scope-form__label"
                     >
-                      {translation.fields['grantToLegalGuardians'].label}
+                      {localization.fields['grantToLegalGuardians'].label}
                     </label>
                     <input
                       ref={register}
@@ -291,12 +293,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       }
                       className="api-scope-form__checkbox"
                       title={
-                        translation.fields['grantToLegalGuardians'].helpText
+                        localization.fields['grantToLegalGuardians'].helpText
                       }
                     />
                     <HelpBox
                       helpText={
-                        translation.fields['grantToLegalGuardians'].helpText
+                        localization.fields['grantToLegalGuardians'].helpText
                       }
                     />
                   </div>
@@ -306,7 +308,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="grantToProcuringHolders"
                       className="api-scope-form__label"
                     >
-                      {translation.fields['grantToProcuringHolders'].label}
+                      {localization.fields['grantToProcuringHolders'].label}
                     </label>
                     <input
                       ref={register}
@@ -318,12 +320,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       }
                       className="api-scope-form__checkbox"
                       title={
-                        translation.fields['grantToProcuringHolders'].helpText
+                        localization.fields['grantToProcuringHolders'].helpText
                       }
                     />
                     <HelpBox
                       helpText={
-                        translation.fields['grantToProcuringHolders'].helpText
+                        localization.fields['grantToProcuringHolders'].helpText
                       }
                     />
                   </div>
@@ -332,7 +334,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="allowExplicitDelegationGrant"
                       className="api-scope-form__label"
                     >
-                      {translation.fields['allowExplicitDelegationGrant'].label}
+                      {
+                        localization.fields['allowExplicitDelegationGrant']
+                          .label
+                      }
                     </label>
                     <input
                       ref={register}
@@ -344,13 +349,13 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       }
                       className="api-scope-form__checkbox"
                       title={
-                        translation.fields['allowExplicitDelegationGrant']
+                        localization.fields['allowExplicitDelegationGrant']
                           .helpText
                       }
                     />
                     <HelpBox
                       helpText={
-                        translation.fields['allowExplicitDelegationGrant']
+                        localization.fields['allowExplicitDelegationGrant']
                           .helpText
                       }
                     />
@@ -360,7 +365,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="automaticDelegationGrant"
                       className="api-scope-form__label"
                     >
-                      {translation.fields['automaticDelegationGrant'].label}
+                      {localization.fields['automaticDelegationGrant'].label}
                     </label>
                     <input
                       ref={register}
@@ -372,12 +377,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       }
                       className="api-scope-form__checkbox"
                       title={
-                        translation.fields['automaticDelegationGrant'].helpText
+                        localization.fields['automaticDelegationGrant'].helpText
                       }
                     />
                     <HelpBox
                       helpText={
-                        translation.fields['automaticDelegationGrant'].helpText
+                        localization.fields['automaticDelegationGrant'].helpText
                       }
                     />
                   </div>
@@ -387,7 +392,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="alsoForDelegatedUser"
                       className="api-scope-form__label"
                     >
-                      {translation.fields['alsoForDelegatedUser'].label}
+                      {localization.fields['alsoForDelegatedUser'].label}
                     </label>
                     <input
                       ref={register}
@@ -399,12 +404,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       }
                       className="api-scope-form__checkbox"
                       title={
-                        translation.fields['alsoForDelegatedUser'].helpText
+                        localization.fields['alsoForDelegatedUser'].helpText
                       }
                     />
                     <HelpBox
                       helpText={
-                        translation.fields['alsoForDelegatedUser'].helpText
+                        localization.fields['alsoForDelegatedUser'].helpText
                       }
                     />
                   </div>
@@ -417,7 +422,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       className="identity-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >
-                      {translation.cancelButton}
+                      {localization.cancelButton}
                     </button>
                   </div>
                   <div className="identity-resource-form__button__container">
@@ -425,7 +430,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="identity-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value={translation.saveButton}
+                      value={localization.saveButton}
                     />
                   </div>
                 </div>

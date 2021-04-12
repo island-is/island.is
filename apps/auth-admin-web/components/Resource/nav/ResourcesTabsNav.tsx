@@ -2,12 +2,14 @@
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import TranslationUtils from './../../../utils/translation.utils'
-import { Translation } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 const ResourcesTabsNav: React.FC = () => {
   const router = useRouter()
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <nav className="resource-tab-nav">
       <ul>
@@ -23,7 +25,7 @@ const ResourcesTabsNav: React.FC = () => {
               }
             >
               {
-                translation.navigations['resourcesTabs'].items['apiResource']
+                localization.navigations['resourcesTabs'].items['apiResource']
                   .text
               }
             </a>
@@ -38,7 +40,7 @@ const ResourcesTabsNav: React.FC = () => {
             <a
               className={router?.pathname.includes('api-scope') ? 'active' : ''}
             >
-              {translation.navigations['resourcesTabs'].items['apiScope'].text}
+              {localization.navigations['resourcesTabs'].items['apiScope'].text}
             </a>
           </Link>
         </li>
@@ -54,7 +56,7 @@ const ResourcesTabsNav: React.FC = () => {
               }
             >
               {
-                translation.navigations['resourcesTabs'].items[
+                localization.navigations['resourcesTabs'].items[
                   'identityResource'
                 ].text
               }

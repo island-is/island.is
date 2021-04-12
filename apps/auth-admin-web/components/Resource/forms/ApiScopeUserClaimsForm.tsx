@@ -3,8 +3,8 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
 import UserClaimCreateForm from './UserClaimCreateForm'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   apiScopeName: string
@@ -17,8 +17,8 @@ interface Props {
 
 const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([])
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ApiScopeUserClaimsForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ApiScopeUserClaimsForm'),
   )
   useEffect(() => {
     getAllAvailableClaims()
@@ -77,11 +77,11 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
     <div className="api-scope-user-claims">
       <div className="api-scope-user-claims__wrapper">
         <div className="api-scope-user-claims__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
 
           <div className="api-scope-user-claims__container__form">
             <div className="api-scope-user-claims__help">
-              {translation.help}
+              {localization.help}
             </div>
             <UserClaimCreateForm
               resourceName={props.apiScopeName}
@@ -116,9 +116,9 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title={translation.noActiveConnections.title}
+              title={localization.noActiveConnections.title}
               show={!props.claims || props.claims.length === 0}
-              helpText={translation.noActiveConnections.helpText}
+              helpText={localization.noActiveConnections.helpText}
             ></NoActiveConnections>
 
             <div className="api-scope-user-claims__buttons__container">
@@ -128,17 +128,17 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
                   className="api-scope-user-claims__button__cancel"
                   onClick={props.handleBack}
                 >
-                  {translation.cancelButton}
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="api-scope-user-claims__button__container">
                 <button
                   type="button"
                   className="api-scope-user-claims__button__save"
-                  value={translation.saveButton}
+                  value={localization.saveButton}
                   onClick={props.handleNext}
                 >
-                  {translation.saveButton}
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

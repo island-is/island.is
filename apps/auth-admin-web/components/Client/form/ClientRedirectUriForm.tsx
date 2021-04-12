@@ -7,8 +7,8 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -32,8 +32,8 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [uriToRemove, setUriToRemove] = React.useState('')
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientRedirectUriForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientRedirectUriForm'),
   )
 
   const add = async (data: ClientRedirectUriDTO) => {
@@ -93,9 +93,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
       <div className="client-redirect">
         <div className="client-redirect__wrapper">
           <div className="client-redirect__container">
-            <h1>{translation.title}</h1>
+            <h1>{localization.title}</h1>
             <div className="client-redirect__container__form">
-              <div className="client-redirect__help">{translation.help}</div>
+              <div className="client-redirect__help">{localization.help}</div>
               <form id="redirectForm" onSubmit={handleSubmit(add)}>
                 <div className="client-redirect__container__fields">
                   <div className="client-redirect__container__field">
@@ -103,7 +103,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-redirect__label"
                       htmlFor="redirectUri"
                     >
-                      {translation.fields['redirectUri'].label}
+                      {localization.fields['redirectUri'].label}
                     </label>
                     <input
                       id="redirectUri"
@@ -116,31 +116,31 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       defaultValue={defaultUrl ?? ''}
                       className="client-redirect__input"
                       placeholder={
-                        translation.fields['redirectUri'].placeholder
+                        localization.fields['redirectUri'].placeholder
                       }
-                      title={translation.fields['redirectUri'].helpText}
+                      title={localization.fields['redirectUri'].helpText}
                     />
                     <HelpBox helpText="Full path of the redirect URL. These protocols rely upon TLS in production" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="redirectUri"
-                      message={translation.fields['redirectUri'].errorMessage}
+                      message={localization.fields['redirectUri'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-redirect__button__add"
                       disabled={isSubmitting}
-                      value={translation.addButton}
+                      value={localization.addButton}
                     />
                   </div>
                 </div>
               </form>
 
               <NoActiveConnections
-                title={translation.noActiveConnections?.title}
+                title={localization.noActiveConnections?.title}
                 show={!props.uris || props.uris.length === 0}
-                helpText={translation.noActiveConnections?.helpText}
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -148,7 +148,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{translation.sectionTitle1}</h3>
+                <h3>{localization.sectionTitle1}</h3>
                 {props.uris?.map((uri: string) => {
                   return (
                     <div
@@ -161,10 +161,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(uri)}
                           className="client-redirect__container__list__button__remove"
-                          title={translation.removeButton}
+                          title={localization.removeButton}
                         >
                           <i className="icon__delete"></i>
-                          <span>{translation.removeButton}</span>
+                          <span>{localization.removeButton}</span>
                         </button>
                       </div>
                     </div>
@@ -180,7 +180,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     title="Back"
                     onClick={props.handleBack}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="client-redirect__button__container">
@@ -188,9 +188,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-redirect__button__save"
                     onClick={props.handleNext}
-                    title={translation.saveButton}
+                    title={localization.saveButton}
                   >
-                    {translation.saveButton}
+                    {localization.saveButton}
                   </button>
                 </div>
               </div>

@@ -8,8 +8,8 @@ import ConfirmModal from '../../common/ConfirmModal'
 import Link from 'next/link'
 import Paginator from '../../common/Paginator'
 import { downloadCSV } from '../../../utils/csv.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { ListPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -20,8 +20,8 @@ const ApiResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
-  const [translation] = useState<ListPage>(
-    TranslationUtils.getListPage('ApiResourcesList'),
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ApiResourcesList'),
   )
 
   const edit = (apiResource: ApiResourcesDTO) => {
@@ -96,7 +96,7 @@ const ApiResourcesList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}:<span>{resourceToRemove}</span>
+        {localization.removeConfirmation}:<span>{resourceToRemove}</span>
       </p>
     )
   }
@@ -118,20 +118,20 @@ const ApiResourcesList: React.FC = () => {
       <div className="api-resources-list">
         <div className="api-resources-list__wrapper">
           <div className="api-resources-list__container">
-            <h1>{translation.title}</h1>
+            <h1>{localization.title}</h1>
             <div className="api-resources-list__container__options">
               <div className="api-resources-list__container__options__button">
                 <Link href={'/resource/api-resource'}>
                   <a className="api-resources-list__button__new">
                     <i className="icon__new"></i>
-                    {translation.createNewItem}
+                    {localization.createNewItem}
                   </a>
                 </Link>
               </div>
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
                   <label htmlFor="search" className="api-resources-list__label">
-                    {translation.search.label}
+                    {localization.search.label}
                   </label>
                   <input
                     id="search"
@@ -143,7 +143,7 @@ const ApiResourcesList: React.FC = () => {
                     type="submit"
                     className="api-resources-list__button__search"
                   >
-                    {translation.searchButton}
+                    {localization.searchButton}
                   </button>
                 </div>
               </form>
@@ -152,9 +152,9 @@ const ApiResourcesList: React.FC = () => {
               <table className="api-resources-list__table">
                 <thead>
                   <tr>
-                    <th>{translation.columns['name'].headerText}</th>
-                    <th>{translation.columns['nationalId'].headerText}</th>
-                    <th>{translation.columns['contactEmail'].headerText}</th>
+                    <th>{localization.columns['name'].headerText}</th>
+                    <th>{localization.columns['nationalId'].headerText}</th>
+                    <th>{localization.columns['contactEmail'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -175,10 +175,10 @@ const ApiResourcesList: React.FC = () => {
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => edit(resource)}
-                            title={translation.editButton}
+                            title={localization.editButton}
                           >
                             <i className="icon__edit"></i>
-                            <span>{translation.editButton}</span>
+                            <span>{localization.editButton}</span>
                           </button>
                         </td>
                         <td className="api-resources-list__table__button">
@@ -188,10 +188,10 @@ const ApiResourcesList: React.FC = () => {
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => confirmRemove(resource.name)}
-                            title={translation.removeButton}
+                            title={localization.removeButton}
                           >
                             <i className="icon__delete"></i>
-                            <span>{translation.removeButton}</span>
+                            <span>{localization.removeButton}</span>
                           </button>
                         </td>
                       </tr>
@@ -205,7 +205,7 @@ const ApiResourcesList: React.FC = () => {
                 <div className="api-resources-list__container__export__container__button">
                   <button type="button" onClick={() => exportCsv()}>
                     <i className="icon__export__csv" aria-hidden="true"></i>
-                    <span>{translation.exportButton}</span>
+                    <span>{localization.exportButton}</span>
                   </button>
                 </div>
               </div>

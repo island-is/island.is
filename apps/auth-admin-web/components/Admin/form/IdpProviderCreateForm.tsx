@@ -6,8 +6,8 @@ import { IdpProviderDTO } from './../../../entities/dtos/idp-provider.dto'
 import { IdpProviderService } from './../../../services/IdpProviderService'
 import { IdpProvider } from './../../../entities/models/IdpProvider.model'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   idpProvider: IdpProviderDTO
   handleSaveButtonClicked?: (response: IdpProvider) => void
@@ -22,8 +22,8 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('IdpProviderCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('IdpProviderCreateForm'),
   )
   const idp = props.idpProvider
 
@@ -64,10 +64,10 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
     <div className="idp-provider-create-form">
       <div className="idp-provider-create-form__wrapper">
         <div className="idp-provider-create-form__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="idp-provider-create-form__container__form">
             <div className="idp-provider-create-form__help">
-              {translation.help}
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(create)}>
               <div className="idp-provider-create-form__container__fields">
@@ -76,7 +76,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     className="idp-provider-create-form__label"
                     htmlFor="name"
                   >
-                    {translation.fields['name'].label}
+                    {localization.fields['name'].label}
                   </label>
                   <input
                     id="name"
@@ -88,16 +88,16 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={idp.name}
                     className="idp-provider-create-form__input"
-                    placeholder={translation.fields['name'].placeholder}
-                    title={translation.fields['name'].helpText}
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
                     readOnly={isEditing}
                   />
-                  <HelpBox helpText={translation.fields['name'].helpText} />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.name"
-                    message={translation.fields['name'].errorMessage}
+                    message={localization.fields['name'].errorMessage}
                   />
                 </div>
 
@@ -106,7 +106,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     className="idp-provider-create-form__label"
                     htmlFor="description"
                   >
-                    {translation.fields['description'].label}
+                    {localization.fields['description'].label}
                   </label>
                   <input
                     id="description"
@@ -118,17 +118,17 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.description"
                     defaultValue={idp.description ?? ''}
                     className="idp-provider-create-form__input"
-                    title={translation.fields['description'].helpText}
-                    placeholder={translation.fields['description'].placeholder}
+                    title={localization.fields['description'].helpText}
+                    placeholder={localization.fields['description'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.description"
-                    message={translation.fields['description'].errorMessage}
+                    message={localization.fields['description'].errorMessage}
                   />
                   <HelpBox
-                    helpText={translation.fields['description'].helpText}
+                    helpText={localization.fields['description'].helpText}
                   />
                 </div>
 
@@ -137,7 +137,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     className="idp-provider-create-form__label"
                     htmlFor="helptext"
                   >
-                    {translation.fields['helptext'].label}
+                    {localization.fields['helptext'].label}
                   </label>
                   <input
                     id="helptext"
@@ -149,16 +149,18 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                       validate: ValidationUtils.validateDescription,
                     })}
                     defaultValue={idp.helptext}
-                    title={translation.fields['helptext'].helpText}
-                    placeholder={translation.fields['helptext'].placeholder}
+                    title={localization.fields['helptext'].helpText}
+                    placeholder={localization.fields['helptext'].placeholder}
                   />
 
-                  <HelpBox helpText={translation.fields['helptext'].helpText} />
+                  <HelpBox
+                    helpText={localization.fields['helptext'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.helptext"
-                    message={translation.fields['helptext'].errorMessage}
+                    message={localization.fields['helptext'].errorMessage}
                   />
                 </div>
 
@@ -167,7 +169,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     className="idp-provider-create-form__label"
                     htmlFor="level"
                   >
-                    {translation.fields['level'].label}
+                    {localization.fields['level'].label}
                   </label>
                   <input
                     id="level"
@@ -176,16 +178,16 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.level"
                     ref={register({ required: true, min: 1, max: 4 })}
                     defaultValue={idp.level}
-                    placeholder={translation.fields['level'].placeholder}
-                    title={translation.fields['level'].helpText}
+                    placeholder={localization.fields['level'].placeholder}
+                    title={localization.fields['level'].helpText}
                   />
 
-                  <HelpBox helpText={translation.fields['level'].helpText} />
+                  <HelpBox helpText={localization.fields['level'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.level"
-                    message={translation.fields['level'].errorMessage}
+                    message={localization.fields['level'].errorMessage}
                   />
                 </div>
               </div>
@@ -197,7 +199,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="idp-provider-create-form__button__container">
@@ -205,7 +207,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="idp-provider-create-form__button__save"
                     disabled={isSubmitting}
-                    value={translation.saveButton}
+                    value={localization.saveButton}
                   />
                 </div>
               </div>

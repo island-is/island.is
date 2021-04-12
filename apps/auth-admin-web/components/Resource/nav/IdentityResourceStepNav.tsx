@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { IdentityResourceStep } from '../../../entities/common/IdentityResourcesStep'
-import TranslationUtils from './../../../utils/translation.utils'
-import { Translation } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: IdentityResourceStep) => void
@@ -13,7 +13,9 @@ const IdentityResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
-  const [translation] = useState<Translation>(TranslationUtils.getTranslation())
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <div>
       <nav className="identity-resource-step-nav">
@@ -31,7 +33,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['identityResourceSteps'].items[
+                localization.navigations['identityResourceSteps'].items[
                   'identityResource'
                 ].text
               }
@@ -46,8 +48,9 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               }
             >
               {
-                translation.navigations['identityResourceSteps'].items['claims']
-                  .text
+                localization.navigations['identityResourceSteps'].items[
+                  'claims'
+                ].text
               }
             </button>
           </li>

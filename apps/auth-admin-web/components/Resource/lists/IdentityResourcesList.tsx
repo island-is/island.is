@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import ResourceListDisplay from './ListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
-import TranslationUtils from './../../../utils/translation.utils'
-import { ListPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const IdentityResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -15,8 +15,8 @@ const IdentityResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
-  const [translation] = useState<ListPage>(
-    TranslationUtils.getListPage('IdentityResourcesList'),
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('IdentityResourcesList'),
   )
   const edit = (resource: IdentityResourceDTO) => {
     router.push(
@@ -70,7 +70,7 @@ const IdentityResourcesList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}
+        {localization.removeConfirmation}
         <span>{resourceToRemove}</span>
       </p>
     )
@@ -80,8 +80,8 @@ const IdentityResourcesList: React.FC = () => {
     <div>
       <ResourceListDisplay
         list={resources}
-        header={translation.title}
-        linkHeader={translation.createNewItem}
+        header={localization.title}
+        linkHeader={localization.createNewItem}
         createUri={'/resource/identity-resource'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
@@ -93,7 +93,7 @@ const IdentityResourcesList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText={translation.removeButton}
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )

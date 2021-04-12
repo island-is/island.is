@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { IdpProvider } from './../../../entities/models/IdpProvider.model'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -18,8 +18,8 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,
   )
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientIdpRestrictionsForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientIdpRestrictionsForm'),
   )
 
   useEffect(() => {
@@ -79,16 +79,16 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
     <div className="client-idp-restriction">
       <div className="client-idp-restriction__wrapper">
         <div className="client-idp-restriction__container">
-          <h1>{translation.title}</h1>
+          <h1>{localization.title}</h1>
 
           <div className="client-idp-restriction__container__form">
             <div className="client-idp-restriction__help">
-              {translation.help}
+              {localization.help}
             </div>
             <div className="client-idp-restriction__container__fields">
               <div className="client-idp-restriction__container__radio__field">
                 <label htmlFor="all" className="client-idp-restriction__label">
-                  {translation.fields['all'].label}
+                  {localization.fields['all'].label}
                 </label>
                 <input
                   type="radio"
@@ -99,7 +99,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   onChange={(e) => {
                     setAllowAll(true)
                   }}
-                  title={translation.fields['all'].helpText}
+                  title={localization.fields['all'].helpText}
                 />
               </div>
               <div className="client-idp-restriction__container__radio__field">
@@ -107,7 +107,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   className="client-idp-restriction__label"
                   htmlFor="restricted"
                 >
-                  {translation.fields['restricted'].label}
+                  {localization.fields['restricted'].label}
                 </label>
                 <input
                   id="restricted"
@@ -118,7 +118,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   onChange={(e) => {
                     setAllowAll(false)
                   }}
-                  title={translation.fields['restricted'].helpText}
+                  title={localization.fields['restricted'].helpText}
                 />
               </div>
             </div>
@@ -159,7 +159,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   className="client-idp-restriction__button__cancel"
                   onClick={props.handleBack}
                 >
-                  {translation.cancelButton}
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="client-idp-restriction__button__container">
@@ -169,7 +169,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   value="Next"
                   onClick={props.handleNext}
                 >
-                  {translation.saveButton}
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

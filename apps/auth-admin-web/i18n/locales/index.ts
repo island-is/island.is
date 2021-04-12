@@ -1,6 +1,6 @@
 import * as englishTranslations from './en.json'
-import { Translation as ITranslation } from './../../entities/common/Translation'
+import { Localization as ITranslation } from '../../entities/common/Localization'
 
-export type Translation = ITranslation
+export type Localization = ITranslation
 export default { englishTranslations }
 export const LOCALE_KEY = 'locale'

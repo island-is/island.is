@@ -6,8 +6,8 @@ import { AdminAccessDTO } from './../../../entities/dtos/admin-acess.dto'
 import { AdminAccess } from './../../../entities/models/admin-access.model'
 import { AdminAccessService } from './../../../services/AdminAccessService'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   adminAccess: AdminAccessDTO
   handleSaveButtonClicked?: (admin: AdminAccess) => void
@@ -22,8 +22,8 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('AdminUserCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('AdminUserCreateForm'),
   )
   const admin = props.adminAccess
 
@@ -67,10 +67,10 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     <div className="admin-user-create-form">
       <div className="admin-user-create-form__wrapper">
         <div className="admin-user-create-form__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="admin-user-create-form__container__form">
             <div className="admin-user-create-form__help">
-              {translation.help}
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="admin-user-create-form__container__fields">
@@ -79,7 +79,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-form__label"
                     htmlFor="nationalId"
                   >
-                    {translation.fields['nationalId'].label}
+                    {localization.fields['nationalId'].label}
                   </label>
                   <input
                     id="nationalId"
@@ -93,13 +93,13 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={admin.nationalId}
                     className="admin-user-create-form__input"
-                    placeholder={translation.fields['nationalId'].placeholder}
+                    placeholder={localization.fields['nationalId'].placeholder}
                     maxLength={10}
-                    title={translation.fields['nationalId'].helpText}
+                    title={localization.fields['nationalId'].helpText}
                     readOnly={isEditing}
                   />
                   <HelpBox
-                    helpText={translation.fields['nationalId'].helpText}
+                    helpText={localization.fields['nationalId'].helpText}
                   />
                   <ErrorMessage
                     as="span"
@@ -114,7 +114,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-form__label"
                     htmlFor="email"
                   >
-                    {translation.fields['email'].label}
+                    {localization.fields['email'].label}
                   </label>
                   <input
                     id="email"
@@ -126,16 +126,16 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     name="admin.email"
                     defaultValue={admin.email ?? ''}
                     className="admin-user-create-form__input"
-                    title={translation.fields['email'].helpText}
-                    placeholder={translation.fields['email'].placeholder}
+                    title={localization.fields['email'].helpText}
+                    placeholder={localization.fields['email'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="admin.email"
-                    message={translation.fields['email'].errorMessage}
+                    message={localization.fields['email'].errorMessage}
                   />
-                  <HelpBox helpText={translation.fields['email'].helpText} />
+                  <HelpBox helpText={localization.fields['email'].helpText} />
                 </div>
 
                 <div className="admin-user-create-form__container__field">
@@ -143,25 +143,25 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-form__label"
                     htmlFor="scope"
                   >
-                    {translation.fields['scope'].label}
+                    {localization.fields['scope'].label}
                   </label>
                   <select
                     id="scope"
                     name="admin.scope"
                     ref={register({ required: true })}
-                    title={translation.fields['scope'].helpText}
+                    title={localization.fields['scope'].helpText}
                   >
                     <option value="auth-admin-api.full_control" selected>
                       Full control
                     </option>
                   </select>
 
-                  <HelpBox helpText={translation.fields['scope'].helpText} />
+                  <HelpBox helpText={localization.fields['scope'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="admin.scope"
-                    message={translation.fields['scope'].errorMessage}
+                    message={localization.fields['scope'].errorMessage}
                   />
                 </div>
 
@@ -170,7 +170,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-formlabel"
                     htmlFor="active"
                   >
-                    {translation.fields['active'].label}
+                    {localization.fields['active'].label}
                   </label>
                   <input
                     id="active"
@@ -179,9 +179,9 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-formcheckbox"
                     defaultChecked={true}
                     ref={register}
-                    title={translation.fields['active'].helpText}
+                    title={localization.fields['active'].helpText}
                   ></input>
-                  <HelpBox helpText={translation.fields['active'].helpText} />
+                  <HelpBox helpText={localization.fields['active'].helpText} />
                 </div>
               </div>
 
@@ -192,7 +192,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="admin-user-create-form__button__container">
@@ -200,7 +200,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="admin-user-create-form__button__save"
                     disabled={isSubmitting}
-                    value={translation.saveButton}
+                    value={localization.saveButton}
                   />
                 </div>
               </div>

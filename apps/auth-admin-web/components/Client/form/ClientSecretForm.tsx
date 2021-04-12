@@ -9,8 +9,8 @@ import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import InfoModal from '../../common/InfoModal'
 import ValidationUtils from './../../../utils/validation.utils'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -34,8 +34,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
   const [infoModalIsOpen, setInfoModalIsOpen] = useState(false)
   const [secretValue, setSecretValue] = useState<string>('')
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientSecretForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientSecretForm'),
   )
   const [secretToRemove, setSecretToRemove] = useState<ClientSecret>(
     new ClientSecret(),
@@ -127,7 +127,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}:<span>{secretToRemove.type}</span> -{' '}
+        {localization.removeConfirmation}:<span>{secretToRemove.type}</span> -{' '}
         <span>{secretToRemove.description}</span>
       </p>
     )
@@ -138,7 +138,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
       <div className="client-secret">
         <div className="client-secret__wrapper">
           <div className="client-secret__container">
-            <h1>{translation.title}</h1>
+            <h1>{localization.title}</h1>
             <div className="client-secret__container__form">
               <div className="client-secret__help">
                 <div
@@ -148,9 +148,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       : 'hidden'
                   }`}
                 >
-                  {translation.conditionalHelp}
+                  {localization.conditionalHelp}
                 </div>
-                {translation.help}
+                {localization.help}
               </div>
               <form id="secretForm" onSubmit={handleSubmit(add)}>
                 <div className="client-secret__container__fields">
@@ -159,7 +159,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       className="client-secret__label"
                       htmlFor="secretValue"
                     >
-                      {translation.fields['secretValue'].label}
+                      {localization.fields['secretValue'].label}
                     </label>
                     <input
                       id="secretValue"
@@ -169,27 +169,27 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       defaultValue={defaultSecret}
                       className="client-secret__input"
                       placeholder={
-                        translation.fields['secretValue'].placeholder
+                        localization.fields['secretValue'].placeholder
                       }
-                      title={translation.fields['secretValue'].helpText}
+                      title={localization.fields['secretValue'].helpText}
                     />
                     <HelpBox helpText="Your secret value should be a rather complicated string" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="value"
-                      message={translation.fields['secretValue'].errorMessage}
+                      message={localization.fields['secretValue'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-secret__button__add"
                       disabled={isSubmitting}
-                      value={translation.addButton}
+                      value={localization.addButton}
                     />
                   </div>
                   <div className="client-secret__container__field">
                     <label className="client-secret__label" htmlFor="type">
-                      {translation.fields['type'].label}
+                      {localization.fields['type'].label}
                     </label>
                     <input
                       type="text"
@@ -197,16 +197,16 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       ref={register({ required: true })}
                       defaultValue={'SharedSecret'}
                       className="client-secret__input"
-                      placeholder={translation.fields['type'].placeholder}
-                      title={translation.fields['type'].helpText}
+                      placeholder={localization.fields['type'].placeholder}
+                      title={localization.fields['type'].helpText}
                       readOnly
                     />
-                    <HelpBox helpText={translation.fields['type'].helpText} />
+                    <HelpBox helpText={localization.fields['type'].helpText} />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="type"
-                      message={translation.fields['type'].errorMessage}
+                      message={localization.fields['type'].errorMessage}
                     />
                   </div>
                   <div className="client-secret__container__field">
@@ -214,7 +214,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       className="client-secret__label"
                       htmlFor="description"
                     >
-                      {translation.fields['description'].label}
+                      {localization.fields['description'].label}
                     </label>
                     <input
                       id="description"
@@ -227,26 +227,26 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       defaultValue={''}
                       className="client-secret__input"
                       placeholder={
-                        translation.fields['description'].placeholder
+                        localization.fields['description'].placeholder
                       }
-                      title={translation.fields['description'].helpText}
+                      title={localization.fields['description'].helpText}
                     />
                     <HelpBox
-                      helpText={translation.fields['description'].helpText}
+                      helpText={localization.fields['description'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="description"
-                      message={translation.fields['description'].errorMessage}
+                      message={localization.fields['description'].errorMessage}
                     />
                   </div>
                 </div>
 
                 <NoActiveConnections
-                  title={translation.noActiveConnections?.title}
+                  title={localization.noActiveConnections?.title}
                   show={!props.secrets || props.secrets.length === 0}
-                  helpText={translation.noActiveConnections?.helpText}
+                  helpText={localization.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div
@@ -256,7 +256,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       : 'hidden'
                   }`}
                 >
-                  <h3>{translation.sectionTitle1}</h3>
+                  <h3>{localization.sectionTitle1}</h3>
                   {props.secrets?.map((secret: ClientSecret) => {
                     return (
                       <div
@@ -276,7 +276,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                             title="Remove"
                           >
                             <i className="icon__delete"></i>
-                            <span>{translation.removeButton}</span>
+                            <span>{localization.removeButton}</span>
                           </button>
                         </div>
                       </div>
@@ -291,7 +291,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       className="client-secret__button__cancel"
                       onClick={props.handleBack}
                     >
-                      {translation.cancelButton}
+                      {localization.cancelButton}
                     </button>
                   </div>
                   <div className="client-secret__button__container">
@@ -300,7 +300,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       className="client-secret__button__save"
                       onClick={props.handleNext}
                     >
-                      {translation.saveButton}
+                      {localization.saveButton}
                     </button>
                   </div>
                 </div>
@@ -318,11 +318,11 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
       ></ConfirmModal>
       <InfoModal
         modalIsOpen={infoModalIsOpen}
-        headerText={translation.infoModal?.headerText}
+        headerText={localization.infoModal?.headerText}
         closeModal={closeInfoModal}
         handleButtonClicked={closeInfoModal}
         infoText={secretValue}
-        buttonText={translation.infoModal?.buttonText}
+        buttonText={localization.infoModal?.buttonText}
       ></InfoModal>
     </div>
   )

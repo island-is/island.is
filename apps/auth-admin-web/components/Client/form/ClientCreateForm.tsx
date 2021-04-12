@@ -9,8 +9,8 @@ import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
-import TranslationUtils from './../../../utils/translation.utils'
-import { FormPage } from './../../../entities/common/Translation'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -36,8 +36,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
-  const [translation] = useState<FormPage>(
-    TranslationUtils.getFormPage('ClientCreateForm'),
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientCreateForm'),
   )
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
@@ -142,21 +142,21 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       <div className="detail-container">
         <div className="detail-title">
           {
-            translation.fields['clientType'].selectItems[clientType]
+            localization.fields['clientType'].selectItems[clientType]
               .selectItemText
           }
         </div>
         <div
           className={`detail-flow${
-            translation.fields['clientType'].selectItems[clientType].flow
+            localization.fields['clientType'].selectItems[clientType].flow
               ? ' show'
               : ' hidden'
           }`}
         >
-          {translation.fields['clientType'].selectItems[clientType].flow}
+          {localization.fields['clientType'].selectItems[clientType].flow}
         </div>
         <div className="detail-description">
-          {translation.fields['clientType'].selectItems[clientType].helpText}
+          {localization.fields['clientType'].selectItems[clientType].helpText}
         </div>
       </div>
     )
@@ -203,9 +203,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     <div className="client">
       <div className="client__wrapper">
         <div className="client__container">
-          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="client__container__form">
-            <div className="client__help">{translation.help}</div>
+            <div className="client__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
                 <div className={clientTypeSelected ? '' : 'field-with-details'}>
@@ -214,20 +214,20 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       className="client__label"
                       htmlFor="client.clientType"
                     >
-                      {translation.fields['clientType'].label}
+                      {localization.fields['clientType'].label}
                     </label>
                     <select
                       id="client.clientType"
                       name="client.clientType"
                       ref={register({ required: true })}
-                      title={translation.fields['clientType'].helpText}
+                      title={localization.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
                       onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
                         {
-                          translation.fields['clientType'].selectItems['']
+                          localization.fields['clientType'].selectItems['']
                             .selectItemText
                         }
                       </option>
@@ -236,7 +236,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'spa'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['spa']
+                          localization.fields['clientType'].selectItems['spa']
                             .selectItemText
                         }
                       </option>
@@ -245,8 +245,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'native'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['native']
-                            .selectItemText
+                          localization.fields['clientType'].selectItems[
+                            'native'
+                          ].selectItemText
                         }
                       </option>
                       <option
@@ -254,7 +255,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'web'}
                       >
                         {
-                          translation.fields['clientType'].selectItems['web']
+                          localization.fields['clientType'].selectItems['web']
                             .selectItemText
                         }
                       </option>
@@ -263,7 +264,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'machine'}
                       >
                         {
-                          translation.fields['clientType'].selectItems[
+                          localization.fields['clientType'].selectItems[
                             'machine'
                           ].selectItemText
                         }
@@ -274,20 +275,21 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         disabled
                       >
                         {
-                          translation.fields['clientType'].selectItems['device']
-                            .selectItemText
+                          localization.fields['clientType'].selectItems[
+                            'device'
+                          ].selectItemText
                         }
                       </option>
                     </select>
 
                     <HelpBox
-                      helpText={translation.fields['clientType'].helpText}
+                      helpText={localization.fields['clientType'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientType"
-                      message={translation.fields['clientType'].errorMessage}
+                      message={localization.fields['clientType'].errorMessage}
                     />
                     <div
                       className={`client__container__field__details${
@@ -302,7 +304,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="nationalId">
-                      {translation.fields['nationalId'].label}
+                      {localization.fields['nationalId'].label}
                     </label>
                     <input
                       id="nationalId"
@@ -316,23 +318,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.nationalId}
                       className="client__input"
-                      placeholder={translation.fields['nationalId'].placeholder}
+                      placeholder={
+                        localization.fields['nationalId'].placeholder
+                      }
                       maxLength={10}
-                      title={translation.fields['nationalId'].helpText}
+                      title={localization.fields['nationalId'].helpText}
                     />
                     <HelpBox
-                      helpText={translation.fields['nationalId'].helpText}
+                      helpText={localization.fields['nationalId'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.nationalId"
-                      message={translation.fields['nationalId'].errorMessage}
+                      message={localization.fields['nationalId'].errorMessage}
                     />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="contactEmail">
-                      {translation.fields['contactEmail'].label}
+                      {localization.fields['contactEmail'].label}
                     </label>
                     <input
                       id="contactEmail"
@@ -344,24 +348,24 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client__input"
-                      title={translation.fields['contactEmail'].helpText}
+                      title={localization.fields['contactEmail'].helpText}
                       placeholder={
-                        translation.fields['contactEmail'].placeholder
+                        localization.fields['contactEmail'].placeholder
                       }
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.contactEmail"
-                      message={translation.fields['contactEmail'].errorMessage}
+                      message={localization.fields['contactEmail'].errorMessage}
                     />
                     <HelpBox
-                      helpText={translation.fields['contactEmail'].helpText}
+                      helpText={localization.fields['contactEmail'].helpText}
                     />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="clientId">
-                      {translation.fields['clientId'].label}
+                      {localization.fields['clientId'].label}
                     </label>
                     <input
                       type="text"
@@ -372,9 +376,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
-                      placeholder={translation.fields['clientId'].placeholder}
+                      placeholder={localization.fields['clientId'].placeholder}
                       onChange={(e) => checkAvailability(e.target.value)}
-                      title={translation.fields['clientId'].helpText}
+                      title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
                     />
                     <div
@@ -383,23 +387,23 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
                     >
                       {available
-                        ? translation.fields['clientId'].available
-                        : translation.fields['clientId'].unAvailable}
+                        ? localization.fields['clientId'].available
+                        : localization.fields['clientId'].unAvailable}
                     </div>
                     <HelpBox
-                      helpText={translation.fields['clientId'].helpText}
+                      helpText={localization.fields['clientId'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message={translation.fields['clientId'].errorMessage}
+                      message={localization.fields['clientId'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="description">
-                      {translation.fields['description'].label}
+                      {localization.fields['description'].label}
                     </label>
                     <input
                       type="text"
@@ -409,26 +413,26 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
-                      title={translation.fields['description'].helpText}
+                      title={localization.fields['description'].helpText}
                       placeholder={
-                        translation.fields['description'].placeholder
+                        localization.fields['description'].placeholder
                       }
                     />
                     <HelpBox
-                      helpText={translation.fields['description'].helpText}
+                      helpText={localization.fields['description'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.description"
-                      message={translation.fields['description'].errorMessage}
+                      message={localization.fields['description'].errorMessage}
                     />
                   </div>
 
                   <div>
                     <div className="client__container__field">
                       <label className="client__label" htmlFor="baseUrl">
-                        {translation.fields['baseUrl'].label}
+                        {localization.fields['baseUrl'].label}
                       </label>
                       <input
                         id="baseUrl"
@@ -441,33 +445,33 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
-                        placeholder={translation.fields['baseUrl'].placeholder}
-                        title={translation.fields['baseUrl'].helpText}
+                        placeholder={localization.fields['baseUrl'].placeholder}
+                        title={localization.fields['baseUrl'].helpText}
                         onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
                         onBlur={() => setShowBaseUrlInfo(false)}
                       />
                       <HelpBox
-                        helpText={translation.fields['baseUrl'].helpText}
+                        helpText={localization.fields['baseUrl'].helpText}
                       />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message={translation.fields['baseUrl'].helpText}
+                        message={localization.fields['baseUrl'].helpText}
                       />
                       <div
                         className={`client__container__field__details
                           ${showBaseUrlInfo ? ' show' : ' hidden'}`}
                       >
                         <div className="detail-title">
-                          {translation.fields['baseUrl'].popUpTitle}
+                          {localization.fields['baseUrl'].popUpTitle}
                         </div>
                         <div className="detail-uri">
                           {callbackUri}/signin-oidc
                         </div>
                         <div className="detail-link">
-                          {translation.fields['baseUrl'].popUpDescription}
+                          {localization.fields['baseUrl'].popUpDescription}
                         </div>
                       </div>
                     </div>
@@ -475,7 +479,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="clientName">
-                      {translation.fields['clientName'].label}
+                      {localization.fields['clientName'].label}
                     </label>
                     <input
                       id="clientName"
@@ -486,17 +490,19 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientName ?? ''}
                       className="client__input"
-                      title={translation.fields['clientName'].helpText}
-                      placeholder={translation.fields['clientName'].placeholder}
+                      title={localization.fields['clientName'].helpText}
+                      placeholder={
+                        localization.fields['clientName'].placeholder
+                      }
                     />
                     <HelpBox
-                      helpText={translation.fields['clientName'].helpText}
+                      helpText={localization.fields['clientName'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientName"
-                      message={translation.fields['clientName'].errorMessage}
+                      message={localization.fields['clientName'].errorMessage}
                     />
                     <TranslationCreateFormDropdown
                       className="client"
@@ -508,7 +514,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
                   <div className="client__container__field">
                     <label className="client__label" htmlFor="clientUri">
-                      {translation.fields['clientUri'].label}
+                      {localization.fields['clientUri'].label}
                     </label>
                     <input
                       id="clientUri"
@@ -517,23 +523,23 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
-                      placeholder={translation.fields['clientUri'].placeholder}
-                      title={translation.fields['clientUri'].helpText}
+                      placeholder={localization.fields['clientUri'].placeholder}
+                      title={localization.fields['clientUri'].helpText}
                     />
                     <HelpBox
-                      helpText={translation.fields['clientUri'].helpText}
+                      helpText={localization.fields['clientUri'].helpText}
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientUri"
-                      message={translation.fields['clientUri'].errorMessage}
+                      message={localization.fields['clientUri'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label" htmlFor="enabled">
-                      {translation.fields['enabled'].label}
+                      {localization.fields['enabled'].label}
                     </label>
                     <input
                       id="enabled"
@@ -542,16 +548,16 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       className="client__checkbox"
                       defaultChecked={client.enabled}
                       ref={register}
-                      title={translation.fields['enabled'].helpText}
+                      title={localization.fields['enabled'].helpText}
                     ></input>
                     <HelpBox
-                      helpText={translation.fields['enabled'].helpText}
+                      helpText={localization.fields['enabled'].helpText}
                     />
                   </div>
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label" htmlFor="requireConsent">
-                      {translation.fields['requireConsent'].label}
+                      {localization.fields['requireConsent'].label}
                     </label>
                     <input
                       id="requireConsent"
@@ -560,11 +566,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       name="client.requireConsent"
                       ref={register}
-                      title={translation.fields['requireConsent'].helpText}
+                      title={localization.fields['requireConsent'].helpText}
                       onChange={(e) => setRequireConsent(e.target.checked)}
                     />
                     <HelpBox
-                      helpText={translation.fields['requireConsent'].helpText}
+                      helpText={localization.fields['requireConsent'].helpText}
                     />
                   </div>
 
@@ -1178,7 +1184,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    {translation.cancelButton}
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="client__button__container">
@@ -1186,7 +1192,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="submit"
                     className="client__button__save"
                     disabled={isSubmitting || !available}
-                    value={translation.saveButton}
+                    value={localization.saveButton}
                   />
                 </div>
               </div>
