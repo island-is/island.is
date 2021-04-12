@@ -154,6 +154,7 @@
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
+      "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"

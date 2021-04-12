@@ -1,4 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
+import { JwtFromBodyStrategy } from './jwt-from-body.stragety'
 import { JwtStrategy } from './jwt.strategy'
 
 export interface AuthConfig {
@@ -17,8 +18,12 @@ export class AuthModule {
           provide: JwtStrategy,
           useValue: new JwtStrategy(options),
         },
+        {
+          provide: JwtFromBodyStrategy,
+          useValue: new JwtFromBodyStrategy(options),
+        },
       ],
-      exports: [JwtStrategy],
+      exports: [JwtStrategy, JwtFromBodyStrategy],
     }
   }
 }

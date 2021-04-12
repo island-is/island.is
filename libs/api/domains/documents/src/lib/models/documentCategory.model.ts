@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { CategoryDTO } from '../client/models'
+import { CategoryDTO } from '@island.is/clients/documents'
 
 @ObjectType()
 export class DocumentCategory {
