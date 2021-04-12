@@ -245,6 +245,37 @@
   ],
   "formPages": [
     {
+      "id": "AdminUserCreateForm",
+      "title": "Create a new Admin User",
+      "editTitle": "Edit Admin User",
+      "help": "Add user for the Admin UI by filling out the form.",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "nationalId": {
+          "label": "National Id (Kennitala)",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) of the Admin User",
+          "errorMessage": "NationalId must be 10 numeric characters"
+        },
+        "email": {
+          "label": "User email",
+          "placeholder": "john@example.com",
+          "helpText": "The email of the admin user",
+          "errorMessage": "Email is required and needs to be in a right format"
+        },
+        "scope": {
+          "label": "Scope",
+          "helpText": "Select the appropriate Scope for this Admin User",
+          "errorMessage": "Select the appropriate Scope for this Admin User"
+        },
+        "active": {
+          "label": "Active",
+          "helpText": "Sets if user is active or not"
+        }
+      }
+    },
+    {
       "id": "IdentityResourceCreateForm",
       "title": "Create Identity Resource",
       "editTitle": "Edit Identity Resource",
