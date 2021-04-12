@@ -1,5 +1,10 @@
 import React from 'react'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
+import {
+  useForm,
+  FormProvider,
+  Controller,
+  useFormContext,
+} from 'react-hook-form'
 import {
   Box,
   Stack,
@@ -50,6 +55,8 @@ const EditForm: React.FC<PropTypes> = () => {
     reValidateMode: 'onBlur',
     shouldUnregister: false,
   })
+
+  const { setValue } = hookFormData
 
   return (
     <FormProvider {...hookFormData}>
@@ -148,7 +155,18 @@ const EditForm: React.FC<PropTypes> = () => {
           defaultValue={true}
           render={({ onChange, value }) => {
             return (
-              <Checkbox label="Birta í lista" large backgroundColor="white" />
+              <Checkbox
+                name="visible"
+                label="Birta i lista"
+                onChange={(e) => {
+                  const isChecked = Boolean(e.target.checked)
+                  setValue('visible', isChecked)
+                  onChange(isChecked)
+                }}
+                checked={value}
+                backgroundColor="white"
+                large
+              />
             )
           }}
         />
