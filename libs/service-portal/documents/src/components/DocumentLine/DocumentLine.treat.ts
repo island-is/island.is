@@ -33,6 +33,9 @@ export const button = style({
   ':hover': {
     textDecoration: 'underline',
   },
+  ':focus': {
+    outline: 'none',
+  },
 })
 
 export const sender = style({

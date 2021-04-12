@@ -19,8 +19,8 @@ export interface DocumentClientConfig {
 
 @Injectable()
 export class DocumentClient {
-  private accessToken: string
-  private accessTokenExpiryDate: Date
+  private accessToken!: string
+  private accessTokenExpiryDate!: Date
 
   constructor(
     private httpService: HttpService,
