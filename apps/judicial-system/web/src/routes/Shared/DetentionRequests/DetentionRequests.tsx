@@ -9,6 +9,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  Feature,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
@@ -21,6 +22,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './DetentionRequests.treat'
 import ActiveDetentionRequests from './ActiveDetentionRequests'
 import PastDetentionRequests from './PastDetentionRequests'
@@ -30,6 +32,7 @@ import router from 'next/router'
 export const DetentionRequests: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
+  const { features } = useContext(FeatureContext)
 
   const { user } = useContext(UserContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -163,7 +166,11 @@ export const DetentionRequests: React.FC = () => {
       caseToOpen.state === CaseState.RECEIVED &&
       caseToOpen.isCourtDateInThePast
     ) {
-      router.push(`${Constants.STEP_FIVE_ROUTE}/${caseToOpen.id}`)
+      if (features.includes(Feature.CASE_FILES)) {
+        router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
+      } else {
+        router.push(`${Constants.STEP_FIVE_ROUTE}/${caseToOpen.id}`)
+      }
     } else {
       router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
     }

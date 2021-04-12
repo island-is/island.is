@@ -142,5 +142,6 @@ module.exports = {
     '<rootDir>/apps/download-service',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
+    '<rootDir>/apps/endorsement-system',
   ],
 }
