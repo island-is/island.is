@@ -20,7 +20,13 @@ interface Props {
 }
 
 export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
-  const { files, onChange, onRemove } = useS3Upload(workingCase)
+  const {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+  } = useS3Upload(workingCase)
   return (
     <>
       <FormContentContainer>
@@ -66,7 +72,8 @@ export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
               buttonLabel="Velja skjöl til að hlaða upp"
               onChange={onChange}
               onRemove={onRemove}
-              errorMessage=""
+              onRetry={onRetry}
+              errorMessage={uploadErrorMessage}
               showFileSize
             />
           </ContentBlock>
