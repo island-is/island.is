@@ -5,7 +5,7 @@ This application helps institutions to request Stafrænt Ísland to collaborate 
 ## Application flow:
 
 - Application has 2 states, DRAFT & APPROVED
-- When applicant submits his application the state automacally changes to APPROVED.
+- When applicant submits his application the state automatically changes to APPROVED.
   - Stafrænt Ísland's contact personnel recevies the application in email, and manually reviews it.
   - The applicant receives a copy of the application in email but is also able to revisit the application and view the summary page at any time.
 
