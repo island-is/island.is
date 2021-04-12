@@ -124,6 +124,33 @@
   },
   "listPages": [
     {
+      "id": "ClientsList",
+      "removeConfirmation": "Are you sure want to archive this client",
+      "removeButton": "Archive",
+      "editButton": "Edit",
+      "title": "Clients",
+      "createNewItem": "Create new client",
+      "search": {
+        "label": "National Id or Client Id"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "clientId": {
+          "headerText": "Name"
+        },
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "contactEmail": {
+          "headerText": "Contact Email"
+        },
+        "clientType": {
+          "headerText": "Type"
+        }
+      }
+    },
+    {
       "id": "ApiResourcesList",
       "removeConfirmation": "Are you sure want to archive this Api resource",
       "removeButton": "Delete",
