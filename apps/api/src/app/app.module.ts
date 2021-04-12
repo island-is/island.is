@@ -80,10 +80,15 @@ const autoSchemaFile = environment.production
     DirectorateOfLabourModule.register(),
     FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
+      documentClientConfig: {
+        basePath: environment.documentService.basePath,
+        clientId: environment.documentService.clientId,
+        clientSecret: environment.documentService.clientSecret,
+        tokenUrl: environment.documentService.tokenUrl,
+      },
+      downloadServiceConfig: {
+        downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      },
     }),
     DocumentProviderModule.register({
       test: {
