@@ -245,7 +245,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )

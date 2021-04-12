@@ -219,7 +219,7 @@ const ApiResourcesList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Archive"
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )

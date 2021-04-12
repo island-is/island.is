@@ -203,7 +203,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )
