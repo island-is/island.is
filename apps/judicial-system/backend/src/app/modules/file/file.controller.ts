@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -129,6 +130,12 @@ export class FileController {
     @CurrentHttpUser() user: User,
   ): Promise<SignedUrl> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+
+    if (user.role === UserRole.JUDGE && user.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
+      )
+    }
 
     const file = await this.fileService.findById(id)
 
