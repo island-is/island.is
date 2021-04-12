@@ -11,7 +11,6 @@ const EndorsementApproved: FC<FieldBaseProps> = () => {
   return (
     <Box>
       <Box marginBottom={12}>
-        Hello
         <Approved
           title={formatMessage(m.endorsementApproved.cardTitle)}
           subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
