@@ -164,6 +164,9 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
