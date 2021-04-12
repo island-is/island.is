@@ -326,7 +326,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Frontpage)
-  getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
+  getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webFrontpage', slug: input.pageIdentifier },
