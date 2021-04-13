@@ -91,7 +91,7 @@ const Auction: Screen<AuctionProps> = ({
           {auction.title}
         </Text>
         <Text variant="h3" as="h3" marginBottom={2}>
-          {format(date, 'e. MMMM yyyy')}
+          {format(date, 'd. MMMM yyyy')}
         </Text>
         <Box marginBottom={4}>
           <Tag disabled>{auction.organization.title}</Tag>
