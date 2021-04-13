@@ -119,7 +119,6 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
   const router = useRouter()
-  const [advancedActive, setAdvancedActive] = useState(false)
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -198,24 +197,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
               onChange={(value) => doSearch('q', value)}
             />
           </GridColumn>
-          <GridColumn
-            span={['1/1', '1/1', '3/12']}
-            paddingTop={[1, 1, 0]}
-            paddingBottom={[3, 3, 0]}
-          >
-            <Button
-              variant="text"
-              size="small"
-              icon="chevronDown"
-              onClick={() => {
-                setAdvancedActive(!advancedActive)
-              }}
-            >
-              Ýtarlegri leit{' '}
-            </Button>
-          </GridColumn>
         </GridRow>
-        {advancedActive && (
           <GridRow>
             <GridColumn
               span={['1/1', '1/1', '4/12', '3/12', '2/12']}
@@ -269,7 +251,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
               />
             </GridColumn>
           </GridRow>
-        )}
+
       </GridContainer>
 
       {/* <Checkbox
