@@ -30,7 +30,7 @@ import {
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { NO, YES } from '../constants'
+import { NO, StartDateOptions, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -627,7 +627,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
-                formValue.firstPeriodStart === 'specificDate',
+                formValue.firstPeriodStart === StartDateOptions.SPECIFIC_DATE,
               title: parentalLeaveFormMessages.startDate.title,
               description: parentalLeaveFormMessages.startDate.description,
               children: [

@@ -600,20 +600,18 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 18 months after the date of birth.`,
+    },
+    estimatedDateOfBirthOption: {
+      id: 'pl.application:periods.first.period.estimatedDateOfBirth',
+      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
+      description: 'I will start from the estimated date of birth',
     },
     dateOfBirthOption: {
-      id: 'pl.application:periods.first.period.dateOfBirth',
-      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
-      description: 'I will start from the date of birth',
-    },
-    dateOfBirthOptionTooltip: {
-      id: 'pl.application:periods.first.period.dateOfBirth.tooltip',
-      defaultMessage:
-        'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess aðlagast raunverulegum fæðingardegi barnsins.',
-      description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will adjust to the real date of birth',
+      id: 'pl.application:periods.first.period.actualDateOfBirth',
+      defaultMessage: 'Ég vil byrja frá raunverulegum fæðingardegi',
+      description: 'I will start from the actual date of birth',
     },
     specificDateOption: {
       id: 'pl.application:periods.first.period.specificDate',
@@ -625,7 +623,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess EKKI aðlagast út frá raunverulegum fæðingardegi barnsins ef þessi valmöguleiki er valinn.',
       description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
+        'If the child is born on another date than the expected date of birth, the parental leave and its duration will NOT adjust to the real date of birth',
     },
   }),
 

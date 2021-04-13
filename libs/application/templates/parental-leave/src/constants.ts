@@ -6,3 +6,9 @@ export enum API_MODULE_ACTIONS {
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
 }
+
+export enum StartDateOptions {
+  ESTIMATED_DATE_OF_BIRTH = 'estimatedDateOfBirth',
+  DATE_OF_BIRTH = 'dateOfBirth', // The actual date of birth
+  SPECIFIC_DATE = 'specificDate',
+}
