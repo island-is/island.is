@@ -10,7 +10,7 @@ import React, { useState, useEffect } from 'react'
 import { ClientStep } from './../../entities/common/ClientStep'
 import { Client } from './../../entities/models/client.model'
 import ClientAllowedCorsOriginsForm from '../../components/Client/form/ClientAllowedCorsOriginsForm'
-import ClientAllowedScopes from '../../components/Client/form/ClientAllowedScopesForm'
+import ClientAllowedScopesForm from '../../components/Client/form/ClientAllowedScopesForm'
 import ClientSecretForm from '../../components/Client/form/ClientSecretForm'
 import ClientClaimForm from '../../components/Client/form/ClientClaimForm'
 import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesForm'
@@ -173,7 +173,7 @@ const Index: React.FC = () => {
       return (
         <ContentWrapper>
           <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-            <ClientAllowedScopes
+            <ClientAllowedScopesForm
               clientId={client.clientId}
               scopes={client.allowedScopes?.map((s) => s.scopeName)}
               handleChanges={changesMade}

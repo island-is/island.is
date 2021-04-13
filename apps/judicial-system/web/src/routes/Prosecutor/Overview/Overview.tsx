@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Accordion,
+  AccordionItem,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
@@ -25,6 +31,7 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
+  CaseFile,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -34,6 +41,7 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  GetSignedUrlQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
@@ -50,6 +58,7 @@ import * as styles from './Overview.treat'
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [openFileId, setOpenFileId] = useState<string>()
   const { features } = useContext(FeatureContext)
 
   const router = useRouter()
@@ -59,6 +68,15 @@ export const Overview: React.FC = () => {
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
+    variables: {
+      input: {
+        id: openFileId,
+        caseId: workingCase?.id,
+      },
+    },
+    skip: !workingCase?.id || !openFileId,
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
@@ -132,6 +150,12 @@ export const Overview: React.FC = () => {
     return sendNotification(workingCase.id)
   }
 
+  const handleOpenFile = (file: UploadFile) => {
+    if (workingCase) {
+      setOpenFileId(file.id)
+    }
+  }
+
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -141,6 +165,13 @@ export const Overview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  useEffect(() => {
+    if (fileSignedUrl) {
+      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
+      setOpenFileId(undefined)
+    }
+  }, [fileSignedUrl])
 
   return (
     <PageLayout
@@ -326,8 +357,28 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
+                {workingCase.files && (
+                  <AccordionItem
+                    id="id_5"
+                    label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
+                    labelVariant="h3"
+                  >
+                    {workingCase.files?.map((file, index) => {
+                      return (
+                        <Box marginBottom={3}>
+                          <CaseFile
+                            name={`${index + 1}. ${file.name}`}
+                            size={file.size}
+                            uploadedAt={file.created}
+                            onOpen={() => handleOpenFile(file)}
+                          />
+                        </Box>
+                      )
+                    })}
+                  </AccordionItem>
+                )}
                 <AccordionItem
-                  id="id_5"
+                  id="id_6"
                   label="Athugasemdir vegna málsmeðferðar"
                   labelVariant="h3"
                 >

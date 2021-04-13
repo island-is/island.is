@@ -164,6 +164,9 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -207,6 +210,9 @@
     "clients-document-provider": {
       "tags": []
     },
+    "clients-documents": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -243,7 +249,13 @@
     "dokobit-signing": {
       "tags": []
     },
+    "download-service": {
+      "tags": []
+    },
     "email-service": {
+      "tags": []
+    },
+    "endorsement-system": {
       "tags": []
     },
     "feature-flags": {
@@ -482,6 +494,9 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "system-e2e": {
       "tags": []
     },
     "utils-api": {
