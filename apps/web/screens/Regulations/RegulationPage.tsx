@@ -23,6 +23,12 @@ import { GET_REGULATION_QUERY } from '../queries'
 
 const { publicRuntimeConfig } = getConfig()
 
+const getKey = (regulation: Regulation): string => {
+  const { name, timelineDate, showingDiff } = regulation
+  const { from, to } = showingDiff || {}
+  return [name, timelineDate, from, to].join()
+}
+
 // ---------------------------------------------------------------------------
 
 type RegulationPageProps = {
@@ -43,6 +49,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
     <RegulationDisplay
+      key={getKey(regulation)}
       texts={texts}
       regulation={regulation}
       urlDate={urlDate}
