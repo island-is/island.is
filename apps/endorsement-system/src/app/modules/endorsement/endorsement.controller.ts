@@ -17,14 +17,14 @@ import * as faker from 'faker'
 @ApiTags('endorsement')
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
-  constructor (
+  constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly endorsementService: EndorsementService,
   ) {}
 
   @Get()
-  async findOne (
+  async findOne(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<Endorsement> {
     // TODO: Add auth here
@@ -43,7 +43,7 @@ export class EndorsementController {
   }
 
   @Post()
-  async create (
+  async create(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<Endorsement> {
     // TODO: Add auth here
@@ -63,7 +63,7 @@ export class EndorsementController {
   }
 
   @Delete()
-  async delete (
+  async delete(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<boolean> {
     // TODO: Add auth here

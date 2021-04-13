@@ -11,7 +11,7 @@ interface EndorsementListInput {
 }
 @Injectable()
 export class EndorsementService {
-  constructor (
+  constructor(
     @InjectModel(EndorsementList)
     private readonly endorsementListModel: typeof EndorsementList,
     @InjectModel(Endorsement)
@@ -21,7 +21,7 @@ export class EndorsementService {
     private readonly metadataService: MetadataService,
   ) {}
 
-  async findSingleEndorsementByNationalId ({
+  async findSingleEndorsementByNationalId({
     nationalId,
     listId,
   }: EndorsementListInput) {
@@ -34,7 +34,7 @@ export class EndorsementService {
     })
   }
 
-  async createEndorsementOnList ({ listId, nationalId }: EndorsementListInput) {
+  async createEndorsementOnList({ listId, nationalId }: EndorsementListInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple endorsements to same list
@@ -64,7 +64,7 @@ export class EndorsementService {
     })
   }
 
-  async deleteFromListByNationalId ({
+  async deleteFromListByNationalId({
     nationalId,
     listId,
   }: EndorsementListInput) {

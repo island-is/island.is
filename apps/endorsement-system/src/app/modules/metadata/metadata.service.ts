@@ -41,7 +41,7 @@ export enum EndorsementMetaField {
 @Injectable()
 export class MetadataService {
   fieldToProviderMap: MetadataProviderField
-  constructor (
+  constructor(
     private readonly nationalRegistryService: NationalRegistryService,
   ) {
     /**
@@ -60,7 +60,7 @@ export class MetadataService {
     }
   }
 
-  findProvidersByRequestedMetadataFields (fields: EndorsementMetaField[]) {
+  findProvidersByRequestedMetadataFields(fields: EndorsementMetaField[]) {
     return fields.reduce((providers, field) => {
       // this is where we assign metadata key that is returned in final results object
       const metadataKey = this.fieldToProviderMap[field].provider.metadataKey
@@ -71,7 +71,7 @@ export class MetadataService {
     }, {} as MetadataProviderService)
   }
 
-  async executeProviders (
+  async executeProviders(
     providers: MetadataProviderService,
     input: MetadataInput,
   ) {
@@ -92,7 +92,7 @@ export class MetadataService {
     ) as MetadataProviderResponse
   }
 
-  mapProviderDataToFields (
+  mapProviderDataToFields(
     fields: EndorsementMetaField[],
     providerData: MetadataProviderResponse,
   ): EndorsementMetaData {
@@ -107,7 +107,7 @@ export class MetadataService {
     )
   }
 
-  pruneMetadataFields (
+  pruneMetadataFields(
     allMetadataFields: EndorsementMetaData,
     fieldsToKeep: EndorsementMetaField[],
   ): EndorsementMetaData {
@@ -124,7 +124,7 @@ export class MetadataService {
     )
   }
 
-  async getMetadata (input: MetadataInput): Promise<EndorsementMetaData> {
+  async getMetadata(input: MetadataInput): Promise<EndorsementMetaData> {
     const requiredProviders = this.findProvidersByRequestedMetadataFields(
       input.fields,
     )

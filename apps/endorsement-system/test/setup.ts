@@ -9,7 +9,7 @@ let sequelize: Sequelize
 
 // needed for generic error validation
 expect.extend({
-  anyOf (value: any, classTypes: any[]) {
+  anyOf(value: any, classTypes: any[]) {
     const types = classTypes.map((type) => type.name).join(', ')
     const message = `expected to be any of type: ${types}`
     for (let i = 0; i < classTypes.length; i++) {

@@ -21,14 +21,14 @@ import { Endorsement } from '../endorsement/endorsement.model'
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 export class EndorsementListController {
-  constructor (
+  constructor(
     private readonly endorsementListService: EndorsementListService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
   @Get()
-  async findLists (
+  async findLists(
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add dto for tags here?
@@ -37,7 +37,7 @@ export class EndorsementListController {
   }
 
   @Get('/endorsements')
-  async findEndorsements (): Promise<Endorsement[]> {
+  async findEndorsements(): Promise<Endorsement[]> {
     // TODO: Add auth here
     // TODO: Add pagination
     const response = await this.endorsementListService.findAllEndorsementsByNationalId(
@@ -48,7 +48,7 @@ export class EndorsementListController {
   }
 
   @Get(':listId')
-  async findOne (
+  async findOne(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     const response = await this.endorsementListService.findSingleList(listId)
@@ -60,7 +60,7 @@ export class EndorsementListController {
   }
 
   @Put(':listId/close')
-  async close (
+  async close(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     // TODO: Add auth here
@@ -74,7 +74,7 @@ export class EndorsementListController {
   }
 
   @Post()
-  async create (
+  async create(
     @Body() endorsementList: EndorsementListDto,
   ): Promise<EndorsementList> {
     // TODO: Add auth here

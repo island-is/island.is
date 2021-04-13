@@ -16,10 +16,10 @@ export interface NationalRegistryResponse {
 
 @Injectable()
 export class NationalRegistryService implements MetadataProvider {
-  constructor (private readonly nationalRegistryApi: NationalRegistryApi) {}
+  constructor(private readonly nationalRegistryApi: NationalRegistryApi) {}
   metadataKey = 'nationalRegistry'
 
-  async getData (input: NationalRegistryInput) {
+  async getData(input: NationalRegistryInput) {
     const user = await this.nationalRegistryApi.getUser(input.nationalId)
     return {
       fullName: user.Fulltnafn,
