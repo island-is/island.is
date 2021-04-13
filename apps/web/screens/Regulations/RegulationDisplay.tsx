@@ -103,16 +103,22 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               colorScheme="blueberry"
             >
               {regulation.effects.map((item, i) => {
-                const name = prettyName(item.name) + ' ' + item.title
+                const name = prettyName(item.name)
                 const label = interpolate(
                   item.effect === 'amend'
                     ? txt('effectsChange')
                     : txt('effectsCancel'),
                   { name },
                 )
+                const labelLong = label + ' ' + item.title
 
                 return (
-                  <Link key={'effects-' + i} href={linkToRegulation(item.name)}>
+                  <Link
+                    key={'effects-' + i}
+                    href={linkToRegulation(item.name)}
+                    aria-label={labelLong}
+                    title={labelLong}
+                  >
                     <FocusableBox flexDirection={'column'}>
                       {({
                         isFocused,
@@ -159,6 +165,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                     : txt('historyCancel'),
                   { name },
                 )
+                const labelLong =
+                  item.effect !== 'root' ? label + ' ' + item.title : undefined
 
                 const isTimelineActive = regulation.timelineDate === item.date
 
@@ -197,7 +205,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                             {isTimelineActive && ' ▶︎ '}
                             <strong>{formatDate(item.date)}</strong>
                             <br />
-                            {label}
+                            <span title={labelLong}>{label}</span>
                           </Text>
                         )}
                       </FocusableBox>
@@ -276,7 +284,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                 </Text>
               )}
             </RegulationsSidebarBox>
-          )}
+          }
         </Stack>
       }
     />
