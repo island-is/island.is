@@ -32,6 +32,7 @@ export const demoRegulationsMinistries: RegulationMinistryList = [
 export const demoRegulations: RegulationSearchResults = {
   page: 1,
   perPage: 14,
+  totalItems: 1691,
   totalPages: 121,
   data: [
     {
