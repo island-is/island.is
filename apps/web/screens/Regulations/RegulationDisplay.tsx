@@ -1,10 +1,15 @@
+import React, { FC, Fragment } from 'react'
+import { useRouter } from 'next/router'
 import { Regulation, ISODate } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
-
 import * as s from './RegulationDisplay.treat'
-
-import React, { FC, Fragment } from 'react'
-import { FocusableBox, Link, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Button,
+  FocusableBox,
+  Link,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import {
   interpolate,
@@ -25,6 +30,7 @@ export type RegulationDisplayProps = {
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
+  const router = useRouter()
   const { regulation, texts } = props
   const { history, effects } = regulation
 
@@ -97,6 +103,73 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       }
       sidebar={
         <Stack space={2}>
+          {
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              onClick={() => {
+                window.history.length > 2
+                  ? router.back()
+                  : router.push('/reglugerdir')
+              }}
+            >
+              Til baka
+            </Button>
+          }
+
+          {
+            <RegulationsSidebarBox
+              title={txt('infoboxTitle')}
+              colorScheme="blueberry"
+            >
+              {regulation.ministry && (
+                <Text>
+                  <strong>{txt('infoboxMinistry')}:</strong>
+                  <br />
+                  {regulation.ministry.name}
+                </Text>
+              )}
+
+              {regulation.lawChapters.length > 0 && (
+                <Text>
+                  <strong>{txt('infoboxLawChapters')}:</strong>
+                  <ul>
+                    {regulation.lawChapters.map((chapter, i) => (
+                      <li key={i}>{chapter.name}</li>
+                    ))}
+                  </ul>
+                </Text>
+              )}
+
+              {regulation.effectiveDate && (
+                <Text>
+                  <strong>{txt('infoboxEffectiveDate')}:</strong>
+                  <br />
+                  {formatDate(regulation.effectiveDate)}
+                </Text>
+              )}
+
+              {regulation.repealedDate ? (
+                <Text>
+                  <strong>{txt('infoboxRepealed')}:</strong>
+                  <br />
+                  {formatDate(regulation.repealedDate)}
+                </Text>
+              ) : (
+                regulation.lastAmendDate && (
+                  <Text>
+                    <strong>{txt('infoboxLastAmended')}:</strong>
+                    <br />
+                    {formatDate(regulation.lastAmendDate)}
+                  </Text>
+                )
+              )}
+            </RegulationsSidebarBox>
+          }
+
           {effects.length > 0 && (
             <RegulationsSidebarBox
               title={interpolate(txt('effectsTitle'), { name })}
@@ -246,56 +319,6 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               })}
             </RegulationsSidebarBox>
           )}
-
-          {
-            <RegulationsSidebarBox
-              title={txt('infoboxTitle')}
-              colorScheme="blueberry"
-            >
-              {regulation.ministry && (
-                <Text>
-                  <strong>{txt('infoboxMinistry')}:</strong>
-                  <br />
-                  {regulation.ministry.name}
-                </Text>
-              )}
-
-              {regulation.lawChapters.length > 0 && (
-                <Text>
-                  <strong>{txt('infoboxLawChapters')}:</strong>
-                  <ul>
-                    {regulation.lawChapters.map((chapter, i) => (
-                      <li key={i}>{chapter.name}</li>
-                    ))}
-                  </ul>
-                </Text>
-              )}
-
-              {regulation.effectiveDate && (
-                <Text>
-                  <strong>{txt('infoboxEffectiveDate')}:</strong>
-                  <br />
-                  {formatDate(regulation.effectiveDate)}
-                </Text>
-              )}
-
-              {regulation.repealedDate ? (
-                <Text>
-                  <strong>{txt('infoboxRepealed')}:</strong>
-                  <br />
-                  {formatDate(regulation.repealedDate)}
-                </Text>
-              ) : (
-                regulation.lastAmendDate && (
-                  <Text>
-                    <strong>{txt('infoboxLastAmended')}:</strong>
-                    <br />
-                    {formatDate(regulation.lastAmendDate)}
-                  </Text>
-                )
-              )}
-            </RegulationsSidebarBox>
-          }
         </Stack>
       }
     />
