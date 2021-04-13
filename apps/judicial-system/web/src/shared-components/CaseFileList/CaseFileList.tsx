@@ -5,12 +5,12 @@ import { CaseFile } from '..'
 
 interface Props {
   files: File[]
-  canOpenFiles: boolean
+  canOpenFiles?: boolean
   onOpen: (fileId: string) => void
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
-  const { files, canOpenFiles, onOpen } = props
+  const { files, canOpenFiles = true, onOpen } = props
 
   return (
     <>

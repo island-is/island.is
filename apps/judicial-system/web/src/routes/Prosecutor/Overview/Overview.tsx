@@ -32,6 +32,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFile,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -150,9 +151,9 @@ export const Overview: React.FC = () => {
     return sendNotification(workingCase.id)
   }
 
-  const handleOpenFile = (file: UploadFile) => {
+  const handleOpenFile = (fileId: string) => {
     if (workingCase) {
-      setOpenFileId(file.id)
+      setOpenFileId(fileId)
     }
   }
 
@@ -363,19 +364,10 @@ export const Overview: React.FC = () => {
                     label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
                     labelVariant="h3"
                   >
-                    {workingCase.files?.map((file, index) => {
-                      return (
-                        <Box marginBottom={3} key={index}>
-                          <CaseFile
-                            fileId={file.id}
-                            name={`${index + 1}. ${file.name}`}
-                            size={file.size}
-                            uploadedAt={file.created}
-                            onOpen={() => handleOpenFile(file)}
-                          />
-                        </Box>
-                      )
-                    })}
+                    <CaseFileList
+                      files={workingCase.files}
+                      onOpen={handleOpenFile}
+                    />
                   </AccordionItem>
                 )}
                 <AccordionItem
