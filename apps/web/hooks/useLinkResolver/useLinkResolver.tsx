@@ -85,6 +85,10 @@ export const routesTemplate = {
     is: '/stofnanir/[organization]/frett',
     en: '/en/organizations/[organization]/news',
   },
+  auctions: {
+    is: '/stofnanir/syslumenn/uppbod',
+    en: '',
+  },
   auction: {
     is: '/stofnanir/syslumenn/uppbod/[id]',
     en: '',

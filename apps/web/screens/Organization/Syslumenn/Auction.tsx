@@ -77,6 +77,10 @@ const Auction: Screen<AuctionProps> = ({
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
+        {
+          title: n('auctions', 'Uppboð'),
+          href: linkResolver('auctions').href,
+        },
       ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
