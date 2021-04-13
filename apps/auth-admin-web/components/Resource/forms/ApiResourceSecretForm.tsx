@@ -9,6 +9,8 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import ConfirmModal from './../../common/ConfirmModal'
 import InfoModal from './../../common/InfoModal'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   apiResourceName: string
@@ -33,6 +35,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
   const [secretValue, setSecretValue] = useState<string>('')
   const [secretToRemove, setSecretToRemove] = useState<ApiResourceSecret>(
     new ApiResourceSecret(),
+  )
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ApiResourceSecretForm'),
   )
 
   const makeDefaultSecret = (length: number) => {
@@ -122,8 +127,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this secret:{' '}
-        <span>{secretToRemove.type}</span> -{' '}
+        {localization.removeConfirmation}:<span>{secretToRemove.type}</span> -
         <span>{secretToRemove.description}</span>
       </p>
     )
@@ -133,17 +137,19 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
     <div className="api-resource-secret-form">
       <div className="api-resource-secret-form__wrapper">
         <div className="api-resource-secret-form__container">
-          <h1>Api Resource Secrets</h1>
+          <h1>{localization.title}</h1>
           <div className="api-resource-secret-form__container__form">
             <div className="api-resource-secret-form__help">
-              The API secret is used for the introspection endpoint. The API can
-              authenticate with introspection using the API name and secret.
+              {localization.help}
             </div>
             <form id="secretForm" onSubmit={handleSubmit(add)}>
               <div className="api-resource-secret-form__container__fields">
                 <div className="api-resource-secret-form__container__field">
-                  <label className="api-resource-secret-form__label">
-                    Api resource Secret
+                  <label
+                    className="api-resource-secret-form__label"
+                    htmlFor="secretValue"
+                  >
+                    {localization.fields['secretValue'].label}
                   </label>
                   <input
                     id="secretValue"
@@ -152,43 +158,47 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     ref={register({ required: true })}
                     defaultValue={defaultSecret}
                     className="api-resource-secret-form__input"
-                    placeholder="Some secret text"
-                    title="The secret value"
+                    placeholder={localization.fields['secretValue'].placeholder}
+                    title={localization.fields['secretValue'].helpText}
                   />
                   <HelpBox helpText="Your secret value should be a rather complicated string" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="value"
-                    message="Value is required"
+                    message={localization.fields['secretValue'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="api-resource-secret-form__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    value={localization.addButton}
                   />
                 </div>
                 <div className="api-resource-secret-form__container__field">
-                  <label className="api-resource-secret-form__label">
-                    Type
+                  <label
+                    className="api-resource-secret-form__label"
+                    htmlFor="type"
+                  >
+                    {localization.fields['type'].label}
                   </label>
                   <input
+                    id="type"
                     type="text"
                     name="type"
                     ref={register({ required: true })}
                     defaultValue={'SharedSecret'}
                     className="api-resource-secret-form__input"
-                    placeholder="Type of secret"
-                    title="Allowed scopen"
+                    placeholder={localization.fields['type'].placeholder}
+                    title={localization.fields['type'].helpText}
                     readOnly
                   />
-                  <HelpBox helpText="SharedSecret is the only type supported" />
+                  <HelpBox helpText={localization.fields['type'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="type"
-                    message="Type is required"
+                    message={localization.fields['type'].errorMessage}
                   />
                 </div>
                 <div className="api-resource-secret-form__container__field">
@@ -196,7 +206,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-secret-form__label"
                     htmlFor="description"
                   >
-                    Description
+                    {localization.fields['description'].label}
                   </label>
                   <input
                     id="description"
@@ -208,23 +218,23 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={''}
                     className="api-resource-secret-form__input"
-                    placeholder="Secret description"
-                    title="Description of the secret"
+                    placeholder={localization.fields['description'].placeholder}
+                    title={localization.fields['description'].helpText}
                   />
                   <HelpBox helpText="Description of the secret" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="description"
-                    message="Description is required"
+                    message={localization.fields['description'].errorMessage}
                   />
                 </div>
               </div>
 
               <NoActiveConnections
-                title="No secrets are defined"
+                title={localization.noActiveConnections?.title}
                 show={!props.secrets || props.secrets.length === 0}
-                helpText="Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -232,7 +242,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   props.secrets && props.secrets.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active secrets</h3>
+                <h3>{localization.sectionTitle1}</h3>
                 {props.secrets?.map((secret: ApiResourceSecret) => {
                   return (
                     <div
@@ -267,7 +277,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-secret-form__button__cancel"
                     onClick={props.handleBack}
                   >
-                    Back
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="api-resource-secret-form__button__container">
@@ -276,7 +286,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-secret-form__button__save"
                     onClick={props.handleNext}
                   >
-                    Next
+                    {localization.saveButton}
                   </button>
                 </div>
               </div>
@@ -289,15 +299,15 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
       <InfoModal
         modalIsOpen={infoModalIsOpen}
-        headerText="Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
+        headerText={localization.infoModal?.headerText}
         closeModal={closeInfoModal}
         handleButtonClicked={closeInfoModal}
         infoText={secretValue}
-        buttonText="Ok"
+        buttonText={localization.infoModal?.buttonText}
       ></InfoModal>
     </div>
   )

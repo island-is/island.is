@@ -15,10 +15,13 @@
 
 /apps/web*/                                                                                   @island-is/kosmos-kaos @island-is/aranja
 /apps/endorsement-system/                                                                     @island-is/kosmos-kaos
+/apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
+/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
+/libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
 
 /*/air-discount-scheme/                                                                       @island-is/vice-versa
 /*/gjafakort/                                                                                 @island-is/vice-versa @island-is/kosmos-kaos
@@ -77,6 +80,8 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/                                                                @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/apps/download-service/                                                                       @island-is/sendiradid
+/libs/clients/documents/                                                                      @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja

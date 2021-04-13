@@ -1,1 +1,1 @@
-export { default as BackendAPI } from './backend'
+export { default as BackendAPI } from './backend.service'

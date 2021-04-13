@@ -1,9 +1,12 @@
 import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
+import { transformIcelandicName } from './shared'
 
 export class CreateIcelandicNameBodyDto {
   @IsString()
+  @Transform(transformIcelandicName)
   readonly icelandicName!: string
 
   @IsEnum(NameType)
