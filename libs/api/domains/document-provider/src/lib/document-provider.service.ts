@@ -381,7 +381,7 @@ export class DocumentProviderService {
 
     // Get external provider ids if organisationId is included
     if (organisationId) {
-      var orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
+      const orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
         {
           id: organisationId,
           authorization,
