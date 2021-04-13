@@ -2,11 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  EndorsementMetaField,
-  MetadataService,
-} from '../metadata/metadata.service'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
+import { MetadataService } from '../metadata/metadata.service'
 
 interface EndorsementListInput {
   listId: string
@@ -53,28 +50,17 @@ export class EndorsementService {
       fields: parentEndorsementList.endorsementMeta, // TODO: Add fields required by validation here
       nationalId,
     })
-    // TODO: Validate rules here
 
-    // some meta fields are only required for validation and should not be persisted, we remove them here
-    const prunedEndorsementMetadata = Object.entries(
-      allEndorsementMetadata,
-    ).reduce(
-      (metadata, [metadataKey, metadataValue]) =>
-        parentEndorsementList.endorsementMeta.includes(
-          metadataKey as EndorsementMetaField,
-        )
-          ? {
-              ...metadata,
-              [metadataKey]: metadataValue,
-            }
-          : metadata,
-      {},
-    )
+    // TODO: Validate rules here
 
     return this.endorsementModel.create({
       endorser: nationalId,
       endorsementListId: listId,
-      meta: prunedEndorsementMetadata,
+      // this removes validation fields fetched by meta service
+      meta: this.metadataService.pruneMetadataFields(
+        allEndorsementMetadata,
+        parentEndorsementList.endorsementMeta,
+      ),
     })
   }
 

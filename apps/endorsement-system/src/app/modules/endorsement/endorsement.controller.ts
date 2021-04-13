@@ -12,8 +12,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import faker from 'faker'
-import { environment } from '../../../environments/environment'
+import * as faker from 'faker'
 
 @ApiTags('endorsement')
 @Controller('endorsement-list/:listId/endorsement')
@@ -50,11 +49,11 @@ export class EndorsementController {
     // TODO: Add auth here
     try {
       return await this.endorsementService.createEndorsementOnList({
-        nationalId: '0000000000', // TODO: Replace this with requesting user
+        nationalId: faker.phone.phoneNumber('##########'), // TODO: Replace this with requesting user
         listId,
       })
     } catch (error) {
-      this.logger.warn('Failed to create endorsement for list', {
+      this.logger.error('Failed to create endorsement for list', {
         listId,
         error,
       })

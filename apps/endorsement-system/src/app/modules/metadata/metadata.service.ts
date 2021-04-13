@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import {
   NationalRegistryResponse,
   NationalRegistryService,
@@ -9,73 +8,67 @@ interface MetadataInput {
   fields: EndorsementMetaField[]
   nationalId: string
 }
-interface MetadataProvider {
-  getData: (
-    input: MetadataInput,
-  ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
-}
-// TODO: Use TS magic to extract types here
-type MetadataProviderResponse = {
-  [EndorsementProvider.NATIONAL_REGISTRY]: NationalRegistryResponse
-}
 type MetadataProviderField = {
   [providerKey in EndorsementMetaField]: {
-    providerName: EndorsementProvider
+    provider: MetadataProvider
     dataResolver: (input: MetadataProviderResponse) => any
   }
 }
 type MetadataProviderService = {
-  [providerKey in EndorsementProvider]: MetadataProvider
-}
-export enum EndorsementProvider {
-  NATIONAL_REGISTRY = 'nationalRegistry',
-}
-export enum EndorsementMetaField {
-  FULL_NAME = 'fullName',
-  ADDRESS = 'address',
+  [providerKey in 'nationalRegistry']: MetadataProvider
 }
 export type EndorsementMetaData = {
   [key in EndorsementMetaField]?: any
+}
+export interface MetadataProvider {
+  metadataKey: string
+  getData: (
+    input: MetadataInput,
+  ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
+}
+
+// add types for new metadata providers here
+type MetadataProviderResponse = {
+  [key in NationalRegistryService['metadataKey']]: NationalRegistryResponse
+}
+
+// add types for new metadata fields here
+export enum EndorsementMetaField {
+  FULL_NAME = 'fullName',
+  ADDRESS = 'address',
 }
 
 @Injectable()
 export class MetadataService {
   fieldToProviderMap: MetadataProviderField
-  ProviderNameToProviderServiceMap: MetadataProviderService
   constructor (
     private readonly nationalRegistryService: NationalRegistryService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {
+    /**
+     * We should assign minimal data to each metadata field since they optionally get appended to endorsements
+     * Each data provider is called once
+     */
     this.fieldToProviderMap = {
       [EndorsementMetaField.FULL_NAME]: {
-        providerName: EndorsementProvider.NATIONAL_REGISTRY,
+        provider: this.nationalRegistryService,
         dataResolver: ({ nationalRegistry }) => nationalRegistry.fullName,
       },
       [EndorsementMetaField.ADDRESS]: {
-        providerName: EndorsementProvider.NATIONAL_REGISTRY,
+        provider: this.nationalRegistryService,
         dataResolver: ({ nationalRegistry }) => nationalRegistry.address,
       },
-    }
-    this.ProviderNameToProviderServiceMap = {
-      [EndorsementProvider.NATIONAL_REGISTRY]: this.nationalRegistryService,
     }
   }
 
   findProvidersByRequestedMetadataFields (fields: EndorsementMetaField[]) {
-    const providerNames = new Set<EndorsementProvider>()
-
-    fields.forEach((field) => {
-      providerNames.add(this.fieldToProviderMap[field].providerName)
-    })
-
-    return [...providerNames].reduce(
-      (providers, field) => ({
+    return fields.reduce((providers, field) => {
+      // this is where we assign metadata key that is returned in final results object
+      const metadataKey = this.fieldToProviderMap[field].provider.metadataKey
+      return {
         ...providers,
-        [field]: this.ProviderNameToProviderServiceMap[field],
-      }),
-      {} as MetadataProviderService,
-    )
+        [metadataKey]: this.fieldToProviderMap[field].provider,
+      }
+    }, {} as MetadataProviderService)
   }
 
   async executeProviders (
@@ -114,6 +107,23 @@ export class MetadataService {
     )
   }
 
+  pruneMetadataFields (
+    allMetadataFields: EndorsementMetaData,
+    fieldsToKeep: EndorsementMetaField[],
+  ): EndorsementMetaData {
+    // some meta fields are only required for validation and should not be persisted, we remove them here
+    return Object.entries(allMetadataFields).reduce(
+      (metadata, [metadataKey, metadataValue]) =>
+        fieldsToKeep.includes(metadataKey as EndorsementMetaField)
+          ? {
+              ...metadata,
+              [metadataKey]: metadataValue,
+            }
+          : metadata,
+      {},
+    )
+  }
+
   async getMetadata (input: MetadataInput): Promise<EndorsementMetaData> {
     const requiredProviders = this.findProvidersByRequestedMetadataFields(
       input.fields,
@@ -122,5 +132,3 @@ export class MetadataService {
     return this.mapProviderDataToFields(input.fields, providerData)
   }
 }
-
-// TODO: Simplify this

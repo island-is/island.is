@@ -1,5 +1,6 @@
 import { NationalRegistryApi } from '@island.is/clients/national-registry'
 import { Injectable } from '@nestjs/common'
+import { MetadataProvider } from '../metadata.service'
 
 export interface NationalRegistryInput {
   nationalId: string
@@ -14,8 +15,9 @@ export interface NationalRegistryResponse {
 }
 
 @Injectable()
-export class NationalRegistryService {
+export class NationalRegistryService implements MetadataProvider {
   constructor (private readonly nationalRegistryApi: NationalRegistryApi) {}
+  metadataKey = 'nationalRegistry'
 
   async getData (input: NationalRegistryInput) {
     const user = await this.nationalRegistryApi.getUser(input.nationalId)
