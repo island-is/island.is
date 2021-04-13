@@ -8,15 +8,16 @@ import isValid from 'date-fns/isValid'
 import * as styles from './CaseFile.treat'
 
 interface Props {
+  fileId: string
   name: string
   size: number
   uploadedAt: string
   canOpenFiles?: boolean
-  onOpen?: () => void
+  onOpen?: (id: string) => void
 }
 
 const CaseFile: React.FC<Props> = (props) => {
-  const { name, size, uploadedAt, canOpenFiles = true, onOpen } = props
+  const { fileId, name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
 
@@ -41,7 +42,7 @@ const CaseFile: React.FC<Props> = (props) => {
             </div>
           )}
           {canOpenFiles && onOpen && (
-            <Tag variant="darkerBlue" onClick={onOpen}>
+            <Tag variant="darkerBlue" onClick={() => onOpen(fileId)}>
               Opna
             </Tag>
           )}

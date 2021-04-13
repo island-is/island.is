@@ -25,6 +25,7 @@ import {
   Modal,
   FormContentContainer,
   CaseFile,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -234,6 +235,10 @@ export const JudgeOverview: React.FC = () => {
       setOpenFileId(undefined)
     }
   }, [fileSignedUrl])
+
+  const handleOpenFile = (fileId: string) => {
+    setOpenFileId(fileId)
+  }
 
   return (
     <PageLayout
@@ -549,27 +554,11 @@ export const JudgeOverview: React.FC = () => {
                     id="files-card"
                     label={`Rannsóknargögn (${workingCase.files.length})`}
                   >
-                    {workingCase.files?.map((file, index) => {
-                      return (
-                        <Box
-                          marginBottom={
-                            workingCase.files &&
-                            index !== workingCase.files.length - 1
-                              ? 3
-                              : 0
-                          }
-                          key={index}
-                        >
-                          <CaseFile
-                            name={`${index + 1}. ${file.name}`}
-                            size={file.size}
-                            uploadedAt={file.created}
-                            canOpenFiles={workingCase.judge !== null}
-                            onOpen={() => setOpenFileId(file.id)}
-                          />
-                        </Box>
-                      )
-                    })}
+                    <CaseFileList
+                      files={workingCase.files}
+                      canOpenFiles={workingCase.judge !== null}
+                      onOpen={handleOpenFile}
+                    />
                   </AccordionCard>
                 </div>
               )}

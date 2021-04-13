@@ -367,6 +367,7 @@ export const Overview: React.FC = () => {
                       return (
                         <Box marginBottom={3} key={index}>
                           <CaseFile
+                            fileId={file.id}
                             name={`${index + 1}. ${file.name}`}
                             size={file.size}
                             uploadedAt={file.created}
