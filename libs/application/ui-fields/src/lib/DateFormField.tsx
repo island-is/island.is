@@ -1,8 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   FieldBaseProps,
   DateField,
   formatText,
+  MaybeWithApplication,
+  Application,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -23,8 +25,28 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     description,
     placeholder,
     backgroundColor,
+    excludeDates,
   } = field
   const { formatMessage, lang } = useLocale()
+
+  const computeExcludeDates = (
+    maybeExcludeDates: MaybeWithApplication<Date[]>,
+    application: Application,
+  ) => {
+    if (typeof maybeExcludeDates === 'function') {
+      return maybeExcludeDates(application)
+    }
+    return maybeExcludeDates
+  }
+
+  const finalExcludeDates = useMemo(
+    () =>
+      computeExcludeDates(
+        excludeDates as MaybeWithApplication<Date[]>,
+        application,
+      ),
+    [excludeDates, application],
+  )
 
   return (
     <div>
@@ -40,6 +62,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           id={id}
           name={`${id}`}
           locale={lang}
+          excludeDates={finalExcludeDates}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={

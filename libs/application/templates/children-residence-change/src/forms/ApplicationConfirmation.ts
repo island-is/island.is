@@ -2,7 +2,6 @@ import {
   buildForm,
   buildSection,
   Form,
-  FormModes,
   buildCustomField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
@@ -12,7 +11,6 @@ export const ApplicationConfirmation: Form = buildForm({
   id: 'ApplicationConfirmation',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'submitted',
