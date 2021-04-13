@@ -1,32 +1,31 @@
 import React from 'react'
-import {
-  useForm,
-  FormProvider,
-  Controller,
-  useFormContext,
-} from 'react-hook-form'
+import { useForm, FormProvider, Controller } from 'react-hook-form'
+
 import {
   Box,
-  Stack,
-  Typography,
+  Text,
   Divider,
-  DatePicker,
-  ButtonDeprecated as Button,
+  Button,
   Input,
   Select,
   Checkbox,
+  GridRow,
+  GridContainer,
+  GridColumn,
 } from '@island.is/island-ui/core'
 
 import * as styles from './EditForm.treat'
 
-interface PropTypes {}
+interface PropTypes {
+  closeModal: () => void
+}
 
 const NameTypes = {
-  ST: 'ST',
-  DR: 'DR',
-  MI: 'MI',
-  RST: 'RST',
-  RDR: 'RDR',
+  ST: 'Stúlkunafn',
+  DR: 'Drengjanafn',
+  MI: 'Miðjunafn',
+  RST: 'RST (?)',
+  RDR: 'RDR (?)',
 } as { [key: string]: string }
 
 const StatusTypes = {
@@ -49,128 +48,297 @@ export const statusTypeOptions = Object.keys(StatusTypes).map((x: string) => {
   }
 })
 
-const EditForm: React.FC<PropTypes> = () => {
-  const hookFormData = useForm({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-    shouldUnregister: false,
+const spacing = 3
+
+interface IFormInputs {
+  icelandicName: string
+  type: string
+  status: string
+  description?: string
+  url?: string
+  verdict?: string
+  visible: boolean
+}
+
+const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
+  const hookFormData = useForm<IFormInputs>({
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      icelandicName: '',
+      type: '',
+      status: '',
+      description: '',
+      url: '',
+      verdict: '',
+      visible: true,
+    },
+    shouldFocusError: true,
   })
 
-  const { setValue } = hookFormData
+  const {
+    setValue,
+    register,
+    handleSubmit,
+    control,
+    errors,
+    formState: { isDirty, isSubmitting, touched, submitCount },
+  } = hookFormData
+
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
+
+  const onSubmit = async (data: object) => {
+    await sleep(2000)
+  }
+
+  console.log('errors', errors)
+
+  const disabled = isSubmitting
 
   return (
     <FormProvider {...hookFormData}>
-      <Box
-        component="form"
-        display="flex"
-        flexDirection="column"
-        justifyContent="spaceBetween"
-        height="full"
-      >
-        <Controller
-          name="icelandicName"
-          defaultValue=""
-          render={({ onChange, value }) => (
-            <Input
-              name="icelandicName"
-              label="Nafn"
-              placeholder="Nafn"
-              value={value}
-              onChange={onChange}
-              backgroundColor="blue"
-            />
-          )}
-        />
-        <Controller
-          name="type"
-          defaultValue=""
-          render={({ onChange, value }) => {
-            return (
-              <Select
-                name="type"
-                options={nameTypeOptions}
-                label="Tegund nafns"
-                placeholder="Veldu tegund"
-                value={nameTypeOptions.find((option) => option.value === value)}
-                onChange={onChange}
-                backgroundColor="blue"
-                required
-              />
-            )
-          }}
-        />
-        <Controller
-          name="status"
-          defaultValue=""
-          render={({ onChange, value }) => {
-            return (
-              <Select
-                name="status"
-                options={statusTypeOptions}
-                label="Staða"
-                placeholder="Veldu stöðu"
-                value={statusTypeOptions.find(
-                  (option) => option.value === value,
-                )}
-                onChange={onChange}
-                backgroundColor="blue"
-                required
-              />
-            )
-          }}
-        />
-        <Controller
-          name="description"
-          defaultValue=""
-          render={({ onChange, value }) => {
-            return (
-              <Input
-                name="description"
-                label="Skýring"
-                defaultValue=""
-                textarea
-                backgroundColor="blue"
-              />
-            )
-          }}
-        />
-        <Controller
-          name="url"
-          defaultValue=""
-          render={({ onChange, value }) => {
-            return (
-              <Input
-                name="url"
-                label="Úrskurður"
-                placeholder="Vefslóð á úrskurð mannanafnanefndar"
-                value={value}
-                onChange={onChange}
-                backgroundColor="blue"
-              />
-            )
-          }}
-        />
-        <Controller
-          name="visible"
-          defaultValue={true}
-          render={({ onChange, value }) => {
-            return (
-              <Checkbox
-                name="visible"
-                label="Birta i lista"
-                onChange={(e) => {
-                  const isChecked = Boolean(e.target.checked)
-                  setValue('visible', isChecked)
-                  onChange(isChecked)
-                }}
-                checked={value}
-                backgroundColor="white"
-                large
-              />
-            )
-          }}
-        />
-      </Box>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="spaceBetween"
+          height="full"
+          paddingX={[1, 4, 4, 8]}
+          paddingY={[6, 6, 6, 12]}
+          paddingBottom={6}
+        >
+          <GridContainer position="none">
+            <GridRow>
+              <GridColumn span={'12/12'} paddingBottom={6}>
+                <Text variant="h1">Skráning íslensks nafns</Text>
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn span={'12/12'} paddingBottom={spacing}>
+                <Controller
+                  name="icelandicName"
+                  render={({ onChange, value, name }) => (
+                    <Input
+                      name={name}
+                      label="Nafn"
+                      placeholder="Nafn"
+                      size="md"
+                      errorMessage={errors?.icelandicName?.message}
+                      backgroundColor="blue"
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
+                      {...register('icelandicName', {
+                        required: 'Nafn vantar',
+                      })}
+                      disabled={disabled}
+                    />
+                  )}
+                />
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '6/12']}
+                paddingBottom={spacing}
+              >
+                <Controller
+                  name="type"
+                  render={({ onChange, value, name }) => {
+                    return (
+                      <Select
+                        name={name}
+                        options={nameTypeOptions}
+                        label="Tegund nafns"
+                        placeholder="Veldu tegund"
+                        value={nameTypeOptions.find(
+                          (option) => option.value === value,
+                        )}
+                        onChange={onChange}
+                        size="sm"
+                        hasError={Boolean(errors?.type?.message)}
+                        errorMessage={errors?.type?.message}
+                        backgroundColor="blue"
+                        {...register('type', {
+                          required: 'Tegund nafns vantar',
+                        })}
+                        disabled={disabled}
+                        required
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '6/12']}
+                paddingBottom={spacing}
+              >
+                <Controller
+                  name="status"
+                  render={({ onChange, value, name }) => {
+                    return (
+                      <Select
+                        name={name}
+                        options={statusTypeOptions}
+                        label="Staða"
+                        placeholder="Veldu stöðu"
+                        value={statusTypeOptions.find(
+                          (option) => option.value === value,
+                        )}
+                        onChange={onChange}
+                        size="sm"
+                        hasError={Boolean(errors?.status?.message)}
+                        errorMessage={errors?.status?.message}
+                        backgroundColor="blue"
+                        {...register('status', {
+                          required: 'Stöðu nafns vantar',
+                        })}
+                        disabled={disabled}
+                        required
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+
+            <GridRow marginTop={3}>
+              <GridColumn span={'12/12'} paddingBottom={spacing}>
+                <Controller
+                  name="description"
+                  render={({ onChange, value, name }) => {
+                    return (
+                      <Input
+                        name={name}
+                        label="Skýring"
+                        size="sm"
+                        backgroundColor="blue"
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        {...register('description')}
+                        disabled={disabled}
+                        textarea
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+
+            <GridRow marginTop={3}>
+              <GridColumn span={'12/12'} paddingBottom={spacing}>
+                <Controller
+                  name="url"
+                  render={({ onChange, value, name }) => {
+                    return (
+                      <Input
+                        name={name}
+                        label="Vefslóð á úrskurð"
+                        placeholder="Vefslóð á úrskurð mannanafnanefndar"
+                        size="sm"
+                        onChange={(e) => onChange(e.target.value)}
+                        {...register('url')}
+                        disabled={disabled}
+                        backgroundColor="blue"
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+
+              <GridColumn span={'6/12'} paddingBottom={spacing}>
+                <Controller
+                  name="verdict"
+                  render={({ onChange, value, name }) => {
+                    return (
+                      <Input
+                        name={name}
+                        label="Dags. úrskurðar"
+                        placeholder="Dæmi: t.d. 17.04.2006 eða 03.11.2014"
+                        size="sm"
+                        onChange={onChange}
+                        {...register('verdict')}
+                        disabled={disabled}
+                        backgroundColor="blue"
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+
+            <GridRow marginTop={3}>
+              <GridColumn span={'12/12'} paddingBottom={spacing}>
+                <Controller
+                  name="visible"
+                  control={control}
+                  render={({ onChange, value }) => {
+                    return (
+                      <Checkbox
+                        name="visible"
+                        label="Birta nafn á ísland.is"
+                        onChange={(e) => {
+                          const isChecked = Boolean(e.target.checked)
+                          setValue('visible', isChecked)
+                          onChange(isChecked)
+                        }}
+                        checked={value}
+                        backgroundColor="white"
+                        disabled={disabled}
+                        large
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
+
+        <Divider weight="blueberry200" />
+
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="spaceBetween"
+          height="full"
+          paddingX={[1, 4, 4, 8]}
+          paddingTop={6}
+          paddingBottom={3}
+        >
+          <GridContainer position="none">
+            <GridRow>
+              <GridColumn span={'6/12'} paddingBottom={3}>
+                <Box>
+                  <Button
+                    onClick={closeModal}
+                    variant="ghost"
+                    colorScheme="destructive"
+                    disabled={disabled}
+                  >
+                    Hætta við
+                  </Button>
+                </Box>
+              </GridColumn>
+              <GridColumn span={'6/12'} paddingBottom={3}>
+                <Box display="flex" justifyContent="flexEnd" width="full">
+                  <Button
+                    type="submit"
+                    icon="checkmark"
+                    loading={isSubmitting}
+                    iconType="outline"
+                    disabled={disabled}
+                  >
+                    Skrá nafn
+                  </Button>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
+      </form>
     </FormProvider>
   )
 }

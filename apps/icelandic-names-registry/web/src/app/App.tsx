@@ -45,7 +45,6 @@ export const App = () => {
                           <Route exact path={Paths.MinarSidurRoot}>
                             <TableList />
                             <EditModal />
-                            <EditForm />
                           </Route>
                         </Switch>
                       </Layout>

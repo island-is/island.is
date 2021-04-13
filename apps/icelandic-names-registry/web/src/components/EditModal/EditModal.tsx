@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react'
 
-import { Box, Button, Text, ModalBase } from '@island.is/island-ui/core'
+import { Box, Button, ModalBase } from '@island.is/island-ui/core'
 
 import * as styles from './EditModal.treat'
+import EditForm from '../EditForm/EditForm'
 
 interface EditModalProps {}
 
-const EditModal: FC<EditModalProps> = () => {
+const EditModal: FC<EditModalProps> = ({ children }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   return (
@@ -21,7 +22,9 @@ const EditModal: FC<EditModalProps> = () => {
       </Button>
       <ModalBase
         baseId="myDialog"
+        className={styles.modal}
         isVisible={isVisible}
+        hideOnClickOutside={false}
         onVisibilityChange={(visibility) => {
           if (visibility !== isVisible) {
             setIsVisible(visibility)
@@ -29,11 +32,8 @@ const EditModal: FC<EditModalProps> = () => {
         }}
       >
         {({ closeModal }: { closeModal: () => void }) => (
-          <Box padding={4}>
-            <Text>We use onVisibilityChange to keep isVisible in sync</Text>
-            <Button onClick={closeModal} variant="text">
-              Close modal
-            </Button>
+          <Box position="relative" borderRadius="large" background="white">
+            <EditForm closeModal={closeModal} />
           </Box>
         )}
       </ModalBase>
