@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  AccordionCard,
+} from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -18,6 +24,7 @@ import {
   BlueBox,
   Modal,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -50,6 +57,7 @@ import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
+import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 interface CaseData {
   case?: Case
@@ -74,6 +82,9 @@ export const JudgeOverview: React.FC = () => {
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
+  const { handleOpenFile } = useFileList({
+    caseId: workingCase?.id,
+  })
 
   const [
     createCustodyCourtCaseMutation,
@@ -515,6 +526,20 @@ export const JudgeOverview: React.FC = () => {
                       {workingCase.comments}
                     </span>
                   </Text>
+                </div>
+              )}
+              {workingCase.files && (
+                <div className={styles.infoSection}>
+                  <AccordionCard
+                    id="files-card"
+                    label={`Rannsóknargögn (${workingCase.files.length})`}
+                  >
+                    <CaseFileList
+                      files={workingCase.files}
+                      canOpenFiles={workingCase.judge !== null}
+                      onOpen={handleOpenFile}
+                    />
+                  </AccordionCard>
                 </div>
               )}
               <PdfButton

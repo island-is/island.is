@@ -30,7 +30,7 @@ export class FileService {
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
     return this.awsS3Service.createPresignedPost(
-      `${caseId}/${uuid()}_${createPresignedPost.fileName}`,
+      `${caseId}/${uuid()}/${createPresignedPost.fileName}`,
     )
   }
 
@@ -39,7 +39,7 @@ export class FileService {
 
     const { key } = createFile
 
-    const regExp = new RegExp(`^${caseId}/.{36}_(.*)$`)
+    const regExp = new RegExp(`^${caseId}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
       throw new BadRequestException(`${key} is not a valid key`)

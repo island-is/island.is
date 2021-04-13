@@ -1885,6 +1885,41 @@
         }
       }
     },
+    "application-templates-institution-collaboration": {
+      "root": "libs/application/templates/institution-collaboration",
+      "sourceRoot": "libs/application/templates/institution-collaboration/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/institution-collaboration/tsconfig.lib.json",
+              "libs/application/templates/institution-collaboration/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/institution-collaboration/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/institution-collaboration/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",
@@ -1953,6 +1988,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/parental-leave/codegen.yml"
+          }
+        }
+      }
+    },
+    "application-templates-party-application": {
+      "root": "libs/application/templates/party-application",
+      "sourceRoot": "libs/application/templates/party-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/party-application/tsconfig.lib.json",
+              "libs/application/templates/party-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/party-application/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-application/src/lib/messages.ts'"
           }
         }
       }
@@ -2386,6 +2449,27 @@
         }
       }
     },
+    "clients-documents": {
+      "root": "libs/clients/documents",
+      "sourceRoot": "libs/clients/documents/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/documents/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/documents"],
+          "options": {
+            "jestConfig": "libs/clients/documents/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",
@@ -2744,6 +2828,58 @@
           },
           "outputs": ["coverage/libs/dokobit-signing"]
         }
+      }
+    },
+    "download-service": {
+      "root": "apps/download-service",
+      "sourceRoot": "apps/download-service/src",
+      "projectType": "application",
+      "prefix": "download-service",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/download-service",
+            "main": "apps/download-service/src/main.ts",
+            "tsConfig": "apps/download-service/tsconfig.app.json",
+            "assets": ["apps/download-service/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/download-service/src/environments/environment.ts",
+                  "with": "apps/download-service/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "download-service:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/download-service/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/download-service"],
+          "options": {
+            "jestConfig": "apps/download-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "email-service": {

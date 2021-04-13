@@ -102,7 +102,7 @@ describe('FileModule', () => {
       })
 
       expect(presignedPost.fields.key).toMatch(
-        new RegExp(`^${caseId}/.{36}_${fileName}$`),
+        new RegExp(`^${caseId}/.{36}/${fileName}$`),
       )
     })
 
@@ -163,7 +163,7 @@ describe('FileModule', () => {
 
     describe('Given a file', () => {
       const fileId = uuid()
-      const key = `${caseId}/${fileId}_${fileName}`
+      const key = `${caseId}/${fileId}/${fileName}`
       const mockFile = {
         id: fileId,
         caseId,

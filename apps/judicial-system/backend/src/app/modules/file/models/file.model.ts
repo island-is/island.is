@@ -14,7 +14,7 @@ import { Case } from '../../case'
 
 @Table({
   tableName: 'file',
-  timestamps: false,
+  timestamps: true,
 })
 export class File extends Model<File> {
   @Column({

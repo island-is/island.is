@@ -79,6 +79,7 @@ export const CategoryCard = ({
                 variant={tagVariant}
                 href={tag.href}
                 onClick={tag.onClick}
+                truncate={true}
               >
                 {tag.label}
               </Tag>

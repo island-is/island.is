@@ -25,6 +25,7 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -46,6 +47,7 @@ import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/u
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
+import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -62,6 +64,7 @@ export const Overview: React.FC = () => {
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const { handleOpenFile } = useFileList({ caseId: workingCase?.id })
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -116,7 +119,6 @@ export const Overview: React.FC = () => {
           setWorkingCase({
             ...workingCase,
             state: resCase.state,
-            prosecutor: resCase.prosecutor,
           })
         } catch (e) {
           return false
@@ -326,8 +328,22 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
+                {workingCase.files && (
+                  <AccordionItem
+                    id="id_5"
+                    label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
+                    labelVariant="h3"
+                  >
+                    <Box marginY={3}>
+                      <CaseFileList
+                        files={workingCase.files}
+                        onOpen={handleOpenFile}
+                      />
+                    </Box>
+                  </AccordionItem>
+                )}
                 <AccordionItem
-                  id="id_5"
+                  id="id_6"
                   label="Athugasemdir vegna málsmeðferðar"
                   labelVariant="h3"
                 >
@@ -357,10 +373,7 @@ export const Overview: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={
-                workingCase.state === CaseState.RECEIVED &&
-                workingCase.isCourtDateInThePast
-                  ? Constants.REQUEST_LIST_ROUTE
-                  : features.includes(Feature.CASE_FILES)
+                features.includes(Feature.CASE_FILES)
                   ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
                   : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
               }
