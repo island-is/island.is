@@ -91,6 +91,7 @@ export const CaseQuery = gql`
         id
         name
         size
+        created
       }
     }
   }
@@ -157,6 +158,14 @@ export const DeleteFileMutation = gql`
   mutation DeleteFileMutation($input: DeleteFileInput!) {
     deleteFile(input: $input) {
       success
+    }
+  }
+`
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
     }
   }
 `

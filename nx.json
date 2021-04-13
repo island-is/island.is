@@ -164,6 +164,9 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -207,6 +210,9 @@
     "clients-document-provider": {
       "tags": []
     },
+    "clients-documents": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -241,6 +247,9 @@
       "tags": []
     },
     "dokobit-signing": {
+      "tags": []
+    },
+    "download-service": {
       "tags": []
     },
     "email-service": {
