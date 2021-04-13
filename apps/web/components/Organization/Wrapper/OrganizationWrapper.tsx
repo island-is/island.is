@@ -61,10 +61,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const isMobile = useWindowSize().width < theme.breakpoints.md
   const { linkResolver } = useLinkResolver()
 
+  const metaTitleSuffix =
+    pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
+
   return (
     <>
       <HeadWithSocialSharing
-        title={pageTitle}
+        title={`${pageTitle}${metaTitleSuffix}`}
         description={pageDescription}
         imageUrl={pageFeaturedImage?.url}
         imageWidth={pageFeaturedImage?.width?.toString()}
