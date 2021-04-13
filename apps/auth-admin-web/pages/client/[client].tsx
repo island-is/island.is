@@ -17,6 +17,8 @@ import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesF
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import StepEnd from './../../components/common/StepEnd'
 import { ClientService } from './../../services/ClientService'
+import LocalizationUtils from '../../utils/localization.utils'
+import { Localization } from '../../entities/common/Localization'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -26,6 +28,9 @@ const Index: React.FC = () => {
   const [step, setStep] = useState(1)
   const [client, setClient] = useState<Client>(new Client())
   const router = useRouter()
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
@@ -40,6 +45,7 @@ const Index: React.FC = () => {
     }
     loadClient()
     setStep(1)
+    document.title = LocalizationUtils.getPageTitle('client.[client]')
   }, [clientId])
 
   const getClient = async (clientId: string) => {
@@ -220,12 +226,16 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
             <StepEnd
-              buttonText="Go back"
-              title="Steps completed"
+              buttonText={
+                localization.pages['client.[client]'].endStep?.buttonText
+              }
+              title={localization.pages['client.[client]'].endStep?.title}
               handleButtonFinishedClick={() => setStep(1)}
             >
-              <p>The steps needed, to create a client, have been completed</p>
-              <p>You can review your settings by clicking on the steps above</p>
+              <p>{localization.pages['client.[client]'].endStep?.infoTitle}</p>
+              <p>
+                {localization.pages['client.[client]'].endStep?.infoDescription}
+              </p>
             </StepEnd>
           </ClientStepNav>
         </ContentWrapper>
