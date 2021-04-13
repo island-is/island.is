@@ -364,10 +364,12 @@ export const Overview: React.FC = () => {
                     label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
                     labelVariant="h3"
                   >
-                    <CaseFileList
-                      files={workingCase.files}
-                      onOpen={handleOpenFile}
-                    />
+                    <Box marginY={3}>
+                      <CaseFileList
+                        files={workingCase.files}
+                        onOpen={handleOpenFile}
+                      />
+                    </Box>
                   </AccordionItem>
                 )}
                 <AccordionItem

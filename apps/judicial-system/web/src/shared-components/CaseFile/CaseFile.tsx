@@ -23,15 +23,15 @@ const CaseFile: React.FC<Props> = (props) => {
 
   return (
     <BlueBox size="small">
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box display="flex" alignItems="center" marginRight={1}>
-          <div className={styles.CaseFileNameContainer}>
+      <div className={styles.CaseFileContainer}>
+        <div className={styles.CaseFileNameContainer}>
+          <div className={styles.CaseFileName}>
             <Text fontWeight="semiBold" truncate>
               {name}
             </Text>
           </div>
           <Text>{`(${kb(size)}KB)`}</Text>
-        </Box>
+        </div>
         <Box display="flex" alignItems="center">
           {isValidUpdatedAtDate && (
             <div className={styles.CaseFileCreatedContainer}>
@@ -47,7 +47,7 @@ const CaseFile: React.FC<Props> = (props) => {
             </Tag>
           )}
         </Box>
-      </Box>
+      </div>
     </BlueBox>
   )
 }
