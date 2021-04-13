@@ -91,11 +91,11 @@ describe('getRegulation', () => {
 
   it('should throw on error', async () => {
     // @ts-expect-error  (testing bad input)
-    const emptyName: RegName = ''
+    const emptyName: RegQueryName = ''
     // @ts-expect-error  (testing bad input)
-    const badName: RegName = 'NNNN-NNNN'
+    const badName: RegQueryName = 'NNNN-NNNN'
     // @ts-expect-error  (testing bad input)
-    const watName: RegName = expectedResult.SERVER_ERROR
+    const watName: RegQueryName = expectedResult.SERVER_ERROR
 
     await expect(
       regulationsService.getRegulation('original', emptyName),
