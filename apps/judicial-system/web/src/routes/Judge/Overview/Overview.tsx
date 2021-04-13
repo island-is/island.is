@@ -59,6 +59,7 @@ import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
+import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 interface CaseData {
   case?: Case
@@ -79,11 +80,13 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
-  const [openFileId, setOpenFileId] = useState<string>()
   const { features } = useContext(FeatureContext)
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
+  const { handleOpenFile } = useFileList({
+    caseId: workingCase?.id,
+  })
 
   const [
     createCustodyCourtCaseMutation,
@@ -143,16 +146,6 @@ export const JudgeOverview: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-
-  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
-    variables: {
-      input: {
-        id: openFileId,
-        caseId: workingCase?.id,
-      },
-    },
-    skip: !workingCase?.id || !openFileId,
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -228,17 +221,6 @@ export const JudgeOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    if (fileSignedUrl) {
-      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
-      setOpenFileId(undefined)
-    }
-  }, [fileSignedUrl])
-
-  const handleOpenFile = (fileId: string) => {
-    setOpenFileId(fileId)
-  }
 
   return (
     <PageLayout
