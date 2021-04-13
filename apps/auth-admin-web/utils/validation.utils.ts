@@ -33,7 +33,7 @@ class ValidationUtils {
   }
 
   public static validateDescription(input: string): boolean {
-    if (input.length === 0) {
+    if (input == null || input.length === 0) {
       return true
     }
     const regex = new RegExp(ValidationUtils.descriptionPattern)
