@@ -58,6 +58,7 @@ import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/s
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -82,6 +83,8 @@ export const JudgeOverview: React.FC = () => {
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
+  const { user } = useContext(UserContext)
+
   const { handleOpenFile } = useFileList({
     caseId: workingCase?.id,
   })
@@ -536,7 +539,10 @@ export const JudgeOverview: React.FC = () => {
                   >
                     <CaseFileList
                       files={workingCase.files}
-                      canOpenFiles={workingCase.judge !== null}
+                      canOpenFiles={
+                        workingCase.judge !== null &&
+                        workingCase.judge?.id === user?.id
+                      }
                       onOpen={handleOpenFile}
                     />
                   </AccordionCard>
