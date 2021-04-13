@@ -119,7 +119,6 @@ export const Overview: React.FC = () => {
           setWorkingCase({
             ...workingCase,
             state: resCase.state,
-            prosecutor: resCase.prosecutor,
           })
         } catch (e) {
           return false
@@ -374,10 +373,7 @@ export const Overview: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={
-                workingCase.state === CaseState.RECEIVED &&
-                workingCase.isCourtDateInThePast
-                  ? Constants.REQUEST_LIST_ROUTE
-                  : features.includes(Feature.CASE_FILES)
+                features.includes(Feature.CASE_FILES)
                   ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
                   : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
               }

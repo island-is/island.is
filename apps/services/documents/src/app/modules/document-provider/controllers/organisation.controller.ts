@@ -25,6 +25,7 @@ import { Helpdesk } from '../models/helpdesk.model'
 import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { NationalId } from '../utils/nationalId.decorator'
+import { Provider } from '../models/provider.model'
 
 @ApiTags('organisations')
 @ApiHeader({
@@ -225,5 +226,15 @@ export class OrganisationController {
     }
 
     return updatedHelpdesk
+  }
+
+  @Get(':id/providers')
+  @ApiOkResponse({ type: [Provider] })
+  async getOrganisationsProviders(
+    @Param('id') organisationId: string,
+  ): Promise<Provider[]> {
+    return this.documentProviderService.getOrganisationsProviders(
+      organisationId,
+    )
   }
 }

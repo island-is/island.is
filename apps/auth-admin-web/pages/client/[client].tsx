@@ -17,6 +17,7 @@ import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesF
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import StepEnd from './../../components/common/StepEnd'
 import { ClientService } from './../../services/ClientService'
+import LocalizationUtils from '../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -40,6 +41,7 @@ const Index: React.FC = () => {
     }
     loadClient()
     setStep(1)
+    document.title = LocalizationUtils.getPageTitle('client.[client]')
   }, [clientId])
 
   const getClient = async (clientId: string) => {
@@ -220,12 +222,26 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
             <StepEnd
-              buttonText="Go back"
-              title="Steps completed"
+              buttonText={
+                LocalizationUtils.getPage('client.[client]').endStep?.buttonText
+              }
+              title={
+                LocalizationUtils.getPage('client.[client]').endStep?.title
+              }
               handleButtonFinishedClick={() => setStep(1)}
             >
-              <p>The steps needed, to create a client, have been completed</p>
-              <p>You can review your settings by clicking on the steps above</p>
+              <p>
+                {
+                  LocalizationUtils.getPage('client.[client]').endStep
+                    ?.infoTitle
+                }
+              </p>
+              <p>
+                {
+                  LocalizationUtils.getPage('client.[client]').endStep
+                    ?.infoDescription
+                }
+              </p>
             </StepEnd>
           </ClientStepNav>
         </ContentWrapper>
