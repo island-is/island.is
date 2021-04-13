@@ -12,6 +12,7 @@ import {
   RegulationLawChapterTree,
   RegulationRedirect,
   RegName,
+  RegQueryName,
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
@@ -32,7 +33,7 @@ export class RegulationsResolver {
   ): Promise<Regulation | RegulationRedirect | null> {
     return this.regulationsService.getRegulation(
       input.viewType,
-      input.name as RegName,
+      input.name as RegQueryName,
       input.date as ISODate | undefined,
       input.isCustomDiff,
       input.earlierDate as ISODate | 'original' | undefined,
