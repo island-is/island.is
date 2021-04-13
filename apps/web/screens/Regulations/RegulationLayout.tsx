@@ -1,5 +1,5 @@
 import { RegName } from './Regulations.types'
-import { RegulationPageTexts } from './Regulations.mock'
+import { RegulationPageTexts } from './RegulationTexts.types'
 
 import React, { FC } from 'react'
 import {
@@ -30,15 +30,15 @@ export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
       <Breadcrumbs
         items={[
           {
-            title: n('crumbs_1'),
+            title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
-          {
-            title: n('crumbs_2'),
+          /*{
+            title: 'Upplýsingasvæði',
             href: linkResolver('article').href,
-          },
+          },*/
           {
-            title: n('crumbs_3'),
+            title: 'Reglugerðir',
             href: linkResolver('regulationshome').href,
           },
           {

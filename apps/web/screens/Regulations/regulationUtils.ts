@@ -1,6 +1,6 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { ParsedUrlQuery } from 'querystring'
-import { ISODate, RegName, RegQueryName } from './mockData'
+import { ISODate, RegName, RegQueryName } from './Regulations.types'
 
 export const interpolate = (
   text: string,

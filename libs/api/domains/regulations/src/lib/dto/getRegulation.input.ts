@@ -10,7 +10,7 @@ export class GetRegulationInput {
 
   @Field()
   @IsString()
-  name!: string // RegName
+  name!: string // RegQueryName
 
   @Field({ nullable: true })
   @IsOptional()

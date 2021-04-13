@@ -3,10 +3,11 @@ import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
   ISODate,
-  RegName,
+  RegQueryName,
   Regulation,
   RegulationLawChapterTree,
-  RegulationMinistries,
+  RegulationListItem,
+  RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
@@ -43,7 +44,7 @@ export class RegulationsService extends RESTDataSource {
 */
   async getRegulation(
     viewType: 'current' | 'diff' | 'original' | 'd',
-    name: RegName,
+    name: RegQueryName,
     date?: ISODate,
     isCustomDiff?: boolean,
     earlierDate?: ISODate | 'original',
@@ -86,6 +87,21 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
+  async getRegulationsSearch(
+    q?: string,
+    rn?: string,
+    year?: string,
+    ch?: string,
+  ): Promise<RegulationListItem[] | null> {
+    const response = await this.get<RegulationListItem[] | null>(
+      `search?q=${q}&rn=${rn}&year=${year}&ch=${ch}`,
+      {
+        cacheOptions: { ttl: 1 /* this.options.ttl ?? 600*/ }, // defaults to 10 minutes
+      },
+    )
+    return response
+  }
+
   async getRegulationsYears(): Promise<RegulationYears | null> {
     const response = await this.get<RegulationYears | null>(`years`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
@@ -93,10 +109,13 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(): Promise<RegulationMinistries | null> {
-    const response = await this.get<RegulationMinistries | null>(`ministries`, {
-      cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-    })
+  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
+    const response = await this.get<RegulationMinistryList | null>(
+      `ministries`,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
     return response
   }
 

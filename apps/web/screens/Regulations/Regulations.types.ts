@@ -1,4 +1,43 @@
-export type Ministry = {
+declare const _RegNameToken_: unique symbol
+/** Regulation name – `0123/2012` */
+export type RegName = string & { [_RegNameToken_]: true }
+
+declare const _RegNameQueryToken_: unique symbol
+/** Regulation name formatted for URL param insertion – `0123-2012` */
+export type RegQueryName = string & { [_RegNameQueryToken_]: true }
+
+declare const _ISODateToken_: unique symbol
+/** Valid ISODate string – e.g. `2012-09-30` */
+export type ISODate = string & { [_ISODateToken_]: true }
+
+// ---------------------------------------------------------------------------
+
+// Years
+export type RegulationYears = ReadonlyArray<number>
+
+// ---------------------------------------------------------------------------
+
+export type RegulationLawChapter = {
+  /** Name (title) of the law chapter */
+  name: string
+  /** Short, URL-friendly token to use for search filters, etc.  */
+  slug: string // '01a' |'01b' |'01c' | etc.
+}
+
+export type RegulationLawChapterTree = ReadonlyArray<
+  RegulationLawChapter & {
+    /** List of child-chapters for this top-level chapter.
+     *
+     * NOTE: The "tree" never goes more than one level down.
+     */
+    subChapters: ReadonlyArray<RegulationLawChapter>
+  }
+>
+
+// ---------------------------------------------------------------------------
+
+// Ministries
+export type RegulationMinistry = {
   /** Name (title) of the ministry */
   name: string
   /** Short, URL-friendly token to use for search filters, etc.  */
@@ -7,51 +46,15 @@ export type Ministry = {
   current: boolean
 }
 
-export type MinistryFull = Ministry & {
-  /** Custom sorting modifier – i.e. to push Forsætisráðuneytið to the top of a list. */
-  order?: number
+export type RegulationMinistryListItem = RegulationMinistry & {
+  /** Optional sorting weight hint.
+   *
+   * Lower numbers first, undefined/null last.
+   */
+  order?: number | null
 }
 
-// ---------------------------------------------------------------------------
-
-export type LawChapter = {
-  /** Name (title) of the LawChapter */
-  name: string
-  /** Short, URL-friendly token to use for search filters, etc.  */
-  slug: string // '01a' |'01b' |'01c' | etc.
-}
-
-export type LawChapterTree = Array<
-  LawChapter & {
-    /** List of child-chapters for this top-level chapter.
-     *
-     * NOTE: The "tree" never goes more than one level down.
-     */
-    subChapters: ReadonlyArray<LawChapter>
-  }
->
-
-// ---------------------------------------------------------------------------
-
-export type RegulationListItem = {
-  /** Publication name */
-  name: RegName
-  /** The title of the Regulation */
-  title: string
-  /** The ministry that the regulation is linked to */
-  ministry?: Ministry
-}
-
-// ---------------------------------------------------------------------------
-
-declare const _RegNameToken_: unique symbol
-export type RegName = string & { [_RegNameToken_]: true }
-
-declare const _RegNameQueryToken_: unique symbol
-export type RegQueryName = string & { [_RegNameQueryToken_]: true }
-
-declare const _ISODateToken_: unique symbol
-export type ISODate = string & { [_ISODateToken_]: true }
+export type RegulationMinistryList = ReadonlyArray<RegulationMinistryListItem>
 
 // ---------------------------------------------------------------------------
 
@@ -81,14 +84,42 @@ export type RegulationEffect = {
 
 // ---------------------------------------------------------------------------
 
+// Regulations list
+export type RegulationListItem = {
+  /** Publication name */
+  name: RegName
+  /** The title of the Regulation */
+  title: string
+  /** The ministry that the regulation is linked to */
+  ministry?: RegulationMinistry
+  /** Publication date of this regulation */
+  publishedDate: ISODate
+}
+
+export type RegulationSearchResults = {
+  /** The number of the current page, 1-based  */
+  page: number
+  /** Total number of pages available for this query */
+  perPage: number
+  /** Total number of pages available for this query */
+  totalPages: number
+  /** Total number of items found for this query */
+  totalItems: number
+  /** ReguationListItems for this page */
+  data: RegulationListItem[]
+}
+
+// ---------------------------------------------------------------------------
+
 /** Regulation appendix/attachment chapter */
-export type Appendix = {
+export type RegulationAppendix = {
   /** Title of the appendix */
   title: string
   /** The appendix text in HTML format */
   text: string
 }
 
+// Single Regulation
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
   name: RegName
@@ -97,20 +128,21 @@ export type Regulation = {
   /* The regulation text in HTML format */
   text: string
   /** List of the regulation's appendixes */
-  appendixes: ReadonlyArray<Appendix>
+  appendixes: ReadonlyArray<RegulationAppendix>
   /** Optional HTML formatted comments from the editor pointing out
    * known errors or ambiguities in the text.
    */
   comments: string
+
   /** Date signed in the ministry */
   signatureDate: ISODate
   /** Date officially published in Stjórnartíðindi */
   publishedDate: ISODate
   /** Date when the regulation took effect for the first time */
   effectiveDate: ISODate
-  /** Date of last amendment of this regulation
+  /** Date of the last effective amendment of this regulation
    *
-   * This date is always a past date – UNLESS a future timeline Date is being
+   * This date is always a past (or current) date
    */
   lastAmendDate?: ISODate | null
   /** Date when (if) this regulation was repealed and became a thing of the past.
@@ -119,9 +151,9 @@ export type Regulation = {
    */
   repealedDate?: ISODate | null
   /** The ministry this regulation is published by/linked to */
-  ministry: Ministry
+  ministry?: RegulationMinistry
   /** Law chapters that this regulation is linked to */
-  lawChapters: ReadonlyArray<LawChapter>
+  lawChapters: ReadonlyArray<RegulationLawChapter>
   // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
 
   /** Regulations are roughly classified based on whether they contain
@@ -170,5 +202,3 @@ export type RegulationRedirect = {
   /** The regulation data has not been fully migrated and should be viewed at this URL */
   redirectUrl: string
 }
-
-// ---------------------------------------------------------------------------

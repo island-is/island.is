@@ -2,9 +2,9 @@ import {
   Regulation,
   RegulationRedirect,
   ISODate,
-  RegName,
+  RegQueryName,
 } from './Regulations.types'
-import { RegulationPageTexts } from './Regulations.mock'
+import { RegulationPageTexts } from './RegulationTexts.types'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -22,6 +22,12 @@ import {
 import { GET_REGULATION_QUERY } from '../queries'
 
 const { publicRuntimeConfig } = getConfig()
+
+const getKey = (regulation: Regulation): string => {
+  const { name, timelineDate, showingDiff } = regulation
+  const { from, to } = showingDiff || {}
+  return [name, timelineDate, from, to].join()
+}
 
 // ---------------------------------------------------------------------------
 
@@ -43,12 +49,15 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
     <RegulationDisplay
+      key={getKey(regulation)}
       texts={texts}
       regulation={regulation}
       urlDate={urlDate}
     />
   )
 }
+
+// ---------------------------------------------------------------------------
 
 const viewTypes = {
   /*+ renders the current regulation text - This is the deafult view type. */
@@ -75,9 +84,11 @@ export type ViewType = keyof typeof viewTypes
  *
  * Returns a fully zero-padded number.
  */
-const assertName = (slug: string): RegName => {
+const assertName = (slug: string): RegQueryName => {
   if (/\d{1,4}-\d{4}/.test(slug)) {
-    return (slug.length === 9 ? slug : ('000' + slug).substr(-9)) as RegName
+    return (slug.length === 9
+      ? slug
+      : ('000' + slug).substr(-9)) as RegQueryName
   }
   throw new CustomNextError(404)
 }
@@ -96,7 +107,7 @@ const assertDiff = (diff: string): true | undefined => {
   throw new CustomNextError(404)
 }
 
-const isISODate = (maybeISODate: string): boolean =>
+const smellsLikeISODate = (maybeISODate: string): boolean =>
   /\d{4}-\d{2}-\d{2}/.test(maybeISODate)
 
 const assertDate = (
@@ -104,7 +115,7 @@ const assertDate = (
   viewType?: ViewType,
 ): ISODate | undefined => {
   if (viewType === undefined || viewType === 'd') {
-    if (isISODate(maybeISODate)) {
+    if (smellsLikeISODate(maybeISODate)) {
       const date = new Date(maybeISODate).toISOString().substr(0, 10) as ISODate
       if (date === maybeISODate) {
         return date
@@ -133,6 +144,8 @@ const assertEarlierDate = (
   }
   throw new CustomNextError(404)
 }
+
+// ---------------------------------------------------------------------------
 
 RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const p = getParams(query, [
@@ -166,12 +179,13 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
             name,
             date,
             isCustomDiff,
+            earlierDate,
           },
         },
       })
       .then(
         (res) =>
-          Object.values(res.data ?? {})[0] as
+          res.data?.getRegulation as
             | Regulation
             | RegulationRedirect
             | undefined,
@@ -188,6 +202,9 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   //
   // This would be more in line with the intended difference between
   // viewTypes `"d"` and `"on"`
+
+  // TODO: Consider adding the same validation + redirect behavior
+  // for `earlierDate`s
 
   const urlDate = viewType === 'on' ? date : undefined
 

@@ -1,14 +1,12 @@
 import {
-  Ministry,
-  LawChapterTree,
+  RegulationLawChapterTree,
   RegulationListItem,
-  MinistryFull,
+  RegulationMinistryList,
+  RegulationSearchResults,
 } from './Regulations.types'
+import { RegulationHomeTexts } from './RegulationTexts.types'
 
-import {
-  RegulationHomeTexts,
-  regulationsSearchResults,
-} from './Regulations.mock'
+import { regulationsSearchResults } from './Regulations.mock'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -36,6 +34,8 @@ import { shuffle } from 'lodash'
 import { getParams, useRegulationLinkResolver } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
+  GetRegulationsSearchQuery,
+  QueryGetRegulationsSearchArgs,
   GetRegulationsQuery,
   QueryGetRegulationsArgs,
   GetRegulationsYearsQuery,
@@ -44,6 +44,7 @@ import {
   QueryGetRegulationsLawChaptersArgs,
 } from '@island.is/web/graphql/schema'
 import {
+  GET_REGULATIONS_SEARCH_QUERY,
   GET_REGULATIONS_LAWCHAPTERS_QUERY,
   GET_REGULATIONS_MINISTRIES_QUERY,
   GET_REGULATIONS_QUERY,
@@ -55,12 +56,13 @@ const { publicRuntimeConfig } = getConfig()
 // ---------------------------------------------------------------------------
 
 type RegulationsHomeProps = {
-  regulations: RegulationListItem[]
+  regulations: RegulationSearchResults
   texts: RegulationHomeTexts
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<Ministry>
-  lawChapters: Readonly<LawChapterTree>
+  ministries: RegulationMinistryList
+  lawChapters: RegulationLawChapterTree
+  doSearch: boolean
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
@@ -71,6 +73,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
+  const totalItems = props.regulations?.totalItems ?? 0
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -78,15 +81,15 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       <Breadcrumbs
         items={[
           {
-            title: txt('crumbs_1'),
+            title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
-          {
-            title: txt('crumbs_2'),
+          /*{
+            title: 'Upplýsingasvæði',
             href: linkResolver('article').href,
-          },
+          },*/
           {
-            title: txt('crumbs_3'),
+            title: 'Reglugerðir',
             href: linkResolver('regulationshome').href,
           },
         ]}
@@ -143,26 +146,49 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           header=""
           content={
             <GridContainer>
-              <GridRow>
-                {props.regulations.map((reg, i) => (
-                  <GridColumn
-                    key={reg.name}
-                    span={['1/1', '1/2', '1/2', '1/3']}
-                    paddingTop={3}
-                    paddingBottom={4}
-                  >
-                    <CategoryCard
-                      href={linkToRegulation(reg.name)}
-                      heading={reg.name}
-                      text={reg.title}
-                      tags={
-                        reg.ministry && [
-                          { label: reg.ministry.name, disabled: true },
-                        ]
-                      }
-                    />
+              {props.doSearch && (
+                <GridRow>
+                  <GridColumn span={'10/12'} paddingTop={3} paddingBottom={4}>
+                    <p>
+                      {totalItems === 0
+                        ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
+                        : String(totalItems).substr(-1) === '1'
+                        ? totalItems + ' reglugerð fannst'
+                        : `${totalItems} reglugerðir fundust${
+                            totalItems > props.regulations.perPage
+                              ? ', sýni ' +
+                                Math.min(totalItems, props.regulations?.perPage)
+                              : ''
+                          }
+                          `}
+                    </p>
                   </GridColumn>
-                ))}
+                </GridRow>
+              )}
+              <GridRow>
+                {props.regulations?.data?.length > 0 &&
+                  props.regulations.data.map((reg, i) => (
+                    <GridColumn
+                      key={reg.name}
+                      span={['1/1', '1/2', '1/2', '1/3']}
+                      paddingTop={3}
+                      paddingBottom={4}
+                    >
+                      <CategoryCard
+                        href={linkToRegulation(reg.name)}
+                        heading={reg.name}
+                        text={reg.title}
+                        tags={
+                          reg.ministry && [
+                            {
+                              label: reg.ministry.name ?? reg.ministry,
+                              disabled: true,
+                            },
+                          ]
+                        }
+                      />
+                    </GridColumn>
+                  ))}
               </GridRow>
             </GridContainer>
           }
@@ -192,11 +218,21 @@ RegulationsHome.getInitialProps = async (ctx) => {
     ),
 
     doSearch
-      ? [regulationsSearchResults[0]].concat(
-          shuffle(regulationsSearchResults).slice(
-            Math.floor(5 * Math.random()),
-          ),
-        )
+      ? apolloClient
+          .query<GetRegulationsSearchQuery, QueryGetRegulationsSearchArgs>({
+            query: GET_REGULATIONS_SEARCH_QUERY,
+            variables: {
+              input: {
+                q: searchQuery.q,
+                rn: searchQuery.rn,
+                year: searchQuery.year,
+                ch: searchQuery.ch,
+              },
+            },
+          })
+          .then(
+            (res) => res.data?.getRegulationsSearch as RegulationSearchResults,
+          )
       : apolloClient
           .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
             query: GET_REGULATIONS_QUERY,
@@ -207,7 +243,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
               },
             },
           })
-          .then((res) => res.data?.getRegulations.data as RegulationListItem[]),
+          .then((res) => res.data?.getRegulations as RegulationSearchResults),
 
     apolloClient
       .query<GetRegulationsYearsQuery>({
@@ -219,7 +255,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
       .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
       })
-      .then((res) => res.data?.getRegulationsMinistries as Array<MinistryFull>),
+      .then(
+        (res) => res.data?.getRegulationsMinistries as RegulationMinistryList,
+      ),
 
     apolloClient
       .query<
@@ -233,7 +271,10 @@ RegulationsHome.getInitialProps = async (ctx) => {
           },
         },
       })
-      .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
+      .then(
+        (res) =>
+          res.data?.getRegulationsLawChapters as RegulationLawChapterTree,
+      ),
   ])
 
   return {
@@ -243,6 +284,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
     years,
     ministries,
     lawChapters,
+    doSearch,
   }
 }
 
