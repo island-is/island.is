@@ -112,9 +112,6 @@ export class Case implements TCase {
   readonly courtDate?: string
 
   @Field({ nullable: true })
-  isCourtDateInThePast?: boolean
-
-  @Field({ nullable: true })
   readonly courtRoom?: string
 
   @Field({ nullable: true })
