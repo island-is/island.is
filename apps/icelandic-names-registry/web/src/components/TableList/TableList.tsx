@@ -17,6 +17,7 @@ import {
   GetIcelandicNameByInitialLetterQueryVariables,
   IcelandicName,
 } from '../../graphql/schema'
+import EditModal from '../EditModal/EditModal'
 
 interface TableListProps {}
 
@@ -33,13 +34,13 @@ const TableList: FC<TableListProps> = () => {
   >(GET_ICELANDIC_NAME_BY_INITIAL_LETTER, {
     variables: {
       input: {
-        initialLetter: 'Þ',
+        initialLetter: 'Æ',
       },
     },
   })
 
   useLayoutEffect(() => {
-    // retreive()
+    retreive()
   }, [])
 
   useLayoutEffect(() => {
@@ -58,6 +59,7 @@ const TableList: FC<TableListProps> = () => {
 
   return (
     <div className={styles.container}>
+      <EditModal />
       <T.Table>
         <T.Head>
           <T.Row>

@@ -11,12 +11,14 @@ import {
   Select,
   Checkbox,
   GridRow,
+  Option,
   GridContainer,
   DatePicker,
   GridColumn,
 } from '@island.is/island-ui/core'
 
 import * as styles from './EditForm.treat'
+import { ActionMeta, ValueType } from 'react-select'
 
 interface PropTypes {
   closeModal: () => void
@@ -92,8 +94,21 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms))
 
-  const onSubmit = async (data: object, e: any) => {
+  const onSubmit = async (data: IFormInputs, e: any) => {
     console.log('data', data, e)
+
+    let dateString = null
+
+    if (data.verdict) {
+      dateString = format(data.verdict, 'dd.MM.yyyy')
+    }
+
+    const submitData = {
+      ...data,
+      verdict: dateString,
+    }
+
+    console.log(submitData)
     await sleep(2000)
   }
 
@@ -138,6 +153,10 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                       onChange={(e) => onChange(e.target.value)}
                       {...register('icelandicName', {
                         required: 'Nafn vantar',
+                        pattern: {
+                          value: /^\S*$/i,
+                          message: 'Nafn má ekki innihalda bil',
+                        },
                       })}
                       disabled={inputsDisabled}
                     />
@@ -163,7 +182,9 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         value={nameTypeOptions.find(
                           (option) => option.value === value,
                         )}
-                        onChange={onChange}
+                        onChange={(option) =>
+                          onChange(String((option as Option).value))
+                        }
                         size="sm"
                         hasError={Boolean(errors?.type?.message)}
                         errorMessage={errors?.type?.message}
@@ -194,7 +215,9 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         value={statusTypeOptions.find(
                           (option) => option.value === value,
                         )}
-                        onChange={onChange}
+                        onChange={(option) =>
+                          onChange(String((option as Option).value))
+                        }
                         size="sm"
                         hasError={Boolean(errors?.status?.message)}
                         errorMessage={errors?.status?.message}
@@ -248,7 +271,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         onChange={(e) => onChange(e.target.value)}
                         {...register('url', {
                           pattern: {
-                            value: /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/i,
+                            value: /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i,
                             message: 'Vefslóð virðist ekki vera á réttu formi',
                           },
                         })}
