@@ -117,9 +117,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                     key={'effects-' + i}
                     href={linkToRegulation(item.name)}
                     aria-label={labelLong}
-                    title={labelLong}
                   >
-                    <FocusableBox flexDirection={'column'}>
+                    <FocusableBox
+                      flexDirection={'column'}
+                      component="span"
+                      title={labelLong}
+                    >
                       {({
                         isFocused,
                         isHovered,
