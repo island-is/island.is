@@ -1,8 +1,8 @@
 import {
-  Ministry,
-  LawChapterTree,
+  RegulationLawChapterTree,
   RegulationListItem,
-  MinistryFull,
+  RegulationMinistryList,
+  RegulationSearchResults,
 } from './Regulations.types'
 
 import {
@@ -58,12 +58,13 @@ const { publicRuntimeConfig } = getConfig()
 // ---------------------------------------------------------------------------
 
 type RegulationsHomeProps = {
-  regulations: RegulationListItem[]
+  regulations: RegulationSearchResults
   texts: RegulationHomeTexts
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<Ministry>
-  lawChapters: Readonly<LawChapterTree>
+  ministries: RegulationMinistryList
+  lawChapters: Readonly<RegulationLawChapterTree>
+  doSearch: boolean
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
@@ -74,6 +75,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
+  const totalItems = props.regulations?.totalItems ?? 0
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -146,9 +148,28 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           header=""
           content={
             <GridContainer>
+              {props.doSearch && (
+                <GridRow>
+                  <GridColumn span={'10/12'} paddingTop={3} paddingBottom={4}>
+                    <p>
+                      {totalItems === 0
+                        ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
+                        : String(totalItems).substr(-1) === '1'
+                        ? totalItems + ' reglugerð fannst'
+                        : `${totalItems} reglugerðir fundust${
+                            totalItems > props.regulations.perPage
+                              ? ', sýni ' +
+                                Math.min(totalItems, props.regulations?.perPage)
+                              : ''
+                          }
+                          `}
+                    </p>
+                  </GridColumn>
+                </GridRow>
+              )}
               <GridRow>
-                {props.regulations ? (
-                  props.regulations.map((reg, i) => (
+                {props.regulations?.data?.length > 0 &&
+                  props.regulations.data.map((reg, i) => (
                     <GridColumn
                       key={reg.name}
                       span={['1/1', '1/2', '1/2', '1/3']}
@@ -161,15 +182,15 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                         text={reg.title}
                         tags={
                           reg.ministry && [
-                            { label: reg.ministry.name  ?? reg.ministry, disabled: true },
+                            {
+                              label: reg.ministry.name ?? reg.ministry,
+                              disabled: true,
+                            },
                           ]
                         }
                       />
                     </GridColumn>
-                  ))
-                ) : (
-                  <p>Engar reglugerðir fundust</p>
-                )}
+                  ))}
               </GridRow>
             </GridContainer>
           }
@@ -212,8 +233,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
             },
           })
           .then(
-            (res) =>
-              res.data?.getRegulationsSearch as RegulationListItem[],
+            (res) => res.data?.getRegulationsSearch as RegulationSearchResults,
           )
       : apolloClient
           .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
@@ -225,7 +245,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
               },
             },
           })
-          .then((res) => res.data?.getRegulations.data as RegulationListItem[]),
+          .then((res) => res.data?.getRegulations as RegulationSearchResults),
 
     apolloClient
       .query<GetRegulationsYearsQuery>({
@@ -237,7 +257,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
       .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
       })
-      .then((res) => res.data?.getRegulationsMinistries as Array<MinistryFull>),
+      .then(
+        (res) => res.data?.getRegulationsMinistries as RegulationMinistryList,
+      ),
 
     apolloClient
       .query<
@@ -251,7 +273,10 @@ RegulationsHome.getInitialProps = async (ctx) => {
           },
         },
       })
-      .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
+      .then(
+        (res) =>
+          res.data?.getRegulationsLawChapters as RegulationLawChapterTree,
+      ),
   ])
 
   return {
@@ -261,6 +286,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
     years,
     ministries,
     lawChapters,
+    doSearch,
   }
 }
 

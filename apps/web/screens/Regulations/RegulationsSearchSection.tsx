@@ -198,60 +198,57 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             />
           </GridColumn>
         </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['1/1', '1/1', '4/12', '3/12', '2/12']}
-              offset={['0', '0', '0', '0', '1/12']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={[2, 2, 0]}
-            >
-              <Select
-                name="year"
-                isSearchable
-                label={txt('searchYearLabel')}
-                placeholder={txt('searchYearPlaceholder')}
-                value={findValueOption(yearOptions, filters.year)}
-                options={yearOptions}
-                onChange={(option) =>
-                  doSearch('year', getRSValue(option) || '')
-                }
-                size="sm"
-              />
-            </GridColumn>
-            <GridColumn
-              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={[2, 2, 0]}
-            >
-              <Select
-                name="ch"
-                isSearchable
-                label={txt('searchChapterLabel')}
-                placeholder={txt('searchChapterPlaceholder')}
-                value={findValueOption(lawChapterOptions, filters.ch)}
-                options={lawChapterOptions}
-                onChange={(option) => doSearch('ch', getRSValue(option) || '')}
-                size="sm"
-              />
-            </GridColumn>
-            <GridColumn
-              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={[2, 2, 0]}
-            >
-              <Select
-                name="rn"
-                isSearchable
-                label={txt('searchMinistryLabel')}
-                placeholder={txt('searchMinistryPlaceholder')}
-                value={findValueOption(ministryOptions, filters.rn)}
-                options={ministryOptions}
-                onChange={(option) => doSearch('rn', getRSValue(option) || '')}
-                size="sm"
-              />
-            </GridColumn>
-          </GridRow>
-
+        <GridRow>
+          <GridColumn
+            span={['1/1', '1/1', '4/12', '3/12', '2/12']}
+            offset={['0', '0', '0', '0', '1/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
+          >
+            <Select
+              name="year"
+              isSearchable
+              label={txt('searchYearLabel')}
+              placeholder={txt('searchYearPlaceholder')}
+              value={findValueOption(yearOptions, filters.year)}
+              options={yearOptions}
+              onChange={(option) => doSearch('year', getRSValue(option) || '')}
+              size="sm"
+            />
+          </GridColumn>
+          <GridColumn
+            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
+          >
+            <Select
+              name="ch"
+              isSearchable
+              label={txt('searchChapterLabel')}
+              placeholder={txt('searchChapterPlaceholder')}
+              value={findValueOption(lawChapterOptions, filters.ch)}
+              options={lawChapterOptions}
+              onChange={(option) => doSearch('ch', getRSValue(option) || '')}
+              size="sm"
+            />
+          </GridColumn>
+          <GridColumn
+            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+            paddingTop={[0, 0, 4]}
+            paddingBottom={[2, 2, 0]}
+          >
+            <Select
+              name="rn"
+              isSearchable
+              label={txt('searchMinistryLabel')}
+              placeholder={txt('searchMinistryPlaceholder')}
+              value={findValueOption(ministryOptions, filters.rn)}
+              options={ministryOptions}
+              onChange={(option) => doSearch('rn', getRSValue(option) || '')}
+              size="sm"
+            />
+          </GridColumn>
+        </GridRow>
       </GridContainer>
 
       {/* <Checkbox
