@@ -22,7 +22,7 @@ const CaseFile: React.FC<Props> = (props) => {
   return (
     <BlueBox size="small">
       <Box display="flex" justifyContent="spaceBetween">
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" marginRight={1}>
           <div className={styles.CaseFileNameContainer}>
             <Text fontWeight="semiBold" truncate>
               {name}
@@ -32,12 +32,12 @@ const CaseFile: React.FC<Props> = (props) => {
         </Box>
         <Box display="flex" alignItems="center">
           {isValidUpdatedAtDate && (
-            <Box marginRight={2}>
+            <div className={styles.CaseFileCreatedContainer}>
               <Text variant="small">{`${formatDate(
                 uploadedAt,
                 'd.M.y',
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
-            </Box>
+            </div>
           )}
           <Tag variant="darkerBlue" onClick={onOpen}>
             Opna

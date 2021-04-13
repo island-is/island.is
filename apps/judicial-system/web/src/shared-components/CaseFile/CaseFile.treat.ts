@@ -3,5 +3,10 @@ import { style } from 'treat'
 
 export const CaseFileNameContainer = style({
   marginRight: theme.spacing[1],
-  maxWidth: '416px',
+  maxWidth: '353px',
+})
+
+export const CaseFileCreatedContainer = style({
+  marginRight: theme.spacing[2],
+  whiteSpace: 'nowrap',
 })

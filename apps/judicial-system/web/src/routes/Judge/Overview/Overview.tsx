@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  AccordionCard,
+} from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -18,6 +24,7 @@ import {
   BlueBox,
   Modal,
   FormContentContainer,
+  CaseFile,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -33,6 +40,7 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  GetSignedUrlQuery,
   TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
@@ -70,6 +78,7 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
+  const [openFileId, setOpenFileId] = useState<string>()
   const { features } = useContext(FeatureContext)
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
@@ -133,6 +142,16 @@ export const JudgeOverview: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
+    variables: {
+      input: {
+        id: openFileId,
+        caseId: workingCase?.id,
+      },
+    },
+    skip: !workingCase?.id || !openFileId,
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -208,6 +227,13 @@ export const JudgeOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  useEffect(() => {
+    if (fileSignedUrl) {
+      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
+      setOpenFileId(undefined)
+    }
+  }, [fileSignedUrl])
 
   return (
     <PageLayout
@@ -515,6 +541,27 @@ export const JudgeOverview: React.FC = () => {
                       {workingCase.comments}
                     </span>
                   </Text>
+                </div>
+              )}
+              {workingCase.files && (
+                <div className={styles.infoSection}>
+                  <AccordionCard
+                    id="files-card"
+                    label={`Rannsóknargögn (${workingCase.files.length})`}
+                  >
+                    {workingCase.files?.map((file, index) => {
+                      return (
+                        <Box marginBottom={3}>
+                          <CaseFile
+                            name={`${index + 1}. ${file.name}`}
+                            size={file.size}
+                            uploadedAt={file.created}
+                            onOpen={() => setOpenFileId(file.id)}
+                          />
+                        </Box>
+                      )
+                    })}
+                  </AccordionCard>
                 </div>
               )}
               <PdfButton
