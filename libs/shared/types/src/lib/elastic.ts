@@ -51,7 +51,7 @@ export interface GetByIdResponse<ResponseSource = any> {
   _source: ResponseSource
 }
 
-export interface RankEvaluationResponse<searchTermsUnion = string> {
+export interface RankEvaluationResponse<searchTermsUnion extends string> {
   metric_score: number
   details: {
     [searchTerm in searchTermsUnion]: {

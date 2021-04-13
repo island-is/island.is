@@ -6,6 +6,7 @@ import {
   ValidAnswers,
   formatAndParseAsHTML,
   buildFieldOptions,
+  RecordObject,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -30,7 +31,6 @@ import {
   getExpectedDateOfBirth,
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
-
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
@@ -46,7 +46,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../../types/schema'
-
 import { Period } from '../../types'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
@@ -55,15 +54,16 @@ interface ReviewScreenProps {
   application: Application
   goToScreen?: (id: string) => void
   editable?: boolean
+  errors?: RecordObject
 }
 
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
   editable = true,
+  errors,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
-
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -544,7 +544,7 @@ const Review: FC<ReviewScreenProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <Box marginTop={1} marginBottom={2} marginLeft={4}>
+              <Box marginTop={1} marginBottom={2}>
                 <Text variant="h5">
                   {formatMessage(
                     parentalLeaveFormMessages.shareInformation.title,
@@ -557,6 +557,10 @@ const Review: FC<ReviewScreenProps> = ({
                   id="shareInformationWithOtherParent"
                   disabled={false}
                   name="shareInformationWithOtherParent"
+                  error={
+                    (errors as RecordObject<string> | undefined)
+                      ?.shareInformationWithOtherParent
+                  }
                   defaultValue={
                     getValueViaPath(
                       application.answers,

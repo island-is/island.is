@@ -26,6 +26,8 @@ import { NotFound } from '@island.is/application/ui-shell'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
@@ -75,8 +77,14 @@ export const Applications: FC = () => {
   }, [type, data])
 
   useEffect(() => {
-    refetch?.()
+    if (type) {
+      refetch?.()
+    }
   }, [lang])
+
+  if (loading) {
+    return <ApplicationLoading />
+  }
 
   if (!type || applicationsError) {
     return (

@@ -9,6 +9,8 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
@@ -35,8 +37,18 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z.string().min(7),
+    nationalId: z
+      .string()
+      .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+        params: m.dataSchemeNationalId,
+      }),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      { params: m.dataSchemePhoneNumber },
+    ),
     email: z.string().email(),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
@@ -56,7 +68,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  translation: ApplicationConfigurations.ExampleForm.translation,
+  translations: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
     initial: 'draft',

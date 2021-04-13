@@ -38,12 +38,19 @@ import {
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentLocale,
+} from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
+import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
+import { IntlService } from '@island.is/api/domains/translations'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -51,7 +58,6 @@ import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
@@ -103,6 +109,7 @@ export class ApplicationController {
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
+    private intlService: IntlService,
   ) {}
 
   @Scopes(ApplicationIdentityServerScope.read)
@@ -344,11 +351,13 @@ export class ApplicationController {
       newAnswers,
       nationalId,
       true,
+      this.intlService.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       newAnswers,
+      this.intlService.formatMessage,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
@@ -449,12 +458,15 @@ export class ApplicationController {
       newAnswers,
       nationalId,
       false,
+      this.intlService.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
+      this.intlService.formatMessage,
     )
+
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       permittedAnswers,

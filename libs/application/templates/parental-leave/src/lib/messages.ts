@@ -1182,17 +1182,16 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-// TODO: Add the translations to the dataSchema.ts
 export const dataSchemaMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
+    description: 'Error message when phone number is invalid.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'ID number must be valid.',
+    description: 'Error message when the kennitala is invalid.',
   },
 })
 

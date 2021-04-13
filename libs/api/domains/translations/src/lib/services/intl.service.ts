@@ -8,43 +8,56 @@ import { TranslationsService } from '../translations.service'
 
 @Injectable()
 export class IntlService {
+  private namespaces: string[] | undefined = []
+  private locale: Locale = 'is'
+
   constructor(private translationsService: TranslationsService) {}
 
-  getMessages(id: string, locale: Locale) {
-    if (this.translationsService.loadedNamespaces.has(id)) {
-      const namespace = this.translationsService.loadedNamespaces.get(id)!
-
-      return namespace.data.find((item) => item.id === locale)!.messages
-    }
-
-    return {}
-  }
-
-  intl = (namespace: string, locale: Locale) => {
+  intl() {
     const intlCache = createIntlCache()
-    const messages = this.getMessages(namespace, locale)
+    const messages = this.getMessages(this.namespaces, this.locale)
 
-    return createIntl({ locale, messages }, intlCache)
+    return createIntl({ locale: this.locale, messages }, intlCache)
   }
 
-  formatMessage = (
-    key: StaticText | undefined,
-    { namespace, locale }: { namespace?: string; locale: Locale },
-  ): string | null => {
-    if (!key) {
-      logger.error('No key passed to formatMessage function.')
+  /**
+   * We reduced all the messages from the different namespaces
+   * inside an unique object for the current locale.
+   */
+  getMessages(namespaces: string[] | undefined, locale: Locale) {
+    return namespaces?.reduce((acc, cur) => {
+      if (this.translationsService.loadedNamespaces.has(cur)) {
+        const namespace = this.translationsService.loadedNamespaces.get(cur)!
 
-      return null
+        return {
+          ...acc,
+          ...namespace.find((item) => item.id === locale)!.messages,
+        }
+      }
+
+      return acc
+    }, {})
+  }
+
+  setConfig({ namespaces, locale }: { namespaces?: string[]; locale: Locale }) {
+    this.namespaces = namespaces
+    this.locale = locale
+  }
+
+  formatMessage = (descriptor: StaticText): string => {
+    if (!descriptor) {
+      logger.warn('No descriptor passed to formatMessage function.')
+      return ''
     }
 
-    if (typeof key === 'string') {
-      return key
+    if (typeof descriptor === 'string') {
+      return descriptor
     }
 
-    if (!namespace) {
-      return key.defaultMessage as string
+    if (!this.namespaces) {
+      return descriptor.defaultMessage as string
     }
 
-    return this.intl(namespace, locale).formatMessage(key)
+    return this.intl().formatMessage(descriptor)
   }
 }

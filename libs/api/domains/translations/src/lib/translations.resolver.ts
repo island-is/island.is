@@ -13,11 +13,9 @@ export class TranslationsResolver {
   async getTranslations(
     @Args('input') input: GetTranslationsInput,
   ): Promise<TranslationsDict | null> {
-    const res = await this.translationsService.getTranslations(
+    return this.translationsService.getTranslations(
       input?.namespaces,
       input?.lang as Locale,
     )
-
-    return res.items
   }
 }

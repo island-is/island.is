@@ -89,24 +89,27 @@ const Screen: FC<ScreenProps> = ({
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
-  const { formatMessage } = useLocale()
+  const { lang, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
-    resolver,
+    resolver: (formValue, context) =>
+      resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-
   const refetch = useContext<() => void>(RefetchContext)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION,
     {
+      context: {
+        headers: {
+          locale: lang,
+        },
+      },
       onError: (e) => {
         // We only show the error message if it doesn't contains a json data object
         if (!isJSONObject(e.message)) {

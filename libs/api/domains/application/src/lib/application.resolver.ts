@@ -68,8 +68,9 @@ export class ApplicationResolver {
   async updateApplication(
     @Args('input') input: UpdateApplicationInput,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<Application> {
-    return this.applicationService.update(input, user.authorization)
+    return this.applicationService.update(input, user.authorization, locale)
   }
 
   @Mutation(() => Application, { nullable: true })

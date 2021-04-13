@@ -113,4 +113,14 @@ export const m = defineMessages({
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: 'Some description',
   },
+  dataSchemePhoneNumber: {
+    id: 'example.application:dataSchema.phoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'Error message when phone number is invalid.',
+  },
+  dataSchemeNationalId: {
+    id: 'example.application:dataSchema.national.id',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'Error message when the kennitala is invalid.',
+  },
 })

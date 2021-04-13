@@ -1,10 +1,11 @@
 import React, { FC, useEffect } from 'react'
 import { Header as UIHeader } from '@island.is/island-ui/core'
-import { useAuthState } from '../context/AuthProvider'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocation } from 'react-router-dom'
+
+import { useAuthState } from '../context/AuthProvider'
 import useAuth from '../hooks/useAuth'
 import { fixSvgUrls } from '../utils'
-import { useLocation } from 'react-router-dom'
 
 const Header: FC = () => {
   const [{ isAuthenticated, userInfo }] = useAuthState()
@@ -12,6 +13,10 @@ const Header: FC = () => {
   const { lang } = useLocale()
   const { changeLanguage } = useNamespaces()
   const location = useLocation()
+
+  const handleSwitchLanguage = () => {
+    changeLanguage(lang === 'is' ? 'en' : 'is')
+  }
 
   useEffect(() => {
     // Fixes the island.is logo and other SVGs not appearing on
@@ -25,7 +30,7 @@ const Header: FC = () => {
       authenticated={isAuthenticated}
       userName={userInfo?.profile?.name}
       language={(lang ?? 'is') === 'is' ? 'EN' : 'IS'}
-      switchLanguage={() => changeLanguage(lang === 'is' ? 'en' : 'is')}
+      switchLanguage={handleSwitchLanguage}
       onLogout={signOutUser}
     />
   )

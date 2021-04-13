@@ -174,7 +174,7 @@ export class ElasticService {
     })
   }
 
-  async getRankEvaluation<searchTermUnion>(
+  async getRankEvaluation<searchTermUnion extends string>(
     index: string,
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],

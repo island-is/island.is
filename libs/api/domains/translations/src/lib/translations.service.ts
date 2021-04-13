@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import { Locale } from '@island.is/shared/types'
-import { dateFormat } from '@island.is/shared/constants'
 import { ApolloError } from 'apollo-server-express'
 import isEmpty from 'lodash/isEmpty'
 import mergeWith from 'lodash/mergeWith'
-import format from 'date-fns/format'
 
 export interface TranslationsDict {
   [key: string]: string
@@ -37,7 +35,7 @@ const errorHandler = (name: string) => {
 export class TranslationsService {
   loadedNamespaces = new Map<
     string,
-    { lastUpdated: number; data: { id: Locale; messages: TranslationsDict }[] }
+    { id: Locale; messages: TranslationsDict }[]
   >()
   fetching: Record<string, boolean> = {}
 
@@ -46,7 +44,7 @@ export class TranslationsService {
   getTranslations = async (
     namespaces?: string[],
     lang?: Locale,
-  ): Promise<{ lastUpdated: number; items: TranslationsDict }> => {
+  ): Promise<TranslationsDict> => {
     const locale = locales.find((l) => l.code === localeMap[lang ?? 'is']) as {
       code: string
       fallbackCode: string | null
@@ -64,56 +62,46 @@ export class TranslationsService {
       })
       .catch(errorHandler('getNamespace'))
 
-    return result.items.reduce(
-      (acc: { lastUpdated: number; items: TranslationsDict }, cur) => {
-        const strings = cur.fields.strings
+    return result.items.reduce((acc: TranslationsDict, cur) => {
+      const strings = cur.fields.strings
 
-        return {
-          lastUpdated: new Date(cur.sys.updatedAt).getTime(),
-          items: {
-            ...acc.items,
-            ...mergeWith(
-              {},
-              locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
-              strings?.[locale.code],
-              (o, s) => (isEmpty(s) ? o : s),
-            ),
-          },
-        }
-      },
-      { lastUpdated: 0, items: {} },
-    )
+      return {
+        ...acc,
+        ...mergeWith(
+          {},
+          locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
+          strings?.[locale.code],
+          (o, s) => (isEmpty(s) ? o : s),
+        ),
+      }
+    }, {})
   }
 
-  fetchNamespace = async (namespace: string) => {
-    if (this.fetching?.[namespace]) {
-      return
-    }
+  fetchNamespaces = async (namespaces: string[]) => {
+    await Promise.all(
+      namespaces.map(async (namespace) => {
+        if (this.fetching?.[namespace]) {
+          return
+        }
 
-    this.fetching[namespace] = true
+        this.fetching[namespace] = true
 
-    if (this.loadedNamespaces.has(namespace)) {
-      logger.info(
-        `${namespace} already exists and last updated at ${format(
-          this.loadedNamespaces.get(namespace)!.lastUpdated,
-          dateFormat.is,
-        )}.`,
-      )
+        if (this.loadedNamespaces.has(namespace)) {
+          logger.info(`${namespace} already exists.`)
 
-      return
-    }
+          return
+        }
 
-    const isMessages = await this.getTranslations([namespace], 'is')
-    const enMessages = await this.getTranslations([namespace], 'en')
+        const isMessages = await this.getTranslations([namespace], 'is')
+        const enMessages = await this.getTranslations([namespace], 'en')
 
-    this.loadedNamespaces.set(namespace, {
-      lastUpdated: isMessages.lastUpdated,
-      data: [
-        { id: 'is', messages: isMessages.items },
-        { id: 'en', messages: enMessages.items },
-      ],
-    })
+        this.loadedNamespaces.set(namespace, [
+          { id: 'is', messages: isMessages },
+          { id: 'en', messages: enMessages },
+        ])
 
-    this.fetching[namespace] = false
+        this.fetching[namespace] = false
+      }),
+    )
   }
 }

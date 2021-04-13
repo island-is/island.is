@@ -1,4 +1,4 @@
-# api-domains-translations
+# API Domains Translations
 
 Translations domain to fetch namespaces' messages from Contentful. Also used to create the Intl function to be able to use along with `formatMessage`.
 

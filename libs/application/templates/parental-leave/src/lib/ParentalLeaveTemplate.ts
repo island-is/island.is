@@ -73,7 +73,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
-  translation: ApplicationConfigurations.ParentalLeave.translation,
+  translations: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

@@ -68,28 +68,26 @@ export class ApplicationSerializer
     const helper = new ApplicationTemplateHelper(application, template)
     const stateInfo = helper.getApplicationStateInfo()
 
-    if (template.translation) {
-      await this.translationsService.fetchNamespace(template.translation)
-    }
+    // We load the core namespace for the application system + the ones defined in the application template
+    const namespaces = ['application.system', ...(template?.translations ?? [])]
 
-    const intlConfig = {
-      namespace: template.translation,
-      locale,
-    }
+    await this.translationsService.fetchNamespaces(namespaces)
+
+    this.intlService.setConfig({ namespaces, locale })
 
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
       ),
-      stateTitle: this.intlService.formatMessage(stateInfo.title, intlConfig),
-      stateDescription: this.intlService.formatMessage(
-        stateInfo.description,
-        intlConfig,
-      ),
-      name: this.intlService.formatMessage(template.name, intlConfig),
+      stateTitle: stateInfo.title
+        ? this.intlService.formatMessage(stateInfo.title)
+        : null,
+      stateDescription: stateInfo.description
+        ? this.intlService.formatMessage(stateInfo.description)
+        : null,
+      name: this.intlService.formatMessage(template.name),
       progress: helper.getApplicationProgress(),
-      translation: template.translation,
     })
 
     return classToPlain(dto)

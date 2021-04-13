@@ -130,3 +130,11 @@ export const coreMessages = defineMessages({
       'To continue the application process, you will need to sign in.',
   },
 })
+
+export const coreErrorMessages = defineMessages({
+  defaultError: {
+    id: 'application.system:core.default.error',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Generic invalid value error message',
+  },
+})
