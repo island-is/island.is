@@ -34,6 +34,7 @@ const CheckboxFormField: FC<Props> = ({
     large,
     strong,
     backgroundColor,
+    width,
   } = field
   const { formatMessage } = useLocale()
 
@@ -62,6 +63,7 @@ const CheckboxFormField: FC<Props> = ({
           disabled={disabled}
           large={large}
           name={`${id}`}
+          split={width === 'half' ? '1/2' : '1/1'}
           backgroundColor={backgroundColor}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
