@@ -36,6 +36,8 @@ import { shuffle } from 'lodash'
 import { getParams, useRegulationLinkResolver } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
+  GetRegulationsSearchQuery,
+  QueryGetRegulationsSearchArgs,
   GetRegulationsQuery,
   QueryGetRegulationsArgs,
   GetRegulationsYearsQuery,
@@ -44,6 +46,7 @@ import {
   QueryGetRegulationsLawChaptersArgs,
 } from '@island.is/web/graphql/schema'
 import {
+  GET_REGULATIONS_SEARCH_QUERY,
   GET_REGULATIONS_LAWCHAPTERS_QUERY,
   GET_REGULATIONS_MINISTRIES_QUERY,
   GET_REGULATIONS_QUERY,
@@ -144,25 +147,29 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           content={
             <GridContainer>
               <GridRow>
-                {props.regulations.map((reg, i) => (
-                  <GridColumn
-                    key={reg.name}
-                    span={['1/1', '1/2', '1/2', '1/3']}
-                    paddingTop={3}
-                    paddingBottom={4}
-                  >
-                    <CategoryCard
-                      href={linkToRegulation(reg.name)}
-                      heading={reg.name}
-                      text={reg.title}
-                      tags={
-                        reg.ministry && [
-                          { label: reg.ministry.name, disabled: true },
-                        ]
-                      }
-                    />
-                  </GridColumn>
-                ))}
+                {props.regulations ? (
+                  props.regulations.map((reg, i) => (
+                    <GridColumn
+                      key={reg.name}
+                      span={['1/1', '1/2', '1/2', '1/3']}
+                      paddingTop={3}
+                      paddingBottom={4}
+                    >
+                      <CategoryCard
+                        href={linkToRegulation(reg.name)}
+                        heading={reg.name}
+                        text={reg.title}
+                        tags={
+                          reg.ministry && [
+                            { label: reg.ministry.name  ?? reg.ministry, disabled: true },
+                          ]
+                        }
+                      />
+                    </GridColumn>
+                  ))
+                ) : (
+                  <p>Engar reglugerðir fundust</p>
+                )}
               </GridRow>
             </GridContainer>
           }
@@ -192,11 +199,22 @@ RegulationsHome.getInitialProps = async (ctx) => {
     ),
 
     doSearch
-      ? [regulationsSearchResults[0]].concat(
-          shuffle(regulationsSearchResults).slice(
-            Math.floor(5 * Math.random()),
-          ),
-        )
+      ? apolloClient
+          .query<GetRegulationsSearchQuery, QueryGetRegulationsSearchArgs>({
+            query: GET_REGULATIONS_SEARCH_QUERY,
+            variables: {
+              input: {
+                q: searchQuery.q,
+                rn: searchQuery.rn,
+                year: searchQuery.year,
+                ch: searchQuery.ch,
+              },
+            },
+          })
+          .then(
+            (res) =>
+              res.data?.getRegulationsSearch as RegulationListItem[],
+          )
       : apolloClient
           .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
             query: GET_REGULATIONS_QUERY,

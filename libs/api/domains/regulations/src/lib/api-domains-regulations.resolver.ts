@@ -13,12 +13,14 @@ import {
   RegulationRedirect,
   RegName,
   RegQueryName,
+  RegulationListItem,
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { RegulationModel } from './model/regulation'
 import { RegulationsModel } from './model/regulations'
+import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
@@ -48,6 +50,18 @@ export class RegulationsResolver {
     return this.regulationsService.getRegulations(
       input.type,
       validPage(input.page),
+    )
+  }
+
+  @Query(() => graphqlTypeJson)
+  getRegulationsSearch(
+    @Args('input') input: GetRegulationsSearchInput,
+  ): Promise<RegulationListItem[] | null> {
+    return this.regulationsService.getRegulationsSearch(
+      input.q,
+      input.rn,
+      input.year,
+      input.ch,
     )
   }
 

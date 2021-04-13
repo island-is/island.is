@@ -78,6 +78,13 @@ export const GET_REGULATIONS_QUERY = gql`
   }
 `
 */
+
+export const GET_REGULATIONS_SEARCH_QUERY = gql`
+  query GetRegulationsSearch($input: GetRegulationsSearchInput!) {
+    getRegulationsSearch(input: $input)
+  }
+`
+
 export const GET_REGULATIONS_YEARS_QUERY = gql`
   query GetRegulationsYears {
     getRegulationsYears

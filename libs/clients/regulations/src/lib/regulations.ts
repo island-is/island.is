@@ -6,6 +6,7 @@ import {
   RegQueryName,
   Regulation,
   RegulationLawChapterTree,
+  RegulationListItem,
   RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
@@ -81,6 +82,21 @@ export class RegulationsService extends RESTDataSource {
       `regulations/${type}${page ? '?page=' + page : ''}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
+    return response
+  }
+
+  async getRegulationsSearch(
+    q?: string,
+    rn?: string,
+    year?: string,
+    ch?: string,
+  ): Promise<RegulationListItem[] | null> {
+    const response = await this.get<RegulationListItem[] | null>(
+      `search?q=${q}&rn=${rn}&year=${year}&ch=${ch}`,
+      {
+        cacheOptions: { ttl: 1 /* this.options.ttl ?? 600*/ }, // defaults to 10 minutes
       },
     )
     return response

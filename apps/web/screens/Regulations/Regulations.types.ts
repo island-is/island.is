@@ -103,6 +103,8 @@ export type RegulationSearchResults = {
   perPage: number
   /** Total number of pages available for this query */
   totalPages: number
+  /** Total number of items found for this query */
+  totalItems: number
   /** ReguationListItems for this page */
   data: RegulationListItem[]
 }
