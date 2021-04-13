@@ -1,5 +1,6 @@
 import React from 'react'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
+import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import {
   Box,
@@ -11,6 +12,7 @@ import {
   Checkbox,
   GridRow,
   GridContainer,
+  DatePicker,
   GridColumn,
 } from '@island.is/island-ui/core'
 
@@ -56,9 +58,11 @@ interface IFormInputs {
   status: string
   description?: string
   url?: string
-  verdict?: string
+  verdict?: Date | null
   visible: boolean
 }
+
+const today = new Date()
 
 const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
   const hookFormData = useForm<IFormInputs>({
@@ -70,7 +74,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
       status: '',
       description: '',
       url: '',
-      verdict: '',
+      verdict: null,
       visible: true,
     },
     shouldFocusError: true,
@@ -88,17 +92,20 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms))
 
-  const onSubmit = async (data: object) => {
+  const onSubmit = async (data: object, e: any) => {
+    console.log('data', data, e)
     await sleep(2000)
   }
 
+  const onError = (errors: object, e: any) => console.log(errors, e)
+
   console.log('errors', errors)
 
-  const disabled = isSubmitting
+  const inputsDisabled = isSubmitting
 
   return (
     <FormProvider {...hookFormData}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
         <Box
           display="flex"
           flexDirection="column"
@@ -132,7 +139,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                       {...register('icelandicName', {
                         required: 'Nafn vantar',
                       })}
-                      disabled={disabled}
+                      disabled={inputsDisabled}
                     />
                   )}
                 />
@@ -164,7 +171,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         {...register('type', {
                           required: 'Tegund nafns vantar',
                         })}
-                        disabled={disabled}
+                        disabled={inputsDisabled}
                         required
                       />
                     )
@@ -195,7 +202,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         {...register('status', {
                           required: 'Stöðu nafns vantar',
                         })}
-                        disabled={disabled}
+                        disabled={inputsDisabled}
                         required
                       />
                     )
@@ -218,7 +225,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         {...register('description')}
-                        disabled={disabled}
+                        disabled={inputsDisabled}
                         textarea
                       />
                     )
@@ -239,8 +246,14 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         placeholder="Vefslóð á úrskurð mannanafnanefndar"
                         size="sm"
                         onChange={(e) => onChange(e.target.value)}
-                        {...register('url')}
-                        disabled={disabled}
+                        {...register('url', {
+                          pattern: {
+                            value: /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/i,
+                            message: 'Vefslóð virðist ekki vera á réttu formi',
+                          },
+                        })}
+                        errorMessage={errors?.url?.message ?? ''}
+                        disabled={inputsDisabled}
                         backgroundColor="blue"
                       />
                     )
@@ -253,15 +266,21 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                   name="verdict"
                   render={({ onChange, value, name }) => {
                     return (
-                      <Input
+                      <DatePicker
                         name={name}
-                        label="Dags. úrskurðar"
-                        placeholder="Dæmi: t.d. 17.04.2006 eða 03.11.2014"
-                        size="sm"
-                        onChange={onChange}
+                        backgroundColor="white"
+                        handleChange={onChange}
+                        icon="calendar"
+                        iconType="outline"
+                        label="Dagsetning úrskurðar"
+                        locale="is"
+                        disabled={inputsDisabled}
+                        selected={value ?? undefined}
                         {...register('verdict')}
-                        disabled={disabled}
-                        backgroundColor="blue"
+                        placeholderText="Veldu dagsetningu"
+                        minYear={today.getFullYear() - 100}
+                        maxYear={today.getFullYear()}
+                        size="md"
                       />
                     )
                   }}
@@ -286,7 +305,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         }}
                         checked={value}
                         backgroundColor="white"
-                        disabled={disabled}
+                        disabled={inputsDisabled}
                         large
                       />
                     )
@@ -316,7 +335,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                     onClick={closeModal}
                     variant="ghost"
                     colorScheme="destructive"
-                    disabled={disabled}
+                    disabled={inputsDisabled}
                   >
                     Hætta við
                   </Button>
@@ -329,7 +348,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                     icon="checkmark"
                     loading={isSubmitting}
                     iconType="outline"
-                    disabled={disabled}
+                    disabled={inputsDisabled}
                   >
                     Skrá nafn
                   </Button>

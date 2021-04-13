@@ -82,9 +82,9 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  // @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Patch(':id')
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
@@ -102,9 +102,9 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  // @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Post()
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @HttpCode(201)
   @ApiCreatedResponse({
     description: 'The name has been successfully created.',
@@ -118,9 +118,9 @@ export class IcelandicNameController {
     return this.icelandicNameService.createName(body)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  // @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Delete(':id')
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @HttpCode(204)
   @ApiNoContentResponse({
     description: 'The name has been successfully deleted.',

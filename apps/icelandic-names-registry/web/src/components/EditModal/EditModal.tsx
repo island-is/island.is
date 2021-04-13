@@ -14,11 +14,13 @@ const EditModal: FC<EditModalProps> = ({ children }) => {
     <>
       <Button
         variant="ghost"
+        icon="add"
+        size="small"
         onClick={() => {
           setIsVisible(true)
         }}
       >
-        Open modal using state
+        Bæta við nafni
       </Button>
       <ModalBase
         baseId="myDialog"

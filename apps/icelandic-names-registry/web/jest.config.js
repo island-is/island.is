@@ -5,7 +5,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../../coverage/apps/service-portal',
+  coverageDirectory: '../../../coverage/apps/icelandic-names-registry/web',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'icelandic-names-registry-web',
 }

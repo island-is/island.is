@@ -38,7 +38,8 @@ class BackendAPI extends RESTDataSource {
   }
 
   updateById(id: number, body: IcelandicNameBody): Promise<IcelandicName> {
-    return this.patch(`/${id}`, body)
+    const { id: bla, ...rest } = body
+    return this.patch(`/${id}`, rest)
   }
 
   create(body: IcelandicNameBody): Promise<IcelandicName> {
