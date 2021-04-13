@@ -51,5 +51,20 @@ class LocalizationUtils {
       return item
     }
   }
+
+  public static getPageTitle(pageLocalizationId: string = null) {
+    if (pageLocalizationId) {
+      return (
+        this.getActiveLocalization().title +
+        ' - ' +
+        this.getActiveLocalization().pages[pageLocalizationId].title
+      )
+    }
+    return this.getActiveLocalization().title
+  }
+
+  public static getPage(pathId: string) {
+    return this.getActiveLocalization().pages[pathId]
+  }
 }
 export default LocalizationUtils
