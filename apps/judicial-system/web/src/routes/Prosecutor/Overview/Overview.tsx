@@ -55,11 +55,11 @@ import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/u
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
+import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [openFileId, setOpenFileId] = useState<string>()
   const { features } = useContext(FeatureContext)
 
   const router = useRouter()
@@ -70,17 +70,9 @@ export const Overview: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
-    variables: {
-      input: {
-        id: openFileId,
-        caseId: workingCase?.id,
-      },
-    },
-    skip: !workingCase?.id || !openFileId,
-  })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const { handleOpenFile } = useFileList({ caseId: workingCase?.id })
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -151,12 +143,6 @@ export const Overview: React.FC = () => {
     return sendNotification(workingCase.id)
   }
 
-  const handleOpenFile = (fileId: string) => {
-    if (workingCase) {
-      setOpenFileId(fileId)
-    }
-  }
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -166,13 +152,6 @@ export const Overview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    if (fileSignedUrl) {
-      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
-      setOpenFileId(undefined)
-    }
-  }, [fileSignedUrl])
 
   return (
     <PageLayout

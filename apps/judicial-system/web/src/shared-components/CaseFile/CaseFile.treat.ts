@@ -12,7 +12,7 @@ export const CaseFileNameContainer = style({
   flex: '1',
   alignItems: 'center',
   marginRight: theme.spacing[1],
-  maxWidth: '70%',
+  maxWidth: '68%',
 })
 
 export const CaseFileName = style({
