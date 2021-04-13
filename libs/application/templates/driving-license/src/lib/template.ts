@@ -6,6 +6,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -49,6 +50,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Umsókn um ökuskilríki',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -73,6 +75,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'reviewer',
@@ -105,6 +108,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -122,6 +126,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

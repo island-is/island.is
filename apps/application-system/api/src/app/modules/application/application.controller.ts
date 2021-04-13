@@ -80,6 +80,7 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import { getApplicationLifecycle } from './utils/application'
 import {
   DecodedAssignmentToken,
   StateChangeResult,
@@ -237,7 +238,24 @@ export class ApplicationController {
       typeId: application.typeId,
     }
 
-    return this.applicationService.create(applicationDto)
+    const createdApplication = await this.applicationService.create(
+      applicationDto,
+    )
+
+    // Make sure the application has the correct lifecycle values persisted to database.
+    // Requires an application object that is created in the previous step.
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateApplicationState(
+      createdApplication.id,
+      createdApplication.state,
+      createdApplication.answers as FormValue,
+      createdApplication.assignees,
+      createdApplication.status,
+      getApplicationLifecycle(createdApplication as BaseApplication, template),
+    )
+
+    return updatedApplication
   }
 
   @Scopes(ApplicationIdentityServerScope.write)
@@ -378,6 +396,7 @@ export class ApplicationController {
     @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
@@ -550,7 +569,7 @@ export class ApplicationController {
     }
   }
 
-  async changeState(
+  private async changeState(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
@@ -641,6 +660,7 @@ export class ApplicationController {
         updatedApplication.answers,
         updatedApplication.assignees,
         status,
+        getApplicationLifecycle(updatedApplication, template),
       )
 
       updatedApplication = update.updatedApplication as BaseApplication

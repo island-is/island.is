@@ -5,6 +5,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
@@ -54,6 +55,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
         meta: {
           name: 'Application for health insurance',
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -79,6 +81,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

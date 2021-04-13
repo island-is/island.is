@@ -6,12 +6,21 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
 import { ApiActions } from '../shared'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+
+const States = {
+  prerequisites: 'prerequisites',
+  draft: 'draft',
+  inReview: 'inReview',
+  approved: 'approved',
+  rejected: 'rejected',
+}
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -24,6 +33,7 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 const ExampleSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   person: z.object({
     name: z.string().nonempty().max(256),
     age: z.string().refine((x) => {
@@ -56,12 +66,43 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   name: 'Reference application',
   dataSchema: ExampleSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.prerequisites,
     states: {
-      draft: {
+      [States.prerequisites]: {
+        meta: {
+          name: 'Skilyrði',
+          progress: 0,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
+      [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -78,14 +119,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: States.inReview,
           },
         },
       },
-      inReview: {
+      [States.inReview]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createApplication,
           },
@@ -117,14 +159,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'rejected' },
+          APPROVE: { target: States.approved },
+          REJECT: { target: States.rejected },
         },
       },
-      approved: {
+      [States.approved]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -138,9 +181,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
       },
-      rejected: {
+      [States.rejected]: {
         meta: {
           name: 'Rejected',
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

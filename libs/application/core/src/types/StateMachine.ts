@@ -12,15 +12,6 @@ import { Application } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
-// 'completed' and 'rejected' use same values as ApplicationStatus but
-// computed values are not permitted in an enum with string valued members
-// so we cannot reference those values from here
-export enum DefaultState {
-  prerequisites = 'prerequisites',
-  completed = 'completed',
-  rejected = 'rejected',
-}
-
 export enum DefaultEvents {
   APPROVE = 'APPROVE',
   ASSIGN = 'ASSIGN',
@@ -69,8 +60,22 @@ export interface ApplicationTemplateAPIAction {
   throwOnError?: boolean
 }
 
+export type StateLifeCycle =
+  | {
+      // Controls visibility from my pages + /umsoknir/:type when in current state
+      shouldBeListed: boolean
+      shouldBePruned: false
+    }
+  | {
+      shouldBeListed: boolean
+      shouldBePruned: true
+      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+      whenToPrune: number | ((application: Application) => Date)
+    }
+
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
+  lifecycle: StateLifeCycle
   progress?: number
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction

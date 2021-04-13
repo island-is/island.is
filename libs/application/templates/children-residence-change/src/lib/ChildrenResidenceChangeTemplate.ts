@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
@@ -42,6 +43,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentA,
@@ -71,6 +73,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentB,
@@ -106,6 +109,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: 'submitApplication',
           },
