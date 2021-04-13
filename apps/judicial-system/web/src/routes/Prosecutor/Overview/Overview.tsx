@@ -134,7 +134,6 @@ export const Overview: React.FC = () => {
           setWorkingCase({
             ...workingCase,
             state: resCase.state,
-            prosecutor: resCase.prosecutor,
           })
         } catch (e) {
           return false
