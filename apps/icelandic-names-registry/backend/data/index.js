@@ -21,25 +21,15 @@ const data = parse(csv, {
     }),
 })
 
-const remapped = data.map((x) => {
-  if (x.visible === 1) {
-    x.visible = true
-  }
+const setEmptyToNull = (x) => (x === 'NULL' || x.trim() === '' ? null : x)
 
-  Object.keys(x).map((k) => {
-    if (x[k] === 'NULL' || x[k].trim() === '') {
-      // reset empty values to null
-      x[k] = null
-    }
-
-    if (k === 'icelandic_name') {
-      x[k] = x[k].toLowerCase()
-    }
-  })
-
-  // make db create id for record
-  delete x.id
-  return x
-})
+const remapped = data.map((x) => ({
+  icelandic_name: x.icelandic_name.toLowerCase(),
+  status: setEmptyToNull(x.status),
+  visible: x.visible === '1',
+  type: setEmptyToNull(x.type),
+  description: setEmptyToNull(x.description),
+  verdict: setEmptyToNull(x.verdict),
+}))
 
 module.exports = remapped
