@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Inject,
   NotFoundException,
   Param,
@@ -63,9 +64,10 @@ export class EndorsementController {
   }
 
   @Delete()
+  @HttpCode(204)
   async delete(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
-  ): Promise<boolean> {
+  ): Promise<unknown> {
     // TODO: Add auth here
     const endorsement = await this.endorsementService.deleteFromListByNationalId(
       {
@@ -75,10 +77,13 @@ export class EndorsementController {
     )
 
     if (endorsement === 0) {
-      this.logger.warn('Failed to remove endorsement for list', { listId })
+      this.logger.warn(
+        'Failed to remove endorsement for list, list might not exist',
+        { listId },
+      )
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
 
-    return endorsement > 0
+    return
   }
 }
