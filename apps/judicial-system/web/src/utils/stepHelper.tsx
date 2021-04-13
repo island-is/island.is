@@ -370,3 +370,7 @@ export const getRestrictionTagVariant = (
     }
   }
 }
+
+export const kb = (bytes?: number) => {
+  return bytes ? Math.ceil(bytes / 1024) : ''
+}

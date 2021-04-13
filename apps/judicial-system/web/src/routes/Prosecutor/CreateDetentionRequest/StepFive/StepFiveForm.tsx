@@ -27,6 +27,7 @@ export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
     onRemove,
     onRetry,
   } = useS3Upload(workingCase)
+
   return (
     <>
       <FormContentContainer>
