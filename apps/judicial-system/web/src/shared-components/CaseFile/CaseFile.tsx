@@ -11,14 +11,15 @@ interface Props {
   name: string
   size: number
   uploadedAt: string
-  onOpen: () => void
+  canOpenFiles?: boolean
+  onOpen?: () => void
 }
 
 const CaseFile: React.FC<Props> = (props) => {
-  const { name, size, uploadedAt, onOpen } = props
+  const { name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
-
+  console.log(canOpenFiles, onOpen)
   return (
     <BlueBox size="small">
       <Box display="flex" justifyContent="spaceBetween">
@@ -39,9 +40,11 @@ const CaseFile: React.FC<Props> = (props) => {
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
             </div>
           )}
-          <Tag variant="darkerBlue" onClick={onOpen}>
-            Opna
-          </Tag>
+          {canOpenFiles && onOpen && (
+            <Tag variant="darkerBlue" onClick={onOpen}>
+              Opna
+            </Tag>
+          )}
         </Box>
       </Box>
     </BlueBox>

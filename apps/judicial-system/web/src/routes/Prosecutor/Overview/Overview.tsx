@@ -365,7 +365,7 @@ export const Overview: React.FC = () => {
                   >
                     {workingCase.files?.map((file, index) => {
                       return (
-                        <Box marginBottom={3}>
+                        <Box marginBottom={3} key={index}>
                           <CaseFile
                             name={`${index + 1}. ${file.name}`}
                             size={file.size}

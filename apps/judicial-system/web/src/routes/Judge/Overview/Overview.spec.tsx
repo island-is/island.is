@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
+import userEvent from '@testing-library/user-event'
 
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
@@ -84,5 +85,31 @@ describe('/domari-krafa with an ID', () => {
     // Assert
     expect(await screen.findByText('a-lið 1. mgr. 95. gr.')).toBeInTheDocument()
     expect(await screen.findByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
+  })
+
+  test('should not allow case files to be opened unless a judge has been set', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_8' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Rannsóknargögn (5)' }),
+    )
+
+    // Assert
+    expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
   })
 })
