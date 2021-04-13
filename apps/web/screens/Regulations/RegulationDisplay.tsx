@@ -1,5 +1,5 @@
 import { Regulation, ISODate } from './Regulations.types'
-import { RegulationPageTexts } from './Regulations.mock'
+import { RegulationPageTexts } from './RegulationTexts.types'
 
 import * as s from './RegulationDisplay.treat'
 

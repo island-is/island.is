@@ -13,8 +13,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import { LawChapterTree, Ministry } from './Regulations.types'
-import { RegulationHomeTexts } from './Regulations.mock'
+import {
+  RegulationLawChapterTree,
+  RegulationMinistry,
+} from './Regulations.types'
+import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 
 // ---------------------------------------------------------------------------
@@ -60,7 +63,7 @@ const findValueOption = (
 }
 
 const isLegacyMinistry = (
-  ministries: ReadonlyArray<Ministry>,
+  ministries: ReadonlyArray<RegulationMinistry>,
   slug: string,
 ) => {
   const ministry = ministries.find((m) => m.slug === slug)
@@ -108,8 +111,8 @@ export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
 export type RegulationsSearchSectionProps = {
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<Ministry>
-  lawChapters: Readonly<LawChapterTree>
+  ministries: ReadonlyArray<RegulationMinistry>
+  lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
 } & NoChildren
 

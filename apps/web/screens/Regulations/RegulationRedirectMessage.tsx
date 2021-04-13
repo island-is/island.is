@@ -4,7 +4,7 @@ import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from './regulationUtils'
 
 import { RegulationRedirect } from './Regulations.types'
-import { RegulationPageTexts } from './Regulations.mock'
+import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespace } from '@island.is/web/hooks'
 
 export type RegulationRedirectMessageProps = {

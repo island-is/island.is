@@ -4,11 +4,9 @@ import {
   RegulationMinistryList,
   RegulationSearchResults,
 } from './Regulations.types'
+import { RegulationHomeTexts } from './RegulationTexts.types'
 
-import {
-  RegulationHomeTexts,
-  regulationsSearchResults,
-} from './Regulations.mock'
+import { regulationsSearchResults } from './Regulations.mock'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -63,7 +61,7 @@ type RegulationsHomeProps = {
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: RegulationMinistryList
-  lawChapters: Readonly<RegulationLawChapterTree>
+  lawChapters: RegulationLawChapterTree
   doSearch: boolean
 }
 

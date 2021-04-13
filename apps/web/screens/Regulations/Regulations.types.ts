@@ -24,7 +24,7 @@ export type RegulationLawChapter = {
   slug: string // '01a' |'01b' |'01c' | etc.
 }
 
-export type RegulationLawChapterTree = Array<
+export type RegulationLawChapterTree = ReadonlyArray<
   RegulationLawChapter & {
     /** List of child-chapters for this top-level chapter.
      *

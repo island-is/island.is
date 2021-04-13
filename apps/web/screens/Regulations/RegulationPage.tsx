@@ -2,10 +2,9 @@ import {
   Regulation,
   RegulationRedirect,
   ISODate,
-  RegName,
   RegQueryName,
 } from './Regulations.types'
-import { RegulationPageTexts } from './Regulations.mock'
+import { RegulationPageTexts } from './RegulationTexts.types'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
@@ -50,6 +49,8 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     />
   )
 }
+
+// ---------------------------------------------------------------------------
 
 const viewTypes = {
   /*+ renders the current regulation text - This is the deafult view type. */
@@ -136,6 +137,8 @@ const assertEarlierDate = (
   }
   throw new CustomNextError(404)
 }
+
+// ---------------------------------------------------------------------------
 
 RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const p = getParams(query, [
