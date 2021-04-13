@@ -59,7 +59,7 @@ yarn start judicial-system-backend
 To enable SMS notifications to an on-call judge provide a password for the SMS service and a judge mobile number:
 
 ```bash
-NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number> yarn start judicial-system-backend
+NOVA_PASSWORD=<SMS password> COURT_MOBILE_NUMBERS=<judge mobile number> yarn start judicial-system-backend
 ```
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
@@ -77,7 +77,9 @@ emailOptions: {
 
 You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
 
-Finally, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
+In addition, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
+
+Finally, to write to AWS S3 you need to be authenticated against AWS.
 
 ### Graphql
 

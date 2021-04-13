@@ -1,10 +1,12 @@
 export class Localization {
   formControls: FormControl[]
   listControls: ListControl[]
+  title: string
   header: HeaderTranslation
   navigations: Record<string, Navigation>
   paginator: Paginator
   version: string
+  pages: Record<string, Page>
 }
 
 export class FormControl {
@@ -25,6 +27,18 @@ export class FormControl {
   infoModal?: InfoModalTranslation
   infoEdit?: string
   infoCreate?: string
+}
+
+export class Page {
+  title?: string
+  endStep?: EndStep
+}
+
+export class EndStep {
+  buttonText: string
+  title: string
+  infoTitle: string
+  infoDescription: string
 }
 
 export class Navigation {

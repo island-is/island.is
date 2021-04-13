@@ -197,6 +197,15 @@ export class DocumentProviderService {
     return { numberOfAffectedRows, updatedProvider }
   }
 
+  async getOrganisationsProviders(id: string): Promise<Provider[]> {
+    const organisation = await this.organisationModel.findOne({
+      where: { id },
+      include: [Provider],
+    })
+
+    return organisation?.providers ?? []
+  }
+
   // ADMINISTRATIVE CONTACT
   async createAdministrativeContact(
     organisationId: string,
