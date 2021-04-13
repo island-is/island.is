@@ -102,7 +102,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               title={interpolate(txt('effectsTitle'), { name })}
               colorScheme="blueberry"
             >
-              {regulation.effects.slice(0, 1).map((item, i) => {
+              {regulation.effects.map((item, i) => {
                 const name = prettyName(item.name) + ' ' + item.title
                 const label = interpolate(
                   item.effect === 'amend'
