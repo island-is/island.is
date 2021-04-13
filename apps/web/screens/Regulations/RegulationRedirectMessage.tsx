@@ -58,9 +58,8 @@ export const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
               Til baka
             </Button>
           }
-
-          </Stack>
-        }
+        </Stack>
+      }
     />
   )
 }
