@@ -254,6 +254,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getOrganizationTags(input?.lang ?? 'is-IS')
   }
 
+  // DEPRECATED: will be removed after 18-05-21
   @Directive(cacheControlDirective())
   @Query(() => FrontpageSliderList, { nullable: true })
   getFrontpageSliderList(
@@ -318,6 +319,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getTellUsAStory(input)
   }
 
+  // DEPRECATED: will be removed after 18-05-21
   @Directive(cacheControlDirective())
   @Query(() => Homepage)
   getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
