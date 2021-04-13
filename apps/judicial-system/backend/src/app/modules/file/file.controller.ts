@@ -18,7 +18,12 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseState,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -33,6 +38,8 @@ const judgeRule = UserRole.JUDGE as RolesRule
 
 // Allows registrars to perform any action
 const registrarRule = UserRole.REGISTRAR as RolesRule
+
+const completedCaseStates = [CaseState.ACCEPTED, CaseState.RECEIVED]
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -56,6 +63,10 @@ export class FileController {
   ): Promise<PresignedPost> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
+    if (completedCaseStates.includes(existingCase.state)) {
+      throw new ForbiddenException('Files cannot be added to a completed case')
+    }
+
     return this.fileService.createCasePresignedPost(
       existingCase.id,
       createPresignedPost,
@@ -74,6 +85,10 @@ export class FileController {
     @Body() createFile: CreateFileDto,
   ): Promise<File> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+
+    if (completedCaseStates.includes(existingCase.state)) {
+      throw new ForbiddenException('Files cannot be added to a completed case')
+    }
 
     return this.fileService.createCaseFile(existingCase.id, createFile)
   }
@@ -107,6 +122,12 @@ export class FileController {
   ): Promise<DeleteFileResponse> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
+    if (completedCaseStates.includes(existingCase.state)) {
+      throw new ForbiddenException(
+        'Files cannot be deleted from a completed case',
+      )
+    }
+
     const file = await this.fileService.findById(id)
 
     if (!file || file.caseId !== existingCase.id) {
@@ -118,7 +139,7 @@ export class FileController {
     return this.fileService.deleteCaseFile(existingCase.id, file)
   }
 
-  @RolesRules(prosecutorRule, judgeRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('file/:id/url')
   @ApiOkResponse({
     type: PresignedPost,
@@ -131,10 +152,36 @@ export class FileController {
   ): Promise<SignedUrl> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
-    if (user.role === UserRole.JUDGE && user.id !== existingCase.judgeId) {
-      throw new ForbiddenException(
-        `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
-      )
+    if (user.role === UserRole.JUDGE) {
+      if (user.id !== existingCase.judgeId) {
+        throw new ForbiddenException(
+          `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
+        )
+      }
+
+      if (completedCaseStates.includes(existingCase.state)) {
+        throw new ForbiddenException(
+          'Judges cannot get files of completed cases',
+        )
+      }
+    }
+
+    if (user.role === UserRole.REGISTRAR) {
+      if (user.id !== existingCase.registrarId) {
+        throw new ForbiddenException(
+          `User ${user.id} is not the assigned registrar of case ${existingCase.id}`,
+        )
+      }
+
+      if (
+        !completedCaseStates.includes(existingCase.state) ||
+        (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
+          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL)
+      ) {
+        throw new ForbiddenException(
+          'Registrars can only get files of appealed cases',
+        )
+      }
     }
 
     const file = await this.fileService.findById(id)
