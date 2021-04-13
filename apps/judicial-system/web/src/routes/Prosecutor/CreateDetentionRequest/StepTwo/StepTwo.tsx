@@ -145,6 +145,7 @@ export const StepTwo: React.FC = () => {
 
     if (transitionSuccess) {
       if (
+        // TODO: Ignore failed notifications
         workingCase.notifications?.find(
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
