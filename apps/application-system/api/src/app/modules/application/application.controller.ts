@@ -165,6 +165,7 @@ export class ApplicationController {
       // We've already checked an application with this type and it is ready
       if (templateTypeToIsReady[application.typeId]) {
         filteredApplications.push(application)
+        continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
