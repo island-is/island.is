@@ -14,6 +14,7 @@
 
 
 /apps/web*/                                                                                   @island-is/kosmos-kaos @island-is/aranja
+/apps/endorsement-system/                                                                     @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
@@ -77,6 +78,8 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/                                                                @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/apps/download-service/                                                                       @island-is/sendiradid
+/libs/clients/documents/                                                                      @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
@@ -106,6 +109,7 @@
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /apps/services/xroad-collector/                                                               @island-is/advania
 /apps/services/documents                                                                      @island-is/advania
+/libs/clients/document-provider                                                               @island-is/advania
 
 /apps/skilavottord/                                                                           @island-is/deloitte
 /libs/application/templates/health-insurance/                                                 @island-is/deloitte

@@ -137,5 +137,12 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
+    '<rootDir>/libs/vmst-client',
+    '<rootDir>/libs/clients/mms',
+    '<rootDir>/libs/clients/zendesk',
+    '<rootDir>/apps/download-service',
+    '<rootDir>/libs/clients/documents',
+    '<rootDir>/libs/clients/document-provider',
+    '<rootDir>/apps/endorsement-system',
   ],
 }
