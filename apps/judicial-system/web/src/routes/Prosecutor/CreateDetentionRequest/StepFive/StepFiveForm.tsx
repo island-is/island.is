@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/useS3Upload'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload'
 import {
   FormContentContainer,
   FormFooter,
