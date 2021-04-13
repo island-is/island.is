@@ -24,7 +24,6 @@ import {
   BlueBox,
   Modal,
   FormContentContainer,
-  CaseFile,
   CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -41,7 +40,6 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
-  GetSignedUrlQuery,
   TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'

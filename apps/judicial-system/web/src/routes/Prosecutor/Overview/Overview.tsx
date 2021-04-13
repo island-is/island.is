@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import {
-  Box,
-  Text,
-  Accordion,
-  AccordionItem,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
@@ -31,7 +25,6 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
-  CaseFile,
   CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -42,7 +35,6 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
-  GetSignedUrlQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
