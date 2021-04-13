@@ -81,15 +81,15 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       <Breadcrumbs
         items={[
           {
-            title: txt('crumbs_1'),
+            title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
-          {
-            title: txt('crumbs_2'),
+          /*{
+            title: 'Upplýsingasvæði',
             href: linkResolver('article').href,
-          },
+          },*/
           {
-            title: txt('crumbs_3'),
+            title: 'Reglugerðir',
             href: linkResolver('regulationshome').href,
           },
         ]}
