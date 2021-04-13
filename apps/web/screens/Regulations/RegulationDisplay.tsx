@@ -236,7 +236,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             </RegulationsSidebarBox>
           )}
 
-          {regulation.type === 'base' && (
+          {
             <RegulationsSidebarBox
               title={txt('infoTitle', 'Upplýsingar')}
               colorScheme="blueberry"
