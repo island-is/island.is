@@ -126,6 +126,7 @@
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
+    - [Party Application](libs/application/templates/party-application/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Components](libs/application/ui-components/README.md)
