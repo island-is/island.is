@@ -550,9 +550,16 @@ export const JudgeOverview: React.FC = () => {
                     label={`Rannsóknargögn (${workingCase.files.length})`}
                   >
                     {workingCase.files?.map((file, index) => {
-                      console.log(workingCase)
                       return (
-                        <Box marginBottom={3} key={index}>
+                        <Box
+                          marginBottom={
+                            workingCase.files &&
+                            index !== workingCase.files.length - 1
+                              ? 3
+                              : 0
+                          }
+                          key={index}
+                        >
                           <CaseFile
                             name={`${index + 1}. ${file.name}`}
                             size={file.size}

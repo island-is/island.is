@@ -19,7 +19,7 @@ const CaseFile: React.FC<Props> = (props) => {
   const { name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
-  console.log(canOpenFiles, onOpen)
+
   return (
     <BlueBox size="small">
       <Box display="flex" justifyContent="spaceBetween">
