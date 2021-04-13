@@ -2,6 +2,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  EndorsementMetaField,
+  MetadataService,
+} from '../metadata/metadata.service'
+import { EndorsementList } from '../endorsementList/endorsementList.model'
 
 interface EndorsementListInput {
   listId: string
@@ -9,14 +14,17 @@ interface EndorsementListInput {
 }
 @Injectable()
 export class EndorsementService {
-  constructor(
+  constructor (
+    @InjectModel(EndorsementList)
+    private readonly endorsementListModel: typeof EndorsementList,
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private readonly metadataService: MetadataService,
   ) {}
 
-  async findEndorsementByNationalId({
+  async findSingleEndorsementByNationalId ({
     nationalId,
     listId,
   }: EndorsementListInput) {
@@ -29,19 +37,48 @@ export class EndorsementService {
     })
   }
 
-  async createEndorsementOnList({ listId, nationalId }: EndorsementListInput) {
+  async createEndorsementOnList ({ listId, nationalId }: EndorsementListInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple endorsements to same list
+    // parent list is used to evaluate rules and metadata
+    const parentEndorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+    })
+
+    if (!parentEndorsementList) {
+      throw new Error('Failed to find parent endorsement list')
+    }
+    const allEndorsementMetadata = await this.metadataService.getMetadata({
+      fields: parentEndorsementList.endorsementMeta, // TODO: Add fields required by validation here
+      nationalId,
+    })
+    // TODO: Validate rules here
+
+    // some meta fields are only required for validation and should not be persisted, we remove them here
+    const prunedEndorsementMetadata = Object.entries(
+      allEndorsementMetadata,
+    ).reduce(
+      (metadata, [metadataKey, metadataValue]) =>
+        parentEndorsementList.endorsementMeta.includes(
+          metadataKey as EndorsementMetaField,
+        )
+          ? {
+              ...metadata,
+              [metadataKey]: metadataValue,
+            }
+          : metadata,
+      {},
+    )
 
     return this.endorsementModel.create({
       endorser: nationalId,
       endorsementListId: listId,
-      meta: [], // TODO: Add list metadata here
+      meta: prunedEndorsementMetadata,
     })
   }
 
-  async deleteFromListByNationalId({
+  async deleteFromListByNationalId ({
     nationalId,
     listId,
   }: EndorsementListInput) {

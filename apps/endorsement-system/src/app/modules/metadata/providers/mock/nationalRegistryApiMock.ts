@@ -1,0 +1,19 @@
+import { Injectable } from '@nestjs/common'
+import * as faker from 'faker'
+
+/**
+ * This exists as a quick solution to mocking the underlying soap endpoint
+ */
+
+@Injectable()
+export class NationalRegistryApiMock {
+  async getUser (input: string) {
+    console.log('faker', faker)
+    return Promise.resolve({
+      Fulltnafn: `${faker.name.firstName()} ${faker.name.lastName()}`,
+      Logheimili: faker.address.streetAddress(),
+      LogheimiliSveitarfelag: faker.address.county(),
+      Postnr: faker.phone.phoneNumber('###'),
+    })
+  }
+}

@@ -11,16 +11,16 @@ interface createInput extends EndorsementListDto {
 }
 @Injectable()
 export class EndorsementListService {
-  constructor(
-    @InjectModel(EndorsementList)
-    private endorsementListModel: typeof EndorsementList,
+  constructor (
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
+    @InjectModel(EndorsementList)
+    private readonly endorsementListModel: typeof EndorsementList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async findListsByTag(tag: string) {
+  async findListsByTag (tag: string) {
     this.logger.debug(`Finding endorsement lists by tag "${tag}"`)
     // TODO: Add option to get only open endorsement lists
     return this.endorsementListModel.findAll({
@@ -28,21 +28,19 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleList(id: string) {
+  async findSingleList (id: string) {
     this.logger.debug(`Finding single endorsement lists by id "${id}"`)
     return this.endorsementListModel.findOne({
       where: { id },
     })
   }
 
-  async findAllEndorsementsByNationalId(nationalId: string) {
+  async findAllEndorsementsByNationalId (nationalId: string) {
     this.logger.debug(`Finding endorsements for single national id`)
-    return this.endorsementModel.findAll({
-      where: { endorser: nationalId },
-    })
+    return this.endorsementModel.findAll({ where: { endorser: nationalId } })
   }
 
-  async close(id: string): Promise<EndorsementList | null> {
+  async close (id: string): Promise<EndorsementList | null> {
     this.logger.debug('Closing endorsement list', id)
     const [_, endorsementLists] = await this.endorsementListModel.update(
       { closedDate: new Date() },
@@ -52,7 +50,7 @@ export class EndorsementListService {
     return endorsementLists[0] ?? null
   }
 
-  async create(list: createInput) {
+  async create (list: createInput) {
     this.logger.debug('Creating endorsement list')
     return this.endorsementListModel.create({
       title: list.title,
