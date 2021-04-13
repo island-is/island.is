@@ -138,9 +138,9 @@ export type Regulation = {
   publishedDate: ISODate
   /** Date when the regulation took effect for the first time */
   effectiveDate: ISODate
-  /** Date of last amendment of this regulation
+  /** Date of the last effective amendment of this regulation
    *
-   * This date is always a past date – UNLESS a future timeline Date is being
+   * This date is always a past (or current) date
    */
   lastAmendDate?: ISODate | null
   /** Date when (if) this regulation was repealed and became a thing of the past.
