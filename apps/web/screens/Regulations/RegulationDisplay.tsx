@@ -246,12 +246,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
           {
             <RegulationsSidebarBox
-              title={txt('infoTitle', 'Upplýsingar')}
+              title={txt('infoboxTitle')}
               colorScheme="blueberry"
             >
               {regulation.ministry && (
                 <Text>
-                  <strong>Ráðuneyti</strong>
+                  <strong>{txt('infoboxMinistry')}:</strong>
                   <br />
                   {regulation.ministry.name}
                 </Text>
@@ -259,7 +259,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
               {regulation.lawChapters.length > 0 && (
                 <Text>
-                  <strong>Lagakaflar</strong>
+                  <strong>{txt('infoboxLawChapters')}:</strong>
                   <ul>
                     {regulation.lawChapters.map((chapter, i) => (
                       <li key={i}>{chapter.name}</li>
@@ -270,18 +270,26 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
               {regulation.effectiveDate && (
                 <Text>
-                  <strong>Tók gildi</strong>
+                  <strong>{txt('infoboxEffectiveDate')}:</strong>
                   <br />
                   {formatDate(regulation.effectiveDate)}
                 </Text>
               )}
 
-              {regulation.lastAmendDate && (
+              {regulation.repealedDate ? (
                 <Text>
-                  <strong>Síðast uppfærð</strong>
+                  <strong>{txt('infoboxRepealed')}:</strong>
                   <br />
-                  {formatDate(regulation.lastAmendDate)}
+                  {formatDate(regulation.repealedDate)}
                 </Text>
+              ) : (
+                regulation.lastAmendDate && (
+                  <Text>
+                    <strong>{txt('infoboxLastAmended')}:</strong>
+                    <br />
+                    {formatDate(regulation.lastAmendDate)}
+                  </Text>
+                )
               )}
             </RegulationsSidebarBox>
           }
