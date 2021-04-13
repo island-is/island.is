@@ -15,7 +15,7 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
   const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
-        Í viðhengi er afrit af samningi um breytt lögheimili barna sem þú undirritaðir.
+        Í viðhengi er afrit af samningi, um breytt lögheimili barna, sem þú undirritaðir.
 
         Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
 
