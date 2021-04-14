@@ -17,7 +17,7 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { FilteredCards, Webreader } from '@island.is/web/components'
+import { FilteredCards } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
@@ -55,7 +55,6 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       </Head>
       <SidebarLayout fullWidthContent sidebarContent={null}>
         <Box paddingBottom={[2, 2, 4]}>
-          <Webreader />
           <Breadcrumbs
             items={[
               {

@@ -18,7 +18,6 @@ import {
   BackgroundImage,
   HeadWithSocialSharing,
   Sticky,
-  Webreader,
 } from '@island.is/web/components'
 import {
   GET_LIFE_EVENT_QUERY,
@@ -87,7 +86,6 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 span={['9/9', '9/9', '9/9', '9/9', '7/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
-                  <Webreader />
                   <Breadcrumbs
                     items={[
                       {

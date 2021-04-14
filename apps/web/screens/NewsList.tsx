@@ -6,11 +6,7 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import Head from 'next/head'
 import { Screen } from '../types'
-import {
-  Select as NativeSelect,
-  Bullet,
-  Webreader,
-} from '@island.is/web/components'
+import { Select as NativeSelect, Bullet } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
@@ -211,7 +207,6 @@ const NewsList: Screen<NewsListProps> = ({
       </Head>
       <SidebarLayout sidebarContent={sidebar}>
         <Stack space={[3, 3, 4]}>
-          <Webreader />
           <Breadcrumbs
             items={
               breadCrumbTags ? [...breadCrumbs, breadCrumbTags] : breadCrumbs

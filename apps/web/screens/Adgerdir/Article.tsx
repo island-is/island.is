@@ -19,11 +19,7 @@ import {
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  HeadWithSocialSharing,
-  ChatPanel,
-  Webreader,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, ChatPanel } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
 import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
@@ -105,7 +101,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <Webreader />
           <Breadcrumbs
             tagVariant="green"
             items={[

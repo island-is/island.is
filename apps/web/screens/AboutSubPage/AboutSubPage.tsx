@@ -19,7 +19,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { RichText, Webreader } from '@island.is/web/components'
+import { RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
@@ -90,7 +90,6 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <Webreader />
                 <Breadcrumbs
                   items={[
                     {
