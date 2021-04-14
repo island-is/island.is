@@ -64,7 +64,6 @@ export const Overview: React.FC = () => {
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-  const { handleOpenFile } = useFileList({ caseId: workingCase?.id })
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -336,8 +335,8 @@ export const Overview: React.FC = () => {
                   >
                     <Box marginY={3}>
                       <CaseFileList
+                        caseId={workingCase.id}
                         files={workingCase.files}
-                        onOpen={handleOpenFile}
                       />
                     </Box>
                   </AccordionItem>

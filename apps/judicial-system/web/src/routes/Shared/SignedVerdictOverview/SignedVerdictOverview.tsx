@@ -323,8 +323,9 @@ export const SignedVerdictOverview: React.FC = () => {
                     labelVariant="h3"
                   >
                     <CaseFileList
+                      caseId={workingCase.id}
                       files={workingCase.files}
-                      onOpen={() => console.log('asd')}
+                      canOpenFiles={false}
                     />
                   </AccordionItem>
                 )}
