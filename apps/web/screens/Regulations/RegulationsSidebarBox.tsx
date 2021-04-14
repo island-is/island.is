@@ -54,6 +54,7 @@ export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
       borderRadius="large"
       padding={[3, 3, 4]}
       position="relative"
+      marginBottom={2}
     >
       <Stack space={[1, 1, 2]}>
         <Text variant="h4" as="h2" color={color}>
