@@ -9,7 +9,6 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 
-import EditModal from '../EditModal/EditModal'
 import { GET_ICELANDIC_NAME_BY_INITIAL_LETTER } from '../../graphql/queries'
 import {
   GetIcelandicNameByInitialLetterQuery,
@@ -20,44 +19,17 @@ import { NameStatusStrings, NameTypeStrings } from '../../constants'
 
 import * as styles from './TableList.treat'
 
-interface TableListProps {}
+interface TableListProps {
+  data: TIcelandicName[]
+  loading?: boolean
+}
 
 type TIcelandicName = Pick<
   IcelandicName,
   'id' | 'icelandicName' | 'type' | 'status' | 'visible' | 'description' | 'url'
 >
 
-const TableList: FC<TableListProps> = () => {
-  const [tableData, setTableData] = useState<TIcelandicName[]>([])
-  const [retreive, { data, loading }] = useLazyQuery<
-    GetIcelandicNameByInitialLetterQuery,
-    GetIcelandicNameByInitialLetterQueryVariables
-  >(GET_ICELANDIC_NAME_BY_INITIAL_LETTER, {
-    variables: {
-      input: {
-        initialLetter: 'Æ',
-      },
-    },
-  })
-
-  useLayoutEffect(() => {
-    retreive()
-  }, [])
-
-  useLayoutEffect(() => {
-    if (data?.getIcelandicNameByInitialLetter) {
-      const newTableData = data.getIcelandicNameByInitialLetter.map((x) => {
-        return {
-          ...x,
-          icelandicName:
-            x.icelandicName.charAt(0).toUpperCase() + x.icelandicName.slice(1),
-        }
-      })
-
-      setTableData(newTableData)
-    }
-  }, [data])
-
+const TableList: FC<TableListProps> = ({ data = [], loading }) => {
   return (
     <>
       <div className={styles.container}>
@@ -79,7 +51,7 @@ const TableList: FC<TableListProps> = () => {
               </T.Row>
             )}
             {!loading &&
-              tableData.map((x, index) => {
+              data.map((x, index) => {
                 return (
                   <T.Row key={index}>
                     <T.Data>

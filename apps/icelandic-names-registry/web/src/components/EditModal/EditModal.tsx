@@ -5,41 +5,26 @@ import { Box, Button, ModalBase } from '@island.is/island-ui/core'
 import * as styles from './EditModal.treat'
 import EditForm from '../EditForm/EditForm'
 
-interface EditModalProps {}
+interface EditModalProps {
+  isVisible: boolean
+  setIsVisible: (visibility: boolean) => void
+}
 
-const EditModal: FC<EditModalProps> = ({ children }) => {
-  const [isVisible, setIsVisible] = useState(false)
-
+const EditModal: FC<EditModalProps> = ({ isVisible, setIsVisible }) => {
   return (
-    <>
-      <Button
-        variant="ghost"
-        icon="add"
-        size="small"
-        onClick={() => {
-          setIsVisible(true)
-        }}
-      >
-        Bæta við nafni
-      </Button>
-      <ModalBase
-        baseId="myDialog"
-        className={styles.modal}
-        isVisible={isVisible}
-        hideOnClickOutside={false}
-        onVisibilityChange={(visibility) => {
-          if (visibility !== isVisible) {
-            setIsVisible(visibility)
-          }
-        }}
-      >
-        {({ closeModal }: { closeModal: () => void }) => (
-          <Box position="relative" borderRadius="large" background="white">
-            <EditForm closeModal={closeModal} />
-          </Box>
-        )}
-      </ModalBase>
-    </>
+    <ModalBase
+      baseId="myDialog"
+      className={styles.modal}
+      isVisible={isVisible}
+      hideOnClickOutside={false}
+      onVisibilityChange={(visibility) => setIsVisible(visibility)}
+    >
+      {({ closeModal }: { closeModal: () => void }) => (
+        <Box position="relative" borderRadius="large" background="white">
+          <EditForm closeModal={closeModal} />
+        </Box>
+      )}
+    </ModalBase>
   )
 }
 
