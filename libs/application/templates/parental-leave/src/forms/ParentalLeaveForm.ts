@@ -23,6 +23,7 @@ import {
   formatIsk,
   getEstimatedMonthlyPay,
   getOtherParentOptions,
+  getAllPeriodDates,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -38,6 +39,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { Period } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -714,6 +716,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  excludeDates: (application) => {
+                    const {
+                      answers: { periods },
+                    } = application
+
+                    return getAllPeriodDates(periods as Period[])
+                  },
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -725,20 +734,16 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
+                      excludeDates: (application) => {
+                        const {
+                          answers: { periods },
+                        } = application
+
+                        return getAllPeriodDates(periods as Period[])
+                      },
                     }),
                   ],
                 }),
-                // buildCustomField(
-                //   {
-                //     id: 'endDate',
-                //     name: parentalLeaveFormMessages.shared.duration,
-                //     description: parentalLeaveFormMessages.duration.description,
-                //     component: 'Duration',
-                //   },
-                //   {
-                //     showTimeline: true,
-                //   },
-                // ),
                 buildMultiField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,

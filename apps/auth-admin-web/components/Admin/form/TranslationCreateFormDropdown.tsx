@@ -4,6 +4,8 @@ import ValidationUtils from '../../../utils/validation.utils'
 import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
 import { TranslationDTO } from '../../../entities/dtos/translation.dto'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   className: string
@@ -20,6 +22,9 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   const [translationValue, setTranslationValue] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [infoMessage, setInfoMessage] = useState<string>(null)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('TranslationCreateFormDropdown'),
+  )
 
   useEffect(() => {
     if (props.isEditing) {
@@ -63,18 +68,18 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       const response = await TranslationService.updateTranslation(data)
       if (response) {
         setInfoMessage(
-          `Translation has been updated for ${
-            languages.find((x) => x.isoKey === data.language).englishDescription
-          }`,
+          localization.infoEdit +
+            languages.find((x) => x.isoKey === data.language)
+              .englishDescription,
         )
       }
     } else {
       const response = await TranslationService.createTranslation(data)
       if (response) {
         setInfoMessage(
-          `Translation has been created for ${
-            languages.find((x) => x.isoKey === data.language).englishDescription
-          }`,
+          localization.infoCreate +
+            languages.find((x) => x.isoKey === data.language)
+              .englishDescription,
         )
       }
     }
@@ -85,7 +90,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       setErrorMessage('')
       create(translationValue)
     } else {
-      setErrorMessage('Value is required and need to be in the right format')
+      setErrorMessage(localization.errorMessage)
     }
   }
 
@@ -100,7 +105,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
     if (ValidationUtils.validateDescription(translationValue)) {
       setErrorMessage('')
     } else {
-      setErrorMessage('Value is required and need to be in the right format')
+      setErrorMessage(localization.errorMessage)
     }
   }
 
@@ -120,10 +125,10 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
         <a
           className="toggle-button__button__show"
           onClick={() => (visible ? close() : setVisible(true))}
-          title={`Create new Translation`}
+          title={localization.title}
         >
           <i className="icon__translation"></i>
-          <span>Create new Translation</span>
+          <span>{localization.title}</span>
         </a>
       </div>
       <div className="translation-create-form-dropdown">
@@ -138,15 +143,14 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
             </a>
           </div>
           <div className="translation-create-form-dropdown__container">
-            <h1>Create a Translation</h1>
+            <h1>{localization.title}</h1>
 
             <div
               className={`translation-create-form-dropdown__container__help-text ${
                 props.isEditing ? 'hidden' : 'show'
               }`}
             >
-              The item you are creating needs to be saved before creating
-              translations
+              {localization.conditionalHelp}
             </div>
 
             <div
@@ -162,7 +166,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
               }`}
             >
               <div className="translation-create-form-dropdown__help">
-                Add new translation by filling out the form
+                {localization.help}
               </div>
 
               <div className="translation-create-form-dropdown__container__fields">
@@ -171,7 +175,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                     className="translation-create-form-dropdown__label"
                     htmlFor="language"
                   >
-                    Language
+                    {localization.fields['language'].label}
                   </label>
                   <select
                     id="language"
@@ -191,7 +195,9 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                       )
                     })}
                   </select>
-                  <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
+                  <HelpBox
+                    helpText={localization.fields['language'].helpText}
+                  />
                 </div>
 
                 <div className="translation-create-form-dropdown__container__field">
@@ -199,7 +205,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                     className="translation-create-form-dropdown__label"
                     htmlFor="value"
                   >
-                    Value
+                    {localization.fields['value'].label}
                   </label>
                   <input
                     id="value"
@@ -207,12 +213,12 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                     name="translation.value"
                     value={translationValue ?? ''}
                     className="translation-create-form-dropdown__input"
-                    title="The translated text in the selected language"
-                    placeholder="Some description"
+                    title={localization.fields['value'].helpText}
+                    placeholder={localization.fields['value'].helpText}
                     onChange={(e) => handleTextValueChange(e.target.value)}
                   />
 
-                  <HelpBox helpText="The translated text in the selected language" />
+                  <HelpBox helpText={localization.fields['value'].helpText} />
                   <div className="customErrorMessage">{errorMessage}</div>
                 </div>
 
@@ -223,17 +229,17 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                       type="button"
                       onClick={close}
                     >
-                      Cancel
+                      {localization.cancelButton}
                     </button>
                   </div>
                   <div className="translation-create-form-dropdown__button__container">
                     <button
                       type="button"
                       className="translation-create-form-dropdown__button__save"
-                      value="Save"
+                      value={localization.saveButton}
                       onClick={save}
                     >
-                      Save
+                      {localization.saveButton}
                     </button>
                   </div>
                 </div>

@@ -41,7 +41,6 @@ export const CaseQuery = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -88,8 +87,10 @@ export const CaseQuery = gql`
         type
       }
       files {
+        id
         name
         size
+        created
       }
     }
   }
@@ -148,6 +149,22 @@ export const CreateFileMutation = gql`
       name
       key
       size
+    }
+  }
+`
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
+    }
+  }
+`
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
     }
   }
 `

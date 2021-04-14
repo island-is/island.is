@@ -36,6 +36,8 @@ import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 
+type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
+
 const { elastic } = environment
 
 @Injectable()
@@ -190,12 +192,8 @@ export class ElasticService {
     })
 
     const results = await Promise.all(requests)
-    return results.reduce(
-      (
-        groupedResults: Record<string, RankEvaluationResponse<searchTermUnion>>,
-        result,
-        index,
-      ) => {
+    return results.reduce<RankResultMap<searchTermUnion>>(
+      (groupedResults, result, index) => {
         groupedResults[metrics[index]] = result
         return groupedResults
       },

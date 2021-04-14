@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { EndorsementList } from '../endorsementList/endorsementList.model'
+import { MetadataService } from '../metadata/metadata.service'
 
 interface EndorsementListInput {
   listId: string
@@ -10,13 +12,16 @@ interface EndorsementListInput {
 @Injectable()
 export class EndorsementService {
   constructor(
+    @InjectModel(EndorsementList)
+    private readonly endorsementListModel: typeof EndorsementList,
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private readonly metadataService: MetadataService,
   ) {}
 
-  async findEndorsementByNationalId({
+  async findSingleEndorsementByNationalId({
     nationalId,
     listId,
   }: EndorsementListInput) {
@@ -33,11 +38,29 @@ export class EndorsementService {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple endorsements to same list
+    // parent list is used to evaluate rules and metadata
+    const parentEndorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+    })
+
+    if (!parentEndorsementList) {
+      throw new Error('Failed to find parent endorsement list')
+    }
+    const allEndorsementMetadata = await this.metadataService.getMetadata({
+      fields: parentEndorsementList.endorsementMeta, // TODO: Add fields required by validation here
+      nationalId,
+    })
+
+    // TODO: Validate rules here
 
     return this.endorsementModel.create({
       endorser: nationalId,
       endorsementListId: listId,
-      meta: [], // TODO: Add list metadata here
+      // this removes validation fields fetched by meta service
+      meta: this.metadataService.pruneMetadataFields(
+        allEndorsementMetadata,
+        parentEndorsementList.endorsementMeta,
+      ),
     })
   }
 

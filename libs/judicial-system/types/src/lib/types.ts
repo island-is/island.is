@@ -153,7 +153,6 @@ export interface Case {
   setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
-  isCourtDateInThePast?: boolean
   courtRoom?: string
   courtStartTime?: string
   courtEndTime?: string
@@ -296,6 +295,23 @@ export interface PresignedPost {
 
 export interface CreatePresignedPost {
   fileName: string
+}
+
+export interface DeleteFile {
+  id: string
+}
+
+export interface DeleteFileResponse {
+  success: boolean
+}
+
+export interface GetSignedUrl {
+  caseId: string
+  id: string
+}
+
+export interface SignedUrl {
+  url: string
 }
 
 export interface File {

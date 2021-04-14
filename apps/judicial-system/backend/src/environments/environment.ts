@@ -5,7 +5,7 @@ export default {
     secretToken: 'secret-token',
   },
   notifications: {
-    judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
@@ -35,5 +35,6 @@ export default {
     region: 'eu-west-1',
     bucket: 'island-is-dev-upload-judicial-system',
     timeToLivePost: '15',
+    timeToLiveGet: '5',
   },
 }

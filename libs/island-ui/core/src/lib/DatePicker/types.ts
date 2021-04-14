@@ -27,6 +27,7 @@ export interface DatePickerProps {
   locale?: LocaleKeys
   minDate?: ReactDatePickerProps['minDate']
   maxDate?: ReactDatePickerProps['maxDate']
+  excludeDates?: ReactDatePickerProps['excludeDates']
   selected?: ReactDatePickerProps['selected']
   disabled?: boolean
   hasError?: boolean

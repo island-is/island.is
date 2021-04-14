@@ -181,6 +181,7 @@ export class CmsContentfulService {
     }
   }
 
+  // DEPRECATED: will be removed after 18-05-21
   async getFrontpageSliderList(lang = 'is-IS'): Promise<FrontpageSliderList> {
     const params = {
       ['content_type']: 'frontpageSliderList',
@@ -591,6 +592,7 @@ export class CmsContentfulService {
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
+  // DEPRECATED: will be removed after 18-05-21
   async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
     const params = {
       ['content_type']: 'homepage',

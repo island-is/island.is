@@ -164,10 +164,16 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
     "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-party-application": {
       "tags": []
     },
     "application-templates-party-letter": {
@@ -207,6 +213,9 @@
     "clients-document-provider": {
       "tags": []
     },
+    "clients-documents": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -241,6 +250,9 @@
       "tags": []
     },
     "dokobit-signing": {
+      "tags": []
+    },
+    "download-service": {
       "tags": []
     },
     "email-service": {
