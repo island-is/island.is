@@ -11,7 +11,7 @@ beforeAll(async () => {
 
 const errorExpectedStructure = {
   error: expect.any(String),
-  message: expect.any(Array),
+  message: expect.anyOf([String, Array]),
   statusCode: expect.any(Number),
 }
 
@@ -57,7 +57,7 @@ describe('EndorsementList', () => {
       statusCode: 404,
     })
   })
-  it(`GET /endorsement-list/:listId should return 400 valdiation error when listId is not UUID`, async () => {
+  it(`GET /endorsement-list/:listId should return 400 validation error when listId is not UUID`, async () => {
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/notAUUID')
       .send()
