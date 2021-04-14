@@ -1,6 +1,6 @@
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import React, { FC } from 'react'
-import { ISODate, Regulation } from './Regulations.types'
+import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as s from './RegulationStatus.treat'
@@ -17,7 +17,10 @@ const Ball: React.FC<BallProps> = ({ type, children }) => (
 // ---------------------------------------------------------------------------
 
 export type RegulationStatusProps = {
-  regulation: Regulation
+  regulation: Pick<
+    RegulationMaybeDiff,
+    'repealedDate' | 'timelineDate' | 'lastAmendDate'
+  >
   urlDate?: ISODate
   today: ISODate
   viewingOriginal: boolean

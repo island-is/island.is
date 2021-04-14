@@ -1,5 +1,6 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { ParsedUrlQuery } from 'querystring'
+import { useState } from 'react'
 import { ISODate, RegName, RegQueryName } from './Regulations.types'
 
 export const interpolate = (
@@ -104,3 +105,17 @@ export const getParams = <K extends string>(
     obj[key] = getParamStr(query, key)
     return obj
   }, {} as Record<K, string>)
+
+// ---------------------------------------------------------------------------
+
+const domid_prefix = '_' + /*@__PURE__*/ (Date.now() + '-').substr(6)
+let domid_incr = 0
+
+export default function domid() {
+  return domid_prefix + domid_incr++
+}
+
+// ---------------------------------------------------------------------------
+
+// Returns a stable, unique ID string
+export const useDomid = (staticId?: string) => useState(staticId || domid)[0]

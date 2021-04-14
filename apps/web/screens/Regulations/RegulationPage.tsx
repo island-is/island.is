@@ -3,6 +3,8 @@ import {
   RegulationRedirect,
   ISODate,
   RegQueryName,
+  RegulationDiff,
+  RegulationMaybeDiff,
 } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 
@@ -23,7 +25,7 @@ import { GET_REGULATION_QUERY } from '../queries'
 
 const { publicRuntimeConfig } = getConfig()
 
-const getKey = (regulation: Regulation): string => {
+const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
   const { from, to } = showingDiff || {}
   return [name, timelineDate, from, to].join()
@@ -32,7 +34,7 @@ const getKey = (regulation: Regulation): string => {
 // ---------------------------------------------------------------------------
 
 type RegulationPageProps = {
-  regulation: Regulation | RegulationRedirect
+  regulation: Regulation | RegulationDiff | RegulationRedirect
   texts: RegulationPageTexts
   urlDate?: ISODate
 }
@@ -187,6 +189,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         (res) =>
           res.data?.getRegulation as
             | Regulation
+            | RegulationDiff
             | RegulationRedirect
             | undefined,
       ),

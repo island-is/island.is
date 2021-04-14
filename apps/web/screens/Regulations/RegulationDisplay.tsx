@@ -1,6 +1,6 @@
 import React, { FC, Fragment } from 'react'
 import { useRouter } from 'next/router'
-import { Regulation, ISODate } from './Regulations.types'
+import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import * as s from './RegulationDisplay.treat'
 import {
@@ -20,11 +20,14 @@ import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { RegulationStatus } from './RegulationStatus'
+import { Appendixes } from './Appendixes'
+import { HTMLDump } from './HTMLDump'
+import { CommentsBox } from './CommentsBox'
 
 // ---------------------------------------------------------------------------
 
 export type RegulationDisplayProps = {
-  regulation: Regulation
+  regulation: RegulationMaybeDiff
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
@@ -93,11 +96,21 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             marginTop={[2, 3, 4, 5]}
             marginBottom={[2, 4]}
           >
+            {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
             {name} {regulation.title}
           </Text>
-          <div
-            className={s.bodyText}
-            dangerouslySetInnerHTML={{ __html: regulation.text }}
+
+          <HTMLDump className={s.bodyText} content={regulation.text} />
+
+          <Appendixes
+            legend={txt('appendixesTitle')}
+            genericTitle={txt('appendixGenericTitle')}
+            appendixes={regulation.appendixes}
+          />
+
+          <CommentsBox
+            title={txt('commentsTitle')}
+            content={regulation.comments}
           />
         </>
       }

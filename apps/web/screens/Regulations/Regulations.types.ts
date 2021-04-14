@@ -10,6 +10,13 @@ declare const _ISODateToken_: unique symbol
 /** Valid ISODate string – e.g. `2012-09-30` */
 export type ISODate = string & { [_ISODateToken_]: true }
 
+declare const _HTMLTextToken_: unique symbol
+/** HTMLText string – e.g. `I &lt;3 You ` */
+export type HTMLText = string & { [_HTMLTextToken_]: true }
+
+/** Plain-text string – e.g. `I <3 You ` */
+export type PlainText = string & { [_HTMLTextToken_]?: false }
+
 // ---------------------------------------------------------------------------
 
 // Years
@@ -114,25 +121,25 @@ export type RegulationSearchResults = {
 /** Regulation appendix/attachment chapter */
 export type RegulationAppendix = {
   /** Title of the appendix */
-  title: string
+  title: PlainText
   /** The appendix text in HTML format */
-  text: string
+  text: HTMLText
 }
 
 // Single Regulation
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
   name: RegName
-  /** The title of the regulation in HTML format */
-  title: string
+  /** The title of the regulation */
+  title: PlainText
   /* The regulation text in HTML format */
-  text: string
+  text: HTMLText
   /** List of the regulation's appendixes */
   appendixes: ReadonlyArray<RegulationAppendix>
   /** Optional HTML formatted comments from the editor pointing out
    * known errors or ambiguities in the text.
    */
-  comments: string
+  comments: HTMLText
 
   /** Date signed in the ministry */
   signatureDate: ISODate
@@ -182,7 +189,25 @@ export type Regulation = {
   timelineDate?: ISODate
 
   /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
-  showingDiff?: {
+  showingDiff?: undefined
+}
+
+// ---------------------------------------------------------------------------
+
+export type RegulationDiff = Omit<
+  Regulation,
+  'title' | 'appendixes' | 'showingDiff'
+> & {
+  /** The title of the regulation in HTML format */
+  title: HTMLText
+  /** List of the regulation's appendixes */
+  appendixes: ReadonlyArray<
+    Omit<RegulationAppendix, 'title'> & {
+      title: HTMLText
+    }
+  >
+  /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
+  showingDiff: {
     /** The date of the base version being compared against */
     from: ISODate
     /** The date of the version being viewed
@@ -191,6 +216,10 @@ export type Regulation = {
     to: ISODate
   }
 }
+
+// ---------------------------------------------------------------------------
+
+export type RegulationMaybeDiff = Regulation | RegulationDiff
 
 // ---------------------------------------------------------------------------
 
