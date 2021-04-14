@@ -305,6 +305,13 @@
     "icelandic-names-registry-types": {
       "tags": []
     },
+    "icelandic-names-registry-web": {
+      "tags": []
+    },
+    "icelandic-names-registry/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["icelandic-names-registry-web"]
+    },
     "infra-express-server": {
       "tags": []
     },

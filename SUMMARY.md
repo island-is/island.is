@@ -85,6 +85,7 @@
 - [API](apps/api/README.md)
 - [Application System](apps/application-system/README.md)
 - [[DEPRECATED] Gjafakort](apps/gjafakort/README.md)
+  - [Icelandic Names Registry Web](apps/icelandic-names-registry/web/README.md)
 - [Judicial System](apps/judicial-system/README.md)
 - [Reference Backend](apps/reference-backend/README.md)
 - [Reference Next App](apps/reference-next-app/README.md)
