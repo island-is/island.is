@@ -147,7 +147,6 @@ export class ChildrenResidenceChangeService {
     const { answers } = application
     const { counterParty } = answers
 
-    console.log(counterParty)
     if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
