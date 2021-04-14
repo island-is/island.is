@@ -16,6 +16,7 @@ const messages: Messages = {
 describe('useNamespaceStrict', () => {
   const n = useNamespaceStrict(messages)
   {
+    /* eslint-disable  @typescript-eslint/no-unused-vars */
     // Quick function signature testing
     const fooTyped1: 'My Title' = n('title')
     const fooTyped2: 'nully' = n('nully')
@@ -28,6 +29,7 @@ describe('useNamespaceStrict', () => {
     const test = messages.maybeNully
     // @ts-expect-error  (proof it doesn't return any)
     const fooErr1: RegExp = n('title')
+    /* eslint-enable */
   }
 
   it('should return a string value', () => {
