@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import CopyLink from './CopyLink'
+import { CopyLink } from '@island.is/application/ui-components'
 import RecommendationTable from './RecommendationTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -64,7 +64,7 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
     <Box marginBottom={8}>
       <CopyLink
         linkUrl="www.island.is/listabókstafur/128877634/"
-        fieldDescription={formatMessage(m.recommendations.linkDescription)}
+        buttonTitle={formatMessage(m.recommendations.copyLinkButton)}
       />
       <Text variant="h3">{`${SIGNATURES.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>

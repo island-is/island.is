@@ -94,7 +94,9 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text fontWeight={strong ? 'medium' : 'regular'}>{label}</Text>
+          <Text as="span" fontWeight={strong ? 'medium' : 'regular'}>
+            {label}
+          </Text>
           {subLabel && large && (
             <Text
               as="span"

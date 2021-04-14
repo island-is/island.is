@@ -5,6 +5,7 @@ import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import { IdpProviderService } from './../../../services/IdpProviderService'
 import IdpProviderCreateForm from './../../../components/Admin/form/IdpProviderCreateForm'
 import { AdminTab } from './../../../entities/common/AdminTab'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -21,6 +22,7 @@ const Index: React.FC = () => {
       }
     }
     loadIdp()
+    document.title = LocalizationUtils.getPageTitle('admin.idp-provider.[idp]')
   }, [idpProviderName])
 
   const getIdpProvider = async (idpName: string) => {

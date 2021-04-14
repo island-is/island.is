@@ -16,10 +16,7 @@ import {
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import {
-  ApplicationStates,
-  Roles,
-} from '../../lib/ChildrenResidenceChangeTemplate'
+import { ApplicationStates, Roles } from '../../lib/constants'
 import { DescriptionText } from '../components'
 import {
   fileSignatureReducer,
@@ -114,7 +111,6 @@ const Overview = ({
             status: FileSignatureStatus.REQUEST_ERROR,
             error: error.graphQLErrors[0].extensions?.code ?? 500,
           })
-          throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
       if (documentToken) {
         dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
@@ -136,7 +132,6 @@ const Overview = ({
               status: FileSignatureStatus.UPLOAD_ERROR,
               error: error.graphQLErrors[0].extensions?.code ?? 500,
             })
-            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
 
         if (success) {

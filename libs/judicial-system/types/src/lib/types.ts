@@ -153,7 +153,6 @@ export interface Case {
   setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
-  isCourtDateInThePast?: boolean
   courtRoom?: string
   courtStartTime?: string
   courtEndTime?: string

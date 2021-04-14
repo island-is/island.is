@@ -12,7 +12,7 @@ export class TranslationService extends BaseService {
     page: number,
     count: number,
   ): Promise<{
-    rows: any[]
+    rows: Translation[]
     count: number
   } | null> {
     return BaseService.GET(
@@ -25,7 +25,7 @@ export class TranslationService extends BaseService {
     page: number,
     count: number,
   ): Promise<{
-    rows: any[]
+    rows: Language[]
     count: number
   } | null> {
     return BaseService.GET(`translation/languages?page=${page}&count=${count}`)
