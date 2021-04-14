@@ -53,15 +53,18 @@ describe('Application system API', () => {
     string | undefined,
     [import('@nestjs/common').ExecutionContext]
   >
+
   beforeEach(() => {
     spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
     spy.mockImplementation(() => {
       return nationalId
     })
   })
+
   afterAll(() => {
     spy.mockRestore()
   })
+
   it(`POST /application should register application`, async () => {
     // Act
     const response = await server

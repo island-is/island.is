@@ -20,11 +20,15 @@ const dataSchema = z.object({
   requiredString: z.string(),
 })
 
-const invalidValue = 'Invalid value.'
-const invalidEmail = 'Invalid email'
-const invalidInput = 'Invalid input'
-const expectedNumberReceivedString = 'Expected number, received string'
-const expectedStringReceivedNumber = 'Expected string, received number'
+const defaultError = 'Ógilt gildi' // `coreErrorMessages.defaultError` in validators.ts
+
+const formatMessage = (descriptor: StaticText): string => {
+  if (typeof descriptor === 'string') {
+    return descriptor
+  }
+
+  return descriptor.defaultMessage?.toString() ?? ''
+}
 
 describe('validateAnswers', () => {
   it('should return no errors for non-nested types from valid values', () => {
@@ -34,6 +38,7 @@ describe('validateAnswers', () => {
         answers: {
           requiredString: 'asdf',
         },
+        formatMessage,
       }),
     ).toBeUndefined()
     expect(
@@ -43,6 +48,7 @@ describe('validateAnswers', () => {
           optionalEnum: 'yes',
           requiredString: '123',
         },
+        formatMessage,
       }),
     ).toBeUndefined()
   })
@@ -51,7 +57,9 @@ describe('validateAnswers', () => {
       nested: { name: 'asdf', numeric: '22' },
     }
 
-    expect(validateAnswers({ dataSchema, answers })).toBeUndefined()
+    expect(
+      validateAnswers({ dataSchema, answers, formatMessage }),
+    ).toBeUndefined()
   })
   it('should pick partial nested object and non-nested values as well from the schema and return no errors', () => {
     const answers = {
@@ -59,7 +67,9 @@ describe('validateAnswers', () => {
       requiredString: 'yes',
     }
 
-    expect(validateAnswers({ dataSchema, answers })).toBeUndefined()
+    expect(
+      validateAnswers({ dataSchema, answers, formatMessage }),
+    ).toBeUndefined()
   })
 
   it('should validate a nested object with nonempty strings', () => {
@@ -90,13 +100,14 @@ describe('validateAnswers', () => {
     const schemaValidationError = validateAnswers({
       dataSchema: nonEmptyNestedStringSchema,
       answers: invalidFormValue,
+      formatMessage,
     })
 
     expect(schemaValidationError).toEqual({
-      person: invalidValue,
-      'person.nationalId': invalidValue,
-      'person.age': invalidValue,
-      'person.email': invalidEmail,
+      person: defaultError,
+      'person.nationalId': defaultError,
+      'person.age': defaultError,
+      'person.email': defaultError,
     })
   })
 
@@ -120,7 +131,11 @@ describe('validateAnswers', () => {
     }
 
     expect(
-      validateAnswers({ dataSchema: veryNestedSchema, answers: okFormValue }),
+      validateAnswers({
+        dataSchema: veryNestedSchema,
+        answers: okFormValue,
+        formatMessage,
+      }),
     ).toBeUndefined()
 
     const anotherGoodFormValue = {
@@ -130,6 +145,7 @@ describe('validateAnswers', () => {
       validateAnswers({
         dataSchema: veryNestedSchema,
         answers: anotherGoodFormValue,
+        formatMessage,
       }),
     ).toBeUndefined()
 
@@ -140,6 +156,7 @@ describe('validateAnswers', () => {
     const firstSchemaValidationError = validateAnswers({
       dataSchema: veryNestedSchema,
       answers: badFormValue,
+      formatMessage,
     })
     expect(firstSchemaValidationError).toEqual({
       requiredString: expect.anything(),
@@ -152,12 +169,13 @@ describe('validateAnswers', () => {
     const secondSchemaValidationError = validateAnswers({
       dataSchema: veryNestedSchema,
       answers: anotherBadFormValue,
+      formatMessage,
     })
     expect(secondSchemaValidationError).toEqual({
-      nested: expectedNumberReceivedString,
-      'nested.deep': expectedNumberReceivedString,
-      'nested.deep.soDeep': expectedNumberReceivedString,
-      'nested.deep.soDeep.id': expectedNumberReceivedString,
+      nested: defaultError,
+      'nested.deep': defaultError,
+      'nested.deep.soDeep': defaultError,
+      'nested.deep.soDeep.id': defaultError,
     })
   })
   describe('arrays', () => {
@@ -171,7 +189,11 @@ describe('validateAnswers', () => {
         somethingElse: 4,
       }
       expect(
-        validateAnswers({ dataSchema: schemaWithArray, answers: okFormValue }),
+        validateAnswers({
+          dataSchema: schemaWithArray,
+          answers: okFormValue,
+          formatMessage,
+        }),
       ).toBeUndefined()
 
       const badFormValue = {
@@ -180,6 +202,7 @@ describe('validateAnswers', () => {
       const schemaValidationError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: badFormValue,
+        formatMessage,
       })
       expect(schemaValidationError).toEqual({
         anArray: expect.anything(),
@@ -195,7 +218,11 @@ describe('validateAnswers', () => {
         somethingElse: 4,
       }
       expect(
-        validateAnswers({ dataSchema: schemaWithArray, answers: okFormValue }),
+        validateAnswers({
+          dataSchema: schemaWithArray,
+          answers: okFormValue,
+          formatMessage,
+        }),
       ).toBeUndefined()
 
       const anotherOkFormValue = {
@@ -205,6 +232,7 @@ describe('validateAnswers', () => {
         validateAnswers({
           dataSchema: schemaWithArray,
           answers: anotherOkFormValue,
+          formatMessage,
         }),
       ).toBeUndefined()
 
@@ -214,11 +242,12 @@ describe('validateAnswers', () => {
       const schemaValidationError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: badFormValue,
+        formatMessage,
       })
       expect(schemaValidationError).toEqual({
-        anArray: expectedStringReceivedNumber,
-        'anArray[1]': expectedStringReceivedNumber,
-        'anArray[2]': expectedStringReceivedNumber,
+        anArray: defaultError,
+        'anArray[1]': defaultError,
+        'anArray[2]': defaultError,
       })
     })
     it('should pick nested object inside an array from a schema', () => {
@@ -249,7 +278,11 @@ describe('validateAnswers', () => {
       }
 
       expect(
-        validateAnswers({ dataSchema: schemaWithArray, answers: okFormValue }),
+        validateAnswers({
+          dataSchema: schemaWithArray,
+          answers: okFormValue,
+          formatMessage,
+        }),
       ).toBeUndefined()
 
       const anotherGoodFormValue = {
@@ -260,6 +293,7 @@ describe('validateAnswers', () => {
         validateAnswers({
           dataSchema: schemaWithArray,
           answers: anotherGoodFormValue,
+          formatMessage,
         }),
       ).toBeUndefined()
 
@@ -271,6 +305,7 @@ describe('validateAnswers', () => {
       const firstError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: badFormValue,
+        formatMessage,
       })
       expect(firstError).toEqual({
         requiredString: expect.anything(),
@@ -283,11 +318,12 @@ describe('validateAnswers', () => {
       const secondError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: anotherBadFormValue,
+        formatMessage,
       })
       expect(secondError).toEqual({
-        person: invalidInput,
-        'person[0]': invalidInput,
-        'person[0].age': invalidInput,
+        person: defaultError,
+        'person[0]': defaultError,
+        'person[0].age': defaultError,
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -322,7 +358,11 @@ describe('validateAnswers', () => {
       } as FormValue
 
       expect(
-        validateAnswers({ dataSchema: schemaWithArray, answers: okFormValue }),
+        validateAnswers({
+          dataSchema: schemaWithArray,
+          answers: okFormValue,
+          formatMessage,
+        }),
       ).toBeUndefined()
 
       const anotherGoodFormValue = {
@@ -333,6 +373,7 @@ describe('validateAnswers', () => {
         validateAnswers({
           dataSchema: schemaWithArray,
           answers: anotherGoodFormValue,
+          formatMessage,
         }),
       ).toBeUndefined()
 
@@ -344,6 +385,7 @@ describe('validateAnswers', () => {
       const firstError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: badFormValue,
+        formatMessage,
       })
       expect(firstError).toEqual({
         requiredString: expect.anything(),
@@ -356,11 +398,12 @@ describe('validateAnswers', () => {
       const secondError = validateAnswers({
         dataSchema: schemaWithArray,
         answers: anotherBadFormValue,
+        formatMessage,
       })
       expect(secondError).toEqual({
-        person: invalidInput,
-        'person[1]': invalidInput,
-        'person[1].age': invalidInput,
+        person: defaultError,
+        'person[1]': defaultError,
+        'person[1].age': defaultError,
       })
     })
 
@@ -369,8 +412,10 @@ describe('validateAnswers', () => {
 
       const value = { value: false } as FormValue
 
-      expect(validateAnswers({ dataSchema: schema, answers: value })).toEqual({
-        value: invalidValue,
+      expect(
+        validateAnswers({ dataSchema: schema, answers: value, formatMessage }),
+      ).toEqual({
+        value: defaultError,
       })
     })
 
@@ -382,7 +427,9 @@ describe('validateAnswers', () => {
 
       const value = { value: false } as FormValue
 
-      expect(validateAnswers({ dataSchema: schema, answers: value })).toEqual({
+      expect(
+        validateAnswers({ dataSchema: schema, answers: value, formatMessage }),
+      ).toEqual({
         value: expectedMessage,
       })
     })

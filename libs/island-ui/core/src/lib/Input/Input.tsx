@@ -1,64 +1,13 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
+
 import * as styles from './Input.treat'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
-import { Icon as IconType, Type } from '../IconRC/iconMap'
-import {
-  resolveResponsiveProp,
-  ResponsiveProp,
-} from '../../utils/responsiveProp'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
-
-export type InputBackgroundColor = 'white' | 'blue'
-
-interface InputComponentProps {
-  name: string
-  value?: string | number
-  defaultValue?: string | number
-  id?: string
-  className?: string
-  disabled?: boolean
-  required?: boolean
-  placeholder?: string
-  autoFocus?: boolean
-  maxLength?: number
-  size?: keyof typeof styles.inputSize
-  onFocus?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onBlur?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onChange?: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onClick?: (
-    event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>,
-  ) => void
-  onKeyDown?: (
-    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  rows?: number
-  type?: 'text' | 'number' | 'email' | 'tel'
-  icon?: IconType
-  iconType?: Type
-  /**
-   * While true hover state will not show and focus state will be allways on
-   */
-  fixedFocusState?: boolean
-}
-
-export interface InputProps extends InputComponentProps {
-  label?: string
-  hasError?: boolean
-  errorMessage?: string
-  tooltip?: string
-  backgroundColor?: ResponsiveProp<InputBackgroundColor>
-  textarea?: boolean
-  maxLength?: number
-}
+import { InputBackgroundColor, InputComponentProps, InputProps } from './types'
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
   if (typeof ref === 'function') {

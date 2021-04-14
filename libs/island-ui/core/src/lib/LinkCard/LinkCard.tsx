@@ -2,7 +2,8 @@
 
 import React, { forwardRef, ComponentPropsWithRef } from 'react'
 import cn from 'classnames'
-import { Box, BoxProps } from '../Box/Box'
+import { Box } from '../Box/Box'
+import { BoxProps } from '../Box/types'
 import { Text } from '../Text/Text'
 import { Tag, TagVariant, TagProps } from '../Tag/Tag'
 import * as styles from './LinkCard.treat'

@@ -26,16 +26,11 @@ function populateError(
     return currentError
   }
 
-  // For generic errors we use a default message
-  const translatedErrorMessage = {
+  const defaultZodError = newError.errors[0].message === 'Invalid value.'
+
+  let newErrorMessage = {
     [pathToError]: formatMessage(coreErrorMessages.defaultError),
   }
-
-  if (!currentError) {
-    return translatedErrorMessage
-  }
-
-  let newErrorMessage = translatedErrorMessage
 
   // For custom error from namespaces' messages defined inside the dataSchema.ts file
   if (newError.errors[0].code === 'custom_error') {
@@ -50,11 +45,15 @@ function populateError(
           newError.errors[0].params as StaticTextObject,
         ),
       }
+    } else if (!defaultZodError) {
+      newErrorMessage = {
+        [pathToError]: newError.errors[0].message,
+      }
     }
   }
 
   return {
-    ...currentError,
+    ...(currentError ?? {}),
     ...newErrorMessage,
   }
 }

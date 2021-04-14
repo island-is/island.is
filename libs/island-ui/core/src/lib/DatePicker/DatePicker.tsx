@@ -10,16 +10,17 @@ import getYear from 'date-fns/getYear'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 import { dateFormat } from '@island.is/shared/constants'
+import { VisuallyHidden } from 'reakit'
+import range from 'lodash/range'
 
 import { Icon } from '../IconRC/Icon'
 import { Text } from '../Text/Text'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
-import { Input, InputProps } from '../Input/Input'
-import { VisuallyHidden } from 'reakit'
+import { Input } from '../Input/Input'
+import { InputProps } from '../Input/types'
 import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
-import range from 'lodash/range'
 
 const languageConfig = {
   is: {

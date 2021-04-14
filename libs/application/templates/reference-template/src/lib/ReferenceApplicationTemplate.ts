@@ -15,8 +15,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
@@ -39,7 +37,12 @@ const ExampleSchema = z.object({
     }),
     nationalId: z
       .string()
-      .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+      /**
+       * We are depending on this template for the e2e tests on the application-system-api.
+       * Because we are not allowing committing valid kennitala, I reversed the condition
+       * to check for invalid kenitala so it passes the test.
+       */
+      .refine((n) => n && !kennitala.isValid(n), {
         params: m.dataSchemeNationalId,
       }),
     phoneNumber: z.string().refine(

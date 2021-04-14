@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactElement } from 'react'
 
-import { BoxProps } from '../../Box/Box'
+import { BoxProps } from '../../Box/types'
 
 export type BackgroundVariant = BoxProps['background']
 

@@ -31,8 +31,9 @@ import { ApplicationLoading } from '../components/ApplicationsLoading/Applicatio
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { lang, formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   useApplicationNamespaces(type)
 
@@ -41,7 +42,7 @@ export const Applications: FC = () => {
     {
       context: {
         headers: {
-          locale: lang,
+          locale,
         },
       },
       variables: {
@@ -80,7 +81,7 @@ export const Applications: FC = () => {
     if (type) {
       refetch?.()
     }
-  }, [lang])
+  }, [locale])
 
   if (loading) {
     return <ApplicationLoading />
@@ -122,27 +123,27 @@ export const Applications: FC = () => {
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
                 (application: Application, index: number) => {
-                  const isComplete =
-                    application.status === ApplicationStatus.COMPLETED
+                  const isOpen = application.progress === 0
+                  const isComplete = application.progress === 1
 
                   return (
                     <ActionCard
                       key={`${application.id}-${index}`}
                       date={format(
                         new Date(application.modified),
-                        dateFormat.is,
+                        formattedDate,
                       )}
                       tag={{
                         label: isComplete
-                          ? formatMessage(coreMessages.tagsInCompleted)
+                          ? formatMessage(coreMessages.tagsDone)
+                          : isOpen
+                          ? formatMessage(coreMessages.tagsOpen)
                           : formatMessage(coreMessages.tagsInProgress),
                         variant: isComplete ? 'mint' : 'blue',
                         outlined: false,
                       }}
                       heading={application.name || application.typeId}
-                      text={
-                        application.stateDescription ?? application.applicant
-                      }
+                      text={application.stateDescription}
                       cta={{
                         label: formatMessage(coreMessages.buttonNext),
                         variant: 'ghost',

@@ -1,6 +1,6 @@
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
-import { BoxProps } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
 
 import { Condition } from './Condition'
