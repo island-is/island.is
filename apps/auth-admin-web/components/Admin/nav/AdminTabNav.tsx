@@ -109,7 +109,7 @@ const AdminTabNav: React.FC<Props> = ({
               {localization.navigations['adminTabNav'].items['language'].text}
             </button>
           </li>
-          <li className={activetab === AdminTab.Language ? 'active' : ''}>
+          <li className={activetab === AdminTab.Translation ? 'active' : ''}>
             <button
               type="button"
               onClick={() => handleTabChange(AdminTab.Translation)}
