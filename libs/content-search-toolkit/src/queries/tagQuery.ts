@@ -1,5 +1,7 @@
 import { elasticTagField } from '../types'
 
+export type TagQuery = ReturnType<typeof tagQuery>
+
 export const tagQuery = (tag: elasticTagField) => ({
   nested: {
     path: 'tags',

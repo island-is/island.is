@@ -13,6 +13,8 @@ export interface RankEvaluationInput {
   metric: rankEvaluationMetrics
 }
 
-export interface GroupedRankEvaluationResponse<searchTermsUnion = string> {
+export interface GroupedRankEvaluationResponse<
+  searchTermsUnion extends string
+> {
   [metric: string]: RankEvaluationResponse<searchTermsUnion>
 }

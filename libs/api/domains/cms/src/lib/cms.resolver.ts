@@ -327,7 +327,7 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Frontpage)
+  @Query(() => Frontpage, { nullable: true })
   getFrontpage(
     @Args('input') input: GetFrontpageInput,
   ): Promise<Frontpage | null> {
