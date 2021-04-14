@@ -209,6 +209,30 @@ describe('Signed Verdict Overview route', () => {
         ),
       ).not.toBeInTheDocument()
     })
+
+    test('should not show case files', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Rannsóknargögn (1)' }),
+        ),
+      ).not.toBeInTheDocument()
+    })
   })
 
   describe('Accepted case with custody end time in the past', () => {
