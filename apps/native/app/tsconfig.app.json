@@ -4,6 +4,10 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["node"]
   },
+  "files": [
+    "../../../node_modules/@types/styled-components-react-native/index.d.ts",
+    "./src/styled-components.d.ts"
+  ],
   "exclude": ["**/*.spec.ts", "**/*.spec.tsx"],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
 }

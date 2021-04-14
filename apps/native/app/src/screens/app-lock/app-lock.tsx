@@ -8,63 +8,67 @@ import { authenticateAsync } from 'expo-local-authentication';
 import { getMainRoot } from '../../utils/lifecycle/get-app-root'
 import { authStore } from '../../stores/auth-store'
 import { useRef } from 'react'
+import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
+import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
+import { useState } from 'react'
+import styled from 'styled-components/native';
+import { usePreferencesStore } from '../../stores/preferences-store'
 
-function resetLockScreen() {
-  authStore.setState(() => ({
-    lockScreenActivatedAt: undefined,
-    lockScreenComponentId: undefined,
-  }));
-}
+const MAX_PIN_CHARS = 4;
 
-function unlockApp() {
-  const { lockScreenComponentId, lockScreenType } = authStore.getState();
-  if (lockScreenComponentId && lockScreenType === 'overlay') {
-    Navigation.dismissOverlay(lockScreenComponentId);
-  } else {
-    Navigation.setRoot({ root: getMainRoot() });
-  }
-  resetLockScreen();
-}
+const Host = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+`;
 
 export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean; status: string }> = ({ componentId, status, isRoot = false }) => {
 
-  const isBiometricsPrompt = useRef(false);
+  const { useBiometrics } = usePreferencesStore();
+  const isPromptRef = useRef(false);
+  const [code, setCode] = useState('');
+
+  const resetLockScreen = useCallback(() => {
+    authStore.setState(() => ({
+      lockScreenActivatedAt: undefined,
+      lockScreenComponentId: undefined,
+    }));
+  }, []);
+
+  const unlockApp = useCallback(() => {
+    const { lockScreenComponentId, lockScreenType } = authStore.getState();
+    if (lockScreenComponentId && lockScreenType === 'overlay') {
+      Navigation.dismissOverlay(lockScreenComponentId);
+    } else {
+      Navigation.setRoot({ root: getMainRoot() });
+    }
+    resetLockScreen();
+  }, []);
 
   const authenticateWithBiometrics = useCallback(async () => {
-    if (isBiometricsPrompt.current) {
+    if (!useBiometrics) {
+      // dont have biometrics
       return;
     }
-    isBiometricsPrompt.current = true;
+    if (isPromptRef.current) {
+      // dont show twice?
+      return;
+    }
+    isPromptRef.current = true;
     const response = await authenticateAsync();
-    isBiometricsPrompt.current = false;
-    console.log({ response });
     if (response.success) {
       unlockApp();
     }
-  }, []);
-
-  const onAppStateChange = useCallback((status: AppStateStatus) => {
-    if (status === 'active') {
-      // authenticateWithBiometrics();
-      // authenticateDelay = setTimeout(authenticateWithBiometrics, 1000);
-    }
-  }, []);
+  }, [isPromptRef]);
 
   useEffect(() => {
-    console.log({ status });
-    if (status === 'active') {
+    if (status === 'active' && isPromptRef.current) {
+      isPromptRef.current = false;
+    } else if (status === 'active') {
       authenticateWithBiometrics();
     }
   }, [status]);
-
-  useEffect(() => {
-    // authenticateWithBiometrics();
-
-    AppState.addEventListener('change', onAppStateChange);
-    return () => {
-      AppState.removeEventListener('change', onAppStateChange);
-    }
-  }, []);
 
   useNavigationComponentDidAppear(() => {
     authStore.setState(() => ({
@@ -78,24 +82,41 @@ export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean; statu
     resetLockScreen();
   })
 
+  useEffect(() => {
+    if (code === '0000') {
+      unlockApp();
+    }
+  }, [code]);
+
+  const onPinInput = (char: string) => {
+    setCode(previousCode => `${previousCode}${previousCode.length >= MAX_PIN_CHARS ? '' : char}`);
+  }
+
+  const onBackPress = () => {
+    setCode(previousCode => `${previousCode.substr(0, previousCode.length - 1)}`);
+  }
+
+  const onFaceIdPress = () => {
+    // we know the prompt is not present at this time
+    isPromptRef.current = false;
+    authenticateWithBiometrics();
+  }
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f2f7ff'
-      }}
+    <Host
       testID={testIDs.SCREEN_APP_LOCK}
     >
       <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-        <Image source={logo} />
-        <Text style={{ fontSize: 32, marginTop: 20, fontFamily: 'IBMPlexSans-Bold' }}>Stafrænt Ísland</Text>
-        <Button title="Unlock" onPress={() => {
-          authenticateWithBiometrics();
-        }} />
+        <VisualizedPinCode code={code} maxChars={MAX_PIN_CHARS} />
+        <View style={{ height: 32 }} />
+        <PinKeypad
+          onInput={onPinInput}
+          onBackPress={onBackPress}
+          onFaceIdPress={onFaceIdPress}
+          back={code.length > 0}
+          faceId={useBiometrics}
+        />
       </SafeAreaView>
-      <Image source={require('../../assets/illustrations/digital-services-m1.png')} />
-    </View>
+    </Host>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { RefreshControl, ScrollView } from 'react-native'
 import { ListItem } from '@island.is/island-ui-native'
@@ -46,13 +46,14 @@ export const InboxScreen: NavigationFunctionComponent = () => {
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
   const inboxItems = res?.data?.listDocuments ?? []
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setLoading(true)
+    console.log(res);
     Promise.all([
       new Promise((r) => setTimeout(r, 1000)),
-      res.fetchMore({}),
+      res.refetch().catch(err => void 0),
     ]).then(() => setLoading(false))
-  }
+  }, [res]);
 
   return (
     <>
