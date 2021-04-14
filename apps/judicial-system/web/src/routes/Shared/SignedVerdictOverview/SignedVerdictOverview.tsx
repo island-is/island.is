@@ -325,7 +325,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files}
-                      canOpenFiles={false}
+                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
                     />
                   </AccordionItem>
                 )}

@@ -106,6 +106,15 @@ const testCase1 = {
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
+  files: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+      __typename: 'File',
+    },
+  ],
 }
 
 const testCase2 = {
@@ -154,15 +163,6 @@ const testCase2 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
-    {
-      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
-      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
-      size: 4991527,
-      created: '2021-04-12T13:55:28.131Z',
-      __typename: 'File',
-    },
-  ],
 }
 
 const testCase3 = {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import userEvent from '@testing-library/user-event'
 
 import {
   mockCaseQueries,
@@ -9,7 +10,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 
 describe('Signed Verdict Overview route', () => {
@@ -210,7 +210,7 @@ describe('Signed Verdict Overview route', () => {
       ).not.toBeInTheDocument()
     })
 
-    test('should not show case files', async () => {
+    test('should show case files', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -228,10 +228,34 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.queryByRole('button', { name: 'Rannsóknargögn (1)' }),
-        ),
-      ).not.toBeInTheDocument()
+        await screen.findByRole('button', { name: 'Rannsóknargögn (1)' }),
+      ).toBeInTheDocument()
+    })
+
+    test('should show a button to open case files if you are a prosecutor', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      userEvent.click(
+        await screen.findByRole('button', { name: 'Rannsóknargögn (1)' }),
+      )
+
+      expect(
+        await screen.findAllByRole('button', { name: 'Opna' }),
+      ).toHaveLength(1)
     })
   })
 
