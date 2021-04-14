@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
@@ -60,6 +60,19 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
           </Text>
         )
       )}
+
+      <Button
+        // icon="print"
+        // iconType="outline"
+        size="small"
+        type="button"
+        variant="text"
+        onClick={() => {
+          window.print()
+        }}
+      >
+        Prenta þessa útgáfu
+      </Button>
     </RegulationsSidebarBox>
   )
 }
