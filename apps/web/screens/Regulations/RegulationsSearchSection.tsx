@@ -188,10 +188,10 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
       <GridContainer>
         <GridRow alignItems="center">
           <GridColumn
-            span={['1/1', '1/1', '9/12', '7/12', '6/12']}
+            span={['1/1', '1/1', '12/12', '11/12', '8/12']}
             offset={['0', '0', '0', '0', '1/12']}
             paddingTop={0}
-            paddingBottom={0}
+            paddingBottom={[2, 2, 0]}
           >
             <FilterInput
               name="q"

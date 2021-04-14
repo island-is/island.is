@@ -101,7 +101,7 @@ describe('getRegulation', () => {
       regulationsService.getRegulation('original', emptyName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation('original', badName),
+      regulationsService.getRegulation('current', badName),
     ).rejects.toThrow()
     await expect(
       regulationsService.getRegulation('original', watName),
