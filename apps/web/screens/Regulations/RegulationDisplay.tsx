@@ -23,6 +23,7 @@ import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLDump } from './HTMLDump'
 import { CommentsBox } from './CommentsBox'
+import { RegulationsToggleSwitch } from './RegulationsToggleSwitch'
 
 // ---------------------------------------------------------------------------
 
@@ -68,7 +69,9 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       main={
         <>
           {history.length > 0 && !viewingOriginal && (
-            <Link
+            <RegulationsToggleSwitch
+              className={s.diffToggler}
+              checked={diffView}
               href={linkToRegulation(regulation.name, {
                 diff: !diffView,
                 ...(props.urlDate
@@ -77,10 +80,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                   ? { d: regulation.timelineDate }
                   : undefined),
               })}
-              className={s.diffToggler}
-            >
-              {diffView ? txt('hideDiff') : txt('showDiff')}
-            </Link>
+              label={diffView ? txt('hideDiff') : txt('showDiff')}
+            />
           )}
 
           <RegulationStatus
