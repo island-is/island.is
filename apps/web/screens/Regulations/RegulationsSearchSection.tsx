@@ -1,13 +1,12 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
-  Button,
   Checkbox,
   Filter,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
+  Input,
   Option,
   Select,
 } from '@island.is/island-ui/core'
@@ -176,6 +175,11 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
     })
   }
 
+  const [filterValue, setFilterValue] = useState(filters.q)
+  const textFilter = (q: string) => {
+    setFilterValue(q)
+  }
+
   return (
     <Filter
       labelClear={txt('searchClearLabel')}
@@ -193,11 +197,22 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             paddingTop={0}
             paddingBottom={[2, 2, 0]}
           >
-            <FilterInput
+            <Input
+              id="q"
               name="q"
               placeholder={txt('searchQueryLabel')}
-              value={filters.q}
-              onChange={(value) => doSearch('q', value)}
+              backgroundColor={['blue', 'blue', 'white']}
+              size="md"
+              icon="search"
+              iconType="outline"
+              value={filterValue}
+              onChange={(event) => textFilter(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  doSearch('q', filterValue)
+                }
+              }}
+              onBlur={() => doSearch('q', filterValue)}
             />
           </GridColumn>
         </GridRow>
