@@ -74,7 +74,6 @@ export const Checkbox = ({
       />
       <label
         className={cn(styles.label, {
-          [styles.labelChecked]: checked,
           [styles.checkboxLabelDisabled]: disabled,
           [styles.largeLabel]: large,
         })}
@@ -94,14 +93,14 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text as="span" fontWeight={strong ? 'medium' : 'regular'}>
+          <Text as="span" fontWeight={checked || strong ? 'semiBold' : 'light'}>
             {label}
           </Text>
           {subLabel && large && (
             <Text
               as="span"
               marginTop="smallGutter"
-              fontWeight="medium"
+              fontWeight="regular"
               variant="small"
             >
               {subLabel}

@@ -17,6 +17,7 @@ type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
 enum TemplateApiActions {
   submitApplication = 'submitApplication',
+  sendNotificationToCounterParty = 'sendNotificationToCounterParty',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -65,6 +66,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
+          },
           roles: [
             {
               id: Roles.ParentB,
