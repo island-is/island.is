@@ -1,15 +1,14 @@
 import { getSlugFromType } from '@island.is/application/core'
-import get from 'lodash/get'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { EmailTemplateGenerator } from '../../../../types'
 
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
+  const application = (props.application as unknown) as CRCApplication
   const {
-    application,
     options: { clientLocationOrigin },
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
-  const email = get(application.answers, 'counterParty.email') as string
   const subject = 'Umsókn um breytt lögheimili barns'
   const body = `
         Borist hefur umsókn um breytt lögheimili barns.
@@ -25,7 +24,7 @@ export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
     to: [
       {
         name: '',
-        address: email,
+        address: application.answers.counterParty.email,
       },
     ],
     subject,
