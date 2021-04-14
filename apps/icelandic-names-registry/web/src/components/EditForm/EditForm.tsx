@@ -18,18 +18,29 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './EditForm.treat'
-import { ActionMeta, ValueType } from 'react-select'
 
 interface PropTypes {
   closeModal: () => void
+  nameData?: IcelandicNameInputs
+}
+
+interface IcelandicNameInputs {
+  id?: number
+  icelandicName: string
+  type: string
+  status: string
+  description?: null | string
+  verdict?: Date | string | null
+  url?: null | string
+  visible: boolean
 }
 
 const NameTypes = {
   ST: 'Stúlkunafn',
   DR: 'Drengjanafn',
-  MI: 'Miðjunafn',
-  RST: 'RST (?)',
-  RDR: 'RDR (?)',
+  MI: 'Millinafn',
+  RST: 'Ritbreytt stúlkunafn',
+  RDR: 'Ritbreytt drengjanafn',
 } as { [key: string]: string }
 
 const StatusTypes = {
@@ -54,31 +65,26 @@ export const statusTypeOptions = Object.keys(StatusTypes).map((x: string) => {
 
 const spacing = 3
 
-interface IFormInputs {
-  icelandicName: string
-  type: string
-  status: string
-  description?: string
-  url?: string
-  verdict?: Date | null
-  visible: boolean
-}
-
 const today = new Date()
 
-const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
-  const hookFormData = useForm<IFormInputs>({
+const initialNameData: IcelandicNameInputs = {
+  icelandicName: '',
+  type: '',
+  status: '',
+  description: null,
+  url: null,
+  verdict: null,
+  visible: true,
+}
+
+const EditForm: React.FC<PropTypes> = ({
+  closeModal,
+  nameData = initialNameData,
+}) => {
+  const hookFormData = useForm<IcelandicNameInputs>({
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: {
-      icelandicName: '',
-      type: '',
-      status: '',
-      description: '',
-      url: '',
-      verdict: null,
-      visible: true,
-    },
+    defaultValues: nameData,
     shouldFocusError: true,
   })
 
@@ -91,16 +97,20 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
     formState: { isDirty, isSubmitting, touched, submitCount },
   } = hookFormData
 
+  const isAdding = Boolean(nameData.id)
+
+  console.log(!isAdding ? 'Adding new new' : 'Updating name', nameData.id)
+
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms))
 
-  const onSubmit = async (data: IFormInputs, e: any) => {
+  const onSubmit = async (data: IcelandicNameInputs, e: any) => {
     console.log('data', data, e)
 
     let dateString = null
 
     if (data.verdict) {
-      dateString = format(data.verdict, 'dd.MM.yyyy')
+      dateString = format(new Date(data.verdict), 'dd.MM.yyyy')
     }
 
     const submitData = {
@@ -133,7 +143,11 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
           <GridContainer position="none">
             <GridRow>
               <GridColumn span={'12/12'} paddingBottom={6}>
-                <Text variant="h1">Skráning íslensks nafns</Text>
+                <Text variant="h1">
+                  {!isAdding
+                    ? 'Skráning íslensks nafns'
+                    : 'Breyta íslensku nafni'}
+                </Text>
               </GridColumn>
             </GridRow>
 
@@ -245,7 +259,7 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         label="Skýring"
                         size="sm"
                         backgroundColor="blue"
-                        value={value}
+                        value={value ?? ''}
                         onChange={(e) => onChange(e.target.value)}
                         {...register('description')}
                         disabled={inputsDisabled}
@@ -268,11 +282,18 @@ const EditForm: React.FC<PropTypes> = ({ closeModal }) => {
                         label="Vefslóð á úrskurð"
                         placeholder="Vefslóð á úrskurð mannanafnanefndar"
                         size="sm"
+                        value={value}
                         onChange={(e) => onChange(e.target.value)}
                         {...register('url', {
-                          pattern: {
-                            value: /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i,
-                            message: 'Vefslóð virðist ekki vera á réttu formi',
+                          validate: (x) => {
+                            if (
+                              x &&
+                              !x.match(
+                                /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i,
+                              )
+                            ) {
+                              return 'Vefslóð virðist ekki vera á réttu formi'
+                            }
                           },
                         })}
                         errorMessage={errors?.url?.message ?? ''}

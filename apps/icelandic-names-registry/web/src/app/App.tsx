@@ -11,8 +11,7 @@ import * as styles from './App.treat'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
 import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
 import TableList from '../components/TableList/TableList'
-import EditModal from '../components/EditModal/EditModal'
-import EditForm from '../components/EditForm/EditForm'
+import NamesEditor from '../components/NamesEditor/NamesEditor'
 
 import Paths from '../constants'
 
@@ -43,7 +42,7 @@ export const App = () => {
                       <Layout>
                         <Switch>
                           <Route exact path={Paths.MinarSidurRoot}>
-                            <TableList />
+                            <NamesEditor />
                           </Route>
                         </Switch>
                       </Layout>

@@ -30,20 +30,7 @@ const Layout: FC = ({ children }) => {
         </Hidden>
       </RemoveScroll>
       <Box overflow="hidden" className={styles.layoutWrapper}>
-        <ContentBlock>
-          <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>
-            <Columns space={[0, 0, 0, 'containerGutter']} collapseBelow="lg">
-              <Column width="4/12">
-                <Hidden below="lg">{/* <Sidebar /> */}</Hidden>
-              </Column>
-              <Column>
-                <Box as="main">
-                  <div>{children}</div>
-                </Box>
-              </Column>
-            </Columns>
-          </Box>
-        </ContentBlock>
+        <Box as="main">{children}</Box>
       </Box>
     </>
   )
