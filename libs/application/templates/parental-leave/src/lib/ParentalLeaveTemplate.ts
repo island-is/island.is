@@ -8,6 +8,7 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 
 import { dataSchema, SchemaFormValues } from './dataSchema'
@@ -69,6 +70,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.25,
           roles: [
             {
@@ -103,6 +105,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: 'Needs other parent approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -151,6 +154,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.OTHER_PARENT_ACTION]: {
         meta: {
           name: 'Other parent requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -172,6 +176,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: 'Waiting to assign employer',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -198,6 +203,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: 'Employer Approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -236,6 +242,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_ACTION]: {
         meta: {
           name: 'Employer requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -256,6 +263,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
           name: 'Vinnumálastofnun Approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -281,6 +289,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
           name: 'Vinnumálastofnun requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -301,6 +310,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
+          lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
