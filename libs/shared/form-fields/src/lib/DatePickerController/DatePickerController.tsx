@@ -5,6 +5,7 @@ import parseISO from 'date-fns/parseISO'
 import {
   DatePicker,
   DatePickerBackgroundColor,
+  DatePickerProps,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 
@@ -18,6 +19,9 @@ interface Props {
   label: string
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
+  maxDate?: DatePickerProps['maxDate']
+  minDate?: DatePickerProps['minDate']
+  excludeDates?: DatePickerProps['excludeDates']
 }
 const df = 'yyyy-MM-dd'
 export const DatePickerController: FC<Props> = ({
@@ -30,6 +34,9 @@ export const DatePickerController: FC<Props> = ({
   label,
   placeholder,
   backgroundColor,
+  maxDate,
+  minDate,
+  excludeDates,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -47,6 +54,9 @@ export const DatePickerController: FC<Props> = ({
           placeholderText={placeholder}
           backgroundColor={backgroundColor}
           selected={value ? parseISO(value) : undefined}
+          maxDate={maxDate}
+          minDate={minDate}
+          excludeDates={excludeDates}
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)

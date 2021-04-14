@@ -36,6 +36,16 @@ export const mockJudge = {
   },
 } as User
 
+export const mockJudgeBatman = {
+  id: 'judge_2',
+  role: UserRole.JUDGE,
+  name: 'Batman',
+  title: 'héraðsdómari',
+  institution: {
+    name: 'Héraðsdómur Reykjavíkur',
+  },
+} as User
+
 export const mockRegistrar = {
   id: 'registrar_1',
   role: UserRole.REGISTRAR,
@@ -96,6 +106,15 @@ const testCase1 = {
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
+  files: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+      __typename: 'File',
+    },
+  ],
 }
 
 const testCase2 = {
@@ -112,7 +131,7 @@ const testCase2 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  requestedCustodyEndDate: '2020-09-16',
+  requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
   requestedCustodyRestrictions: [],
@@ -135,7 +154,7 @@ const testCase2 = {
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
-  custodyEndDate: '2020-10-24',
+  custodyEndDate: null,
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
@@ -160,7 +179,7 @@ const testCase3 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  requestedCustodyEndDate: null,
+  requestedCustodyEndDate: '2020-10-24T12:31:00Z',
   lawsBroken: null,
   custodyProvisions: [],
   requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
@@ -181,7 +200,7 @@ const testCase3 = {
   litigationPresentations: null,
   ruling: null,
   decision: null,
-  custodyEndDate: '2020-10-24',
+  custodyEndDate: null,
   isolationTo: '2020-09-16T19:51:00.000Z',
   custodyRestrictions: null,
   accusedAppealDecision: null,
@@ -236,9 +255,25 @@ const testCase4 = {
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
-  judge: null,
+  judge: mockJudgeBatman,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
+  files: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+      __typename: 'File',
+    },
+    {
+      id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
+      name: 'Screen Shot 2021-04-09 at 14.01.30.png',
+      size: 125293,
+      created: '2021-04-12T13:55:24.311Z',
+      __typename: 'File',
+    },
+  ],
 }
 
 const testCase5 = {
@@ -287,6 +322,22 @@ const testCase5 = {
   judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
+  files: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+      __typename: 'File',
+    },
+    {
+      id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
+      name: 'Screen Shot 2021-04-09 at 14.01.30.png',
+      size: 125293,
+      created: '2021-04-12T13:55:24.311Z',
+      __typename: 'File',
+    },
+  ],
 }
 
 const testCase6 = {
@@ -436,6 +487,91 @@ const testCase8 = {
   parentCase: {
     custodyEndDate: '2021-01-18T19:50:08.033Z',
   },
+  files: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+      __typename: 'File',
+    },
+    {
+      id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
+      name: 'Screen Shot 2021-04-09 at 14.01.30.png',
+      size: 125293,
+      created: '2021-04-12T13:55:24.311Z',
+      __typename: 'File',
+    },
+    {
+      id: '58d53f9c-b70b-4b5a-a578-03e95102a981',
+      name: 'Screen Shot 2021-04-09 at 13.33.05.png',
+      size: 51454,
+      created: '2021-04-12T13:55:24.076Z',
+      __typename: 'File',
+    },
+    {
+      id: '0fcff6d7-3e2e-4933-87d9-f3eacdb4caed',
+      name: 'Screen Shot 2021-04-09 at 13.40.53.png',
+      size: 67077,
+      created: '2021-04-12T13:55:24.069Z',
+      __typename: 'File',
+    },
+    {
+      id: 'c63982e8-e548-445f-b9ea-580606e3de44',
+      name: 'Screen Shot 2021-04-09 at 08.48.06.png',
+      size: 50160,
+      created: '2021-04-12T13:55:24.055Z',
+      __typename: 'File',
+    },
+  ],
+}
+
+const testCase9 = {
+  id: 'test_id_9',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
+  state: CaseState.REJECTED,
+  policeCaseNumber: '000-0000-0000',
+  accusedNationalId: '000000-0000',
+  accusedName: 'Jon Harring',
+  accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
+  court: 'string',
+  arrestDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  requestedCustodyEndDate: '2020-09-16T00:00:00.000Z',
+  lawsBroken: null,
+  custodyProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  witnessAccounts: 'string',
+  investigationProgress: 'string',
+  legalArguments: null,
+  comments: 'string',
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartTime: null,
+  courtEndTime: null,
+  courtAttendees: null,
+  policeDemands: null,
+  accusedPleaAnnouncement: null,
+  litigationPresentations: null,
+  ruling: null,
+  decision: CaseDecision.REJECTING,
+  custodyEndDate: '2020-09-16T00:00:00.000Z',
+  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+  accusedAppealDecision: null,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: null,
+  prosecutorAppealAnnouncement: null,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
 }
 
 export const mockJudgeQuery = [
@@ -576,6 +712,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase8,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_9' } },
+    },
+    result: {
+      data: {
+        case: testCase9,
       },
     },
   },

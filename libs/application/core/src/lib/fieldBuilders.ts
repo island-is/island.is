@@ -47,6 +47,7 @@ export function buildCheckboxField(data: {
   disabled?: boolean
   width?: FieldWidth
   large?: boolean
+  strong?: boolean
   backgroundColor?: InputBackgroundColor
   defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
@@ -58,6 +59,7 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    strong = false,
     large,
     backgroundColor,
     defaultValue,
@@ -68,6 +70,7 @@ export function buildCheckboxField(data: {
     disabled,
     width,
     large,
+    strong,
     backgroundColor,
     condition,
     id,
@@ -87,6 +90,7 @@ export function buildDateField(data: {
   description?: FormText
   maxDate?: Date
   minDate?: Date
+  excludeDates?: MaybeWithApplication<Date[]>
   disabled?: boolean
   width?: FieldWidth
   backgroundColor?: DatePickerBackgroundColor
@@ -100,6 +104,7 @@ export function buildDateField(data: {
     defaultValue,
     maxDate,
     minDate,
+    excludeDates,
     disabled = false,
     width = 'full',
     placeholder,
@@ -117,6 +122,7 @@ export function buildDateField(data: {
     description,
     maxDate,
     minDate,
+    excludeDates,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
     backgroundColor,
@@ -291,6 +297,7 @@ export function buildTextField(data: {
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
   rows?: number
+  required?: boolean
 }): TextField {
   const {
     condition,
@@ -306,6 +313,7 @@ export function buildTextField(data: {
     format,
     suffix,
     rows,
+    required,
   } = data
   return {
     children: undefined,
@@ -322,6 +330,7 @@ export function buildTextField(data: {
     format,
     suffix,
     rows,
+    required,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

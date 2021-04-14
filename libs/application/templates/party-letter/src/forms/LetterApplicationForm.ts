@@ -5,6 +5,7 @@ import {
   buildRadioField,
   buildSection,
   buildSubmitField,
+  buildDescriptionField,
   Form,
   FormModes,
   buildCustomField,
@@ -12,6 +13,8 @@ import {
   buildDataProviderItem,
   Application,
   getValueViaPath,
+  buildFileUploadField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
@@ -24,6 +27,7 @@ export enum IDS {
   PartyName = 'party.name',
   Signatures = 'signatures',
   Warnings = 'warnings',
+  Documents = 'documents',
 }
 
 export const LetterApplicationForm: Form = buildForm({
@@ -137,10 +141,45 @@ export const LetterApplicationForm: Form = buildForm({
       id: 'recommendations',
       title: m.recommendations.title,
       children: [
-        buildCustomField({
-          id: 'gatherRecommendations',
-          title: m.recommendations.title,
-          component: 'Recommendations',
+        buildMultiField({
+          id: 'recommendations',
+          title: m.selectPartyLetter.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'gatherRecommendations',
+              title: m.recommendations.title,
+              component: 'Recommendations',
+            }),
+
+            buildCheckboxField({
+              id: 'includePapers',
+              title: '',
+              strong: true,
+              options: [
+                {
+                  value: 'yes',
+                  label: m.recommendations.includePapers,
+                },
+              ],
+              defaultValue: '',
+            }),
+            buildCustomField({
+              id: 'fileUploadDisclaimer',
+              title: m.recommendations.title,
+              component: 'FileUploadDisclaimer',
+            }),
+            buildFileUploadField({
+              condition: (answer) => answer.includePapers !== undefined,
+              id: IDS.Documents,
+              title: '',
+              introduction: '',
+              maxSize: 10000000,
+              uploadAccept: '.xlsx',
+              uploadHeader: m.recommendations.fileUploadHeader,
+              uploadDescription: m.recommendations.uploadDescription,
+              uploadButtonLabel: m.recommendations.uploadButtonLabel,
+            }),
+          ],
         }),
       ],
     }),

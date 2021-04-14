@@ -5,21 +5,23 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
+import { m } from '../forms/messages'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
-type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
-  | { type: 'MISSING_INFO' }
+type Events = { type: DefaultEvents.SUBMIT }
+
+enum ApplicationStates {
+  DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
+}
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -39,21 +41,23 @@ const HealthInsuranceSchema = z.object({
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })
 
+const applicationName = m.formTitle.defaultMessage
+
 const HealthInsuranceTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE,
-  name: 'Application for health insurance',
+  name: applicationName,
   readyForProduction: true,
   dataSchema: HealthInsuranceSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: ApplicationStates.DRAFT,
     states: {
-      draft: {
+      [ApplicationStates.DRAFT]: {
         meta: {
-          name: 'Application for health insurance',
+          name: applicationName,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -63,20 +67,26 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: ApplicationStates.IN_REVIEW,
           },
         },
       },
-      inReview: {
+      [ApplicationStates.IN_REVIEW]: {
         meta: {
-          name: 'In Review',
+          name: applicationName,
           onEntry: {
             apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },

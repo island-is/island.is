@@ -9,11 +9,11 @@ import {
   TestResult,
   Organisation,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
-  CreateOrganisationInput,
   UpdateOrganisationInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
@@ -61,20 +61,6 @@ export class DocumentProviderService {
       })
 
     return !organisation ? false : true
-  }
-
-  async createOrganisation(
-    input: CreateOrganisationInput,
-    authorization: string,
-  ): Promise<Organisation> {
-    const dto = {
-      createOrganisationDto: { ...input },
-      authorization,
-    }
-
-    return await this.organisationsApi
-      .organisationControllerCreateOrganisation(dto)
-      .catch(handleError)
   }
 
   async updateOrganisation(
@@ -195,17 +181,42 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    authorization: string,
+  ): Promise<boolean> {
+    return await this.organisationsApi.organisationControllerIsLastModifierOfOrganisation(
+      {
+        nationalId: organisationNationalId,
+        authorization,
+      },
+    )
+  }
+
   //-------------------- PROVIDER --------------------------
 
   async createProviderOnTest(
     nationalId: string,
     clientName: string,
+    authorization: string,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientTest
       .createClient(nationalId, clientName)
@@ -263,6 +274,18 @@ export class DocumentProviderService {
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientProd
       .createClient(nationalId, clientName)
@@ -344,5 +367,53 @@ export class DocumentProviderService {
     }
 
     return audienceAndScope
+  }
+
+  //-------------------- STATISTICS --------------------------
+
+  async getStatisticsTotal(
+    organisationId?: string,
+    fromDate?: string,
+    toDate?: string,
+    authorization?: string,
+  ): Promise<ProviderStatistics> {
+    let providers = undefined
+
+    // Get external provider ids if organisationId is included
+    if (organisationId) {
+      const orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
+        {
+          id: organisationId,
+          authorization,
+        },
+      )
+
+      // Filter out null values and only set providers if organisation has external providers
+      if (orgProviders) {
+        const externalProviders = orgProviders
+          .filter(
+            (item) =>
+              item.externalProviderId !== null &&
+              item.externalProviderId !== undefined,
+          )
+          .map((item) => {
+            return item.externalProviderId
+          })
+
+        if (externalProviders.length > 0) {
+          providers = externalProviders as string[]
+        }
+      }
+    }
+
+    const result = await this.documentProviderClientProd
+      .statisticsTotal(providers, fromDate, toDate)
+      .catch(handleError)
+
+    return new ProviderStatistics(
+      result.published,
+      result.notifications,
+      result.opened,
+    )
   }
 }

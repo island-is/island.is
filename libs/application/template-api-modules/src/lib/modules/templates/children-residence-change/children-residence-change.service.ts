@@ -10,6 +10,7 @@ import {
   CRCApplication,
   Override,
   getSelectedChildrenFromExternalData,
+  formatDate,
   childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
 import * as AWS from 'aws-sdk'
@@ -103,13 +104,17 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
+    const durationType = answers.durationType as string
     const extraData = {
-      interviewRequested: answers.interview,
+      interviewRequestedParentA:
+        answers.interviewParentA === 'yes' ? applicant.nationalId : '',
+      interviewRequestedParentB:
+        answers.interviewParentB === 'yes' ? otherParent.nationalId : '',
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
-        answers.selectDuration[0] === 'permanent'
-          ? answers.selectDuration[0]
-          : answers.selectDuration[1],
+        durationType === 'temporary' && answers.durationDate
+          ? formatDate(answers.durationDate)
+          : durationType,
     }
 
     const response = await this.syslumennService.uploadData(

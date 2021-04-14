@@ -12,18 +12,12 @@ import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { getSelectedChildrenFromExternalData } from './utils'
+import { Roles, ApplicationStates } from './constants'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-export enum ApplicationStates {
-  DRAFT = 'draft',
-  IN_REVIEW = 'inReview',
-  SUBMITTED = 'submitted',
-}
-
-enum Roles {
-  ParentA = 'parentA',
-  ParentB = 'parentB',
+enum TemplateApiActions {
+  submitApplication = 'submitApplication',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -111,7 +105,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: 'submitApplication',
+            apiModuleAction: TemplateApiActions.submitApplication,
           },
           roles: [
             {

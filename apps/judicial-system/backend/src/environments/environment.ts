@@ -5,7 +5,7 @@ export default {
     secretToken: 'secret-token',
   },
   notifications: {
-    judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
@@ -30,5 +30,11 @@ export default {
   admin: {
     users:
       '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla"}]',
+  },
+  files: {
+    region: 'eu-west-1',
+    bucket: 'island-is-dev-upload-judicial-system',
+    timeToLivePost: '15',
+    timeToLiveGet: '5',
   },
 }

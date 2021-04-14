@@ -1,26 +1,50 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import is from 'date-fns/locale/is'
 import {
-  NationalRegistry,
-  Answers,
   formatAddress,
+  formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
+  CRCApplication,
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
+const formatDays = (date: string): string => {
+  return date.replace('dagur', 'daginn')
+}
+
 export async function generateResidenceChangePdf(
-  applicant: NationalRegistry,
-  answers: Answers,
+  application: CRCApplication,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
-  const { selectDuration, residenceChangeReason, selectedChildren } = answers
+  const {
+    answers,
+    externalData: { nationalRegistry },
+  } = application
+  const applicant = nationalRegistry.data
+  const nationalRegistryLookupDate = format(
+    parseISO(nationalRegistry.date),
+    'EEEE d. MMMM y',
+    { locale: is },
+  )
+  const nationalRegistryLookupTime = format(
+    parseISO(nationalRegistry.date),
+    'p',
+    { locale: is },
+  )
+  const {
+    durationType,
+    durationDate,
+    residenceChangeReason,
+    selectedChildren,
+  } = answers
   const reason = residenceChangeReason
-  const expiry = selectDuration
-  const parentA = applicant
   const childrenAppliedFor = getSelectedChildrenFromExternalData(
     applicant.children,
     selectedChildren,
@@ -106,14 +130,16 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentA.fullName}, ${formatSsn(parentA.nationalId)}`,
+    `Nafn og kennitala: ${applicant.fullName}, ${formatSsn(
+      applicant.nationalId,
+    )}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${formatAddress(parentA.address)}`,
+    `Heimilisfang: ${formatAddress(applicant.address)}`,
   )
 
   addToDoc(
@@ -141,21 +167,21 @@ export async function generateResidenceChangePdf(
     PdfConstants.BOLD_FONT,
     PdfConstants.SUB_HEADER_FONT_SIZE,
     PdfConstants.NORMAL_LINE_GAP,
-    'Lögheimilsbreyting:',
+    'Lögheimilisbreyting',
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${childResidenceInfo.current.parent.fullName}, Foreldri ${childResidenceInfo.current.parent.letter}`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parentName}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${childResidenceInfo.future.parent.fullName}, Foreldri ${childResidenceInfo.future.parent.letter}`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parentName}`,
   )
 
   if (reason) {
@@ -185,9 +211,9 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    expiry[0] === PdfConstants.PERMANENT
-      ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${expiry[1]}`,
+    durationType === PdfConstants.TEMPORARY && durationDate
+      ? `Samningurinn gildir til ${formatDate(durationDate)}`
+      : 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.',
   )
 
   addToDoc(
@@ -278,7 +304,18 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Undirritaður/uð, ${parentA.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+    `Undirritaður/uð, ${applicant.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Fyrirspurn og uppfletting í gögnum Þjóðskrár fór fram ${formatDays(
+      nationalRegistryLookupDate,
+    )} kl. ${nationalRegistryLookupTime}.`,
   )
 
   doc.end()

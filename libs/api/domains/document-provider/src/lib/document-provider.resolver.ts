@@ -17,6 +17,7 @@ import {
   Organisation,
   Contact,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import {
   RunEndpointTestsInput,
@@ -26,10 +27,10 @@ import {
   UpdateHelpdeskInput,
   CreateContactInput,
   CreateHelpdeskInput,
+  StatisticsInput,
 } from './dto'
-import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
-import { AdminGuard } from './admin.guard'
+import { AdminGuard } from './utils/admin.guard'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -57,19 +58,6 @@ export class DocumentProviderResolver {
     @Args('nationalId') nationalId: string,
   ): Promise<boolean> {
     return await this.documentProviderService.organisationExists(nationalId)
-  }
-
-  @Mutation(() => Organisation, { nullable: true })
-  async createOrganisation(
-    @Args('input') input: CreateOrganisationInput,
-    @CurrentUser() user: User,
-  ): Promise<Organisation | null> {
-    logger.info(`createOrganisation: user: ${user.nationalId}`)
-
-    return this.documentProviderService.createOrganisation(
-      input,
-      user.authorization,
-    )
   }
 
   @UseGuards(AdminGuard)
@@ -210,6 +198,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProviderOnTest(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 
@@ -275,6 +264,18 @@ export class DocumentProviderResolver {
       input.providerId,
       input.xroad || false,
       user.authorization,
+    )
+  }
+
+  @UseGuards(AdminGuard)
+  @Query(() => ProviderStatistics)
+  async getStatisticsTotal(
+    @Args('input', { nullable: true }) input: StatisticsInput,
+  ): Promise<ProviderStatistics> {
+    return this.documentProviderService.getStatisticsTotal(
+      input?.organisationId,
+      input?.fromDate,
+      input?.toDate,
     )
   }
 }

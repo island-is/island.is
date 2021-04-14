@@ -38,10 +38,10 @@ interface Recipient {
 @Injectable()
 export class NotificationService {
   constructor(
-    private readonly smsService: SmsService,
-    private readonly emailService: EmailService,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly smsService: SmsService,
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -83,26 +83,29 @@ export class NotificationService {
 
   private async sendSms(smsText: string): Promise<Recipient> {
     // Production or local development with judge mobile number
-    if (environment.production || environment.notifications.judgeMobileNumber) {
+    if (
+      environment.production ||
+      environment.notifications.courtMobileNumbers
+    ) {
       try {
         await this.smsService.sendSms(
-          environment.notifications.judgeMobileNumber,
+          environment.notifications.courtMobileNumbers.split(','),
           smsText,
         )
       } catch (error) {
         this.logger.error(
-          `Failed to send sms to ${environment.notifications.judgeMobileNumber}`,
+          `Failed to send sms to ${environment.notifications.courtMobileNumbers}`,
           error,
         )
         return {
-          address: environment.notifications.judgeMobileNumber,
+          address: environment.notifications.courtMobileNumbers,
           success: false,
         }
       }
     }
 
     return {
-      address: environment.notifications.judgeMobileNumber,
+      address: environment.notifications.courtMobileNumbers,
       success: true,
     }
   }
@@ -507,7 +510,7 @@ export class NotificationService {
 
     const courtWasBeenNotified = await this.existsRevokableNotification(
       existingCase.id,
-      environment.notifications.judgeMobileNumber,
+      environment.notifications.courtMobileNumbers,
     )
 
     if (courtWasBeenNotified) {

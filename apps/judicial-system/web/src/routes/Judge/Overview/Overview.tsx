@@ -1,5 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  AccordionCard,
+} from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -18,6 +24,7 @@ import {
   BlueBox,
   Modal,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -27,6 +34,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  Feature,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
@@ -47,8 +55,9 @@ import {
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import { getFeature } from '@island.is/judicial-system-web/src/services/api'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -69,10 +78,11 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
-  const [
-    showCreateCustodyCourtCase,
-    setShowCreateCustodyCourtCase,
-  ] = useState<boolean>(false)
+  const { features } = useContext(FeatureContext)
+  const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
+    false,
+  )
+  const { user } = useContext(UserContext)
 
   const [
     createCustodyCourtCaseMutation,
@@ -186,17 +196,17 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
-    const tryToShowFeature = async (theCase: Case) => {
+    const tryToShowFeature = (theCase: Case) => {
       setShowCreateCustodyCourtCase(
         theCase.type === CaseType.CUSTODY &&
-          (await getFeature('CREATE_CUSTODY_COURT_CASE')),
+          features.includes(Feature.CREATE_CUSTODY_COURT_CASE),
       )
     }
 
     if (workingCase) {
       tryToShowFeature(workingCase)
     }
-  }, [workingCase, setShowCreateCustodyCourtCase])
+  }, [features, workingCase, setShowCreateCustodyCourtCase])
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -449,21 +459,19 @@ export const JudgeOverview: React.FC = () => {
                     }`}
                   </Text>
                 </Box>
-                <Text>
-                  {formatRequestedCustodyRestrictions(
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                    workingCase.requestedOtherRestrictions,
-                  )
-                    .split('\n')
-                    .map((requestedCustodyRestriction, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{requestedCustodyRestriction}</Text>
-                        </div>
-                      )
-                    })}
-                </Text>
+                {formatRequestedCustodyRestrictions(
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </div>
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <div className={styles.infoSection}>
@@ -514,6 +522,23 @@ export const JudgeOverview: React.FC = () => {
                       {workingCase.comments}
                     </span>
                   </Text>
+                </div>
+              )}
+              {workingCase.files && (
+                <div className={styles.infoSection}>
+                  <AccordionCard
+                    id="files-card"
+                    label={`Rannsóknargögn (${workingCase.files.length})`}
+                  >
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files}
+                      canOpenFiles={
+                        workingCase.judge !== null &&
+                        workingCase.judge?.id === user?.id
+                      }
+                    />
+                  </AccordionCard>
                 </div>
               )}
               <PdfButton

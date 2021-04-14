@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ClientTab } from '../../../entities/common/ClientTab'
-import HelpBox from '../../common/HelpBox'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleTabChange: (tab: ClientTab) => void
@@ -12,6 +13,9 @@ const ClientTabNav: React.FC<Props> = ({
   activeTab: activetab,
   children,
 }) => {
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <div className="client-tab-nav">
       <nav className="client-tab-nav__nav">
@@ -21,9 +25,12 @@ const ClientTabNav: React.FC<Props> = ({
               type="button"
               onClick={() => handleTabChange(ClientTab.BasicForm)}
               className={activetab === ClientTab.BasicForm ? 'active' : ''}
-              title="Simple form for easily creating a client"
+              title={
+                localization.navigations['clientTabNav'].items['basicForm']
+                  .title
+              }
             >
-              Simple Form
+              {localization.navigations['clientTabNav'].items['basicForm'].text}
             </button>
           </li>
           <li className={activetab === ClientTab.DetailedForm ? 'active' : ''}>
@@ -31,9 +38,15 @@ const ClientTabNav: React.FC<Props> = ({
               type="button"
               onClick={() => handleTabChange(ClientTab.DetailedForm)}
               className={activetab === ClientTab.DetailedForm ? 'active' : ''}
-              title="Detailed form for creating a client"
+              title={
+                localization.navigations['clientTabNav'].items['detailedForm']
+                  .title
+              }
             >
-              Detailed form
+              {
+                localization.navigations['clientTabNav'].items['detailedForm']
+                  .text
+              }
             </button>
           </li>
         </ul>

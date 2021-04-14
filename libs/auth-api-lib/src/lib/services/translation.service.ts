@@ -33,7 +33,6 @@ export class TranslationService {
     return this.translationModel.findAndCountAll({
       limit: count,
       offset: offset,
-      distinct: true,
     })
   }
 
@@ -122,7 +121,7 @@ export class TranslationService {
     return this.translationModel.findOne({
       where: {
         language: language,
-        className: className.toLowerCase(),
+        className: className,
         key: key,
         property: property,
       },
@@ -133,7 +132,6 @@ export class TranslationService {
   async createTranslation(
     translation: TranslationDTO,
   ): Promise<Translation | undefined> {
-    translation.className = translation.className.toLowerCase()
     this.logger.debug(`Creating translation for id - ${translation.key}`)
     try {
       return this.sequelize.transaction((t) => {
@@ -152,7 +150,6 @@ export class TranslationService {
   async updateTranslation(
     translate: TranslationDTO,
   ): Promise<Translation | null> {
-    translate.className = translate.className.toLowerCase()
     this.logger.debug('Updating the translation with key: ', translate.key)
 
     await this.translationModel.update(
@@ -177,7 +174,6 @@ export class TranslationService {
 
   /** Deletes a translation */
   async deleteTranslation(translate: TranslationDTO): Promise<number | null> {
-    translate.className = translate.className.toLowerCase()
     this.logger.debug(`Deleting translation with key: ${translate.key}`)
 
     if (!translate) {

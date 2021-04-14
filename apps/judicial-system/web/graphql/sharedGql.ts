@@ -41,7 +41,6 @@ export const CaseQuery = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -87,6 +86,12 @@ export const CaseQuery = gql`
       notifications {
         type
       }
+      files {
+        id
+        name
+        size
+        created
+      }
     }
   }
 `
@@ -122,6 +127,44 @@ export const SendNotificationMutation = gql`
   mutation SendNotificationMutation($input: SendNotificationInput!) {
     sendNotification(input: $input) {
       notificationSent
+    }
+  }
+`
+
+export const CreatePresignedPostMutation = gql`
+  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+    createPresignedPost(input: $input) {
+      url
+      fields
+    }
+  }
+`
+
+export const CreateFileMutation = gql`
+  mutation CreateFileMutation($input: CreateFileInput!) {
+    createFile(input: $input) {
+      id
+      created
+      caseId
+      name
+      key
+      size
+    }
+  }
+`
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
+    }
+  }
+`
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
     }
   }
 `

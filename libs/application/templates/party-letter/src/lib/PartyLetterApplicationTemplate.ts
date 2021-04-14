@@ -8,10 +8,8 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
 import { answerValidators } from './answerValidators'
-import { ACTIVE_PARTIES } from '../fields/PartyLetter'
-import { m } from '../lib/messages'
+import { PartyLetterSchema } from './dataSchema'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -23,35 +21,6 @@ enum Roles {
   SIGNATUREE = 'signaturee',
 }
 
-const dataSchema = z.object({
-  approveTermsAndConditions: z
-    .boolean()
-    .refine(
-      (v) => v,
-      m.validationMessages.approveTerms.defaultMessage as string,
-    ),
-  ssd: z.string().refine((p) => {
-    return p.trim().length > 0
-  }, m.validationMessages.ssd.defaultMessage as string),
-  party: z.object({
-    letter: z
-      .string()
-      .refine((p) => {
-        return p.trim().length === 1
-      }, m.validationMessages.partyLetterSingle.defaultMessage as string)
-      .refine((p) => {
-        return ACTIVE_PARTIES.filter((x) => p === x.letter).length === 0
-      }, m.validationMessages.partyLetterOccupied.defaultMessage as string),
-    name: z
-      .string()
-      .refine(
-        (p) => p.trim().length > 0,
-        m.validationMessages.partyName.defaultMessage as string,
-      ),
-  }),
-  signatures: z.array(z.string()), // todo validate that signatures are >= 300
-})
-
 const PartyLetterApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -59,7 +28,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Party letter',
-  dataSchema,
+  dataSchema: PartyLetterSchema,
   stateMachineConfig: {
     initial: 'draft',
     states: {

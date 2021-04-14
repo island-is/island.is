@@ -4,6 +4,8 @@ import ValidationUtils from '../../../utils/validation.utils'
 import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
 import { TranslationDTO } from '../../../entities/dtos/translation.dto'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   className: string
@@ -20,6 +22,9 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   const [translationValue, setTranslationValue] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [infoMessage, setInfoMessage] = useState<string>(null)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('TranslationCreateFormDropdown'),
+  )
 
   useEffect(() => {
     if (props.isEditing) {
@@ -63,18 +68,18 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       const response = await TranslationService.updateTranslation(data)
       if (response) {
         setInfoMessage(
-          `Translation has been updated for ${
-            languages.find((x) => x.isoKey === data.language).englishDescription
-          }`,
+          localization.infoEdit +
+            languages.find((x) => x.isoKey === data.language)
+              .englishDescription,
         )
       }
     } else {
       const response = await TranslationService.createTranslation(data)
       if (response) {
         setInfoMessage(
-          `Translation has been created for ${
-            languages.find((x) => x.isoKey === data.language).englishDescription
-          }`,
+          localization.infoCreate +
+            languages.find((x) => x.isoKey === data.language)
+              .englishDescription,
         )
       }
     }
@@ -85,7 +90,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       setErrorMessage('')
       create(translationValue)
     } else {
-      setErrorMessage('Value is required and need to be in the right format')
+      setErrorMessage(localization.errorMessage)
     }
   }
 
@@ -100,7 +105,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
     if (ValidationUtils.validateDescription(translationValue)) {
       setErrorMessage('')
     } else {
-      setErrorMessage('Value is required and need to be in the right format')
+      setErrorMessage(localization.errorMessage)
     }
   }
 
@@ -115,125 +120,128 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div className="translation-create-form-dropdown">
-      <div className="translation-create-form-dropdown__button__show">
+    <div>
+      <div className="toggle-button">
         <a
-          className="user-claim__button__show"
+          className="toggle-button__button__show"
           onClick={() => (visible ? close() : setVisible(true))}
-          title={`Create new Translation`}
+          title={localization.title}
         >
           <i className="icon__translation"></i>
-          <span>Create new Translation</span>
+          <span>{localization.title}</span>
         </a>
       </div>
-      <div
-        className={`translation-create-form-dropdown__wrapper ${
-          visible ? 'show' : 'hidden'
-        }`}
-      >
-        <div className="translation-create-form-dropdown__button__close">
-          <a onClick={close}>
-            <i className="icon__close"></i>
-          </a>
-        </div>
-        <div className="translation-create-form-dropdown__container">
-          <h1>Create a Translation</h1>
-
-          <div
-            className={`translation-create-form-dropdown__container__help-text ${
-              props.isEditing ? 'hidden' : 'show'
-            }`}
-          >
-            The item you are creating needs to be saved before creating
-            translations
+      <div className="translation-create-form-dropdown">
+        <div
+          className={`translation-create-form-dropdown__wrapper ${
+            visible ? 'show' : 'hidden'
+          }`}
+        >
+          <div className="translation-create-form-dropdown__button__close">
+            <a onClick={close}>
+              <i className="icon__close"></i>
+            </a>
           </div>
+          <div className="translation-create-form-dropdown__container">
+            <h1>{localization.title}</h1>
 
-          <div
-            className={`translation-create-form-dropdown__saved__message ${
-              infoMessage ? 'show' : 'hidden'
-            }`}
-          >
-            {infoMessage}
-          </div>
-          <div
-            className={`translation-create-form-dropdown__container__form ${
-              props.isEditing ? 'show' : 'hidden'
-            }`}
-          >
-            <div className="translation-create-form-dropdown__help">
-              Add new translation by filling out the form
+            <div
+              className={`translation-create-form-dropdown__container__help-text ${
+                props.isEditing ? 'hidden' : 'show'
+              }`}
+            >
+              {localization.conditionalHelp}
             </div>
 
-            <div className="translation-create-form-dropdown__container__fields">
-              <div className="translation-create-form-dropdown__container__field">
-                <label
-                  className="translation-create-form-dropdown__label"
-                  htmlFor="language"
-                >
-                  Language
-                </label>
-                <select
-                  id="language"
-                  className="translation-create-form-dropdown__select"
-                  name="translation.language"
-                  onChange={(e) => switchLanguge(e.target.value)}
-                >
-                  {languages.map((language: Language) => {
-                    return (
-                      <option
-                        value={language.isoKey}
-                        key={language.isoKey}
-                        selected={selectedLanguage === language.isoKey}
-                      >
-                        {language.englishDescription}
-                      </option>
-                    )
-                  })}
-                </select>
-                <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
+            <div
+              className={`translation-create-form-dropdown__saved__message ${
+                infoMessage ? 'show' : 'hidden'
+              }`}
+            >
+              {infoMessage}
+            </div>
+            <div
+              className={`translation-create-form-dropdown__container__form ${
+                props.isEditing ? 'show' : 'hidden'
+              }`}
+            >
+              <div className="translation-create-form-dropdown__help">
+                {localization.help}
               </div>
 
-              <div className="translation-create-form-dropdown__container__field">
-                <label
-                  className="translation-create-form-dropdown__label"
-                  htmlFor="value"
-                >
-                  Value
-                </label>
-                <input
-                  id="value"
-                  type="text"
-                  name="translation.value"
-                  value={translationValue ?? ''}
-                  className="translation-create-form-dropdown__input"
-                  title="The translated text in the selected language"
-                  placeholder="Some description"
-                  onChange={(e) => handleTextValueChange(e.target.value)}
-                />
-
-                <HelpBox helpText="The translated text in the selected language" />
-                <div className="customErrorMessage">{errorMessage}</div>
-              </div>
-
-              <div className="translation-create-form-dropdown__buttons__container">
-                <div className="translation-create-form-dropdown__button__container">
-                  <button
-                    className="translation-create-form-dropdown__button__cancel"
-                    type="button"
-                    onClick={close}
+              <div className="translation-create-form-dropdown__container__fields">
+                <div className="translation-create-form-dropdown__container__field">
+                  <label
+                    className="translation-create-form-dropdown__label"
+                    htmlFor="language"
                   >
-                    Cancel
-                  </button>
+                    {localization.fields['language'].label}
+                  </label>
+                  <select
+                    id="language"
+                    className="translation-create-form-dropdown__select"
+                    name="translation.language"
+                    onChange={(e) => switchLanguge(e.target.value)}
+                  >
+                    {languages.map((language: Language) => {
+                      return (
+                        <option
+                          value={language.isoKey}
+                          key={language.isoKey}
+                          selected={selectedLanguage === language.isoKey}
+                        >
+                          {language.englishDescription}
+                        </option>
+                      )
+                    })}
+                  </select>
+                  <HelpBox
+                    helpText={localization.fields['language'].helpText}
+                  />
                 </div>
-                <div className="translation-create-form-dropdown__button__container">
-                  <button
-                    type="button"
-                    className="translation-create-form-dropdown__button__save"
-                    value="Save"
-                    onClick={save}
+
+                <div className="translation-create-form-dropdown__container__field">
+                  <label
+                    className="translation-create-form-dropdown__label"
+                    htmlFor="value"
                   >
-                    Save
-                  </button>
+                    {localization.fields['value'].label}
+                  </label>
+                  <input
+                    id="value"
+                    type="text"
+                    name="translation.value"
+                    value={translationValue ?? ''}
+                    className="translation-create-form-dropdown__input"
+                    title={localization.fields['value'].helpText}
+                    placeholder={localization.fields['value'].helpText}
+                    onChange={(e) => handleTextValueChange(e.target.value)}
+                  />
+
+                  <HelpBox helpText={localization.fields['value'].helpText} />
+                  <div className="customErrorMessage">{errorMessage}</div>
+                </div>
+
+                <div className="translation-create-form-dropdown__buttons__container">
+                  <div className="translation-create-form-dropdown__button__container">
+                    <button
+                      className="translation-create-form-dropdown__button__cancel"
+                      type="button"
+                      onClick={close}
+                    >
+                      {localization.cancelButton}
+                    </button>
+                  </div>
+                  <div className="translation-create-form-dropdown__button__container">
+                    <button
+                      type="button"
+                      className="translation-create-form-dropdown__button__save"
+                      value={localization.saveButton}
+                      onClick={save}
+                    >
+                      {localization.saveButton}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

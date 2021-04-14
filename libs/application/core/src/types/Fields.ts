@@ -91,6 +91,7 @@ export interface CheckboxField extends BaseField {
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplication<Option[]>
   large?: boolean
+  strong?: boolean
   backgroundColor?: InputBackgroundColor
 }
 
@@ -100,6 +101,7 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
+  excludeDates?: MaybeWithApplication<Date[]>
   backgroundColor?: DatePickerBackgroundColor
 }
 
@@ -150,6 +152,7 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  required?: boolean
 }
 
 export interface FileUploadField extends BaseField {

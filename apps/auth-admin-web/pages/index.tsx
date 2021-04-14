@@ -1,13 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ContentWrapper from '../components/Layout/ContentWrapper'
 import { isLoggedIn } from './../utils/auth.utils'
 import { useSession } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
+import LocalizationUtils from '../utils/localization.utils'
 
 const Home: React.FC = () => {
   const [session, loading] = useSession()
+
+  useEffect(() => {
+    document.title = LocalizationUtils.getPageTitle()
+  }, [])
 
   if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return (

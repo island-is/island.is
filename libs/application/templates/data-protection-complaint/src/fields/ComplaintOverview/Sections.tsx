@@ -13,6 +13,7 @@ export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => (
   <>
+    <SectionHeading title={info.general.applicantPageTitle} />
     <ValueLine label={info.labels.name} value={answers.applicant.name} />
     <ValueLine
       label={info.labels.nationalId}
@@ -40,6 +41,7 @@ export const OrganizationOrInstitution: FC<{
   answers: DataProtectionComplaint
 }> = ({ answers }) => (
   <>
+    <SectionHeading title={info.general.organizationOrInstitutionPageTitle} />
     <ValueLine
       label={info.labels.organizationOrInstitutionName}
       value={answers.organizationOrInstitution.name}
@@ -79,6 +81,7 @@ export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => (
   <>
+    <SectionHeading title={info.general.commissionsPageTitle} />
     <ValueLine
       label={info.labels.commissionDocuments}
       value={answers.commissions.documents.map((x) => x.name).join(', ')}
@@ -98,8 +101,8 @@ export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => (
   <>
-    <ComplaineeTable {...answers.complainee} />
-    {answers.additionalComplainees?.map((complainee, index) => (
+    <SectionHeading title={complaint.general.complaineePageTitle} />
+    {answers.complainees?.map((complainee, index) => (
       <ComplaineeTable {...complainee} key={index} />
     ))}
   </>
@@ -111,6 +114,7 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
   const { formatMessage } = useLocale()
   return (
     <>
+      <SectionHeading title={complaint.general.complaintPageTitle} />
       <ValueLine
         label={complaint.general.subjectOfComplaintPageTitle}
         value={

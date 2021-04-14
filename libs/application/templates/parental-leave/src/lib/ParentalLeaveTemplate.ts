@@ -1,5 +1,9 @@
 import { assign } from 'xstate'
+
 import set from 'lodash/set'
+import unset from 'lodash/unset'
+import cloneDeep from 'lodash/cloneDeep'
+
 import {
   ApplicationContext,
   ApplicationRole,
@@ -13,7 +17,13 @@ import {
 
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { YES, NO, API_MODULE_ACTIONS } from '../constants'
+import { YES, API_MODULE_ACTIONS } from '../constants'
+
+import {
+  hasEmployer,
+  needsOtherParentApproval,
+  isDev,
+} from './parentalLeaveTemplateUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -22,38 +32,38 @@ type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
+  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
 
-enum States {
+export enum States {
+  // Draft flow
   DRAFT = 'draft',
+
   OTHER_PARENT_APPROVAL = 'otherParentApproval',
   OTHER_PARENT_ACTION = 'otherParentRequiresAction',
-  VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
+
   EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
   EMPLOYER_APPROVAL = 'employerApproval',
   EMPLOYER_ACTION = 'employerRequiresAction',
-  IN_REVIEW = 'inReview',
+
+  VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
+
   APPROVED = 'approved',
-}
 
-function hasEmployer(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application.answers as {
-    employer: { isSelfEmployed: typeof YES | typeof NO }
-  }
+  // Edit Flow
+  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
 
-  return currentApplicationAnswers.employer.isSelfEmployed === NO
-}
+  EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
+  EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
+  EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
-function needsOtherParentApproval(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application
-    .answers as SchemaFormValues
-
-  return currentApplicationAnswers.requestRights.isRequestingRights === YES
+  VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
+  VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -96,10 +106,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_WAITING_TO_ASSIGN },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
           ],
         },
       },
+
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
         exit: 'clearAssignees',
@@ -143,12 +158,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
               cond: hasEmployer,
             },
+            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
           ],
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.OTHER_PARENT_ACTION]: {
@@ -160,8 +175,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/DraftRequiresAction').then((val) =>
+                  Promise.resolve(val.DraftRequiresAction),
                 ),
               read: 'all',
               write: 'all',
@@ -195,8 +210,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
-          [DefaultEvents.REJECT]: { target: States.DRAFT },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -234,9 +248,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
-          ABORT: { target: States.EMPLOYER_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: [
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -248,8 +266,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/DraftRequiresAction').then((val) =>
+                  Promise.resolve(val.DraftRequiresAction),
                 ),
               read: 'all',
               write: 'all',
@@ -281,9 +299,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
+          // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -295,8 +314,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/DraftRequiresAction').then((val) =>
+                  Promise.resolve(val.DraftRequiresAction),
                 ),
               read: 'all',
               write: 'all',
@@ -324,18 +343,241 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        },
+      },
+
+      // Edit Flow States
+      [States.EDIT_OR_ADD_PERIODS]: {
+        entry: 'createTempPeriods',
+        exit: 'restorePeriodsFromTemp',
+        meta: {
+          name: States.EDIT_OR_ADD_PERIODS,
+          progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditOrAddPeriods').then((val) =>
+                  Promise.resolve(val.EditOrAddPeriods),
+                ),
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+              cond: hasEmployer,
+            },
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          [DefaultEvents.ABORT]: [
+            {
+              target: States.APPROVED,
+            },
+          ],
+        },
+      },
+
+      [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
+        exit: 'saveEmployerNationalRegistryId',
+        meta: {
+          name: 'Waiting to assign employer to review period edits',
+          progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsInReview').then((val) =>
+                  Promise.resolve(val.EditsInReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
+          [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
+        },
+      },
+
+      [States.EMPLOYER_APPROVE_EDITS]: {
+        meta: {
+          name: 'Employer is reviewing the period edits',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsInReview').then((val) =>
+                  Promise.resolve(val.EditsInReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
+        },
+      },
+      [States.EMPLOYER_EDITS_ACTION]: {
+        exit: 'restorePeriodsFromTemp',
+        meta: {
+          name: 'Employer rejected the period edits',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsRequireAction').then((val) =>
+                  Promise.resolve(val.EditsRequireAction),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          MODIFY: {
+            target: States.EDIT_OR_ADD_PERIODS,
+          },
+          [DefaultEvents.ABORT]: { target: States.APPROVED },
+        },
+      },
+      [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
+        exit: 'clearTemp',
+        meta: {
+          name: 'VMLST is reviewing the period edits',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsInReview').then((val) =>
+                  Promise.resolve(val.EditsInReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: {
+            target: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          },
+        },
+      },
+      [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
+        exit: 'restorePeriodsFromTemp',
+        meta: {
+          name: 'VMLST rejected the period edits',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsRequireAction').then((val) =>
+                  Promise.resolve(val.EditsRequireAction),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          MODIFY: {
+            target: States.EDIT_OR_ADD_PERIODS,
+          },
+          [DefaultEvents.ABORT]: { target: States.APPROVED },
         },
       },
     },
   },
   stateMachineOptions: {
     actions: {
+      /*
+      Copy the current periods to temp. If the user cancels the edits,
+      we will restore the periods to their original state from temp.
+      */
+      createTempPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempPeriods', answers.periods)
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+
+      /*
+        The user canceled the edits.
+        Restore the periods to their original state from temp.
+      */
+      restorePeriodsFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'periods', cloneDeep(answers.tempPeriods))
+        unset(answers, 'tempPeriods')
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+
+      /*
+        The edits were approved. Clear out temp.
+      */
+      clearTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.APPROVE) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempPeriods')
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+
       assignToOtherParent: assign((context) => {
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
+
         if (
           currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&

@@ -28,9 +28,16 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 - You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
+- You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed (for fetching secrets).
 - Run `yarn` to install the dependencies.
+
+### For fetching secrets
+
+- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed.
+  - `brew install awscli`
+- You have [jq](https://stedolan.github.io/jq/) installed.
+  - `brew install jq`
 
 ## Usage
 
@@ -116,7 +123,9 @@ yarn nx dep-graph
 
 ### Making dev secrets available locally
 
-Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
+Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.  
+_(**NOTE:** Each variable must be prefixed with `export ` for direnv to pick them up.)_
+
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
 All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
@@ -132,6 +141,13 @@ yarn get-secrets <project> [options]
 ```bash
 yarn get-secrets gjafakort --reset
 ```
+
+To be able to fetch secrets, make sure you have aws configured:
+
+- Run `aws configure`
+- Region should be set to `eu-west-1`
+- Output should be set to `json`
+- Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
 
 ### Environment variables with static websites
 
