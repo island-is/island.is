@@ -50,11 +50,20 @@ export const Appendixes: FC<AppendixesProps & NoChildren> = memo((props) => {
               <AccordionItem
                 key={id}
                 id={id}
-                label={title.asPlainText || props.genericTitle}
+                // label={title.asPlainText || props.genericTitle}
+                label={title.asPlainText || ''}
+                labelVariant="h3"
                 labelUse="h2"
                 visibleContent={
                   title.asHtml && (
-                    <HTMLDump className={s.bodyText} content={title.asHtml} />
+                    // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode
+                    <Text variant="h3" as="h2">
+                      <HTMLDump
+                        tag="span"
+                        className={s.bodyText}
+                        content={title.asHtml}
+                      />
+                    </Text>
                   )
                 }
                 startExpanded={hasDiff(appendix.text)}
