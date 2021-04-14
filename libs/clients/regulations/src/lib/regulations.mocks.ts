@@ -1,4 +1,5 @@
 import {
+  HTMLText,
   ISODate,
   RegName,
   RegQueryName,
@@ -51,10 +52,10 @@ export const demoRegulations: RegulationSearchResults = {
 export const demoRegulation: Regulation = {
   name: '0244/2021' as RegName,
   title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
-  text: '<p>Lorem ipsum dolor</p>',
+  text: '<p>Lorem ipsum dolor</p>' as HTMLText,
   appendixes: [],
   // comments: '<p>Þessi reglugerð er bara prufureglugerð.</p>',
-  comments: '',
+  comments: '' as HTMLText,
 
   effectiveDate: '2021-03-06' as ISODate,
   publishedDate: '2021-03-05' as ISODate,
