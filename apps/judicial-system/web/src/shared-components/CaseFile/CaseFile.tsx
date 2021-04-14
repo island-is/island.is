@@ -8,42 +8,46 @@ import isValid from 'date-fns/isValid'
 import * as styles from './CaseFile.treat'
 
 interface Props {
+  fileId: string
   name: string
   size: number
   uploadedAt: string
-  onOpen: () => void
+  onOpen: (id: string) => void
+  canOpenFiles?: boolean
 }
 
 const CaseFile: React.FC<Props> = (props) => {
-  const { name, size, uploadedAt, onOpen } = props
+  const { fileId, name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
 
   return (
     <BlueBox size="small">
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box display="flex" alignItems="center">
-          <div className={styles.CaseFileNameContainer}>
+      <div className={styles.CaseFileContainer}>
+        <div className={styles.CaseFileNameContainer}>
+          <div className={styles.CaseFileName}>
             <Text fontWeight="semiBold" truncate>
               {name}
             </Text>
           </div>
           <Text>{`(${kb(size)}KB)`}</Text>
-        </Box>
+        </div>
         <Box display="flex" alignItems="center">
           {isValidUpdatedAtDate && (
-            <Box marginRight={2}>
+            <div className={styles.CaseFileCreatedContainer}>
               <Text variant="small">{`${formatDate(
                 uploadedAt,
                 'd.M.y',
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
-            </Box>
+            </div>
           )}
-          <Tag variant="darkerBlue" onClick={onOpen}>
-            Opna
-          </Tag>
+          {canOpenFiles && (
+            <Tag variant="darkerBlue" onClick={() => onOpen(fileId)}>
+              Opna
+            </Tag>
+          )}
         </Box>
-      </Box>
+      </div>
     </BlueBox>
   )
 }

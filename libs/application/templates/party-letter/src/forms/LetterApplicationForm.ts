@@ -159,7 +159,6 @@ export const LetterApplicationForm: Form = buildForm({
                 {
                   value: 'yes',
                   label: m.recommendations.includePapers,
-                  subLabel: 'Hello',
                 },
               ],
               defaultValue: '',

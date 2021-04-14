@@ -12,10 +12,10 @@ interface createInput extends EndorsementListDto {
 @Injectable()
 export class EndorsementListService {
   constructor(
-    @InjectModel(EndorsementList)
-    private endorsementListModel: typeof EndorsementList,
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
+    @InjectModel(EndorsementList)
+    private readonly endorsementListModel: typeof EndorsementList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -37,9 +37,7 @@ export class EndorsementListService {
 
   async findAllEndorsementsByNationalId(nationalId: string) {
     this.logger.debug(`Finding endorsements for single national id`)
-    return this.endorsementModel.findAll({
-      where: { endorser: nationalId },
-    })
+    return this.endorsementModel.findAll({ where: { endorser: nationalId } })
   }
 
   async close(id: string): Promise<EndorsementList | null> {

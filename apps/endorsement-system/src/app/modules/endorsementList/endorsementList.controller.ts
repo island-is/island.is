@@ -5,6 +5,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -16,7 +17,6 @@ import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { FindEndorsementListDto } from './dto/findEndorsementLists.dto'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
@@ -44,14 +44,12 @@ export class EndorsementListController {
       '0000000000', // TODO: Replace with auth
     )
 
-    console.log('response', response)
-
     return response
   }
 
   @Get(':listId')
   async findOne(
-    @Param() { listId }: FindEndorsementListDto,
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     const response = await this.endorsementListService.findSingleList(listId)
     if (!response) {
@@ -63,7 +61,7 @@ export class EndorsementListController {
 
   @Put(':listId/close')
   async close(
-    @Param() { listId }: FindEndorsementListDto,
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     // TODO: Add auth here
     const response = await this.endorsementListService.close(listId)
