@@ -174,6 +174,7 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  isCaseAppealable?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
