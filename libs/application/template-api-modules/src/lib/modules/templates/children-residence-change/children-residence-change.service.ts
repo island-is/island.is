@@ -13,9 +13,12 @@ import {
   formatDate,
   childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
-import * as AWS from 'aws-sdk'
+import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
-import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmitted'
+import {
+  generateApplicationSubmittedEmail,
+  transferRequestedEmail,
+} from './emailGenerators'
 import { Application } from '@island.is/application/core'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
@@ -27,14 +30,14 @@ type props = Override<
 
 @Injectable()
 export class ChildrenResidenceChangeService {
-  s3: AWS.S3
+  s3: S3
 
   constructor(
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
-    this.s3 = new AWS.S3()
+    this.s3 = new S3()
   }
 
   async submitApplication({ application }: props) {
@@ -138,5 +141,18 @@ export class ChildrenResidenceChangeService {
     )
 
     return response
+  }
+
+  async sendNotificationToCounterParty({ application }: props) {
+    const { answers } = application
+    const { counterParty } = answers
+
+    console.log(counterParty)
+    if (counterParty.email) {
+      await this.sharedTemplateAPIService.sendEmail(
+        transferRequestedEmail,
+        (application as unknown) as Application,
+      )
+    }
   }
 }
