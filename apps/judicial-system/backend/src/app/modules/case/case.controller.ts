@@ -78,6 +78,7 @@ const prosecutorUpdateRule = {
     'caseFacts',
     'legalArguments',
     'comments',
+    'caseFilesComments',
     'prosecutorId',
   ],
 } as RolesRule

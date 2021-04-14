@@ -205,6 +205,13 @@ export class Case extends Model<Case> {
   @ApiProperty()
   comments: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseFilesComments: string
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,

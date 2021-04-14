@@ -119,6 +119,11 @@ export class UpdateCaseDto {
   readonly comments?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseFilesComments?: string
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly prosecutorId?: string

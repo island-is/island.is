@@ -30,6 +30,7 @@ export const CaseQuery = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         id
         name
