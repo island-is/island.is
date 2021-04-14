@@ -41,7 +41,7 @@ export interface SearchResponse<ResponseSource, ResponseAggregation = any> {
 }
 
 export interface GetByIdResponse<ResponseSource = any> {
-  _index: SearchIndex
+  _index: string
   _type: string
   _id: string
   _version: number
@@ -51,7 +51,7 @@ export interface GetByIdResponse<ResponseSource = any> {
   _source: ResponseSource
 }
 
-export interface RankEvaluationResponse<searchTermsUnion = string> {
+export interface RankEvaluationResponse<searchTermsUnion extends string> {
   metric_score: number
   details: {
     [searchTerm in searchTermsUnion]: {

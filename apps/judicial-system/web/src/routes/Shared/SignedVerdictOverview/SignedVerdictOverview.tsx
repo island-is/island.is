@@ -1,5 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
   formatDate,
@@ -23,6 +30,7 @@ import {
   RulingAccordionItem,
   CourtRecordAccordionItem,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -308,6 +316,19 @@ export const SignedVerdictOverview: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
+                {workingCase.files && workingCase.files.length > 0 && (
+                  <AccordionItem
+                    id="id_4"
+                    label={`Rannsóknargögn (${workingCase.files.length})`}
+                    labelVariant="h3"
+                  >
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files}
+                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                    />
+                  </AccordionItem>
+                )}
               </Accordion>
             </Box>
             <Box marginBottom={15}>

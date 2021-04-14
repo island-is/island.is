@@ -75,6 +75,9 @@ export default {
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  icelandicNamesRegistry: {
+    backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
+  },
   regulationsDomain: {
     url:
       process.env.REGULATIONS_API_URL ??

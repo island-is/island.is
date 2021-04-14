@@ -80,6 +80,9 @@ export default {
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
   },
+  icelandicNamesRegistry: {
+    backendUrl: 'http://localhost:4239',
+  },
   regulationsDomain: {
     url:
       process.env.REGULATIONS_API_URL ??
