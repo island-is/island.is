@@ -13,6 +13,12 @@ export const reason = {
       defaultMessage: 'Hvert er tilefni breytingar á lögheimili?',
       description: 'Reason for change page title',
     },
+    description: {
+      id: 'crc.application:section.arrangement.reason.description',
+      defaultMessage:
+        'Ekki er nauðsynlegt að tilgreina tilefni breytingarinnar sérstaklega en það getur auðveldað sýslumanni vinnslu umsóknarinnar að gera það.',
+      description: 'Reason for change page description',
+    },
   }),
   input: defineMessages({
     label: {

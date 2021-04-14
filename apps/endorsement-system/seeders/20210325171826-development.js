@@ -50,7 +50,7 @@ module.exports = {
         description: faker.lorem.paragraph(1),
         closed_date: new Date(),
         tags: ['nordausturkjordaemi'],
-        endorsement_meta: ['fullName'],
+        endorsement_meta: ['fullName', 'address'], // this field is used in tests to validate metadata injection
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
