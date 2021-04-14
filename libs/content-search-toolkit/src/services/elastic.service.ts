@@ -21,6 +21,7 @@ import {
   TypeAggregationResponse,
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
+  rankEvaluationMetrics,
 } from '../types'
 import {
   DeleteByQueryResponse,
@@ -35,11 +36,14 @@ import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 
+type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
+
 const { elastic } = environment
 
 @Injectable()
 export class ElasticService {
-  private client: Client
+  private client: Client | null = null
+
   constructor() {
     logger.debug('Created ES Service')
   }
@@ -66,7 +70,8 @@ export class ElasticService {
       removed: documents.remove.length,
     })
 
-    const requests = []
+    const requests: Record<string, unknown>[] = []
+
     // if we have any documents to add add them to the request
     if (documents.add.length) {
       documents.add.forEach(({ _id, ...document }) => {
@@ -99,7 +104,7 @@ export class ElasticService {
     await this.bulkRequest(index, requests)
   }
 
-  async bulkRequest(index: string, requests) {
+  async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const chunkSize = 100 // this has to be an even number
@@ -171,7 +176,7 @@ export class ElasticService {
     })
   }
 
-  async getRankEvaluation<searchTermUnion>(
+  async getRankEvaluation<searchTermUnion extends string>(
     index: string,
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],
@@ -187,10 +192,13 @@ export class ElasticService {
     })
 
     const results = await Promise.all(requests)
-    return results.reduce((groupedResults, result, index) => {
-      groupedResults[metrics[index]] = result
-      return groupedResults
-    }, {})
+    return results.reduce<RankResultMap<searchTermUnion>>(
+      (groupedResults, result, index) => {
+        groupedResults[metrics[index]] = result
+        return groupedResults
+      },
+      {},
+    )
   }
 
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
@@ -215,7 +223,7 @@ export class ElasticService {
 
   // we use this equation to update the popularity score
   // https://stackoverflow.com/questions/11128086/simple-popularity-algorithm
-  async updateDocumentPopularityScore(index, id) {
+  async updateDocumentPopularityScore(index: string, id: string) {
     const client = await this.getClient()
     client
       .update({
@@ -349,7 +357,9 @@ export class ElasticService {
     if (this.client) {
       return this.client
     }
+
     this.client = await this.createEsClient()
+
     return this.client
   }
 

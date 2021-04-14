@@ -1,5 +1,5 @@
-import { DateAggregationInput } from '../types'
-import { tagQuery } from './tagQuery'
+import { DateAggregationInput, elasticTagField } from '../types'
+import { TagQuery, tagQuery } from './tagQuery'
 
 export const dateAggregationQuery = ({
   types = [],
@@ -26,7 +26,8 @@ export const dateAggregationQuery = ({
       format: 'y-M-d',
     },
   }
-  const tagFilters = []
+  const tagFilters: TagQuery[] = []
+
   if (tags.length) {
     tags.forEach((tag) => {
       tagFilters.push(tagQuery(tag))
