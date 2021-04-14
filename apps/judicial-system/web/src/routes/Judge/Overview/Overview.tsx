@@ -57,7 +57,6 @@ import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
-import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
@@ -84,10 +83,6 @@ export const JudgeOverview: React.FC = () => {
     false,
   )
   const { user } = useContext(UserContext)
-
-  const { handleOpenFile } = useFileList({
-    caseId: workingCase?.id,
-  })
 
   const [
     createCustodyCourtCaseMutation,
@@ -536,12 +531,12 @@ export const JudgeOverview: React.FC = () => {
                     label={`Rannsóknargögn (${workingCase.files.length})`}
                   >
                     <CaseFileList
+                      caseId={workingCase.id}
                       files={workingCase.files}
                       canOpenFiles={
                         workingCase.judge !== null &&
                         workingCase.judge?.id === user?.id
                       }
-                      onOpen={handleOpenFile}
                     />
                   </AccordionCard>
                 </div>
