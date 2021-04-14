@@ -94,7 +94,8 @@ export class RegulationsService extends RESTDataSource {
     ch?: string,
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(
-      `search?q=${q}&rn=${rn}&year=${year}&ch=${ch}`,
+      `search`,
+      { q, rn, year, ch },
       {
         cacheOptions: { ttl: 1 /* this.options.ttl ?? 600*/ }, // defaults to 10 minutes
       },
