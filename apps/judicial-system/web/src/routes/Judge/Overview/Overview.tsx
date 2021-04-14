@@ -524,12 +524,22 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
-              {features.includes(Feature.CASE_FILES) && workingCase.files && (
+              {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
-                  <AccordionCard
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      {`Rannsóknargögn (${
+                        workingCase.files ? workingCase.files.length : 0
+                      })`}
+                    </Text>
+                  </Box>
+                  {/* <AccordionCard
                     id="files-card"
-                    label={`Rannsóknargögn (${workingCase.files.length})`}
-                  >
+                    label={`Rannsóknargögn (${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}
+                  > */}
+                  {workingCase.files && workingCase.files.length > 0 ? (
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files}
@@ -538,7 +548,12 @@ export const JudgeOverview: React.FC = () => {
                         workingCase.judge?.id === user?.id
                       }
                     />
-                  </AccordionCard>
+                  ) : (
+                    <Text>
+                      Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.
+                    </Text>
+                  )}
+                  {/* </AccordionCard> */}
                 </div>
               )}
               <PdfButton
