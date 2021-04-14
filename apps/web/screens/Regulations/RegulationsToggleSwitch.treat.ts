@@ -8,6 +8,11 @@ const toggleSwitchWidthLarge = 88 // theme.spacing[11]
 
 export const container = style({
   position: 'relative',
+  '@media': {
+    print: {
+      display: 'none !important',
+    },
+  },
 })
 
 export const label = style({

@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import SubpageLayout from '../Layouts/Layouts'
@@ -69,7 +70,7 @@ export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
                 span={['1/1', '1/1', '1/1', '3/12']}
                 order={[1, 1, 0]}
               >
-                {props.sidebar}
+                <Hidden print={true}>{props.sidebar}</Hidden>
               </GridColumn>
             </GridRow>
           </GridContainer>

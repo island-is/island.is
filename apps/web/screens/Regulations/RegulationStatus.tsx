@@ -1,7 +1,7 @@
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import React, { FC } from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
-import { Text } from '@island.is/island-ui/core'
+import { Hidden, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as s from './RegulationStatus.treat'
 
@@ -36,67 +36,72 @@ export const RegulationStatus: FC<RegulationStatusProps> = (props) => {
 
   return (
     <>
-      {!regulation.repealedDate ? (
-        <Text>
-          {!regulation.timelineDate ? (
-            <>
-              <Ball type="green" />
-              Núgildandi reglugerð
-              {regulation.lastAmendDate ? (
-                <>
-                  {' – '}
+      <div className={s.printText}>
+        <Text>Prentað {formatDate(today)}</Text>
+      </div>
+      <Hidden print={true}>
+        {!regulation.repealedDate ? (
+          <Text>
+            {!regulation.timelineDate ? (
+              <>
+                <Ball type="green" />
+                Núgildandi reglugerð
+                {regulation.lastAmendDate ? (
+                  <>
+                    {' – '}
+                    <span className={s.metaDate}>
+                      uppfærð {formatDate(regulation.lastAmendDate)}
+                    </span>
+                  </>
+                ) : (
+                  ''
+                )}
+              </>
+            ) : viewingOriginal ? (
+              <>
+                <Ball type="red" />
+                Upprunaleg útgáfa reglugerðar
+                {' – '}
+                <span className={s.metaDate}>
+                  sem gók gildi þann {formatDate(regulation.timelineDate)}
+                </span>
+              </>
+            ) : regulation.timelineDate > today ? (
+              <>
+                <Ball type="red" />
+                Væntanleg útgáfa reglugerðar
+                {' – '}
+                <span className={s.metaDate}>
+                  sem mun taka gildi þann {formatDate(regulation.timelineDate)}
+                </span>
+              </>
+            ) : (
+              <>
+                <Ball type="red" />
+                Úrelt útgáfa reglugerðar
+                {' – '}
+                {urlDate ? (
                   <span className={s.metaDate}>
-                    uppfærð {formatDate(regulation.lastAmendDate)}
+                    eins og leit út þann {formatDate(urlDate)}
                   </span>
-                </>
-              ) : (
-                ''
-              )}
-            </>
-          ) : viewingOriginal ? (
-            <>
-              <Ball type="red" />
-              Upprunaleg útgáfa reglugerðar
-              {' – '}
-              <span className={s.metaDate}>
-                sem gók gildi þann {formatDate(regulation.timelineDate)}
-              </span>
-            </>
-          ) : regulation.timelineDate > today ? (
-            <>
-              <Ball type="red" />
-              Væntanleg útgáfa reglugerðar
-              {' – '}
-              <span className={s.metaDate}>
-                sem mun taka gildi þann {formatDate(regulation.timelineDate)}
-              </span>
-            </>
-          ) : (
-            <>
-              <Ball type="red" />
-              Úrelt útgáfa reglugerðar
-              {' – '}
-              {urlDate ? (
-                <span className={s.metaDate}>
-                  eins og leit út þann {formatDate(urlDate)}
-                </span>
-              ) : (
-                <span className={s.metaDate}>
-                  sem tók gildi þann {formatDate(regulation.timelineDate)}
-                </span>
-              )}
-            </>
-          )}
-        </Text>
-      ) : (
-        <Text>
-          <Ball type="red" />
-          Úrelt reglugerð{' – '}
-          <span className={s.metaDate}>
-            felld úr gildi {formatDate(regulation.repealedDate)}
-          </span>
-        </Text>
-      )}
+                ) : (
+                  <span className={s.metaDate}>
+                    sem tók gildi þann {formatDate(regulation.timelineDate)}
+                  </span>
+                )}
+              </>
+            )}
+          </Text>
+        ) : (
+          <Text>
+            <Ball type="red" />
+            Úrelt reglugerð{' – '}
+            <span className={s.metaDate}>
+              felld úr gildi {formatDate(regulation.repealedDate)}
+            </span>
+          </Text>
+        )}
+      </Hidden>
     </>
   )
 }
