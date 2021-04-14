@@ -27,6 +27,7 @@ export const dataSchema = z.object({
     .min(1, { message: error.validation.selectChild.defaultMessage }),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
+  counterParty: parentContactInfo,
   parentB: parentContactInfo,
   approveTerms: terms,
   approveTermsParentB: terms,
