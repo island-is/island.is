@@ -17,6 +17,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -36,6 +37,7 @@ import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/uti
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 
 interface CaseData {
@@ -48,6 +50,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -316,19 +319,21 @@ export const SignedVerdictOverview: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
-                {workingCase.files && workingCase.files.length > 0 && (
-                  <AccordionItem
-                    id="id_4"
-                    label={`Rannsóknargögn (${workingCase.files.length})`}
-                    labelVariant="h3"
-                  >
-                    <CaseFileList
-                      caseId={workingCase.id}
-                      files={workingCase.files}
-                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
-                    />
-                  </AccordionItem>
-                )}
+                {features.includes(Feature.CASE_FILES) &&
+                  workingCase.files &&
+                  workingCase.files.length > 0 && (
+                    <AccordionItem
+                      id="id_4"
+                      label={`Rannsóknargögn (${workingCase.files.length})`}
+                      labelVariant="h3"
+                    >
+                      <CaseFileList
+                        caseId={workingCase.id}
+                        files={workingCase.files}
+                        canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                      />
+                    </AccordionItem>
+                  )}
               </Accordion>
             </Box>
             <Box marginBottom={15}>

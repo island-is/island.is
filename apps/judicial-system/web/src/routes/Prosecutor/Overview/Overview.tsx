@@ -326,7 +326,7 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {workingCase.files && (
+                {features.includes(Feature.CASE_FILES) && workingCase.files && (
                   <AccordionItem
                     id="id_5"
                     label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
