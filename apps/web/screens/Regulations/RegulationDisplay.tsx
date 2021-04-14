@@ -60,6 +60,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   ]
 
   const diffView = !!regulation.showingDiff
+
+  const viewingCurrent =
+    !regulation.timelineDate &&
+    (!regulation.showingDiff ||
+      regulation.showingDiff.from <= regulation.effectiveDate)
+
   const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
 
   return (
@@ -258,7 +264,9 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                 const labelLong =
                   item.effect !== 'root' ? label + ' ' + item.title : undefined
 
-                const isTimelineActive = regulation.timelineDate === item.date
+                const isTimelineActive =
+                  (regulation.timelineDate ||
+                    (!viewingCurrent && regulation.lastAmendDate)) === item.date
 
                 const futureSplitter = item.date > today &&
                   (i === 0 || arr[i - 1].date <= today) && (
@@ -317,11 +325,9 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                                   ? 'blueberry400'
                                   : 'blueberry600'
                               }
-                              fontWeight={
-                                !regulation.timelineDate ? 'medium' : undefined
-                              }
+                              fontWeight={viewingCurrent ? 'medium' : undefined}
                             >
-                              {!regulation.timelineDate && ' ▶︎ '}
+                              {viewingCurrent && ' ▶︎ '}
                               {txt('historyCurrentVersion')}
                             </Text>
                           )}
