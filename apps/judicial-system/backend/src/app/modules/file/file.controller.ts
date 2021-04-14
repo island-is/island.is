@@ -159,9 +159,9 @@ export class FileController {
         )
       }
 
-      if (completedCaseStates.includes(existingCase.state)) {
+      if (existingCase.state !== CaseState.RECEIVED) {
         throw new ForbiddenException(
-          'Judges cannot get files of completed cases',
+          'Judges can only get files of uncompleted received cases',
         )
       }
     }
