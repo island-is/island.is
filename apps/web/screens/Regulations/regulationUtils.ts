@@ -1,4 +1,5 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { ParsedUrlQuery } from 'querystring'
 import { useState } from 'react'
 import { ISODate, RegName, RegQueryName } from './Regulations.types'
@@ -119,3 +120,13 @@ export default function domid() {
 
 // Returns a stable, unique ID string
 export const useDomid = (staticId?: string) => useState(staticId || domid)[0]
+
+// ---------------------------------------------------------------------------
+
+export const useDateUtils = () => {
+  const dateUtl = _useDateUtils()
+  const formatDate = (isoDate: string) => {
+    return dateUtl.format(new Date(isoDate), 'd. MMM yyyy')
+  }
+  return { formatDate }
+}

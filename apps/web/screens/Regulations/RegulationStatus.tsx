@@ -1,9 +1,12 @@
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import * as s from './RegulationStatus.treat'
+
 import React, { FC } from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Hidden, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as s from './RegulationStatus.treat'
+import { useDateUtils } from './regulationUtils'
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 // ---------------------------------------------------------------------------
 
@@ -19,20 +22,19 @@ const Ball: React.FC<BallProps> = ({ type, children }) => (
 export type RegulationStatusProps = {
   regulation: Pick<
     RegulationMaybeDiff,
-    'repealedDate' | 'timelineDate' | 'lastAmendDate'
+    'repealedDate' | 'timelineDate' | 'lastAmendDate' | 'effectiveDate'
   >
   urlDate?: ISODate
-  today: ISODate
-  viewingOriginal: boolean
+  texts: RegulationPageTexts
 }
 
 export const RegulationStatus: FC<RegulationStatusProps> = (props) => {
-  const { regulation, urlDate, viewingOriginal, today } = props
+  const { regulation, urlDate, texts } = props
+  const { formatDate } = useDateUtils()
+  const txt = useNamespace(texts)
 
-  const dateUtl = useDateUtils()
-  const formatDate = (isoDate: string) => {
-    return dateUtl.format(new Date(isoDate), 'd. MMM yyyy')
-  }
+  const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
+  const today = new Date().toISOString().substr(0, 10) as ISODate
 
   return (
     <>

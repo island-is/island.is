@@ -1,29 +1,21 @@
-import React, { FC, Fragment } from 'react'
+import * as s from './RegulationDisplay.treat'
+
+import React, { FC } from 'react'
 import { useRouter } from 'next/router'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import * as s from './RegulationDisplay.treat'
-import {
-  Button,
-  FocusableBox,
-  Link,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Button, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
-import {
-  interpolate,
-  prettyName,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationsSidebarBox } from './RegulationsSidebarBox'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLDump } from './HTMLDump'
 import { CommentsBox } from './CommentsBox'
 import { RegulationsToggleSwitch } from './RegulationsToggleSwitch'
+import { RegulationInfoBox } from './RegulationInfoBox'
+import { RegulationEffectsBox } from './RegulationEffectsBox'
+import { RegulationTimeline } from './RegulationTimeline'
 
 // ---------------------------------------------------------------------------
 
@@ -36,37 +28,17 @@ export type RegulationDisplayProps = {
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const router = useRouter()
   const { regulation, texts } = props
-  const { history, effects } = regulation
 
-  const today = new Date().toISOString().substr(0, 10) as ISODate
-
-  const dateUtl = useDateUtils()
-  const formatDate = (isoDate: string) => {
-    return dateUtl.format(new Date(isoDate), 'd. MMM yyyy')
-  }
   const txt = useNamespace(texts)
   const { linkToRegulation } = useRegulationLinkResolver()
 
   const name = prettyName(regulation.name)
 
-  const timelineItems = [
-    {
-      name: regulation.name,
-      date: regulation.effectiveDate,
-      // title: regulation.title,
-      effect: 'root',
-    } as const,
-    ...history,
-  ]
-
   const diffView = !!regulation.showingDiff
 
-  const viewingCurrent =
-    !regulation.timelineDate &&
-    (!regulation.showingDiff ||
-      regulation.showingDiff.from <= regulation.effectiveDate)
-
-  const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
+  const isDiffable =
+    regulation.history.length > 0 &&
+    regulation.timelineDate !== regulation.effectiveDate
 
   return (
     <RegulationLayout
@@ -74,7 +46,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       texts={props.texts}
       main={
         <>
-          {history.length > 0 && !viewingOriginal && (
+          {isDiffable && (
             <RegulationsToggleSwitch
               className={s.diffToggler}
               checked={diffView}
@@ -92,9 +64,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
           <RegulationStatus
             regulation={regulation}
-            viewingOriginal={viewingOriginal}
             urlDate={props.urlDate}
-            today={today}
+            texts={texts}
           />
 
           <Text
@@ -123,222 +94,24 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       }
       sidebar={
         <Stack space={2}>
-          {
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              onClick={() => {
-                window.history.length > 2
-                  ? router.back()
-                  : router.push('/reglugerdir')
-              }}
-            >
-              Til baka
-            </Button>
-          }
+          <Button
+            preTextIcon="arrowBack"
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="text"
+            onClick={() => {
+              window.history.length > 2
+                ? router.back()
+                : router.push('/reglugerdir')
+            }}
+          >
+            Til baka
+          </Button>
 
-          {
-            <RegulationsSidebarBox
-              title={txt('infoboxTitle')}
-              colorScheme="blueberry"
-            >
-              {regulation.ministry && (
-                <Text>
-                  <strong>{txt('infoboxMinistry')}:</strong>
-                  <br />
-                  {regulation.ministry.name}
-                </Text>
-              )}
-
-              {regulation.lawChapters.length > 0 && (
-                <Text>
-                  <strong>{txt('infoboxLawChapters')}:</strong>
-                  <ul>
-                    {regulation.lawChapters.map((chapter, i) => (
-                      <li key={i}>{chapter.name}</li>
-                    ))}
-                  </ul>
-                </Text>
-              )}
-
-              {regulation.effectiveDate && (
-                <Text>
-                  <strong>{txt('infoboxEffectiveDate')}:</strong>
-                  <br />
-                  {formatDate(regulation.effectiveDate)}
-                </Text>
-              )}
-
-              {regulation.repealedDate ? (
-                <Text>
-                  <strong>{txt('infoboxRepealed')}:</strong>
-                  <br />
-                  {formatDate(regulation.repealedDate)}
-                </Text>
-              ) : (
-                regulation.lastAmendDate && (
-                  <Text>
-                    <strong>{txt('infoboxLastAmended')}:</strong>
-                    <br />
-                    {formatDate(regulation.lastAmendDate)}
-                  </Text>
-                )
-              )}
-            </RegulationsSidebarBox>
-          }
-
-          {effects.length > 0 && (
-            <RegulationsSidebarBox
-              title={interpolate(txt('effectsTitle'), { name })}
-              colorScheme="blueberry"
-            >
-              {regulation.effects.map((item, i) => {
-                const name = prettyName(item.name)
-                const label = interpolate(
-                  item.effect === 'amend'
-                    ? txt('effectsChange')
-                    : txt('effectsCancel'),
-                  { name },
-                )
-                const labelLong = label + ' ' + item.title
-
-                return (
-                  <Link
-                    key={'effects-' + i}
-                    href={linkToRegulation(item.name)}
-                    aria-label={labelLong}
-                  >
-                    <FocusableBox
-                      flexDirection={'column'}
-                      component="span"
-                      title={labelLong}
-                    >
-                      {({
-                        isFocused,
-                        isHovered,
-                      }: {
-                        isFocused: boolean
-                        isHovered: boolean
-                      }) => (
-                        <Text
-                          color={
-                            isFocused || isHovered
-                              ? 'blueberry400'
-                              : 'blueberry600'
-                          }
-                        >
-                          {label}
-                        </Text>
-                      )}
-                    </FocusableBox>
-                  </Link>
-                )
-              })}
-            </RegulationsSidebarBox>
-          )}
-
-          {history.length > 0 && (
-            <RegulationsSidebarBox
-              title={interpolate(txt('historyTitle'), {
-                name,
-              })}
-              colorScheme="blueberry"
-            >
-              {timelineItems.map((item, i, arr) => {
-                const name = prettyName(item.name)
-                const isCurrentVersion =
-                  item.date <= today &&
-                  item.effect === 'amend' &&
-                  (i === arr.length - 1 || arr[i + 1].date > today)
-                const label = interpolate(
-                  i === 0 // item.effect === 'root'
-                    ? txt('historyStart')
-                    : item.effect === 'amend'
-                    ? txt('historyChange')
-                    : txt('historyCancel'),
-                  { name },
-                )
-                const labelLong =
-                  item.effect !== 'root' ? label + ' ' + item.title : undefined
-
-                const isTimelineActive =
-                  (regulation.timelineDate ||
-                    (!viewingCurrent && regulation.lastAmendDate)) === item.date
-
-                const futureSplitter = item.date > today &&
-                  (i === 0 || arr[i - 1].date <= today) && (
-                    <Text variant="small">{txt('historyFutureSplitter')}:</Text>
-                  )
-
-                return (
-                  <Fragment key={'history-' + i}>
-                    {futureSplitter}
-                    <Link
-                      href={linkToRegulation(
-                        regulation.name,
-                        item.effect === 'root'
-                          ? { original: true }
-                          : { d: item.date, diff: true },
-                      )}
-                    >
-                      <FocusableBox flexDirection={'column'}>
-                        {({
-                          isFocused,
-                          isHovered,
-                        }: {
-                          isFocused: boolean
-                          isHovered: boolean
-                        }) => (
-                          <Text
-                            color={
-                              isFocused || isHovered
-                                ? 'blueberry400'
-                                : 'blueberry600'
-                            }
-                            fontWeight={isTimelineActive ? 'medium' : undefined}
-                          >
-                            {isTimelineActive && ' ▶︎ '}
-                            <strong>{formatDate(item.date)}</strong>
-                            <br />
-                            <span title={labelLong}>{label}</span>
-                          </Text>
-                        )}
-                      </FocusableBox>
-                    </Link>
-
-                    {isCurrentVersion && (
-                      <Link href={linkToRegulation(regulation.name)}>
-                        <FocusableBox flexDirection={'column'}>
-                          {({
-                            isFocused,
-                            isHovered,
-                          }: {
-                            isFocused: boolean
-                            isHovered: boolean
-                          }) => (
-                            <Text
-                              color={
-                                isFocused || isHovered
-                                  ? 'blueberry400'
-                                  : 'blueberry600'
-                              }
-                              fontWeight={viewingCurrent ? 'medium' : undefined}
-                            >
-                              {viewingCurrent && ' ▶︎ '}
-                              {txt('historyCurrentVersion')}
-                            </Text>
-                          )}
-                        </FocusableBox>
-                      </Link>
-                    )}
-                  </Fragment>
-                )
-              })}
-            </RegulationsSidebarBox>
-          )}
+          <RegulationInfoBox regulation={regulation} texts={texts} />
+          <RegulationEffectsBox regulation={regulation} texts={texts} />
+          <RegulationTimeline regulation={regulation} texts={texts} />
         </Stack>
       }
     />
