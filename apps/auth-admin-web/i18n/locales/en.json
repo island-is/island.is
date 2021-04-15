@@ -6,6 +6,28 @@
     "loginButton": "Login",
     "logoutButton": "Logout"
   },
+  "environment": {
+    "production": {
+      "title": "Production",
+      "description": "You are on Production environment",
+      "helpText": ""
+    },
+    "staging": {
+      "title": "Staging",
+      "description": "You are on Staging environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "development": {
+      "title": "Development",
+      "description": "You are on Development environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "local": {
+      "title": "Localhost",
+      "description": "You are on Local environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    }
+  },
   "pages": {
     "admin.index": {
       "title": "Admin Controls"
