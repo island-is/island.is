@@ -32,14 +32,10 @@ export const input = style({
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
-  fontWeight: theme.typography.light,
 })
 export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
-})
-export const labelChecked = style({
-  fontWeight: theme.typography.medium,
 })
 export const checkboxDisabled = style({
   background: 'transparent',

@@ -62,7 +62,6 @@ export const RadioButton = ({
       />
       <label
         className={cn(styles.label, {
-          [styles.labelChecked]: checked,
           [styles.radioButtonLabelDisabled]: disabled,
           [styles.largeLabel]: large,
         })}
@@ -78,12 +77,14 @@ export const RadioButton = ({
           <div className={styles.checkMark} />
         </div>
         <span className={styles.labelText}>
-          <Text>{label}</Text>
+          <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
+            {label}
+          </Text>
           {subLabel && large && (
             <Text
               as="span"
               marginTop="smallGutter"
-              fontWeight="medium"
+              fontWeight="regular"
               variant="small"
             >
               {subLabel}
