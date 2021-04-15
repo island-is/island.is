@@ -11,9 +11,11 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseDecision,
   CaseType,
+  Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
@@ -46,6 +48,7 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
 
   const caseResult = () => {
     if (
@@ -76,22 +79,43 @@ const PageLayout: React.FC<PageProps> = ({
         caseType === CaseType.CUSTODY
           ? 'Krafa um gæsluvarðhald'
           : 'Krafa um farbann',
-      children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-        {
-          type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Greinargerð',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
-        },
-      ],
+      children: features.includes(Feature.CASE_FILES)
+        ? [
+            { type: 'SUB_SECTION', name: 'Sakborningur' },
+            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Dómkröfur og lagagrundvöllur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Greinargerð',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Rannsóknargögn',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Yfirlit kröfu',
+            },
+          ]
+        : [
+            { type: 'SUB_SECTION', name: 'Sakborningur' },
+            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Dómkröfur og lagagrundvöllur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Greinargerð',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Yfirlit kröfu',
+            },
+          ],
     },
     {
       name: 'Úrskurður Héraðsdóms',
@@ -109,22 +133,43 @@ const PageLayout: React.FC<PageProps> = ({
     },
     {
       name: 'Krafa um framlengingu',
-      children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-        {
-          type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Greinargerð',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
-        },
-      ],
+      children: features.includes(Feature.CASE_FILES)
+        ? [
+            { type: 'SUB_SECTION', name: 'Sakborningur' },
+            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Dómkröfur og lagagrundvöllur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Greinargerð',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Rannsóknargögn',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Yfirlit kröfu',
+            },
+          ]
+        : [
+            { type: 'SUB_SECTION', name: 'Sakborningur' },
+            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Dómkröfur og lagagrundvöllur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Greinargerð',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Yfirlit kröfu',
+            },
+          ],
     },
     {
       name: 'Úrskurður Héraðsdóms',

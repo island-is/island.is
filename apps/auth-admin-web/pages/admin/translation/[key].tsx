@@ -5,6 +5,7 @@ import { AdminTab } from './../../../entities/common/AdminTab'
 import { TranslationService } from './../../../services/TranslationService'
 import { Translation } from './../../../entities/models/translation.model'
 import TranslationCreateForm from './../../../components/Admin/form/TranslationCreateForm'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -22,6 +23,7 @@ const Index: React.FC = () => {
       }
     }
     loadLanguage()
+    document.title = LocalizationUtils.getPageTitle('admin.translation.[key]')
   }, [key])
 
   const getTranslation = async (

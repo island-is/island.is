@@ -1,6 +1,6 @@
 import { SearchInput } from '../types'
 import { tagAggregationQueryFragment } from './tagAggregation'
-import { tagQuery } from './tagQuery'
+import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 
 export const searchQuery = ({
@@ -13,7 +13,7 @@ export const searchQuery = ({
   countTypes = false,
 }: SearchInput) => {
   const should = []
-  const must = []
+  const must: TagQuery[] = []
   let minimumShouldMatch = 1
 
   should.push({

@@ -62,7 +62,7 @@ const Auction: Screen<AuctionProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('singleAuction', 'Uppboð')}
+      pageTitle={`${auction.title} ${format(date, 'e. MMMM yyyy')}`}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {

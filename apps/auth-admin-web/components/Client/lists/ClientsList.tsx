@@ -1,24 +1,27 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
 import { downloadCSV } from '../../../utils/csv.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
-class ClientsList extends Component {
-  state = {
-    clients: [],
-    rowCount: 0,
-    count: 1,
-    page: 1,
-    modalIsOpen: false,
-    clientToRemove: '',
-    searchString: '',
-  }
+const ClientsList: React.FC = () => {
+  const [clients, setClients] = useState<Client[]>([])
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
+  const [clientToRemove, setclientToRemove] = React.useState('')
+  const [count, setCount] = useState(0)
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [searchString, setSearchString] = useState<string>('')
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ClientsList'),
+  )
 
-  getClients = async (
+  const getClients = async (
     searchString: string,
     page: number,
     count: number,
@@ -36,54 +39,55 @@ class ClientsList extends Component {
         return 0
       })
 
-      this.setState({
-        clients: clientsArr.reverse(),
-        rowCount: response.count,
-      })
+      setClients(clientsArr.reverse())
+      setLastPage(Math.ceil(response.count / count))
     }
   }
 
-  handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getClients(this.state.searchString, page, count)
-    this.setState({ page: page, count: count })
+  const handlePageChange = async (
+    page: number,
+    count: number,
+  ): Promise<void> => {
+    getClients(searchString, page, count)
+    setPage(page)
+    setCount(count)
   }
 
-  archive = async (): Promise<void> => {
-    await ClientService.delete(this.state.clientToRemove)
-    this.getClients(this.state.searchString, this.state.page, this.state.count)
-
-    this.closeModal()
+  const archive = async (): Promise<void> => {
+    const response = await ClientService.delete(clientToRemove)
+    if (response) {
+      getClients(searchString, page, count)
+    }
+    closeModal()
   }
 
-  confirmArchive = async (clientId: string): Promise<void> => {
-    this.setState({ clientToRemove: clientId })
-
-    this.setState({ modalIsOpen: true })
+  const confirmArchive = async (clientId: string): Promise<void> => {
+    setclientToRemove(clientId)
+    setIsOpen(true)
   }
 
-  closeModal = (): void => {
-    this.setState({ modalIsOpen: false })
+  const closeModal = (): void => {
+    setIsOpen(false)
   }
 
-  setHeaderElement = (): JSX.Element => {
+  const setHeaderElement = (): JSX.Element => {
     return (
       <p>
-        Are you sure want to archive this client:{' '}
-        <span>{this.state.clientToRemove}</span>
+        {localization.removeConfirmation}:<span>{clientToRemove}</span>
       </p>
     )
   }
 
-  search = (event) => {
-    this.getClients(this.state.searchString, this.state.page, this.state.count)
+  const search = (event) => {
+    getClients(searchString, page, count)
     event.preventDefault()
   }
 
-  handleSearchChange = (event) => {
-    this.setState({ searchString: event.target.value })
+  const handleSearchChange = (event) => {
+    setSearchString(event.target.value)
   }
 
-  exportCsv = async () => {
+  const exportCsv = async () => {
     const filename = `Clients, ${new Date().toISOString().split('T')[0]}.csv`
 
     await downloadCSV(
@@ -93,126 +97,123 @@ class ClientsList extends Component {
     )
   }
 
-  render(): JSX.Element {
-    return (
-      <div>
-        <div className="clients">
-          <div className="clients__wrapper">
-            <div className="clients__container">
-              <h1>Clients</h1>
-              <div className="clients__container__options">
-                <div className="clients__container__options__button">
-                  <Link href={'/client'}>
-                    <a className="clients__button__new">
-                      <i className="icon__new"></i>Create new client
-                    </a>
-                  </Link>
-                </div>
-                <form onSubmit={this.search}>
-                  <div className="clients__container__options__search">
-                    <label htmlFor="search" className="clients__label">
-                      National Id or Client Id
-                    </label>
-                    <input
-                      id="search"
-                      className="clients__input__search"
-                      value={this.state.searchString}
-                      onChange={this.handleSearchChange}
-                    ></input>
-                    <button type="submit" className="clients__button__search">
-                      Search
-                    </button>
-                  </div>
-                </form>
+  return (
+    <div>
+      <div className="clients">
+        <div className="clients__wrapper">
+          <div className="clients__container">
+            <h1>{localization.title}</h1>
+            <div className="clients__container__options">
+              <div className="clients__container__options__button">
+                <Link href={'/client'}>
+                  <a className="clients__button__new">
+                    <i className="icon__new"></i>
+                    {localization.createNewItem}
+                  </a>
+                </Link>
               </div>
-              <div className="client__container__table">
-                <table className="clients__table">
-                  <thead>
-                    <tr>
-                      <th>Client Id</th>
-                      <th>National Id</th>
-                      <th>Contact</th>
-                      <th>Type</th>
-                      <th colSpan={2}></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.clients.map((client: Client) => {
-                      return (
-                        <tr
-                          key={client.clientId}
-                          className={client.archived ? 'archived' : ''}
-                        >
-                          <td>{client.clientId}</td>
-                          <td>{client.nationalId}</td>
-                          <td>{client.contactEmail}</td>
-                          <td>{client.clientType}</td>
-                          <td className="clients__table__button">
-                            <Link
-                              href={`client/${encodeURIComponent(
-                                client.clientId,
-                              )}`}
-                            >
-                              <button
-                                type="button"
-                                className={`clients__button__edit${
-                                  client.archived ? ' hidden' : ''
-                                }`}
-                                title="Edit"
-                              >
-                                <i className="icon__edit"></i>
-                                <span>Edit</span>
-                              </button>
-                            </Link>
-                          </td>
-                          <td className="clients__table__button">
+              <form onSubmit={search}>
+                <div className="clients__container__options__search">
+                  <label htmlFor="search" className="clients__label">
+                    {localization.search?.label}
+                  </label>
+                  <input
+                    id="search"
+                    className="clients__input__search"
+                    value={searchString}
+                    onChange={handleSearchChange}
+                  ></input>
+                  <button type="submit" className="clients__button__search">
+                    {localization.searchButton}
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="client__container__table">
+              <table className="clients__table">
+                <thead>
+                  <tr>
+                    <th>{localization.columns['clientId'].headerText}</th>
+                    <th>{localization.columns['nationalId'].headerText}</th>
+                    <th>{localization.columns['contactEmail'].headerText}</th>
+                    <th>{localization.columns['clientType'].headerText}</th>
+                    <th colSpan={2}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clients.map((client: Client) => {
+                    return (
+                      <tr
+                        key={client.clientId}
+                        className={client.archived ? 'archived' : ''}
+                      >
+                        <td>{client.clientId}</td>
+                        <td>{client.nationalId}</td>
+                        <td>{client.contactEmail}</td>
+                        <td>{client.clientType}</td>
+                        <td className="clients__table__button">
+                          <Link
+                            href={`client/${encodeURIComponent(
+                              client.clientId,
+                            )}`}
+                          >
                             <button
                               type="button"
-                              className={`clients__button__delete${
+                              className={`clients__button__edit${
                                 client.archived ? ' hidden' : ''
                               }`}
-                              title="Delete"
-                              onClick={() =>
-                                this.confirmArchive(client.clientId)
-                              }
+                              title={localization.editButton}
                             >
-                              <i className="icon__delete"></i>
-                              <span>Delete</span>
+                              <i className="icon__edit"></i>
+                              <span>{localization.editButton}</span>
                             </button>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <div>
-                <div className="clients__container__export">
-                  <div className="clients__container__export__container__button">
-                    <button type="button" onClick={() => this.exportCsv()}>
-                      <i className="icon__export__csv" aria-hidden="true"></i>
-                      <span>Export</span>
-                    </button>
-                  </div>
+                          </Link>
+                        </td>
+                        <td className="clients__table__button">
+                          <button
+                            type="button"
+                            className={`clients__button__delete${
+                              client.archived ? ' hidden' : ''
+                            }`}
+                            title={localization.removeButton}
+                            onClick={() => confirmArchive(client.clientId)}
+                          >
+                            <i className="icon__delete"></i>
+                            <span>{localization.removeButton}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div className="clients__container__export">
+                <div className="clients__container__export__container__button">
+                  <button type="button" onClick={() => exportCsv()}>
+                    <i className="icon__export__csv" aria-hidden="true"></i>
+                    <span>{localization.exportButton}</span>
+                  </button>
                 </div>
-                <Paginator
-                  lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                  handlePageChange={this.handlePageChange}
-                />
               </div>
+              <Paginator
+                lastPage={lastPage}
+                handlePageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
-        <ConfirmModal
-          modalIsOpen={this.state.modalIsOpen}
-          headerElement={this.setHeaderElement()}
-          closeModal={this.closeModal}
-          confirmation={this.archive}
-          confirmationText="Archive"
-        ></ConfirmModal>
       </div>
-    )
-  }
+      <ConfirmModal
+        modalIsOpen={modalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeModal}
+        confirmation={archive}
+        confirmationText={localization.removeButton}
+      ></ConfirmModal>
+    </div>
+  )
 }
 
 export default ClientsList

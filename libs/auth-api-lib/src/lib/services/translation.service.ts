@@ -33,7 +33,6 @@ export class TranslationService {
     return this.translationModel.findAndCountAll({
       limit: count,
       offset: offset,
-      distinct: true,
     })
   }
 

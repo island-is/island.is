@@ -516,6 +516,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               printHidden
             >
               <InstitutionsPanel
+                img={article.organization[0].logo?.url ?? ''}
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),

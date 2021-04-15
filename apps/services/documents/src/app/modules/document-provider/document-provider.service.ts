@@ -119,6 +119,17 @@ export class DocumentProviderService {
     return { numberOfAffectedRows, updatedOrganisation }
   }
 
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    modifier: string,
+  ): Promise<boolean> {
+    const org = this.organisationModel.findOne({
+      where: { nationalId: organisationNationalId, modifiedBy: modifier },
+    })
+
+    return org ? true : false
+  }
+
   // PROVIDER
   async getProviders(): Promise<Provider[] | null> {
     return await this.providerModel.findAll({ include: [Organisation] })
@@ -184,6 +195,15 @@ export class DocumentProviderService {
     )
 
     return { numberOfAffectedRows, updatedProvider }
+  }
+
+  async getOrganisationsProviders(id: string): Promise<Provider[]> {
+    const organisation = await this.organisationModel.findOne({
+      where: { id },
+      include: [Provider],
+    })
+
+    return organisation?.providers ?? []
   }
 
   // ADMINISTRATIVE CONTACT

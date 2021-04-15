@@ -68,7 +68,7 @@ export class CourtService {
             authenticationToken,
           }),
         )
-      : 'R-1337/2021'
+      : '"R-1337/2021"'
 
     return stripResult(courtCaseNumber)
   }

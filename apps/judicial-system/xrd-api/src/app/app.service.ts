@@ -5,7 +5,7 @@ import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Case as TCase } from '@island.is/judicial-system/types'
 
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { CreateCaseDto } from './app.dto'
 import { Case } from './app.model'
 

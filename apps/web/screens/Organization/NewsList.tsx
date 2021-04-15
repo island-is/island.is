@@ -7,6 +7,7 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   OrganizationWrapper,
+  lightThemes,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -208,11 +209,8 @@ const NewsList: Screen<NewsListProps> = ({
 
   return (
     <>
-      <Head>
-        <title>{n('pageTitle')} | Ísland.is</title>
-      </Head>
       <OrganizationWrapper
-        pageTitle={organizationPage.title}
+        pageTitle={n('newsTitle', 'Fréttir og tilkynningar')}
         organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
         sidebarContent={sidebar}
@@ -400,6 +398,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     organizationPage: getOrganizationPage,
     newsList,
@@ -410,10 +410,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(NewsList, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(NewsList)

@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
@@ -16,7 +16,7 @@ import {
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
+import { ApplicationStates, Roles } from '../../lib/constants'
 import { DescriptionText } from '../components'
 import {
   fileSignatureReducer,
@@ -105,13 +105,12 @@ const Overview = ({
         .then((response) => {
           return response.data?.requestFileSignature?.documentToken
         })
-        .catch((error) => {
+        .catch((error: ApolloError) => {
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: '500',
+            error: error.graphQLErrors[0].extensions?.code ?? 500,
           })
-          throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
       if (documentToken) {
         dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
@@ -127,13 +126,12 @@ const Overview = ({
           .then(() => {
             return true
           })
-          .catch((error) => {
+          .catch((error: ApolloError) => {
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: '500',
+              error: error.graphQLErrors[0].extensions?.code ?? 500,
             })
-            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
 
         if (success) {
@@ -147,7 +145,8 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   // TODO: Look into if we want to do this in a different way - using the application state seems wrong
-  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+  const parentKey =
+    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
     <>
@@ -158,8 +157,7 @@ const Overview = ({
             type: FileSignatureActionTypes.RESET,
           })
         }
-        modalOpen={fileSignatureState.modalOpen}
-        signatureStatus={fileSignatureState.status}
+        fileSignatureState={fileSignatureState}
       />
       <AlertMessage
         type="info"
@@ -171,7 +169,7 @@ const Overview = ({
           text={m.contract.general.description}
           format={{
             otherParent:
-              application.state === 'draft'
+              parentKey === Roles.ParentA
                 ? parentB.fullName
                 : applicant.fullName,
           }}
@@ -193,10 +191,10 @@ const Overview = ({
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers[contactInfoKey]?.email}
+          {answers[parentKey]?.email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[contactInfoKey]?.phoneNumber}</Text>
+        <Text fontWeight="medium">{answers[parentKey]?.phoneNumber}</Text>
       </Box>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>
@@ -241,7 +239,13 @@ const Overview = ({
           {formatMessage(m.interview.general.sectionTitle)}
         </Text>
         <Text>
-          {formatMessage(m.interview[answers.interview].overviewText)}
+          {formatMessage(
+            m.interview[
+              parentKey === Roles.ParentA
+                ? answers.interviewParentA
+                : answers.interviewParentB
+            ].overviewText,
+          )}
         </Text>
       </Box>
       <Box marginTop={5} marginBottom={3}>

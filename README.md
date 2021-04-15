@@ -28,8 +28,14 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed (for fetching secrets).
 - Run `yarn` to install the dependencies.
+
+### For fetching secrets
+
+- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed.
+  - `brew install awscli`
+- You have [jq](https://stedolan.github.io/jq/) installed.
+  - `brew install jq`
 
 ## Usage
 
@@ -132,6 +138,13 @@ It will use the `aws-cli` to get your AWS credentials or if it cannot find it, w
 {% hint style="warning" %}
 The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
 {% endhint %}
+
+To be able to fetch secrets, make sure you have aws configured:
+
+- Run `aws configure`
+- Region should be set to `eu-west-1`
+- Output should be set to `json`
+- Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
 
 ### Environment variables with static websites
 
