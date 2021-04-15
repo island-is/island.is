@@ -5,7 +5,7 @@ import {
   validate,
 } from 'class-validator'
 import { ValidationRule } from './endorsementValidator.service'
-import { MinAgeByDateInputType } from './validators/minAgeByDate.service'
+import { MinAgeByDateInputType } from './validators/minAgeByDate/minAgeByDateValidator.service'
 
 const validatorInputTypes = {
   [ValidationRule.MIN_AGE_AT_DATE]: MinAgeByDateInputType,

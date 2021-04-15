@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { MinAgeByDateValidatorService } from './validators/minAgeByDate.service'
+import { MinAgeByDateValidatorService } from './validators/minAgeByDate/minAgeByDateValidator.service'
 
 type ValidatorTypesMap = {
   [key in ValidationRule]: ValidatorService

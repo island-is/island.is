@@ -60,9 +60,7 @@ export class EndorsementMetadataService {
     }
   }
 
-  private findProvidersByRequestedMetadataFields(
-    fields: EndorsementMetaField[],
-  ) {
+  findProvidersByRequestedMetadataFields(fields: EndorsementMetaField[]) {
     return fields.reduce((providers, field) => {
       // this is where we assign metadata key that is returned in final results object
       const metadataKey = this.fieldToProviderMap[field].provider.metadataKey
@@ -73,7 +71,7 @@ export class EndorsementMetadataService {
     }, {} as MetadataProviderService)
   }
 
-  private async executeProviders(
+  async executeProviders(
     providers: MetadataProviderService,
     input: MetadataInput,
   ) {
@@ -94,7 +92,7 @@ export class EndorsementMetadataService {
     ) as MetadataProviderResponse
   }
 
-  private mapProviderDataToFields(
+  mapProviderDataToFields(
     fields: EndorsementMetaField[],
     providerData: MetadataProviderResponse,
   ): EndorsementMetaData {

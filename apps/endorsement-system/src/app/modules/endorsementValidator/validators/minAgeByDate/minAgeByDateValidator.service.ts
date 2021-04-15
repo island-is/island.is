@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Transform } from 'class-transformer'
 import { IsDateString, IsNumber } from 'class-validator'
-import { ValidatorService } from '../endorsementValidator.service'
+import { ValidatorService } from '../../endorsementValidator.service'
 import { info } from 'kennitala'
 
 export class MinAgeByDateInputType {
@@ -12,7 +11,7 @@ export class MinAgeByDateInputType {
   date!: string
 }
 
-interface MinAgeByDateInput {
+export interface MinAgeByDateInput {
   value: MinAgeByDateInputType
   meta: {
     nationalId: string
