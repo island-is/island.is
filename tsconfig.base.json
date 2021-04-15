@@ -77,6 +77,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-names-registry": [
+        "libs/api/domains/icelandic-names-registry/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -194,6 +197,9 @@
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
+      "@island.is/icelandic-names-registry-types": [
+        "libs/icelandic-names-registry/types/src/index.ts"
+      ],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],

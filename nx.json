@@ -100,6 +100,9 @@
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -291,6 +294,12 @@
       "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
+      "tags": []
+    },
+    "icelandic-names-registry-backend": {
+      "tags": []
+    },
+    "icelandic-names-registry-types": {
       "tags": []
     },
     "infra-express-server": {

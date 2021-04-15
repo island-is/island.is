@@ -533,12 +533,6 @@ export const JudgeOverview: React.FC = () => {
                       })`}
                     </Text>
                   </Box>
-                  {/* <AccordionCard
-                    id="files-card"
-                    label={`Rannsóknargögn (${
-                      workingCase.files ? workingCase.files.length : 0
-                    })`}
-                  > */}
                   {workingCase.files && workingCase.files.length > 0 ? (
                     <CaseFileList
                       caseId={workingCase.id}
@@ -553,7 +547,6 @@ export const JudgeOverview: React.FC = () => {
                       Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.
                     </Text>
                   )}
-                  {/* </AccordionCard> */}
                 </div>
               )}
               <PdfButton
