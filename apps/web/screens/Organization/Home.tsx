@@ -93,7 +93,12 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         items: navList,
       }}
       mainContent={organizationPage.slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationSlug={organizationPage.slug}
+        />
       ))}
       sidebarContent={organizationPage.sidebarCards.map((card) => (
         <SidebarCard key={card.id} sidebarCard={card} />

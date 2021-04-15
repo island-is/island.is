@@ -33,11 +33,13 @@ const AccordionSlice = dynamic(() =>
 
 interface OrganizationSliceProps {
   slice: Slice
+  organizationSlug: string
   namespace?: Namespace
 }
 
 export const OrganizationSlice: FC<OrganizationSliceProps> = ({
   slice,
+  organizationSlug,
   namespace,
 }) => {
   switch (slice.__typename) {
@@ -46,7 +48,13 @@ export const OrganizationSlice: FC<OrganizationSliceProps> = ({
     case 'Districts':
       return <DistrictsSlice slice={slice} />
     case 'FeaturedArticles':
-      return <FeaturedArticlesSlice slice={slice} namespace={namespace} />
+      return (
+        <FeaturedArticlesSlice
+          slice={slice}
+          namespace={namespace}
+          organizationSlug={organizationSlug}
+        />
+      )
     case 'TwoColumnText':
       return <TwoColumnTextSlice slice={slice} />
     case 'Offices':

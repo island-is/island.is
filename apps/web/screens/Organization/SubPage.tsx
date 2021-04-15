@@ -152,6 +152,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.slices,
         subpage.sliceCustomRenderer,
         subpage.sliceExtraText,
+        organizationPage.slug,
         namespace,
       )}
     </OrganizationWrapper>
@@ -162,6 +163,7 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
+  organizationSlug: string,
   namespace: Namespace,
 ) => {
   switch (renderType) {
@@ -169,7 +171,12 @@ const renderSlices = (
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationSlug={organizationSlug}
+        />
       ))
   }
 }
