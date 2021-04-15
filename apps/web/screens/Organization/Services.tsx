@@ -124,6 +124,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
+      stickySidebar={false}
       sidebarContent={
         <Box marginTop={[3, 3, 8]}>
           <Filter
