@@ -4,9 +4,9 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { IDS } from '../../forms/LetterApplicationForm'
-import { PartyLetter, File } from '../../lib/dataSchema'
+import { PartyLetter } from '../../lib/dataSchema'
 
-const Review: FC<FieldBaseProps> = ({ application }) => {
+const PartyLetterApplicationReview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as PartyLetter
 
@@ -14,9 +14,9 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
     ssd: formatMessage(m.overview.responsibleParty),
     'party.letter': formatMessage(m.overview.partyLetter),
     'party.name': formatMessage(m.overview.partyName),
-    endorsements: formatMessage(m.overview.endorsementsCount),
-    warnings: formatMessage(m.overview.warningCount),
-    documents: formatMessage(m.overview.includedPapers),
+    signatures: '',
+    warnings: '',
+    documents: '',
   }
 
   const reviewItem = (label: string, answer: string) => {
@@ -26,10 +26,6 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
         <Text>{answer}</Text>
       </Box>
     ) : null
-  }
-
-  const documentNames = (documents: File[]) => {
-    return documents.map((x) => x.name).join(', ')
   }
 
   return (
@@ -45,16 +41,8 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
         labelMapper[IDS.PartyLetter],
         getValueViaPath(answers, IDS.PartyLetter) as string,
       )}
-      {reviewItem(labelMapper[IDS.Endorsements], '305')}
-      {reviewItem(labelMapper[IDS.Warnings], '18')}
-      {answers.documents
-        ? reviewItem(
-            labelMapper[IDS.Documents],
-            documentNames(getValueViaPath(answers, IDS.Documents) as File[]),
-          )
-        : null}
     </Box>
   )
 }
 
-export default Review
+export default PartyLetterApplicationReview

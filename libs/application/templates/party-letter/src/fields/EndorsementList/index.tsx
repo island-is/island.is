@@ -2,11 +2,11 @@ import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import RecommendationTable from './RecommendationTable'
+import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const SIGNATURES = [
+const ENDORSEMENTS = [
   {
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
@@ -47,26 +47,33 @@ const SIGNATURES = [
   },
 ]
 
-const Recommendations: FC<FieldBaseProps> = ({ application }) => {
+const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [signatures, setSignatures] = useState(SIGNATURES)
+  const [endorsements, setEndorsements] = useState(ENDORSEMENTS)
   const [showWarning, setShowWarning] = useState(false)
 
   const namesCountString = formatMessage(
-    SIGNATURES.length > 1
-      ? m.recommendations.namesCount
-      : m.recommendations.nameCount,
+    ENDORSEMENTS.length > 1
+      ? m.endorsementList.namesCount
+      : m.endorsementList.nameCount,
   )
 
   return (
     <Box marginBottom={8}>
+      <Text marginBottom={3}>
+        {formatMessage(m.endorsementList.linkDescription)}
+      </Text>
       <CopyLink
-        linkUrl="www.island.is/listabókstafur/128877634/"
-        buttonTitle={formatMessage(m.recommendations.copyLinkButton)}
+        linkUrl={window.location.origin + location.pathname}
+        buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text variant="h3">{`${SIGNATURES.length} ${namesCountString}`}</Text>
+      <Text
+        variant="h3"
+        marginBottom={2}
+        marginTop={5}
+      >{`${ENDORSEMENTS.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
           display="flex"
@@ -75,35 +82,35 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
           marginBottom={3}
         >
           <Checkbox
-            label={formatMessage(m.recommendations.invalidSignatures)}
+            label={formatMessage(m.endorsementList.invalidEndorsements)}
             checked={showWarning}
             onChange={() => {
               setShowWarning(!showWarning)
               setSearchTerm('')
               showWarning
-                ? setSignatures(SIGNATURES)
-                : setSignatures(signatures.filter((x) => x.hasWarning))
+                ? setEndorsements(ENDORSEMENTS)
+                : setEndorsements(endorsements.filter((x) => x.hasWarning))
             }}
           />
           <Input
             name="searchbar"
-            placeholder={formatMessage(m.recommendations.searchbar)}
+            placeholder={formatMessage(m.endorsementList.searchbar)}
             icon="search"
             backgroundColor="blue"
             size="sm"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value)
-              setSignatures(
-                SIGNATURES.filter((x) => x.name.startsWith(e.target.value)),
+              setEndorsements(
+                ENDORSEMENTS.filter((x) => x.name.startsWith(e.target.value)),
               )
             }}
           />
         </Box>
-        {signatures && signatures.length > 0 && (
-          <RecommendationTable
+        {endorsements && endorsements.length > 0 && (
+          <EndorsementTable
             application={application}
-            signatures={signatures}
+            endorsements={endorsements}
           />
         )}
       </Box>
@@ -111,4 +118,4 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default Recommendations
+export default EndorsementList
