@@ -78,7 +78,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.totalItems ?? 0
+  const totalItems = props.regulations?.data?.length ?? 0
   const stepSize = 9
   const [showCount, setShowCount] = useState(totalItems > 18 ? stepSize : 18)
 
