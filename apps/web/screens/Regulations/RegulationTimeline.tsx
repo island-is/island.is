@@ -46,7 +46,7 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
   return (
     <RegulationsSidebarBox
       title={interpolate(txt('historyTitle'), {
-        name,
+        name: regulation.name,
       })}
       colorScheme="blueberry"
     >
