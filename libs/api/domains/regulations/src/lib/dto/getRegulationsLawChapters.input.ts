@@ -4,7 +4,7 @@ import { IsOptional } from 'class-validator'
 
 @InputType()
 export class GetRegulationsLawChaptersInput {
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
   tree?: boolean
 }
