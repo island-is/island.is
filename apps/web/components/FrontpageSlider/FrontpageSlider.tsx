@@ -31,6 +31,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
+import axios from 'axios'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
@@ -113,13 +114,27 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
     }
   }
 
+
   useEffect(() => {
-    if (!animationData.length) {
-      const data = slides.map((x) =>
-        x.animationJson ? JSON.parse(x.animationJson) : null,
-      )
-      setAnimationData(data)
-    }
+      const requests = slides.reduce((all, slide) => {
+        if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
+          all.push(axios.get(slide.animationJsonAsset.url))
+        }
+
+        return all
+        }, [])
+      
+
+      if (!animationData.length) {
+        Promise.all(requests).then(res => {
+          const data = res.map((r) => {
+            console.log(r.data)
+            return r.data
+          })
+          console.log({data})
+          setAnimationData(data)
+        })
+      }
   }, [slides, animationData])
 
   const onResize = useCallback(() => {
@@ -337,10 +352,11 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             height="full"
             justifyContent="center"
           >
-            <LottieLoader
+            {animationData.length > 0 && <LottieLoader
               animationData={animationData}
               selectedIndex={selectedIndex}
             />
+            }
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />

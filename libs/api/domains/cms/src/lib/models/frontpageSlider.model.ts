@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Html, mapHtml } from './html.model'
 import { IFrontpageSlider } from '../generated/contentfulTypes'
+import { Asset } from './asset.model'
 
 @ObjectType()
 export class FrontpageSlider {
@@ -21,12 +22,18 @@ export class FrontpageSlider {
 
   @Field({ nullable: true })
   animationJson?: string
+
+  @Field({ nullable: true})
+  animationJsonAsset: Asset | null
+
 }
 
 export const mapFrontpageSlider = ({
   sys,
   fields,
-}: IFrontpageSlider): FrontpageSlider => ({
+}: IFrontpageSlider): FrontpageSlider => {
+  console.log("ANIMATIONJSONASSET", JSON.stringify(fields.animationJsonAsset))
+  return {
   title: fields.title ?? '',
   subtitle: fields.subtitle ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
@@ -35,4 +42,9 @@ export const mapFrontpageSlider = ({
   animationJson: fields.animationJson
     ? JSON.stringify(fields.animationJson)
     : '',
-})
+  animationJsonAsset: {
+    id: fields.animationJsonAsset?.sys.id ?? '',
+    typename: 'AnimationJson',
+    url: fields.animationJsonAsset?.fields?.file.url ?? ''
+  }
+}}
