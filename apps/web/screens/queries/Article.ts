@@ -86,6 +86,16 @@ export const GET_ARTICLE_QUERY = gql`
         width
         height
       }
+      wizard {
+        configuration
+        answers {
+          name
+          slug
+          content {
+            ...HtmlFields
+          }
+        }
+      }
     }
   }
   ${slices}

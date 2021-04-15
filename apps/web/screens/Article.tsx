@@ -27,6 +27,7 @@ import {
   InstitutionPanel,
   InstitutionsPanel,
   Sticky,
+  Wizard,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -501,13 +502,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
+          {!!article.wizard && <Wizard wizard={article.wizard} />}
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {!!processEntry && <ProcessEntry {...processEntry} />}J
           </Box>
           {article.organization.length > 0 && (
             <Box
