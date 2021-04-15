@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import anime, { AnimeInstance } from 'animejs'
+import { motion, useAnimation } from 'framer-motion'
 
 interface LoadingIconProps {
   animate?: boolean
@@ -12,6 +13,77 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
   ({ animate = true, color, size }, ref) => {
     const animationRef = useRef<AnimeInstance | null>(null)
     const lineRef = useRef<SVGLineElement | null>(null)
+    const controls = useAnimation()
+    useEffect(() => {
+      seq()
+    }, [])
+    const seq = async () => {
+      await controls.start({
+        x1: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x2: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x1: 88,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x2: 88,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y1: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y2: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y1: 88,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y2: 88,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x1: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x2: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x1: 12,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        x2: 12,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y1: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y2: 50,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y1: 12,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      await controls.start({
+        y2: 12,
+        transition: { duration: 0.15, ease: 'easeInOutSine' },
+      })
+      seq()
+    }
 
     const usedColor = color
       ? theme.color[color]
@@ -20,39 +92,6 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
     const props = {
       ...(size && { width: size, height: size }),
     }
-
-    useEffect(() => {
-      if (lineRef.current) {
-        animationRef.current = anime({
-          targets: lineRef.current,
-          keyframes: [
-            // right
-            { x1: 12, x2: 50, y1: 12, y2: 12 },
-            { x1: 50, x2: 50, y1: 12, y2: 12 },
-            { x1: 50, x2: 88, y1: 12, y2: 12 },
-            { x1: 88, x2: 88, y1: 12, y2: 12 },
-            // down
-            { x1: 88, x2: 88, y1: 50, y2: 12 },
-            { x1: 88, x2: 88, y1: 50, y2: 50 },
-            { x1: 88, x2: 88, y1: 88, y2: 50 },
-            { x1: 88, x2: 88, y1: 88, y2: 88 },
-            // left
-            { x1: 88, x2: 50, y1: 88, y2: 88 },
-            { x1: 50, x2: 50, y1: 88, y2: 88 },
-            { x1: 50, x2: 12, y1: 88, y2: 88 },
-            { x1: 12, x2: 12, y1: 88, y2: 88 },
-            // up
-            { x1: 12, x2: 12, y1: 88, y2: 50 },
-            { x1: 12, x2: 12, y1: 50, y2: 50 },
-            { x1: 12, x2: 12, y1: 50, y2: 12 },
-            { x1: 12, x2: 12, y1: 12, y2: 12 },
-          ],
-          duration: 2000,
-          loop: true,
-          easing: 'easeInOutSine',
-        })
-      }
-    }, [lineRef])
 
     return (
       <svg ref={ref} viewBox="0 0 100 100" {...props}>
@@ -82,8 +121,9 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
         <circle cx="50" cy="88" r="12" fill={usedColor} />
         <circle cx="88" cy="88" r="12" fill={usedColor} />
         {!!animate && (
-          <line
-            ref={lineRef}
+          <motion.line
+            cx={500}
+            animate={controls}
             x1="12"
             x2="12"
             y1="12"
