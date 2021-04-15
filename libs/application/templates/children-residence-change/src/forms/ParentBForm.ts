@@ -57,17 +57,6 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'interviewParentB',
-      title: m.interview.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: InterviewFieldIds.parentB,
-          title: m.interview.general.pageTitle,
-          component: 'Interview',
-        }),
-      ],
-    }),
-    buildSection({
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [

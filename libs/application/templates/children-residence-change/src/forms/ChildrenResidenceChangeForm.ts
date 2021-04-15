@@ -262,17 +262,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'interview',
-      title: m.interview.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: InterviewFieldIds.parentA,
-          title: m.interview.general.pageTitle,
-          component: 'Interview',
-        }),
-      ],
-    }),
-    buildSection({
       id: 'overview',
       title: m.section.overview,
       children: [
