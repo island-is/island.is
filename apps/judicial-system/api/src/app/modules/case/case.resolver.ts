@@ -19,7 +19,7 @@ import {
 
 import { BackendAPI } from '../../../services'
 import { AuditService } from '../audit'
-import { File } from '../file'
+import { CaseFile } from '../file'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
@@ -222,11 +222,11 @@ export class CaseResolver {
     return backendApi.getCaseNotifications(id)
   }
 
-  @ResolveField(() => [File])
+  @ResolveField(() => [CaseFile])
   async files(
     @Parent() existingCase: Case,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<File[]> {
+  ): Promise<CaseFile[]> {
     const { id } = existingCase
 
     return backendApi.getCaseFiles(id)
