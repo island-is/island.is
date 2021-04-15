@@ -271,7 +271,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                   {format(auctionDate, 'd. MMMM yyyy')} | {auction.title}
                 </Text>
                 <Text paddingTop={1}>
-                  {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
+                  {n('updatedAt', 'Uppfært')}{' '}
+                  {format(updatedAt, 'd. MMMM HH:mm')}
                 </Text>
               </Box>
               <Box
