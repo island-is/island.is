@@ -9,6 +9,6 @@ export enum API_MODULE_ACTIONS {
 
 export enum StartDateOptions {
   ESTIMATED_DATE_OF_BIRTH = 'estimatedDateOfBirth',
-  DATE_OF_BIRTH = 'dateOfBirth', // The actual date of birth
+  ACTUAL_DATE_OF_BIRTH = 'actualDateOfBirth',
   SPECIFIC_DATE = 'specificDate',
 }

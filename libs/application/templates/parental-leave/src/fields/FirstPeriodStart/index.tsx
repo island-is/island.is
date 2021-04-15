@@ -13,7 +13,7 @@ import { StartDateOptions } from '../../constants'
 
 type ValidAnswers =
   | StartDateOptions.ESTIMATED_DATE_OF_BIRTH
-  | StartDateOptions.DATE_OF_BIRTH
+  | StartDateOptions.ACTUAL_DATE_OF_BIRTH
   | StartDateOptions.SPECIFIC_DATE
   | undefined
 
@@ -65,7 +65,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
-              value: StartDateOptions.DATE_OF_BIRTH,
+              value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
             },
             {
               label: formatMessage(
@@ -85,7 +85,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           type="hidden"
           value={
             statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-            statefulAnswer === StartDateOptions.DATE_OF_BIRTH
+            statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
               ? expectedDateOfBirth
               : currentStartDateAnswer
           }
