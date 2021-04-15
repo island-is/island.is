@@ -11,7 +11,6 @@ import {
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
-import { InterviewFieldIds } from '../types'
 
 export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',

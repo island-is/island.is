@@ -1,6 +1,5 @@
 import { error } from './messages/index'
 import * as z from 'zod'
-import { InterviewFieldIds } from '../types'
 
 const parentContactInfo = z.object({
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
