@@ -56,6 +56,7 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
           item.date <= today &&
           item.effect === 'amend' &&
           (i === arr.length - 1 || arr[i + 1].date > today)
+
         const label = interpolate(
           i === 0 // item.effect === 'root'
             ? txt('historyStart')
@@ -80,12 +81,18 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
           <Fragment key={'history-' + i}>
             {futureSplitter}
             <Link
-              href={linkToRegulation(
-                regulation.name,
+              href={
                 item.effect === 'root'
-                  ? { original: true }
-                  : { d: item.date, diff: true },
-              )}
+                  ? linkToRegulation(regulation.name, {
+                      original: true,
+                    })
+                  : item.effect === 'repeal'
+                  ? linkToRegulation(item.name)
+                  : linkToRegulation(regulation.name, {
+                      d: item.date,
+                      diff: true,
+                    })
+              }
             >
               <FocusableBox flexDirection={'column'}>
                 {({
