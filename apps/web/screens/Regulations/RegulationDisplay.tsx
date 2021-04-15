@@ -78,7 +78,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             {name} {regulation.title}
           </Text>
 
-          <HTMLDump className={s.bodyText} content={regulation.text} />
+          <HTMLDump className={s.bodyText} html={regulation.text} />
 
           <Appendixes
             legend={txt('appendixesTitle')}
