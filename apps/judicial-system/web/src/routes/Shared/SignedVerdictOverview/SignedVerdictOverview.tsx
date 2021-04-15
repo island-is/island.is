@@ -31,6 +31,8 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { useRouter } from 'next/router'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface CaseData {
   case?: Case
@@ -42,6 +44,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -163,6 +166,34 @@ export const SignedVerdictOverview: React.FC = () => {
       } sem er lokið.`
     } else {
       return undefined
+    }
+  }
+
+  const handleAccusedAppeal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedAppealDecision: CaseAppealDecision.APPEAL,
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('accusedAppealDecision', CaseAppealDecision.APPEAL),
+      )
+    }
+  }
+
+  const handleProsecutorAppeal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('prosecutorAppealDecision', CaseAppealDecision.APPEAL),
+      )
     }
   }
 
@@ -305,24 +336,26 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {workingCase.isCaseAppealable && (
-              <Box marginBottom={9}>
-                {workingCase.rulingDate && workingCase.accusedGender && (
-                  <AppealSection
-                    rulingDate={workingCase.rulingDate}
-                    accusedGender={workingCase.accusedGender}
-                    accusedCanAppeal={
-                      workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.POSTPONE
-                    }
-                    prosecutorCanAppeal={
-                      workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.POSTPONE
-                    }
-                  />
-                )}
-              </Box>
-            )}
+            {/* {workingCase.isCaseAppealable && ( */}
+            <Box marginBottom={9}>
+              {workingCase.rulingDate && workingCase.accusedGender && (
+                <AppealSection
+                  rulingDate={workingCase.rulingDate}
+                  accusedGender={workingCase.accusedGender}
+                  accusedCanAppeal={
+                    workingCase.accusedAppealDecision ===
+                    CaseAppealDecision.POSTPONE
+                  }
+                  prosecutorCanAppeal={
+                    workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.POSTPONE
+                  }
+                  handleAccusedAppeal={handleAccusedAppeal}
+                  handleProsecutorAppeal={handleProsecutorAppeal}
+                />
+              )}
+            </Box>
+            {/* )} */}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
