@@ -57,6 +57,10 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]/thjonusta',
     en: '/en/organizations/[slug]/services',
   },
+  auctions: {
+    is: '/stofnanir/syslumenn/uppbod',
+    en: '',
+  },
   organizationsubpage: {
     is: '/stofnanir/[slug]/[subSlug]',
     en: '/en/organizations/[slug]/[subSlug]',
@@ -84,10 +88,6 @@ export const routesTemplate = {
   organizationnewsoverview: {
     is: '/stofnanir/[organization]/frett',
     en: '/en/organizations/[organization]/news',
-  },
-  auctions: {
-    is: '/stofnanir/syslumenn/uppbod',
-    en: '',
   },
   auction: {
     is: '/stofnanir/syslumenn/uppbod/[id]',
