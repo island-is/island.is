@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
+import { ContentfulRepository } from '@island.is/api/domains/cms'
 import { Locale } from '@island.is/shared/types'
 import { ApolloError } from 'apollo-server-express'
-import isEmpty from 'lodash/isEmpty'
-import mergeWith from 'lodash/mergeWith'
+import memoize from 'memoizee'
+import { EntryCollection } from 'contentful'
 
-export interface TranslationsDict {
-  [key: string]: string
-}
+export type TranslationsDict = Record<string, string>
 
 interface NamespaceFields {
   namespace?: string | undefined
@@ -17,11 +15,14 @@ interface NamespaceFields {
   fallback?: Record<string, any> | undefined
 }
 
+const MAX_AGE = 1000 * 60 * 15 // 15 minutes
+const DEFAULT_LOCALE = 'is-IS'
+
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
 // this can be replaced by fetching Contentful locales if fallback is set in the future, same format.
 const locales = [
-  { code: 'is-IS', fallbackCode: null },
-  { code: 'en', fallbackCode: 'is-IS' },
+  { code: DEFAULT_LOCALE, locale: 'is', fallbackCode: null },
+  { code: 'en', locale: 'en', fallbackCode: DEFAULT_LOCALE },
 ]
 
 const errorHandler = (name: string) => {
@@ -33,75 +34,67 @@ const errorHandler = (name: string) => {
 
 @Injectable()
 export class TranslationsService {
-  loadedNamespaces = new Map<
-    string,
-    { id: Locale; messages: TranslationsDict }[]
-  >()
-  fetching: Record<string, boolean> = {}
-
   constructor(private contentfulRepository: ContentfulRepository) {}
 
-  getTranslations = async (
-    namespaces?: string[],
-    lang?: Locale,
-  ): Promise<TranslationsDict> => {
-    const locale = locales.find((l) => l.code === localeMap[lang ?? 'is']) as {
-      code: string
-      fallbackCode: string | null
-    }
+  getOrRequest = memoize(
+    async (namespace: string) =>
+      await this.contentfulRepository
+        .getLocalizedEntries<NamespaceFields>('*', {
+          ['content_type']: 'namespace',
+          select: 'fields.strings',
+          'fields.namespace[in]': namespace,
+        })
+        .catch(errorHandler('getNamespace')),
+    { maxAge: MAX_AGE, preFetch: true },
+  )
 
-    if (!namespaces || !lang) {
-      throw new Error('No namespaces or lang defined.')
-    }
+  getMessages = async (entries: EntryCollection<NamespaceFields>[]) => {
+    let messages: Record<string, TranslationsDict> = {}
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<NamespaceFields>('*', {
-        ['content_type']: 'namespace',
-        select: 'fields.strings',
-        'fields.namespace[in]': namespaces.join(','),
-      })
-      .catch(errorHandler('getNamespace'))
+    for (const namespace of entries) {
+      for (const item of namespace.items) {
+        const strings = item.fields.strings
 
-    return result.items.reduce((acc: TranslationsDict, cur) => {
-      const strings = cur.fields.strings
+        if (!strings) {
+          continue
+        }
 
-      return {
-        ...acc,
-        ...mergeWith(
-          {},
-          locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
-          strings?.[locale.code],
-          (o, s) => (isEmpty(s) ? o : s),
-        ),
+        for (const contentfulLocale of Object.keys(strings)) {
+          const locale = locales.find((item) => item.code === contentfulLocale)!
+            .locale as Locale
+
+          for (const key of Object.keys(strings[contentfulLocale])) {
+            const message =
+              contentfulLocale === DEFAULT_LOCALE
+                ? strings?.[contentfulLocale]?.[key]
+                : strings?.[contentfulLocale]?.[key] !== ''
+                ? strings?.[contentfulLocale]?.[key]
+                : strings?.[DEFAULT_LOCALE]?.[key]
+
+            messages = {
+              ...messages,
+              [locale]: {
+                ...messages[locale],
+                [key]: message,
+              },
+            }
+          }
+        }
       }
-    }, {})
+    }
+
+    return messages
   }
 
-  fetchNamespaces = async (namespaces: string[]) => {
-    await Promise.all(
-      namespaces.map(async (namespace) => {
-        if (this.fetching?.[namespace]) {
-          return
-        }
-
-        this.fetching[namespace] = true
-
-        if (this.loadedNamespaces.has(namespace)) {
-          logger.info(`${namespace} already exists.`)
-
-          return
-        }
-
-        const isMessages = await this.getTranslations([namespace], 'is')
-        const enMessages = await this.getTranslations([namespace], 'en')
-
-        this.loadedNamespaces.set(namespace, [
-          { id: 'is', messages: isMessages },
-          { id: 'en', messages: enMessages },
-        ])
-
-        this.fetching[namespace] = false
-      }),
+  getTranslations = async (
+    namespaces: string[],
+    lang: Locale,
+  ): Promise<TranslationsDict> => {
+    const results = await Promise.all(
+      namespaces.map(async (namespace) => await this.getOrRequest(namespace)),
     )
+    const messages = await this.getMessages(results)
+
+    return messages[lang]
   }
 }

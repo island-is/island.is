@@ -13,25 +13,22 @@ import {
   ApplicationTemplateHelper,
   ApplicationTypes,
 } from '@island.is/application/core'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
-  IntlService,
-  TranslationsService,
-} from '@island.is/api/domains/translations'
-import { getCurrentLocale } from '@island.is/auth-nest-tools'
+  getApplicationTemplateByTypeId,
+  getApplicationTranslationNamespaces,
+} from '@island.is/application/template-loader'
+import { IntlService } from '@island.is/api/domains/translations'
 import { Locale } from '@island.is/shared/types'
 
 import { Application } from '../application.model'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getNationalIdFromToken } from '../utils/tokenUtils'
+import { getCurrentLocale } from '../utils/currentLocale'
 
 @Injectable()
 export class ApplicationSerializer
   implements NestInterceptor<Application, Promise<unknown>> {
-  constructor(
-    private translationsService: TranslationsService,
-    private intlService: IntlService,
-  ) {}
+  constructor(private intlService: IntlService) {}
 
   intercept(
     context: ExecutionContext,
@@ -67,26 +64,19 @@ export class ApplicationSerializer
     )
     const helper = new ApplicationTemplateHelper(application, template)
     const stateInfo = helper.getApplicationStateInfo()
-
-    // We load the core namespace for the application system + the ones defined in the application template
-    const namespaces = ['application.system', ...(template?.translations ?? [])]
-
-    await this.translationsService.fetchNamespaces(namespaces)
-
-    this.intlService.setConfig({ namespaces, locale })
+    const namespaces = await getApplicationTranslationNamespaces(application)
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
       ),
-      stateTitle: stateInfo.title
-        ? this.intlService.formatMessage(stateInfo.title)
-        : null,
+      stateTitle: stateInfo.title ? intl.formatMessage(stateInfo.title) : null,
       stateDescription: stateInfo.description
-        ? this.intlService.formatMessage(stateInfo.description)
+        ? intl.formatMessage(stateInfo.description)
         : null,
-      name: this.intlService.formatMessage(template.name),
+      name: intl.formatMessage(template.name),
       progress: helper.getApplicationProgress(),
     })
 

@@ -6,6 +6,7 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
+import { ContentfulRepository } from '@island.is/api/domains/cms'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
@@ -28,6 +29,27 @@ class MockEmailService {
   }
 }
 
+class MockContentfulRepository {
+  async getLocalizedEntries() {
+    return {
+      items: [
+        {
+          fields: [
+            {
+              fields: {
+                strings: {
+                  en: {},
+                  'is-IS': {},
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }
+  }
+}
+
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
@@ -35,6 +57,8 @@ beforeAll(async () => {
   app = await setup({
     override: (builder) => {
       builder
+        .overrideProvider(ContentfulRepository)
+        .useClass(MockContentfulRepository)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsAuthGuard)

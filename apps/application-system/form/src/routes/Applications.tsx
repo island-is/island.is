@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
@@ -32,6 +32,7 @@ export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { lang: locale, formatMessage } = useLocale()
+  const currentLocale = useRef(locale)
   const type = getTypeFromSlug(slug)
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
@@ -40,13 +41,9 @@ export const Applications: FC = () => {
   const { data, loading, error: applicationsError, refetch } = useQuery(
     APPLICATION_APPLICATIONS,
     {
-      context: {
-        headers: {
-          locale,
-        },
-      },
       variables: {
         input: { typeId: type },
+        locale,
       },
       skip: !type,
     },
@@ -78,7 +75,8 @@ export const Applications: FC = () => {
   }, [type, data])
 
   useEffect(() => {
-    if (type) {
+    if (type && locale !== currentLocale.current) {
+      currentLocale.current = locale
       refetch?.()
     }
   }, [locale])
@@ -123,8 +121,10 @@ export const Applications: FC = () => {
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
                 (application: Application, index: number) => {
-                  const isOpen = application.progress === 0
-                  const isComplete = application.progress === 1
+                  const isCompleted =
+                    application.status === ApplicationStatus.COMPLETED
+                  const isRejected =
+                    application.status === ApplicationStatus.REJECTED
 
                   return (
                     <ActionCard
@@ -134,12 +134,16 @@ export const Applications: FC = () => {
                         formattedDate,
                       )}
                       tag={{
-                        label: isComplete
+                        label: isRejected
+                          ? formatMessage(coreMessages.tagsRejected)
+                          : isCompleted
                           ? formatMessage(coreMessages.tagsDone)
-                          : isOpen
-                          ? formatMessage(coreMessages.tagsOpen)
                           : formatMessage(coreMessages.tagsInProgress),
-                        variant: isComplete ? 'mint' : 'blue',
+                        variant: isRejected
+                          ? 'red'
+                          : isCompleted
+                          ? 'mint'
+                          : 'blue',
                         outlined: false,
                       }}
                       heading={application.name || application.typeId}
@@ -155,7 +159,11 @@ export const Applications: FC = () => {
                       progressMeter={{
                         active: true,
                         progress: application.progress,
-                        variant: isComplete ? 'mint' : 'blue',
+                        variant: isRejected
+                          ? 'red'
+                          : isCompleted
+                          ? 'mint'
+                          : 'blue',
                       }}
                     />
                   )

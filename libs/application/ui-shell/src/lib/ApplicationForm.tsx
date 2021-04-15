@@ -31,11 +31,13 @@ const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
+  const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
       input: {
         id: applicationId,
       },
+      locale,
     },
     // Setting this so that refetch causes a re-render
     // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392

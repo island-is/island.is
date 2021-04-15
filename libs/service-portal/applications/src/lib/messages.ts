@@ -17,20 +17,20 @@ export const m = defineMessages({
     defaultMessage: 'Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis',
     description: 'General error message',
   },
-  cardStatusDone: {
-    id: 'sp.applications:card.status.done',
-    defaultMessage: 'Lokið',
-    description: 'Done status for an application card',
-  },
-  cardStatusOpen: {
-    id: 'sp.applications:card.status.open',
-    defaultMessage: 'Opin',
-    description: 'Open status for an application card',
-  },
   cardStatusInProgress: {
     id: 'sp.applications:card.status.inProgress',
     defaultMessage: 'Í ferli',
-    description: 'In progress status for an application card',
+    description: 'In progress status for an application',
+  },
+  cardStatusDone: {
+    id: 'sp.applications:card.status.done',
+    defaultMessage: 'Lokið',
+    description: 'Done status for an application',
+  },
+  cardStatusRejected: {
+    id: 'sp.applications:card.status.rejected',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected status for an application',
   },
   cardButtonInProgress: {
     id: 'sp.applications:card.button.inProgress',

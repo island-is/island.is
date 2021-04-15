@@ -1,20 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 
 import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
 export const useApplications = (locale?: Locale) => {
+  const currentLocale = useRef(locale)
   const { data, loading, error, refetch } = useQuery(APPLICATION_APPLICATIONS, {
-    context: {
-      headers: {
-        locale,
-      },
+    variables: {
+      locale,
     },
   })
 
   useEffect(() => {
-    refetch()
+    if (locale !== currentLocale.current) {
+      currentLocale.current = locale
+      refetch()
+    }
   }, [locale])
 
   return {

@@ -89,7 +89,7 @@ const Screen: FC<ScreenProps> = ({
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
-  const { lang, formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -105,11 +105,6 @@ const Screen: FC<ScreenProps> = ({
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION,
     {
-      context: {
-        headers: {
-          locale: lang,
-        },
-      },
       onError: (e) => {
         // We only show the error message if it doesn't contains a json data object
         if (!isJSONObject(e.message)) {
@@ -201,6 +196,7 @@ const Screen: FC<ScreenProps> = ({
               screen,
             ),
           },
+          locale,
         },
       })
     }
@@ -263,6 +259,7 @@ const Screen: FC<ScreenProps> = ({
                         id: applicationId,
                         answers: { [screen.id]: newRepeaterItems },
                       },
+                      locale,
                     },
                   })
                   if (!newData.errors) {

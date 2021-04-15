@@ -71,7 +71,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  translations: [ApplicationConfigurations.ExampleForm.translation],
+  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
     initial: 'draft',

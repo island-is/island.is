@@ -4,7 +4,6 @@ import {
   ScopesGuard,
   CurrentUser,
   User,
-  CurrentLocale,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Locale } from '@island.is/shared/types'
@@ -35,9 +34,9 @@ export class ApplicationResolver {
 
   @Query(() => Application, { nullable: true })
   async applicationApplication(
+    @Args('locale', { type: () => String }) locale: Locale,
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
-    @CurrentLocale() locale: Locale,
   ): Promise<Application> {
     return this.applicationService.findOne(input.id, user.authorization, locale)
   }
@@ -45,7 +44,7 @@ export class ApplicationResolver {
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
     @CurrentUser() user: User,
-    @CurrentLocale() locale: Locale,
+    @Args('locale', { type: () => String }) locale: Locale,
     @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAll(
@@ -66,9 +65,9 @@ export class ApplicationResolver {
 
   @Mutation(() => Application, { nullable: true })
   async updateApplication(
+    @Args('locale', { type: () => String }) locale: Locale,
     @Args('input') input: UpdateApplicationInput,
     @CurrentUser() user: User,
-    @CurrentLocale() locale: Locale,
   ): Promise<Application> {
     return this.applicationService.update(input, user.authorization, locale)
   }

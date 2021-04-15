@@ -37,16 +37,12 @@ import {
   ApplicationStatus,
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
-import { Unwrap } from '@island.is/shared/types'
-import {
-  IdsAuthGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentLocale,
-} from '@island.is/auth-nest-tools'
+import { Unwrap, Locale } from '@island.is/shared/types'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
+  getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
@@ -91,6 +87,7 @@ import {
   StateChangeResult,
   TemplateAPIModuleActionResult,
 } from './types'
+import { CurrentLocale } from './utils/currentLocale'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
@@ -207,7 +204,6 @@ export class ApplicationController {
     nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
-
     const template = await getApplicationTemplateByTypeId(typeId)
 
     if (template === null) {
@@ -343,21 +339,26 @@ export class ApplicationController {
     @Body()
     application: UpdateApplicationDto,
     @NationalId() nationalId: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
     const newAnswers = application.answers as FormValue
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       nationalId,
       true,
-      this.intlService.formatMessage,
+      intl.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       newAnswers,
-      this.intlService.formatMessage,
+      intl.formatMessage,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
@@ -441,9 +442,11 @@ export class ApplicationController {
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @NationalId() nationalId: string,
     @AuthorizationHeader() authorization: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
+
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -452,19 +455,23 @@ export class ApplicationController {
     }
 
     const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       nationalId,
       false,
-      this.intlService.formatMessage,
+      intl.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
-      this.intlService.formatMessage,
+      intl.formatMessage,
     )
 
     const mergedAnswers = mergeAnswers(

@@ -11,7 +11,7 @@ export class ApplicationsProvider extends BasicDataProvider {
 
   provide(): Promise<Applications[]> {
     const query = `query ApplicationApplications {
-      applicationApplications(input: { typeId: ["${ApplicationTypes.HEALTH_INSURANCE}"] }) {
+      applicationApplications(input: { typeId: ["${ApplicationTypes.HEALTH_INSURANCE}"] }, locale: "is") {
         id
         state
         created

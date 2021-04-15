@@ -10,12 +10,12 @@ import {
   HttpException,
   UnauthorizedException,
 } from '@nestjs/common'
-
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { Unwrap } from '@island.is/shared/types'
+import { NestIntl } from '@island.is/api/domains/translations'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import { Unwrap } from '@island.is/shared/types'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&

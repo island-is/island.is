@@ -94,17 +94,17 @@ export const coreMessages = defineMessages({
   tagsInProgress: {
     id: 'application.system:tags.inProgress',
     defaultMessage: 'Í ferli',
-    description: 'In progress status for an application card',
-  },
-  tagsOpen: {
-    id: 'application.system:tags.open',
-    defaultMessage: 'Opin',
-    description: 'Open status for an application card',
+    description: 'In progress status for an application',
   },
   tagsDone: {
     id: 'application.system:tags.completed',
     defaultMessage: 'Lokið',
-    description: 'Done status for an application card',
+    description: 'Done status for an application',
+  },
+  tagsRejected: {
+    id: 'application.system:tags.rejected',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected status for an application',
   },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',

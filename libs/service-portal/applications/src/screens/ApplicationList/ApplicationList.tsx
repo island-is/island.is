@@ -13,7 +13,11 @@ import {
   ActionCard,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
-import { Application, getSlugFromType } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  getSlugFromType,
+} from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 import { dateFormat } from '@island.is/shared/constants'
@@ -71,8 +75,8 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       <Stack space={2}>
         {applications.map((application: Application, index: number) => {
-          const isOpen = application.progress === 0
-          const isComplete = application.progress === 1
+          const isCompleted = application.status === ApplicationStatus.COMPLETED
+          const isRejected = application.status === ApplicationStatus.REJECTED
           const slug = getSlugFromType(application.typeId)
 
           if (!slug) {
@@ -85,16 +89,16 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               date={format(new Date(application.modified), formattedDate)}
               heading={application.name || application.typeId}
               tag={{
-                label: isComplete
+                label: isRejected
+                  ? formatMessage(m.cardStatusRejected)
+                  : isCompleted
                   ? formatMessage(m.cardStatusDone)
-                  : isOpen
-                  ? formatMessage(m.cardStatusOpen)
                   : formatMessage(m.cardStatusInProgress),
-                variant: isComplete ? 'mint' : 'blue',
+                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
                 outlined: false,
               }}
               cta={{
-                label: isComplete
+                label: isCompleted
                   ? formatMessage(m.cardButtonComplete)
                   : formatMessage(m.cardButtonInProgress),
                 variant: 'ghost',
@@ -106,8 +110,8 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               text={application.stateDescription}
               progressMeter={{
                 active: true,
-                progress: isOpen ? 0.33 : isComplete ? 1 : 0.66,
-                variant: isComplete ? 'mint' : 'blue',
+                progress: application.progress,
+                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
               }}
             />
           )

@@ -1,15 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class GetTranslationsInput {
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String])
   @IsString({ each: true })
-  @IsOptional()
-  namespaces?: Array<string>
+  namespaces!: Array<string>
 
   @Field()
   @IsString()
-  @IsOptional()
-  lang?: string
+  lang!: string
 }
