@@ -10,10 +10,18 @@ import { CaseGender } from '@island.is/judicial-system/types'
 interface Props {
   rulingDate: string
   accusedGender: CaseGender
+  accusedCanAppeal: boolean
+  prosecutorCanAppeal: boolean
 }
 
 const AppealSection: React.FC<Props> = (props) => {
-  const { rulingDate, accusedGender } = props
+  const {
+    rulingDate,
+    accusedGender,
+    accusedCanAppeal,
+    prosecutorCanAppeal,
+  } = props
+
   return (
     <>
       <Box marginBottom={1}>
@@ -24,12 +32,18 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <Button size="small">
-        {`${capitalize(formatAccusedByGender(accusedGender))} kærir úrskurðinn`}
-      </Button>
-      <Box marginTop={3}>
-        <Button size="small">Sækjandi kærir úrskurðinn</Button>
-      </Box>
+      {accusedCanAppeal && (
+        <Button size="small">
+          {`${capitalize(
+            formatAccusedByGender(accusedGender),
+          )} kærir úrskurðinn`}
+        </Button>
+      )}
+      {prosecutorCanAppeal && (
+        <Box marginTop={3}>
+          <Button size="small">Sækjandi kærir úrskurðinn</Button>
+        </Box>
+      )}
     </>
   )
 }

@@ -7,6 +7,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -304,14 +305,24 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            <Box marginBottom={9}>
-              {workingCase.rulingDate && workingCase.accusedGender && (
-                <AppealSection
-                  rulingDate={workingCase.rulingDate}
-                  accusedGender={workingCase.accusedGender}
-                />
-              )}
-            </Box>
+            {workingCase.isCaseAppealable && (
+              <Box marginBottom={9}>
+                {workingCase.rulingDate && workingCase.accusedGender && (
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedCanAppeal={
+                      workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.POSTPONE
+                    }
+                    prosecutorCanAppeal={
+                      workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.POSTPONE
+                    }
+                  />
+                )}
+              </Box>
+            )}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
