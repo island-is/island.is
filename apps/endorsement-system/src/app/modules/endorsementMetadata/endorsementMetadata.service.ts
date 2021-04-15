@@ -40,7 +40,7 @@ export enum EndorsementMetaField {
 
 @Injectable()
 export class EndorsementMetadataService {
-  private fieldToProviderMap: MetadataProviderField
+  fieldToProviderMap: MetadataProviderField
   constructor(
     private readonly nationalRegistryService: NationalRegistryService,
   ) {
