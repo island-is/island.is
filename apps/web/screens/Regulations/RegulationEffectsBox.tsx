@@ -26,7 +26,9 @@ export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
 
   return (
     <RegulationsSidebarBox
-      title={interpolate(txt('effectsTitle'), { name: regulation.name })}
+      title={interpolate(txt('effectsTitle'), {
+        name: prettyName(regulation.name),
+      })}
       colorScheme="blueberry"
     >
       {regulation.effects.map((item, i) => {

@@ -32,7 +32,11 @@ import {
   RegulationsSearchSection,
 } from './RegulationsSearchSection'
 import { shuffle } from 'lodash'
-import { getParams, useRegulationLinkResolver } from './regulationUtils'
+import {
+  getParams,
+  prettyName,
+  useRegulationLinkResolver,
+} from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
   GetRegulationsSearchQuery,
@@ -173,7 +177,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                     >
                       <CategoryCard
                         href={linkToRegulation(reg.name)}
-                        heading={reg.name}
+                        heading={prettyName(reg.name)}
                         text={reg.title}
                         tags={
                           reg.ministry && [
