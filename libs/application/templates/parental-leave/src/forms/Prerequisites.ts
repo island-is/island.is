@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import {
   buildCustomField,
   buildDataProviderItem,
@@ -96,14 +97,24 @@ export const PrerequisitesForm: Form = buildForm({
                   id: 'selectedBaby',
                   title: 'Veldu barn',
                   width: 'full',
-                  options: (application) =>
-                    // @ts-ignore
-                    application.externalData.children.data?.map((child) => ({
+                  options: (application) => {
+                    const children = get(
+                      application.externalData,
+                      'children.data',
+                      [],
+                    ) as {
+                      id: string
+                      dateOfBirth: string
+                      expectedDateOfBirth: string
+                    }[]
+
+                    return children.map((child) => ({
                       value: child.id,
                       label: child.dateOfBirth
                         ? child.dateOfBirth
                         : child.expectedDateOfBirth,
-                    })) ?? [],
+                    }))
+                  },
                   largeButtons: true,
                 }),
                 buildSubmitField({
