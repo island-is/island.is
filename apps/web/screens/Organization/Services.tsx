@@ -108,7 +108,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const matches = services.filter(
     (x) =>
-      x.title.toLowerCase().includes(parameters.query) &&
+      x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
