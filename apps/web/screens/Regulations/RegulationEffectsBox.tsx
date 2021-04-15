@@ -17,10 +17,11 @@ export type RegulationEffectsBoxProps = {
 
 export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
   const { regulation, texts } = props
+  const { name, effects } = regulation
   const txt = useNamespace(texts)
   const { linkToRegulation } = useRegulationLinkResolver()
 
-  if (!regulation.effects.length) {
+  if (!effects.length) {
     return null
   }
 
@@ -29,7 +30,7 @@ export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
       title={interpolate(txt('effectsTitle'), { name })}
       colorScheme="blueberry"
     >
-      {regulation.effects.map((item, i) => {
+      {effects.map((item, i) => {
         const name = prettyName(item.name)
         const label = interpolate(
           item.effect === 'amend' ? txt('effectsChange') : txt('effectsCancel'),
