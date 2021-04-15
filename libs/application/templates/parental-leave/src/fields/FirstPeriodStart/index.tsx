@@ -11,11 +11,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { StartDateOptions } from '../../constants'
 
-type ValidAnswers =
-  | StartDateOptions.ESTIMATED_DATE_OF_BIRTH
-  | StartDateOptions.ACTUAL_DATE_OF_BIRTH
-  | StartDateOptions.SPECIFIC_DATE
-  | undefined
+type ValidAnswers = StartDateOptions | undefined
 
 const FirstPeriodStart: FC<FieldBaseProps> = ({
   error,
