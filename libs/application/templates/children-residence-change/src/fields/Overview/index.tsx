@@ -26,6 +26,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
+import * as style from './Overview.treat'
 
 const Overview = ({
   application,
@@ -149,7 +150,7 @@ const Overview = ({
     application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
-    <>
+    <Box className={style.container}>
       <SignatureModal
         controlCode={controlCode}
         onClose={() =>
@@ -159,12 +160,7 @@ const Overview = ({
         }
         fileSignatureState={fileSignatureState}
       />
-      <AlertMessage
-        type="info"
-        title={formatMessage(m.contract.alert.title)}
-        message={formatMessage(m.contract.alert.message)}
-      />
-      <Box marginTop={5}>
+      <Box>
         <DescriptionText
           text={m.contract.general.description}
           format={{
@@ -175,7 +171,7 @@ const Overview = ({
           }}
         />
       </Box>
-      <Box marginTop={5}>
+      <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.childName, {
             count: children.length,
@@ -185,25 +181,6 @@ const Overview = ({
           <Text key={child.nationalId}>{child.fullName}</Text>
         ))}
       </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.contract.labels.contactInformation)}
-        </Text>
-        <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
-        <Text fontWeight="medium" marginBottom={2}>
-          {answers[parentKey]?.email}
-        </Text>
-        <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[parentKey]?.phoneNumber}</Text>
-      </Box>
-      {answers.residenceChangeReason && (
-        <Box marginTop={4}>
-          <Text variant="h4" marginBottom={1}>
-            {formatMessage(m.reason.input.label)}
-          </Text>
-          <Text>{answers.residenceChangeReason}</Text>
-        </Box>
-      )}
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.currentResidence, {
@@ -224,6 +201,21 @@ const Overview = ({
           {formatAddress(childResidenceInfo.future.address)}
         </Text>
       </Box>
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.contract.labels.contactInformation)}
+        </Text>
+        <Text>{answers[parentKey]?.email}</Text>
+        <Text>{answers[parentKey]?.phoneNumber}</Text>
+      </Box>
+      {answers.residenceChangeReason && (
+        <Box marginTop={4}>
+          <Text variant="h4" marginBottom={1}>
+            {formatMessage(m.reason.input.label)}
+          </Text>
+          <Text>{answers.residenceChangeReason}</Text>
+        </Box>
+      )}
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.duration.general.sectionTitle)}
@@ -248,6 +240,16 @@ const Overview = ({
           )}
         </Text>
       </Box>
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.contract.childBenefit.label)}
+        </Text>
+        <Text>
+          {formatMessage(m.contract.childBenefit.text, {
+            otherParent: childResidenceInfo.future.parentName,
+          })}
+        </Text>
+      </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
           colorScheme="default"
@@ -264,7 +266,7 @@ const Overview = ({
           {formatMessage(m.contract.pdfButton.label)}
         </Button>
       </Box>
-    </>
+    </Box>
   )
 }
 

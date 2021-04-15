@@ -20,6 +20,7 @@ import {
   transferRequestedEmail,
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
+import { SmsService } from '@island.is/nova-sms'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -36,6 +37,7 @@ export class ChildrenResidenceChangeService {
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly smsService: SmsService,
   ) {
     this.s3 = new S3()
   }
@@ -147,10 +149,18 @@ export class ChildrenResidenceChangeService {
     const { answers } = application
     const { counterParty } = answers
 
-    if (counterParty.email) {
+    // TODO Remove null check on counter party once we add it to the template.
+    if (counterParty?.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
         (application as unknown) as Application,
+      )
+    }
+
+    if (counterParty?.phoneNumber) {
+      await this.smsService.sendSms(
+        counterParty.phoneNumber,
+        'Borist hefur umsókn um breytt lögheimili barns.',
       )
     }
   }
