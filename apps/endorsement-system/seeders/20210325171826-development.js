@@ -20,7 +20,10 @@ module.exports = {
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
-            value: '2021-03-15:18',
+            value: {
+              date: '2021-04-15T00:00:00Z',
+              age: 18,
+            },
           },
         ]),
         owner: '1111111111',
@@ -37,7 +40,10 @@ module.exports = {
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
-            value: '2021-03-15:18',
+            value: {
+              date: '2021-04-15T00:00:00Z',
+              age: 18,
+            },
           },
         ]),
         owner: '1111111111',
@@ -54,7 +60,10 @@ module.exports = {
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
-            value: '2021-03-15:18',
+            value: {
+              date: '2021-04-15T00:00:00Z',
+              age: 18,
+            },
           },
         ]),
         owner: '1111111111',
