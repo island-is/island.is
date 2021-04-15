@@ -23,17 +23,14 @@ export class FrontpageSlider {
   @Field({ nullable: true })
   animationJson?: string
 
-  @Field({ nullable: true})
+  @Field({ nullable: true })
   animationJsonAsset: Asset | null
-
 }
 
 export const mapFrontpageSlider = ({
   sys,
   fields,
-}: IFrontpageSlider): FrontpageSlider => {
-  console.log("ANIMATIONJSONASSET", JSON.stringify(fields.animationJsonAsset))
-  return {
+}: IFrontpageSlider): FrontpageSlider => ({
   title: fields.title ?? '',
   subtitle: fields.subtitle ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
@@ -45,6 +42,6 @@ export const mapFrontpageSlider = ({
   animationJsonAsset: {
     id: fields.animationJsonAsset?.sys.id ?? '',
     typename: 'AnimationJson',
-    url: fields.animationJsonAsset?.fields?.file.url ?? ''
-  }
-}}
+    url: fields.animationJsonAsset?.fields?.file.url ?? '',
+  },
+})
