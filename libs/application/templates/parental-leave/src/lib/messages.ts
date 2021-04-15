@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fæðingarorlof',
       description: 'Parental Leave',
     },
+    prerequisitesSection: {
+      id: 'pl.application:prerequisites.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
+    },
     applicationName: {
       id: 'pl.application:application.name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -356,6 +361,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:familyinformation.subtitle',
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
+    },
+    childrenInformationTitle: {
+      id: 'pl.application:childreninformation.title',
+      defaultMessage: 'Börnin þín',
+      description: 'Your children',
+    },
+    childrenInformationSubTitle: {
+      id: 'pl.application:childreninformation.subtitle',
+      defaultMessage:
+        'Upplýsingar um börn sem þú hefur forsjá fyrir eru sóttar til Þjóðskrár. Upplýsingar um áætlaðan fæðingardag barns eru sóttar úr sjúkraskrá.',
+      description:
+        'Information about children in your custody, source Þjóðskrá. Information on expected date of birth, source sjúkraskrá',
     },
     expectedDateOfBirthTitle: {
       id: 'pl.application:expectedDateOfBirth.title',

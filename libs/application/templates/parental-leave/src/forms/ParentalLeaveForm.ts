@@ -48,58 +48,14 @@ export const ParentalLeaveForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'prerequisites',
+      title: parentalLeaveFormMessages.shared.prerequisitesSection,
+      children: [],
+    }),
+    buildSection({
       id: 'theApplicant',
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
-        buildSubSection({
-          id: 'externalData',
-          title: parentalLeaveFormMessages.shared.externalDataSubSection,
-          children: [
-            buildExternalDataProvider({
-              id: 'approveExternalData',
-              title: parentalLeaveFormMessages.shared.introductionProvider,
-              dataProviders: [
-                buildDataProviderItem({
-                  id: 'userProfile',
-                  type: 'UserProfileProvider',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .userProfileInformationTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'family',
-                  type: 'FamilyInformationProvider',
-                  title:
-                    parentalLeaveFormMessages.shared.familyInformationTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared.familyInformationSubTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'pregnancyStatus',
-                  type: 'PregnancyStatus',
-                  title:
-                    parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .expectedDateOfBirthSubtitle,
-                }),
-                buildDataProviderItem({
-                  id: 'parentalLeaves',
-                  type: 'ParentalLeaves',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesSubTitle,
-                }),
-              ],
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'emailAndPhoneNumber',
           title: parentalLeaveFormMessages.applicant.subSection,

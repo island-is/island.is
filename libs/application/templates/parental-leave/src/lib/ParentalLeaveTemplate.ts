@@ -40,6 +40,8 @@ enum Roles {
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
+
   // Draft flow
   DRAFT = 'draft',
 
@@ -75,8 +77,39 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   name: 'Umsókn um fæðingarorlof',
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: States.PREREQUISITES,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          progress: 0.25,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: States.DRAFT,
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
@@ -355,6 +388,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -391,6 +425,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign employer to review period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
           },
@@ -416,6 +451,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Employer is reviewing the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -443,6 +479,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Employer rejected the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -467,6 +504,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'VMLST is reviewing the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -491,6 +529,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'VMLST rejected the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
