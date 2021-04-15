@@ -15,11 +15,7 @@ const ShowEnvironment: React.FC = () => {
 
   return (
     <div className="environment">
-      <div
-        className={`environment__title ${
-          activeEnv === Environment.PROD ? 'danger' : ''
-        }`}
-      >
+      <div className={`environment__title`}>
         {localization.environment[activeEnv].title}
       </div>
       <div className="environment__description">
