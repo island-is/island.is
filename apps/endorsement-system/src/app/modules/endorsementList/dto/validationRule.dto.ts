@@ -1,15 +1,12 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator'
-
-// TODO: Move these to validation module
-export enum ValidationRule {
-  MIN_AGE_AT_DATE = 'minAgeAtDate',
-}
-
+import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsEndorsementValidator } from '../../endorsementValidator/endorsementValidator.decorator'
+import { ValidationRule } from '../../endorsementValidator/endorsementValidator.service'
 export class ValidationRuleDto {
   @IsEnum(ValidationRule)
   type!: ValidationRule
 
   @IsOptional()
-  @IsString()
+  @IsObject()
+  @IsEndorsementValidator()
   value?: string
 }

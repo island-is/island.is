@@ -11,7 +11,7 @@ beforeAll(async () => {
 
 const errorExpectedStructure = {
   error: expect.any(String),
-  message: expect.any(Array),
+  message: expect.anyOf([String, Array]),
   statusCode: expect.any(Number),
 }
 
