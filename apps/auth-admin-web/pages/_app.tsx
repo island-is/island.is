@@ -22,8 +22,8 @@ const endpointDependencies = process.env.NEXTAUTH_URL
   ? [process.env.NEXTAUTH_URL]
   : []
 const {
-  serverRuntimeConfig: { backendUrl },
+  serverRuntimeConfig: { backendUrl, userInfoUrl },
 } = getConfig()
-const externalEndpointDependencies = [backendUrl]
+const externalEndpointDependencies = [backendUrl, userInfoUrl]
 
 export default withHealthchecks(endpointDependencies)(AuthAdminWebApp)

@@ -31,30 +31,11 @@ module.exports = withTreat(
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
       },
-      async headers() {
+      async rewrites() {
         return [
           {
-            source: '/(.*)',
-            headers: createSecureHeaders({
-              contentSecurityPolicy: {
-                directives: {
-                  defaultSrc: "'self'",
-                  objectSrc: "'none'",
-                  frameSrc: "'none'",
-                  baseURI: "'self'",
-                  styleSrc: ["'self' 'unsafe-inline'"],
-                  scriptSrc: ["'self'"],
-                  connectSrc: ["'self'"],
-                },
-              },
-              forceHTTPSRedirect: [
-                true,
-                { maxAge: 60 * 60 * 24 * 4, includeSubDomains: true },
-              ],
-              nosniff: 'nosniff',
-              frameGuard: 'deny',
-              referrerPolicy: 'no-referrer',
-            }),
+            source: '/identity-server/:path*',
+            destination: 'http://identity-server.dev01.devland.is/:path*',
           },
         ]
       },

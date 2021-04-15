@@ -158,7 +158,7 @@ export class BaseService {
     })
   }
 
-  private static getConfig(session: any) {
+  public static getConfig(session: any) {
     return {
       headers: { Authorization: `Bearer ${session.accessToken}` },
     }

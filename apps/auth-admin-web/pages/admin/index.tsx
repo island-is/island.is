@@ -9,6 +9,7 @@ import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
 import LanguageList from './../../components/Admin/lists/LanguageList'
 import TranslationList from './../../components/Admin/lists/TranslationList'
 import LocalizationUtils from '../../utils/localization.utils'
+import { UserInfoService } from './../../services/UserInfoService'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -18,6 +19,8 @@ const Index: React.FC = () => {
   useEffect(() => {
     setActiveTab(+tabQuery)
     document.title = LocalizationUtils.getPageTitle('admin.index')
+    console.log(UserInfoService.getUserInfo())
+    console.log(process.env)
   }, [tabQuery])
 
   const handleTabChange = (tab: AdminTab) => {
