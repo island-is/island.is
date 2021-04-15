@@ -28,7 +28,7 @@ import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/uti
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import AppealSection from './Components/AppealSection'
+import AppealSection from './Components/AppealSection/AppealSection'
 import { useRouter } from 'next/router'
 
 interface CaseData {

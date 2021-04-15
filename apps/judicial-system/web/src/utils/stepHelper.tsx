@@ -22,7 +22,7 @@ import {
 import { validate } from './validate'
 import compareAsc from 'date-fns/compareAsc'
 import parseISO from 'date-fns/parseISO'
-import { addDays } from 'date-fns/esm'
+import addDays from 'date-fns/addDays'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
