@@ -25,6 +25,35 @@ module.exports = withTreat(
         // Requests made by the server are internal request made directly to the api hostname
         backendUrl: NEXT_PUBLIC_BACKEND_URL,
       },
+      async headers() {
+        return [
+          {
+            source: '/(.*)',
+            headers: createSecureHeaders({
+              contentSecurityPolicy: {
+                directives: {
+                  defaultSrc: "'self'",
+                  objectSrc: "'none'",
+                  frameSrc: "'none'",
+                  baseURI: "'self'",
+                  styleSrc: ["'self' 'unsafe-inline'"],
+                  scriptSrc: ["'self'"],
+                  connectSrc: [
+                    "'self' http://identity-server.dev01.devland.is/",
+                  ],
+                },
+              },
+              forceHTTPSRedirect: [
+                true,
+                { maxAge: 60 * 60 * 24 * 4, includeSubDomains: true },
+              ],
+              nosniff: 'nosniff',
+              frameGuard: 'deny',
+              referrerPolicy: 'no-referrer',
+            }),
+          },
+        ]
+      },
       publicRuntimeConfig: {
         backendUrl: '',
       },
