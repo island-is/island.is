@@ -4,8 +4,6 @@ import {
   TIME_FORMAT,
   formatDate,
   getShortRestrictionByValue,
-  formatAccusedByGender,
-  capitalize,
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -26,13 +24,11 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  getAppealEndDate,
-  getRestrictionTagVariant,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import AppealSection from './Components/AppealSection'
 import { useRouter } from 'next/router'
 
 interface CaseData {
@@ -309,24 +305,12 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
             <Box marginBottom={9}>
-              <Box marginBottom={1}>
-                <Text variant="h3" as="h3">
-                  Ákvörðun um kæru
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-                  workingCase,
-                )}`}</Text>
-              </Box>
-              <Button size="small">
-                {`${capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                )} kærir úrskurðinn`}
-              </Button>
-              <Box marginTop={3}>
-                <Button size="small">Sækjandi kærir úrskurðinn</Button>
-              </Box>
+              {workingCase.rulingDate && workingCase.accusedGender && (
+                <AppealSection
+                  rulingDate={workingCase.rulingDate}
+                  accusedGender={workingCase.accusedGender}
+                />
+              )}
             </Box>
             <Box marginBottom={5}>
               <Accordion>
