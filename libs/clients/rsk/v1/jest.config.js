@@ -1,5 +1,5 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -10,6 +10,6 @@ module.exports = {
   },
   testEnvironment: 'jest-environment-node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/rsk',
-  displayName: 'rsk',
+  coverageDirectory: '../../../../coverage/libs/clients/rsk/v1',
+  displayName: 'rsk-v1',
 }
