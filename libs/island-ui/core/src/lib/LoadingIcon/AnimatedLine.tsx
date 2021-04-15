@@ -19,7 +19,7 @@ const AnimatedLine: React.FC<Props> = (props) => {
     : `url(#loading-icon-new-linear-gradient)`
 
   const seq = async () => {
-    const transitionOptions = { duration: 0.15, ease: 'easeInOutSine' }
+    const transitionOptions = { duration: 0.15, ease: 'easeInOut' }
     // Right
     await controls.start({
       x1: 50,
