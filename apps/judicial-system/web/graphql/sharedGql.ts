@@ -92,6 +92,7 @@ export const CaseQuery = gql`
         size
         created
       }
+      isCaseAppealable
     }
   }
 `

@@ -22,6 +22,7 @@ import {
 import { validate } from './validate'
 import compareAsc from 'date-fns/compareAsc'
 import parseISO from 'date-fns/parseISO'
+import { addDays } from 'date-fns/esm'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
@@ -373,4 +374,12 @@ export const getRestrictionTagVariant = (
 
 export const kb = (bytes?: number) => {
   return bytes ? Math.ceil(bytes / 1024) : ''
+}
+
+export const getAppealEndDate = (workingCase: Case) => {
+  if (workingCase.rulingDate) {
+    const rulingDateToDate = parseISO(workingCase.rulingDate)
+    const appealEndDate = addDays(rulingDateToDate, 3)
+    return formatDate(appealEndDate, 'PPPp')
+  }
 }
