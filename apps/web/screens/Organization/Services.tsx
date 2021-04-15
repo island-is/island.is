@@ -288,6 +288,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           organization: query.slug as string,
           lang: locale as ContentLanguage,
           sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
+          size: 500,
         },
       },
     }),
