@@ -225,7 +225,10 @@
     "clients-national-registry": {
       "tags": []
     },
-    "clients-rsk": {
+    "clients-rsk-v1": {
+      "tags": []
+    },
+    "clients-rsk-v2": {
       "tags": []
     },
     "clients-vmst": {
