@@ -22,6 +22,7 @@ import {
 
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { StepOneForm } from './StepOneForm'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface CaseData {
   case?: Case
@@ -35,62 +36,12 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const router = useRouter()
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
+  const { createCase, updateCase, isCreatingCase } = useCase()
+
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [createCaseMutation, { loading: createLoading }] = useMutation(
-    CreateCaseMutation,
-  )
-
-  const createCase = async (theCase: Case): Promise<string | undefined> => {
-    if (createLoading === false) {
-      const { data } = await createCaseMutation({
-        variables: {
-          input: {
-            type: theCase.type,
-            policeCaseNumber: theCase.policeCaseNumber,
-            accusedNationalId: theCase.accusedNationalId.replace('-', ''),
-            accusedName: theCase.accusedName,
-            accusedAddress: theCase.accusedAddress,
-            accusedGender: theCase.accusedGender,
-            defenderName: theCase.defenderName,
-            defenderEmail: theCase.defenderEmail,
-            sendRequestToDefender: theCase.sendRequestToDefender,
-            court: 'Héraðsdómur Reykjavíkur',
-          },
-        },
-      })
-
-      const resCase: Case = data?.createCase
-
-      return resCase.id
-    }
-
-    return undefined
-  }
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    // Only update if id has been set
-    if (!id) {
-      return null
-    }
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
 
   const handleNextButtonClick = async (theCase: Case) => {
     const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
@@ -141,7 +92,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       {workingCase && (
         <StepOneForm
           case={workingCase}
-          loading={createLoading}
+          loading={isCreatingCase}
           updateCase={updateCase}
           handleNextButtonClick={handleNextButtonClick}
         />
