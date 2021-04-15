@@ -117,6 +117,22 @@ yarn nx dep-graph
 
 A dedicated documentation about fetching shared development secrets or creating new secrets, using AWS secrets is available [here](handbook/repository/aws-secrets.md).
 
+### Running proxy against development service
+
+You are able to run a couple of proxy against the development services: `db`, `es`, `redis` and `xroad`.
+
+To do so, you can run the following command:
+
+```bash
+./scripts/run-db-proxy.sh
+```
+
+It will use the `aws-cli` to get your AWS credentials or if it cannot find it, will try to find the environments variables in the `process.env`.
+
+{% hint style="warning" %}
+The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
+{% endhint %}
+
 ### Environment variables with static websites
 
 To be able to access environment variables in purely static projects, you need to do the following:

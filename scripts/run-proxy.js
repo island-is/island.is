@@ -1,26 +1,47 @@
 #!/usr/bin/env node
 const yargs = require('yargs')
-const argv = yargs(process.argv.slice(2))
 const { execSync } = require('child_process')
+const get = require('lodash').get
+const { default: dedent } = require('ts-dedent')
+
+const argv = yargs(process.argv.slice(2))
 
 const error = (errorMessage) => {
   console.error(errorMessage)
   process.exit(1)
 }
 
+const getFromFileOrEnv = (key) => {
+  const value = execSync(`aws configure get ${key.toLowerCase()}`)
+    .toString()
+    .trim()
+
+  // We get it from `aws configure get`
+  if (value) {
+    return value
+  }
+
+  // We try to find it within `process.env`
+  return get(process.env, key)
+}
+
+const getCredentials = () => [
+  getFromFileOrEnv('AWS_ACCESS_KEY_ID'),
+  getFromFileOrEnv('AWS_SECRET_ACCESS_KEY'),
+  getFromFileOrEnv('AWS_SESSION_TOKEN'),
+]
+
 const checkPresenceAWSAccessVars = () => {
-  const awsCredsEnvVars = [
-    'AWS_ACCESS_KEY_ID',
-    'AWS_SECRET_ACCESS_KEY',
-    'AWS_SESSION_TOKEN',
-  ]
-  const valuesPresent = awsCredsEnvVars
-    .map((key) => process.env[key])
-    .filter((v) => !!v)
-  if (valuesPresent.length != awsCredsEnvVars.length)
-    error(
-      'Missing AWS envronment variables\n\nYou need to login to AWS portal and get some env variables as in step 1 here - https://docs.devland.is/handbook/technical-overview/devops/dockerizing#troubleshooting\nThen simply re-run the script',
-    )
+  const awsCredentials = getCredentials()
+  const valuesPresent = awsCredentials.filter((v) => !!v)
+
+  if (valuesPresent.length !== awsCredentials.length) {
+    error(`
+      Missing AWS environment variables.
+      You need to log in your AWS portal and get the environments variables. Either you export them or add them to your \`~/.aws/credentials\` file.
+      Find more about it on the AWS secrets documentation: https://docs.devland.is/repository/aws-secrets
+    `)
+  }
 }
 
 const args = argv

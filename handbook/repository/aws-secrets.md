@@ -133,7 +133,7 @@ It's recommended to use `SecureString` in most cases. However, if you need to ad
 Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
 {% endhint %}
 
-### Making dev secrets available locally
+## Making dev secrets available locally
 
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file. _(**NOTE:** Each variable must be prefixed with `export ` for direnv to pick them up.)_
 
@@ -141,6 +141,10 @@ Additionally, if that same variable is also stored in AWS Parameter Store, the s
 
 All secrets labeled with the `dev` label can be fetched using `yarn get-secrets <project>`.
 
-### Environment variables with static websites
+## Environment variables with static websites
 
-More about it on [this page](../../README.md#environment-variables-with-static-websites).
+More about it on the root [README](../../README.md#environment-variables-with-static-websites).
+
+## Running proxy against development service
+
+More about it on the root [README](../../README.md#running-proxy-against-development-service)
