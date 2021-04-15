@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { motion, useAnimation } from 'framer-motion'
+import { m, LazyMotion, domAnimation, useAnimation } from 'framer-motion'
 import { Colors, theme } from '@island.is/island-ui/theme'
 
 interface Props {
@@ -93,16 +93,18 @@ const AnimatedLine: React.FC<Props> = (props) => {
   }
 
   return (
-    <motion.line
-      animate={controls}
-      x1="12"
-      x2="12"
-      y1="12"
-      y2="12"
-      stroke={usedColor}
-      strokeWidth="24"
-      strokeLinecap="round"
-    />
+    <LazyMotion features={domAnimation}>
+      <m.line
+        animate={controls}
+        x1="12"
+        x2="12"
+        y1="12"
+        y2="12"
+        stroke={usedColor}
+        strokeWidth="24"
+        strokeLinecap="round"
+      />
+    </LazyMotion>
   )
 }
 
