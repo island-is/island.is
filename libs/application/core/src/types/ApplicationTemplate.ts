@@ -20,12 +20,6 @@ export interface ApplicationTemplate<
   readonly type: ApplicationTypes
   readonly name: string
   readonly dataSchema: Schema
-  // If this is set to true then it will always skip the
-  // /umsoknir/:type overview screen and create a new application
-  // in the initial state which will likely be an unlisted
-  // prunable state that handles business logic related to
-  // where to guide the applicant
-  readonly alwaysCreateNew?: boolean
   readonly stateMachineConfig: MachineConfig<
     TContext,
     TStateSchema,
