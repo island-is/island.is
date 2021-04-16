@@ -31,7 +31,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
-import axios from 'axios'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
@@ -118,15 +117,16 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
     if (!animationData.length) {
       const requests = slides.reduce((all, slide) => {
         if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
-          all.push(axios.get(slide.animationJsonAsset.url))
+          all.push(
+            fetch(slide.animationJsonAsset.url).then((res) => res.json()),
+          )
         }
 
         return all
       }, [])
 
       Promise.all(requests).then((res) => {
-        const data = res.map((r) => r.data)
-        setAnimationData(data)
+        setAnimationData(res)
       })
     }
   }, [slides, animationData])
