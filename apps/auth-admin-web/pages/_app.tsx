@@ -18,9 +18,7 @@ class AuthAdminWebApp extends App<Props> {
   }
 }
 
-const endpointDependencies = process.env.NEXTAUTH_URL
-  ? [process.env.NEXTAUTH_URL]
-  : []
+const endpointDependencies = process.env.BASE_URL ? [process.env.BASE_URL] : []
 const {
   serverRuntimeConfig: { backendUrl },
 } = getConfig()
