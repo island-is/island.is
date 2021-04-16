@@ -6,6 +6,7 @@ import {
   InputFileUpload,
   BulletList,
   Bullet,
+  Input,
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -14,12 +15,19 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface Props {
-  case: Case
+  workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
 }
 
-export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
+export const StepFiveForm: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase } = props
+
   const {
     files,
     uploadErrorMessage,
@@ -65,7 +73,7 @@ export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
             Rannsóknargögn
           </Text>
         </Box>
-        <Box marginBottom={[2, 2, 3]}>
+        <Box marginBottom={10}>
           <ContentBlock>
             <InputFileUpload
               fileList={files}
@@ -78,6 +86,33 @@ export const StepFiveForm: React.FC<Props> = ({ case: workingCase }) => {
               showFileSize
             />
           </ContentBlock>
+        </Box>
+        <Box>
+          <Box marginBottom={3}>
+            <Text variant="h3" as="h3">
+              Athugasemdir vegna rannsóknargagna
+            </Text>
+          </Box>
+          <Box marginBottom={10}>
+            <Input
+              name="caseFilesComments"
+              label="Skilaboð"
+              placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi gögnin?"
+              defaultValue={workingCase?.comments}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'caseFilesComments',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={() => console.log('TODO')}
+              textarea
+              rows={7}
+            />
+          </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
