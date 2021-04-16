@@ -15,25 +15,23 @@ const CaseFileList: React.FC<Props> = (props) => {
 
   const { handleOpenFile } = useFileList({ caseId })
 
-  return (
+  return files.length > 0 ? (
     <>
-      {files.length > 0 ? (
-        files.map((file, index) => (
-          <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
-            <CaseFile
-              fileId={file.id}
-              name={`${index + 1}. ${file.name}`}
-              size={file.size}
-              uploadedAt={file.created}
-              canOpenFiles={canOpenFiles}
-              onOpen={handleOpenFile}
-            />
-          </Box>
-        ))
-      ) : (
-        <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
-      )}
+      {files.map((file, index) => (
+        <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
+          <CaseFile
+            fileId={file.id}
+            name={`${index + 1}. ${file.name}`}
+            size={file.size}
+            uploadedAt={file.created}
+            canOpenFiles={canOpenFiles}
+            onOpen={handleOpenFile}
+          />
+        </Box>
+      ))}
     </>
+  ) : (
+    <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
   )
 }
 

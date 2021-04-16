@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import {
-  Box,
-  Text,
-  Input,
-  Button,
-  AccordionCard,
-} from '@island.is/island-ui/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
