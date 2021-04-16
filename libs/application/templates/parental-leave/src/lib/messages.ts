@@ -606,17 +606,20 @@ export const parentalLeaveFormMessages: MessageDir = {
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
       defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
-      description: 'I will start from the estimated date of birth',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     dateOfBirthOption: {
       id: 'pl.application:periods.first.period.actualDateOfBirth',
       defaultMessage: 'Ég vil byrja frá raunverulegum fæðingardegi',
-      description: 'I will start from the actual date of birth',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOption: {
       id: 'pl.application:periods.first.period.specificDate',
       defaultMessage: 'Ég vil byrja á ákveðinni dagsetningu',
-      description: 'I will start on a specific date',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOptionTooltip: {
       id: 'pl.application:periods.first.period.specificDate.tooltip',
