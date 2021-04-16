@@ -391,6 +391,7 @@ export class ApplicationController {
     externalDataDto: PopulateExternalDataDto,
     @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
@@ -406,6 +407,7 @@ export class ApplicationController {
         externalDataDto,
         templateDataProviders,
         authorization ?? '',
+        locale,
       ),
       existingApplication as BaseApplication,
     )
