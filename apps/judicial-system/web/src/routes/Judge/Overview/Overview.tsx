@@ -57,7 +57,7 @@ import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
-import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -82,9 +82,7 @@ export const JudgeOverview: React.FC = () => {
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
-  const { handleOpenFile } = useFileList({
-    caseId: workingCase?.id,
-  })
+  const { user } = useContext(UserContext)
 
   const [
     createCustodyCourtCaseMutation,
@@ -461,21 +459,19 @@ export const JudgeOverview: React.FC = () => {
                     }`}
                   </Text>
                 </Box>
-                <Text>
-                  {formatRequestedCustodyRestrictions(
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                    workingCase.requestedOtherRestrictions,
-                  )
-                    .split('\n')
-                    .map((requestedCustodyRestriction, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{requestedCustodyRestriction}</Text>
-                        </div>
-                      )
-                    })}
-                </Text>
+                {formatRequestedCustodyRestrictions(
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </div>
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <div className={styles.infoSection}>
@@ -528,16 +524,19 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
-              {workingCase.files && (
+              {features.includes(Feature.CASE_FILES) && workingCase.files && (
                 <div className={styles.infoSection}>
                   <AccordionCard
                     id="files-card"
                     label={`Rannsóknargögn (${workingCase.files.length})`}
                   >
                     <CaseFileList
+                      caseId={workingCase.id}
                       files={workingCase.files}
-                      canOpenFiles={workingCase.judge !== null}
-                      onOpen={handleOpenFile}
+                      canOpenFiles={
+                        workingCase.judge !== null &&
+                        workingCase.judge?.id === user?.id
+                      }
                     />
                   </AccordionCard>
                 </div>

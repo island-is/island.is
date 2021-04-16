@@ -1,16 +1,19 @@
 import { Box } from '@island.is/island-ui/core'
-import { File } from '@island.is/judicial-system/types'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import React from 'react'
 import { CaseFile } from '..'
+import useFileList from '../../utils/hooks/useFileList'
 
 interface Props {
-  files: File[]
+  caseId: string
+  files: TCaseFile[]
   canOpenFiles?: boolean
-  onOpen: (fileId: string) => void
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
-  const { files, canOpenFiles = true, onOpen } = props
+  const { caseId, files, canOpenFiles = true } = props
+
+  const { handleOpenFile } = useFileList({ caseId })
 
   return (
     <>
@@ -22,7 +25,7 @@ const CaseFileList: React.FC<Props> = (props) => {
             size={file.size}
             uploadedAt={file.created}
             canOpenFiles={canOpenFiles}
-            onOpen={onOpen}
+            onOpen={handleOpenFile}
           />
         </Box>
       ))}

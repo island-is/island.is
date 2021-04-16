@@ -4,6 +4,7 @@ import { ApplicationConfig } from '../app/modules/application/application.config
 import { FileStorageConfig } from '@island.is/file-storage'
 import { SigningServiceOptions } from '@island.is/dokobit-signing'
 import { SyslumennClientConfig } from '@island.is/api/domains/syslumenn'
+import { SmsServiceOptions } from '@island.is/nova-sms'
 
 export interface Environment {
   production: boolean
@@ -19,4 +20,5 @@ export interface Environment {
   fileStorage: FileStorageConfig
   signingOptions: SigningServiceOptions
   syslumenn: SyslumennClientConfig
+  smsOptions: SmsServiceOptions
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,11 +28,17 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleList(id: string) {
-    this.logger.debug(`Finding single endorsement lists by id "${id}"`)
-    return this.endorsementListModel.findOne({
-      where: { id },
+  async findSingleList(listId: string) {
+    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    const result = await this.endorsementListModel.findOne({
+      where: { id: listId },
     })
+
+    if (!result) {
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+
+    return result
   }
 
   async findAllEndorsementsByNationalId(nationalId: string) {
@@ -40,14 +46,19 @@ export class EndorsementListService {
     return this.endorsementModel.findAll({ where: { endorser: nationalId } })
   }
 
-  async close(id: string): Promise<EndorsementList | null> {
-    this.logger.debug('Closing endorsement list', id)
+  async close(listId: string): Promise<EndorsementList> {
+    this.logger.debug('Closing endorsement list', listId)
     const [_, endorsementLists] = await this.endorsementListModel.update(
       { closedDate: new Date() },
-      { where: { id }, returning: true },
+      { where: { id: listId }, returning: true },
     )
 
-    return endorsementLists[0] ?? null
+    if (!endorsementLists[0]) {
+      this.logger.warn('Failed to close list', { listId })
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+
+    return endorsementLists[0]
   }
 
   async create(list: createInput) {

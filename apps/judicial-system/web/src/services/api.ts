@@ -1,8 +1,6 @@
 import 'isomorphic-fetch'
 
 import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
-import { PresignedPost } from '@island.is/judicial-system/types'
-import { UploadFile } from '@island.is/island-ui/core'
 
 const { API_URL = '' } = process.env
 export const apiUrl = API_URL

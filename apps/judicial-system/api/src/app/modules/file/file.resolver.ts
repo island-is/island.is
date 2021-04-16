@@ -17,7 +17,12 @@ import {
   DeleteFileInput,
   GetSignedUrlInput,
 } from './dto'
-import { PresignedPost, File, DeleteFileResponse, SignedUrl } from './models'
+import {
+  PresignedPost,
+  CaseFile,
+  DeleteFileResponse,
+  SignedUrl,
+} from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -85,13 +90,13 @@ export class FileResolver {
     )
   }
 
-  @Mutation(() => File)
+  @Mutation(() => CaseFile)
   createFile(
     @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<File> {
+  ): Promise<CaseFile> {
     const { caseId, ...createFile } = input
 
     this.logger.debug(`Creating a file for case ${caseId}`)

@@ -12,8 +12,8 @@ interface Props {
   name: string
   size: number
   uploadedAt: string
+  onOpen: (id: string) => void
   canOpenFiles?: boolean
-  onOpen?: (id: string) => void
 }
 
 const CaseFile: React.FC<Props> = (props) => {
@@ -41,7 +41,7 @@ const CaseFile: React.FC<Props> = (props) => {
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
             </div>
           )}
-          {canOpenFiles && onOpen && (
+          {canOpenFiles && (
             <Tag variant="darkerBlue" onClick={() => onOpen(fileId)}>
               Opna
             </Tag>

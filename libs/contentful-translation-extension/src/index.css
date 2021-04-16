@@ -17,6 +17,20 @@ p {
 
 /* Extracted from `import '@contentful/forma-36-react-components/dist/styles.css'` to make the bundle lighter */
 
+.a11y__focus-outline--default___2hwb1:focus {
+  outline: 1px solid #2e75d4;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 0 0 3px #84b9f5;
+  box-shadow: 0 0 0 3px #84b9f5;
+}
+
+.a11y__focus-border--default___60AXp:focus {
+  outline: none;
+  border: 1px solid #2e75d4;
+  -webkit-box-shadow: 0 0 0 3px #84b9f5;
+  box-shadow: 0 0 0 3px #84b9f5;
+}
+
 .Table__Table___3vKIR {
   width: 100%;
 }
@@ -225,6 +239,92 @@ tbody tr:last-child .TableCell__TableCell___Wou8a {
 
 .TextField__TextField__validation-message___1Idkl {
   margin-top: 0.5rem;
+}
+
+.Button__Button___1ZfFj,
+.Button__Button___1ZfFj:link {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 2.5rem;
+  display: inline-block;
+  padding: 0;
+  border: 0.0625rem solid #c3cfd5;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  font-size: 0.875rem;
+  font-weight: 500;
+  overflow: hidden;
+  background-size: 100% 200%;
+  -webkit-transition: background 0.1s ease-in-out, opacity 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  transition: background 0.1s ease-in-out, opacity 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  vertical-align: middle;
+  text-decoration: none;
+  -webkit-box-shadow: 0 1px 0 rgba(25, 37, 50, 0.1);
+  box-shadow: 0 1px 0 rgba(25, 37, 50, 0.1);
+}
+.Button__Button___1ZfFj:hover:not(.Button__Button--disabled___1E20M),
+.Button__Button___1ZfFj:link:hover:not(.Button__Button--disabled___1E20M) {
+  cursor: pointer;
+}
+.Button__Button___1ZfFj:focus:not(.Button__Button--disabled___1E20M),
+.Button__Button___1ZfFj:link:focus:not(.Button__Button--disabled___1E20M) {
+  outline: none;
+}
+.Button__Button__icon___2YX5- {
+  min-width: 1.125rem;
+}
+.Button__Button--muted___2Wair {
+  background-color: #fff;
+  border-color: #c3cfd5;
+  -webkit-box-shadow: 0 1px 0 rgba(25, 37, 50, 0.08);
+  box-shadow: 0 1px 0 rgba(25, 37, 50, 0.08);
+}
+.Button__Button--muted___2Wair:hover:not(.Button__Button--disabled___1E20M) {
+  background-color: #f7f9fa;
+}
+.Button__Button--muted___2Wair.Button__Button--is-active___iPvhW:not(.Button__Button--disabled___1E20M),
+.Button__Button--muted___2Wair:active:not(.Button__Button--disabled___1E20M) {
+  -webkit-transition: none;
+  transition: none;
+  background-color: #e5ebed;
+}
+.Button__Button--muted___2Wair:focus:not(.Button__Button--disabled___1E20M) {
+  -webkit-box-shadow: 0 0 0 3px #e5ebed;
+  box-shadow: 0 0 0 3px #e5ebed;
+}
+.Button__Button__inner-wrapper___3qrNC {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  z-index: 1;
+  padding: 0 1rem;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.Button__Button__label___3tcOj {
+  margin: 0 0.25rem;
+  font-size: 0.875rem;
+  color: #192532;
+  line-height: 2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.Button__Button--small___3yyrk,
+.Button__Button--small___3yyrk:link {
+  height: 2rem;
+}
+.Button__Button--small___3yyrk .Button__Button__inner-wrapper___3qrNC,
+.Button__Button--small___3yyrk:link .Button__Button__inner-wrapper___3qrNC {
+  padding: 0 0.875rem;
 }
 
 [data-slate-editor] > * + * {
