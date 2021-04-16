@@ -9,8 +9,7 @@ const Logo: FC = () => {
 
   return (
     <Box display="flex" alignItems="center">
-
-      <CoatOfARms title="smu"/>
+      <CoatOfARms title="smu" />
       <Box marginLeft={2}>
         <Text variant="eyebrow">{formatMessage(m.logo.service)}</Text>
         <Text variant="h5">
