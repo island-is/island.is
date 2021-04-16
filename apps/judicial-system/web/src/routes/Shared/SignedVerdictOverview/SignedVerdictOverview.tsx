@@ -327,13 +327,11 @@ export const SignedVerdictOverview: React.FC = () => {
                     })`}
                     labelVariant="h3"
                   >
-                    {workingCase.files && (
-                      <CaseFileList
-                        caseId={workingCase.id}
-                        files={workingCase.files}
-                        canOpenFiles={user?.role === UserRole.PROSECUTOR}
-                      />
-                    )}
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files || []}
+                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                    />
                   </AccordionItem>
                 )}
               </Accordion>

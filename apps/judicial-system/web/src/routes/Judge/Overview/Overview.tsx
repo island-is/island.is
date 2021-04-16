@@ -533,16 +533,14 @@ export const JudgeOverview: React.FC = () => {
                       })`}
                     </Text>
                   </Box>
-                  {workingCase.files && (
-                    <CaseFileList
-                      caseId={workingCase.id}
-                      files={workingCase.files}
-                      canOpenFiles={
-                        workingCase.judge !== null &&
-                        workingCase.judge?.id === user?.id
-                      }
-                    />
-                  )}
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
+                    }
+                  />
                 </div>
               )}
               <PdfButton

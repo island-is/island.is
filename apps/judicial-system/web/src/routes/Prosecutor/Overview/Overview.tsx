@@ -334,14 +334,12 @@ export const Overview: React.FC = () => {
                     })`}`}
                     labelVariant="h3"
                   >
-                    {workingCase.files && (
-                      <Box marginY={3}>
-                        <CaseFileList
-                          caseId={workingCase.id}
-                          files={workingCase.files}
-                        />
-                      </Box>
-                    )}
+                    <Box marginY={3}>
+                      <CaseFileList
+                        caseId={workingCase.id}
+                        files={workingCase.files || []}
+                      />
+                    </Box>
                   </AccordionItem>
                 )}
                 <AccordionItem
