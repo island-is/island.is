@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 
 interface Props {
   rulingDate: string
@@ -49,13 +50,13 @@ const AppealSection: React.FC<Props> = (props) => {
           )} kærir úrskurðinn`}
         </Button>
       ) : (
-        <AlertMessage
-          type="info"
-          title="bla"
-          message={`${capitalize(
-            formatAccusedByGender(accusedGender),
-          )} hefur kært úrskurðinn ${formatDate(new Date(), 'PPPp')}`}
-        />
+        <Box marginBottom={3}>
+          <InfoBox
+            text={`${capitalize(
+              formatAccusedByGender(accusedGender),
+            )} hefur kært úrskurðinn ${formatDate(new Date(), 'PPPp')}`}
+          />
+        </Box>
       )}
       {prosecutorCanAppeal ? (
         <Box marginTop={3}>
@@ -64,14 +65,14 @@ const AppealSection: React.FC<Props> = (props) => {
           </Button>
         </Box>
       ) : (
-        <AlertMessage
-          type="info"
-          title="bla"
-          message={`Sækjandi hefur kært úrskurðinn ${formatDate(
-            new Date(),
-            'PPPp',
-          )}`}
-        />
+        <Box marginBottom={3}>
+          <InfoBox
+            text={`Sækjandi hefur kært úrskurðinn ${formatDate(
+              new Date(),
+              'PPPp',
+            )}`}
+          />
+        </Box>
       )}
     </>
   )
