@@ -7,9 +7,9 @@ class ValidationUtils {
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
 
-  public static corsOriginPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static corsOriginPattern = /^http/
 
-  public static urlPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static urlPattern = /^http/
 
   public static nationalIdPattern = /^[0-9]*$/
 

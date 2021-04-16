@@ -1,9 +1,11 @@
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+
 type tag = {
   key: string
   value?: string
   type: string
 }
+
 export interface MappedData {
   _id?: string
   title: string

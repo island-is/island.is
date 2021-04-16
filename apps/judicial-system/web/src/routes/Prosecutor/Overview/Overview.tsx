@@ -47,7 +47,6 @@ import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/u
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
-import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -64,7 +63,6 @@ export const Overview: React.FC = () => {
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-  const { handleOpenFile } = useFileList({ caseId: workingCase?.id })
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -328,7 +326,7 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {workingCase.files && (
+                {features.includes(Feature.CASE_FILES) && workingCase.files && (
                   <AccordionItem
                     id="id_5"
                     label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
@@ -336,8 +334,8 @@ export const Overview: React.FC = () => {
                   >
                     <Box marginY={3}>
                       <CaseFileList
+                        caseId={workingCase.id}
                         files={workingCase.files}
-                        onOpen={handleOpenFile}
                       />
                     </Box>
                   </AccordionItem>
