@@ -14,7 +14,7 @@ const PartyLetterApplicationReview: FC<FieldBaseProps> = ({ application }) => {
     ssd: formatMessage(m.overview.responsibleParty),
     'party.letter': formatMessage(m.overview.partyLetter),
     'party.name': formatMessage(m.overview.partyName),
-    signatures: '',
+    endorsements: '',
     warnings: '',
     documents: '',
   }
