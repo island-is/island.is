@@ -19,7 +19,7 @@ function populateError(
 ) {
   let errorObject = {}
   newError?.forEach((element) => {
-    errorObject = set(errorObject, pathToError ?? element.path, element.message)
+    errorObject = set(errorObject, pathToError || element.path, element.message)
   })
   if (currentError) {
     return merge(currentError, errorObject)
