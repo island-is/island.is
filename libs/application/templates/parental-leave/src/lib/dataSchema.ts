@@ -2,7 +2,7 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES } from '../constants'
+import { NO, YES, StartDateOptions } from '../constants'
 import { dataSchemaMessages } from './messages'
 
 const PersonalAllowance = z
@@ -53,7 +53,11 @@ export const dataSchema = z.object({
     giveDays: z.number().optional(),
   }),
   singlePeriod: z.enum([YES, NO]),
-  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
+  firstPeriodStart: z.enum([
+    StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+    StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+    StartDateOptions.SPECIFIC_DATE,
+  ]),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
   otherParent: z.enum(['spouse', NO, 'manual']).optional(),
   otherParentName: z.string().optional(),
