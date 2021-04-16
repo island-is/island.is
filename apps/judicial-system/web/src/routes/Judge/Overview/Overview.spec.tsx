@@ -111,10 +111,6 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (5)' }),
-    )
-
     // Assert
     expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
   })
@@ -139,10 +135,6 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
-    )
-
     // Assert
     expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
   })
@@ -165,10 +157,6 @@ describe('/domari-krafa with an ID', () => {
           </UserProvider>
         </FeatureProvider>
       </MockedProvider>,
-    )
-
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
     )
 
     // Assert
