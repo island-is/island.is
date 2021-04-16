@@ -184,12 +184,12 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        accusedAppealDecision: CaseAppealDecision.APPEAL,
+        accusedPostponedAppealDate: new Date().toString(),
       })
 
       updateCase(
         workingCase.id,
-        parseString('accusedAppealDecision', CaseAppealDecision.APPEAL),
+        parseString('accusedPostponedAppealDate', new Date().toString()),
       )
     }
   }
@@ -198,12 +198,12 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+        prosecutorPostponedAppealDate: new Date().toString(),
       })
 
       updateCase(
         workingCase.id,
-        parseString('prosecutorAppealDecision', CaseAppealDecision.APPEAL),
+        parseString('prosecutorPostponedAppealDate', new Date().toString()),
       )
     }
   }
@@ -353,13 +353,9 @@ export const SignedVerdictOverview: React.FC = () => {
                 <AppealSection
                   rulingDate={workingCase.rulingDate}
                   accusedGender={workingCase.accusedGender}
-                  accusedCanAppeal={
-                    workingCase.accusedAppealDecision ===
-                    CaseAppealDecision.POSTPONE
-                  }
+                  accusedCanAppeal={!workingCase.accusedPostponedAppealDate}
                   prosecutorCanAppeal={
-                    workingCase.prosecutorAppealDecision ===
-                    CaseAppealDecision.POSTPONE
+                    workingCase.prosecutorPostponedAppealDate === null
                   }
                   handleAccusedAppeal={handleAccusedAppeal}
                   handleProsecutorAppeal={handleProsecutorAppeal}
