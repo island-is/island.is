@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
-import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
+import { Box, Text, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
@@ -224,20 +224,6 @@ const Overview = ({
           {answers.durationType === 'temporary' && answers.durationDate
             ? formatDate(answers.durationDate)
             : formatMessage(m.duration.permanentInput.label)}
-        </Text>
-      </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.interview.general.sectionTitle)}
-        </Text>
-        <Text>
-          {formatMessage(
-            m.interview[
-              parentKey === Roles.ParentA
-                ? answers.interviewParentA
-                : answers.interviewParentB
-            ].overviewText,
-          )}
         </Text>
       </Box>
       <Box marginTop={4}>
