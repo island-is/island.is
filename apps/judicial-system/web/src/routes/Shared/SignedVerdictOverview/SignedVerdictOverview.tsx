@@ -327,16 +327,12 @@ export const SignedVerdictOverview: React.FC = () => {
                     })`}
                     labelVariant="h3"
                   >
-                    {workingCase.files && workingCase.files.length > 0 ? (
+                    {workingCase.files && (
                       <CaseFileList
                         caseId={workingCase.id}
                         files={workingCase.files}
                         canOpenFiles={user?.role === UserRole.PROSECUTOR}
                       />
-                    ) : (
-                      <Text>
-                        Engin rannsóknargögn fylgdu kröfunni í Réttarvörslugátt.
-                      </Text>
                     )}
                   </AccordionItem>
                 )}

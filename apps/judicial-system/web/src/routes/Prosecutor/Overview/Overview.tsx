@@ -334,17 +334,13 @@ export const Overview: React.FC = () => {
                     })`}`}
                     labelVariant="h3"
                   >
-                    {workingCase.files && workingCase.files.length > 0 ? (
+                    {workingCase.files && (
                       <Box marginY={3}>
                         <CaseFileList
                           caseId={workingCase.id}
                           files={workingCase.files}
                         />
                       </Box>
-                    ) : (
-                      <Text>
-                        Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.
-                      </Text>
                     )}
                   </AccordionItem>
                 )}

@@ -533,7 +533,7 @@ export const JudgeOverview: React.FC = () => {
                       })`}
                     </Text>
                   </Box>
-                  {workingCase.files && workingCase.files.length > 0 ? (
+                  {workingCase.files && (
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files}
@@ -542,10 +542,6 @@ export const JudgeOverview: React.FC = () => {
                         workingCase.judge?.id === user?.id
                       }
                     />
-                  ) : (
-                    <Text>
-                      Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.
-                    </Text>
                   )}
                 </div>
               )}
