@@ -35,6 +35,7 @@ interface WrapperProps {
   sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
+  stickySidebar?: boolean
   minimal?: boolean
 }
 
@@ -73,9 +74,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   mainContent,
   sidebarContent,
   navigationData,
+  fullWidthContent = false,
+  stickySidebar = true,
   children,
   minimal = false,
-  fullWidthContent = false,
 }) => {
   const secondaryNavList: NavigationItem[] = organizationPage.secondaryMenu?.childrenLinks.map(
     ({ text, url }) => ({
@@ -87,6 +89,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
+
+  const SidebarContainer = stickySidebar ? Sticky : Box
 
   return (
     <>
@@ -107,7 +111,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             isSticky={false}
             fullWidthContent={fullWidthContent}
             sidebarContent={
-              <Sticky>
+              <SidebarContainer>
                 <Navigation
                   baseId="pageNav"
                   items={navigationData.items}
@@ -140,7 +144,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   </Box>
                 )}
                 {sidebarContent}
-              </Sticky>
+              </SidebarContainer>
             }
           >
             <Hidden above="sm">
