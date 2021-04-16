@@ -31,6 +31,11 @@ export default {
       username: process.env.SYSLUMENN_USERNAME,
       password: process.env.SYSLUMENN_PASSWORD,
     },
+    smsOptions: {
+      url: process.env.NOVA_URL,
+      username: process.env.NOVA_USERNAME,
+      password: process.env.NOVA_PASSWORD,
+    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
   },
   application: {

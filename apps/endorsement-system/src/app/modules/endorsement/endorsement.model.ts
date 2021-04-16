@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementMetaData } from '../metadata/metadata.service'
+import { EndorsementMetaData } from '../endorsementMetadata/endorsementMetadata.service'
 @Table({
   tableName: 'endorsement',
   indexes: [

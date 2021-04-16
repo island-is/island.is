@@ -524,7 +524,7 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
-              {workingCase.files && (
+              {features.includes(Feature.CASE_FILES) && workingCase.files && (
                 <div className={styles.infoSection}>
                   <AccordionCard
                     id="files-card"
