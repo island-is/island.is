@@ -22,7 +22,12 @@ import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import { PresignedPost, File, DeleteFileResponse, SignedUrl } from './models'
+import {
+  PresignedPost,
+  CaseFile,
+  DeleteFileResponse,
+  SignedUrl,
+} from './models'
 import { FileService } from './file.service'
 
 // Allows prosecutors to perform any action
@@ -65,14 +70,14 @@ export class FileController {
   @RolesRules(prosecutorRule)
   @Post('file')
   @ApiCreatedResponse({
-    type: File,
+    type: CaseFile,
     description: 'Creates a new file',
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @Body() createFile: CreateFileDto,
-  ): Promise<File> {
+  ): Promise<CaseFile> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.fileService.createCaseFile(existingCase.id, createFile)
@@ -81,14 +86,14 @@ export class FileController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('files')
   @ApiOkResponse({
-    type: File,
+    type: CaseFile,
     isArray: true,
     description: 'Gets all existing files for an existing case',
   })
   async getAllCaseFiles(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
-  ): Promise<File[]> {
+  ): Promise<CaseFile[]> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.fileService.getAllCaseFiles(existingCase.id)

@@ -183,7 +183,7 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: File[]
+  files?: CaseFile[]
 }
 
 export enum NotificationType {
@@ -319,7 +319,7 @@ export interface SignedUrl {
   url: string
 }
 
-export interface File {
+export interface CaseFile {
   id: string
   created: string
   modified: string
