@@ -115,15 +115,15 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   }
 
   useEffect(() => {
-    const requests = slides.reduce((all, slide) => {
-      if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
-        all.push(axios.get(slide.animationJsonAsset.url))
-      }
-
-      return all
-    }, [])
-
     if (!animationData.length) {
+      const requests = slides.reduce((all, slide) => {
+        if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
+          all.push(axios.get(slide.animationJsonAsset.url))
+        }
+
+        return all
+      }, [])
+
       Promise.all(requests).then((res) => {
         const data = res.map((r) => r.data)
         setAnimationData(data)

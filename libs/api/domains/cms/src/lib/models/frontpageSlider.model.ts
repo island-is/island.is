@@ -21,9 +21,6 @@ export class FrontpageSlider {
   link?: string
 
   @Field({ nullable: true })
-  animationJson?: string
-
-  @Field({ nullable: true })
   animationJsonAsset: Asset | null
 }
 
@@ -36,9 +33,6 @@ export const mapFrontpageSlider = ({
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   content: fields.content ?? '',
   link: fields.link ? JSON.stringify(fields.link) : '',
-  animationJson: fields.animationJson
-    ? JSON.stringify(fields.animationJson)
-    : '',
   animationJsonAsset: {
     id: fields.animationJsonAsset?.sys.id ?? '',
     typename: 'AnimationJson',
