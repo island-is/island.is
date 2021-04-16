@@ -1,19 +1,19 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Signature } from '../../types'
+import { Endorsement } from '../../types'
 import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-interface RecommendationProps {
+interface EndorsementTableProps {
   application: Application
-  signatures?: Signature[]
+  endorsements?: Endorsement[]
 }
 
-const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
+const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
-  const renderRow = (signature: Signature, index: number) => {
-    const cell = Object.entries(signature)
+  const renderRow = (endorsements: Endorsement, index: number) => {
+    const cell = Object.entries(endorsements)
     return (
       <T.Row key={index}>
         {cell.map(([_key, value], i) => {
@@ -22,11 +22,11 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
               <T.Data
                 key={i}
                 box={{
-                  background: signature.hasWarning ? 'yellow200' : 'white',
-                  textAlign: value === signature.address ? 'right' : 'left',
+                  background: endorsements.hasWarning ? 'yellow200' : 'white',
+                  textAlign: value === endorsements.address ? 'right' : 'left',
                 }}
               >
-                {signature.hasWarning && value === signature.address ? (
+                {endorsements.hasWarning && value === endorsements.address ? (
                   <Box
                     display="flex"
                     alignItems="center"
@@ -60,23 +60,25 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>{formatMessage(m.recommendations.thDate)}</T.HeadData>
-          <T.HeadData>{formatMessage(m.recommendations.thName)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementTable.thDate)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementTable.thName)}</T.HeadData>
           <T.HeadData>
-            {formatMessage(m.recommendations.thNationalNumber)}
+            {formatMessage(m.endorsementTable.thNationalNumber)}
           </T.HeadData>
           <T.HeadData box={{ textAlign: 'right' }}>
-            {formatMessage(m.recommendations.thAddress)}
+            {formatMessage(m.endorsementTable.thAddress)}
           </T.HeadData>
         </T.Row>
       </T.Head>
       <T.Body>
-        {signatures &&
-          signatures.length &&
-          signatures.map((signature, index) => renderRow(signature, index))}
+        {endorsements &&
+          endorsements.length &&
+          endorsements.map((endorsements, index) =>
+            renderRow(endorsements, index),
+          )}
       </T.Body>
     </T.Table>
   )
 }
 
-export default RecommendationTable
+export default EndorsementTable
