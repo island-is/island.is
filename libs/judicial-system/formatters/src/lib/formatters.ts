@@ -5,7 +5,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
-  CaseTransition,
   CaseType,
 } from '@island.is/judicial-system/types'
 

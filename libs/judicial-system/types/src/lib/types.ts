@@ -76,6 +76,7 @@ export enum CaseTransition {
   DELETE = 'DELETE',
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum CaseCustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -86,6 +87,7 @@ export enum CaseCustodyProvisions {
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
   ISOLATION = 'ISOLATION',
@@ -180,7 +182,7 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: File[]
+  files?: CaseFile[]
 }
 
 export enum NotificationType {
@@ -314,7 +316,7 @@ export interface SignedUrl {
   url: string
 }
 
-export interface File {
+export interface CaseFile {
   id: string
   created: string
   modified: string

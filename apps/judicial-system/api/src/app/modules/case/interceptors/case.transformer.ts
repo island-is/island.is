@@ -1,7 +1,5 @@
 import { Case } from '../models'
 
-const fiveMinutes = 5 * 60 * 1000
-
 export function transformCase(theCase: Case): Case {
   theCase.sendRequestToDefender = theCase.sendRequestToDefender ?? false
 

@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect, useRef } from 'react'
+import React, { forwardRef } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
-import anime, { AnimeInstance } from 'animejs'
+import AnimatedLine from './AnimatedLine'
 
 interface LoadingIconProps {
   animate?: boolean
@@ -10,9 +10,6 @@ interface LoadingIconProps {
 
 export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
   ({ animate = true, color, size }, ref) => {
-    const animationRef = useRef<AnimeInstance | null>(null)
-    const lineRef = useRef<SVGLineElement | null>(null)
-
     const usedColor = color
       ? theme.color[color]
       : `url(#loading-icon-new-linear-gradient)`
@@ -20,39 +17,6 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
     const props = {
       ...(size && { width: size, height: size }),
     }
-
-    useEffect(() => {
-      if (lineRef.current) {
-        animationRef.current = anime({
-          targets: lineRef.current,
-          keyframes: [
-            // right
-            { x1: 12, x2: 50, y1: 12, y2: 12 },
-            { x1: 50, x2: 50, y1: 12, y2: 12 },
-            { x1: 50, x2: 88, y1: 12, y2: 12 },
-            { x1: 88, x2: 88, y1: 12, y2: 12 },
-            // down
-            { x1: 88, x2: 88, y1: 50, y2: 12 },
-            { x1: 88, x2: 88, y1: 50, y2: 50 },
-            { x1: 88, x2: 88, y1: 88, y2: 50 },
-            { x1: 88, x2: 88, y1: 88, y2: 88 },
-            // left
-            { x1: 88, x2: 50, y1: 88, y2: 88 },
-            { x1: 50, x2: 50, y1: 88, y2: 88 },
-            { x1: 50, x2: 12, y1: 88, y2: 88 },
-            { x1: 12, x2: 12, y1: 88, y2: 88 },
-            // up
-            { x1: 12, x2: 12, y1: 88, y2: 50 },
-            { x1: 12, x2: 12, y1: 50, y2: 50 },
-            { x1: 12, x2: 12, y1: 50, y2: 12 },
-            { x1: 12, x2: 12, y1: 12, y2: 12 },
-          ],
-          duration: 2000,
-          loop: true,
-          easing: 'easeInOutSine',
-        })
-      }
-    }, [lineRef])
 
     return (
       <svg ref={ref} viewBox="0 0 100 100" {...props}>
@@ -81,18 +45,7 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
         <circle cx="12" cy="88" r="12" fill={usedColor} />
         <circle cx="50" cy="88" r="12" fill={usedColor} />
         <circle cx="88" cy="88" r="12" fill={usedColor} />
-        {!!animate && (
-          <line
-            ref={lineRef}
-            x1="12"
-            x2="12"
-            y1="12"
-            y2="12"
-            stroke={usedColor}
-            strokeWidth="24"
-            strokeLinecap="round"
-          />
-        )}
+        {!!animate && <AnimatedLine color={color} />}
       </svg>
     )
   },

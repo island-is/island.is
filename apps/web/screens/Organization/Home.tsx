@@ -103,7 +103,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         />
       ))}
       sidebarContent={organizationPage.sidebarCards.map((card) => (
-        <SidebarCard sidebarCard={card} />
+        <SidebarCard key={card.id} sidebarCard={card} />
       ))}
     >
       <Section

@@ -7,12 +7,15 @@ import {
   mockCaseQueries,
   mockJudgeQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  FeatureProvider,
+  UserProvider,
+} from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
-import userEvent from '@testing-library/user-event'
 
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
+  fetchMock.mock('/api/feature/CASE_FILES', true)
 
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
@@ -99,14 +102,12 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
-    )
-
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (5)' }),
     )
 
     // Assert
@@ -125,14 +126,12 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
-    )
-
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
     )
 
     // Assert
@@ -151,14 +150,12 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
-    )
-
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
     )
 
     // Assert

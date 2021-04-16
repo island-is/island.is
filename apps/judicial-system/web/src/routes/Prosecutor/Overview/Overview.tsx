@@ -326,16 +326,18 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {workingCase.files && (
+                {features.includes(Feature.CASE_FILES) && (
                   <AccordionItem
                     id="id_5"
-                    label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
+                    label={`Rannsóknargögn ${`(${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}`}
                     labelVariant="h3"
                   >
                     <Box marginY={3}>
                       <CaseFileList
                         caseId={workingCase.id}
-                        files={workingCase.files}
+                        files={workingCase.files || []}
                       />
                     </Box>
                   </AccordionItem>
