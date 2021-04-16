@@ -16,8 +16,6 @@ There are additional steps required to run this template locally
 
 ### Prerequisites
 
-- You have `jq` installed [JQ](https://stedolan.github.io/jq/)
-  - `brew install jq`
 - You have `kubectl` installed
   - `brew install kubectl`
 - You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured

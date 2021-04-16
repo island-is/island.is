@@ -3,6 +3,8 @@
 ## Prerequisites
 
 - You will need [AWS command line](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) installed.
+- You have [jq](https://stedolan.github.io/jq/) installed.
+  - `brew install jq`
 - You will also need access to the AWS account. Ask someone from DevOps to send you an invitation.
 
 ## Getting started
@@ -11,7 +13,7 @@
 
 Using SSO is the most straight forward solution. You won't need to go by yourself on your AWS account and it will open the needed url for you.
 
-1. Run the sso command for the first time
+- Run the sso command for the first time
 
 ```bash
 aws configure sso
@@ -30,7 +32,7 @@ CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. dev)> or <Press Ente
 
 This step will add the new profile to your `~/.aws/config` file. If you choose `dev` as profile's name, you will see `[profile dev]` in there.
 
-2. Ready to use
+- Ready to use
 
 You can now pass your profile to the `get-secrets` script.
 
@@ -54,7 +56,7 @@ This method is more manual where you will need to export environments variables 
 
 You will need to go to your [AWS account](https://island-is.awsapps.com/start) and get the required credentials for the account you need.
 
-1. Option 1: Set environment variables
+- Option 1: Set environment variables
 
 You can copy/paste these environment variables to your terminal:
 
@@ -64,18 +66,18 @@ export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY_EXAMPLE
 export AWS_SESSION_TOKEN=AWS_SESSION_TOKEN_EXAMPLE
 ```
 
-2. Option 2: Edit `~/.aws/credentials`
+- Option 2: Edit `~/.aws/credentials`
 
 Copy/paste the values in the `~/.aws/credentials` file.
 
 ```bash
-[X_AWSPowerUserAccess]
+[default]
 aws_access_key_id = <KEY_ID>
 aws_secret_access_key = <ACCESS_KEY>
 aws_session_token = <SESSION_TOKEN>
 ```
 
-3. Ready to use
+- Ready to use
 
 In this case you won't need to pass a profile name as opposed to the SSO method.
 
