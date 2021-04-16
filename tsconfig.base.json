@@ -174,7 +174,8 @@
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
-      "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
+      "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
+      "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
