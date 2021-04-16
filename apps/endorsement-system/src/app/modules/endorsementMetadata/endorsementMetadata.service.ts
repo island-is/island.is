@@ -15,7 +15,7 @@ type MetadataProviderField = {
   }
 }
 type MetadataProviderService = {
-  [providerKey in 'nationalRegistry']: MetadataProvider
+  [providerKey in EndorsementMetaField]: MetadataProvider
 }
 export type EndorsementMetaData = {
   [key in EndorsementMetaField]?: any
@@ -39,7 +39,7 @@ export enum EndorsementMetaField {
 }
 
 @Injectable()
-export class MetadataService {
+export class EndorsementMetadataService {
   fieldToProviderMap: MetadataProviderField
   constructor(
     private readonly nationalRegistryService: NationalRegistryService,

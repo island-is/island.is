@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { MetadataService } from './metadata.service'
+import { EndorsementMetadataService } from './endorsementMetadata.service'
 import { NationalRegistryService } from './providers/nationalRegistry.service'
 import { NationalRegistryApi } from '@island.is/clients/national-registry'
 import { environment } from '../../../environments/environment'
@@ -8,7 +8,7 @@ import { NationalRegistryApiMock } from './providers/mock/nationalRegistryApiMoc
 @Module({
   providers: [
     NationalRegistryService,
-    MetadataService,
+    EndorsementMetadataService,
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
@@ -21,6 +21,6 @@ import { NationalRegistryApiMock } from './providers/mock/nationalRegistryApiMoc
         : {}),
     },
   ],
-  exports: [MetadataService],
+  exports: [EndorsementMetadataService],
 })
-export class MetadataModule {}
+export class EndorsementMetadataModule {}
