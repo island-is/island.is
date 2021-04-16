@@ -16,6 +16,7 @@ import { RegulationsToggleSwitch } from './RegulationsToggleSwitch'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationTimeline } from './RegulationTimeline'
+import { AffectingRegulations } from './AffectingRegulations'
 
 // ---------------------------------------------------------------------------
 
@@ -76,6 +77,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             urlDate={props.urlDate}
             texts={texts}
           />
+          <AffectingRegulations regulation={regulation} texts={texts} />
+
           <div className={waterMarkClass}>
             <Text
               as="h1"
@@ -99,7 +102,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               title={txt('commentsTitle')}
               content={regulation.comments}
             />
-          </div>{' '}
+          </div>
         </>
       }
       sidebar={

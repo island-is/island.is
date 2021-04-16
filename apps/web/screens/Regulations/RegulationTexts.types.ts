@@ -47,6 +47,8 @@ export type RegulationPageTexts = Partial<
     | 'appendixesTitle' // 'Viðaukar'
     | 'appendixGenericTitle' // 'Viðauki'
     | 'commentsTitle' // 'Athugasemdir ritstjóra'
+    | 'affectingLinkPrefix' // 'Breytingar vegna'
+    | 'affectingListLegend' // 'Reglugerðir sem kveða á um þessar breytingar'
     | 'effectsTitle' // 'Áhrif %{name} á aðrar reglugerðir'
     | 'effectsChange' // 'Breytir %{name}'
     | 'effectsCancel' // 'Fellir brott %{name}'
