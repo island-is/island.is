@@ -8,7 +8,7 @@ import { RegulationHomeTexts } from './RegulationTexts.types'
 
 import { regulationsSearchResults } from './Regulations.mock'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -19,6 +19,7 @@ import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
   Breadcrumbs,
+  Button,
   CategoryCard,
   GridColumn,
   GridContainer,
@@ -31,7 +32,11 @@ import {
   RegulationsSearchSection,
 } from './RegulationsSearchSection'
 import { shuffle } from 'lodash'
-import { getParams, useRegulationLinkResolver } from './regulationUtils'
+import {
+  getParams,
+  prettyName,
+  useRegulationLinkResolver,
+} from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
   GetRegulationsSearchQuery,
@@ -73,7 +78,9 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.totalItems ?? 0
+  const totalItems = props.regulations?.data?.length ?? 0
+  const stepSize = 9
+  const [showCount, setShowCount] = useState(totalItems > 18 ? stepSize : 18)
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -154,20 +161,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                         ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
                         : String(totalItems).substr(-1) === '1'
                         ? totalItems + ' reglugerð fannst'
-                        : `${totalItems} reglugerðir fundust${
-                            totalItems > props.regulations.perPage
-                              ? ', sýni ' +
-                                Math.min(totalItems, props.regulations?.perPage)
-                              : ''
-                          }
-                          `}
+                        : `${totalItems} reglugerðir fundust`}
                     </p>
                   </GridColumn>
                 </GridRow>
               )}
               <GridRow>
                 {props.regulations?.data?.length > 0 &&
-                  props.regulations.data.map((reg, i) => (
+                  props.regulations.data.slice(0, showCount).map((reg, i) => (
                     <GridColumn
                       key={reg.name}
                       span={['1/1', '1/2', '1/2', '1/3']}
@@ -176,7 +177,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                     >
                       <CategoryCard
                         href={linkToRegulation(reg.name)}
-                        heading={reg.name}
+                        heading={prettyName(reg.name)}
                         text={reg.title}
                         tags={
                           reg.ministry && [
@@ -190,6 +191,18 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                     </GridColumn>
                   ))}
               </GridRow>
+              <Box
+                display="flex"
+                justifyContent="center"
+                marginTop={3}
+                textAlign="center"
+              >
+                {showCount < totalItems && (
+                  <Button onClick={() => setShowCount(showCount + stepSize)}>
+                    Sjá fleiri ({totalItems - showCount})
+                  </Button>
+                )}
+              </Box>
             </GridContainer>
           }
         />

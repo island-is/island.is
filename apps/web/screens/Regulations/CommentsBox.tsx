@@ -16,7 +16,9 @@ export const CommentsBox: FC<CommentsBoxProps> = (props) =>
       <AlertMessage
         type="info"
         title={props.title}
-        message={<HTMLDump className={s.bodyText} content={props.content} />}
+        message={
+          <HTMLDump className={s.bodyText} html={props.content} marginTop={1} />
+        }
       />
     </Box>
   )

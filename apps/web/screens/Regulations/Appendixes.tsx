@@ -59,16 +59,16 @@ export const Appendixes: FC<AppendixesProps & NoChildren> = memo((props) => {
                     // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode
                     <Text variant="h3" as="h2">
                       <HTMLDump
-                        tag="span"
+                        component="span"
                         className={s.bodyText}
-                        content={title.asHtml}
+                        html={title.asHtml}
                       />
                     </Text>
                   )
                 }
                 startExpanded={hasDiff(appendix.text)}
               >
-                <HTMLDump className={s.bodyText} content={appendix.text} />
+                <HTMLDump className={s.bodyText} html={appendix.text} />
               </AccordionItem>
             )
           )

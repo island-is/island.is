@@ -1,19 +1,14 @@
-import { NoChildren } from '@island.is/web/types'
 import React, { FC } from 'react'
+import { NoChildren } from '@island.is/web/types'
+import { Box, BoxProps } from '@island.is/island-ui/core'
 import { HTMLText } from './Regulations.types'
 
-export type HTMLDumpProps = {
-  content: HTMLText
-  className?: string
-  tag?: 'span' | 'div' | 'p' | 'section'
+export type HTMLDumpProps = BoxProps & {
+  html: HTMLText
+  dangerouslySetInnerHTML?: undefined
 }
 
 export const HTMLDump: FC<HTMLDumpProps & NoChildren> = (props) => {
-  const Tag = props.tag || 'div'
-  return (
-    <Tag
-      className={props.className}
-      dangerouslySetInnerHTML={{ __html: props.content }}
-    />
-  )
+  const { html, ...boxProps } = props
+  return <Box {...boxProps} dangerouslySetInnerHTML={{ __html: html }} />
 }

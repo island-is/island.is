@@ -16,6 +16,7 @@ import { RegulationsToggleSwitch } from './RegulationsToggleSwitch'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationTimeline } from './RegulationTimeline'
+import { AffectingRegulations } from './AffectingRegulations'
 
 // ---------------------------------------------------------------------------
 
@@ -36,9 +37,19 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
   const diffView = !!regulation.showingDiff
 
+  const timelineDate = regulation.timelineDate || ''
+  const effectiveDate = regulation.effectiveDate
+  const lastAmendDate = regulation.lastAmendDate || ''
+
   const isDiffable =
-    regulation.history.length > 0 &&
-    regulation.timelineDate !== regulation.effectiveDate
+    regulation.history.length > 0 && timelineDate !== effectiveDate
+
+  const isCurrent = !timelineDate || timelineDate === lastAmendDate
+  const isUpcoming = !isCurrent && timelineDate > lastAmendDate
+
+  const waterMarkClass = isCurrent
+    ? undefined
+    : s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
 
   return (
     <RegulationLayout
@@ -54,42 +65,44 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                 diff: !diffView,
                 ...(props.urlDate
                   ? { on: props.urlDate }
-                  : regulation.timelineDate
-                  ? { d: regulation.timelineDate }
+                  : timelineDate
+                  ? { d: timelineDate }
                   : undefined),
               })}
               label={diffView ? txt('hideDiff') : txt('showDiff')}
             />
           )}
-
           <RegulationStatus
             regulation={regulation}
             urlDate={props.urlDate}
             texts={texts}
           />
+          <AffectingRegulations regulation={regulation} texts={texts} />
 
-          <Text
-            as="h1"
-            variant="h3"
-            marginTop={[2, 3, 4, 5]}
-            marginBottom={[2, 4]}
-          >
-            {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
-            {name} {regulation.title}
-          </Text>
+          <div className={waterMarkClass}>
+            <Text
+              as="h1"
+              variant="h3"
+              marginTop={[2, 3, 4, 5]}
+              marginBottom={[2, 4]}
+            >
+              {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
+              {name} {regulation.title}
+            </Text>
 
-          <HTMLDump className={s.bodyText} content={regulation.text} />
+            <HTMLDump className={s.bodyText} html={regulation.text} />
 
-          <Appendixes
-            legend={txt('appendixesTitle')}
-            genericTitle={txt('appendixGenericTitle')}
-            appendixes={regulation.appendixes}
-          />
+            <Appendixes
+              legend={txt('appendixesTitle')}
+              genericTitle={txt('appendixGenericTitle')}
+              appendixes={regulation.appendixes}
+            />
 
-          <CommentsBox
-            title={txt('commentsTitle')}
-            content={regulation.comments}
-          />
+            <CommentsBox
+              title={txt('commentsTitle')}
+              content={regulation.comments}
+            />
+          </div>
         </>
       }
       sidebar={

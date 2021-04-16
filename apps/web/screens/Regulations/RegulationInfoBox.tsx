@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { Button, Text } from '@island.is/island-ui/core'
+import { Button, FocusableBox, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { useDateUtils } from './regulationUtils'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationInfoBoxProps = {
   regulation: RegulationMaybeDiff
@@ -13,6 +13,7 @@ export type RegulationInfoBoxProps = {
 
 export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
   const { regulation, texts } = props
+  const { linkResolver } = useRegulationLinkResolver()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
 
@@ -21,8 +22,33 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
       {regulation.ministry && (
         <Text>
           <strong>{txt('infoboxMinistry')}:</strong>
-          <br />
-          {regulation.ministry.name}
+          <ul>
+            <li>
+              <Link
+                href={`${linkResolver('regulationshome').href}?rn=${
+                  regulation.ministry.slug
+                }`}
+              >
+                <FocusableBox flexDirection={'column'} component="span">
+                  {({
+                    isFocused,
+                    isHovered,
+                  }: {
+                    isFocused: boolean
+                    isHovered: boolean
+                  }) => (
+                    <Text
+                      color={
+                        isFocused || isHovered ? 'blueberry400' : 'blueberry600'
+                      }
+                    >
+                      {regulation.ministry?.name}
+                    </Text>
+                  )}
+                </FocusableBox>
+              </Link>
+            </li>
+          </ul>
         </Text>
       )}
 
@@ -31,7 +57,33 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
           <strong>{txt('infoboxLawChapters')}:</strong>
           <ul>
             {regulation.lawChapters.map((chapter, i) => (
-              <li key={i}>{chapter.name}</li>
+              <li key={i}>
+                <Link
+                  href={`${linkResolver('regulationshome').href}?ch=${
+                    chapter.slug
+                  }`}
+                >
+                  <FocusableBox flexDirection={'column'} component="span">
+                    {({
+                      isFocused,
+                      isHovered,
+                    }: {
+                      isFocused: boolean
+                      isHovered: boolean
+                    }) => (
+                      <Text
+                        color={
+                          isFocused || isHovered
+                            ? 'blueberry400'
+                            : 'blueberry600'
+                        }
+                      >
+                        {chapter.name}
+                      </Text>
+                    )}
+                  </FocusableBox>
+                </Link>
+              </li>
             ))}
           </ul>
         </Text>

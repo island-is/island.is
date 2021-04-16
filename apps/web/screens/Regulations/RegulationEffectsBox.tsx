@@ -17,20 +17,21 @@ export type RegulationEffectsBoxProps = {
 
 export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
   const { regulation, texts } = props
-  const { name, effects } = regulation
   const txt = useNamespace(texts)
   const { linkToRegulation } = useRegulationLinkResolver()
 
-  if (!effects.length) {
+  if (!regulation.effects.length) {
     return null
   }
 
   return (
     <RegulationsSidebarBox
-      title={interpolate(txt('effectsTitle'), { name })}
+      title={interpolate(txt('effectsTitle'), {
+        name: prettyName(regulation.name),
+      })}
       colorScheme="blueberry"
     >
-      {effects.map((item, i) => {
+      {regulation.effects.map((item, i) => {
         const name = prettyName(item.name)
         const label = interpolate(
           item.effect === 'amend' ? txt('effectsChange') : txt('effectsCancel'),
