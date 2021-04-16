@@ -66,7 +66,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         {formatMessage(m.endorsementList.linkDescription)}
       </Text>
       <CopyLink
-        linkUrl={window.location.origin + location.pathname}
+        linkUrl={window.location.href}
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
       <Text
