@@ -9,13 +9,22 @@ import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
 import LanguageList from './../../components/Admin/lists/LanguageList'
 import TranslationList from './../../components/Admin/lists/TranslationList'
 import LocalizationUtils from '../../utils/localization.utils'
+import { RoleUtils } from './../../utils/role.utils'
 
 const Index: React.FC = () => {
+  const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab
   const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.AdminUsers)
 
   useEffect(() => {
+    async function resolveRoles() {
+      const isAdmin = await RoleUtils.isUserAdmin()
+      if (!isAdmin) {
+        router.push('/')
+      }
+    }
+    resolveRoles()
     setActiveTab(+tabQuery)
     document.title = LocalizationUtils.getPageTitle('admin.index')
   }, [tabQuery])
