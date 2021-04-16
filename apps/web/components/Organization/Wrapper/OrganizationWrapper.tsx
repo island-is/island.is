@@ -42,6 +42,7 @@ interface WrapperProps {
   sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
+  stickySidebar?: boolean
   minimal?: boolean
 }
 
@@ -55,16 +56,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   sidebarContent,
   navigationData,
   fullWidthContent = false,
+  stickySidebar = true,
   children,
   minimal = false,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
   const { linkResolver } = useLinkResolver()
 
+  const metaTitleSuffix =
+    pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
+
+  const SidebarContainer = stickySidebar ? Sticky : Box
+
   return (
     <>
       <HeadWithSocialSharing
-        title={pageTitle}
+        title={`${pageTitle}${metaTitleSuffix}`}
         description={pageDescription}
         imageUrl={pageFeaturedImage?.url}
         imageWidth={pageFeaturedImage?.width?.toString()}
@@ -140,7 +147,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             paddingBottom={[4, 4, 4]}
             isSticky={false}
             sidebarContent={
-              <Sticky>
+              <SidebarContainer>
                 <Navigation
                   baseId="pageNav"
                   isMenuDialog={isMobile}
@@ -156,7 +163,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
                 {sidebarContent}
-              </Sticky>
+              </SidebarContainer>
             }
           >
             <Hidden above="sm">

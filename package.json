@@ -385,6 +385,7 @@
     "urijs": "1.19.6",
     "elliptic": "6.5.4",
     "serialize-to-js": "3.1.1",
-    "netmask": "2.0.1"
+    "netmask": "2.0.1",
+    "ssri": "8.0.1"
   }
 }

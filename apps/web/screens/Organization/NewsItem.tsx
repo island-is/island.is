@@ -80,13 +80,6 @@ const NewsItem: Screen<NewsItemProps> = ({
 
   return (
     <>
-      <HeadWithSocialSharing
-        title={`${newsItem.title} | Sýslumenn | Ísland.is`}
-        description={newsItem.intro}
-        imageUrl={newsItem.image?.url}
-        imageWidth={newsItem.image?.width.toString()}
-        imageHeight={newsItem.image?.height.toString()}
-      />
       <OrganizationWrapper
         pageTitle={organizationPage.title}
         organizationPage={organizationPage}
@@ -98,6 +91,13 @@ const NewsItem: Screen<NewsItemProps> = ({
       >
         <NewsArticle newsItem={newsItem} namespace={namespace} />
       </OrganizationWrapper>
+      <HeadWithSocialSharing
+        title={`${newsItem.title} | ${organizationPage.title}`}
+        description={newsItem.intro}
+        imageUrl={newsItem.image?.url}
+        imageWidth={newsItem.image?.width.toString()}
+        imageHeight={newsItem.image?.height.toString()}
+      />
     </>
   )
 }

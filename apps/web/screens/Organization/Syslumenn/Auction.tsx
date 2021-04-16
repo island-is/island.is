@@ -62,7 +62,7 @@ const Auction: Screen<AuctionProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('singleAuction', 'Uppboð')}
+      pageTitle={`${auction.title} ${format(date, 'd. MMMM yyyy')}`}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -76,6 +76,10 @@ const Auction: Screen<AuctionProps> = ({
         {
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
+        },
+        {
+          title: n('auctions', 'Uppboð'),
+          href: linkResolver('auctions').href,
         },
       ]}
       navigationData={{
@@ -91,14 +95,14 @@ const Auction: Screen<AuctionProps> = ({
           {auction.title}
         </Text>
         <Text variant="h3" as="h3" marginBottom={2}>
-          {format(date, 'e. MMMM yyyy')}
+          {format(date, 'd. MMMM yyyy')}
         </Text>
         <Box marginBottom={4}>
           <Tag disabled>{auction.organization.title}</Tag>
         </Box>
         {richText(auction.content as SliceType[])}
         <Text paddingTop={4} variant="small">
-          {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
+          {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM HH:mm')}
         </Text>
       </Box>
     </OrganizationWrapper>
