@@ -1,12 +1,12 @@
 import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
 import { ZodError } from 'zod'
+import { ZodSuberror } from 'zod/lib/src/ZodError'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
 import set from 'lodash/set'
 import merge from 'lodash/merge'
 import { AnswerValidationError } from './AnswerValidator'
-import { ZodSuberror } from 'zod/lib/src/ZodError'
 
 interface SchemaValidationError {
   [key: string]: string
@@ -14,12 +14,12 @@ interface SchemaValidationError {
 
 function populateError(
   currentError: SchemaValidationError | undefined,
-  newError: ZodError | undefined,
-  errorPath?: string,
-): SchemaValidationError {
+  newError: ZodSuberror[] | undefined,
+  pathToError?: string,
+) {
   let errorObject = {}
-  newError?.errors?.forEach((element) => {
-    errorObject = set(errorObject, errorPath || element.path, element.message)
+  newError?.forEach((element) => {
+    errorObject = set(errorObject, pathToError ?? element.path, element.message)
   })
   if (currentError) {
     return merge(currentError, errorObject)
@@ -39,10 +39,10 @@ function partialSchemaValidation(
   originalSchema: Schema,
   error: SchemaValidationError | undefined,
   currentPath = '',
-  sendPath?: boolean,
+  sendConstructedPath?: boolean,
 ): SchemaValidationError | undefined {
   Object.keys(answers).forEach((key) => {
-    const newPath = constructPath(currentPath, key)
+    const constructedErrorPath = constructPath(currentPath, key)
     const answer = answers[key]
 
     // ZodUnions do not have .pick method
@@ -57,8 +57,12 @@ function partialSchemaValidation(
       const keyIsIncludedInErrors = zodErrors.some((err) =>
         err.path.includes(key),
       )
-      if (!has(error, newPath) && keyIsIncludedInErrors) {
-        error = populateError(error, e, sendPath ? newPath : undefined)
+      if (!has(error, constructedErrorPath) && keyIsIncludedInErrors) {
+        error = populateError(
+          error,
+          zodErrors,
+          sendConstructedPath ? constructedErrorPath : undefined,
+        )
       }
       if (Array.isArray(answer)) {
         const arrayElements = answer as Answer[]
@@ -66,7 +70,7 @@ function partialSchemaValidation(
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
-            const elementPath = `${newPath}[${index}]`
+            const elementPath = `${constructedErrorPath}[${index}]`
             if (el !== null && typeof el === 'object') {
               partialSchemaValidation(
                 el as FormValue,
@@ -83,7 +87,7 @@ function partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],
           error,
-          newPath,
+          constructedErrorPath,
         )
       }
     }
