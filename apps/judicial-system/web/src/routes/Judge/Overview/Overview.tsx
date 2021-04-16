@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import {
-  Box,
-  Text,
-  Input,
-  Button,
-  AccordionCard,
-} from '@island.is/island-ui/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -524,21 +518,23 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
-              {workingCase.files && (
+              {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
-                  <AccordionCard
-                    id="files-card"
-                    label={`Rannsóknargögn (${workingCase.files.length})`}
-                  >
-                    <CaseFileList
-                      caseId={workingCase.id}
-                      files={workingCase.files}
-                      canOpenFiles={
-                        workingCase.judge !== null &&
-                        workingCase.judge?.id === user?.id
-                      }
-                    />
-                  </AccordionCard>
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      {`Rannsóknargögn (${
+                        workingCase.files ? workingCase.files.length : 0
+                      })`}
+                    </Text>
+                  </Box>
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
+                    }
+                  />
                 </div>
               )}
               <PdfButton

@@ -5,13 +5,13 @@ import cn from 'classnames'
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './Table.treat'
 import { theme } from '@island.is/island-ui/theme'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 type column<T> = {
   Header: string
   accessor: keyof T
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 interface TableProps<T extends object> {
   data: Array<T>
   columns: column<T>[]
@@ -23,6 +23,7 @@ interface TableProps<T extends object> {
   sortableColumnIds?: ReadonlyArray<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const Table = <T extends object>(
   props: PropsWithChildren<TableProps<T>>,
 ): ReactElement => {
@@ -54,6 +55,7 @@ const Table = <T extends object>(
     restRows = rows.slice(3, lastIndex)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderRow = (row: any) => {
     prepareRow(row)
 
@@ -63,13 +65,16 @@ const Table = <T extends object>(
         className={styles.row}
         onClick={() => handleRowClick(row.original.id)}
       >
-        {row.cells.map((cell: any) => {
-          return (
-            <td {...cell.getCellProps()} style={{}}>
-              <Text>{cell.render('Cell')}</Text>
-            </td>
-          )
-        })}
+        {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          row.cells.map((cell: any) => {
+            return (
+              <td {...cell.getCellProps()} style={{}}>
+                <Text>{cell.render('Cell')}</Text>
+              </td>
+            )
+          })
+        }
       </tr>
     )
   }

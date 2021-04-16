@@ -1,4 +1,4 @@
-export interface Signature {
+export interface Endorsement {
   date: string
   name: string
   nationalRegistry: string

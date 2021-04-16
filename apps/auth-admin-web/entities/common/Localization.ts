@@ -7,6 +7,7 @@ export class Localization {
   paginator: Paginator
   version: string
   pages: Record<string, Page>
+  environment: Record<string, Environment>
 }
 
 export class FormControl {
@@ -27,6 +28,12 @@ export class FormControl {
   infoModal?: InfoModalTranslation
   infoEdit?: string
   infoCreate?: string
+}
+
+export class Environment {
+  title: string
+  description: string
+  helpText: string
 }
 
 export class Page {
