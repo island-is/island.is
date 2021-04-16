@@ -3,6 +3,7 @@ import Header from './Header'
 import Nav from './Nav'
 import StatusBar from './StatusBar'
 import { LOCALE_KEY } from './../../i18n/locales'
+import ShowEnvironment from './ShowEnvironment'
 
 const ContentWrapper: React.FC = ({ children }) => {
   useEffect(() => {
@@ -13,6 +14,7 @@ const ContentWrapper: React.FC = ({ children }) => {
 
   return (
     <div className="content-wrapper">
+      <ShowEnvironment></ShowEnvironment>
       <Header></Header>
       <Nav></Nav>
       <StatusBar></StatusBar>

@@ -1,74 +1,54 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
-  Inject,
-  NotFoundException,
+  HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { EndorsementDto } from './dto/endorsement.dto'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import * as faker from 'faker'
 
 @ApiTags('endorsement')
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly endorsementService: EndorsementService,
-  ) {}
+  constructor(private readonly endorsementService: EndorsementService) {}
 
   @Get()
-  async findOne(@Param() { listId }: EndorsementDto): Promise<Endorsement> {
+  async findOne(
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+  ): Promise<Endorsement> {
     // TODO: Add auth here
-    const endorsement = await this.endorsementService.findEndorsementByNationalId(
-      {
-        nationalId: '0000000000', // TODO: Replace this with requesting user
-        listId,
-      },
-    )
-
-    if (!endorsement) {
-      throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-
-    return endorsement
+    return await this.endorsementService.findSingleEndorsementByNationalId({
+      nationalId: '0000000000', // TODO: Replace this with requesting user
+      listId,
+    })
   }
 
   @Post()
-  async create(@Param() { listId }: EndorsementDto): Promise<Endorsement> {
+  async create(
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+  ): Promise<Endorsement> {
     // TODO: Add auth here
-    // TODO: Validate rules here
-    try {
-      return await this.endorsementService.createEndorsementOnList({
-        nationalId: '0000000000', // TODO: Replace this with requesting user
-        listId,
-      })
-    } catch (error) {
-      this.logger.warn('Failed to create endorsement for list', { listId })
-      throw new NotFoundException(["This list doesn't exist"])
-    }
+    return await this.endorsementService.createEndorsementOnList({
+      nationalId: '0101302989', // TODO: Replace this with requesting user
+      listId,
+    })
   }
 
   @Delete()
-  async delete(@Param() { listId }: EndorsementDto): Promise<boolean> {
+  @HttpCode(204)
+  async delete(
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+  ): Promise<unknown> {
     // TODO: Add auth here
-    const endorsement = await this.endorsementService.deleteFromListByNationalId(
-      {
-        nationalId: '0000000000', // TODO: Replace this with requesting user
-        listId,
-      },
-    )
-
-    if (endorsement === 0) {
-      this.logger.warn('Failed to remove endorsement for list', { listId })
-      throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-
-    return endorsement > 0
+    await this.endorsementService.deleteFromListByNationalId({
+      nationalId: '0000000000', // TODO: Replace this with requesting user
+      listId,
+    })
+    return
   }
 }

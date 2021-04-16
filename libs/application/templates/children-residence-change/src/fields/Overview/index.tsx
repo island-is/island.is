@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
-import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
+import { Box, Text, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
@@ -26,6 +26,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
+import * as style from './Overview.treat'
 
 const Overview = ({
   application,
@@ -149,7 +150,7 @@ const Overview = ({
     application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
-    <>
+    <Box className={style.container}>
       <SignatureModal
         controlCode={controlCode}
         onClose={() =>
@@ -159,12 +160,7 @@ const Overview = ({
         }
         fileSignatureState={fileSignatureState}
       />
-      <AlertMessage
-        type="info"
-        title={formatMessage(m.contract.alert.title)}
-        message={formatMessage(m.contract.alert.message)}
-      />
-      <Box marginTop={5}>
+      <Box>
         <DescriptionText
           text={m.contract.general.description}
           format={{
@@ -175,7 +171,7 @@ const Overview = ({
           }}
         />
       </Box>
-      <Box marginTop={5}>
+      <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.childName, {
             count: children.length,
@@ -185,25 +181,6 @@ const Overview = ({
           <Text key={child.nationalId}>{child.fullName}</Text>
         ))}
       </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.contract.labels.contactInformation)}
-        </Text>
-        <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
-        <Text fontWeight="medium" marginBottom={2}>
-          {answers[parentKey]?.email}
-        </Text>
-        <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[parentKey]?.phoneNumber}</Text>
-      </Box>
-      {answers.residenceChangeReason && (
-        <Box marginTop={4}>
-          <Text variant="h4" marginBottom={1}>
-            {formatMessage(m.reason.input.label)}
-          </Text>
-          <Text>{answers.residenceChangeReason}</Text>
-        </Box>
-      )}
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.currentResidence, {
@@ -226,6 +203,21 @@ const Overview = ({
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.contract.labels.contactInformation)}
+        </Text>
+        <Text>{answers[parentKey]?.email}</Text>
+        <Text>{answers[parentKey]?.phoneNumber}</Text>
+      </Box>
+      {answers.residenceChangeReason && (
+        <Box marginTop={4}>
+          <Text variant="h4" marginBottom={1}>
+            {formatMessage(m.reason.input.label)}
+          </Text>
+          <Text>{answers.residenceChangeReason}</Text>
+        </Box>
+      )}
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={1}>
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
@@ -237,16 +229,12 @@ const Overview = ({
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.interview.general.sectionTitle)}
+          {formatMessage(m.contract.childBenefit.label)}
         </Text>
         <Text>
-          {formatMessage(
-            m.interview[
-              parentKey === Roles.ParentA
-                ? answers.interviewParentA
-                : answers.interviewParentB
-            ].overviewText,
-          )}
+          {formatMessage(m.contract.childBenefit.text, {
+            otherParent: childResidenceInfo.future.parentName,
+          })}
         </Text>
       </Box>
       <Box marginTop={5} marginBottom={3}>
@@ -265,7 +253,7 @@ const Overview = ({
           {formatMessage(m.contract.pdfButton.label)}
         </Button>
       </Box>
-    </>
+    </Box>
   )
 }
 

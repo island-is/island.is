@@ -1,6 +1,5 @@
 import { error } from './messages/index'
 import * as z from 'zod'
-import { InterviewFieldIds } from '../types'
 
 enum Duration {
   Permanent = 'permanent',
@@ -18,10 +17,6 @@ const terms = z
   .array(z.string())
   .length(3, error.validation.approveTerms.defaultMessage)
 
-const interview = z.enum(['yes', 'no']).refine((v) => v, {
-  message: error.validation.interview.defaultMessage,
-})
-
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
   approveExternalData: z.boolean().refine((v) => v, {
@@ -32,12 +27,13 @@ export const dataSchema = z.object({
     .min(1, error.validation.selectChild.defaultMessage),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
+  counterParty: parentContactInfo,
   parentB: parentContactInfo,
   approveTerms: terms,
   approveTermsParentB: terms,
   confirmResidenceChangeInfo: z
     .array(z.string())
-    .min(1, error.validation.approveChildrenResidenceChange.defaultMessage),
+    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
   selectDuration: z
     .object({
       type: z.enum([Duration.Permanent, Duration.Temporary]),
@@ -47,8 +43,6 @@ export const dataSchema = z.object({
       message: error.validation.durationDate.defaultMessage,
       path: ['date'],
     }),
-  [InterviewFieldIds.parentA]: interview,
-  [InterviewFieldIds.parentB]: interview,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

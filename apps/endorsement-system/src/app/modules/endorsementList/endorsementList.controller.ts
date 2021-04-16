@@ -2,9 +2,8 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
-  NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -14,17 +13,13 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { FindEndorsementListDto } from './dto/findEndorsementLists.dto'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
   @Get()
@@ -40,39 +35,24 @@ export class EndorsementListController {
   async findEndorsements(): Promise<Endorsement[]> {
     // TODO: Add auth here
     // TODO: Add pagination
-    const response = await this.endorsementListService.findAllEndorsementsByNationalId(
+    return await this.endorsementListService.findAllEndorsementsByNationalId(
       '0000000000', // TODO: Replace with auth
     )
-
-    console.log('response', response)
-
-    return response
   }
 
   @Get(':listId')
   async findOne(
-    @Param() { listId }: FindEndorsementListDto,
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
-    const response = await this.endorsementListService.findSingleList(listId)
-    if (!response) {
-      throw new NotFoundException(['This endorsement list does not exist.'])
-    } else {
-      return response
-    }
+    return await this.endorsementListService.findSingleList(listId)
   }
 
   @Put(':listId/close')
   async close(
-    @Param() { listId }: FindEndorsementListDto,
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     // TODO: Add auth here
-    const response = await this.endorsementListService.close(listId)
-    if (!response) {
-      this.logger.warn('Failed to close list', { listId })
-      throw new NotFoundException(['This endorsement list does not exist.'])
-    } else {
-      return response
-    }
+    return await this.endorsementListService.close(listId)
   }
 
   @Post()

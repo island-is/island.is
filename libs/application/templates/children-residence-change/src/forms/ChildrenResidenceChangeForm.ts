@@ -22,7 +22,6 @@ import {
 import Logo from '../../assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import * as m from '../lib/messages'
-import { InterviewFieldIds } from '../types'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
@@ -260,17 +259,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'approveTerms',
           title: m.terms.general.pageTitle,
           component: 'Terms',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'interview',
-      title: m.interview.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: InterviewFieldIds.parentA,
-          title: m.interview.general.pageTitle,
-          component: 'Interview',
         }),
       ],
     }),

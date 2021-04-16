@@ -77,6 +77,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-names-registry": [
+        "libs/api/domains/icelandic-names-registry/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -133,6 +136,9 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
+      "@island.is/application/templates/party-application": [
+        "libs/application/templates/party-application/src/index.ts"
+      ],
       "@island.is/application/templates/party-letter": [
         "libs/application/templates/party-letter/src/index.ts"
       ],
@@ -162,7 +168,8 @@
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"
       ],
-      "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
+      "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
+      "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
@@ -191,6 +198,9 @@
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
+      "@island.is/icelandic-names-registry-types": [
+        "libs/icelandic-names-registry/types/src/index.ts"
+      ],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],

@@ -8,17 +8,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import {
-  EndorsementList,
-  EndorsementMetaField,
-} from '../endorsementList/endorsementList.model'
-
-// TODO: Move this type to the metadata service
-// TODO: Map out all potential key/values types
-export type EndorsementMetaData = {
-  [key in keyof typeof EndorsementMetaField]?: any
-}
-
+import { EndorsementList } from '../endorsementList/endorsementList.model'
+import { EndorsementMetaData } from '../endorsementMetadata/endorsementMetadata.service'
 @Table({
   tableName: 'endorsement',
   indexes: [

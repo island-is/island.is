@@ -1,5 +1,6 @@
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
+const { createSecureHeaders } = require('next-secure-headers')
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 
@@ -30,6 +31,34 @@ module.exports = withTreat(
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
       },
+      async headers() {
+        return [
+          {
+            source: '/(.*)',
+            headers: createSecureHeaders({
+              contentSecurityPolicy: {
+                directives: {
+                  defaultSrc: "'self'",
+                  objectSrc: "'none'",
+                  frameSrc: "'none'",
+                  baseURI: "'self'",
+                  styleSrc: ["'self' 'unsafe-inline'"],
+                  scriptSrc: ["'self'"],
+                  connectSrc: ["'self'"],
+                },
+              },
+              forceHTTPSRedirect: [
+                true,
+                { maxAge: 60 * 60 * 24 * 4, includeSubDomains: true },
+              ],
+              nosniff: 'nosniff',
+              frameGuard: 'deny',
+              referrerPolicy: 'no-referrer',
+            }),
+          },
+        ]
+      },
+      poweredByHeader: false,
     }),
   ),
 )

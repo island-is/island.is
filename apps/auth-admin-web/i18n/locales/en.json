@@ -1,9 +1,127 @@
 {
   "version": "1",
+  "title": "IDS Managament",
   "header": {
     "title": "IDS admin management",
     "loginButton": "Login",
     "logoutButton": "Logout"
+  },
+  "environment": {
+    "production": {
+      "title": "Production",
+      "description": "You are on Production environment",
+      "helpText": ""
+    },
+    "staging": {
+      "title": "Staging",
+      "description": "You are on Staging environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "development": {
+      "title": "Development",
+      "description": "You are on Development environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "local": {
+      "title": "Localhost",
+      "description": "You are on Local environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    }
+  },
+  "pages": {
+    "admin.index": {
+      "title": "Admin Controls"
+    },
+    "admin.admin-user.[admin]": {
+      "title": "Edit Admin User"
+    },
+    "admin.admin-user.index": {
+      "title": "Create admin user"
+    },
+    "admin.grant-type.[grantType]": {
+      "title": "Edit Grant Type"
+    },
+    "admin.grant-type.index": {
+      "title": "Create Grant Type"
+    },
+    "admin.idp-provider.[idp]": {
+      "title": "Edit Identity Provider"
+    },
+    "admin.idp-provider.index": {
+      "title": "Create Identity Provider"
+    },
+    "admin.language.[isoKey]": {
+      "title": "Edit Language"
+    },
+    "admin.language.index": {
+      "title": "Create Language"
+    },
+    "admin.translation.[key]": {
+      "title": "Edit Translation"
+    },
+    "admin.translation.index": {
+      "title": "Create Translation"
+    },
+    "client.[client]": {
+      "title": "Edit Client",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Client, have been completed",
+        "infoDescription": "You can review your settings by clicking on the steps above"
+      }
+    },
+    "client.index": {
+      "title": "Create a Client"
+    },
+    "clients.index": {
+      "title": "Clients"
+    },
+    "resource.api-resource.[edit]": {
+      "title": "Edit Api Resource",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Api Resource, have been completed"
+      }
+    },
+    "resource.api-resource.index": {
+      "title": "Create an Api Resource"
+    },
+    "resource.api-scope.[edit]": {
+      "title": "Edit an Api Scope",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Api Scope, have been completed"
+      }
+    },
+    "resource.api-scope.index": {
+      "title": "Create an Api Scope"
+    },
+    "resource.identity-resource.[edit]": {
+      "title": "Edit an Identity Resource",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Identity Resource, have been completed"
+      }
+    },
+    "resource.identity-resource.index": {
+      "title": "Create an Identity Resource"
+    },
+    "resources.api-resources.index": {
+      "title": "Api Resources"
+    },
+    "resources.api-scopes.index": {
+      "title": "Api Scopes"
+    },
+    "resources.identity-resources.index": {
+      "title": "Identity Resources"
+    },
+    "users.index": {
+      "title": "Users"
+    }
   },
   "navigations": {
     "navigation": {
@@ -517,8 +635,8 @@
     },
     {
       "id": "TranslationCreateForm",
-      "title": "Edit Translation",
-      "editTitle": "Create a new Translation",
+      "title": "Create a new Translation",
+      "editTitle": "Edit Translation",
       "help": "Add new translation by filling out the form",
       "saveButton": "Save",
       "cancelButton": "Cancel",
@@ -871,6 +989,11 @@
           "errorMessage": "",
           "available": "",
           "unAvailable": ""
+        },
+        "isAccessControlled": {
+          "label": "Is Accessed Controlled",
+          "placeholder": "",
+          "helpText": "Indicates that the Identity Server needs to do a look up in the access table with the user national identity for the user to have access"
         },
         "grantToLegalGuardians": {
           "label": "Grant To Legal Guardians",

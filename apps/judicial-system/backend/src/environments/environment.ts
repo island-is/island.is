@@ -5,7 +5,7 @@ export default {
     secretToken: 'secret-token',
   },
   notifications: {
-    judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },

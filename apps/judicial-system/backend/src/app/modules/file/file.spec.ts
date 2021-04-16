@@ -8,7 +8,7 @@ import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
 import { AwsS3Service } from './awsS3.service'
-import { File } from './models'
+import { CaseFile } from './models'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
 
@@ -63,7 +63,7 @@ describe('FileModule', () => {
           })),
         },
         {
-          provide: getModelToken(File),
+          provide: getModelToken(CaseFile),
           useValue: fileModel,
         },
         FileService,
@@ -111,13 +111,14 @@ describe('FileModule', () => {
       const timeStamp = new Date()
       const size = 99999
 
-      fileModel.create.mockImplementation((values: object) =>
-        Promise.resolve({
-          ...values,
-          id,
-          created: timeStamp,
-          modified: timeStamp,
-        }),
+      fileModel.create.mockImplementation(
+        (values: { key: string; size: number; caseId: string; name: string }) =>
+          Promise.resolve({
+            ...values,
+            id,
+            created: timeStamp,
+            modified: timeStamp,
+          }),
       )
 
       const presignedPost = await fileController.createCasePresignedPost(

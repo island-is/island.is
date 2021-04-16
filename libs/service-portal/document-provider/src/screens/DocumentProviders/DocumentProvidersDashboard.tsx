@@ -1,42 +1,55 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
+import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
+import { m } from '../../lib/messages'
 
-export const DocumentProvidersDashboard = () => {
+interface Props {
+  organisationsCount: number
+  fromDate?: Date
+  toDate?: Date
+}
+interface StatisticsBoxData {
+  name: string
+  value: number
+}
+
+export const DocumentProvidersDashboard = ({
+  organisationsCount,
+  fromDate,
+  toDate,
+}: Props) => {
   const { formatMessage } = useLocale()
 
-  interface Data {
-    name: string
-    value: number
-  }
-  const [data, setData] = useState<Data[]>([])
+  const { statistics } = useGetProviderStatistics(undefined, fromDate, toDate)
 
-  useEffect(() => {
-    //TODO: Set up real data
-    handleFetch()
-  }, [])
-
-  const handleFetch = () => {
-    //TODO: Set up real data
-    setData([
-      {
-        name: 'Fjöldi skjalaveitenda',
-        value: 120,
-      },
-      { name: 'Send skjöl', value: 120 },
-      { name: 'Opnuð skjöl', value: 75 },
-      { name: 'Hnipp', value: 85 },
-    ])
-  }
+  const data: StatisticsBoxData[] = [
+    {
+      name: formatMessage(m.statisticsBoxOrganisationsCount),
+      value: organisationsCount,
+    },
+    {
+      name: formatMessage(m.statisticsBoxPublishedDocuments),
+      value: statistics?.published || 0,
+    },
+    {
+      name: formatMessage(m.statisticsBoxOpenedDocuments),
+      value: statistics?.opened || 0,
+    },
+    {
+      name: formatMessage(m.statisticsBoxNotifications),
+      value: statistics?.notifications || 0,
+    },
+  ]
 
   return (
     <Box marginBottom={2}>
       {data && (
         <GridRow>
-          {data.map((Data, index) => (
+          {data.map((statData, index) => (
             <GridColumn span={['12/12', '3/12']} key={index}>
-              <StatisticBox name={Data.name} value={Data.value} />
+              <StatisticBox name={statData.name} value={statData.value} />
             </GridColumn>
           ))}
         </GridRow>

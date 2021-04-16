@@ -100,6 +100,9 @@
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -173,6 +176,9 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-application": {
+      "tags": []
+    },
     "application-templates-party-letter": {
       "tags": []
     },
@@ -219,7 +225,10 @@
     "clients-national-registry": {
       "tags": []
     },
-    "clients-rsk": {
+    "clients-rsk-v1": {
+      "tags": []
+    },
+    "clients-rsk-v2": {
       "tags": []
     },
     "clients-vmst": {
@@ -288,6 +297,12 @@
       "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
+      "tags": []
+    },
+    "icelandic-names-registry-backend": {
+      "tags": []
+    },
+    "icelandic-names-registry-types": {
       "tags": []
     },
     "infra-express-server": {

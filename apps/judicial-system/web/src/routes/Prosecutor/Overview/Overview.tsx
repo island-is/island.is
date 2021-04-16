@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import {
-  Box,
-  Text,
-  Accordion,
-  AccordionItem,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
@@ -31,7 +25,7 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
-  CaseFile,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -41,7 +35,6 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
-  GetSignedUrlQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
@@ -58,7 +51,6 @@ import * as styles from './Overview.treat'
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [openFileId, setOpenFileId] = useState<string>()
   const { features } = useContext(FeatureContext)
 
   const router = useRouter()
@@ -68,15 +60,6 @@ export const Overview: React.FC = () => {
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
-    variables: {
-      input: {
-        id: openFileId,
-        caseId: workingCase?.id,
-      },
-    },
-    skip: !workingCase?.id || !openFileId,
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
@@ -134,7 +117,6 @@ export const Overview: React.FC = () => {
           setWorkingCase({
             ...workingCase,
             state: resCase.state,
-            prosecutor: resCase.prosecutor,
           })
         } catch (e) {
           return false
@@ -150,12 +132,6 @@ export const Overview: React.FC = () => {
     return sendNotification(workingCase.id)
   }
 
-  const handleOpenFile = (file: UploadFile) => {
-    if (workingCase) {
-      setOpenFileId(file.id)
-    }
-  }
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -165,13 +141,6 @@ export const Overview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    if (fileSignedUrl) {
-      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
-      setOpenFileId(undefined)
-    }
-  }, [fileSignedUrl])
 
   return (
     <PageLayout
@@ -357,24 +326,20 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {workingCase.files && (
+                {features.includes(Feature.CASE_FILES) && (
                   <AccordionItem
                     id="id_5"
-                    label={`Rannsóknargögn ${`(${workingCase.files.length})`}`}
+                    label={`Rannsóknargögn ${`(${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}`}
                     labelVariant="h3"
                   >
-                    {workingCase.files?.map((file, index) => {
-                      return (
-                        <Box marginBottom={3}>
-                          <CaseFile
-                            name={`${index + 1}. ${file.name}`}
-                            size={file.size}
-                            uploadedAt={file.created}
-                            onOpen={() => handleOpenFile(file)}
-                          />
-                        </Box>
-                      )
-                    })}
+                    <Box marginY={3}>
+                      <CaseFileList
+                        caseId={workingCase.id}
+                        files={workingCase.files || []}
+                      />
+                    </Box>
                   </AccordionItem>
                 )}
                 <AccordionItem
@@ -408,10 +373,7 @@ export const Overview: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={
-                workingCase.state === CaseState.RECEIVED &&
-                workingCase.isCourtDateInThePast
-                  ? Constants.REQUEST_LIST_ROUTE
-                  : features.includes(Feature.CASE_FILES)
+                features.includes(Feature.CASE_FILES)
                   ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
                   : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
               }

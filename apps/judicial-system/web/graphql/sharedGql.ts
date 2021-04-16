@@ -41,7 +41,6 @@ export const CaseQuery = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime

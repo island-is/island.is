@@ -11,7 +11,7 @@ beforeAll(async () => {
 
 const errorExpectedStructure = {
   error: expect.any(String),
-  message: expect.any(Array),
+  message: expect.anyOf([String, Array]),
   statusCode: expect.any(Number),
 }
 
@@ -50,7 +50,7 @@ describe('Endorsement', () => {
       statusCode: 404,
     })
   })
-  it(`POST /endorsement-list/:listId/endorsement should create a new endorsement`, async () => {
+  it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement`)
@@ -60,6 +60,15 @@ describe('Endorsement', () => {
     // should return the created object
     expect(response.body).toMatchObject({
       endorsementListId: listId,
+      // lets make sure metadata got populated
+      meta: {
+        fullName: expect.any(String),
+        address: {
+          streetAddress: expect.any(String),
+          city: expect.any(String),
+          postalCode: expect.any(String),
+        },
+      },
     })
   })
 
@@ -82,7 +91,7 @@ describe('Endorsement', () => {
         '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c2/endorsement',
       )
       .send()
-      .expect(200)
+      .expect(204)
 
     expect(response.body).toBeTruthy()
   })
