@@ -1,8 +1,8 @@
 import React from 'react'
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
-import * as styles from './FormFooter.treat'
+import InfoBox from '../InfoBox/InfoBox'
 interface Props {
   previousUrl?: string
   previousIsDisabled?: boolean
@@ -46,21 +46,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           {props.nextButtonText ?? 'Halda áfram'}
         </Button>
       )}
-      {props.infoBoxText && (
-        <div className={styles.infoBoxContainer}>
-          <Box display="flex" alignItems="center">
-            <Box
-              display="flex"
-              alignItems="center"
-              marginRight={2}
-              flexShrink={0}
-            >
-              <Icon type="filled" color="blue400" icon="informationCircle" />
-            </Box>
-            <Text variant="small">{props.infoBoxText}</Text>
-          </Box>
-        </div>
-      )}
+      {props.infoBoxText && <InfoBox text={props.infoBoxText} />}
     </Box>
   )
 }
