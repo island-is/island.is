@@ -71,6 +71,7 @@ callbacks.session = async function session(session, token) {
   session.idToken = token.idToken
   const decoded = parseJwt(session.accessToken)
   session.expires = new Date(decoded.exp * 1000)
+  session.scope = decoded.scope
   return session
 }
 
