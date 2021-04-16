@@ -990,6 +990,11 @@
           "available": "",
           "unAvailable": ""
         },
+        "isAccessControlled": {
+          "label": "Is Accessed Controlled",
+          "placeholder": "",
+          "helpText": "Indicates that the Identity Server needs to do a look up in the access table with the user national identity for the user to have access"
+        },
         "grantToLegalGuardians": {
           "label": "Grant To Legal Guardians",
           "placeholder": "",
