@@ -1,8 +1,7 @@
 #!/usr/bin/env node
+
 const yargs = require('yargs')
 const { execSync } = require('child_process')
-const get = require('lodash').get
-const { default: dedent } = require('ts-dedent')
 
 const argv = yargs(process.argv.slice(2))
 
@@ -12,33 +11,38 @@ const error = (errorMessage) => {
 }
 
 const getFromFileOrEnv = (key) => {
+  // We try to find it within `process.env`
+  const processValue = process.env[key]
+
+  if (processValue) {
+    return processValue
+  }
+
+  // We try to get it from `aws configure get`
   const value = execSync(`aws configure get ${key.toLowerCase()}`)
     .toString()
     .trim()
 
-  // We get it from `aws configure get`
   if (value) {
     return value
   }
 
-  // We try to find it within `process.env`
-  return get(process.env, key)
+  return undefined
 }
 
-const getCredentials = () => [
+const awsCredentials = [
   getFromFileOrEnv('AWS_ACCESS_KEY_ID'),
   getFromFileOrEnv('AWS_SECRET_ACCESS_KEY'),
   getFromFileOrEnv('AWS_SESSION_TOKEN'),
 ]
 
 const checkPresenceAWSAccessVars = () => {
-  const awsCredentials = getCredentials()
   const valuesPresent = awsCredentials.filter((v) => !!v)
 
   if (valuesPresent.length !== awsCredentials.length) {
     error(`
       Missing AWS environment variables.
-      You need to log in your AWS portal and get the environments variables. Either you export them or add them to your \`~/.aws/credentials\` file.
+      You need to log in your AWS account and get the environment variables. Either you export them or add them to your \`~/.aws/credentials\` file.
       Find more about it on the AWS secrets documentation: https://docs.devland.is/repository/aws-secrets
     `)
   }
@@ -76,6 +80,6 @@ console.log(
   `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
 )
 execSync(
-  `docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${args.service}`,
+  `docker run --rm -e AWS_ACCESS_KEY_ID=${awsCredentials[0]} -e AWS_SECRET_ACCESS_KEY=${awsCredentials[1]} -e AWS_SESSION_TOKEN=${awsCredentials[2]} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${args.service}`,
   { stdio: 'inherit' },
 )

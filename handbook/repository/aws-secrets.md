@@ -7,7 +7,11 @@
 
 ## Getting started
 
-1. Configure AWS with SSO, using the following configuration:
+### Using AWS SSO
+
+Using SSO is the most straight forward solution. You won't need to go by yourself on your AWS account and it will open the needed url for you.
+
+1. Run the sso command for the first time
 
 ```bash
 aws configure sso
@@ -24,39 +28,76 @@ CLI default output format [json]: <Press Enter>
 CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. dev)> or <Press Enter>
 ```
 
-This step will add the new profile to your `~/.aws/config` file.
+This step will add the new profile to your `~/.aws/config` file. If you choose `dev` as profile's name, you will see `[profile dev]` in there.
 
-2. Configure AWS, using the following configuration:
+2. Ready to use
+
+You can now pass your profile to the `get-secrets` script.
 
 ```bash
-aws configure
-
-AWS Access Key ID [None]: <KEY_ID>
-AWS Secret Access Key [None]: <ACCESS_KEY>
-Default region name [eu-west-1]: <Press Enter>
-Default output format [json]: <Press Enter>
+AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -> dev as seen above
 ```
 
-You will be able to find these information on the [AWS account](https://island-is.awsapps.com/start).
-
-Then, you will need to open the file created by AWS at `~/.aws/credentials` and add your session token to it.
+{% hint style="info" %}
+**Refresh your profile:** The SSO credentials only lasts 8 hours, after which AWS commands start failing. You can run the following command to renew your SSO credentials.
 
 ```bash
-[default]
+aws configure sso --profile <profile-name> # e.g. profile-name -> dev as seen above
+```
+
+It will open the browser, go to your AWS account to log in and will refresh your credentials and you are ready to use the AWS commands again.
+{% endhint %}
+
+### Using AWS session
+
+This method is more manual where you will need to export environments variables or change a file by yourself.
+
+You will need to go to your [AWS account](https://island-is.awsapps.com/start) and get the required credentials for the account you need.
+
+1. Option 1: Set environment variables
+
+You can copy/paste these environment variables to your terminal:
+
+```bash
+export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID_EXAMPLE
+export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY_EXAMPLE
+export AWS_SESSION_TOKEN=AWS_SESSION_TOKEN_EXAMPLE
+```
+
+2. Option 2: Edit `~/.aws/credentials`
+
+Copy/paste the values in the `~/.aws/credentials` file.
+
+```bash
+[X_AWSPowerUserAccess]
 aws_access_key_id = <KEY_ID>
 aws_secret_access_key = <ACCESS_KEY>
 aws_session_token = <SESSION_TOKEN>
 ```
 
-Voilà, you are now ready to fetch and create secrets.
+3. Ready to use
 
-{% hint style="warning" %}
-Remember, the session token expires every 1 hours so you will need to update it. You can either do `export AWS_SESSION_TOKEN="SESSION_TOKEN"` or change it manually by going into `~/.aws/credentials` and replacing with the new session token generated from your AWS account. The SSO login expires every 8 hours.
+In this case you won't need to pass a profile name as opposed to the SSO method.
+
+```bash
+yarn get-secrets <project-name>
+```
+
+{% hint style="info" %}
+**Refresh your profile:** The session token only lasts 1 hour, after which AWS commands start failing. You will need to log in to your AWS account and get new credentials, with one of the above methods.
 {% endhint %}
 
 ## Usage to fetch secrets
 
 You should now be able to fetch secrets for the project you need.
+
+**With SSO**
+
+```bash
+AWS_PROFILE=<profile-name> yarn get-secrets <project> [options]
+```
+
+**Without SSO**
 
 ```bash
 yarn get-secrets <project> [options]
@@ -65,7 +106,7 @@ yarn get-secrets <project> [options]
 **Example**:
 
 ```bash
-yarn get-secrets api --reset
+yarn get-secrets api
 ```
 
 You can verify it by opening the `.env.secret` file at the root, or inside your code using for example:
@@ -74,22 +115,14 @@ You can verify it by opening the `.env.secret` file at the root, or inside your 
 const { MY_SECRET_KEY } = process.env
 ```
 
-If you configured multiples profiles using `aws configure sso` you can choose which profile to run to get the secrets:
+You can also add the `--reset` argument to the command, that will reset the .env.secret file.
+
+### Troubleshoot
+
+If you get the following error message, you will need to refresh your credentials as explained above.
 
 ```bash
-AWS_PROFILE=dev yarn get-secrets api
-```
-
-You can find your profile listed in `~/.aws/config`, e.g.
-
-```md
-[default]
-region = eu-west-1
-output = json
-[profile dev]
-...
-[profile staging]
-...
+An error occurred (ExpiredTokenException) when calling the GetParametersByPath operation: The security token included in the request is expired
 ```
 
 ## Usage to create secrets

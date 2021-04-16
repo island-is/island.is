@@ -125,15 +125,23 @@ A dedicated documentation about fetching shared development secrets or creating 
 
 ### Running proxy against development service
 
-You are able to run a couple of proxy against the development services: `db`, `es`, `redis` and `xroad`.
+If you have AWS access to our development account, you can connect to development databases and services using a proxy. We've set up a proxy and connection helpers for our development Postgres, Elastic Search, Redis and X-Road Security Server.
 
-To do so, you can run the following command:
+To do so, you can run for example:
 
 ```bash
 ./scripts/run-db-proxy.sh
 ```
 
-It will use the `aws-cli` to get your AWS credentials or if it cannot find it, will try to find the environments variables in the `process.env`.
+It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. We're currently not able to get AWS credentials from an AWS profile configured using AWS SSO. You will need to visit your AWS account and export the credentials manually or add them to your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
+
+{% hint style="info" %}
+You will be able to find the credentials needed to open the development services on your AWS account.
+{% endhint %}
+
+{% hint style="info" %}
+If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.
+{% endhint %}
 
 {% hint style="warning" %}
 The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
