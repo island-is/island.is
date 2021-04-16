@@ -9,7 +9,6 @@ import {
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
-import * as tokenUtils from '../utils/tokenUtils'
 import { FileService } from '../files/file.service'
 
 let app: INestApplication
@@ -53,15 +52,15 @@ describe('Application system API', () => {
     string | undefined,
     [import('@nestjs/common').ExecutionContext]
   >
+
   beforeEach(() => {
-    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
-    spy.mockImplementation(() => {
-      return nationalId
-    })
+    spy = jest.fn()
   })
+
   afterAll(() => {
     spy.mockRestore()
   })
+
   it(`POST /application should register application`, async () => {
     // Act
     const response = await server

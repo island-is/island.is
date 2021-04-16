@@ -5,6 +5,7 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { SigningModule } from '@island.is/dokobit-signing'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
@@ -13,11 +14,11 @@ import { FileService } from './files/file.service'
 import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { SigningModule } from '@island.is/dokobit-signing'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -59,6 +60,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as ApplicationConfig,
     },
     AwsService,
+    ApplicationAccessService,
   ],
 })
 export class ApplicationModule {}

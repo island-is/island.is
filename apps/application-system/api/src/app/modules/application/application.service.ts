@@ -18,8 +18,23 @@ export class ApplicationService {
     private applicationModel: typeof Application,
   ) {}
 
-  async findOneById(id: string): Promise<Application | null> {
-    return this.applicationModel.findOne({ where: { id } })
+  async findOneById(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { assignees: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+      },
+    })
   }
 
   async findAllByNationalIdAndFilters(
