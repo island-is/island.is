@@ -35,10 +35,10 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
     answers,
   } = application
   const children = nationalRegistry.data.children
-  const currentAnswer = answers.selectedChildren
-  const [selectedChildrenState, setSelectedChildrenState] = useState<
-    string[] | undefined
-  >(currentAnswer)
+  const currentAnswer = answers.selectedChildren || []
+  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
+    currentAnswer,
+  )
 
   return (
     <>
