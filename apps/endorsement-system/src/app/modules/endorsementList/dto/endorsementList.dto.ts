@@ -7,7 +7,8 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
-import { EndorsementMetaField, EndorsementTag } from '../endorsementList.model'
+import { EndorsementTag } from '../endorsementList.model'
+import { EndorsementMetaField } from '../../endorsementMetadata/endorsementMetadata.service'
 export class EndorsementListDto {
   @IsString()
   title!: string

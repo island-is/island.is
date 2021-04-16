@@ -6,6 +6,7 @@ import {
 } from './children-residence-change.service'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { SharedTemplateAPIModule } from '../../shared'
+import { SmsModule } from '@island.is/nova-sms'
 
 export class ChildrenResidenceChangeModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -14,6 +15,7 @@ export class ChildrenResidenceChangeModule {
       imports: [
         SyslumennModule.register(config.syslumenn),
         SharedTemplateAPIModule.register(config),
+        SmsModule.register(config.smsOptions),
       ],
       providers: [
         {

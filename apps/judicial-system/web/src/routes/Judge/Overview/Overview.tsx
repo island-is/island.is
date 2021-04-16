@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  AccordionCard,
+} from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -18,6 +24,7 @@ import {
   BlueBox,
   Modal,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -50,6 +57,7 @@ import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -74,6 +82,7 @@ export const JudgeOverview: React.FC = () => {
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
+  const { user } = useContext(UserContext)
 
   const [
     createCustodyCourtCaseMutation,
@@ -450,21 +459,19 @@ export const JudgeOverview: React.FC = () => {
                     }`}
                   </Text>
                 </Box>
-                <Text>
-                  {formatRequestedCustodyRestrictions(
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                    workingCase.requestedOtherRestrictions,
-                  )
-                    .split('\n')
-                    .map((requestedCustodyRestriction, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{requestedCustodyRestriction}</Text>
-                        </div>
-                      )
-                    })}
-                </Text>
+                {formatRequestedCustodyRestrictions(
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </div>
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <div className={styles.infoSection}>
@@ -515,6 +522,25 @@ export const JudgeOverview: React.FC = () => {
                       {workingCase.comments}
                     </span>
                   </Text>
+                </div>
+              )}
+              {features.includes(Feature.CASE_FILES) && (
+                <div className={styles.infoSection}>
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      {`Rannsóknargögn (${
+                        workingCase.files ? workingCase.files.length : 0
+                      })`}
+                    </Text>
+                  </Box>
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
+                    }
+                  />
                 </div>
               )}
               <PdfButton
