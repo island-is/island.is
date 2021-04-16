@@ -12,6 +12,7 @@ import LocalizationUtils from '../../utils/localization.utils'
 import { UserInfoService } from './../../services/UserInfoService'
 
 const Index: React.FC = () => {
+  const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab
   const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.AdminUsers)
@@ -19,8 +20,11 @@ const Index: React.FC = () => {
   useEffect(() => {
     setActiveTab(+tabQuery)
     document.title = LocalizationUtils.getPageTitle('admin.index')
-    console.log(UserInfoService.getUserInfo())
-    console.log(process.env)
+    UserInfoService.getUserInfo().then((userInfo) => {
+      if (userInfo.nationalId !== '3004764579') {
+        router.push('/')
+      }
+    })
   }, [tabQuery])
 
   const handleTabChange = (tab: AdminTab) => {
