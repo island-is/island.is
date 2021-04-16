@@ -29,7 +29,7 @@ export const dataSchema = z.object({
   }),
   selectedChildren: z
     .array(z.string())
-    .min(1, { message: error.validation.selectChild.defaultMessage }),
+    .min(1, error.validation.selectChild.defaultMessage),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
   parentB: parentContactInfo,
@@ -37,7 +37,7 @@ export const dataSchema = z.object({
   approveTermsParentB: terms,
   confirmResidenceChangeInfo: z
     .array(z.string())
-    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
+    .min(1, error.validation.approveChildrenResidenceChange.defaultMessage),
   selectDuration: z
     .object({
       type: z.enum([Duration.Permanent, Duration.Temporary]),
@@ -45,7 +45,7 @@ export const dataSchema = z.object({
     })
     .refine((v) => (v.type === Duration.Temporary ? v.date : true), {
       message: error.validation.durationDate.defaultMessage,
-      path: ['selectDuration', 'date'],
+      path: ['date'],
     }),
   [InterviewFieldIds.parentA]: interview,
   [InterviewFieldIds.parentB]: interview,
