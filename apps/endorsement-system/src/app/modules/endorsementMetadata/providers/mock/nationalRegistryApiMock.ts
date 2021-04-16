@@ -3,6 +3,7 @@ import * as faker from 'faker'
 
 /**
  * This exists as a quick solution to mocking the underlying soap endpoint
+ * Please use msw to mock other endpoints
  */
 
 @Injectable()

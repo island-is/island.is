@@ -11,21 +11,8 @@ export const contract = {
     description: {
       id: 'crc.application:section.contract.overview.description#markdown',
       defaultMessage:
-        'Hér er yfirlit yfir samning um breytt lögheimili. __Þú og {otherParent}__ þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.',
+        'Hér er yfirlit yfir samning um breytt lögheimili. __Þú og {otherParent}__ þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
       description: 'Contract page description',
-    },
-  }),
-  alert: defineMessages({
-    title: {
-      id: 'crc.application:section.contract.overview.alert.title',
-      defaultMessage: 'Upphafsdagur samnings',
-      description: 'Title for alert message',
-    },
-    message: {
-      id: 'crc.application:section.contract.overview.alert.message',
-      defaultMessage:
-        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
-      description: 'Text for alert message',
     },
   }),
   labels: defineMessages({
@@ -37,7 +24,7 @@ export const contract = {
     },
     contactInformation: {
       id: 'crc.application:section.contract.overview.labels.contactInformation',
-      defaultMessage: 'Tengiliðaupplýsingar',
+      defaultMessage: 'Tengiliðaupplýsingar þínar',
       description: 'Label for parent contact information',
     },
     currentResidence: {
@@ -51,6 +38,18 @@ export const contract = {
       defaultMessage:
         'Nýtt lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
       description: 'Label for new residence',
+    },
+  }),
+  childBenefit: defineMessages({
+    label: {
+      id: 'crc.application:section.contract.overview.childBenefit.label',
+      defaultMessage: 'Meðlag',
+      description: 'Label for child benefit',
+    },
+    text: {
+      id: 'crc.application:section.contract.overview.childBenefit.text',
+      defaultMessage: '{otherParent} fær einfalt meðlag mánaðarlega.',
+      description: 'Text for child benefit',
     },
   }),
   pdfButton: defineMessages({

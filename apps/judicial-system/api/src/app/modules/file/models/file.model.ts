@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { File as TFile } from '@island.is/judicial-system/types'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 
 @ObjectType()
-export class File implements TFile {
+export class CaseFile implements TCaseFile {
   @Field(() => ID)
   readonly id!: string
 

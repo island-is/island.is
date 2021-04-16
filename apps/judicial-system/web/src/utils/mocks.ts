@@ -112,7 +112,6 @@ const testCase1 = {
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
-      __typename: 'File',
     },
   ],
 }
@@ -264,14 +263,12 @@ const testCase4 = {
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
-      __typename: 'File',
     },
     {
       id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
       name: 'Screen Shot 2021-04-09 at 14.01.30.png',
       size: 125293,
       created: '2021-04-12T13:55:24.311Z',
-      __typename: 'File',
     },
   ],
 }
@@ -328,14 +325,12 @@ const testCase5 = {
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
-      __typename: 'File',
     },
     {
       id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
       name: 'Screen Shot 2021-04-09 at 14.01.30.png',
       size: 125293,
       created: '2021-04-12T13:55:24.311Z',
-      __typename: 'File',
     },
   ],
 }
@@ -493,35 +488,30 @@ const testCase8 = {
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
-      __typename: 'File',
     },
     {
       id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
       name: 'Screen Shot 2021-04-09 at 14.01.30.png',
       size: 125293,
       created: '2021-04-12T13:55:24.311Z',
-      __typename: 'File',
     },
     {
       id: '58d53f9c-b70b-4b5a-a578-03e95102a981',
       name: 'Screen Shot 2021-04-09 at 13.33.05.png',
       size: 51454,
       created: '2021-04-12T13:55:24.076Z',
-      __typename: 'File',
     },
     {
       id: '0fcff6d7-3e2e-4933-87d9-f3eacdb4caed',
       name: 'Screen Shot 2021-04-09 at 13.40.53.png',
       size: 67077,
       created: '2021-04-12T13:55:24.069Z',
-      __typename: 'File',
     },
     {
       id: 'c63982e8-e548-445f-b9ea-580606e3de44',
       name: 'Screen Shot 2021-04-09 at 08.48.06.png',
       size: 50160,
       created: '2021-04-12T13:55:24.055Z',
-      __typename: 'File',
     },
   ],
 }

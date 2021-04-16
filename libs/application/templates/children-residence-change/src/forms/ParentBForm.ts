@@ -11,7 +11,6 @@ import {
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
-import { InterviewFieldIds } from '../types'
 
 export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',
@@ -53,17 +52,6 @@ export const ParentBForm: Form = buildForm({
           id: 'approveTermsParentB',
           title: m.terms.general.pageTitle,
           component: 'Terms',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'interviewParentB',
-      title: m.interview.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: InterviewFieldIds.parentB,
-          title: m.interview.general.pageTitle,
-          component: 'Interview',
         }),
       ],
     }),
