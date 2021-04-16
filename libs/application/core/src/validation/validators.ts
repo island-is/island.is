@@ -2,53 +2,29 @@ import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
 import { ZodError } from 'zod'
 import isNumber from 'lodash/isNumber'
+import has from 'lodash/has'
 import set from 'lodash/set'
 import merge from 'lodash/merge'
 import { AnswerValidationError } from './AnswerValidator'
+import { ZodSuberror } from 'zod/lib/src/ZodError'
 
 interface SchemaValidationError {
   [key: string]: string
 }
 
-function populateObjectError(
-  currentError: SchemaValidationError | undefined,
-  newError: ZodError | undefined,
-  pathToError: string,
-): SchemaValidationError {
-  const errorMessage = newError?.errors?.[0].message
-  const customPath = newError?.errors?.[0].path
-  const newErrorObject = set(
-    {},
-    customPath && customPath.length > 1 ? customPath : pathToError,
-    errorMessage,
-  )
-  if (currentError) {
-    return merge(currentError, newErrorObject)
-  }
-  return newErrorObject
-}
-
 function populateError(
   currentError: SchemaValidationError | undefined,
   newError: ZodError | undefined,
-  pathToError: string,
-): SchemaValidationError | undefined {
-  const isObject = pathToError.includes('.')
-  if (isObject) {
-    return populateObjectError(currentError, newError, pathToError)
+  errorPath?: string,
+): SchemaValidationError {
+  let errorObject = {}
+  newError?.errors?.forEach((element) => {
+    errorObject = set(errorObject, errorPath || element.path, element.message)
+  })
+  if (currentError) {
+    return merge(currentError, errorObject)
   }
-  if (newError === undefined) {
-    return currentError
-  }
-
-  if (!currentError) {
-    return { [pathToError]: newError.errors[0].message }
-  }
-
-  return {
-    ...currentError,
-    [pathToError]: newError.errors[0].message,
-  }
+  return errorObject
 }
 
 function constructPath(currentPath: string, newKey: string) {
@@ -63,6 +39,7 @@ function partialSchemaValidation(
   originalSchema: Schema,
   error: SchemaValidationError | undefined,
   currentPath = '',
+  sendPath?: boolean,
 ): SchemaValidationError | undefined {
   Object.keys(answers).forEach((key) => {
     const newPath = constructPath(currentPath, key)
@@ -76,8 +53,13 @@ function partialSchemaValidation(
     try {
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
-      error = populateError(error, e, newPath)
-
+      const zodErrors: ZodSuberror[] = e.errors
+      const keyIsIncludedInErrors = zodErrors.some((err) =>
+        err.path.includes(key),
+      )
+      if (!has(error, newPath) && keyIsIncludedInErrors) {
+        error = populateError(error, e, sendPath ? newPath : undefined)
+      }
       if (Array.isArray(answer)) {
         const arrayElements = answer as Answer[]
         arrayElements.forEach((el, index) => {
@@ -85,23 +67,22 @@ function partialSchemaValidation(
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
             const elementPath = `${newPath}[${index}]`
-            error = populateError(error, e, elementPath)
             if (el !== null && typeof el === 'object') {
-              error = partialSchemaValidation(
+              partialSchemaValidation(
                 el as FormValue,
                 trimmedSchema?.shape[key]?._def?.type,
                 error,
                 elementPath,
+                true,
               )
             }
           }
         })
       } else if (typeof answer === 'object') {
-        const objectError = populateError(error, e, newPath)
-        error = partialSchemaValidation(
+        partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],
-          objectError,
+          error,
           newPath,
         )
       }
