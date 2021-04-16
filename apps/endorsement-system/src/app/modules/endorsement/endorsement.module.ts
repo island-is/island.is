@@ -3,13 +3,15 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Endorsement } from './endorsement.model'
 import { EndorsementController } from './endorsement.controller'
 import { EndorsementService } from './endorsement.service'
-import { MetadataModule } from '../metadata/metadata.module'
+import { EndorsementMetadataModule } from '../endorsementMetadata/endorsementMetadata.module'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
+import { EndorsementValidatorModule } from '../endorsementValidator/endorsementValidator.module'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
-    MetadataModule,
+    EndorsementMetadataModule,
+    EndorsementValidatorModule,
   ],
   controllers: [EndorsementController],
   providers: [EndorsementService],

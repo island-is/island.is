@@ -3,7 +3,7 @@ import {
   RSKService,
   RSKServiceOptions,
   RSK_OPTIONS,
-} from '@island.is/clients/rsk'
+} from '@island.is/clients/rsk/v1'
 import { RSKResolver } from './api-domains-rsk.resolver'
 
 @Module({})

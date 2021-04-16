@@ -9,7 +9,7 @@ import {
   CreatePresignedPost,
   CreateUser,
   DeleteFileResponse,
-  File,
+  CaseFile,
   Institution,
   Notification,
   PresignedPost,
@@ -108,7 +108,7 @@ class BackendAPI extends RESTDataSource {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: CreateFile): Promise<File> {
+  createCaseFile(id: string, createFile: CreateFile): Promise<CaseFile> {
     return this.post(`case/${id}/file`, createFile)
   }
 
@@ -120,7 +120,7 @@ class BackendAPI extends RESTDataSource {
     return this.delete(`case/${caseId}/file/${id}`)
   }
 
-  getCaseFiles(id: string): Promise<File[]> {
+  getCaseFiles(id: string): Promise<CaseFile[]> {
     return this.get(`case/${id}/files`)
   }
 }

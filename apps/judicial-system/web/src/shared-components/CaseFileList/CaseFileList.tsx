@@ -1,12 +1,12 @@
 import { Box } from '@island.is/island-ui/core'
-import { File } from '@island.is/judicial-system/types'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import React from 'react'
 import { CaseFile } from '..'
 import useFileList from '../../utils/hooks/useFileList'
 
 interface Props {
   caseId: string
-  files: File[]
+  files: TCaseFile[]
   canOpenFiles?: boolean
 }
 

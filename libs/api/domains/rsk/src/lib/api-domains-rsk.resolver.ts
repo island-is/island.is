@@ -7,7 +7,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { RSKService } from '@island.is/clients/rsk'
+import { RSKService } from '@island.is/clients/rsk/v1'
 import { CurrentUserCompanies } from './models/currentUserCompanies.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
