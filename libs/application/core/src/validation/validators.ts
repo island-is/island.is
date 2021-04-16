@@ -1,6 +1,5 @@
 import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
-import { ZodError } from 'zod'
 import { ZodSuberror } from 'zod/lib/src/ZodError'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
@@ -13,18 +12,15 @@ interface SchemaValidationError {
 }
 
 function populateError(
-  currentError: SchemaValidationError | undefined,
-  newError: ZodSuberror[] | undefined,
+  currentError: SchemaValidationError = {},
+  newError: ZodSuberror[],
   pathToError?: string,
 ) {
   let errorObject = {}
-  newError?.forEach((element) => {
+  newError.forEach((element) => {
     errorObject = set(errorObject, pathToError || element.path, element.message)
   })
-  if (currentError) {
-    return merge(currentError, errorObject)
-  }
-  return errorObject
+  return merge(currentError, errorObject)
 }
 
 function constructPath(currentPath: string, newKey: string) {
@@ -70,13 +66,12 @@ function partialSchemaValidation(
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
-            const elementPath = `${constructedErrorPath}[${index}]`
             if (el !== null && typeof el === 'object') {
               partialSchemaValidation(
                 el as FormValue,
                 trimmedSchema?.shape[key]?._def?.type,
                 error,
-                elementPath,
+                `${constructedErrorPath}[${index}]`,
                 true,
               )
             }
