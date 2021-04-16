@@ -175,6 +175,12 @@ export class Case implements TCase {
   readonly prosecutorAppealAnnouncement?: string
 
   @Field({ nullable: true })
+  readonly accusedPostponedAppealDate?: string
+
+  @Field({ nullable: true })
+  readonly prosecutorPostponedAppealDate?: string
+
+  @Field({ nullable: true })
   isCaseAppealable?: boolean
 
   @Field({ nullable: true })

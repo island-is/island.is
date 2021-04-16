@@ -147,15 +147,17 @@ function remainingJudgeCaseData() {
     litigationPresentations: 'Litigation Presentations',
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
-    custodyEndDate: '2020-09-28T12:00:00.000Z',
+    custodyEndDate: '2021-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
-    isolationTo: '2020-09-28T12:00:00.000Z',
+    isolationTo: '2021-09-10T12:00:00.000Z',
     additionToConclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
+    accusedPostponedAppealDate: '2020-09-30T12:00:00.000Z',
+    prosecutorPostponedAppealDate: '2020-09-29T12:00:00.000Z',
     judgeId: judge.id,
     registrarId: registrar.id,
   }
@@ -230,10 +232,16 @@ function caseToCCase(dbCase: Case) {
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
     rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
+    accusedPostponedAppealDate:
+      theCase.accusedPostponedAppealDate &&
+      theCase.accusedPostponedAppealDate.toISOString(),
+    prosecutorPostponedAppealDate:
+      theCase.prosecutorPostponedAppealDate &&
+      theCase.prosecutorPostponedAppealDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
-    isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
   } as unknown) as CCase
 }
 
@@ -350,6 +358,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.rulingDate || null).toBe(caseTwo.rulingDate || null)
+  expect(caseOne.accusedPostponedAppealDate || null).toBe(
+    caseTwo.accusedPostponedAppealDate || null,
+  )
+  expect(caseOne.prosecutorPostponedAppealDate || null).toBe(
+    caseTwo.prosecutorPostponedAppealDate || null,
+  )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
   expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
