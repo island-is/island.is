@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import React, { FC, useEffect } from 'react'
+import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
@@ -23,7 +23,11 @@ import {
   getTypeFromSlug,
 } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
-import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import {
+  useApplicationNamespaces,
+  useLocale,
+  useLocalizedQuery,
+} from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
@@ -32,18 +36,16 @@ export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { lang: locale, formatMessage } = useLocale()
-  const currentLocale = useRef(locale)
   const type = getTypeFromSlug(slug)
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError, refetch } = useQuery(
+  const { data, loading, error: applicationsError } = useLocalizedQuery(
     APPLICATION_APPLICATIONS,
     {
       variables: {
         input: { typeId: type },
-        locale,
       },
       skip: !type,
     },
@@ -73,13 +75,6 @@ export const Applications: FC = () => {
       createApplication()
     }
   }, [type, data])
-
-  useEffect(() => {
-    if (type && locale !== currentLocale.current) {
-      currentLocale.current = locale
-      refetch?.()
-    }
-  }, [locale])
 
   if (loading) {
     return <ApplicationLoading />
