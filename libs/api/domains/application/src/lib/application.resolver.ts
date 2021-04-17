@@ -34,7 +34,8 @@ export class ApplicationResolver {
 
   @Query(() => Application, { nullable: true })
   async applicationApplication(
-    @Args('locale', { type: () => String }) locale: Locale,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
@@ -44,7 +45,8 @@ export class ApplicationResolver {
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String }) locale: Locale,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAll(
@@ -65,7 +67,8 @@ export class ApplicationResolver {
 
   @Mutation(() => Application, { nullable: true })
   async updateApplication(
-    @Args('locale', { type: () => String }) locale: Locale,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {

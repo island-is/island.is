@@ -42,7 +42,7 @@ export class TranslationsService {
         .getLocalizedEntries<NamespaceFields>('*', {
           ['content_type']: 'namespace',
           select: 'fields.strings',
-          'fields.namespace[in]': namespace,
+          'fields.namespace': namespace,
         })
         .catch(errorHandler('getNamespace')),
     { maxAge: MAX_AGE, preFetch: true },
