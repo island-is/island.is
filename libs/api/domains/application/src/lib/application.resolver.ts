@@ -35,7 +35,7 @@ export class ApplicationResolver {
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.findOne(input.id, user.authorization)
+    return this.applicationService.findOne(input.id, user)
   }
 
   @Query(() => [Application], { nullable: true })
@@ -45,7 +45,7 @@ export class ApplicationResolver {
   ): Promise<Application[] | null> {
     return this.applicationService.findAll(
       user.nationalId,
-      user.authorization,
+      user,
       input,
     )
   }
@@ -55,7 +55,7 @@ export class ApplicationResolver {
     @Args('input') input: CreateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.create(input, user.authorization)
+    return this.applicationService.create(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -63,7 +63,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.update(input, user.authorization)
+    return this.applicationService.update(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -71,7 +71,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input, user.authorization)
+    return this.applicationService.updateExternalData(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -79,7 +79,7 @@ export class ApplicationResolver {
     @Args('input') input: AddAttachmentInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.addAttachment(input, user.authorization)
+    return this.applicationService.addAttachment(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -87,7 +87,7 @@ export class ApplicationResolver {
     @Args('input') input: DeleteAttachmentInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.deleteAttachment(input, user.authorization)
+    return this.applicationService.deleteAttachment(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -95,7 +95,7 @@ export class ApplicationResolver {
     @Args('input') input: SubmitApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.submitApplication(input, user.authorization)
+    return this.applicationService.submitApplication(input, user)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -103,7 +103,7 @@ export class ApplicationResolver {
     @Args('input') input: AssignApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.assignApplication(input, user.authorization)
+    return this.applicationService.assignApplication(input, user)
   }
 
   @Mutation(() => PresignedUrlResponse, { nullable: true })
@@ -113,7 +113,7 @@ export class ApplicationResolver {
   ): Promise<PresignedUrlResponse> {
     return this.applicationService.createPdfPresignedUrl(
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -124,7 +124,7 @@ export class ApplicationResolver {
   ): Promise<RequestFileSignatureResponse> {
     return this.applicationService.requestFileSignature(
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -133,7 +133,7 @@ export class ApplicationResolver {
     @Args('input') input: UploadSignedFileInput,
     @CurrentUser() user: User,
   ): Promise<UploadSignedFileResponse> {
-    return this.applicationService.uploadSignedFile(input, user.authorization)
+    return this.applicationService.uploadSignedFile(input, user)
   }
 
   @Query(() => PresignedUrlResponse, { nullable: true })
@@ -141,6 +141,6 @@ export class ApplicationResolver {
     @Args('input') input: GetPresignedUrlInput,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
-    return this.applicationService.presignedUrl(input, user.authorization)
+    return this.applicationService.presignedUrl(input, user)
   }
 }

@@ -4,6 +4,7 @@ import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
+import { User, UserMiddleware } from '@island.is/auth-nest-tools'
 import { ApolloError } from 'apollo-server-express'
 import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -31,156 +32,144 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private applicationApi: ApplicationsApi) {}
+  constructor(private _applicationApi: ApplicationsApi) {}
 
-  async findOne(id: string, authorization: string) {
-    return await this.applicationApi
+  applicationApiForUser(user: User) {
+    return this._applicationApi.withMiddleware(new UserMiddleware(user))
+  }
+
+  async findOne(id: string, user: User) {
+    return await this.applicationApiForUser(user)
       .applicationControllerFindOne({
         id,
-        authorization,
       })
       .catch(handleError)
   }
 
   async findAll(
     nationalId: string,
-    authorization: string,
+    user: User,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerFindAll({
         nationalId,
-        authorization,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
       })
       .catch(handleError)
   }
 
-  async create(input: CreateApplicationInput, authorization: string) {
-    return this.applicationApi
+  async create(input: CreateApplicationInput, user: User) {
+    return this.applicationApiForUser(user)
       .applicationControllerCreate({
         createApplicationDto: input,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async update(input: UpdateApplicationInput, authorization: string) {
+  async update(input: UpdateApplicationInput, user: User) {
     const { id, ...updateApplicationDto } = input
 
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerUpdate({
         id,
         updateApplicationDto,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async addAttachment(input: AddAttachmentInput, authorization: string) {
+  async addAttachment(input: AddAttachmentInput, user: User) {
     const { id, ...addAttachmentDto } = input
 
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerAddAttachment({
         id,
         addAttachmentDto,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async deleteAttachment(input: DeleteAttachmentInput, authorization: string) {
+  async deleteAttachment(input: DeleteAttachmentInput, user: User) {
     const { id, ...deleteAttachmentDto } = input
 
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerDeleteAttachment({
         id,
         deleteAttachmentDto,
-        authorization,
       })
       .catch(handleError)
   }
 
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
-    authorization: string,
+    user: User,
   ) {
     const { id, ...populateExternalDataDto } = input
 
-    return this.applicationApi.applicationControllerUpdateExternalData({
+    return this.applicationApiForUser(
+      user,
+    ).applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
-      authorization,
     })
   }
 
-  async submitApplication(
-    input: SubmitApplicationInput,
-    authorization: string,
-  ) {
+  async submitApplication(input: SubmitApplicationInput, user: User) {
     const { id, ...updateApplicationStateDto } = input
-    return this.applicationApi.applicationControllerSubmitApplication({
+    return this.applicationApiForUser(
+      user,
+    ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
-      authorization,
     })
   }
 
-  async assignApplication(
-    input: AssignApplicationInput,
-    authorization: string,
-  ) {
-    return this.applicationApi.applicationControllerAssignApplication({
+  async assignApplication(input: AssignApplicationInput, user: User) {
+    return this.applicationApiForUser(
+      user,
+    ).applicationControllerAssignApplication({
       assignApplicationDto: input,
-      authorization,
     })
   }
 
-  async createPdfPresignedUrl(input: CreatePdfInput, authorization: string) {
+  async createPdfPresignedUrl(input: CreatePdfInput, user: User) {
     const { id, ...createPdfDto } = input
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerCreatePdf({
         id,
         createPdfDto,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async requestFileSignature(
-    input: RequestFileSignatureInput,
-    authorization: string,
-  ) {
+  async requestFileSignature(input: RequestFileSignatureInput, user: User) {
     const { id, ...requestFileSignatureDto } = input
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerRequestFileSignature({
         id,
         requestFileSignatureDto,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async uploadSignedFile(input: UploadSignedFileInput, authorization: string) {
+  async uploadSignedFile(input: UploadSignedFileInput, user: User) {
     const { id, ...uploadSignedFileDto } = input
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerUploadSignedFile({
         id,
         uploadSignedFileDto,
-        authorization,
       })
       .catch(handleError)
   }
 
-  async presignedUrl(input: GetPresignedUrlInput, authorization: string) {
+  async presignedUrl(input: GetPresignedUrlInput, user: User) {
     const { id, type } = input
 
-    return await this.applicationApi
+    return await this.applicationApiForUser(user)
       .applicationControllerGetPresignedUrl({
         id,
         pdfType: type,
-        authorization,
       })
       .catch(handleError)
   }

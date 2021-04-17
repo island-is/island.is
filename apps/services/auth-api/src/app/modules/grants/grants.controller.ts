@@ -1,5 +1,10 @@
-import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  Grant,
+  GrantDto,
+  GrantsService,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
+import { CurrentUser, IdsAuthGuard, Scopes, ScopesGuard } from "@island.is/auth-nest-tools";
 import {
   BadRequestException,
   Body,
@@ -14,8 +19,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
+@Audit({
+  namespace: '@identityserver.api/grants',
+})
 @ApiTags('grants')
 @Controller('grants')
 export class GrantsController {
@@ -72,6 +81,7 @@ export class GrantsController {
     @Query('sessionId') sessionId?: string,
     @Query('clientId') clientId?: string,
     @Query('type') type?: string,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!subjectId) {
       throw new BadRequestException('SubjectId can not be empty')

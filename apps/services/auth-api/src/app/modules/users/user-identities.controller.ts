@@ -14,15 +14,20 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')
 @Controller('user-identities')
+@Audit({ namespace: '@identityserver.api/userIdentities' })
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
   /** Creates a new User Identity */
   @Scopes('@identityserver.api/authentication')
+  @Audit<UserIdentity | undefined>({
+    resources: (userIdentity) => userIdentity?.id,
+  })
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
   async create(
@@ -33,6 +38,9 @@ export class UserIdentitiesController {
 
   /** Gets User identity by subjectId */
   @Scopes('@identityserver.api/authentication')
+  @Audit<UserIdentity>({
+    resources: (userIdentity) => userIdentity.id,
+  })
   @Get(':subjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
@@ -48,6 +56,9 @@ export class UserIdentitiesController {
 
   /** Gets User Identity by provider and subject id */
   @Scopes('@identityserver.api/authentication')
+  @Audit<UserIdentity>({
+    resources: (userIdentity) => userIdentity.id,
+  })
   @Get('/:provider/:subjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findOneByProviderSubject(
@@ -68,6 +79,9 @@ export class UserIdentitiesController {
 
   /** Gets Delegation User Identity by provider, subject id and actor subject id */
   @Scopes('@identityserver.api/authentication')
+  @Audit<UserIdentity>({
+    resources: (userIdentity) => userIdentity.id,
+  })
   @Get('/delegation/:provider/:subjectId/:actorSubjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findDelegationIdentity(
