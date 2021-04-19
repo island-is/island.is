@@ -26,6 +26,11 @@ export interface CheckboxProps {
   subLabel?: string
 }
 
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 export const Checkbox = ({
   label,
   subLabel,
@@ -43,10 +48,11 @@ export const Checkbox = ({
   backgroundColor,
   filled = false,
 }: CheckboxProps) => {
+  const errorId = `${id}-error`
   const ariaError = hasError
     ? {
         'aria-invalid': true,
-        'aria-describedby': id,
+        'aria-describedby': errorId,
       }
     : {}
 
@@ -70,7 +76,7 @@ export const Checkbox = ({
         onChange={onChange}
         value={value}
         checked={checked}
-        {...ariaError}
+        {...(ariaError as AriaError)}
       />
       <label
         className={cn(styles.label, {
@@ -117,7 +123,11 @@ export const Checkbox = ({
           </div>
         )}
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+          >
             {errorMessage}
           </div>
         )}
