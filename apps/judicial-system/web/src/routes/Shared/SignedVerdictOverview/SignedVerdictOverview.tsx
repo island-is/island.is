@@ -348,27 +348,27 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {/* {workingCase.isCaseAppealable && ( */}
-            <Box marginBottom={7}>
-              {(user?.role === UserRole.JUDGE ||
-                user?.role === UserRole.REGISTRAR) &&
-                workingCase.rulingDate &&
-                workingCase.accusedGender && (
-                  <AppealSection
-                    rulingDate={workingCase.rulingDate}
-                    accusedGender={workingCase.accusedGender}
-                    accusedPostponedAppealDate={
-                      workingCase.accusedPostponedAppealDate
-                    }
-                    prosecutorPostponedAppealDate={
-                      workingCase.prosecutorPostponedAppealDate
-                    }
-                    handleAccusedAppeal={handleAccusedAppeal}
-                    handleProsecutorAppeal={handleProsecutorAppeal}
-                  />
-                )}
-            </Box>
-            {/* )} */}
+            {workingCase.isCaseAppealable && (
+              <Box marginBottom={7}>
+                {(user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR) &&
+                  workingCase.rulingDate &&
+                  workingCase.accusedGender && (
+                    <AppealSection
+                      rulingDate={workingCase.rulingDate}
+                      accusedGender={workingCase.accusedGender}
+                      accusedPostponedAppealDate={
+                        workingCase.accusedPostponedAppealDate
+                      }
+                      prosecutorPostponedAppealDate={
+                        workingCase.prosecutorPostponedAppealDate
+                      }
+                      handleAccusedAppeal={handleAccusedAppeal}
+                      handleProsecutorAppeal={handleProsecutorAppeal}
+                    />
+                  )}
+              </Box>
+            )}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
