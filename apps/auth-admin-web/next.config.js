@@ -31,7 +31,6 @@ module.exports = withTreat(
       },
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
-        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
       },
       async headers() {
         return [
