@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   GridColumn,
-  GridRow,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,7 +15,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,

@@ -4,23 +4,14 @@ import { useRouter } from 'next/router'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
-import {
-  Case,
-  UpdateCase,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
-import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { StepOneForm } from './StepOneForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
