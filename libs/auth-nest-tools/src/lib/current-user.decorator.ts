@@ -3,24 +3,24 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common'
-import { GqlExecutionContext } from '@nestjs/graphql'
 import { User } from './user'
+import { getRequest } from "./getRequest";
 
 export const getCurrentUser = (context: ExecutionContext): User => {
-  const request = context.switchToHttp().getRequest()
-  if (request) {
-    return request.user
-  }
-  const ctx = GqlExecutionContext.create(context)
-  const user = ctx.getContext().req.user
+  const request = getRequest(context)
+
+  const user = request.user
   if (!user) {
-    throw new UnauthorizedException('You are not authenticated')
+    console.warn(
+      'No user authentication found. Did you forget to add IdsUserGuard?',
+    )
+    throw new UnauthorizedException()
   }
   return user
 }
 
 export const CurrentUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext): User => {
+  (options: unknown, context: ExecutionContext): User => {
     return getCurrentUser(context)
   },
 )

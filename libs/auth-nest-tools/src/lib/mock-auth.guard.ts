@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
-import { GqlExecutionContext } from '@nestjs/graphql'
-import { User } from './user'
+import { getRequest } from './getRequest'
+import { Auth } from './auth'
 
 @Injectable()
 export class MockAuthGuard implements CanActivate {
-  user: User
+  auth: Auth
 
-  constructor(user: Partial<User>) {
-    this.user = {
+  constructor(user: Partial<Auth>) {
+    this.auth = {
       nationalId: '1234567890',
       authorization: '',
       client: 'mock',
@@ -17,20 +17,11 @@ export class MockAuthGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const request = this.getRequest(context)
-    request.user = this.user
-    return true
-  }
-
-  getRequest(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest()
-
-    if (request) {
-      return request
-    } else {
-      const ctx = GqlExecutionContext.create(context)
-
-      return ctx.getContext().req
+    const request = getRequest(context)
+    request.auth = this.auth
+    if (this.auth.nationalId) {
+      request.auth = this.auth
     }
+    return true
   }
 }

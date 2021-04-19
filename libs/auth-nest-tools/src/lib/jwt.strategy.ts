@@ -5,7 +5,7 @@ import { Request } from 'express'
 import { passportJwtSecret } from 'jwks-rsa'
 import { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
-import { User } from './user'
+import { Auth } from './auth'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(request: Request, payload: JwtPayload): Promise<User> {
+  async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     return {
       nationalId: payload.nationalId,
       scope: payload.scope,

@@ -1,8 +1,16 @@
 # Auth Nest Tools
 
-This library contains a reusable module (AuthModule) with guards that can be used to protect other APIs and GraphQL resolvers.
+This library contains a reusable module (AuthModule) with guards that can be used to protect other REST controllers and GraphQL resolvers.
 
 ## Using guards
+
+There are a couple of guards available.
+
+* `IdsUserGuard`: validates that the request has a valid JWT bearer authorization from our identity server and checks that it has a nationalId claim, representing an authenticated user. Information from the JWT can be accessed using the CurrentAuth and CurrentUser parameter decorators.
+* `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
+* `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
+
+You should generally add `IdsUserGuard` and `ScopesGuard` to endpoints that return user resources for the authenticated user. You can use `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials.
 
 ### Configuration
 
@@ -20,12 +28,12 @@ Import and configure the AuthModule, example:
 
 where `audience` is the name your resource was registered under in IdS, `issuer` the IdS url, and `jwksUri` the IdS jwk endpoint (we probably won't need to configure this separately in the future).
 
-### Using in API controller
+### Using in REST controller
 
 Decorate the controller with `@UseGuards`:
 
 ```typescript
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('clients')
 export class ClientsController {
 ```
@@ -37,18 +45,20 @@ and individual protected methods with `@Scopes`:
   @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('id') id: string): Promise<Client> {
+    // ...
+  }
 ```
 
 If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
-Information about the logged in user can be obtained by adding `@Req() request` as an input parameter to a controller method, and accessing `request.user`.
+Information about the logged in user can be obtained by adding `@CurrentUser() user: User` as an input parameter to the controller method.
 
 ### Using in GraphQL resolver
 
 Decorate the resolver with `@UseGuards`:
 
 ```typescript
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
 ```
@@ -56,11 +66,13 @@ export class UserProfileResolver {
 and individual protected methods with `@Scopes`:
 
 ```typescript
-  @Scopes('protected_resource/read', 'protected_resource/admin')
+  @Scopes('userProfileScope')
   @Query(() => UserProfile, { nullable: true })
-  getUserProfile(
+  async getUserProfile(@CurrentUser user: User) {
+    // ... user.nationalId
+  }
 ```
 
 If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
-Information about the logged in user can be obtained by adding `@CurrentUser() user` as an input parameter to a resolver method.
+Information about the logged in user can be obtained by adding `@CurrentUser() user: User` as an input parameter to the resolver method.

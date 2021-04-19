@@ -1,4 +1,4 @@
-import { User } from './user'
+import { Auth } from './auth'
 
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
@@ -21,15 +21,14 @@ interface Middleware {
 /**
  * Middleware that adds user authorization and information to OpenAPI Client requests.
  */
-export class UserMiddleware implements Middleware {
-  constructor(private user: User) {}
+export class AuthMiddleware implements Middleware {
+  constructor(private auth: Auth) {}
 
   async pre(context: RequestContext) {
     context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.user.authorization,
-      'User-Agent': this.user.userAgent,
-      'X-Forwarded-For': this.user.ip,
+      authorization: this.auth.authorization,
+      'User-Agent': this.auth.userAgent,
+      'X-Forwarded-For': this.auth.ip,
     })
-    console.log('hiiii', context.init.headers)
   }
 }

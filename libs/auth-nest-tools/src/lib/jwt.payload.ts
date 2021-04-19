@@ -1,5 +1,5 @@
 export interface JwtPayload {
-  nationalId: string
+  nationalId?: string
   scope: string[]
   client_id: string
   act?: {

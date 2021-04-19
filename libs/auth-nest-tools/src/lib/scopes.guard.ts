@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
-import { GqlExecutionContext } from '@nestjs/graphql'
+import { getRequest } from "./getRequest";
 
 @Injectable()
 export class ScopesGuard implements CanActivate {
@@ -19,22 +19,16 @@ export class ScopesGuard implements CanActivate {
       return true
     }
 
-    const userScopes = this.getUserScopes(context)
+    const authScopes = this.getScopes(context)
 
     const hasPermission = () =>
-      allowedScopes.every((scope) => userScopes.includes(scope))
+      allowedScopes.every((scope) => authScopes.includes(scope))
 
     return hasPermission()
   }
 
-  private getUserScopes(context: ExecutionContext): string[] {
-    const request = context.getArgs()[0]
-
-    if (request) {
-      return request.user.scope
-    } else {
-      const ctx = GqlExecutionContext.create(context)
-      return ctx.getContext().req.user.scope
-    }
+  private getScopes(context: ExecutionContext): string[] {
+    const request = getRequest(context)
+    return request.auth.scope
   }
 }

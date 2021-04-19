@@ -1,11 +1,5 @@
-export interface User {
+import { Auth } from './auth'
+
+export interface User extends Auth {
   nationalId: string
-  scope: string[]
-  authorization: string
-  client: string
-  actor?: {
-    nationalId: string
-  }
-  ip?: string
-  userAgent?: string
 }
