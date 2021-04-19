@@ -43,6 +43,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/shared-compon
 import { useRouter } from 'next/router'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import formatISO from 'date-fns/formatISO'
 
 interface CaseData {
   case?: Case
@@ -184,12 +185,12 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        accusedPostponedAppealDate: new Date().toString(),
+        accusedPostponedAppealDate: formatISO(new Date()),
       })
 
       updateCase(
         workingCase.id,
-        parseString('accusedPostponedAppealDate', new Date().toString()),
+        parseString('accusedPostponedAppealDate', formatISO(new Date())),
       )
     }
   }
@@ -198,12 +199,12 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        prosecutorPostponedAppealDate: new Date().toString(),
+        prosecutorPostponedAppealDate: formatISO(new Date()),
       })
 
       updateCase(
         workingCase.id,
-        parseString('prosecutorPostponedAppealDate', new Date().toString()),
+        parseString('prosecutorPostponedAppealDate', formatISO(new Date())),
       )
     }
   }
