@@ -13,14 +13,14 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('permissions')
 @Controller('permissions')
 export class PermissionsController {

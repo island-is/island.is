@@ -1,10 +1,10 @@
 import { ClaimsService, Claim } from '@island.is/auth-api-lib'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, NationalIdGuard)
 @ApiTags('claims')
 @Controller('backend')
 export class ClaimsController {

@@ -1,6 +1,6 @@
 import { DelegationsService, IDelegation } from '@island.is/auth-api-lib'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
@@ -9,7 +9,7 @@ import {
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller('delegations')
 export class DelegationsController {

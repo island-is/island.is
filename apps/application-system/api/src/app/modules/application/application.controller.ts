@@ -40,7 +40,7 @@ import {
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   Scopes,
   CurrentUser,
@@ -92,7 +92,7 @@ import {
 } from './types'
 import { Audit } from '@island.is/nest/audit'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',

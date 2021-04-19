@@ -4,7 +4,7 @@ import {
   GrantsService,
   IdentityResource,
 } from '@island.is/auth-api-lib'
-import { CurrentUser, IdsAuthGuard, Scopes, ScopesGuard } from "@island.is/auth-nest-tools";
+import { IdsAuthGuard, Scopes, ScopesGuard } from "@island.is/auth-nest-tools";
 import {
   BadRequestException,
   Body,
@@ -81,7 +81,6 @@ export class GrantsController {
     @Query('sessionId') sessionId?: string,
     @Query('clientId') clientId?: string,
     @Query('type') type?: string,
-    @CurrentUser() user: User,
   ): Promise<number> {
     if (!subjectId) {
       throw new BadRequestException('SubjectId can not be empty')

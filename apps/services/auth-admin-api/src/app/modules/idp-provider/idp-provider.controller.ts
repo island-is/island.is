@@ -22,10 +22,10 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, NationalIdGuard)
 @ApiTags('idp-provider')
 @Controller('backend/idp-provider')
 export class IdpProviderController {

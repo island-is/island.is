@@ -34,10 +34,10 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, NationalIdGuard)
 @ApiTags('resources')
 @Controller('backend')
 export class ResourcesController {

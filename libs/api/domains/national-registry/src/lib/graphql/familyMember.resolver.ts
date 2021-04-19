@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common'
 import { Resolver, Query } from '@nestjs/graphql'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User as AuthUser,
@@ -12,7 +12,7 @@ import { NationalRegistryFamilyMember } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { FamilyMember } from '../types'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryFamilyMember)
 export class FamilyMemberResolver {
   constructor(

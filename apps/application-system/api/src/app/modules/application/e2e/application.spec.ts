@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { IdsAuthGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import {
   ApplicationIdentityServerScope,
   ApplicationStatus,
@@ -37,7 +37,7 @@ beforeAll(async () => {
       builder
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
-        .overrideGuard(IdsAuthGuard)
+        .overrideGuard(IdsUserGuard)
         .useValue(
           new MockAuthGuard({
             nationalId,

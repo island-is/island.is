@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -30,7 +30,7 @@ import {
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}

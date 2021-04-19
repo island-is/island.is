@@ -13,10 +13,10 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, NationalIdGuard)
 @ApiTags('client-post-logout-redirect-uri')
 @Controller('backend/client-post-logout-redirect-uri')
 export class ClientPostLogoutRedirectUriController {

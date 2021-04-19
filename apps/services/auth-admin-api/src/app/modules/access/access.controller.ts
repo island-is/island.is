@@ -23,11 +23,11 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 import { FullAdminAccessGuard } from './full-admin-access-guard'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, NationalIdGuard)
 @ApiTags('admin-access')
 @Controller('backend/admin-access')
 export class AccessController {

@@ -13,7 +13,7 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -25,7 +25,7 @@ import { RequestFileSignatureResponse } from './dto/requestFileSignature.respons
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}

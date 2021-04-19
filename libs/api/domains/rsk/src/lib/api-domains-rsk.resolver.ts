@@ -2,7 +2,7 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -10,7 +10,7 @@ import {
 import { RSKService } from '@island.is/clients/rsk'
 import { CurrentUserCompanies } from './models/currentUserCompanies.model'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class RSKResolver {
   constructor(private RSKService: RSKService) {}
