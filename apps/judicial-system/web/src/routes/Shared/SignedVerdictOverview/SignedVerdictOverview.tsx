@@ -198,7 +198,7 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        prosecutorPostponedAppealDate: new Date(17).toString(),
+        prosecutorPostponedAppealDate: new Date().toString(),
       })
 
       updateCase(

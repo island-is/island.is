@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { motion, AnimatePresence, useAnimation } from 'framer-motion'
+import React from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
@@ -29,7 +29,11 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppeal,
     handleProsecutorAppeal,
   } = props
-  const variants = { a: { y: 0, opacity: 1 }, b: { y: 60, opacity: 0 } }
+
+  const appealDateVariants = {
+    visible: { y: 0, opacity: 1 },
+    hidden: { y: 60, opacity: 0 },
+  }
 
   return (
     <>
@@ -61,9 +65,12 @@ const AppealSection: React.FC<Props> = (props) => {
         </AnimatePresence>
 
         <motion.div
-          variants={variants}
-          // initial={{ y: 60, opacity: 0 }}
-          animate={accusedPostponedAppealDate ? variants.a : variants.b}
+          variants={appealDateVariants}
+          animate={
+            accusedPostponedAppealDate
+              ? appealDateVariants.visible
+              : appealDateVariants.hidden
+          }
           transition={{ duration: 0.4, delay: 0.4 }}
         >
           <InfoBox
@@ -94,8 +101,12 @@ const AppealSection: React.FC<Props> = (props) => {
         </AnimatePresence>
 
         <motion.div
-          variants={variants}
-          animate={prosecutorPostponedAppealDate ? variants.a : variants.b}
+          variants={appealDateVariants}
+          animate={
+            prosecutorPostponedAppealDate
+              ? appealDateVariants.visible
+              : appealDateVariants.hidden
+          }
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           <InfoBox
