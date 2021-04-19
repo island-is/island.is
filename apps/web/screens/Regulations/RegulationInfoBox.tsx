@@ -1,8 +1,11 @@
 import React, { FC } from 'react'
-import { Button, FocusableBox, Link, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
-import { RegulationsSidebarBox } from './RegulationsSidebarBox'
+import {
+  RegulationsSidebarBox,
+  RegulationsSidebarLink,
+} from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 
@@ -13,76 +16,44 @@ export type RegulationInfoBoxProps = {
 
 export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
   const { regulation, texts } = props
+  const { ministry, lawChapters } = regulation
+
   const { linkResolver } = useRegulationLinkResolver()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
 
   return (
     <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="blueberry">
-      {regulation.ministry && (
+      {ministry && (
         <Text>
           <strong>{txt('infoboxMinistry')}:</strong>
           <ul>
             <li>
-              <Link
+              <RegulationsSidebarLink
                 href={`${linkResolver('regulationshome').href}?rn=${
-                  regulation.ministry.slug
+                  ministry.slug
                 }`}
               >
-                <FocusableBox flexDirection={'column'} component="span">
-                  {({
-                    isFocused,
-                    isHovered,
-                  }: {
-                    isFocused: boolean
-                    isHovered: boolean
-                  }) => (
-                    <Text
-                      color={
-                        isFocused || isHovered ? 'blueberry400' : 'blueberry600'
-                      }
-                    >
-                      {regulation.ministry?.name}
-                    </Text>
-                  )}
-                </FocusableBox>
-              </Link>
+                {ministry.name}
+              </RegulationsSidebarLink>{' '}
             </li>
           </ul>
         </Text>
       )}
 
-      {regulation.lawChapters.length > 0 && (
+      {lawChapters.length > 0 && (
         <Text>
           <strong>{txt('infoboxLawChapters')}:</strong>
           <ul>
-            {regulation.lawChapters.map((chapter, i) => (
+            {lawChapters.map((chapter, i) => (
               <li key={i}>
-                <Link
+                <RegulationsSidebarLink
                   href={`${linkResolver('regulationshome').href}?ch=${
                     chapter.slug
                   }`}
                 >
-                  <FocusableBox flexDirection={'column'} component="span">
-                    {({
-                      isFocused,
-                      isHovered,
-                    }: {
-                      isFocused: boolean
-                      isHovered: boolean
-                    }) => (
-                      <Text
-                        color={
-                          isFocused || isHovered
-                            ? 'blueberry400'
-                            : 'blueberry600'
-                        }
-                      >
-                        {chapter.name}
-                      </Text>
-                    )}
-                  </FocusableBox>
-                </Link>
+                  {chapter.name}
+                </RegulationsSidebarLink>
               </li>
             ))}
           </ul>

@@ -1,8 +1,11 @@
 import React, { FC, Fragment } from 'react'
-import { FocusableBox, Link, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
-import { RegulationsSidebarBox } from './RegulationsSidebarBox'
+import {
+  RegulationsSidebarBox,
+  RegulationsSidebarLink,
+} from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import {
   interpolate,
@@ -80,7 +83,8 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
         return (
           <Fragment key={'history-' + i}>
             {futureSplitter}
-            <Link
+
+            <RegulationsSidebarLink
               href={
                 item.effect === 'root'
                   ? linkToRegulation(regulation.name, {
@@ -93,52 +97,22 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
                       diff: true,
                     })
               }
+              current={isTimelineActive}
             >
-              <FocusableBox flexDirection={'column'}>
-                {({
-                  isFocused,
-                  isHovered,
-                }: {
-                  isFocused: boolean
-                  isHovered: boolean
-                }) => (
-                  <Text
-                    color={
-                      isFocused || isHovered ? 'blueberry400' : 'blueberry600'
-                    }
-                    fontWeight={isTimelineActive ? 'medium' : undefined}
-                  >
-                    {isTimelineActive && ' ▶︎ '}
-                    <strong>{formatDate(item.date)}</strong>
-                    <br />
-                    <span title={labelLong}>{label}</span>
-                  </Text>
-                )}
-              </FocusableBox>
-            </Link>
+              {isTimelineActive && ' ▶︎ '}
+              <strong>{formatDate(item.date)}</strong>
+              <br />
+              <span title={labelLong}>{label}</span>
+            </RegulationsSidebarLink>
 
             {isCurrentVersion && (
-              <Link href={linkToRegulation(regulation.name)}>
-                <FocusableBox flexDirection={'column'}>
-                  {({
-                    isFocused,
-                    isHovered,
-                  }: {
-                    isFocused: boolean
-                    isHovered: boolean
-                  }) => (
-                    <Text
-                      color={
-                        isFocused || isHovered ? 'blueberry400' : 'blueberry600'
-                      }
-                      fontWeight={viewingCurrent ? 'medium' : undefined}
-                    >
-                      {viewingCurrent && ' ▶︎ '}
-                      {txt('historyCurrentVersion')}
-                    </Text>
-                  )}
-                </FocusableBox>
-              </Link>
+              <RegulationsSidebarLink
+                href={linkToRegulation(regulation.name)}
+                current={viewingCurrent}
+              >
+                {viewingCurrent && ' ▶︎ '}
+                {txt('historyCurrentVersion')}
+              </RegulationsSidebarLink>
             )}
           </Fragment>
         )

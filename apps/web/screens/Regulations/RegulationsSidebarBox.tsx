@@ -1,9 +1,17 @@
 // TODO: make this reuseable component?
 // - <Sidebar> has a bunch of some search specific code and <SidebarBox> is too barebones
 
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  FocusableBox,
+  Link,
+  LinkProps,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import * as styles from './RegulationsSidebarBox.treat'
 
 type RegulationsSidebarBoxColorAttributes =
@@ -66,3 +74,32 @@ export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
     </Box>
   )
 }
+
+// ---------------------------------------------------------------------------
+
+export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
+  current?: boolean
+  'aria-label'?: string | undefined
+  children: ReactNode
+}
+
+export const RegulationsSidebarLink: FC<RegulationsSidebarLinkProps> = (
+  props,
+) => (
+  <FocusableBox>
+    {(f: Record<'isFocused' | 'isHovered', boolean>) => (
+      <Text
+        color={f.isFocused || f.isHovered ? 'blueberry400' : 'blueberry600'}
+        fontWeight={props.current ? 'medium' : undefined}
+      >
+        <Link
+          href={props.href}
+          underline="normal"
+          aria-label={props['aria-label']}
+        >
+          {props.children}
+        </Link>
+      </Text>
+    )}
+  </FocusableBox>
+)
