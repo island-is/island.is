@@ -198,7 +198,7 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
-        prosecutorPostponedAppealDate: new Date().toString(),
+        prosecutorPostponedAppealDate: new Date(17).toString(),
       })
 
       updateCase(
@@ -348,19 +348,24 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
             {/* {workingCase.isCaseAppealable && ( */}
-            <Box marginBottom={9}>
-              {workingCase.rulingDate && workingCase.accusedGender && (
-                <AppealSection
-                  rulingDate={workingCase.rulingDate}
-                  accusedGender={workingCase.accusedGender}
-                  accusedCanAppeal={!workingCase.accusedPostponedAppealDate}
-                  prosecutorCanAppeal={
-                    workingCase.prosecutorPostponedAppealDate === null
-                  }
-                  handleAccusedAppeal={handleAccusedAppeal}
-                  handleProsecutorAppeal={handleProsecutorAppeal}
-                />
-              )}
+            <Box marginBottom={7}>
+              {(user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR) &&
+                workingCase.rulingDate &&
+                workingCase.accusedGender && (
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedPostponedAppealDate={
+                      workingCase.accusedPostponedAppealDate
+                    }
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    handleProsecutorAppeal={handleProsecutorAppeal}
+                  />
+                )}
             </Box>
             {/* )} */}
             <Box marginBottom={5}>
