@@ -41,7 +41,7 @@ export function getValueViaPath(
 ): unknown | undefined {
   // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
   if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
-    return obj?.[path]
+    return obj?.[path] ?? defaultValue
   }
 
   // For the rest of the case, we are into e.g. `personalAllowance.usePersonalAllowance`
