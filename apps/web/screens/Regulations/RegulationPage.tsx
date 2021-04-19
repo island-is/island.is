@@ -5,18 +5,18 @@ import {
   RegQueryName,
   RegulationDiff,
   RegulationMaybeDiff,
-} from './Regulations.types'
-import { RegulationPageTexts } from './RegulationTexts.types'
+} from '../../components/Regulations/Regulations.types'
+import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { RegulationRedirectMessage } from './RegulationRedirectMessage'
-import { RegulationDisplay } from './RegulationDisplay'
-import { getParams } from './regulationUtils'
-import { getUiTexts } from './getUiTexts'
+import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
+import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
+import { getParams } from '../../components/Regulations/regulationUtils'
+import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,

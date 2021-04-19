@@ -18,6 +18,10 @@ import {
 } from './Regulations.types'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
+import {
+  RegulationSearchFilters,
+  RegulationSearchKeys,
+} from './regulationUtils'
 
 // ---------------------------------------------------------------------------
 
@@ -101,9 +105,6 @@ const cleanQuery = (
       }
       return newQuery
     }, {})
-
-export type RegulationSearchKeys = 'q' | 'rn' | 'year' | 'ch' | 'all'
-export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
 
 // ---------------------------------------------------------------------------
 

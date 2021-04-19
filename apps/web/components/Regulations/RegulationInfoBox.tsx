@@ -18,7 +18,7 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
   const { regulation, texts } = props
   const { ministry, lawChapters } = regulation
 
-  const { linkResolver } = useRegulationLinkResolver()
+  const { linkToRegulationSearch } = useRegulationLinkResolver()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
 
@@ -30,12 +30,10 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
           <ul>
             <li>
               <RegulationsSidebarLink
-                href={`${linkResolver('regulationshome').href}?rn=${
-                  ministry.slug
-                }`}
+                href={linkToRegulationSearch({ rn: ministry.slug })}
               >
                 {ministry.name}
-              </RegulationsSidebarLink>{' '}
+              </RegulationsSidebarLink>
             </li>
           </ul>
         </Text>
@@ -48,9 +46,7 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
             {lawChapters.map((chapter, i) => (
               <li key={i}>
                 <RegulationsSidebarLink
-                  href={`${linkResolver('regulationshome').href}?ch=${
-                    chapter.slug
-                  }`}
+                  href={linkToRegulationSearch({ ch: chapter.slug })}
                 >
                   {chapter.name}
                 </RegulationsSidebarLink>
