@@ -35,8 +35,6 @@ const AppealSection: React.FC<Props> = (props) => {
     hidden: { y: 60, opacity: 0 },
   }
 
-  console.log(accusedPostponedAppealDate)
-
   return (
     <>
       <Box marginBottom={1}>

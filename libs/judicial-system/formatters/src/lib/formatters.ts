@@ -22,9 +22,7 @@ export function formatDate(
   shortenDayName?: boolean,
 ): string | undefined {
   const theDate: Date = getAsDate(date)
-  if (formatPattern === 'PPPppp') {
-    console.log(parseISO(date as string))
-  }
+
   if (isValid(theDate)) {
     const formattedDate = format(theDate, formatPattern, {
       locale: is,
