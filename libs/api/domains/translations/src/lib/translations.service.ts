@@ -4,9 +4,14 @@ import { ContentfulRepository } from '@island.is/api/domains/cms'
 import { Locale } from '@island.is/shared/types'
 import { ApolloError } from 'apollo-server-express'
 import memoize from 'memoizee'
-import { EntryCollection } from 'contentful'
 
 export type TranslationsDict = Record<string, string>
+
+interface Messages {
+  id: string
+  is: Record<string, string>
+  en: Record<string, string>
+}
 
 interface NamespaceFields {
   namespace?: string | undefined
@@ -36,65 +41,74 @@ const errorHandler = (name: string) => {
 export class TranslationsService {
   constructor(private contentfulRepository: ContentfulRepository) {}
 
-  getOrRequest = memoize(
-    async (namespace: string) =>
-      await this.contentfulRepository
+  getNamespaceMessages = memoize(
+    async (namespace: string) => {
+      const results = await this.contentfulRepository
         .getLocalizedEntries<NamespaceFields>('*', {
           ['content_type']: 'namespace',
           select: 'fields.strings',
           'fields.namespace': namespace,
         })
-        .catch(errorHandler('getNamespace')),
-    { maxAge: MAX_AGE, preFetch: true },
-  )
+        .catch(errorHandler('getNamespace'))
 
-  getMessages = async (entries: EntryCollection<NamespaceFields>[]) => {
-    let messages: Record<string, TranslationsDict> = {}
+      let messages = {
+        id: namespace,
+        is: {},
+        en: {},
+      } as Messages
 
-    for (const namespace of entries) {
-      for (const item of namespace.items) {
-        const strings = item.fields.strings
+      for (const item of results.items) {
+        for (const contentfulLocale of Object.keys(item.fields.strings ?? {})) {
+          const strings = item.fields.strings
 
-        if (!strings) {
-          continue
-        }
-
-        for (const contentfulLocale of Object.keys(strings)) {
-          const locale = locales.find((item) => item.code === contentfulLocale)!
-            .locale as Locale
+          if (!strings) {
+            continue
+          }
 
           for (const key of Object.keys(strings[contentfulLocale])) {
-            const message =
-              contentfulLocale === DEFAULT_LOCALE
-                ? strings?.[contentfulLocale]?.[key]
-                : strings?.[contentfulLocale]?.[key] !== ''
-                ? strings?.[contentfulLocale]?.[key]
-                : strings?.[DEFAULT_LOCALE]?.[key]
+            const locale = locales.find(
+              (item) => item.code === contentfulLocale,
+            )!.locale as Locale
 
-            messages = {
-              ...messages,
-              [locale]: {
-                ...messages[locale],
-                [key]: message,
-              },
+            if (contentfulLocale === DEFAULT_LOCALE) {
+              messages[locale][key] = strings?.[contentfulLocale]?.[key]
+            } else {
+              messages[locale][key] =
+                strings?.[contentfulLocale]?.[key] !== ''
+                  ? strings?.[contentfulLocale]?.[key]
+                  : strings?.[DEFAULT_LOCALE]?.[key]
             }
           }
         }
       }
-    }
 
-    return messages
-  }
+      return messages
+    },
+    { maxAge: MAX_AGE, preFetch: true },
+  )
+
+  groupMessages = (
+    messages: Messages[],
+    { namespaces, lang }: { namespaces: string[]; lang: Locale },
+  ) =>
+    namespaces.reduce(
+      (acc, cur) => ({
+        ...acc,
+        ...messages.find((m) => m.id === cur)?.[lang],
+      }),
+      {},
+    )
 
   getTranslations = async (
     namespaces: string[],
     lang: Locale,
   ): Promise<TranslationsDict> => {
-    const results = await Promise.all(
-      namespaces.map(async (namespace) => await this.getOrRequest(namespace)),
+    const messages = await Promise.all(
+      namespaces.map(
+        async (namespace) => await this.getNamespaceMessages(namespace),
+      ),
     )
-    const messages = await this.getMessages(results)
 
-    return messages[lang]
+    return this.groupMessages(messages, { namespaces, lang })
   }
 }
