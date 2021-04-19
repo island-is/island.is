@@ -4,6 +4,8 @@ import {
   AccordionItem,
   Box,
   Button,
+  GridColumn,
+  GridRow,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -353,20 +355,22 @@ export const SignedVerdictOverview: React.FC = () => {
               workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR) && (
-                <Box marginBottom={7}>
-                  <AppealSection
-                    rulingDate={workingCase.rulingDate}
-                    accusedGender={workingCase.accusedGender}
-                    accusedPostponedAppealDate={
-                      workingCase.accusedPostponedAppealDate
-                    }
-                    prosecutorPostponedAppealDate={
-                      workingCase.prosecutorPostponedAppealDate
-                    }
-                    handleAccusedAppeal={handleAccusedAppeal}
-                    handleProsecutorAppeal={handleProsecutorAppeal}
-                  />
-                </Box>
+                <GridColumn span="11/12">
+                  <Box marginBottom={7}>
+                    <AppealSection
+                      rulingDate={workingCase.rulingDate}
+                      accusedGender={workingCase.accusedGender}
+                      accusedPostponedAppealDate={
+                        workingCase.accusedPostponedAppealDate
+                      }
+                      prosecutorPostponedAppealDate={
+                        workingCase.prosecutorPostponedAppealDate
+                      }
+                      handleAccusedAppeal={handleAccusedAppeal}
+                      handleProsecutorAppeal={handleProsecutorAppeal}
+                    />
+                  </Box>
+                </GridColumn>
               )}
             <Box marginBottom={5}>
               <Accordion>
