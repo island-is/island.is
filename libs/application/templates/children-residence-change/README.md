@@ -4,7 +4,7 @@ This is an application template for children residence change created for the Co
 
 ## Setup
 
-Application System setup: [Setup](https://github.com/island-is/island.is/tree/main/apps/application-system)
+Application System setup: [Setup](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 
@@ -14,8 +14,6 @@ There are additional steps required to run this template locally
 
 Prerequisites
 
-- You have `jq` installed [JQ](https://stedolan.github.io/jq/)
-  - `brew install jq`
 - You have `kubectl` installed
   - `brew install kubectl`
 - You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
