@@ -51,7 +51,7 @@ export class TranslationsService {
         })
         .catch(errorHandler('getNamespace'))
 
-      let messages = {
+      const messages = {
         id: namespace,
         is: {},
         en: {},
