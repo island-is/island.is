@@ -1,23 +1,26 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
 import { GrantTypeService } from './../../../services/GrantTypeService'
 import { GrantType } from './../../../entities/models/grant-type.model'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
-class GrantTypesList extends Component {
-  state = {
-    grantTypes: [],
-    rowCount: 0,
-    count: 1,
-    page: 1,
-    modalIsOpen: false,
-    grantTypeToRemove: '',
-    searchString: '',
-  }
+const GrantTypesList: React.FC = () => {
+  const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
+  const [grantTypeToRemove, setGrantTypeToRemove] = useState('')
+  const [count, setCount] = useState(0)
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [searchString, setSearchString] = useState<string>('')
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('GrantTypesList'),
+  )
 
-  getGrantTypes = async (
+  const getGrantTypes = async (
     searchString: string,
     page: number,
     count: number,
@@ -28,166 +31,162 @@ class GrantTypesList extends Component {
       count,
     )
     if (response) {
-      this.setState({
-        grantTypes: response.rows,
-        rowCount: response.count,
-      })
+      setGrantTypes(response.rows)
+      setLastPage(Math.ceil(response.count / count))
     }
   }
 
-  handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getGrantTypes(this.state.searchString, page, count)
-    this.setState({ page: page, count: count })
+  const handlePageChange = async (
+    page: number,
+    count: number,
+  ): Promise<void> => {
+    getGrantTypes(searchString, page, count)
+    setPage(page)
+    setCount(count)
   }
 
-  deleteGrantType = async (): Promise<void> => {
-    await GrantTypeService.delete(this.state.grantTypeToRemove)
-    this.getGrantTypes(
-      this.state.searchString,
-      this.state.page,
-      this.state.count,
-    )
-    this.closeModal()
+  const deleteGrantType = async (): Promise<void> => {
+    const response = await GrantTypeService.delete(grantTypeToRemove)
+    if (response) {
+      getGrantTypes(searchString, page, count)
+    }
+
+    closeModal()
   }
 
-  confirmDelete = async (name: string): Promise<void> => {
-    this.setState({ grantTypeToRemove: name })
-    this.setState({ modalIsOpen: true })
+  const confirmDelete = async (name: string): Promise<void> => {
+    setGrantTypeToRemove(name)
+    setIsOpen(true)
   }
 
-  closeModal = (): void => {
-    this.setState({ modalIsOpen: false })
+  const closeModal = (): void => {
+    setIsOpen(false)
   }
 
-  setHeaderElement = (): JSX.Element => {
+  const setHeaderElement = (): JSX.Element => {
     return (
       <p>
-        Are you sure want to delete this Grant Type:{' '}
-        <span>{this.state.grantTypeToRemove}</span>
+        {localization.removeConfirmation}
+        <span>{grantTypeToRemove}</span>
       </p>
     )
   }
 
-  search = (event) => {
-    this.getGrantTypes(
-      this.state.searchString,
-      this.state.page,
-      this.state.count,
-    )
+  const search = (event) => {
+    getGrantTypes(searchString, page, count)
     event.preventDefault()
   }
 
-  handleSearchChange = (event) => {
-    this.setState({ searchString: event.target.value })
+  const handleSearchChange = (event) => {
+    setSearchString(event.target.value)
   }
 
-  render(): JSX.Element {
-    return (
-      <div>
-        <div className="grant-type-list">
-          <div className="grant-type-list__wrapper">
-            <div className="grant-type-list__container">
-              <h1>Grant Types</h1>
-              <div className="grant-type-list__container__options">
-                <div className="grant-type-list__container__options__button">
-                  <Link href={'/admin/grant-type'}>
-                    <a className="grant-type-list__button__new">
-                      <i className="icon__new"></i>Create new Grant Type
-                    </a>
-                  </Link>
-                </div>
-                <form onSubmit={this.search}>
-                  <div className="grant-type-list__container__options__search">
-                    <label htmlFor="search" className="grant-type-list__label">
-                      Grant Type name
-                    </label>
-                    <input
-                      id="search"
-                      className="grant-type-list__input__search"
-                      value={this.state.searchString}
-                      onChange={this.handleSearchChange}
-                    ></input>
-                    <button
-                      type="submit"
-                      className="grant-type-list__button__search"
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form>
+  return (
+    <div>
+      <div className="grant-type-list">
+        <div className="grant-type-list__wrapper">
+          <div className="grant-type-list__container">
+            <h1>{localization.title}</h1>
+            <div className="grant-type-list__container__options">
+              <div className="grant-type-list__container__options__button">
+                <Link href={'/admin/grant-type'}>
+                  <a className="grant-type-list__button__new">
+                    <i className="icon__new"></i>
+                    {localization.createNewItem}
+                  </a>
+                </Link>
               </div>
-              <div className="grant-type-list__container__table">
-                <table className="grant-type-list__table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th colSpan={2}></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.grantTypes.map((grantType: GrantType) => {
-                      return (
-                        <tr
-                          key={grantType.name}
-                          className={grantType.archived ? 'archived' : ''}
-                        >
-                          <td>{grantType.name}</td>
-                          <td>{grantType.description}</td>
-                          <td className="grant-type-list__table__button">
-                            <Link
-                              href={`admin/grant-type/${encodeURIComponent(
-                                grantType.name,
-                              )}`}
-                            >
-                              <button
-                                type="button"
-                                className={`grant-type-list__button__edit${
-                                  grantType.archived ? ' hidden' : ''
-                                }`}
-                                title="Edit"
-                              >
-                                <i className="icon__edit"></i>
-                                <span>Edit</span>
-                              </button>
-                            </Link>
-                          </td>
-                          <td className="grant-type-list__table__button">
+              <form onSubmit={search}>
+                <div className="grant-type-list__container__options__search">
+                  <label htmlFor="search" className="grant-type-list__label">
+                    {localization.search.label}
+                  </label>
+                  <input
+                    id="search"
+                    className="grant-type-list__input__search"
+                    value={searchString}
+                    onChange={handleSearchChange}
+                  ></input>
+                  <button
+                    type="submit"
+                    className="grant-type-list__button__search"
+                  >
+                    {localization.searchButton}
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="grant-type-list__container__table">
+              <table className="grant-type-list__table">
+                <thead>
+                  <tr>
+                    <th>{localization.columns['name'].headerText}</th>
+                    <th>{localization.columns['description'].headerText}</th>
+                    <th colSpan={2}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grantTypes.map((grantType: GrantType) => {
+                    return (
+                      <tr
+                        key={grantType.name}
+                        className={grantType.archived ? 'archived' : ''}
+                      >
+                        <td>{grantType.name}</td>
+                        <td>{grantType.description}</td>
+                        <td className="grant-type-list__table__button">
+                          <Link
+                            href={`admin/grant-type/${encodeURIComponent(
+                              grantType.name,
+                            )}`}
+                          >
                             <button
                               type="button"
-                              className={`grant-type-list__button__delete${
+                              className={`grant-type-list__button__edit${
                                 grantType.archived ? ' hidden' : ''
                               }`}
-                              title="Delete"
-                              onClick={() => this.confirmDelete(grantType.name)}
+                              title={localization.editButton}
                             >
-                              <i className="icon__delete"></i>
-                              <span>Delete</span>
+                              <i className="icon__edit"></i>
+                              <span>{localization.editButton}</span>
                             </button>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <Paginator
-                lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                handlePageChange={this.handlePageChange}
-              />
+                          </Link>
+                        </td>
+                        <td className="grant-type-list__table__button">
+                          <button
+                            type="button"
+                            className={`grant-type-list__button__delete${
+                              grantType.archived ? ' hidden' : ''
+                            }`}
+                            title={localization.removeButton}
+                            onClick={() => confirmDelete(grantType.name)}
+                          >
+                            <i className="icon__delete"></i>
+                            <span>{localization.removeButton}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
+            <Paginator
+              lastPage={lastPage}
+              handlePageChange={handlePageChange}
+            />
           </div>
         </div>
-        <ConfirmModal
-          modalIsOpen={this.state.modalIsOpen}
-          headerElement={this.setHeaderElement()}
-          closeModal={this.closeModal}
-          confirmation={this.deleteGrantType}
-          confirmationText="Delete"
-        ></ConfirmModal>
       </div>
-    )
-  }
+      <ConfirmModal
+        modalIsOpen={modalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeModal}
+        confirmation={deleteGrantType}
+        confirmationText={localization.removeButton}
+      ></ConfirmModal>
+    </div>
+  )
 }
 
 export default GrantTypesList

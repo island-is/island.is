@@ -7,9 +7,9 @@ class ValidationUtils {
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
 
-  public static corsOriginPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static corsOriginPattern = /^http/
 
-  public static urlPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static urlPattern = /^http/
 
   public static nationalIdPattern = /^[0-9]*$/
 
@@ -33,7 +33,7 @@ class ValidationUtils {
   }
 
   public static validateDescription(input: string): boolean {
-    if (input.length === 0) {
+    if (input == null || input.length === 0) {
       return true
     }
     const regex = new RegExp(ValidationUtils.descriptionPattern)

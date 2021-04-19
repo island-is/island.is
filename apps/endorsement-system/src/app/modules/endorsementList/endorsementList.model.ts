@@ -8,13 +8,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/endorsement.model'
+import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata.service'
 import { ValidationRuleDto } from './dto/validationRule.dto'
-
-// TODO: Move this type to the metadata service
-export enum EndorsementMetaField {
-  FULL_NAME = 'fullName',
-  ADDRESS = 'address',
-}
 
 export enum EndorsementTag {
   NORDAUSTURKJORDAEMI = 'nordausturkjordaemi',

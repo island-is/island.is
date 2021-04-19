@@ -5,6 +5,7 @@ import { AdminTab } from './../../../entities/common/AdminTab'
 import { Language } from './../../../entities/models/language.model'
 import { TranslationService } from './../../../services/TranslationService'
 import LanguageCreateForm from '../../../components/Admin/form/LanguageCreateForm'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -21,6 +22,7 @@ const Index: React.FC = () => {
       }
     }
     loadLanguage()
+    document.title = LocalizationUtils.getPageTitle('admin.language.[isoKey]')
   }, [isoKey])
 
   const getLanguage = async (isoKey: string) => {

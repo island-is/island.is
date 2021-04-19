@@ -109,6 +109,16 @@ export class ApiScope extends Model<ApiScope> {
   })
   alsoForDelegatedUser!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  isAccessControlled?: boolean
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
   userClaims?: ApiScopeUserClaim[]

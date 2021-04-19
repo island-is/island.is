@@ -3,20 +3,32 @@ import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
-import { CRCFieldBaseProps, Child } from '../../types'
+import { formatAddress } from '../../lib/utils'
+import { CRCFieldBaseProps, Child, Address } from '../../types'
 import { DescriptionText } from '../components'
 
 const shouldBeDisabled = (
   children: Child[],
   childOption: Child,
+  applicantAddress: Address,
   selectedChildren?: string[],
 ) => {
+  // If the applicant and the other parent live together
+  // it should not be possible to request a transfer for the children
+  const formattedApplicantAddress = formatAddress(applicantAddress)
+  const formattedOtherParentAddress = formatAddress(
+    childOption.otherParent.address,
+  )
+  if (formattedApplicantAddress === formattedOtherParentAddress) {
+    return true
+  }
   if (!selectedChildren || selectedChildren?.length === 0) {
     return false
   }
   const firstSelectedChild = children.find(
     (child) => selectedChildren[0] === child.nationalId,
   )
+
   if (
     firstSelectedChild?.livesWithApplicant !== childOption.livesWithApplicant ||
     firstSelectedChild?.otherParent.nationalId !==
@@ -34,7 +46,7 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
     externalData: { nationalRegistry },
     answers,
   } = application
-  const children = nationalRegistry.data.children
+  const { address, children } = nationalRegistry.data
   const currentAnswer = answers.selectedChildren
   const [selectedChildrenState, setSelectedChildrenState] = useState<
     string[] | undefined
@@ -58,7 +70,12 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         options={children.map((child) => ({
           value: child.nationalId,
           label: child.fullName,
-          disabled: shouldBeDisabled(children, child, selectedChildrenState),
+          disabled: shouldBeDisabled(
+            children,
+            child,
+            address,
+            selectedChildrenState,
+          ),
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
             parentName: child.otherParent.fullName,
           }),

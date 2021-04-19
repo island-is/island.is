@@ -133,7 +133,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
         setWorkingCase({
           ...workingCase,
           state: resCase.state,
-          judge: resCase.judge,
         })
       } catch (e) {
         // TODO: Handle error

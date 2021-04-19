@@ -56,7 +56,6 @@ export const CreateCaseMutation = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -112,7 +111,6 @@ export const CasesQuery = gql`
       policeCaseNumber
       accusedNationalId
       accusedName
-      isCourtDateInThePast
       custodyEndDate
       decision
       isCustodyEndDateInThePast
@@ -163,7 +161,6 @@ export const ExtendCaseMutation = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime

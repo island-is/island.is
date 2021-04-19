@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  DatePicker,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocation, useParams } from 'react-router-dom'
 import { DocumentProviderOrganisationForm } from './DocumentProviderOrganisationForm'
@@ -15,6 +21,8 @@ import { useGetOrganisation } from '../../shared/useGetOrganisation'
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 
 const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
+  const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const params = useParams<{ nationalId: string }>()
   const { state: organisationPreview } = useLocation<OrganisationPreview>()
   const { formatMessage } = useLocale()
@@ -32,6 +40,9 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const { technicalContact, administrativeContact, helpdesk } =
     organisation || {}
+
+  const today = new Date()
+
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>
@@ -44,7 +55,49 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Box>
         <IsFetchingProviderOrganisationContext.Provider value={loading}>
-          <DocumentProviderDashboard />
+          <Box marginBottom={[2, 3]}>
+            <GridRow>
+              <GridColumn span="6/12">
+                <DatePicker
+                  id="fromDate"
+                  label={formatMessage(m.documentProvidersDateFromLabel)}
+                  placeholderText={formatMessage(
+                    m.documentProvidersDateFromPlaceholderText,
+                  )}
+                  locale="is"
+                  minDate={new Date(2011, 1, 1)}
+                  maxDate={new Date()}
+                  minYear={2011}
+                  maxYear={today.getFullYear()}
+                  handleChange={(date: Date) => setFromDate(date)}
+                />
+              </GridColumn>
+              <GridColumn span="6/12">
+                <DatePicker
+                  id="toDate"
+                  label={formatMessage(m.documentProvidersDateToLabel)}
+                  placeholderText={formatMessage(
+                    m.documentProvidersDateToPlaceholderText,
+                  )}
+                  locale="is"
+                  minDate={new Date(2011, 1, 1)}
+                  maxDate={new Date()}
+                  minYear={2011}
+                  maxYear={today.getFullYear()}
+                  handleChange={(date: Date) => setToDate(date)}
+                  hasError={fromDate && toDate && toDate < fromDate}
+                  errorMessage={formatMessage(
+                    m.documentProvidersDateToErrorMessage,
+                  )}
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+          <DocumentProviderDashboard
+            organisationId={organisationPreview.id}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
           <DocumentProviderOrganisationForm
             organisation={organisation}
             setOrganisationName={setOrganisationName}

@@ -44,6 +44,15 @@ export interface SmsServiceOptions {
   password: string
 }
 
+interface SmsBody {
+  request: {
+    Recipients: string[]
+    SenderName: string
+    SmsText: string
+    IsFlash: boolean
+  }
+}
+
 @Injectable()
 export class SmsService extends RESTDataSource {
   constructor(
@@ -85,7 +94,7 @@ export class SmsService extends RESTDataSource {
 
   private async wrappedPost(
     url: string,
-    body: object,
+    body: SmsBody,
     isRetry = false,
   ): Promise<NovaResponse> {
     if (!token) {
@@ -120,12 +129,15 @@ export class SmsService extends RESTDataSource {
     }
   }
 
-  sendSms(mobileNumber: string, message: string): Promise<NovaResponse> {
-    this.logger.debug(`Sending sms to ${mobileNumber} with message ${message}`)
+  sendSms(
+    recipients: string | string[],
+    message: string,
+  ): Promise<NovaResponse> {
+    this.logger.debug(`Sending sms to ${recipients} with message ${message}`)
 
     const body = {
       request: {
-        Recipients: [mobileNumber],
+        Recipients: typeof recipients === 'string' ? [recipients] : recipients,
         SenderName: 'Island.is',
         SmsText: message,
         IsFlash: false,
