@@ -972,7 +972,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Your application was not approved',
     },
     draftNotApprovedOtherParentDesc: {
-      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
       defaultMessage: 'The other parent did not approve your request.',
       description: 'The other parent did not approve your request.',
     },
