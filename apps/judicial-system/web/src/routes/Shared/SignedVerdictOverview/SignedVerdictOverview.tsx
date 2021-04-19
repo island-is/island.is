@@ -318,7 +318,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            <Box marginBottom={5}>
+            <Box marginBottom={6}>
               <InfoCard
                 data={[
                   {
@@ -348,27 +348,26 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {workingCase.isCaseAppealable && (
-              <Box marginBottom={7}>
-                {(user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR) &&
-                  workingCase.rulingDate &&
-                  workingCase.accusedGender && (
-                    <AppealSection
-                      rulingDate={workingCase.rulingDate}
-                      accusedGender={workingCase.accusedGender}
-                      accusedPostponedAppealDate={
-                        workingCase.accusedPostponedAppealDate
-                      }
-                      prosecutorPostponedAppealDate={
-                        workingCase.prosecutorPostponedAppealDate
-                      }
-                      handleAccusedAppeal={handleAccusedAppeal}
-                      handleProsecutorAppeal={handleProsecutorAppeal}
-                    />
-                  )}
-              </Box>
-            )}
+            {workingCase.isCaseAppealable &&
+              workingCase.rulingDate &&
+              workingCase.accusedGender &&
+              (user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR) && (
+                <Box marginBottom={7}>
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedPostponedAppealDate={
+                      workingCase.accusedPostponedAppealDate
+                    }
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    handleProsecutorAppeal={handleProsecutorAppeal}
+                  />
+                </Box>
+              )}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
