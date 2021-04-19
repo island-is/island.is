@@ -221,8 +221,9 @@ const Overview = ({
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.durationType === 'temporary' && answers.durationDate
-            ? formatDate(answers.durationDate)
+          {answers.selectDuration.type === 'temporary' &&
+          answers.selectDuration.date
+            ? formatDate(answers.selectDuration.date)
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
