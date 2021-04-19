@@ -179,7 +179,12 @@ function getJudgeCaseData() {
   return remainingJudgeCaseData()
 }
 
+function getCaseType() {
+  return { type: CaseType.CUSTODY }
+}
+
 function getCaseData(
+  withCaseType = true,
   fullCreateCaseData = false,
   otherProsecutorCaseData = false,
   judgeCaseData = false,
@@ -187,6 +192,9 @@ function getCaseData(
   let data = getProsecutorCaseData(fullCreateCaseData, otherProsecutorCaseData)
   if (judgeCaseData) {
     data = { ...data, ...getJudgeCaseData() }
+  }
+  if (withCaseType) {
+    data = { ...data, ...getCaseType() }
   }
 
   return data as CCase
@@ -528,10 +536,7 @@ describe('User', () => {
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
-    const data = {
-      ...getCaseData(true),
-      type: CaseType.CUSTODY,
-    }
+    const data = getCaseData(true, true)
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -563,10 +568,7 @@ describe('Case', () => {
   })
 
   it('POST /api/case with required fields should create a case', async () => {
-    const data = {
-      ...getCaseData(),
-      type: CaseType.CUSTODY,
-    }
+    const data = getCaseData()
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -598,7 +600,7 @@ describe('Case', () => {
   })
 
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
-    const data = getCaseData(true, true)
+    const data = getCaseData(false, true, true)
     let dbCase: CCase
     let apiCase: CCase
 
@@ -622,7 +624,7 @@ describe('Case', () => {
           id: dbCase.id || 'FAILURE',
           created: dbCase.created || 'FAILURE',
           modified: apiCase.modified,
-          type: CaseType.CUSTODY,
+          type: dbCase.type,
           state: dbCase.state || 'FAILURE',
         } as CCase)
 
@@ -680,7 +682,7 @@ describe('Case', () => {
     let apiCase: CCase
 
     await Case.create({
-      ...getCaseData(true, true, true),
+      ...getCaseData(true, true, true, true),
       state: CaseState.RECEIVED,
     })
       .then((value) => {
@@ -760,7 +762,7 @@ describe('Case', () => {
   it('GET /api/case/:id should get a case by id', async () => {
     let dbCase: CCase
 
-    await Case.create(getCaseData(true, true, true))
+    await Case.create(getCaseData(true, true, true, true))
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -783,7 +785,7 @@ describe('Case', () => {
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
     await Case.create({
-      ...getCaseData(true, true, true),
+      ...getCaseData(true, true, true, true),
       state: CaseState.REJECTED,
     })
       .then(async (value) =>
@@ -803,7 +805,7 @@ describe('Case', () => {
     let dbCase: CCase
 
     await Case.create({
-      ...getCaseData(true, true, true),
+      ...getCaseData(true, true, true, true),
       state: CaseState.ACCEPTED,
     })
       .then((value) => {
@@ -862,7 +864,7 @@ describe('Case', () => {
   it('POST /api/case/:id/extend should extend case', async () => {
     let dbCase: CCase
 
-    await Case.create(getCaseData(true, true, true))
+    await Case.create(getCaseData(true, true, true, true))
       .then((value) => {
         dbCase = caseToCCase(value)
 
