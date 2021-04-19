@@ -86,10 +86,12 @@ describe('validateAnswers', () => {
     )
 
     expect(schemaValidationError).toEqual({
-      person: invalidValue,
-      'person.nationalId': invalidValue,
-      'person.age': invalidValue,
-      'person.email': invalidEmail,
+      person: {
+        age: invalidValue,
+        email: invalidEmail,
+        nationalId: invalidValue,
+        phoneNumber: 'Required',
+      },
     })
   })
 
@@ -142,10 +144,13 @@ describe('validateAnswers', () => {
       anotherBadFormValue,
     )
     expect(secondSchemaValidationError).toEqual({
-      nested: expectedNumberReceivedString,
-      'nested.deep': expectedNumberReceivedString,
-      'nested.deep.soDeep': expectedNumberReceivedString,
-      'nested.deep.soDeep.id': expectedNumberReceivedString,
+      nested: {
+        deep: {
+          soDeep: {
+            id: expectedNumberReceivedString,
+          },
+        },
+      },
     })
   })
   describe('arrays', () => {
@@ -197,9 +202,11 @@ describe('validateAnswers', () => {
         badFormValue,
       )
       expect(schemaValidationError).toEqual({
-        anArray: expectedStringReceivedNumber,
-        'anArray[1]': expectedStringReceivedNumber,
-        'anArray[2]': expectedStringReceivedNumber,
+        anArray: [
+          undefined,
+          expectedStringReceivedNumber,
+          expectedStringReceivedNumber,
+        ],
       })
     })
     it('should pick nested object inside an array from a schema', () => {
@@ -255,9 +262,7 @@ describe('validateAnswers', () => {
       }
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
       expect(secondError).toEqual({
-        person: invalidInput,
-        'person[0]': invalidInput,
-        'person[0].age': invalidInput,
+        person: [{ age: invalidInput }],
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -317,9 +322,7 @@ describe('validateAnswers', () => {
       } as FormValue
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
       expect(secondError).toEqual({
-        person: invalidInput,
-        'person[1]': invalidInput,
-        'person[1].age': invalidInput,
+        person: [undefined, { age: invalidInput }],
       })
     })
 

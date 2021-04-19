@@ -72,6 +72,7 @@
 
 ## Repository
 
+- [AWS Secrets](handbook/repository/aws-secrets.md)
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
