@@ -80,6 +80,7 @@ const AppealSection: React.FC<Props> = (props) => {
               accusedPostponedAppealDate,
               'PPPp',
             )}`}
+            fluid
           />
         </motion.div>
       </div>
@@ -114,6 +115,7 @@ const AppealSection: React.FC<Props> = (props) => {
               prosecutorPostponedAppealDate,
               'PPPp',
             )}`}
+            fluid
           />
         </motion.div>
       </div>

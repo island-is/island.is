@@ -348,7 +348,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {workingCase.isCaseAppealable &&
+            {!workingCase.isCaseAppealable &&
               workingCase.rulingDate &&
               workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
