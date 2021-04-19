@@ -51,18 +51,29 @@ import * as styles from './Overview.treat'
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const { features } = useContext(FeatureContext)
 
   const router = useRouter()
   const id = router.query.id
 
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
+
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -131,16 +142,6 @@ export const Overview: React.FC = () => {
 
     return sendNotification(workingCase.id)
   }
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
