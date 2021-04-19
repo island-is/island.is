@@ -117,15 +117,4 @@ describe('answerValidators', () => {
       path: 'periods[0].ratio',
     })
   })
-
-  it('should return error if the period selected is more than the allowed period', () => {
-    const startDate = '2021-01-29'
-    const endDate = '2021-08-16'
-    const newAnswers = [{ startDate, endDate }]
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: `You cannot apply for a period longer than the allowed period of 6 months.`,
-      path: 'periods[0].endDate',
-    })
-  })
 })
