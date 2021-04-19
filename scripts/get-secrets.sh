@@ -24,10 +24,15 @@ function main {
 }
 
 if [ -z ${1-} ]; then
-  echo "Usage: AWS_PROFILE=<profile> secrets.sh <project> [--reset]"
+  echo "Usage:"
+  echo "  yarn get-secrets <project> [--reset]"
   echo ""
   echo "Example:"
-  echo "  AWS_PROFILE=islandis ./secrets.sh gjafakort --reset"
+  echo "  yarn get-secrets gjafakort --reset"
+  echo ""
+  echo "Documentation:"
+  echo "  docs.devland.is/handbook/repository/aws-secrets"
+  echo ""
   exit 1
 else
   main $*

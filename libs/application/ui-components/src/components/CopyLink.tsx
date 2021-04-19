@@ -15,10 +15,9 @@ const CopyLink: FC<CopyLinkProps> = ({
     <Box
       background="blue100"
       display="flex"
+      alignItems="center"
       justifyContent="spaceBetween"
       padding={3}
-      marginTop={3}
-      marginBottom={5}
       borderRadius="large"
     >
       <Text variant="h5" color="blue400">
@@ -29,6 +28,7 @@ const CopyLink: FC<CopyLinkProps> = ({
           onClick={() => copyToClipboard(linkUrl)}
           type="button"
           variant="text"
+          nowrap
         >
           {buttonTitle}
         </Button>

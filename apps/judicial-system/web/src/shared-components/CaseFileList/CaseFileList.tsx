@@ -1,6 +1,6 @@
-import { Box } from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import React from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { CaseFile } from '..'
 import useFileList from '../../utils/hooks/useFileList'
 
@@ -15,7 +15,7 @@ const CaseFileList: React.FC<Props> = (props) => {
 
   const { handleOpenFile } = useFileList({ caseId })
 
-  return (
+  return files.length > 0 ? (
     <>
       {files.map((file, index) => (
         <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
@@ -30,6 +30,8 @@ const CaseFileList: React.FC<Props> = (props) => {
         </Box>
       ))}
     </>
+  ) : (
+    <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
   )
 }
 

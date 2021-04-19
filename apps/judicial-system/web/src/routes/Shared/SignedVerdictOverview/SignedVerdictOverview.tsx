@@ -373,21 +373,21 @@ export const SignedVerdictOverview: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
-                {features.includes(Feature.CASE_FILES) &&
-                  workingCase.files &&
-                  workingCase.files.length > 0 && (
-                    <AccordionItem
-                      id="id_4"
-                      label={`Rannsóknargögn (${workingCase.files.length})`}
-                      labelVariant="h3"
-                    >
-                      <CaseFileList
-                        caseId={workingCase.id}
-                        files={workingCase.files}
-                        canOpenFiles={user?.role === UserRole.PROSECUTOR}
-                      />
-                    </AccordionItem>
-                  )}
+                {features.includes(Feature.CASE_FILES) && (
+                  <AccordionItem
+                    id="id_4"
+                    label={`Rannsóknargögn (${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}
+                    labelVariant="h3"
+                  >
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files || []}
+                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                    />
+                  </AccordionItem>
+                )}
               </Accordion>
             </Box>
             <Box marginBottom={15}>

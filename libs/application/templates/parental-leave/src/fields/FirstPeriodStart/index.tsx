@@ -9,8 +9,9 @@ import { useFormContext } from 'react-hook-form'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { StartDateOptions } from '../../constants'
 
-type ValidAnswers = 'dateOfBirth' | 'specificDate' | undefined
+type ValidAnswers = StartDateOptions | undefined
 
 const FirstPeriodStart: FC<FieldBaseProps> = ({
   error,
@@ -51,13 +52,16 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           options={[
             {
               label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart
+                  .estimatedDateOfBirthOption,
+              ),
+              value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+            },
+            {
+              label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
-              tooltip: formatMessage(
-                parentalLeaveFormMessages.firstPeriodStart
-                  .dateOfBirthOptionTooltip,
-              ),
-              value: 'dateOfBirth',
+              value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
             },
             {
               label: formatMessage(
@@ -67,7 +71,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                 parentalLeaveFormMessages.firstPeriodStart
                   .specificDateOptionTooltip,
               ),
-              value: 'specificDate',
+              value: StartDateOptions.SPECIFIC_DATE,
             },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
@@ -76,7 +80,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         <input
           type="hidden"
           value={
-            statefulAnswer === 'dateOfBirth'
+            statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+            statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
               ? expectedDateOfBirth
               : currentStartDateAnswer
           }
