@@ -1,6 +1,8 @@
-import { ZodError } from 'zod'
+import { ZodSuberror } from 'zod/lib/src/ZodError'
 import isNumber from 'lodash/isNumber'
-import { FieldErrors } from 'react-hook-form/dist/types/form'
+import has from 'lodash/has'
+import set from 'lodash/set'
+import merge from 'lodash/merge'
 
 import {
   FormatMessage,
@@ -9,53 +11,38 @@ import {
   StaticTextObject,
 } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
-import { AnswerValidationError } from './AnswerValidator'
+import { RecordObject } from '../types/Fields'
 import { coreErrorMessages } from '../lib/messages'
-
-export interface SchemaValidationError {
-  [key: string]: string
-}
+import { AnswerValidationError } from './AnswerValidator'
 
 function populateError(
-  currentError: SchemaValidationError | undefined,
-  newError: ZodError | undefined,
-  pathToError: string,
+  currentError: RecordObject = {},
+  newError: ZodSuberror[],
+  pathToError: string | undefined,
   formatMessage: FormatMessage,
-): SchemaValidationError | undefined {
-  if (newError === undefined) {
-    return currentError
-  }
+) {
+  let errorObject = {}
+  const defaultZodError = newError[0].message === 'Invalid value.'
 
-  const defaultZodError = newError.errors[0].message === 'Invalid value.'
+  newError.forEach((element) => {
+    const path = pathToError || element.path
+    let message = formatMessage(coreErrorMessages.defaultError)
 
-  let newErrorMessage = {
-    [pathToError]: formatMessage(coreErrorMessages.defaultError),
-  }
+    if (element.code === 'custom_error') {
+      const namespaceRegex = /^\w*\.\w*:.*/g
+      const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
 
-  // For custom error from namespaces' messages defined inside the dataSchema.ts file
-  if (newError.errors[0].code === 'custom_error') {
-    const namespaceRegex = /^\w*\.\w*:.*/g
-    const includeNamespace = newError.errors[0]?.params?.id?.match(
-      namespaceRegex,
-    )?.[0]
-
-    if (includeNamespace) {
-      newErrorMessage = {
-        [pathToError]: formatMessage(
-          newError.errors[0].params as StaticTextObject,
-        ),
-      }
-    } else if (!defaultZodError) {
-      newErrorMessage = {
-        [pathToError]: newError.errors[0].message,
+      if (includeNamespace) {
+        message = formatMessage(element.params as StaticTextObject)
+      } else if (!defaultZodError) {
+        message = element.message
       }
     }
-  }
 
-  return {
-    ...(currentError ?? {}),
-    ...newErrorMessage,
-  }
+    errorObject = set(errorObject, path, message)
+  })
+
+  return merge(currentError, errorObject)
 }
 
 function constructPath(currentPath: string, newKey: string) {
@@ -69,12 +56,13 @@ function constructPath(currentPath: string, newKey: string) {
 function partialSchemaValidation(
   answers: FormValue,
   originalSchema: Schema,
-  error: SchemaValidationError | undefined,
+  error: RecordObject | undefined,
   currentPath = '',
+  sendConstructedPath: boolean,
   formatMessage: FormatMessage,
-): SchemaValidationError | undefined {
+): RecordObject | undefined {
   Object.keys(answers).forEach((key) => {
-    const newPath = constructPath(currentPath, key)
+    const constructedErrorPath = constructPath(currentPath, key)
     const answer = answers[key]
 
     // ZodUnions do not have .pick method
@@ -85,7 +73,16 @@ function partialSchemaValidation(
     try {
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
-      error = populateError(error, e, newPath, formatMessage)
+      const zodErrors: ZodSuberror[] = e.errors
+
+      if (!has(error, constructedErrorPath)) {
+        error = populateError(
+          error,
+          zodErrors,
+          sendConstructedPath ? constructedErrorPath : undefined,
+          formatMessage,
+        )
+      }
 
       if (Array.isArray(answer)) {
         const arrayElements = answer as Answer[]
@@ -94,27 +91,25 @@ function partialSchemaValidation(
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
-            const elementPath = `${newPath}[${index}]`
-
-            error = populateError(error, e, elementPath, formatMessage)
-
             if (el !== null && typeof el === 'object') {
-              error = partialSchemaValidation(
+              partialSchemaValidation(
                 el as FormValue,
                 trimmedSchema?.shape[key]?._def?.type,
                 error,
-                elementPath,
+                `${constructedErrorPath}[${index}]`,
+                true,
                 formatMessage,
               )
             }
           }
         })
       } else if (typeof answer === 'object') {
-        error = partialSchemaValidation(
+        partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],
           error,
-          newPath,
+          constructedErrorPath,
+          false,
           formatMessage,
         )
       }
@@ -134,14 +129,14 @@ export function validateAnswers({
   answers: FormValue
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
-}): SchemaValidationError | FieldErrors<FormValue> | undefined {
-  // This returns a custom error message object of SchemaValidationError type
+}): RecordObject | undefined {
   if (!isFullSchemaValidation) {
     return partialSchemaValidation(
       answers,
       dataSchema,
       undefined,
       '',
+      false,
       formatMessage,
     )
   }

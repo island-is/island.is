@@ -26,7 +26,8 @@ export const input = style({
   left: 0,
   opacity: 0,
   position: 'absolute',
-  top: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
   width: checkboxSize,
 })
 export const label = style({

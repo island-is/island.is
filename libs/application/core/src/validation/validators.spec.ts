@@ -104,10 +104,12 @@ describe('validateAnswers', () => {
     })
 
     expect(schemaValidationError).toEqual({
-      person: defaultError,
-      'person.nationalId': defaultError,
-      'person.age': defaultError,
-      'person.email': defaultError,
+      person: {
+        age: defaultError,
+        email: defaultError,
+        nationalId: defaultError,
+        phoneNumber: defaultError,
+      },
     })
   })
 
@@ -172,10 +174,13 @@ describe('validateAnswers', () => {
       formatMessage,
     })
     expect(secondSchemaValidationError).toEqual({
-      nested: defaultError,
-      'nested.deep': defaultError,
-      'nested.deep.soDeep': defaultError,
-      'nested.deep.soDeep.id': defaultError,
+      nested: {
+        deep: {
+          soDeep: {
+            id: defaultError,
+          },
+        },
+      },
     })
   })
   describe('arrays', () => {
@@ -245,9 +250,7 @@ describe('validateAnswers', () => {
         formatMessage,
       })
       expect(schemaValidationError).toEqual({
-        anArray: defaultError,
-        'anArray[1]': defaultError,
-        'anArray[2]': defaultError,
+        anArray: [undefined, defaultError, defaultError],
       })
     })
     it('should pick nested object inside an array from a schema', () => {
@@ -321,9 +324,7 @@ describe('validateAnswers', () => {
         formatMessage,
       })
       expect(secondError).toEqual({
-        person: defaultError,
-        'person[0]': defaultError,
-        'person[0].age': defaultError,
+        person: [{ age: defaultError }],
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -401,9 +402,7 @@ describe('validateAnswers', () => {
         formatMessage,
       })
       expect(secondError).toEqual({
-        person: defaultError,
-        'person[1]': defaultError,
-        'person[1].age': defaultError,
+        person: [undefined, { age: defaultError }],
       })
     })
 
