@@ -10,6 +10,7 @@ import {
   CaseState,
   CaseType,
   Feature,
+  Notification,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -58,12 +59,16 @@ export const Overview: React.FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
+
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -82,11 +87,6 @@ export const Overview: React.FC = () => {
 
     return data?.transitionCase
   }
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -141,6 +141,12 @@ export const Overview: React.FC = () => {
     }
 
     return sendNotification(workingCase.id)
+  }
+
+  const hasCaseBeenSentToCourt = (notifications: Notification[]) => {
+    return notifications.some(
+      (notification) => notification.type === NotificationType.READY_FOR_COURT,
+    )
   }
 
   return (
