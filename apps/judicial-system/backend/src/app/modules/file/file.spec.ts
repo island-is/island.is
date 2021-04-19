@@ -111,13 +111,14 @@ describe('FileModule', () => {
       const timeStamp = new Date()
       const size = 99999
 
-      fileModel.create.mockImplementation((values: object) =>
-        Promise.resolve({
-          ...values,
-          id,
-          created: timeStamp,
-          modified: timeStamp,
-        }),
+      fileModel.create.mockImplementation(
+        (values: { key: string; size: number; caseId: string; name: string }) =>
+          Promise.resolve({
+            ...values,
+            id,
+            created: timeStamp,
+            modified: timeStamp,
+          }),
       )
 
       const presignedPost = await fileController.createCasePresignedPost(
