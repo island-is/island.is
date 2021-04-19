@@ -134,7 +134,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         (m): Option => ({
           value: m.slug,
           label:
-            m.name + (m.current ? ` ${txt('searchLegacyMinistrySuffix')}` : ''),
+            m.name + (m.current ? '' : ` ${txt('searchLegacyMinistrySuffix')}`),
         }),
       ),
     ) as ReadonlyArray<Option>
