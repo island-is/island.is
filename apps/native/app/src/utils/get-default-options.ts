@@ -18,7 +18,7 @@ export function getDefaultOptions(): Options {
           }
         : {
             translucent: false,
-            color: theme.color.blue100,
+            color: '#ffffff',
           },
       barStyle: theme.isDark ? 'black' : 'default',
       backButton: {

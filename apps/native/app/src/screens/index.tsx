@@ -11,8 +11,10 @@ import { NavigationBarTitle } from '../components/navigation-bar-title/navigatio
 import { ComponentRegistry } from '../utils/navigation-registry';
 import { DocumentDetailScreen } from './document-detail/document-detail'
 import { StorybookScreen } from './storybook/storybook';
-import { OnboardingAppLockScreen } from './onboarding/onboarding-app-lock'
+import { OnboardingPinCodeScreen } from './onboarding/onboarding-pin-code'
 import { OnboardingNotificationsScreen } from './onboarding/onboarding-notifications'
+import { NotificationsScreen } from './notifications/notifications'
+import { OnboardingBiometricsScreen } from './onboarding/onboarding-biometrics'
 
 export function registerAllComponents() {
   // dev only
@@ -20,7 +22,8 @@ export function registerAllComponents() {
 
   // screens
   registerComponent(ComponentRegistry.LoginScreen, LoginScreen)
-  registerComponent(ComponentRegistry.OnboardingAppLockScreen, OnboardingAppLockScreen);
+  registerComponent(ComponentRegistry.OnboardingPinCodeScreen, OnboardingPinCodeScreen);
+  registerComponent(ComponentRegistry.OnboardingBiometricsScreen, OnboardingBiometricsScreen);
   registerComponent(ComponentRegistry.OnboardingNotificationsScreen, OnboardingNotificationsScreen);
   registerComponent(ComponentRegistry.HomeScreen, HomeScreen)
   registerComponent(ComponentRegistry.InboxScreen, InboxScreen)
@@ -29,6 +32,7 @@ export function registerAllComponents() {
   registerComponent(ComponentRegistry.AppLockScreen, AppLockScreen)
   registerComponent(ComponentRegistry.WalletPassScreen, WalletPassScreen);
   registerComponent(ComponentRegistry.DocumentDetailScreen, DocumentDetailScreen);
+  registerComponent(ComponentRegistry.NotificationsScreen, NotificationsScreen);
 
   // ui components
   Navigation.registerComponent(ComponentRegistry.NavigationBarTitle, () => NavigationBarTitle);

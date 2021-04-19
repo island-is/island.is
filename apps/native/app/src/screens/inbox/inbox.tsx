@@ -48,7 +48,6 @@ export const InboxScreen: NavigationFunctionComponent = () => {
 
   const onRefresh = useCallback(() => {
     setLoading(true)
-    console.log(res);
     Promise.all([
       new Promise((r) => setTimeout(r, 1000)),
       res.refetch().catch(err => void 0),

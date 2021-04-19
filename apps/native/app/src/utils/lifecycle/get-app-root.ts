@@ -14,7 +14,7 @@ import { testIDs } from '../test-ids'
 export async function getAppRoot(): Promise<Layout> {
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
-  const onboardingScreens = getOnboardingScreens()
+  const onboardingScreens = await getOnboardingScreens();
   const isOnboarding = isAuthenticated && onboardingScreens.length > 0
 
   // Show login screen if not authenticated
@@ -63,7 +63,16 @@ export function getMainRoot(): Layout {
         system: 'person.crop.circle',
       },
     },
-  ]
+    {
+      id: ButtonRegistry.NotificationsButton,
+      testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
+      text: 'Notifications',
+      icon: {
+        system: 'bell',
+      },
+    },
+  ];
+
   return {
     bottomTabs: {
       id: 'BOTTOM_TABS_LAYOUT',

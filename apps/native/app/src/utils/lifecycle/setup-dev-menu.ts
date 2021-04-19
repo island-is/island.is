@@ -1,6 +1,7 @@
 import { ActionSheetIOS, DevSettings } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 import { authStore } from '../../stores/auth-store';
+import { preferencesStore } from '../../stores/preferences-store';
 import { ComponentRegistry } from '../navigation-registry';
 import { getAppRoot } from './get-app-root';
 
@@ -21,6 +22,10 @@ async function toggleStorybook() {
   devMenuOptions.storybook = !devMenuOptions.storybook;
 }
 
+async function resetPreferences() {
+  await preferencesStore.getState().reset();
+}
+
 async function enforceLogout() {
   await authStore.getState().logout();
   Navigation.setRoot({ root: await getAppRoot() });
@@ -32,23 +37,29 @@ export function setupDevMenu() {
   }
 
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
-    const options = [
-      devMenuOptions.storybook ? 'Disable Storybook' : 'Enable Storybook',
-      'Logout'
-    ];
+    const options = {
+      STORYBOOK: devMenuOptions.storybook ? 'Disable Storybook' : 'Enable Storybook',
+      RESET_PREFERENCES: 'Reset preferences',
+      LOGOUT: 'Logout'
+    };
+    const objectKeys = Object.keys(options);
+    const objectValues = Object.values(options);
 
     ActionSheetIOS.showActionSheetWithOptions({
       options: [
-        ...options,
+        ...objectValues,
         'Cancel'
       ],
-      cancelButtonIndex: options.length,
+      cancelButtonIndex: objectKeys.length,
     }, (buttonIndex: number) => {
-      if (buttonIndex === 0) {
-        toggleStorybook();
-      }
-      if (buttonIndex === 1) {
-        enforceLogout();
+      const optionKey = objectKeys[buttonIndex];
+      switch (optionKey) {
+        case 'STORYBOOK':
+          return toggleStorybook();
+        case 'RESET_PREFERENCES':
+          return resetPreferences();
+        case 'LOGOUT':
+          return enforceLogout();
       }
     });
   });

@@ -286,6 +286,8 @@ PODS:
   - react-native-app-auth (6.2.0):
     - AppAuth (= 1.4.0)
     - React-Core
+  - react-native-segmented-control (2.3.0):
+    - React-Core
   - react-native-ultimate-config (3.3.1):
     - React
   - react-native-webview (11.3.1):
@@ -463,6 +465,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../../../../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../../../../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-app-auth (from `../../node_modules/react-native-app-auth`)
+  - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
   - react-native-ultimate-config (from `../../node_modules/react-native-ultimate-config`)
   - react-native-webview (from `../../node_modules/react-native-webview`)
   - React-perflogger (from `../../../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -559,6 +562,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/react-native/ReactCommon/jsinspector"
   react-native-app-auth:
     :path: "../../node_modules/react-native-app-auth"
+  react-native-segmented-control:
+    :path: "../../node_modules/@react-native-segmented-control/segmented-control"
   react-native-ultimate-config:
     :path: "../../node_modules/react-native-ultimate-config"
   react-native-webview:
@@ -655,6 +660,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
   react-native-app-auth: 65e59e33e956bd6d83599c22b8f9bea529a0ea5c
+  react-native-segmented-control: 83a05d42acd1234ad5e061d603c145973a61b5ee
   react-native-ultimate-config: 38859f2b2018e3de04afd6203300f47f4803d8f4
   react-native-webview: 07fca3f4378bd6ea26254bf63119bfd70f4fabeb
   React-perflogger: 9c547d8f06b9bf00cb447f2b75e8d7f19b7e02af
@@ -686,6 +692,6 @@ SPEC CHECKSUMS:
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 4d756fea4bf64981553810edad928a336378131c
+PODFILE CHECKSUM: 4bd860c212d0e31ffbfe9c238eaf8115c943b643
 
 COCOAPODS: 1.10.1

@@ -1,29 +1,61 @@
 import { Navigation } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
 import { getMainRoot } from './lifecycle/get-app-root'
+import { hasHardwareAsync, isEnrolledAsync, supportedAuthenticationTypesAsync } from 'expo-local-authentication';
 import { ComponentRegistry } from './navigation-registry'
 
 export function isOnboarded() {
-  return getOnboardingScreens().length === 0;
-}
-
-export function getOnboardingScreens() {
   const {
     hasOnboardedNotifications,
+    hasOnboardedBiometrics,
+    hasOnboardedPinCode,
+  } = preferencesStore.getState();
+
+  return hasOnboardedBiometrics && hasOnboardedNotifications && hasOnboardedPinCode;
+}
+
+export async function getOnboardingScreens() {
+  const {
+    hasOnboardedNotifications,
+    hasOnboardedBiometrics,
     hasOnboardedPinCode,
   } = preferencesStore.getState()
   const screens = []
 
   screens.push({
     component: {
-      name: ComponentRegistry.OnboardingAppLockScreen,
-      id: 'ONBOARDING_APP_LOCK_SCREEN',
+      name: ComponentRegistry.OnboardingPinCodeScreen,
+      id: 'ONBOARDING_PIN_CODE_SCREEN',
     },
   })
 
   // show set pin code screen
   if (!hasOnboardedPinCode) {
-    return screens
+    return screens;
+  }
+
+  const hasHardware = await hasHardwareAsync();
+  const isEnrolled = await isEnrolledAsync();
+  const supportedAuthenticationTypes = await supportedAuthenticationTypesAsync();
+
+  if (hasHardware) {
+    // biometrics screen
+    screens.push({
+      component: {
+        name: ComponentRegistry.OnboardingBiometricsScreen,
+        id: 'ONBOARDING_BIOMETRICS_SCREEN',
+        passProps: {
+          hasHardware,
+          isEnrolled,
+          supportedAuthenticationTypes
+        }
+      },
+    })
+
+    // show enable biometrics screen
+    if (!hasOnboardedBiometrics) {
+      return screens;
+    }
   }
 
   screens.push({
@@ -35,14 +67,17 @@ export function getOnboardingScreens() {
 
   // show notifications accept screen
   if (!hasOnboardedNotifications) {
-    return screens
+    return screens;
   }
 
   return [];
 }
 
-export function nextOnboardingStep() {
-  const screens = getOnboardingScreens()
+export async function nextOnboardingStep() {
+  const screens = await getOnboardingScreens()
+
+  console.log(screens);
+
   if (screens.length === 0) {
     Navigation.setRoot({ root: getMainRoot() })
     return

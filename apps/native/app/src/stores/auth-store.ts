@@ -66,7 +66,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       ...await refresh(appAuthConfig, { refreshToken: get().authorizeResult?.refreshToken! })
     };
     if (authorizeResult) {
-      await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult));
+      await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult), { service: KEYCHAIN_AUTH_KEY });
       set({ authorizeResult });
       return true;
     }
@@ -75,7 +75,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   async login() {
     const authorizeResult = await authorize(appAuthConfig);
     if (authorizeResult) {
-      await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult));
+      await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult), { service: KEYCHAIN_AUTH_KEY });
       set({ authorizeResult });
       return true;
     }
@@ -88,7 +88,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       includeBasicAuth: true,
       sendClientId: true,
     });
-    await Keychain.resetGenericPassword();
+    await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY });
     set(state => ({ ...state, authorizeResult: undefined, userInfo: undefined }), true);
     return true;
   }
@@ -99,7 +99,7 @@ export const useAuthStore = createUse(authStore);
 export async function checkIsAuthenticated() {
   // Fetch initial authorization result from keychain
   try {
-    const res = await Keychain.getGenericPassword();
+    const res = await Keychain.getGenericPassword({ service: KEYCHAIN_AUTH_KEY });
     if (res) {
       const authorizeResult = JSON.parse(res.password);
       authStore.setState({ authorizeResult });

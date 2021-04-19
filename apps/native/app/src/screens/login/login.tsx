@@ -61,7 +61,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
             if (isAuth) {
               const userInfo = await authStore.fetchUserInfo()
               if (userInfo) {
-                nextOnboardingStep();
+                await nextOnboardingStep();
               }
             }
           } catch (err) {
