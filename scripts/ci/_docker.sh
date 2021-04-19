@@ -7,7 +7,8 @@ source $DIR/_common.sh
 
 APP_HOME=`cat $PROJECT_ROOT/workspace.json | jq ".projects[\"$APP\"].root" -r`
 APP_DIST_HOME=`cat $PROJECT_ROOT/workspace.json | jq ".projects[\"$APP\"].architect.build.options.outputPath" -r`
-TARGET=$1
+DOCKERFILE=$1
+TARGET=$2
 
 case $PUBLISH in
     true)
@@ -27,7 +28,7 @@ docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   --cache-from=type=local,src=$PROJECT_ROOT/cache_output \
-  -f ${DIR}/Dockerfile \
+  -f ${DIR}/$DOCKERFILE \
   --target=$TARGET $PUBLISH_TO_REGISTRY \
   --build-arg APP=${APP} \
   --build-arg APP_HOME=${APP_HOME} \
