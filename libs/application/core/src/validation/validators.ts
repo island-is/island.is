@@ -1,5 +1,6 @@
 import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
+import { RecordObject } from '../types/Fields'
 import { ZodSuberror } from 'zod/lib/src/ZodError'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
@@ -7,12 +8,8 @@ import set from 'lodash/set'
 import merge from 'lodash/merge'
 import { AnswerValidationError } from './AnswerValidator'
 
-interface SchemaValidationError {
-  [key: string]: string
-}
-
 function populateError(
-  currentError: SchemaValidationError = {},
+  currentError: RecordObject = {},
   newError: ZodSuberror[],
   pathToError?: string,
 ) {
@@ -33,10 +30,10 @@ function constructPath(currentPath: string, newKey: string) {
 function partialSchemaValidation(
   answers: FormValue,
   originalSchema: Schema,
-  error: SchemaValidationError | undefined,
+  error: RecordObject | undefined,
   currentPath = '',
   sendConstructedPath?: boolean,
-): SchemaValidationError | undefined {
+): RecordObject | undefined {
   Object.keys(answers).forEach((key) => {
     const constructedErrorPath = constructPath(currentPath, key)
     const answer = answers[key]
@@ -50,10 +47,7 @@ function partialSchemaValidation(
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
       const zodErrors: ZodSuberror[] = e.errors
-      const keyIsIncludedInErrors = zodErrors.some((err) =>
-        err.path.includes(key),
-      )
-      if (!has(error, constructedErrorPath) && keyIsIncludedInErrors) {
+      if (!has(error, constructedErrorPath)) {
         error = populateError(
           error,
           zodErrors,
@@ -87,6 +81,7 @@ function partialSchemaValidation(
       }
     }
   })
+
   return error
 }
 
@@ -94,7 +89,7 @@ export function validateAnswers(
   dataSchema: Schema,
   answers: FormValue,
   isFullSchemaValidation?: boolean,
-): SchemaValidationError | undefined {
+): RecordObject | undefined {
   if (!isFullSchemaValidation) {
     return partialSchemaValidation(answers, dataSchema, undefined)
   }
