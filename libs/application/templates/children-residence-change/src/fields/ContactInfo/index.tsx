@@ -44,11 +44,9 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
 
   return (
     <>
-      <Box marginTop={3}>
-        <Text marginTop={3}>
-          {formatMessage(contactInfo.general.description)}
-        </Text>
-      </Box>
+      <Text marginTop={3}>
+        {formatMessage(contactInfo.general.description)}
+      </Text>
       <Text marginTop={5} variant="h4">
         {childResidenceInfo.current.parentName}
       </Text>
