@@ -8,7 +8,8 @@ import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
 import ValidationUtils from './../../../utils/validation.utils'
-
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   clientId: string
   scopes?: string[]
@@ -17,7 +18,7 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
+const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
   const {
     register,
     handleSubmit,
@@ -29,6 +30,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientAllowedScopesForm'),
+  )
 
   const add = async (data: ClientAllowedScopeDTO) => {
     const allowedScope = new ClientAllowedScopeDTO()
@@ -87,7 +91,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this scope: <span>{scopeForDelete}</span>
+        {localization.removeConfirmation}: <span>{scopeForDelete}</span>
       </p>
     )
   }
@@ -96,11 +100,10 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     <div className="client-allowed-scopes">
       <div className="client-allowed-scopes__wrapper">
         <div className="client-allowed-scopes__container">
-          <h1>Allowed scopes</h1>
+          <h1>{localization.title}</h1>
           <div className="client-allowed-scopes__container__form">
             <div className="client-allowed-scopes__help">
-              By default a client has no access to any resources. Specify the
-              allowed resources by adding the corresponding scopes names
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
@@ -109,7 +112,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     className="client-allowed-scopes__label"
                     htmlFor="scopeName"
                   >
-                    Scope Name
+                    {localization.fields['scopeName'].label}
                   </label>
                   <select
                     id="scopeName"
@@ -125,18 +128,20 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                       return <option value={scope.name}>{scope.name}</option>
                     })}
                   </select>
-                  <HelpBox helpText="Select an allowed scope" />
+                  <HelpBox
+                    helpText={localization.fields['scopeName'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="scopeName"
-                    message="Scope Name is required"
+                    message={localization.fields['scopeName'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="client-allowed-scopes__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    value={localization.addButton}
                   />
                 </div>
                 <div
@@ -172,9 +177,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title="No active scopes"
+                title={localization.noActiveConnections?.title}
                 show={!props.scopes || props.scopes.length === 0}
-                helpText="Select a scope and push the Add button to add a scope"
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -195,10 +200,10 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(scope)}
                           className="client-allowed-scopes__container__list__button__remove"
-                          title="Remove"
+                          title={localization.removeButton}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.removeConfirmation}</span>
                         </button>
                       </div>
                     </div>
@@ -213,7 +218,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     className="client-allowed-scopes__button__cancel"
                     onClick={props.handleBack}
                   >
-                    Back
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="client-allowed-scopes__button__container">
@@ -222,7 +227,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     className="client-allowed-scopes__button__save"
                     onClick={props.handleNext}
                   >
-                    Next
+                    {localization.saveButton}
                   </button>
                 </div>
               </div>
@@ -235,9 +240,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.removeButton}
       ></ConfirmModal>
     </div>
   )
 }
-export default ClientAllowedScopes
+export default ClientAllowedScopesForm

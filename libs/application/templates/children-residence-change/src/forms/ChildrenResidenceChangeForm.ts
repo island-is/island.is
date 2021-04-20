@@ -15,11 +15,13 @@ import {
   Application,
   Comparators,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
+import {
+  CRCApplication,
+  DataProviderTypes,
+} from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import * as m from '../lib/messages'
-import { InterviewFieldIds } from '../types'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
@@ -98,8 +100,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: DataProviderTypes.NationalRegistry,
+                  id: '',
+                  type: '',
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
@@ -110,8 +112,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  id: 'nationalRegistry',
+                  type: 'DataProviderTypes.NationalRegistry',
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
@@ -188,10 +190,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.contactInfo.inputs.emailLabel,
                   variant: 'email',
                   backgroundColor: 'blue',
-                  defaultValue: (application: Application) =>
-                    (application.externalData.userProfile?.data as {
-                      email?: string
-                    })?.email,
+                  defaultValue: ({
+                    externalData: { userProfile },
+                  }: CRCApplication) => userProfile?.data?.email || '',
                 }),
                 buildTextField({
                   id: 'parentA.phoneNumber',
@@ -199,10 +200,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   variant: 'tel',
                   format: '###-####',
                   backgroundColor: 'blue',
-                  defaultValue: (application: Application) =>
-                    (application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    })?.mobilePhoneNumber,
+                  defaultValue: ({
+                    externalData: { userProfile },
+                  }: CRCApplication) =>
+                    userProfile?.data?.mobilePhoneNumber || '',
                 }),
               ],
             }),
@@ -258,17 +259,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'approveTerms',
           title: m.terms.general.pageTitle,
           component: 'Terms',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'interview',
-      title: m.interview.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: InterviewFieldIds.parentA,
-          title: m.interview.general.pageTitle,
-          component: 'Interview',
         }),
       ],
     }),

@@ -1,12 +1,13 @@
 import ClientDTO from './../../entities/dtos/client-dto'
 import ClientCreateForm from '../../components/Client/form/ClientCreateForm'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import ClientTabNav from './../../components/Client/nav/ClientTabNav'
 import { ClientTab } from './../../entities/common/ClientTab'
 import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCreateForm'
 import { Client } from './../../entities/models/client.model'
+import LocalizationUtils from '../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const router = useRouter()
@@ -14,6 +15,10 @@ const Index: React.FC = () => {
   const handleCancel = () => {
     router.back()
   }
+
+  useEffect(() => {
+    document.title = LocalizationUtils.getPageTitle('client.index')
+  }, [])
 
   const handleClientDetailedFormSaved = (clientSaved: ClientDTO) => {
     if (clientSaved.clientId) {

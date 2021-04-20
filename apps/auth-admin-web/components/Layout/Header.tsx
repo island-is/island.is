@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import { isLoggedIn, login, logout } from '../../utils/auth.utils'
 import { SessionInfo } from './../../entities/common/SessionInfo'
+import LocalizationUtils from '../../utils/localization.utils'
+import { Localization } from '../../entities/common/Localization'
 
 const Header: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   useEffect(() => {
     if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
@@ -19,7 +24,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header__container__logo">
-        <h1>IDS management</h1>
+        <h1>{localization.header.title}</h1>
       </div>
       <div className="header__container__options">
         {isLoggedIn((session as unknown) as SessionInfo, loading) && (
@@ -31,7 +36,7 @@ const Header: React.FC = () => {
                 className="header__button__logout"
                 onClick={() => logout((session as unknown) as SessionInfo)}
               >
-                Logout
+                {localization.header.logoutButton}
               </button>
             </div>
           </div>
@@ -43,7 +48,7 @@ const Header: React.FC = () => {
               className="header__button__login"
               onClick={() => login()}
             >
-              Login
+              {localization.header.loginButton}
             </button>
           </div>
         )}

@@ -56,6 +56,13 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      secondaryMenu {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
       organization {
         logo {
           url
@@ -89,6 +96,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      theme
+      themeProperties {
+        gradientStartColor
+        gradientEndColor
+      }
     }
   }
   ${slices}
@@ -100,7 +112,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description {
-        ...HtmlFields
+        ...AllSlices
       }
       links {
         text

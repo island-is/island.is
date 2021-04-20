@@ -7,7 +7,7 @@ import { environment } from '../../../environments'
 
 const hiddenFeatures = environment.features?.hidden?.split(',')
 
-@UseGuards(JwtInjectBearerAuthGuard)
+// This controller is not guearded as it should also be available to users not logged in
 @Controller('api/feature')
 export class FeatureController {
   @Get(':name')

@@ -133,6 +133,14 @@ export const GET_SEARCH_RESULTS_NEWS_QUERY = gql`
   }
 `
 
+export const GET_SEARCH_RESULTS_TOTAL = gql`
+  query GetSearchResultsTotal($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
+    }
+  }
+`
+
 export const GET_SEARCH_AUTOCOMPLETE_TERM_QUERY = gql`
   query AutocompleteTermResults($input: WebSearchAutocompleteInput!) {
     webSearchAutocomplete(input: $input) {

@@ -23,13 +23,14 @@ import {
   formatIsk,
   getEstimatedMonthlyPay,
   getOtherParentOptions,
+  getAllPeriodDates,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { NO, YES } from '../constants'
+import { NO, StartDateOptions, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -38,6 +39,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { Period } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -625,7 +627,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
-                formValue.firstPeriodStart === 'specificDate',
+                formValue.firstPeriodStart === StartDateOptions.SPECIFIC_DATE,
               title: parentalLeaveFormMessages.startDate.title,
               description: parentalLeaveFormMessages.startDate.description,
               children: [
@@ -714,6 +716,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  excludeDates: (application) => {
+                    const {
+                      answers: { periods },
+                    } = application
+
+                    return getAllPeriodDates(periods as Period[])
+                  },
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -725,20 +734,16 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
+                      excludeDates: (application) => {
+                        const {
+                          answers: { periods },
+                        } = application
+
+                        return getAllPeriodDates(periods as Period[])
+                      },
                     }),
                   ],
                 }),
-                // buildCustomField(
-                //   {
-                //     id: 'endDate',
-                //     name: parentalLeaveFormMessages.shared.duration,
-                //     description: parentalLeaveFormMessages.duration.description,
-                //     component: 'Duration',
-                //   },
-                //   {
-                //     showTimeline: true,
-                //   },
-                // ),
                 buildMultiField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,

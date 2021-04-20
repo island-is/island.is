@@ -72,7 +72,7 @@ class NotificationService {
     })
   }
 
-  subscribe(cb: Function) {
+  subscribe(cb: (_: string) => void) {
     return PubSub.subscribe(
       'notifications',
       (_: string, notification: string) => cb(notification),

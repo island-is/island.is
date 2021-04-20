@@ -1,3 +1,5 @@
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
@@ -37,60 +39,6 @@ describe('transformCase', () => {
     })
   })
 
-  describe('isCourtDateInThePast', () => {
-    it('should not set court date in the past if no court date', () => {
-      // Arrange
-      const theCase = {} as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBeUndefined()
-    })
-
-    it('should set court date in the past to false if court date in the future', () => {
-      // Arrange
-      const courtDate = new Date()
-      courtDate.setSeconds(courtDate.getSeconds() + 1)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBe(false)
-    })
-
-    it('should set court date in the past to true if court date is more than five minutes in the past', () => {
-      // Arrange
-      const courtDate = new Date()
-      courtDate.setMinutes(courtDate.getMinutes() - 5)
-      courtDate.setSeconds(courtDate.getSeconds() - 1)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBe(true)
-    })
-
-    it('should set court date in the past to false if court date less than five minutes in the past', () => {
-      // Arrange
-      const courtDate = new Date()
-      courtDate.setMinutes(courtDate.getMinutes() - 4)
-      courtDate.setSeconds(courtDate.getSeconds() - 59)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBe(false)
-    })
-  })
-
   describe('isCustodyEndDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {
       // Arrange
@@ -127,6 +75,81 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.isCustodyEndDateInThePast).toBe(true)
+    })
+  })
+
+  describe('isCaseAppealable', () => {
+    it('should not set appealable when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBeUndefined()
+    })
+
+    it('should set appealable to false when neither party postponed', () => {
+      // Arrange
+      const theCase = { rulingDate: new Date().toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(false)
+    })
+
+    it('should set appealable to true when the accused postponed and the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = {
+        accusedAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(true)
+    })
+
+    it('should set appealable to true when the prosecutor postponed and the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = {
+        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(true)
+    })
+
+    it('should set appealable to false when either party postponed and the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      const theCase = {
+        accusedAppealDecision: CaseAppealDecision.POSTPONE,
+        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(false)
     })
   })
 })

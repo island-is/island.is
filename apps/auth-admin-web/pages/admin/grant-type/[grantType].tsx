@@ -5,6 +5,7 @@ import { GrantTypeService } from './../../../services/GrantTypeService'
 import { GrantType } from './../../../entities/models/grant-type.model'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import GrantTypeCreateForm from './../../../components/Admin/form/GrantTypeCreateForm'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -20,6 +21,9 @@ const Index: React.FC = () => {
       }
     }
     loadIdp()
+    document.title = LocalizationUtils.getPageTitle(
+      'admin.grant-type.[grantType]',
+    )
   }, [grantTypeName])
 
   const getGrantType = async (grantTypeName: string) => {

@@ -47,6 +47,11 @@ type RunServerOptions = {
    * Hook up global interceptors to app
    */
   interceptors?: NestInterceptor[]
+
+  /**
+   * Global url prefix for the app
+   */
+  globalPrefix?: string
 }
 
 export const createApp = async (options: RunServerOptions) => {
@@ -56,6 +61,9 @@ export const createApp = async (options: RunServerOptions) => {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   )
+  if (options.globalPrefix) {
+    app.setGlobalPrefix(options.globalPrefix)
+  }
   app.use(httpRequestDurationMiddleware())
   app.use(cookieParser())
 

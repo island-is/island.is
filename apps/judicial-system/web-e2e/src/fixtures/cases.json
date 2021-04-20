@@ -9,7 +9,6 @@
         "policeCaseNumber": "string",
         "accusedNationalId": "0101010000",
         "accusedName": "Jon Harring",
-        "isCourtDateInThePast": null,
         "custodyEndDate": "2020-09-16T19:50:08.033Z",
         "decision": "ACCEPT",
         "isCustodyEndDateInThePast": null,

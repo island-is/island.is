@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import LocalizationUtils from '../../utils/localization.utils'
+import { Localization } from '../../entities/common/Localization'
 
 interface Props {
   lastPage: number
@@ -8,6 +10,9 @@ interface Props {
 const Paginator: React.FC<Props> = (props: Props) => {
   const [page, setPage] = useState<number>(1)
   const [count, setCount] = useState<number>(30)
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
 
   // Runs only once and trickers initial page change of parent
   useEffect(() => {
@@ -47,7 +52,7 @@ const Paginator: React.FC<Props> = (props: Props) => {
             className="paginator__pagination-previous"
             disabled={page === 1}
           >
-            Back
+            {localization.paginator.backButton}
           </button>
         </li>
         <li className="paginator__page-item">
@@ -57,14 +62,14 @@ const Paginator: React.FC<Props> = (props: Props) => {
             className="paginator__pagination-next"
             disabled={page === props.lastPage}
           >
-            Next
+            {localization.paginator.nextButton}
           </button>
         </li>
       </nav>
       <div className="paginator__container__form">
         <div className="paginator__container__field">
           <label htmlFor="count" className="paginator__label">
-            Count
+            {localization.paginator.count}
           </label>
           <select
             id="count"

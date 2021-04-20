@@ -1,5 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useRef, useEffect, useState } from 'react'
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  FC,
+  useLayoutEffect,
+  useMemo,
+} from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -21,6 +28,7 @@ import {
   SidebarAccordion,
   Pagination,
   Link,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -28,6 +36,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -48,11 +57,13 @@ import {
   SearchableTags,
   AdgerdirPage,
   SubArticle,
+  GetSearchResultsTotalQuery,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { typenameResolver } from '@island.is/web/utils/typenameResolver'
+import { useLazyQuery } from '@apollo/client'
 
 const PERPAGE = 10
 
@@ -389,6 +400,12 @@ const Search: Screen<CategoryProps> = ({
               <Text variant="intro" as="p">
                 {n('nothingFoundExtendedExplanation')}
               </Text>
+
+              {q.length &&
+              searchResultsItems.length === 0 &&
+              activeLocale === 'is' ? (
+                <EnglishResultsLink q={q} />
+              ) : null}
             </>
           ) : (
             <Text variant="intro" as="p">
@@ -572,6 +589,54 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
       </Text>
     </Box>
   )
+}
+
+interface EnglishResultsLinkProps {
+  q: string
+}
+
+const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+  const { linkResolver } = useLinkResolver()
+  const [getCount, { data }] = useLazyQuery<
+    GetSearchResultsTotalQuery,
+    QuerySearchResultsArgs
+  >(GET_SEARCH_RESULTS_TOTAL)
+
+  useMemo(() => {
+    getCount({
+      variables: {
+        query: {
+          queryString: q,
+          language: 'en' as ContentLanguage,
+        },
+      },
+    })
+  }, [q])
+
+  const total = data?.searchResults?.total ?? 0
+
+  if (total > 0) {
+    return (
+      <LinkContext.Provider
+        value={{
+          linkRenderer: (href, children) => (
+            <Link color="blue600" underline="normal" href={href}>
+              {children}
+            </Link>
+          ),
+        }}
+      >
+        <Text variant="intro" as="p">
+          <a href={linkResolver('search', [], 'en').href + `?q=${q}`}>
+            {total} niðurstöður
+          </a>{' '}
+          fundust á ensku.
+        </Text>
+      </LinkContext.Provider>
+    )
+  }
+
+  return null
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })

@@ -46,6 +46,9 @@ export default {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
+  downloadService: {
+    baseUrl: process.env.DOWNLOAD_SERVICE_BASE_PATH,
+  },
   documentProviderService: {
     test: {
       basePath: process.env.DOCUMENT_PROVIDER_BASE_PATH_TEST,
@@ -71,5 +74,8 @@ export default {
     username: process.env.RSK_API_USERNAME,
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
+  },
+  icelandicNamesRegistry: {
+    backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
 }
