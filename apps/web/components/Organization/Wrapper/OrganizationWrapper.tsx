@@ -16,7 +16,6 @@ import NextLink from 'next/link'
 import {
   ChatPanel,
   HeadWithSocialSharing,
-  Main,
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -121,12 +120,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
       <OrganizationHeader organizationPage={organizationPage} />
-      <Main>
+      <>
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}
             paddingBottom={[4, 4, 4]}
             isSticky={false}
+            addAsideLandmark={!stickySidebar}
             fullWidthContent={fullWidthContent}
             sidebarContent={
               <SidebarContainer>
@@ -245,7 +245,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             </GridRow>
           </GridContainer>
         )}
-      </Main>
+      </>
       {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
       <OrganizationChatPanel slug={organizationPage?.slug} />
     </>

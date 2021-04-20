@@ -18,6 +18,8 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
     <Box className={styles.headerBg}>
       <Box className={styles.headerWrapper}>
         <SidebarLayout
+          addMainLandmark={false}
+          addAsideLandmark={false}
           sidebarContent={
             !!organizationPage.organization.logo && (
               <Link
