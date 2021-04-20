@@ -34,16 +34,17 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
 @Controller('backend')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   /** Gets all Identity Resources and count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -77,6 +78,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Scopes and count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -110,6 +112,7 @@ export class ResourcesController {
   }
 
   /** Get's all Api resources and total count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-resources')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -154,6 +157,7 @@ export class ResourcesController {
   }
 
   /** Gets Identity Resources by Scope Names */
+  @Scopes(Scope.root, Scope.full)
   @Get('identity-resources/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
@@ -168,6 +172,7 @@ export class ResourcesController {
   }
 
   /** Gets Api Scopes by Scope Names */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-scopes/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: ApiScope, isArray: true })
@@ -182,6 +187,7 @@ export class ResourcesController {
   }
 
   /** Gets Api Resources by either Api Resource Names or Api Scope Names */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-resources/names')
   @ApiQuery({ name: 'apiResourceNames', required: false })
   @ApiQuery({ name: 'apiScopeNames', required: false })
@@ -207,6 +213,7 @@ export class ResourcesController {
     }
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Get('identity-resource/:id')
   async getIdentityResourceByName(
     @Param('id') name: string,
@@ -215,6 +222,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Identity Resource */
+  @Scopes(Scope.root, Scope.full)
   @Post('identity-resource')
   @ApiCreatedResponse({ type: IdentityResource })
   async createIdentityResource(
@@ -224,6 +232,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Identity Resource by it's name */
+  @Scopes(Scope.root, Scope.full)
   @Put('identity-resource/:name')
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
@@ -241,6 +250,7 @@ export class ResourcesController {
   }
 
   /** Deletes an existing Identity Resource by it's name */
+  @Scopes(Scope.root, Scope.full)
   @Delete('identity-resource/:name')
   async deleteIdentityResource(@Param('name') name: string): Promise<number> {
     if (!name) {
@@ -251,6 +261,7 @@ export class ResourcesController {
   }
 
   /** Gets all Identity Resource User Claims */
+  @Scopes(Scope.root, Scope.full)
   @Get('identity-resource-user-claim')
   @ApiOkResponse({ type: [IdentityResourceUserClaim] })
   async findAllIdentityResourceUserClaims(): Promise<
@@ -260,6 +271,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Identity Resource User Claim */
+  @Scopes(Scope.root, Scope.full)
   @Post('identity-resource-user-claim')
   @ApiCreatedResponse({ type: IdentityResourceUserClaim })
   async createIdentityResourceUserClaim(
@@ -269,6 +281,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Scope User Claims */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-scope-user-claim')
   @ApiOkResponse({ type: [ApiScopeUserClaim] })
   async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
@@ -276,6 +289,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Resource User Claim */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-resource-user-claim')
   @ApiCreatedResponse({ type: ApiResourceUserClaim })
   async createApiResourceUserClaim(
@@ -285,6 +299,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Resource User Claims */
+  @Scopes(Scope.root, Scope.full)
   @Get('api-resource-user-claim')
   @ApiOkResponse({ type: [ApiResourceUserClaim] })
   async findAllApiResourceUserClaims(): Promise<
@@ -294,6 +309,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Scope User Claim */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-scope-user-claim')
   @ApiCreatedResponse({ type: ApiScopeUserClaim })
   async createApiScopeUserClaim(
@@ -303,6 +319,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Scope */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-scope')
   @ApiCreatedResponse({ type: ApiScope })
   async createApiScope(@Body() apiScope: ApiScopesDTO): Promise<ApiScope> {
@@ -310,6 +327,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Scope */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-resource')
   @ApiCreatedResponse({ type: ApiResource })
   async createApiResource(
@@ -319,6 +337,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Api Scope */
+  @Scopes(Scope.root, Scope.full)
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
@@ -333,6 +352,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Api Scope */
+  @Scopes(Scope.root, Scope.full)
   @Put('api-resource/:name')
   @ApiOkResponse({ type: ApiResource })
   async updateApiResource(
@@ -347,6 +367,7 @@ export class ResourcesController {
   }
 
   /** Deletes an existing Api Scope by it's name */
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-scope/:name')
   @ApiOkResponse()
   async deleteApiScope(@Param('name') name: string): Promise<number> {
@@ -358,6 +379,7 @@ export class ResourcesController {
   }
 
   /** Performs a soft delete on an Api resource by it's name */
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-resource/:name')
   @ApiOkResponse()
   async deleteApiResource(@Param('name') name: string): Promise<number> {
@@ -368,6 +390,7 @@ export class ResourcesController {
     return await this.resourcesService.deleteApiResource(name)
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Post('identity-resource-user-claims/:identityResourceName/:claimName')
   async addResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
@@ -379,6 +402,7 @@ export class ResourcesController {
     )
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Delete('identity-resource-user-claims/:identityResourceName/:claimName')
   async removeResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
@@ -390,6 +414,7 @@ export class ResourcesController {
     )
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Post('api-scope-user-claims/:apiScopeName/:claimName')
   @ApiCreatedResponse({ type: ApiScopeUserClaim })
   async addApiScopeUserClaim(
@@ -402,6 +427,7 @@ export class ResourcesController {
     )
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-scope-user-claims/:apiScopeName/:claimName')
   async removeApiScopeUserClaim(
     @Param('apiScopeName') apiScopeName: string,
@@ -413,6 +439,7 @@ export class ResourcesController {
     )
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Get('api-scope/:name')
   async getApiScopeByName(
     @Param('name') name: string,
@@ -420,11 +447,13 @@ export class ResourcesController {
     return await this.resourcesService.getApiScopeByName(name)
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Get('is-scope-name-available/:name')
   async isScopeNameAvailable(@Param('name') name: string): Promise<boolean> {
     return await this.resourcesService.isScopeNameAvailable(name)
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Get('api-resource/:name')
   async getApiResourceByName(
     @Param('name') name: string,
@@ -432,6 +461,7 @@ export class ResourcesController {
     return await this.resourcesService.getApiResourceByName(name)
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Post('api-resource-claims/:apiResourceName/:claimName')
   async addApiResourceUserClaim(
     @Param('apiResourceName') apiResourceName: string,
@@ -448,6 +478,7 @@ export class ResourcesController {
   }
 
   /** Removes user claim from Api Resource */
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-resource-claims/:apiResourceName/:claimName')
   async removeApiResourceUserClaim(
     @Param('apiResourceName') apiResourceName: string,
@@ -464,6 +495,7 @@ export class ResourcesController {
   }
 
   /** Add secret to ApiResource */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-resource-secret')
   @ApiCreatedResponse({ type: ApiResourceSecret })
   async addApiResourceSecret(
@@ -477,6 +509,7 @@ export class ResourcesController {
   }
 
   /** Remove a secret from Api Resource */
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-resource-secret')
   async removeApiResourceSecret(
     @Body() apiSecret: ApiResourceSecretDTO,
@@ -491,6 +524,7 @@ export class ResourcesController {
   }
 
   /** Adds an allowed scope to api resource */
+  @Scopes(Scope.root, Scope.full)
   @Post('api-resources-allowed-scope')
   @ApiCreatedResponse({ type: ApiResourceScope })
   async addApiResourceAllowedScope(
@@ -508,6 +542,7 @@ export class ResourcesController {
   }
 
   /** Removes an allowed scope from api Resource */
+  @Scopes(Scope.root, Scope.full)
   @Delete('api-resources-allowed-scope/:apiResourceName/:scopeName')
   async removeApiResourceAllowedScope(
     @Param('apiResourceName') apiResourceName: string,
