@@ -1,15 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Link,
-  NavigationItem,
-  Text,
-} from '@island.is/island-ui/core'
+import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -38,8 +29,8 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
-import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { NEWS_TAGS } from '@island.is/web/screens/Organization/NewsList'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -143,7 +134,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tag: SYSLUMENN_NEWS_TAG_ID,
+          tag: NEWS_TAGS[query.slug as string] ?? '',
         },
       },
     }),
@@ -180,7 +171,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const lightTheme = lightThemes.includes(getOrganizationPage.theme)
 
   return {
-    news,
+    news: NEWS_TAGS[query.slug as string] ? news : [],
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
