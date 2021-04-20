@@ -13,6 +13,11 @@ import { UseBoxStylesProps } from '../Box/useBoxStyles'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 interface InputComponentProps {
   name: string
   value?: string | number
@@ -127,10 +132,11 @@ export const Input = forwardRef(
     } = props
     const [hasFocus, setHasFocus] = useState(false)
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+    const errorId = `${id}-error`
     const ariaError = hasError
       ? {
           'aria-invalid': true,
-          'aria-describedby': id,
+          'aria-describedby': errorId,
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
@@ -170,7 +176,12 @@ export const Input = forwardRef(
               })}
             >
               {label}
-              {required && <span className={styles.isRequiredStar}> *</span>}
+              {required && (
+                <span aria-hidden="true" className={styles.isRequiredStar}>
+                  {' '}
+                  *
+                </span>
+              )}
               {tooltip && (
                 <Box marginLeft={1} display="inlineBlock">
                   <Tooltip text={tooltip} />
@@ -224,8 +235,9 @@ export const Input = forwardRef(
                 }
               }}
               type={type}
-              {...ariaError}
+              {...(ariaError as AriaError)}
               {...inputProps}
+              {...(required && { 'aria-required': true })}
             />
           </Box>
           {hasError && !icon && (
@@ -233,6 +245,7 @@ export const Input = forwardRef(
               icon="warning"
               skipPlaceholderSize
               className={cn(styles.icon, styles.iconError)}
+              ariaHidden
             />
           )}
           {icon && (
@@ -243,13 +256,15 @@ export const Input = forwardRef(
               className={cn(styles.icon, {
                 [styles.iconError]: hasError,
               })}
+              ariaHidden
             />
           )}
         </Box>
         {hasError && errorMessage && (
           <div
+            id={errorId}
             className={styles.errorMessage}
-            id={id}
+            aria-live="assertive"
             data-testid="inputErrorMessage"
           >
             {errorMessage}

@@ -20,6 +20,7 @@ export interface IconProps {
   size?: Size
   className?: string
   skipPlaceholderSize?: boolean
+  ariaHidden?: boolean
 }
 
 export interface SvgProps {
@@ -61,6 +62,7 @@ export const Icon = ({
   title,
   titleId,
   skipPlaceholderSize,
+  ariaHidden,
 }: IconProps) => {
   const path = iconMap[type][icon]
   const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
@@ -99,7 +101,12 @@ export const Icon = ({
         />
       }
     >
-      <IconSvg fill={colors[color]} color={colors[color]} {...optionalProps} />
+      <IconSvg
+        aria-hidden={ariaHidden}
+        fill={colors[color]}
+        color={colors[color]}
+        {...optionalProps}
+      />
     </Suspense>
   )
 }
