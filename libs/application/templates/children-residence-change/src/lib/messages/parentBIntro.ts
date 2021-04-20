@@ -19,26 +19,6 @@ export const parentBIntro = {
       description: 'Parent b intro page description',
     },
   }),
-  information: defineMessages({
-    childNameTitle: {
-      id: 'crc.application:section.parentBIntro.information.childNameTitle',
-      defaultMessage:
-        '{count, plural, =0 {Nafn barns} one {Nafn barns} other {Nöfn barna}}',
-      description: 'Label for a child names',
-    },
-    newLegalParentHomeLabel: {
-      id:
-        'crc.application:section.parentBIntro.information.newLegalParentHomeLabel',
-      defaultMessage: 'Nýtt lögheimilisforeldri',
-      description: 'Label for home of new legal parent',
-    },
-    currentLegalParentHomeLabel: {
-      id:
-        'crc.application:section.parentBIntro.information.currentLegalParentHomeLabel',
-      defaultMessage: 'Núverandi lögheimilisforeldri',
-      description: 'Label for home of current legal parent',
-    },
-  }),
   disagreement: defineMessages({
     title: {
       id: 'crc.application:section.parentBIntro.disagreement.title',
