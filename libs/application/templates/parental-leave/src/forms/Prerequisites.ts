@@ -85,17 +85,17 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'chooseBaby',
-          title: 'Veldu barn',
+          id: 'selectChild',
+          title: parentalLeaveFormMessages.selectChild.subSection,
           children: [
             buildMultiField({
-              id: 'selectedBaby',
-              title: 'Veldu barn',
-              description: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+              id: 'selectedChildScreen',
+              title: parentalLeaveFormMessages.selectChild.title,
+              description: parentalLeaveFormMessages.selectChild.description,
               children: [
                 buildRadioField({
-                  id: 'selectedBaby',
-                  title: 'Veldu barn',
+                  id: 'selectedChild',
+                  title: parentalLeaveFormMessages.selectChild.title,
                   width: 'full',
                   options: (application) => {
                     const children = get(
@@ -120,7 +120,7 @@ export const PrerequisitesForm: Form = buildForm({
                 buildSubmitField({
                   id: 'toDraft',
                   placement: 'footer',
-                  title: 'Velja',
+                  title: parentalLeaveFormMessages.confirmation.title,
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
