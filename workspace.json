@@ -6641,6 +6641,36 @@
         "docker-express": {}
       }
     },
+    "financial-aid-types": {
+      "root": "libs/financial-aid/types",
+      "sourceRoot": "libs/financial-aid/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/types/tsconfig.lib.json",
+              "libs/financial-aid/types/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/financial-aid/types/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/types/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/types"]
+        }
+      }
+    },
     "system-e2e": {
       "root": "apps/system-e2e",
       "sourceRoot": "apps/system-e2e/src",

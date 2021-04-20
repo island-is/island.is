@@ -307,6 +307,10 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      
+      "@island.is/financial-aid/types": [
+        "libs/financial-aid/types/src/index.ts"
+      ],
       "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
