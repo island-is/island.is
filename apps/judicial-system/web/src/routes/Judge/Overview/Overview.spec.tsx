@@ -12,7 +12,6 @@ import {
   UserProvider,
 } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
-import userEvent from '@testing-library/user-event'
 
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
@@ -111,10 +110,6 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (5)' }),
-    )
-
     // Assert
     expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
   })
@@ -139,10 +134,6 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
-    )
-
     // Assert
     expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
   })
@@ -165,10 +156,6 @@ describe('/domari-krafa with an ID', () => {
           </UserProvider>
         </FeatureProvider>
       </MockedProvider>,
-    )
-
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (2)' }),
     )
 
     // Assert

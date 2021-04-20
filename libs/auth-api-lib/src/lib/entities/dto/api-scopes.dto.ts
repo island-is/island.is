@@ -82,4 +82,11 @@ export class ApiScopesDTO {
     example: false,
   })
   readonly alsoForDelegatedUser!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly isAccessControlled!: boolean
 }

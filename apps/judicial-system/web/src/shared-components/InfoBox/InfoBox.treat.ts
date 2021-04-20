@@ -8,3 +8,7 @@ export const infoBoxContainer = style({
   borderRadius: theme.border.radius.large,
   background: theme.color.blue100,
 })
+
+export const fluid = style({
+  maxWidth: '100%',
+})

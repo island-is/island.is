@@ -44,6 +44,15 @@ export interface SmsServiceOptions {
   password: string
 }
 
+interface SmsBody {
+  request: {
+    Recipients: string[]
+    SenderName: string
+    SmsText: string
+    IsFlash: boolean
+  }
+}
+
 @Injectable()
 export class SmsService extends RESTDataSource {
   constructor(
@@ -85,7 +94,7 @@ export class SmsService extends RESTDataSource {
 
   private async wrappedPost(
     url: string,
-    body: object,
+    body: SmsBody,
     isRetry = false,
   ): Promise<NovaResponse> {
     if (!token) {

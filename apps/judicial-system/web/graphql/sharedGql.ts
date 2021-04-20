@@ -63,6 +63,8 @@ export const CaseQuery = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       judge {
         id
@@ -93,6 +95,7 @@ export const CaseQuery = gql`
         size
         created
       }
+      isCaseAppealable
     }
   }
 `

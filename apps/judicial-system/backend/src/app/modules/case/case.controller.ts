@@ -113,6 +113,8 @@ const judgeUpdateRule = {
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
+    'accusedPostponedAppealDate',
+    'prosecutorPostponedAppealDate',
     'judgeId',
     'registrarId',
   ],
@@ -145,6 +147,8 @@ const registrarUpdateRule = {
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
+    'accusedPostponedAppealDate',
+    'prosecutorPostponedAppealDate',
     'judgeId',
     'registrarId',
   ],
@@ -211,7 +215,7 @@ export class CaseController {
     }
   }
 
-  private async validateJudge(judgeId: string, existingCase: Case) {
+  private async validateJudge(judgeId: string) {
     const user = await this.userService.findById(judgeId)
 
     if (!user) {
@@ -223,7 +227,7 @@ export class CaseController {
     }
   }
 
-  private async validateRegistrar(registratId: string, existingCase: Case) {
+  private async validateRegistrar(registratId: string) {
     const user = await this.userService.findById(registratId)
 
     if (!user) {
@@ -271,10 +275,10 @@ export class CaseController {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
     }
     if (caseToUpdate.judgeId) {
-      await this.validateJudge(caseToUpdate.judgeId, existingCase)
+      await this.validateJudge(caseToUpdate.judgeId)
     }
     if (caseToUpdate.registrarId) {
-      await this.validateRegistrar(caseToUpdate.registrarId, existingCase)
+      await this.validateRegistrar(caseToUpdate.registrarId)
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(

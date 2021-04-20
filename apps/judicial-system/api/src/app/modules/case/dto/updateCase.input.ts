@@ -200,6 +200,14 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  accusedPostponedAppealDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  prosecutorPostponedAppealDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly judgeId?: string
 
   @Allow()
