@@ -12,7 +12,7 @@ interface Props {
   label?: string
   name?: string
   onChange?: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event?: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   placeholder?: string
   textarea?: boolean
@@ -70,6 +70,9 @@ export const InputController: FC<Props> = ({
           format={format}
           onValueChange={({ value }) => {
             onChange(value)
+            if (onInputChange) {
+              onInputChange()
+            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
@@ -91,6 +94,9 @@ export const InputController: FC<Props> = ({
           format={format}
           onValueChange={({ value }) => {
             onChange(value)
+            if (onInputChange) {
+              onInputChange()
+            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
@@ -112,6 +118,9 @@ export const InputController: FC<Props> = ({
           format={format}
           onValueChange={({ value }) => {
             onChange(value)
+            if (onInputChange) {
+              onInputChange()
+            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
