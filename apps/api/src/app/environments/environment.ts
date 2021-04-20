@@ -83,4 +83,8 @@ export default {
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
   },
+  endorsementSystem: {
+    isEnabled: true,
+    baseApiUrl: 'http://localhost:4246',
+  },
 }

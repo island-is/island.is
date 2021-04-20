@@ -26,6 +26,7 @@ export class EndorsementListController {
   async findLists(
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
+    console.log('Hit!', tag)
     // TODO: Add dto for tags here?
     // TODO: Add pagination
     return await this.endorsementListService.findListsByTag(tag)

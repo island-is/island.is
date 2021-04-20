@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -37,11 +38,19 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   title!: string
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   @Column({
     type: DataType.TEXT,
   })
   description!: string | null
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   @Column({
     type: DataType.DATE,
   })
@@ -70,11 +79,17 @@ export class EndorsementList extends Model<EndorsementList> {
   owner!: string
 
   @HasMany(() => Endorsement)
-  readonly endorsements!: Endorsement[]
+  readonly endorsements?: Endorsement[]
 
+  @ApiProperty({
+    type: String,
+  })
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty({
+    type: String,
+  })
   @UpdatedAt
   readonly modified!: Date
 }
