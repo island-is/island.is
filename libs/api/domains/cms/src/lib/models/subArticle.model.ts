@@ -15,9 +15,6 @@ export class SubArticle {
   @Field()
   slug!: string
 
-  @Field()
-  parentSlug!: string
-
   @Field(() => ArticleReference, { nullable: true })
   parent?: ArticleReference
 
@@ -36,7 +33,6 @@ export const mapSubArticle = ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
-  parentSlug: fields.parentSlug ?? '',
   parent: fields.parent?.fields && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,

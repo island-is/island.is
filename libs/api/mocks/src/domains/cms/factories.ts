@@ -75,7 +75,6 @@ export const subArticle = factory<SubArticle>({
   slug: slugify('title'),
   body: () => [slice()],
   parent: () => null,
-  parentSlug: () => '',
 })
 
 export const articleCategory = factory<ArticleCategory>({

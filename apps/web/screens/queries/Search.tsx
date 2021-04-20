@@ -39,7 +39,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
               title
               intro
             }
-            parentSlug
           }
         }
 
@@ -93,7 +92,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             id
             title
           }
-          parentSlug
         }
       }
     }
@@ -239,7 +237,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
-          parentSlug
           parent {
             id
             slug

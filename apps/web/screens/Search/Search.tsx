@@ -218,12 +218,10 @@ const Search: Screen<CategoryProps> = ({
       item.seoDescription ??
       item.description ??
       item.parent.intro,
-    link: item.parentSlug
-      ? linkResolver(
-          typenameResolver(item.__typename),
-          item.parentSlug.split('/'),
-        )
-      : linkResolver(typenameResolver(item.__typename), [item.slug]),
+    link:
+      item.slug.split('/').length > 1
+        ? linkResolver(typenameResolver(item.__typename), item.slug.split('/'))
+        : linkResolver(typenameResolver(item.__typename), [item.slug]),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
