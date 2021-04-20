@@ -1,4 +1,13 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+import { Locale } from '@island.is/shared/types'
+
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
@@ -12,13 +21,6 @@ import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
-import {
-  IdsAuthGuard,
-  ScopesGuard,
-  CurrentUser,
-  User,
-} from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
@@ -32,20 +34,25 @@ export class ApplicationResolver {
 
   @Query(() => Application, { nullable: true })
   async applicationApplication(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.findOne(input.id, user.authorization)
+    return this.applicationService.findOne(input.id, user.authorization, locale)
   }
 
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAll(
       user.nationalId,
       user.authorization,
+      locale,
       input,
     )
   }
@@ -60,10 +67,12 @@ export class ApplicationResolver {
 
   @Mutation(() => Application, { nullable: true })
   async updateApplication(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.update(input, user.authorization)
+    return this.applicationService.update(input, user.authorization, locale)
   }
 
   @Mutation(() => Application, { nullable: true })

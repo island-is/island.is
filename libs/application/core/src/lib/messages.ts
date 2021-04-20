@@ -93,13 +93,18 @@ export const coreMessages = defineMessages({
   },
   tagsInProgress: {
     id: 'application.system:tags.inProgress',
-    defaultMessage: 'Opin',
-    description: 'Open',
+    defaultMessage: 'Í ferli',
+    description: 'In progress status for an application',
   },
-  tagsInCompleted: {
+  tagsDone: {
     id: 'application.system:tags.completed',
-    defaultMessage: 'Afgreidd',
-    description: 'Completed',
+    defaultMessage: 'Lokið',
+    description: 'Done status for an application',
+  },
+  tagsRejected: {
+    id: 'application.system:tags.rejected',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected status for an application',
   },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',
@@ -128,5 +133,13 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Til að halda áfram umsóknarferli þarftu að skrá þig inn.',
     description:
       'To continue the application process, you will need to sign in.',
+  },
+})
+
+export const coreErrorMessages = defineMessages({
+  defaultError: {
+    id: 'application.system:core.default.error',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Generic invalid value error message',
   },
 })

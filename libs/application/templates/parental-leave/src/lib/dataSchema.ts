@@ -1,12 +1,10 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { NO, StartDateOptions, YES } from '../constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-/**
- * TODO: zod has a way to overwrite the default errors messages e.g. "Field is required" etc..
- * We might want to define it for all primitives and add localization to it
- */
+import { NO, YES, StartDateOptions } from '../constants'
+import { dataSchemaMessages } from './messages'
+
 const PersonalAllowance = z
   .object({
     usage: z
@@ -26,10 +24,13 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     email: z.string().email(),
-    phoneNumber: z.string().refine((p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    }, 'Símanúmerið þarf að vera gilt.'),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      { params: dataSchemaMessages.phoneNumber },
+    ),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
@@ -63,10 +64,9 @@ export const dataSchema = z.object({
   otherParentId: z
     .string()
     .optional()
-    .refine(
-      (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
-      'Kennitala þarf að vera gild',
-    ),
+    .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+      params: dataSchemaMessages.otherParentId,
+    }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),

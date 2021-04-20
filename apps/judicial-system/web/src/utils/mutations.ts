@@ -76,6 +76,8 @@ export const CreateCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -181,6 +183,8 @@ export const ExtendCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title

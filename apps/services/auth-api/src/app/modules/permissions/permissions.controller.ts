@@ -1,8 +1,7 @@
 import {
   AccessService,
-  AdminAccess,
-  AdminAccessDTO,
-  AdminAccessUpdateDTO,
+  ResourcesService,
+  ApiScope,
 } from '@island.is/auth-api-lib'
 import {
   Controller,
@@ -24,11 +23,14 @@ import {
 @ApiTags('permissions')
 @Controller('permissions')
 export class PermissionsController {
-  constructor(private readonly accessService: AccessService) {}
+  constructor(
+    private readonly accessService: AccessService,
+    private readonly resourcesService: ResourcesService,
+  ) {}
 
   /** Gets permitted scopes  */
   @Scopes('@identityserver.api/authentication')
-  @Get('scopes')
+  @Get('permitted-scopes')
   @ApiOkResponse({ isArray: true })
   async findAllPermittedScopes(
     @CurrentRestUser() user: User,
@@ -48,5 +50,13 @@ export class PermissionsController {
     }
 
     return []
+  }
+
+  @Scopes('@identityserver.api/authentication')
+  @Get('access-controlled-scopes')
+  @ApiOkResponse({ type: [ApiScope] })
+  async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+    const accessControlledScopes = this.resourcesService.findAllAccessControlledApiScopes()
+    return accessControlledScopes
   }
 }
