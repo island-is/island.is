@@ -17,7 +17,7 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
-  id: 'ParentalLeaveDraft',
+  id: 'ParentalLeavePrerequisites',
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
   mode: FormModes.APPLYING,
