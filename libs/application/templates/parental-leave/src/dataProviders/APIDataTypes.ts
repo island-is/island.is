@@ -38,6 +38,7 @@ export type PaymentInfo = {
   privatePensionFund?: PensionFund
   privatePensionFundRatio?: number
 }
+
 export type PaymentPlan = {
   period: Period
   estimatedAmount: number
@@ -47,6 +48,7 @@ export type PaymentPlan = {
   taxAmount: number
   estimatePayment: number
 }
+
 export type ParentalLeave = {
   applicationId: string
   applicant: string

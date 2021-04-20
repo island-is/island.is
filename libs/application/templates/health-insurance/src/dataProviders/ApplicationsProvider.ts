@@ -10,15 +10,17 @@ export class ApplicationsProvider extends BasicDataProvider {
   type = 'ApplicationsProvider'
 
   provide(): Promise<Applications[]> {
-    const query = `query ApplicationApplications {
-      applicationApplications(input: { typeId: ["${ApplicationTypes.HEALTH_INSURANCE}"] }) {
+    const query = `query ApplicationApplications($input: ApplicationApplicationsInput) {
+      applicationApplications(input: $input) {
         id
         state
         created
       }
     }`
 
-    return this.useGraphqlGateway(query)
+    return this.useGraphqlGateway(query, {
+      input: { typeId: [ApplicationTypes.HEALTH_INSURANCE] },
+    })
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {

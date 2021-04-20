@@ -357,15 +357,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
-    expectedDateOfBirthTitle: {
-      id: 'pl.application:expectedDateOfBirth.title',
-      defaultMessage: 'Áætlaður fæðingardagur',
-      description: 'Expected birth date',
+    pregnancyStatusAndRightsTitle: {
+      id: 'pl.application:pregnancyStatusAndRights.title',
+      defaultMessage: 'Áætlaður fæðingardagur barns og réttindi',
+      description: 'Title for the data of birth and rights data provider',
     },
-    expectedDateOfBirthSubtitle: {
-      id: 'pl.application:expectedDateOfBirth.subtitle',
-      defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
-      description: 'Confirmation on date of birth',
+    pregnancyStatusAndRightsSubtitle: {
+      id: 'pl.application:pregnancyStatusAndRights.subtitle',
+      defaultMessage:
+        'Staðfesting á ætluðum fæðingardegi barns er sótt inn á Heilsuveru og fjölda mánaða í boði fyrir fæðingarorlof þitt',
+      description: 'Copy for the data provider for date of birth and rights',
     },
     salaryTitle: {
       id: 'pl.application:salary.title',

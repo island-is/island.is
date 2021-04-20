@@ -1,11 +1,13 @@
-import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import {
   BasicDataProvider,
   DataProviderConfig,
   DataProviderResult,
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
+import { User } from '@island.is/auth-nest-tools'
+
 import { environment } from '../../../../environments'
+import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 
 class NotImplemented extends BasicDataProvider {
   provide(): Promise<unknown> {
@@ -21,15 +23,13 @@ export function buildDataProviders(
     string,
     new (dataProviderConfig: DataProviderConfig) => BasicDataProvider
   >,
-  authorization: string,
+  user: User,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
     const Provider = templateDataProviders[type]
     if (Provider) {
-      providers.push(
-        new Provider({ baseApiUrl: environment.baseApiUrl, authorization }),
-      )
+      providers.push(new Provider({ baseApiUrl: environment.baseApiUrl, user }))
     } else {
       providers.push(new NotImplemented())
     }

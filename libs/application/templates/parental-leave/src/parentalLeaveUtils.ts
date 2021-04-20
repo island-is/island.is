@@ -7,16 +7,16 @@ import {
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import { Right } from '@island.is/clients/vmst'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import { parentalLeaveFormMessages } from './lib/messages'
-
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
 import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -107,6 +107,10 @@ const daysToMonths = (n: number) => n / daysInMonth
  * Returns as well the days given or requested by the applicant.
  */
 export const getAvailableRights = (application: Application) => {
+  const rights = application.externalData.rights.data as Right
+  const independentMonths = rights.independentMonths ?? 0
+  const transferableMonths = rights.transferableMonths ?? 0
+
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -118,8 +122,8 @@ export const getAvailableRights = (application: Application) => {
 
   let requestedDays = 0
   let givenDays = 0
-  let days = defaultMonths * daysInMonth
-  let months = defaultMonths
+  let days = independentMonths * daysInMonth
+  let months = independentMonths
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     requestedDays = requestRights.requestDays
@@ -127,7 +131,11 @@ export const getAvailableRights = (application: Application) => {
     months = months + daysToMonths(requestedDays)
   }
 
-  if (giveRights?.isGivingRights === YES && giveRights.giveDays) {
+  if (
+    transferableMonths > 0 &&
+    giveRights?.isGivingRights === YES &&
+    giveRights.giveDays
+  ) {
     givenDays = giveRights.giveDays
     days = days + givenDays
     months = months + daysToMonths(givenDays)

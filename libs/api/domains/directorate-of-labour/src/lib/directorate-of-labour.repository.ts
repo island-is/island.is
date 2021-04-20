@@ -5,10 +5,14 @@ import {
   Union,
   PensionApi,
   PensionFund,
+  ParentalLeaveApi,
+  PregnancyApi,
 } from '@island.is/clients/vmst'
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
+
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 
 const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 
@@ -19,8 +23,23 @@ enum PensionFundType {
 
 @Injectable()
 export class DirectorateOfLabourRepository {
-  constructor(private unionApi: UnionApi, private pensionApi: PensionApi) {
+  constructor(
+    private parentalLeaveApi: ParentalLeaveApi,
+    private unionApi: UnionApi,
+    private pensionApi: PensionApi,
+    private pregnancyApi: PregnancyApi,
+  ) {
     logger.debug('Created Directorate of labour repository')
+  }
+
+  private async getAllPensionFunds(): Promise<PensionFund[]> {
+    const { pensionFunds } = await this.pensionApi.pensionGetPensionFunds()
+
+    if (pensionFunds) {
+      return pensionFunds
+    }
+
+    throw new Error('Could not fetch pension funds')
   }
 
   async getUnions(): Promise<Union[]> {
@@ -40,16 +59,6 @@ export class DirectorateOfLabourRepository {
     }
 
     throw new Error('Could not fetch unions')
-  }
-
-  private async getAllPensionFunds(): Promise<PensionFund[]> {
-    const { pensionFunds } = await this.pensionApi.pensionGetPensionFunds()
-
-    if (pensionFunds) {
-      return pensionFunds
-    }
-
-    throw new Error('Could not fetch pension funds')
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
@@ -87,15 +96,20 @@ export class DirectorateOfLabourRepository {
   }
 
   async getParentalLeavesEntitlements(
-    dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-    nationalId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): Promise<ParentalLeaveEntitlement[]> {
-    return [
-      {
-        independentMonths: 5,
-        transferableMonths: 1,
-      },
-    ]
+    dateOfBirth: string,
+    nationalId: string,
+  ): Promise<ParentalLeaveEntitlement> {
+    if (isRunningInDevelopment) {
+      return {
+        independentMonths: 6,
+        transferableMonths: 1.5,
+      }
+    }
+
+    return await this.parentalLeaveApi.parentalLeaveGetRights({
+      nationalRegistryId: nationalId,
+      dateOfBirth: new Date(dateOfBirth),
+    })
   }
 
   async getParentalLeavesEstimatedPaymentPlan(
@@ -139,5 +153,18 @@ export class DirectorateOfLabourRepository {
         },
       },
     ]
+  }
+
+  async getPregnancyStatus(nationalId: string): Promise<PregnancyStatus> {
+    if (isRunningInDevelopment) {
+      return {
+        hasActivePregnancy: true,
+        pregnancyDueDate: '2021-01-15',
+      }
+    }
+
+    return ((await this.pregnancyApi.pregnancyGetPregnancyStatus({
+      nationalRegistryId: nationalId,
+    })) as unknown) as PregnancyStatus
   }
 }

@@ -13,10 +13,7 @@ import {
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
 
-import {
-  getAvailableRights,
-  getExpectedDateOfBirth,
-} from '../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO } from '../constants'
@@ -145,7 +142,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (period?.endDate !== undefined) {
       const field = 'endDate'
       const { startDate, endDate } = period
-      const { days, months } = getAvailableRights(application)
 
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {

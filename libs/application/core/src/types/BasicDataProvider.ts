@@ -1,10 +1,12 @@
+import fetch from 'isomorphic-fetch'
+import { GraphQLError } from 'graphql'
+import { User } from '@island.is/auth-nest-tools'
+
 import { Application } from './Application'
 import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import fetch from 'isomorphic-fetch'
-import { GraphQLError } from 'graphql'
 
 export interface DataProvider {
   readonly type: string
@@ -14,8 +16,8 @@ export interface DataProvider {
 }
 
 export interface DataProviderConfig {
-  /** Authorization token **/
-  authorization: string
+  /** User object **/
+  user: User | undefined
   /** GraphQL api base url **/
   baseApiUrl: string
 }
@@ -32,7 +34,7 @@ export abstract class BasicDataProvider implements DataProvider {
   readonly config: DataProviderConfig
 
   constructor(
-    config: DataProviderConfig = { authorization: '', baseApiUrl: '' },
+    config: DataProviderConfig = { user: undefined, baseApiUrl: '' },
   ) {
     this.config = config
   }
@@ -46,16 +48,18 @@ export abstract class BasicDataProvider implements DataProvider {
 
   protected async useGraphqlGateway<DataType = any>(
     query: string,
+    variables?: Record<string, any>,
   ): Promise<GraphqlGatewayResponse<DataType>> {
     return fetch(`${this.config.baseApiUrl}/api/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        authorization: this.config.authorization,
+        authorization: this.config.user?.authorization ?? '',
       },
       body: JSON.stringify({
         query,
+        variables,
       }),
     })
   }

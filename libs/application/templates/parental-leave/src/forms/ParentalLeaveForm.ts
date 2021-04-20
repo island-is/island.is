@@ -14,9 +14,11 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  ExternalData,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { Right } from '@island.is/clients/vmst'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
@@ -33,7 +35,6 @@ import {
 import { NO, StartDateOptions, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
-
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
@@ -78,13 +79,14 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'pregnancyStatus',
-                  type: 'PregnancyStatus',
+                  id: 'pregnancyStatusAndRights',
+                  type: 'PregnancyStatusAndRights',
                   title:
-                    parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+                    parentalLeaveFormMessages.shared
+                      .pregnancyStatusAndRightsTitle,
                   subTitle:
                     parentalLeaveFormMessages.shared
-                      .expectedDateOfBirthSubtitle,
+                      .pregnancyStatusAndRightsSubtitle,
                 }),
                 buildDataProviderItem({
                   id: 'parentalLeaves',
@@ -538,13 +540,24 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers) =>
-                (answers as {
-                  requestRights: {
-                    isRequestingRights: string
-                  }
-                })?.requestRights?.isRequestingRights === NO,
+              condition: (answers, externalData: ExternalData) => {
+                const rights = externalData?.rights?.data as Right
 
+                if (
+                  !rights?.transferableMonths ||
+                  rights.transferableMonths === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',

@@ -38,7 +38,13 @@ import {
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentRestUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -375,24 +381,19 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
-    @AuthorizationHeader() authorization: string,
-    @NationalId() nationalId: string,
+    @CurrentRestUser() user: User,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
-      nationalId,
+      user.nationalId,
     )
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
 
     const results = await callDataProviders(
-      buildDataProviders(
-        externalDataDto,
-        templateDataProviders,
-        authorization ?? '',
-      ),
+      buildDataProviders(externalDataDto, templateDataProviders, user),
       existingApplication as BaseApplication,
     )
     const {

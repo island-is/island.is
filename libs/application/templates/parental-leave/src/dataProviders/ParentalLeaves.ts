@@ -29,12 +29,14 @@ function buildOldParentalLeave(applicant: string): ParentalLeave {
 
 export class ParentalLeaves extends BasicDataProvider {
   type = 'ParentalLeaves'
+
   provide(application: Application): Promise<unknown> {
     const { applicant } = application
     // TODO this will be the url used for this
     // return fetch(`users/${applicant}/parentalLeaves`)
     return Promise.resolve({ applicant })
   }
+
   onProvideSuccess(applicant: string): SuccessfulDataProviderResult {
     return {
       date: new Date(),

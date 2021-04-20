@@ -1,17 +1,23 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 import { ApolloError } from 'apollo-server-express'
 import { Union, PensionFund } from '@island.is/clients/vmst'
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
-// eslint-disable-next-line
+import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
+
 const handleError = (error: any) => {
   logger.error(error)
-  throw new ApolloError('Failed to resolve request', error.response.message)
+
+  throw new ApolloError(
+    'Failed to resolve request',
+    error?.message ?? error?.response?.message,
+  )
 }
+
 @Injectable()
 export class DirectorateOfLabourService {
   constructor(
@@ -39,7 +45,7 @@ export class DirectorateOfLabourService {
   async getParentalLeavesEntitlements(
     dateOfBirth: string,
     nationalId: string,
-  ): Promise<ParentalLeaveEntitlement[]> {
+  ): Promise<ParentalLeaveEntitlement> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEntitlements(dateOfBirth, nationalId)
       .catch(handleError)
@@ -66,6 +72,12 @@ export class DirectorateOfLabourService {
   ): Promise<ParentalLeavePaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEstimatedPaymentPlan(dateOfBirth, period, nationalId)
+      .catch(handleError)
+  }
+
+  async getPregnancyStatus(nationalId: string): Promise<PregnancyStatus> {
+    return await this.directorateOfLabourRepository
+      .getPregnancyStatus(nationalId)
       .catch(handleError)
   }
 }
