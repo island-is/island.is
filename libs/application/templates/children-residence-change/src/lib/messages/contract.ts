@@ -29,14 +29,12 @@ export const contract = {
     },
     currentResidence: {
       id: 'crc.application:section.contract.overview.labels.currentResidence',
-      defaultMessage:
-        'Núverandi lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      defaultMessage: 'Núverandi lögheimilisforeldri:',
       description: 'Label for current residence',
     },
     newResidence: {
       id: 'crc.application:section.contract.overview.labels.newResidence',
-      defaultMessage:
-        'Nýtt lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      defaultMessage: 'Nýtt lögheimilisforeldri:',
       description: 'Label for new residence',
     },
   }),
