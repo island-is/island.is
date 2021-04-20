@@ -125,7 +125,9 @@ export const Overview: React.FC = () => {
         } else {
           // TODO: Handle error
         }
-      } catch (e) {}
+      } catch (e) {
+        // TODO: Handle error
+      }
     }
 
     setModalVisible(true)
