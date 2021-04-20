@@ -4,7 +4,7 @@ import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
-import { User, UserMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ApolloError } from 'apollo-server-express'
 import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -34,12 +34,12 @@ const handleError = async (error: any) => {
 export class ApplicationService {
   constructor(private _applicationApi: ApplicationsApi) {}
 
-  applicationApiForUser(user: User) {
-    return this._applicationApi.withMiddleware(new UserMiddleware(user))
+  applicationApiWithAuth(auth: Auth) {
+    return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async findOne(id: string, user: User) {
-    return await this.applicationApiForUser(user)
+  async findOne(id: string, auth: Auth) {
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerFindOne({
         id,
       })
@@ -48,10 +48,10 @@ export class ApplicationService {
 
   async findAll(
     nationalId: string,
-    user: User,
+    auth: Auth,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerFindAll({
         nationalId,
         typeId: input?.typeId?.join(','),
@@ -60,18 +60,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async create(input: CreateApplicationInput, user: User) {
-    return this.applicationApiForUser(user)
+  async create(input: CreateApplicationInput, auth: Auth) {
+    return this.applicationApiWithAuth(auth)
       .applicationControllerCreate({
         createApplicationDto: input,
       })
       .catch(handleError)
   }
 
-  async update(input: UpdateApplicationInput, user: User) {
+  async update(input: UpdateApplicationInput, auth: Auth) {
     const { id, ...updateApplicationDto } = input
 
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerUpdate({
         id,
         updateApplicationDto,
@@ -79,10 +79,10 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async addAttachment(input: AddAttachmentInput, user: User) {
+  async addAttachment(input: AddAttachmentInput, auth: Auth) {
     const { id, ...addAttachmentDto } = input
 
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerAddAttachment({
         id,
         addAttachmentDto,
@@ -90,10 +90,10 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async deleteAttachment(input: DeleteAttachmentInput, user: User) {
+  async deleteAttachment(input: DeleteAttachmentInput, auth: Auth) {
     const { id, ...deleteAttachmentDto } = input
 
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerDeleteAttachment({
         id,
         deleteAttachmentDto,
@@ -103,39 +103,39 @@ export class ApplicationService {
 
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
-    user: User,
+    auth: Auth,
   ) {
     const { id, ...populateExternalDataDto } = input
 
-    return this.applicationApiForUser(
-      user,
+    return this.applicationApiWithAuth(
+      auth,
     ).applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
     })
   }
 
-  async submitApplication(input: SubmitApplicationInput, user: User) {
+  async submitApplication(input: SubmitApplicationInput, auth: Auth) {
     const { id, ...updateApplicationStateDto } = input
-    return this.applicationApiForUser(
-      user,
+    return this.applicationApiWithAuth(
+      auth,
     ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
     })
   }
 
-  async assignApplication(input: AssignApplicationInput, user: User) {
-    return this.applicationApiForUser(
-      user,
+  async assignApplication(input: AssignApplicationInput, auth: Auth) {
+    return this.applicationApiWithAuth(
+      auth,
     ).applicationControllerAssignApplication({
       assignApplicationDto: input,
     })
   }
 
-  async createPdfPresignedUrl(input: CreatePdfInput, user: User) {
+  async createPdfPresignedUrl(input: CreatePdfInput, auth: Auth) {
     const { id, ...createPdfDto } = input
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerCreatePdf({
         id,
         createPdfDto,
@@ -143,9 +143,9 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async requestFileSignature(input: RequestFileSignatureInput, user: User) {
+  async requestFileSignature(input: RequestFileSignatureInput, auth: Auth) {
     const { id, ...requestFileSignatureDto } = input
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerRequestFileSignature({
         id,
         requestFileSignatureDto,
@@ -153,9 +153,9 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async uploadSignedFile(input: UploadSignedFileInput, user: User) {
+  async uploadSignedFile(input: UploadSignedFileInput, auth: Auth) {
     const { id, ...uploadSignedFileDto } = input
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerUploadSignedFile({
         id,
         uploadSignedFileDto,
@@ -163,10 +163,10 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async presignedUrl(input: GetPresignedUrlInput, user: User) {
+  async presignedUrl(input: GetPresignedUrlInput, auth: Auth) {
     const { id, type } = input
 
-    return await this.applicationApiForUser(user)
+    return await this.applicationApiWithAuth(auth)
       .applicationControllerGetPresignedUrl({
         id,
         pdfType: type,
