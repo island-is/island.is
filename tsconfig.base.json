@@ -124,6 +124,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/funding-government-projects": [
+        "libs/application/templates/funding-government-projects/src/index.ts"
+      ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],

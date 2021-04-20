@@ -1844,6 +1844,35 @@
         }
       }
     },
+    "application-templates-funding-government-projects": {
+      "root": "libs/application/templates/funding-government-projects",
+      "sourceRoot": "libs/application/templates/funding-government-projects/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/funding-government-projects/tsconfig.lib.json",
+              "libs/application/templates/funding-government-projects/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/funding-government-projects/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/funding-government-projects/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
       "sourceRoot": "libs/application/templates/health-insurance/src",
