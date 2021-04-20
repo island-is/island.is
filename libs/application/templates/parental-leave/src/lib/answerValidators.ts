@@ -178,18 +178,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
         )
       }
 
-      // We check if the endDate is inside the allowed range of days/months
-      if (
-        (!startDate &&
-          differenceInDays(parseISO(endDate), parseISO(dob)) > days) ||
-        differenceInDays(parseISO(endDate), parseISO(startDate)) > days
-      ) {
-        return buildError(
-          `You cannot apply for a period longer than the allowed period of ${months} months.`,
-          field,
-        )
-      }
-
       // We check if the start date is within the allowed period
       if (
         differenceInMonths(parseISO(endDate), parseISO(dob)) > usageMaxMonths

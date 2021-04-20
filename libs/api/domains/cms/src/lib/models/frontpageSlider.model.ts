@@ -21,7 +21,7 @@ export class FrontpageSlider {
   link?: string
 
   @Field({ nullable: true })
-  animationJsonAsset: Asset | null
+  animationJsonAsset?: Asset | null
 }
 
 export const mapFrontpageSlider = ({
