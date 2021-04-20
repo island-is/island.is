@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import { ApolloError } from 'apollo-server-express'
+import { Locale } from '@island.is/shared/types'
+
+import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
-import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
@@ -33,11 +35,12 @@ const handleError = async (error: any) => {
 export class ApplicationService {
   constructor(private applicationApi: ApplicationsApi) {}
 
-  async findOne(id: string, authorization: string) {
+  async findOne(id: string, authorization: string, locale: Locale) {
     return await this.applicationApi
       .applicationControllerFindOne({
         id,
         authorization,
+        locale,
       })
       .catch(handleError)
   }
@@ -45,12 +48,14 @@ export class ApplicationService {
   async findAll(
     nationalId: string,
     authorization: string,
+    locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
     return await this.applicationApi
       .applicationControllerFindAll({
         nationalId,
         authorization,
+        locale,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
       })
@@ -66,7 +71,11 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async update(input: UpdateApplicationInput, authorization: string) {
+  async update(
+    input: UpdateApplicationInput,
+    authorization: string,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationDto } = input
 
     return await this.applicationApi
@@ -74,6 +83,7 @@ export class ApplicationService {
         id,
         updateApplicationDto,
         authorization,
+        locale,
       })
       .catch(handleError)
   }

@@ -1,10 +1,12 @@
+import fetch from 'isomorphic-fetch'
+import { GraphQLError } from 'graphql'
+import { Locale } from '@island.is/shared/types'
+
 import { Application } from './Application'
 import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import fetch from 'isomorphic-fetch'
-import { GraphQLError } from 'graphql'
 
 export interface DataProvider {
   readonly type: string
@@ -18,6 +20,8 @@ export interface DataProviderConfig {
   authorization: string
   /** GraphQL api base url **/
   baseApiUrl: string
+  /** Front-end language selected */
+  locale: Locale
 }
 
 export interface GraphqlGatewayResponse<DataType> extends Response {
@@ -32,7 +36,11 @@ export abstract class BasicDataProvider implements DataProvider {
   readonly config: DataProviderConfig
 
   constructor(
-    config: DataProviderConfig = { authorization: '', baseApiUrl: '' },
+    config: DataProviderConfig = {
+      authorization: '',
+      baseApiUrl: '',
+      locale: 'is' as Locale,
+    },
   ) {
     this.config = config
   }

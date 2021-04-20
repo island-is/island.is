@@ -4,7 +4,7 @@ import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
-import { InputBackgroundColor } from '../Input/Input'
+import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Checkbox.treat'
 
 export interface CheckboxProps {

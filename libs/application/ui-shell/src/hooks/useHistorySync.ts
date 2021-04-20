@@ -56,7 +56,11 @@ export const useHistorySync = (
       return
     }
     return history.listen(({ state: payload }, action) => {
-      if (action === 'POP' && payload.screen != null && payload.state != null) {
+      if (
+        action === 'POP' &&
+        payload?.screen != null &&
+        payload?.state != null
+      ) {
         dispatch({ type: ActionTypes.HISTORY_POP, payload })
       }
     })

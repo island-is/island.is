@@ -1,19 +1,21 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
+import { Locale } from '@island.is/shared/types'
+
 import { TranslationsService, TranslationsDict } from './translations.service'
 import { GetTranslationsInput } from './dto/getTranslationsInput'
-import graphqlTypeJson from 'graphql-type-json'
 
 @Resolver()
 export class TranslationsResolver {
   constructor(private translationsService: TranslationsService) {}
 
   @Query(() => graphqlTypeJson, { nullable: true })
-  getTranslations(
+  async getTranslations(
     @Args('input') input: GetTranslationsInput,
   ): Promise<TranslationsDict | null> {
     return this.translationsService.getTranslations(
-      input?.namespaces,
-      input?.lang,
+      input.namespaces,
+      input.lang as Locale,
     )
   }
 }
