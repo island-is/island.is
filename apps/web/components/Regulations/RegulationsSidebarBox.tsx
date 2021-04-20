@@ -1,48 +1,21 @@
+import * as styles from './RegulationsSidebarBox.treat'
+
 // TODO: make this reuseable component?
 // - <Sidebar> has a bunch of some search specific code and <SidebarBox> is too barebones
 
 import {
   Box,
   Divider,
-  FocusableBox,
   Link,
   LinkProps,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
-import React, { FC, ReactNode } from 'react'
-import * as styles from './RegulationsSidebarBox.treat'
-
-type RegulationsSidebarBoxColorAttributes =
-  | 'color'
-  | 'dividerColor'
-  | 'backgroundColor'
-
-const colorSchemeColors: Record<
-  keyof typeof styles.colorScheme,
-  Record<RegulationsSidebarBoxColorAttributes, Colors>
-> = {
-  purple: {
-    color: 'dark400',
-    dividerColor: 'alternate' as Colors,
-    backgroundColor: 'purple100',
-  },
-  blueberry: {
-    color: 'blueberry600',
-    dividerColor: 'blueberry200',
-    backgroundColor: 'blueberry100',
-  },
-  blue: {
-    color: 'blue600',
-    dividerColor: 'blue200',
-    backgroundColor: 'blue100',
-  },
-}
+import React, { FC, ReactNode, CSSProperties } from 'react'
 
 type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
-  colorScheme: 'purple' | 'blueberry' | 'blue'
+  colorScheme?: styles.ColorScheme
 }
 
 export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
@@ -50,11 +23,10 @@ export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
   children,
   colorScheme = 'blueberry',
 }) => {
-  const color = colorSchemeColors[colorScheme]['color']
-  const backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']
-  const dividerColor = colorSchemeColors[colorScheme]['dividerColor'] as
-    | 'alternate'
-    | 'blueberry200'
+  const c = styles.colors[colorScheme]
+  const color = c.color
+  const backgroundColor = c.backgroundColor
+  const dividerColor = c.dividerColor
 
   return (
     <Box
@@ -63,6 +35,12 @@ export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
       padding={[3, 3, 4]}
       position="relative"
       marginBottom={2}
+      style={
+        {
+          '--RegSidebarBox-linkColor': c.linkColor,
+          '--RegSidebarBox-linkColorHover': c.linkColorHover,
+        } as CSSProperties
+      }
     >
       <Stack space={[1, 1, 2]}>
         <Text variant="h4" as="h2" color={color}>
@@ -86,20 +64,15 @@ export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
 export const RegulationsSidebarLink: FC<RegulationsSidebarLinkProps> = (
   props,
 ) => (
-  <FocusableBox>
-    {(f: Record<'isFocused' | 'isHovered', boolean>) => (
-      <Text
-        color={f.isFocused || f.isHovered ? 'blueberry400' : 'blueberry600'}
-        fontWeight={props.current ? 'medium' : undefined}
-      >
-        <Link
-          href={props.href}
-          underline="normal"
-          aria-label={props['aria-label']}
-        >
-          {props.children}
-        </Link>
-      </Text>
-    )}
-  </FocusableBox>
+  <Link href={props.href} pureChildren>
+    <a
+      className={
+        styles.sidebarLink +
+        (props.current ? ' ' + styles.sidebarLinkCurrent : '')
+      }
+      aria-label={props['aria-label']}
+    >
+      {props.children}
+    </a>
+  </Link>
 )
