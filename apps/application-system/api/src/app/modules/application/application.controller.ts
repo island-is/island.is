@@ -397,7 +397,6 @@ export class ApplicationController {
     @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
