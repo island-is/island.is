@@ -23,7 +23,7 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
   const { formatDate } = useDateUtils()
 
   return (
-    <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="blueberry">
+    <RegulationsSidebarBox title={txt('infoboxTitle')}>
       {ministry && (
         <Text>
           <strong>{txt('infoboxMinistry')}:</strong>

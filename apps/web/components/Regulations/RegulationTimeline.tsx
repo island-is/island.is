@@ -51,7 +51,6 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
       title={interpolate(txt('historyTitle'), {
         name: regulation.name,
       })}
-      colorScheme="blueberry"
     >
       {timelineItems.map((item, i, arr) => {
         const name = prettyName(item.name)

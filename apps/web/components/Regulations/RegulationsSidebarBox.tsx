@@ -48,7 +48,7 @@ type RegulationsSidebarBoxProps = {
 export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
   title,
   children,
-  colorScheme = 'purple',
+  colorScheme = 'blueberry',
 }) => {
   const color = colorSchemeColors[colorScheme]['color']
   const backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']

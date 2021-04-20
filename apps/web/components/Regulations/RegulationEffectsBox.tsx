@@ -31,7 +31,6 @@ export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
       title={interpolate(txt('effectsTitle'), {
         name: prettyName(regulation.name),
       })}
-      colorScheme="blueberry"
     >
       {regulation.effects.map((item, i) => {
         const name = prettyName(item.name)
