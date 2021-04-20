@@ -17,12 +17,10 @@ const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
 
   if (error.json) {
-    console.log('inside if')
     const json = await error.json()
 
     logger.error(json)
 
-    console.log('About to run apollo error', json)
     throw new ApolloError(JSON.stringify(json), error.status)
   }
 
