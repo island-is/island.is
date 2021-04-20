@@ -361,6 +361,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       />
       <SidebarLayout
         isSticky={false}
+        addAsideLandmark={false}
         sidebarContent={
           <Sticky>
             <ArticleSidebar

@@ -17,7 +17,7 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { FilteredCards } from '@island.is/web/components'
+import { FilteredCards, Main } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
@@ -47,13 +47,17 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const { items: tagsItems } = tags
 
   return (
-    <>
+    <Main>
       <Head>
         <title>
           {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')} | Ísland.is
         </title>
       </Head>
-      <SidebarLayout fullWidthContent sidebarContent={null}>
+      <SidebarLayout
+        fullWidthContent
+        sidebarContent={null}
+        addMainLandmark={false}
+      >
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs
             items={[
@@ -90,7 +94,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
           </ColorSchemeContext.Provider>
         </ContentBlock>
       </Box>
-    </>
+    </Main>
   )
 }
 

@@ -290,6 +290,7 @@ const Category: Screen<CategoryProps> = ({
       </Head>
       <SidebarLayout
         isSticky={false}
+        addAsideLandmark={false}
         sidebarContent={
           <Sticky>
             <Navigation
