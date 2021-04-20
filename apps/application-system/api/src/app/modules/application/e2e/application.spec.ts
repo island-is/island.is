@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
+import { ExecutionContext, INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
@@ -37,7 +37,17 @@ beforeAll(async () => {
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsAuthGuard)
-        .useValue(() => ({}))
+        .useValue({
+          canActivate: (ctx: ExecutionContext) => {
+            const request = ctx.switchToHttp().getRequest()
+
+            request.user = {
+              nationalId,
+            }
+
+            return true
+          },
+        })
         .overrideGuard(ScopesGuard)
         .useValue(() => ({}))
         .compile()
@@ -100,19 +110,6 @@ describe('Application system API', () => {
     )
 
     environment.environment = envBefore
-  })
-
-  it('should fail when trying to POST when not logged in', async () => {
-    spy.mockRestore()
-
-    const failedResponse = await server
-      .post('/applications')
-      .send({
-        typeId: ApplicationTypes.EXAMPLE,
-      })
-      .expect(401)
-
-    expect(failedResponse.body.message).toBe('You are not authenticated')
   })
 
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
