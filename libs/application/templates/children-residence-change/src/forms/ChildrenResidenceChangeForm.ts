@@ -11,16 +11,12 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  buildTextField,
-  Application,
   Comparators,
 } from '@island.is/application/core'
-import {
-  CRCApplication,
-  DataProviderTypes,
-} from '@island.is/application/templates/children-residence-change'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
+import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -161,6 +157,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: DataProviderTypes.UserProfile,
+                  title: '',
+                  subTitle: '',
+                }),
               ],
             }),
           ],
@@ -180,32 +182,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'contact',
           title: m.contactInfo.general.sectionTitle,
           children: [
-            buildMultiField({
+            buildCustomField({
               id: 'contactInfo',
               title: m.contactInfo.general.pageTitle,
-              description: m.contactInfo.general.description,
-              children: [
-                buildTextField({
-                  id: 'parentA.email',
-                  title: m.contactInfo.inputs.emailLabel,
-                  variant: 'email',
-                  backgroundColor: 'blue',
-                  defaultValue: ({
-                    externalData: { userProfile },
-                  }: CRCApplication) => userProfile?.data?.email || '',
-                }),
-                buildTextField({
-                  id: 'parentA.phoneNumber',
-                  title: m.contactInfo.inputs.phoneNumberLabel,
-                  variant: 'tel',
-                  format: '###-####',
-                  backgroundColor: 'blue',
-                  defaultValue: ({
-                    externalData: { userProfile },
-                  }: CRCApplication) =>
-                    userProfile?.data?.mobilePhoneNumber || '',
-                }),
-              ],
+              childInputIds: contactInfoIds,
+              component: 'ContactInfo',
             }),
           ],
         }),
