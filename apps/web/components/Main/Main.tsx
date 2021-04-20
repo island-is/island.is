@@ -18,11 +18,12 @@ export const Main: React.FC<MainProps> = ({
         outline: 'none',
       }
     : {}
-  const boxId = addId
-    ? {
-        id: 'main-content',
-      }
-    : {}
+  const boxId =
+    addLandmark && addId
+      ? {
+          id: 'main-content',
+        }
+      : {}
   return (
     <Box {...boxProps} {...boxId}>
       {children}
