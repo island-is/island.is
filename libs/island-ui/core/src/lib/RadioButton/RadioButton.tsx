@@ -21,6 +21,11 @@ export interface RadioButtonProps {
   subLabel?: string
 }
 
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 export const RadioButton = ({
   label,
   subLabel,
@@ -36,10 +41,11 @@ export const RadioButton = ({
   large,
   filled = false,
 }: RadioButtonProps) => {
+  const errorId = `${id}-error`
   const ariaError = hasError
     ? {
         'aria-invalid': true,
-        'aria-describedby': id,
+        'aria-describedby': errorId,
       }
     : {}
   return (
@@ -58,7 +64,7 @@ export const RadioButton = ({
         onChange={onChange}
         value={value}
         checked={checked}
-        {...ariaError}
+        {...(ariaError as AriaError)}
       />
       <label
         className={cn(styles.label, {
@@ -101,7 +107,11 @@ export const RadioButton = ({
           </div>
         )}
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+          >
             {errorMessage}
           </div>
         )}

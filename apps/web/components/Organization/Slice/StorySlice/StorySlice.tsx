@@ -10,17 +10,14 @@ interface SliceProps {
 export const StorySlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <Box
-        paddingTop={[8, 8, 12]}
-        paddingBottom={[12, 8, 10]}
-        style={{ filter: 'invert(1)' }}
-      >
+      <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
         <StoryList
           {...slice}
           stories={(slice.stories as any[]).map((story) => ({
             ...story,
             logoUrl: story.logo.url,
           }))}
+          variant="dark"
         />
       </Box>
     </section>
