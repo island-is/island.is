@@ -14,10 +14,10 @@ interface Messages {
 }
 
 interface NamespaceFields {
-  namespace?: string | undefined
-  strings?: Record<string, any> | undefined
-  defaults?: Record<string, any> | undefined
-  fallback?: Record<string, any> | undefined
+  namespace: string
+  strings?: Record<string, any>
+  defaults?: Record<string, any>
+  fallback?: Record<string, any>
 }
 
 const MAX_AGE = 1000 * 60 * 15 // 15 minutes
@@ -58,26 +58,16 @@ export class TranslationsService {
       } as Messages
 
       for (const item of results.items) {
-        for (const contentfulLocale of Object.keys(item.fields.strings ?? {})) {
-          const strings = item.fields.strings
+        const strings = item.fields.strings ?? {}
+        const defaultStrings = strings[DEFAULT_LOCALE] ?? {}
 
-          if (!strings) {
-            continue
-          }
+        for (const contentfulLocale of Object.keys(strings)) {
+          const locale = locales.find((item) => item.code === contentfulLocale)!
+            .locale as Locale
+          const localeStrings = strings[contentfulLocale] ?? {}
 
           for (const key of Object.keys(strings[contentfulLocale])) {
-            const locale = locales.find(
-              (item) => item.code === contentfulLocale,
-            )!.locale as Locale
-
-            if (contentfulLocale === DEFAULT_LOCALE) {
-              messages[locale][key] = strings?.[contentfulLocale]?.[key]
-            } else {
-              messages[locale][key] =
-                strings?.[contentfulLocale]?.[key] !== ''
-                  ? strings?.[contentfulLocale]?.[key]
-                  : strings?.[DEFAULT_LOCALE]?.[key]
-            }
+            messages[locale][key] = localeStrings[key] || defaultStrings[key]
           }
         }
       }
