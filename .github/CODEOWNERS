@@ -75,6 +75,7 @@
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
+/libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
