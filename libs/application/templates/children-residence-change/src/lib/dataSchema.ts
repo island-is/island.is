@@ -46,7 +46,7 @@ export const dataSchema = z.object({
         .optional(),
     })
     .refine((v) => v.email || v.phoneNumber, {
-      message: 'það verður að fylla inn annaðhvort',
+      message: error.validation.counterParty.defaultMessage,
     }),
   parentB: parentContactInfo,
   approveTerms: terms,
