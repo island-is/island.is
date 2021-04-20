@@ -112,7 +112,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description {
-        ...HtmlFields
+        ...AllSlices
       }
       links {
         text
