@@ -6,6 +6,11 @@ import { ResponsiveProp } from '../../utils/responsiveProp'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
+export interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 export interface InputComponentProps {
   name: string
   value?: string | number

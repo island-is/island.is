@@ -24,6 +24,12 @@ export type Option = {
   value: string | number
   disabled?: boolean
 }
+
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 export interface SelectProps {
   name: string
   id?: string
@@ -46,6 +52,7 @@ export interface SelectProps {
   size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
+  ariaError?: AriaError
 }
 
 export const Select = ({
@@ -67,6 +74,14 @@ export const Select = ({
   backgroundColor = 'white',
   required,
 }: SelectProps) => {
+  const errorId = `${id}-error`
+  const ariaError = hasError
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': errorId,
+      }
+    : {}
+
   return (
     <div
       className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
@@ -92,6 +107,7 @@ export const Select = ({
         isSearchable={isSearchable}
         size={size}
         required={required}
+        ariaError={ariaError as AriaError}
         components={{
           Control,
           Input,
@@ -105,7 +121,7 @@ export const Select = ({
         }}
       />
       {hasError && errorMessage && (
-        <div className={styles.errorMessage} id={id}>
+        <div id={errorId} className={styles.errorMessage} aria-live="assertive">
           {errorMessage}
         </div>
       )}
@@ -186,11 +202,13 @@ const Placeholder = (props: PlaceholderProps<Option>) => {
 const Input: ComponentType<InputProps> = (
   props: InputProps & { selectProps?: Props<Option> },
 ) => {
+  const ariaError = props?.selectProps?.ariaError
   const size = (props?.selectProps?.size || 'md') as SelectProps['size']
   return (
     <components.Input
       className={cn(styles.input, styles.inputSize[size!])}
       {...props}
+      {...ariaError}
     />
   )
 }
@@ -210,7 +228,10 @@ const Control = (props: ControlProps<Option>) => {
       >
         {props.selectProps.label}
         {props.selectProps.required && (
-          <span className={styles.isRequiredStar}> *</span>
+          <span aria-hidden="true" className={styles.isRequiredStar}>
+            {' '}
+            *
+          </span>
         )}
       </label>
       {props.children}
