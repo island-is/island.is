@@ -7,6 +7,7 @@ import {
   BulletList,
   Bullet,
   Input,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -15,10 +16,9 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
   workingCase: Case
@@ -35,6 +35,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     onRemove,
     onRetry,
   } = useS3Upload(workingCase)
+  const { updateCase } = useCase()
 
   return (
     <>
@@ -90,7 +91,12 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box>
           <Box marginBottom={3}>
             <Text variant="h3" as="h3">
-              Athugasemdir vegna rannsóknargagna
+              Athugasemdir vegna rannsóknargagna{' '}
+              <Tooltip
+                placement="right"
+                as="span"
+                text="Hér er hægt að skrá athugasemdir til dómara og dómritara varðandi rannsóknargögnin."
+              />
             </Text>
           </Box>
           <Box marginBottom={10}>
@@ -98,7 +104,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label="Skilaboð"
               placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi gögnin?"
-              defaultValue={workingCase?.comments}
+              defaultValue={workingCase?.caseFilesComments}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
@@ -108,7 +114,12 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                   setWorkingCase,
                 )
               }
-              onBlur={() => console.log('TODO')}
+              onBlur={(evt) =>
+                updateCase(
+                  workingCase.id,
+                  parseString('caseFilesComments', evt.target.value),
+                )
+              }
               textarea
               rows={7}
             />
