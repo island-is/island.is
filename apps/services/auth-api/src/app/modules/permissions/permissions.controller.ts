@@ -54,7 +54,7 @@ export class PermissionsController {
 
   @Scopes('@identityserver.api/authentication')
   @Get('access-controlled-scopes')
-  @ApiOkResponse([ApiScope])
+  @ApiOkResponse({ type: [ApiScope] })
   async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
     const accessControlledScopes = this.resourcesService.findAllAccessControlledApiScopes()
     return accessControlledScopes
