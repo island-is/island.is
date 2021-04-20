@@ -43,7 +43,7 @@ export interface TabBulletProps {
 
 const TabBullet = ({ selected }: TabBulletProps) => {
   return (
-    <div
+    <span
       className={cn(styles.tabBullet, {
         [styles.tabBulletSelected]: selected,
       })}

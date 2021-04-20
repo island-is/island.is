@@ -92,26 +92,26 @@ export const Card = ({
       <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
         <Stack space={1}>
           {!!subTitle && (
-            <Text
-              as="h4"
-              variant="small"
-              fontWeight="semiBold"
-              color={titleColor}
-            >
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  {subTitle}
-                </Box>
-              </Box>
-            </Text>
-          )}
-          <Text as="h3" variant="h3" color={titleColor}>
             <Box display="flex" flexDirection="row" alignItems="center">
               <Box display="inlineFlex" flexGrow={1}>
-                {title}
+                <Text
+                  as="h4"
+                  variant="small"
+                  fontWeight="semiBold"
+                  color={titleColor}
+                >
+                  {subTitle}
+                </Text>
               </Box>
             </Box>
-          </Text>
+          )}
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              <Text as="h3" variant="h3" color={titleColor}>
+                {title}
+              </Text>
+            </Box>
+          </Box>
           {description && <Text>{description}</Text>}
           {tags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
