@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { User } from 'oidc-client'
 import { setClientAuthToken } from '@island.is/application/graphql'
 import { useLocation } from 'react-router-dom'
 
@@ -38,6 +40,20 @@ const useAuth = () => {
       type: ActionType.SET_USER_LOGGED_OUT,
     })
   }
+
+  // Watch for silent renew and update client auth token.
+  useEffect(() => {
+    if (userInfoState !== 'fulfilled') {
+      return
+    }
+
+    const userLoaded = (user: User) => {
+      setClientAuthToken(user.access_token)
+    }
+
+    userManager.events.addUserLoaded(userLoaded)
+    return () => userManager.events.removeUserLoaded(userLoaded)
+  }, [userInfoState])
 
   return {
     userInfo,
