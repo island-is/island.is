@@ -97,21 +97,23 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         <SidebarCard key={card.id} sidebarCard={card} />
       ))}
     >
-      <Section
-        paddingTop={[8, 8, 6]}
-        paddingBottom={[8, 8, 6]}
-        background="purple100"
-        aria-labelledby="latestNewsTitle"
-      >
-        <LatestNewsSection
-          label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
-          labelId="latestNewsTitle"
-          items={news}
-          linkType="organizationnews"
-          overview="organizationnewsoverview"
-          parameters={[organizationPage.slug]}
-        />
-      </Section>
+      {!!news.length && (
+        <Section
+          paddingTop={[8, 8, 6]}
+          paddingBottom={[8, 8, 6]}
+          background="purple100"
+          aria-labelledby="latestNewsTitle"
+        >
+          <LatestNewsSection
+            label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
+            labelId="latestNewsTitle"
+            items={news}
+            linkType="organizationnews"
+            overview="organizationnewsoverview"
+            parameters={[organizationPage.slug]}
+          />
+        </Section>
+      )}
     </OrganizationWrapper>
   )
 }
