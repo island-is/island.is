@@ -111,6 +111,15 @@ export class ResourcesController {
     return apiScopes
   }
 
+  /** Finds all access allowed scopes */
+  @Scopes(Scope.root, Scope.full)
+  @Get('access-controlled-scopes')
+  @ApiOkResponse({ type: [ApiScope] })
+  async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+    const accessControlledScopes = this.resourcesService.findAllAccessControlledApiScopes()
+    return accessControlledScopes
+  }
+
   /** Get's all Api resources and total count of rows */
   @Scopes(Scope.root, Scope.full)
   @Get('api-resources')

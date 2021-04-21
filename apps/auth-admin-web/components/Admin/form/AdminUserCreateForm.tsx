@@ -8,6 +8,8 @@ import { AdminAccessService } from './../../../services/AdminAccessService'
 import ValidationUtils from './../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import { ResourcesService } from './../../../services/ResourcesService'
+import { ApiScope } from './../../../entities/models/api-scope.model'
 interface Props {
   adminAccess: AdminAccessDTO
   handleSaveButtonClicked?: (admin: AdminAccess) => void
@@ -25,13 +27,39 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('AdminUserCreateForm'),
   )
+  const [accessControlledScopes, setAccessControlledScopes] = useState<
+    ApiScope[]
+  >([])
+  const [showScopeInfo, setShowScopeInfo] = useState<boolean>(false)
+  const [scopeInfo, setScopeInfo] = useState<JSX.Element>(<div></div>)
+
   const admin = props.adminAccess
 
   useEffect(() => {
+    const setScopes = async () => {
+      const scopes = await ResourcesService.findAllAccessControlledApiScopes()
+      if (scopes) {
+        setAccessControlledScopes(scopes)
+      }
+    }
     if (props.adminAccess && props.adminAccess.nationalId) {
       setIsEditing(true)
     }
+
+    setScopes()
   }, [props.adminAccess])
+
+  useEffect(() => {
+    if (accessControlledScopes) {
+      if (admin.scope) {
+        getScopeInfo(admin.scope)
+      } else {
+        if (accessControlledScopes.length > 0) {
+          getScopeInfo(accessControlledScopes[0].name)
+        }
+      }
+    }
+  }, [accessControlledScopes])
 
   const pushEvent = (response: AdminAccess | null) => {
     if (response) {
@@ -61,6 +89,25 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
 
   const save = async (data: FormOutput) => {
     await create(data.admin)
+  }
+
+  const getScopeInfo = (name: string): void => {
+    const scope = accessControlledScopes.find((x) => x.name === name)
+    setScopeInfo(getScopeHtml(scope))
+  }
+
+  const getScopeHtml = (scope: ApiScope): JSX.Element => {
+    if (scope) {
+      return (
+        <div className="detail-container">
+          <div className="detail-title">{scope.name}</div>
+          {/* <div className="detail-description">{scope.displayName}</div> */}
+          <div className="detail-description">{scope.description}</div>
+        </div>
+      )
+    } else {
+      return <div></div>
+    }
   }
 
   return (
@@ -145,15 +192,29 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                   >
                     {localization.fields['scope'].label}
                   </label>
+
                   <select
                     id="scope"
                     name="admin.scope"
                     ref={register({ required: true })}
                     title={localization.fields['scope'].helpText}
+                    onChange={(e) => getScopeInfo(e.target.value)}
+                    onFocus={() => setShowScopeInfo(true)}
+                    onBlur={() => setShowScopeInfo(false)}
                   >
-                    <option value="auth-admin-api.full_control" selected>
-                      Full control
-                    </option>
+                    {accessControlledScopes &&
+                      accessControlledScopes.map((scope: ApiScope) => {
+                        return (
+                          <option
+                            value={scope.name}
+                            key={scope.name}
+                            title={scope.description}
+                            selected={scope.name === admin.scope}
+                          >
+                            {scope.name}
+                          </option>
+                        )
+                      })}
                   </select>
 
                   <HelpBox helpText={localization.fields['scope'].helpText} />
@@ -163,6 +224,13 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     name="admin.scope"
                     message={localization.fields['scope'].errorMessage}
                   />
+                  <div
+                    className={`admin-user-create-form__container__field__details${
+                      showScopeInfo ? ' show' : ' hidden'
+                    }`}
+                  >
+                    {scopeInfo}
+                  </div>
                 </div>
 
                 <div className="admin-user-create-formcontainer__checkbox__field hidden">
