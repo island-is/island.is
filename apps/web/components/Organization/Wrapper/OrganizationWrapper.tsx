@@ -13,7 +13,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
-import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
+import {
+  ChatPanel,
+  HeadWithSocialSharing,
+  Main,
+  Sticky,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
@@ -60,6 +65,15 @@ const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennFooter organizationPage={organizationPage} />
+    default:
+      return null
+  }
+}
+
+const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+  switch (slug) {
+    case 'syslumenn':
+      return <ChatPanel endpoint="syslumenn" />
     default:
       return null
   }
@@ -229,6 +243,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
+      <OrganizationChatPanel slug={organizationPage?.slug} />
     </>
   )
 }
