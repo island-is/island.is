@@ -4,7 +4,6 @@ import {
   ISODate,
   RegQueryName,
   RegulationDiff,
-  RegulationMaybeDiff,
 } from '../../components/Regulations/Regulations.types'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -24,12 +23,6 @@ import {
 import { GET_REGULATION_QUERY } from '../queries'
 
 const { publicRuntimeConfig } = getConfig()
-
-const getKey = (regulation: RegulationMaybeDiff): string => {
-  const { name, timelineDate, showingDiff } = regulation
-  const { from, to } = showingDiff || {}
-  return [name, timelineDate, from, to].join()
-}
 
 // ---------------------------------------------------------------------------
 
@@ -51,7 +44,6 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
     <RegulationDisplay
-      key={getKey(regulation)}
       texts={texts}
       regulation={regulation}
       urlDate={urlDate}

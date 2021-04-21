@@ -18,6 +18,12 @@ import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationTimeline } from './RegulationTimeline'
 import { AffectingRegulations } from './AffectingRegulations'
 
+const getKey = (regulation: RegulationMaybeDiff): string => {
+  const { name, timelineDate, showingDiff } = regulation
+  const { from, to } = showingDiff || {}
+  return [name, timelineDate, from, to].join()
+}
+
 // ---------------------------------------------------------------------------
 
 export type RegulationDisplayProps = {
@@ -50,6 +56,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const waterMarkClass = isCurrent
     ? undefined
     : s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
+
+  const key = getKey(regulation)
 
   return (
     <RegulationLayout
@@ -93,6 +101,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             <HTMLDump className={s.bodyText} html={regulation.text} />
 
             <Appendixes
+              key={key}
               legend={txt('appendixesTitle')}
               genericTitle={txt('appendixGenericTitle')}
               appendixes={regulation.appendixes}
