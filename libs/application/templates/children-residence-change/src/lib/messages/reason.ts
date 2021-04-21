@@ -14,7 +14,7 @@ export const reason = {
       description: 'Reason for change page title',
     },
     description: {
-      id: 'crc.application:section.arrangement.reason.description',
+      id: 'crc.application:section.arrangement.reason.description#markdown',
       defaultMessage:
         'Ekki er nauðsynlegt að tilgreina tilefni breytingarinnar sérstaklega en það getur auðveldað sýslumanni vinnslu umsóknarinnar að gera það.',
       description: 'Reason for change page description',
