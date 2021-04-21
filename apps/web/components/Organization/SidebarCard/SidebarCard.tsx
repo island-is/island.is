@@ -35,19 +35,21 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
           span={['8/12', '8/12', '12/12']}
         >
           <Text variant="small">{sidebarCard.content}</Text>
-          <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
-            <Link href={sidebarCard.link.url}>
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                type="button"
-                variant="text"
-                size="small"
-              >
-                {sidebarCard.link.text}
-              </Button>
-            </Link>
-          </Box>
+          {!!sidebarCard.link && (
+            <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
+              <Link href={sidebarCard.link.url}>
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  type="button"
+                  variant="text"
+                  size="small"
+                >
+                  {sidebarCard.link.text}
+                </Button>
+              </Link>
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
