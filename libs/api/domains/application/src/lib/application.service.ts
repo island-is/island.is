@@ -72,11 +72,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async update(
-    input: UpdateApplicationInput,
-    auth: Auth,
-    locale: Locale,
-  ) {
+  async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
     const { id, ...updateApplicationDto } = input
 
     return await this.applicationApiWithAuth(auth)

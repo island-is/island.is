@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools';
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

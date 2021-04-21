@@ -59,7 +59,10 @@ export class DocumentProviderResolver {
     @Args('nationalId') nationalId: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return await this.documentProviderService.organisationExists(nationalId, user)
+    return await this.documentProviderService.organisationExists(
+      nationalId,
+      user,
+    )
   }
 
   @UseGuards(AdminGuard)
@@ -73,11 +76,7 @@ export class DocumentProviderResolver {
       `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
     )
 
-    return this.documentProviderService.updateOrganisation(
-      id,
-      input,
-      user,
-    )
+    return this.documentProviderService.updateOrganisation(id, input, user)
   }
 
   @UseGuards(AdminGuard)

@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Auth } from './auth'
-import { getRequest } from "./getRequest";
+import { getRequest } from './getRequest'
 
 export const getCurrentAuth = (context: ExecutionContext): Auth => {
   const request = getRequest(context)

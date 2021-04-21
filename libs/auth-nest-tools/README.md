@@ -6,9 +6,9 @@ This library contains a reusable module (AuthModule) with guards that can be use
 
 There are a couple of guards available.
 
-* `IdsUserGuard`: validates that the request has a valid JWT bearer authorization from our identity server and checks that it has a nationalId claim, representing an authenticated user. Information from the JWT can be accessed using the CurrentAuth and CurrentUser parameter decorators.
-* `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
-* `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
+- `IdsUserGuard`: validates that the request has a valid JWT bearer authorization from our identity server and checks that it has a nationalId claim, representing an authenticated user. Information from the JWT can be accessed using the CurrentAuth and CurrentUser parameter decorators.
+- `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
+- `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
 
 You should generally add `IdsUserGuard` and `ScopesGuard` to endpoints that return user resources for the authenticated user. You can use `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials.
 

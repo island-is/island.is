@@ -20,7 +20,7 @@ export class MockAuthGuard implements CanActivate {
     const request = getRequest(context)
     request.auth = this.auth
     if (this.auth.nationalId) {
-      request.auth = this.auth
+      request.user = this.auth
     }
     return true
   }
