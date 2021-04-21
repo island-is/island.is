@@ -34,8 +34,8 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const { clearErrors } = useFormContext()
   const emailError = errors?.parentA?.email
   const phoneNumberError = errors?.parentA?.phoneNumber
-  const counterPartyError = (errors?.counterParty as unknown) as string
-  const isCounterPartyError = typeof counterPartyError === 'string'
+  const counterPartyError =
+    typeof errors?.counterParty === 'string' ? errors.counterParty : undefined
   const counterPartyEmailError = errors?.counterParty?.email
   const counterPartyPhoneError = errors?.counterParty?.phoneNumber
   const applicant = nationalRegistry.data
@@ -98,9 +98,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               backgroundColor="blue"
               type="email"
               label={formatMessage(contactInfo.inputs.emailLabel)}
-              error={
-                isCounterPartyError ? counterPartyError : counterPartyEmailError
-              }
+              error={counterPartyError || counterPartyEmailError}
               defaultValue={answers?.counterParty?.email || ''}
               onChange={() => {
                 clearErrors([counterPartyEmail, 'counterParty'])
@@ -114,7 +112,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               backgroundColor="blue"
               type="tel"
               label={formatMessage(contactInfo.inputs.phoneNumberLabel)}
-              error={isCounterPartyError ? '' : counterPartyPhoneError}
+              error={counterPartyError ? '' : counterPartyPhoneError}
               format="###-####"
               onChange={() => {
                 clearErrors([counterPartyPhoneNumber, 'counterParty'])
