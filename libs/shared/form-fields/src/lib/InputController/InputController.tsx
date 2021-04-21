@@ -12,7 +12,7 @@ interface Props {
   label?: string
   name?: string
   onChange?: (
-    event?: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   placeholder?: string
   textarea?: boolean
@@ -68,11 +68,13 @@ export const InputController: FC<Props> = ({
           suffix=" kr."
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
-            if (onInputChange) {
-              onInputChange()
-            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
@@ -92,11 +94,13 @@ export const InputController: FC<Props> = ({
           suffix={suffix}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
-            if (onInputChange) {
-              onInputChange()
-            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
@@ -116,11 +120,13 @@ export const InputController: FC<Props> = ({
           type={type as 'text' | 'tel'}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
-            if (onInputChange) {
-              onInputChange()
-            }
           }}
           hasError={error !== undefined}
           errorMessage={error}
