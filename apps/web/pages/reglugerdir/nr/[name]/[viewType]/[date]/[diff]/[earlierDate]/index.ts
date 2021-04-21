@@ -1,5 +1,3 @@
-import withApollo from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n'
-import RegulationPage from '@island.is/web/screens/Regulations/RegulationPage'
+import RegulationPage from '../../../../index'
 
-export default withApollo(withLocale('is')(RegulationPage))
+export default RegulationPage
