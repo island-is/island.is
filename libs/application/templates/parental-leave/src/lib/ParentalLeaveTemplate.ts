@@ -81,8 +81,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
-          title: statesMessages.stateDraftTitle,
-          description: statesMessages.stateDraftDescription,
+          title: statesMessages.draftTitle,
+          description: statesMessages.draftDescription,
           progress: 0.25,
           roles: [
             {
@@ -121,7 +121,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         exit: 'clearAssignees',
         meta: {
-          name: 'Needs other parent approval',
+          name: States.OTHER_PARENT_APPROVAL,
+          title: statesMessages.otherParentApprovalTitle,
+          description: statesMessages.otherParentApprovalDescription,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -169,7 +171,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_ACTION]: {
         meta: {
-          name: 'Other parent requires action',
+          name: States.OTHER_PARENT_ACTION,
+          title: statesMessages.otherParentActionTitle,
+          description: statesMessages.otherParentActionDescription,
           progress: 0.4,
           roles: [
             {
@@ -190,7 +194,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
         exit: 'saveEmployerNationalRegistryId',
         meta: {
-          name: 'Waiting to assign employer',
+          name: States.EMPLOYER_WAITING_TO_ASSIGN,
+          title: statesMessages.employerWaitingToAssignTitle,
+          description: statesMessages.employerWaitingToAssignDescription,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -215,7 +221,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_APPROVAL]: {
         exit: 'clearAssignees',
         meta: {
-          name: 'Employer Approval',
+          name: States.EMPLOYER_APPROVAL,
+          title: statesMessages.employerApprovalTitle,
+          description: statesMessages.employerApprovalDescription,
           progress: 0.5,
           roles: [
             {
@@ -257,7 +265,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_ACTION]: {
         meta: {
-          name: 'Employer requires action',
+          name: States.EMPLOYER_ACTION,
+          title: statesMessages.employerActionTitle,
+          description: statesMessages.employerActionDescription,
           progress: 0.5,
           roles: [
             {
@@ -277,7 +287,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
-          name: 'Vinnumálastofnun Approval',
+          name: States.VINNUMALASTOFNUN_APPROVAL,
+          title: statesMessages.vinnumalastofnunApprovalTitle,
+          description: statesMessages.vinnumalastofnunApprovalDescription,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -303,7 +315,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
-          name: 'Vinnumálastofnun requires action',
+          name: States.VINNUMALASTOFNUN_ACTION,
+          title: statesMessages.vinnumalastofnunActionTitle,
+          description: statesMessages.vinnumalastofnunActionDescription,
           progress: 0.5,
           roles: [
             {
@@ -323,7 +337,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.APPROVED]: {
         meta: {
-          name: 'Approved',
+          name: States.APPROVED,
+          title: statesMessages.approvedTitle,
+          description: statesMessages.approvedDescription,
           progress: 1,
           roles: [
             {
@@ -348,6 +364,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
+          title: statesMessages.editOrAddPeriodsTitle,
+          description: statesMessages.editOrAddPeriodsDescription,
           progress: 1,
           roles: [
             {
@@ -383,7 +401,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
         exit: 'saveEmployerNationalRegistryId',
         meta: {
-          name: 'Waiting to assign employer to review period edits',
+          name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+          title: statesMessages.employerWaitingToAssignForEditsTitle,
+          description:
+            statesMessages.employerWaitingToAssignForEditsDescription,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -408,7 +429,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
       [States.EMPLOYER_APPROVE_EDITS]: {
         meta: {
-          name: 'Employer is reviewing the period edits',
+          name: States.EMPLOYER_APPROVE_EDITS,
+          title: statesMessages.employerApproveEditsTitle,
+          description: statesMessages.employerApproveEditsDescription,
           progress: 0.4,
           roles: [
             {
@@ -435,7 +458,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_EDITS_ACTION]: {
         exit: 'restorePeriodsFromTemp',
         meta: {
-          name: 'Employer rejected the period edits',
+          name: States.EMPLOYER_EDITS_ACTION,
+          title: statesMessages.employerEditsActionTitle,
+          description: statesMessages.employerEditsActionDescription,
           progress: 0.4,
           roles: [
             {
@@ -459,7 +484,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         exit: 'clearTemp',
         meta: {
-          name: 'VMLST is reviewing the period edits',
+          name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          title: statesMessages.vinnumalastofnunApproveEditsTitle,
+          description: statesMessages.vinnumalastofnunApproveEditsDescription,
           progress: 0.4,
           roles: [
             {
@@ -483,7 +510,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
         exit: 'restorePeriodsFromTemp',
         meta: {
-          name: 'VMLST rejected the period edits',
+          name: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          title: statesMessages.vinnumalastofnunEditsActionTitle,
+          description: statesMessages.vinnumalastofnunEditsActionDescription,
           progress: 0.4,
           roles: [
             {

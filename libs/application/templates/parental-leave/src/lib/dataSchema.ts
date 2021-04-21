@@ -3,7 +3,7 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { NO, YES, StartDateOptions } from '../constants'
-import { dataSchemaMessages } from './messages'
+import { errorMessages } from './messages'
 
 const PersonalAllowance = z
   .object({
@@ -29,7 +29,7 @@ export const dataSchema = z.object({
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
         return phoneNumber && phoneNumber.isValid()
       },
-      { params: dataSchemaMessages.phoneNumber },
+      { params: errorMessages.phoneNumber },
     ),
   }),
   personalAllowance: PersonalAllowance,
@@ -65,7 +65,7 @@ export const dataSchema = z.object({
     .string()
     .optional()
     .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
-      params: dataSchemaMessages.otherParentId,
+      params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   usePersonalAllowance: z.enum([YES, NO]),
