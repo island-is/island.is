@@ -84,6 +84,7 @@ import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.resp
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
+import { getApplicationLifecycle } from './utils/application'
 import {
   DecodedAssignmentToken,
   StateChangeResult,
@@ -174,6 +175,7 @@ export class ApplicationController {
       // We've already checked an application with this type and it is ready
       if (templateTypeToIsReady[application.typeId]) {
         filteredApplications.push(application)
+        continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
@@ -244,7 +246,24 @@ export class ApplicationController {
       typeId: application.typeId,
     }
 
-    return this.applicationService.create(applicationDto)
+    const createdApplication = await this.applicationService.create(
+      applicationDto,
+    )
+
+    // Make sure the application has the correct lifecycle values persisted to database.
+    // Requires an application object that is created in the previous step.
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateApplicationState(
+      createdApplication.id,
+      createdApplication.state,
+      createdApplication.answers as FormValue,
+      createdApplication.assignees,
+      createdApplication.status,
+      getApplicationLifecycle(createdApplication as BaseApplication, template),
+    )
+
+    return updatedApplication
   }
 
   @Scopes(ApplicationIdentityServerScope.write)
@@ -585,7 +604,7 @@ export class ApplicationController {
     }
   }
 
-  async changeState(
+  private async changeState(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
@@ -676,6 +695,7 @@ export class ApplicationController {
         updatedApplication.answers,
         updatedApplication.assignees,
         status,
+        getApplicationLifecycle(updatedApplication, template),
       )
 
       updatedApplication = update.updatedApplication as BaseApplication

@@ -3,5 +3,5 @@ export const IdentityServer = {
   name: 'Iceland authentication service',
   clientId: 'ids-admin',
   scope:
-    'openid profile auth-admin-api.full_control offline_access @island.is/auth/admin:root @island.is/auth/admin:full',
+    'openid profile offline_access @island.is/auth/admin:root @island.is/auth/admin:full',
 }

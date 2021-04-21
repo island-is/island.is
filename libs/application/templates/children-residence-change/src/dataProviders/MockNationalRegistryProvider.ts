@@ -9,7 +9,7 @@ import { PersonResidenceChange } from '@island.is/application/templates/children
 import { NationalRegistry, DataProviderTypes, CRCApplication } from '../types'
 
 export class MockNationalRegistryProvider extends BasicDataProvider {
-  readonly type = DataProviderTypes.MOCK_NationalRegistry
+  readonly type = DataProviderTypes.MockNationalRegistry
 
   async provide(application: Application): Promise<NationalRegistry> {
     const query = `
