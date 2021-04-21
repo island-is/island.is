@@ -71,6 +71,11 @@ const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
 }
 
 const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+  // remove when organization chat-bot is ready for release
+  if (process.env.NODE_ENV !== 'development') {
+    return null
+  }
+
   switch (slug) {
     case 'syslumenn':
       return <ChatPanel endpoint="syslumenn" />
