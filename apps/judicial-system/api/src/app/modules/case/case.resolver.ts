@@ -96,7 +96,7 @@ export class CaseResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    this.logger.debug('Creating case')
+    this.logger.debug('Creating a new case')
 
     return this.auditTrailService.audit(
       user.id,
