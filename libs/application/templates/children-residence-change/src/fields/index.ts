@@ -1,5 +1,6 @@
 export { default as ChangeInformation } from './ChangeInformation'
 export { default as Confirmation } from './Confirmation'
+export { default as ContactInfo } from './ContactInfo'
 export { default as Duration } from './Duration'
 export { default as ParentMock } from './MockData/parent'
 export { default as ChildrenMock } from './MockData/children'

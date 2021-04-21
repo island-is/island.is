@@ -11,7 +11,6 @@ import {
 } from '@island.is/application/graphql'
 import {
   childrenResidenceInfo,
-  formatAddress,
   getSelectedChildrenFromExternalData,
   formatDate,
 } from '../../lib/utils'

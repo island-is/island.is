@@ -1,13 +1,26 @@
 import { error } from './messages/index'
 import * as z from 'zod'
 
+const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value: string) => emailRegex.test(value)
+
+const validateOptionalEmail = (value: string) => {
+  return (value && isValidEmail(value)) || value === ''
+}
+
+const validateOptionalPhoneNumber = (value: string) => {
+  return (value && value.length === 7) || value === ''
+}
+
 enum Duration {
   Permanent = 'permanent',
   Temporary = 'temporary',
 }
 
 const parentContactInfo = z.object({
-  email: z.string().email(error.validation.invalidEmail.defaultMessage),
+  email: z.string().refine((v) => isValidEmail(v), {
+    message: error.validation.invalidEmail.defaultMessage,
+  }),
   phoneNumber: z.string().min(7, {
     message: error.validation.invalidPhoneNumber.defaultMessage,
   }),
@@ -27,7 +40,18 @@ export const dataSchema = z.object({
     .min(1, error.validation.selectChild.defaultMessage),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
-  counterParty: parentContactInfo,
+  counterParty: z
+    .object({
+      email: z.string().refine((v) => validateOptionalEmail(v), {
+        message: error.validation.invalidEmail.defaultMessage,
+      }),
+      phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
+        message: error.validation.invalidPhoneNumber.defaultMessage,
+      }),
+    })
+    .refine((v) => v.email || v.phoneNumber, {
+      message: error.validation.counterParty.defaultMessage,
+    }),
   parentB: parentContactInfo,
   approveTerms: terms,
   approveTermsParentB: terms,
