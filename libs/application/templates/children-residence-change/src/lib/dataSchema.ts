@@ -1,6 +1,11 @@
 import { error } from './messages/index'
 import * as z from 'zod'
 
+enum Duration {
+  Permanent = 'permanent',
+  Temporary = 'temporary',
+}
+
 const parentContactInfo = z.object({
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
   phoneNumber: z.string().min(7, {
@@ -19,7 +24,7 @@ export const dataSchema = z.object({
   }),
   selectedChildren: z
     .array(z.string())
-    .min(1, { message: error.validation.selectChild.defaultMessage }),
+    .min(1, error.validation.selectChild.defaultMessage),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
   counterParty: parentContactInfo,
@@ -29,14 +34,15 @@ export const dataSchema = z.object({
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
-  durationType: z
-    .enum(['permanent', 'temporary'])
-    .optional()
-    .refine((v) => v, error.validation.durationType.defaultMessage),
-  durationDate: z
-    .string()
-    .optional()
-    .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
+  selectDuration: z
+    .object({
+      type: z.enum([Duration.Permanent, Duration.Temporary]),
+      date: z.string().optional(),
+    })
+    .refine((v) => (v.type === Duration.Temporary ? v.date : true), {
+      message: error.validation.durationDate.defaultMessage,
+      path: ['date'],
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

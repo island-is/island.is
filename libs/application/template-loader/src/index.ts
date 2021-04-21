@@ -85,3 +85,12 @@ export async function getApplicationStateInformation(
   const helper = new ApplicationTemplateHelper(application, template)
   return helper.getApplicationStateInformation() || null
 }
+
+export async function getApplicationTranslationNamespaces(
+  application: Application,
+): Promise<string[]> {
+  const template = await getApplicationTemplateByTypeId(application.typeId)
+
+  // We load the core namespace for the application system + the ones defined in the application template
+  return ['application.system', ...(template?.translationNamespaces ?? [])]
+}

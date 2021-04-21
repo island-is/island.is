@@ -13,16 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('client-post-logout-redirect-uri')
 @Controller('backend/client-post-logout-redirect-uri')
 export class ClientPostLogoutRedirectUriController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new Grant type to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientPostLogoutRedirectUri })
   async create(
@@ -32,6 +33,7 @@ export class ClientPostLogoutRedirectUriController {
   }
 
   /** Removes a grant type from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:redirectUri')
   @ApiCreatedResponse()
   async delete(

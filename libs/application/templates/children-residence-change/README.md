@@ -4,7 +4,7 @@ This is an application template for children residence change created for the Co
 
 ## Setup
 
-Application System setup: [Setup](https://github.com/island-is/island.is/tree/main/apps/application-system)
+Application System setup: [Setup](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 
@@ -14,31 +14,19 @@ There are additional steps required to run this template locally
 
 Prerequisites
 
-- You have `awscli` installed
-  - `brew install awscli`
-- You have access to the `island-is-development01` AWS account
-  - Contact someone from the [Core team](https://github.com/orgs/island-is/teams/core)
-- You have `jq` installed [JQ](https://stedolan.github.io/jq/)
-  - `brew install jq`
 - You have `kubectl` installed
   - `brew install kubectl`
+- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
-1. Configure AWS
+1. Fetch development secrets for the project
 
-- Run `aws configure`
-- Region should be set to `eu-west-1`
-- Output should be set to `json`
-- Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
+- Run `yarn get-secrets service-portal`
 
-2. Fetch development secrets for the project
-
-- Run `yarn env-secrets service-portal`
-
-3. Get kubeconfig
+2. Get kubeconfig
 
 - Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
 
-4. Socat Þjóðskrá
+3. Socat Þjóðskrá
 
 - Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 - Keep this process running while running the project

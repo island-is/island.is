@@ -23,17 +23,17 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
-import { FullAdminAccessGuard } from './full-admin-access-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('admin-access')
 @Controller('backend/admin-access')
 export class AccessController {
   constructor(private readonly accessService: AccessService) {}
 
   /** Gets admin's access rights by id */
+  @Scopes(Scope.root, Scope.full)
   @Get(':nationalId')
   @ApiOkResponse({ type: AdminAccess })
   async findOne(@Param('nationalId') nationalId: string): Promise<AdminAccess> {
@@ -46,6 +46,7 @@ export class AccessController {
   }
 
   /** Gets x many admins based on pagenumber and count variable */
+  @Scopes(Scope.root, Scope.full)
   @Get()
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -81,16 +82,16 @@ export class AccessController {
   }
 
   /** Creates a new admin */
+  @Scopes(Scope.root, Scope.full)
   @Post()
-  @UseGuards(FullAdminAccessGuard)
   @ApiCreatedResponse({ type: AdminAccess })
   async create(@Body() admin: AdminAccessDTO): Promise<AdminAccess> {
     return await this.accessService.create(admin)
   }
 
   /** Updates an existing admin */
+  @Scopes(Scope.root, Scope.full)
   @Put(':nationalId')
-  @UseGuards(FullAdminAccessGuard)
   @ApiCreatedResponse({ type: AdminAccess })
   async update(
     @Body() admin: AdminAccessUpdateDTO,
@@ -104,8 +105,8 @@ export class AccessController {
   }
 
   /** Deleting an admin by nationalId */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':nationalId')
-  @UseGuards(FullAdminAccessGuard)
   @ApiCreatedResponse()
   async delete(@Param('nationalId') nationalId: string): Promise<number> {
     if (!nationalId) {

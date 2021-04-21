@@ -23,16 +23,17 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('translation')
 @Controller('backend/translation')
 export class TranslationController {
   constructor(private readonly translationService: TranslationService) {}
 
   /** Gets all translations and count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get('translations')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -76,6 +77,7 @@ export class TranslationController {
   }
 
   /** Get's and counts all languages */
+  @Scopes(Scope.root, Scope.full)
   @Get('languages')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -109,6 +111,7 @@ export class TranslationController {
   }
 
   /** Get's and counts all languages */
+  @Scopes(Scope.root, Scope.full)
   @Get('all-languages')
   @ApiOkResponse({ type: [Language] })
   async findAllLanguages(): Promise<Language[] | null> {
@@ -117,6 +120,7 @@ export class TranslationController {
   }
 
   /** Adds a new Language */
+  @Scopes(Scope.root, Scope.full)
   @Post('language')
   @ApiCreatedResponse({ type: Language })
   async createLanguage(
@@ -126,6 +130,7 @@ export class TranslationController {
   }
 
   /** Updates a an existing Language */
+  @Scopes(Scope.root, Scope.full)
   @Put('language')
   @ApiCreatedResponse({ type: Language })
   async updateLanguage(
@@ -135,6 +140,7 @@ export class TranslationController {
   }
 
   /** Deletes a Language */
+  @Scopes(Scope.root, Scope.full)
   @Delete('language/:isoKey')
   @ApiCreatedResponse({ type: Language })
   async deleteLanguage(
@@ -144,6 +150,7 @@ export class TranslationController {
   }
 
   /** Deletes a Language */
+  @Scopes(Scope.root, Scope.full)
   @Get('language/:isoKey')
   @ApiOkResponse({ type: Language })
   async findLanguage(
@@ -153,6 +160,7 @@ export class TranslationController {
   }
 
   /** Adds a new translation */
+  @Scopes(Scope.root, Scope.full)
   @Post('translation')
   @ApiCreatedResponse({ type: Translation })
   async createTranslation(
@@ -162,6 +170,7 @@ export class TranslationController {
   }
 
   /** Gets translation by it's key */
+  @Scopes(Scope.root, Scope.full)
   @Get('translation/:language/:className/:property/:key')
   @ApiOkResponse({ type: Translation })
   async findTranslation(
@@ -179,6 +188,7 @@ export class TranslationController {
   }
 
   /** Updates a translation */
+  @Scopes(Scope.root, Scope.full)
   @Put('translation')
   @ApiCreatedResponse({ type: Translation })
   async updateTranslation(
@@ -188,6 +198,7 @@ export class TranslationController {
   }
 
   /** Delete translation */
+  @Scopes(Scope.root, Scope.full)
   @Delete('translation')
   @ApiCreatedResponse({ type: Translation })
   async deleteTranslation(
