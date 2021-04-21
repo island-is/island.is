@@ -10,7 +10,6 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import * as faker from 'faker'
 
 @ApiTags('endorsement')
 @Controller('endorsement-list/:listId/endorsement')

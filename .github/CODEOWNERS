@@ -16,12 +16,13 @@
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
+/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
+/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
-/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
 
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos

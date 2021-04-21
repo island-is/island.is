@@ -23,6 +23,7 @@ import { DocumentProviderModule } from '@island.is/api/domains/document-provider
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -150,6 +151,9 @@ const autoSchemaFile = environment.production
     }),
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl,
+    })
+    EndorsementSystemModule.register({
+      baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),
   ],
 })

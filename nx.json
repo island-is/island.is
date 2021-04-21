@@ -94,6 +94,9 @@
     "api-domains-education": {
       "tags": []
     },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
