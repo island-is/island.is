@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
-type Events = { type: 'APPROVE' }
+type Events = { type: 'SUBMIT' }
 
 const ExampleSchema = z.object({
   person: z.object({
@@ -63,8 +63,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: {
-            target: 'Approved',
+          SUBMIT: {
+            target: 'approved',
           },
         },
       },
