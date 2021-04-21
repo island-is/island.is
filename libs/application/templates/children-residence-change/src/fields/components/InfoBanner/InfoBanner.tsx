@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
 
-const AlertMessage = ({ children }: { children: React.ReactNode }) => {
+const InfoBanner = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       padding={2}
@@ -20,4 +20,4 @@ const AlertMessage = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export default AlertMessage
+export default InfoBanner
