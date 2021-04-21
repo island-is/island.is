@@ -5,6 +5,7 @@ import React, {
   useMemo,
   forwardRef,
   Fragment,
+  ReactElement,
 } from 'react'
 import {
   Box,
@@ -70,9 +71,8 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
   let i = 0
   let offset = 50
   let lastTimestamp = 0
-  let lastYear = 0
 
-  const items = []
+  const items: ReactElement[] = []
 
   Array.from(eventMap.entries(), ([year, eventsByMonth]) => {
     Array.from(eventsByMonth.entries(), ([month, monthEvents]) => {
@@ -84,7 +84,6 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
           offset={offset}
         />,
       )
-      lastYear = year
       monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()
@@ -129,7 +128,9 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       setPosition(
         Math.min(
           position + 500,
-          frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+          frameRef.current
+            ? frameRef.current.scrollWidth - frameRef.current.offsetWidth
+            : 0,
         ),
       )
     } else {
@@ -138,15 +139,19 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   }
 
   useEffect(() => {
-    frameRef.current.scrollTo({
+    frameRef.current?.scrollTo({
       left: position,
       behavior: 'smooth',
     })
   }, [position])
 
   useEffect(() => {
-    setPosition(frameRef.current.scrollWidth - frameRef.current.offsetWidth)
-    frameRef.current.scrollTo({
+    setPosition(
+      frameRef.current
+        ? frameRef.current.scrollWidth - frameRef.current.offsetWidth
+        : 0,
+    )
+    frameRef.current?.scrollTo({
       left: frameRef.current.scrollWidth - frameRef.current.offsetWidth,
     })
   }, [frameRef])
@@ -165,7 +170,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
 
   const [month, setMonth] = useState(months.length - 1)
 
-  const monthEvents = eventMap.get(months[month].year).get(months[month].month)
+  const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
 
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -202,7 +207,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
             <div
               className={timelineStyles.timelineContainer}
               style={{
-                height: 140 + monthEvents.length * 104,
+                height: 140 + (monthEvents?.length ?? 0) * 104,
               }}
             >
               <ArrowButtonShadow type="prev">
@@ -229,7 +234,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 </Text>
               </div>
               <div className={timelineStyles.mobileContainer}>
-                {monthEvents.map((event) => (
+                {monthEvents?.map((event) => (
                   <TimelineItem
                     event={event}
                     offset={0}
@@ -283,7 +288,21 @@ const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
   )
 }
 
-const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
+interface TimelineItemProps {
+  event: Timeline['events'][0]
+  offset: number
+  index: number
+  detailed: boolean
+  mobile?: boolean
+}
+
+const TimelineItem = ({
+  event,
+  offset,
+  index,
+  detailed,
+  mobile = false,
+}: TimelineItemProps) => {
   const positionStyles = [
     { bottom: 136 },
     { top: 136 },
@@ -299,7 +318,7 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
       }
 
   const [visible, setVisible] = useState(false)
-  const portalRef = useRef()
+  const portalRef = useRef<Element | null>(null)
 
   useEffect(() => {
     portalRef.current = document.querySelector('#__next')
@@ -320,6 +339,7 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
         <div className={timelineStyles.itemText}>{event.title}</div>
       </div>
       {visible &&
+        portalRef.current &&
         ReactDOM.createPortal(
           <ModalBase
             baseId="eventDetails"
@@ -385,7 +405,13 @@ const BulletLine = ({
   )
 }
 
-const MonthItem = ({ month, offset, year = '' }) => {
+interface MonthItemProps {
+  month: string
+  year: string
+  offset: number
+}
+
+const MonthItem = ({ month, offset, year = '' }: MonthItemProps) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
       <Text color="blue600" variant="eyebrow">
