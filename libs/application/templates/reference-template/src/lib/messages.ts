@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  conditionsSection: {
+    id: 'example.application:conditions.section',
+    defaultMessage: 'Skilyrði',
+    description: 'Some description',
+  },
   name: {
     id: 'example.application:name',
     defaultMessage: 'Umsókn um tilvísunar sniðmát',

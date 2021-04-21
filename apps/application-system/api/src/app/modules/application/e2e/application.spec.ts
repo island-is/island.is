@@ -192,6 +192,12 @@ describe('Application system API', () => {
       })
       .expect(200)
 
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const newStateResponse = await server
       .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -220,6 +226,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const response = await server
       .put(`/applications/${creationResponse.body.id}`)
@@ -255,6 +267,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const response = await server
       .put(`/applications/${creationResponse.body.id}`)
@@ -298,6 +316,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const response = await server
       .put(`/applications/${creationResponse.body.id}`)
@@ -408,6 +432,40 @@ describe('Application system API', () => {
     expect(putResponse.body.error).toBe('Bad Request')
   })
 
+  it('GET /users/:nationalId/applications should not return applications that are in an unlisted state', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const getResponse = await server
+      .get('/users/1234561234/applications')
+      .expect(200)
+
+    expect(getResponse.body).toEqual([])
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const updatedGetResponse = await server
+      .get('/users/1234561234/applications')
+      .expect(200)
+
+    expect(updatedGetResponse.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.EXAMPLE,
+        }),
+      ]),
+    )
+  })
+
   it('GET /users/:nationalId/applications should return a list of applications of the user', async () => {
     const creationResponse = await server
       .post('/applications')
@@ -415,6 +473,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.PARENTAL_LEAVE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     await server.put(`/applications/${creationResponse.body.id}`).send({
       answers: {
@@ -435,12 +499,18 @@ describe('Application system API', () => {
   })
 
   it(`GET /users/:nationalId/applications?typeId=ParentalLeave should return the list of applications of the user by typeId`, async () => {
-    await server
+    const creationResponse = await server
       .post('/applications')
       .send({
         typeId: ApplicationTypes.PARENTAL_LEAVE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const getResponse = await server
       .get(
@@ -460,12 +530,18 @@ describe('Application system API', () => {
   })
 
   it('GET /users/:nationalId/applications?typeId=ParentalLeave&status=inprogress should return the list of applications of the user by typeId and status', async () => {
-    await server
+    const creationResponse = await server
       .post('/applications')
       .send({
         typeId: ApplicationTypes.PARENTAL_LEAVE,
       })
       .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const getResponse = await server
       .get(
@@ -607,6 +683,12 @@ describe('Application system API', () => {
       })
       .expect(201)
 
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const answers = {
       person: {
         name: 'Tester',
@@ -667,4 +749,7 @@ describe('Application system API', () => {
       approvedStateResponse.body.externalData.completeApplication.data,
     ).toEqual({ id: 1337 })
   })
+
+  // TODO: Validate that an application that is in a state that should be pruned
+  // is not listed when (mocked) Date.now > application.pruneAt
 })
