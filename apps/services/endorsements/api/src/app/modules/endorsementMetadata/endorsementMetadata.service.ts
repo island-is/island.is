@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { EndorsementMetadata } from './endorsementMetadata.model'
 import {
   NationalRegistryResponse,
   NationalRegistryService,
@@ -16,9 +17,6 @@ type MetadataProviderField = {
 }
 type MetadataProviderService = {
   [providerKey in EndorsementMetaField]: MetadataProvider
-}
-export type EndorsementMetaData = {
-  [key in EndorsementMetaField]?: any
 }
 export interface MetadataProvider {
   metadataKey: string
@@ -95,7 +93,7 @@ export class EndorsementMetadataService {
   mapProviderDataToFields(
     fields: EndorsementMetaField[],
     providerData: MetadataProviderResponse,
-  ): EndorsementMetaData {
+  ): EndorsementMetadata {
     return fields.reduce(
       (metadata, fieldName) => ({
         ...metadata,
@@ -103,14 +101,14 @@ export class EndorsementMetadataService {
           providerData,
         ),
       }),
-      {},
+      {} as EndorsementMetadata,
     )
   }
 
   pruneMetadataFields(
-    allMetadataFields: EndorsementMetaData,
+    allMetadataFields: EndorsementMetadata,
     fieldsToKeep: EndorsementMetaField[],
-  ): EndorsementMetaData {
+  ): EndorsementMetadata {
     // some meta fields are only required for validation and should not be persisted, we remove them here
     return Object.entries(allMetadataFields).reduce(
       (metadata, [metadataKey, metadataValue]) =>
@@ -120,11 +118,11 @@ export class EndorsementMetadataService {
               [metadataKey]: metadataValue,
             }
           : metadata,
-      {},
+      {} as EndorsementMetadata,
     )
   }
 
-  async getMetadata(input: MetadataInput): Promise<EndorsementMetaData> {
+  async getMetadata(input: MetadataInput): Promise<EndorsementMetadata> {
     const requiredProviders = this.findProvidersByRequestedMetadataFields(
       input.fields,
     )

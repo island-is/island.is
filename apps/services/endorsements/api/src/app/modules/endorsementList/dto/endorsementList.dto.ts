@@ -15,7 +15,7 @@ export class EndorsementListDto {
 
   @IsOptional()
   @IsString()
-  description = ''
+  description?: string = ''
 
   @IsOptional()
   @IsArray()

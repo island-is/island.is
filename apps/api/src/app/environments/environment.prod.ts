@@ -81,4 +81,7 @@ export default {
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL,
   },
+  endorsementSystem: {
+    baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
+  },
 }
