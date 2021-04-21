@@ -41,7 +41,7 @@ export class EndorsementList {
   owner!: string
 
   @Field(() => [Endorsement])
-  endorsements!: Endorsement[]
+  endorsements?: Endorsement[]
 
   @Field()
   created!: string
