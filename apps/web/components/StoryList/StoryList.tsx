@@ -13,8 +13,8 @@ export interface StoryProps {
   intro: string
   readMoreText: string
   link?: string
-  linkedPage?: string
-  variant: 'light' | 'dark'
+  linkedPage?: string | null
+  variant?: 'light' | 'dark'
 }
 
 export interface StoryListProps {
@@ -33,7 +33,7 @@ export const StoryList: FC<StoryListProps> = ({
   return (
     <Stack space={8}>
       {stories.map((story, i) => (
-        <Story key={i} variant={variant} {...story} />
+        <Story key={i} {...story} variant={variant} />
       ))}
       {stories.length > 0 ? (
         <div className={styles.margin}>
@@ -65,7 +65,7 @@ const Story: FC<StoryProps> = ({
   readMoreText,
   linkedPage,
   link,
-  variant,
+  variant = 'light',
 }) => {
   return (
     <div className={styles.margin}>
@@ -88,7 +88,7 @@ const Story: FC<StoryProps> = ({
         </Text>
         <Text color={variant === 'light' ? 'white' : 'dark400'}>{intro}</Text>
         {!!(linkedPage || link) && (
-          <ContentLink pageData={linkedPage} fallbackLink={link}>
+          <ContentLink pageData={linkedPage ?? ''} fallbackLink={link}>
             <Button
               variant="text"
               colorScheme={variant === 'light' ? 'negative' : 'default'}
