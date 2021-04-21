@@ -7,6 +7,7 @@ import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { SigningModule } from '@island.is/dokobit-signing'
+import { AuditModule } from '@island.is/nest/audit'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
@@ -19,7 +20,7 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
-import { AuditModule } from '@island.is/nest/audit'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -63,6 +64,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as ApplicationConfig,
     },
     AwsService,
+    ApplicationAccessService,
   ],
 })
 export class ApplicationModule {}

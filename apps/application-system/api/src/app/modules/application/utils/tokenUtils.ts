@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
-import decode from 'jwt-decode'
-import { ExecutionContext } from '@nestjs/common'
+
 import { environment } from '../../../../environments'
 
 export function verifyToken<T>(token: string): T | null {
@@ -9,6 +8,7 @@ export function verifyToken<T>(token: string): T | null {
       token,
       environment.templateApi.jwtSecret,
     ) as unknown) as T
+
     return decoded
   } catch (e) {
     return null

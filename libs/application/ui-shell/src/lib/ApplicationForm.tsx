@@ -48,10 +48,6 @@ const ApplicationLoader: FC<{
   })
   const application = data?.applicationApplication
 
-  if (!applicationId || error) {
-    return <NotFound />
-  }
-
   if (loading) {
     return (
       <Box
@@ -64,6 +60,10 @@ const ApplicationLoader: FC<{
         <LoadingIcon animate size={50} />
       </Box>
     )
+  }
+
+  if (!applicationId || error) {
+    return <NotFound />
   }
 
   return (

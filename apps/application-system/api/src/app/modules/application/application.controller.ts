@@ -55,7 +55,6 @@ import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/api/domains/translations'
 import { Audit } from '@island.is/nest/audit'
 
-import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -70,7 +69,6 @@ import {
   buildDataProviders,
   buildExternalData,
 } from './utils/externalDataUtils'
-import { ApplicationByIdPipe } from './tools/applicationById.pipe'
 import {
   validateApplicationSchema,
   validateIncomingAnswers,
@@ -93,7 +91,9 @@ import {
   StateChangeResult,
   TemplateAPIModuleActionResult,
 } from './types'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
+import { Application } from './application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -111,6 +111,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
+    private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
   ) {}
@@ -124,18 +125,16 @@ export class ApplicationController {
   })
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationService.findOneById(id)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
 
-    if (!application) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
+    await validateThatApplicationIsReady(existingApplication as BaseApplication)
 
-    await validateThatApplicationIsReady(application as BaseApplication)
-
-    return application
+    return existingApplication
   }
 
   @Scopes(ApplicationIdentityServerScope.read)
@@ -303,8 +302,10 @@ export class ApplicationController {
       decodedToken.applicationId,
     )
 
-    if (existingApplication === null) {
-      throw new NotFoundException('No application found')
+    if (!existingApplication) {
+      throw new NotFoundException(
+        `An application with the id ${decodedToken.applicationId} does not exist`,
+      )
     }
 
     if (existingApplication.state !== decodedToken.state) {
@@ -372,13 +373,15 @@ export class ApplicationController {
     resources: (app) => app.id,
   })
   async update(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    existingApplication: Application,
-    @Body()
-    application: UpdateApplicationDto,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() application: UpdateApplicationDto,
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )
@@ -394,7 +397,7 @@ export class ApplicationController {
     )
 
     await validateApplicationSchema(
-      existingApplication as BaseApplication,
+      existingApplication,
       newAnswers,
       intl.formatMessage,
     )
@@ -423,20 +426,24 @@ export class ApplicationController {
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async updateExternalData(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    existingApplication: Application,
-    @Body()
-    externalDataDto: PopulateExternalDataDto,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() externalDataDto: PopulateExternalDataDto,
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
       user.nationalId,
     )
+
     const templateDataProviders = await getApplicationDataProviders(
-      (existingApplication as BaseApplication).typeId,
+      existingApplication.typeId,
     )
 
     const results = await callDataProviders(
@@ -448,6 +455,7 @@ export class ApplicationController {
       ),
       existingApplication as BaseApplication,
     )
+
     const {
       updatedApplication,
     } = await this.applicationService.updateExternalData(
@@ -455,6 +463,7 @@ export class ApplicationController {
       existingApplication.externalData as ExternalData,
       buildExternalData(externalDataDto, results),
     )
+
     if (!updatedApplication) {
       throw new NotFoundException(
         `An application with the id ${existingApplication.id} does not exist`,
@@ -476,12 +485,15 @@ export class ApplicationController {
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async submitApplication(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    existingApplication: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
@@ -734,10 +746,14 @@ export class ApplicationController {
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async addAttachment(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    existingApplication: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: AddAttachmentDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
     const { key, url } = input
 
     const { updatedApplication } = await this.applicationService.update(
@@ -752,6 +768,7 @@ export class ApplicationController {
 
     await this.uploadQueue.add('upload', {
       applicationId: existingApplication.id,
+      nationalId: user.nationalId,
       attachmentUrl: url,
     })
 
@@ -770,10 +787,14 @@ export class ApplicationController {
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async deleteAttachment(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    existingApplication: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: DeleteAttachmentDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
     const { key } = input
 
     const { updatedApplication } = await this.applicationService.update(
@@ -797,11 +818,18 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: PresignedUrlResponseDto })
   async createPdf(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    application: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: CreatePdfDto,
+    @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const url = await this.fileService.createPdf(application, input.type)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+    const url = await this.fileService.createPdf(
+      existingApplication,
+      input.type,
+    )
 
     return { url }
   }
@@ -818,14 +846,21 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: RequestFileSignatureResponseDto })
   async requestFileSignature(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    application: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: RequestFileSignatureDto,
+    @CurrentUser() user: User,
   ): Promise<RequestFileSignatureResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
     const {
       controlCode,
       documentToken,
-    } = await this.fileService.requestFileSignature(application, input.type)
+    } = await this.fileService.requestFileSignature(
+      existingApplication,
+      input.type,
+    )
 
     return { controlCode, documentToken }
   }
@@ -841,12 +876,17 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: UploadSignedFileResponseDto })
   async uploadSignedFile(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    application: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: UploadSignedFileDto,
+    @CurrentUser() user: User,
   ): Promise<UploadSignedFileResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+
     await this.fileService.uploadSignedFile(
-      application,
+      existingApplication,
       input.documentToken,
       input.type,
     )
@@ -867,11 +907,18 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: PresignedUrlResponseDto })
   async getPresignedUrl(
-    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
-    application: Application,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Param('pdfType') type: PdfTypes,
+    @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const url = await this.fileService.getPresignedUrl(application, type)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+    const url = await this.fileService.getPresignedUrl(
+      existingApplication,
+      type,
+    )
 
     return { url }
   }

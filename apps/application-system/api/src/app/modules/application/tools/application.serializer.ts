@@ -39,13 +39,16 @@ export class ApplicationSerializer
     return next.handle().pipe(
       map(async (res: Application | Array<Application>) => {
         const isArray = Array.isArray(res)
-        return isArray
-          ? Promise.all(
-              (res as Application[]).map((item) =>
-                this.serialize(item, user.nationalId, locale),
-              ),
-            )
-          : this.serialize(res as Application, user.nationalId, locale)
+
+        if (isArray) {
+          return Promise.all(
+            (res as Application[]).map((item) =>
+              this.serialize(item, user.nationalId, locale),
+            ),
+          )
+        }
+
+        return this.serialize(res as Application, user.nationalId, locale)
       }),
     )
   }
