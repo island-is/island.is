@@ -105,14 +105,14 @@ export class AuditTrailService {
 
   private writeToTrail(
     userId: string,
-    action: AuditedAction,
+    actionType: AuditedAction,
     ids: string | string[],
   ) {
     if (!this.trail) {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail?.info(this.formatMessage(userId, action, ids))
+    this.trail?.info(this.formatMessage(userId, actionType, ids))
   }
 
   async audit<R>(
