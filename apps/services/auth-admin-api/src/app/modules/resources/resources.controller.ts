@@ -111,7 +111,7 @@ export class ResourcesController {
     return apiScopes
   }
 
-  /** Finds all access allowed scopes */
+  /** Finds all access controlled scopes */
   @Scopes(Scope.root, Scope.full)
   @Get('access-controlled-scopes')
   @ApiOkResponse({ type: [ApiScope] })
