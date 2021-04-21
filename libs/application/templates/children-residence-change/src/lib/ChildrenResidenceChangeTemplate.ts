@@ -94,6 +94,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -118,6 +119,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
                 ),
+              read: 'all',
             },
           ],
         },
