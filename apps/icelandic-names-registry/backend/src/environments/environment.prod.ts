@@ -5,6 +5,5 @@ export default {
     audience: '',
     jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
-  allowedNationalIds:
-    process.env.ICELANDIC_NAMES_REGISTRY_ALLOWED_NATIONAL_IDS ?? '',
+  allowedNationalIds: process.env.ALLOWED_NATIONAL_IDS ?? '',
 }
