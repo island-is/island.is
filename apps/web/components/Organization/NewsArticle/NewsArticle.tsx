@@ -10,19 +10,17 @@ import {
 import { Main, SidebarBox, Sticky } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-import {
-  GetNamespaceQuery,
-  GetSingleNewsItemQuery,
-} from '../../../graphql/schema'
+import { GetNamespaceQuery, News } from '../../../graphql/schema'
 import {
   richText,
   Slice as SliceType,
   Image,
 } from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
+import { NamespaceType } from '@island.is/web/context'
 
 interface NewsArticleProps {
-  newsItem: GetSingleNewsItemQuery['getSingleNews']
+  newsItem: News
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -31,7 +29,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({
   namespace,
 }) => {
   const { format } = useDateUtils()
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as NamespaceType)
 
   return (
     <Box paddingBottom={[0, 0, 4]}>
@@ -44,7 +42,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}
       </Text>
-      {Boolean(newsItem.image) && (
+      {!!newsItem.image && (
         <Box paddingY={2}>
           <Image
             {...newsItem.image}
