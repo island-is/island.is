@@ -44,7 +44,11 @@ export const GET_FRONTPAGE_QUERY = gql`
         title
         content
         link
-        animationJson
+        animationJsonAsset {
+          id
+          typename
+          url
+        }
       }
       namespace {
         fields

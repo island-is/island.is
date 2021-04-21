@@ -84,6 +84,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                         <Input
                           name="name"
                           label={labelName}
+                          placeholder={labelName}
                           required
                           errorMessage={errors.name?.message}
                           ref={register({
@@ -112,6 +113,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                     <Input
                       name="email"
                       label={labelEmail}
+                      placeholder={labelEmail}
                       required
                       errorMessage={errors.email?.message}
                       ref={register({
@@ -125,12 +127,14 @@ export const ContactUs: FC<ContactUsProps> = ({
                     <Input
                       name="subject"
                       label={labelSubject}
+                      placeholder={labelSubject}
                       errorMessage={errors.subject?.message}
                       ref={register({})}
                     />
                     <Input
                       name="message"
                       label={labelMessage}
+                      placeholder={labelMessage}
                       required
                       errorMessage={errors.message?.message}
                       textarea

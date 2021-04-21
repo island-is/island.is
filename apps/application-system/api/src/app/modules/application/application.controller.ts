@@ -37,7 +37,7 @@ import {
   ApplicationStatus,
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
-import { Unwrap } from '@island.is/shared/types'
+import { Unwrap, Locale } from '@island.is/shared/types'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -48,15 +48,17 @@ import {
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
+  getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
+import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
+import { IntlService } from '@island.is/api/domains/translations'
 
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
@@ -88,12 +90,17 @@ import {
   TemplateAPIModuleActionResult,
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
+import { CurrentLocale } from './utils/currentLocale'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
   description: 'Bearer token authorization',
+})
+@ApiHeader({
+  name: 'locale',
+  description: 'Front-end language selected',
 })
 @Controller()
 export class ApplicationController {
@@ -103,6 +110,7 @@ export class ApplicationController {
     private readonly fileService: FileService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
+    private intlService: IntlService,
   ) {}
 
   @Scopes(ApplicationIdentityServerScope.read)
@@ -196,7 +204,6 @@ export class ApplicationController {
     @CurrentRestUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
-
     const template = await getApplicationTemplateByTypeId(typeId)
 
     if (template === null) {
@@ -331,21 +338,31 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() application: UpdateApplicationDto,
     @CurrentRestUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user.nationalId,
     )
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
     const newAnswers = application.answers as FormValue
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
       true,
+      intl.formatMessage,
     )
 
-    await validateApplicationSchema(existingApplication, newAnswers)
+    await validateApplicationSchema(
+      existingApplication,
+      newAnswers,
+      intl.formatMessage,
+    )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
@@ -374,6 +391,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() externalDataDto: PopulateExternalDataDto,
     @CurrentRestUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -395,6 +413,7 @@ export class ApplicationController {
         externalDataDto,
         templateDataProviders,
         user.authorization ?? '',
+        locale,
       ),
       existingApplication as BaseApplication,
     )
@@ -431,6 +450,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @CurrentRestUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -447,18 +467,25 @@ export class ApplicationController {
     }
 
     const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
       false,
+      intl.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
+      intl.formatMessage,
     )
+
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       permittedAnswers,

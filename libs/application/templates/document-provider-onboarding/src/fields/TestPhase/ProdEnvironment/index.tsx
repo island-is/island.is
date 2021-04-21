@@ -24,7 +24,7 @@ export const createProviderMutation = gql`
 `
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
 
   interface Key {
     name: string
@@ -91,6 +91,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
             ...application.answers,
           },
         },
+        locale,
       },
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers
