@@ -23,7 +23,7 @@ import {
   GrantTypeDTO,
 } from '@island.is/auth-api-lib'
 import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
-import { ADMIN_ROOT_SCOPE } from '../access/scope.constants'
+import { Scope } from '../access/scope.constants'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
@@ -32,7 +32,7 @@ export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 
   /** Gets all Grant Types */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Get()
   @ApiOkResponse({ type: [GrantType] })
   async findAll(): Promise<GrantType[] | null> {
@@ -41,7 +41,7 @@ export class GrantTypeController {
   }
 
   /** Gets all grant types and count of rows */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Get('search')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -79,7 +79,7 @@ export class GrantTypeController {
   }
 
   /** Gets a grant type by name */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Get('type/:name')
   @ApiOkResponse({ type: GrantType })
   async getGrantType(@Param('name') name: string): Promise<GrantType | null> {
@@ -97,7 +97,7 @@ export class GrantTypeController {
   }
 
   /** Creates a new grant type */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiOkResponse({ type: GrantType })
   async createGrantType(
@@ -111,7 +111,7 @@ export class GrantTypeController {
   }
 
   /** Updates an existing grantType */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Put(':name')
   @ApiOkResponse({ type: GrantType })
   async updateGrantType(
@@ -129,7 +129,7 @@ export class GrantTypeController {
   }
 
   /** Soft deletes a grant type */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(Scope.root, Scope.full)
   @Delete(':name')
   @ApiOkResponse({ type: Number })
   async deleteGrantType(@Param('name') name: string): Promise<number | null> {

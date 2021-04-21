@@ -452,15 +452,26 @@ export function buildSubmitField(data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
+  refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField {
-  const { id, placement = 'footer', title, actions } = data
+  const {
+    id,
+    placement = 'footer',
+    title,
+    actions,
+    refetchApplicationAfterSubmit,
+  } = data
   return {
     children: undefined,
     id,
     title,
     actions,
     placement,
+    refetchApplicationAfterSubmit:
+      typeof refetchApplicationAfterSubmit !== 'undefined'
+        ? refetchApplicationAfterSubmit
+        : false,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }

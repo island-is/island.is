@@ -23,6 +23,11 @@ export const ExampleForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'conditions',
+      title: m.conditionsSection,
+      children: [],
+    }),
+    buildSection({
       id: 'intro',
       title: m.introSection,
       children: [

@@ -13,16 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('cors')
 @Controller('backend/cors')
 export class CorsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new Cors address */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientAllowedCorsOrigin })
   async create(
@@ -32,6 +33,7 @@ export class CorsController {
   }
 
   /** Removes an cors origin from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:origin')
   @ApiCreatedResponse()
   async delete(
