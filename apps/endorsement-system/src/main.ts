@@ -6,4 +6,5 @@ bootstrap({
   appModule: AppModule,
   name: 'endorsement-system',
   openApi,
+  port: 4246,
 })

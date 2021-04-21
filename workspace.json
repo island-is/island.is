@@ -970,6 +970,43 @@
         }
       }
     },
+    "api-domains-endorsement-system": {
+      "root": "libs/api/domains/endorsement-system",
+      "sourceRoot": "libs/api/domains/endorsement-system/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/endorsement-system/tsconfig.lib.json",
+              "libs/api/domains/endorsement-system/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/endorsement-system/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/endorsement-system/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/endorsement-system"]
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/endorsement-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -2964,7 +3001,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/endorsement-system/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
+            "commands": [
+              "yarn build endorsement-system",
+              "yarn ts-node -P apps/endorsement-system/tsconfig.app.json dist/apps/endorsement-system/buildOpenApi.js"
+            ],
+            "parallel": false
           }
         },
         "migrate": {
