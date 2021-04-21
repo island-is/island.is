@@ -32,18 +32,12 @@ export const dataSchema = z.object({
   parentA: parentContactInfo,
   counterParty: z
     .object({
-      email: z
-        .string()
-        .refine((v) => (v && isValidEmail(v)) || v === '', {
-          message: error.validation.invalidEmail.defaultMessage,
-        })
-        .optional(),
-      phoneNumber: z
-        .string()
-        .refine((v) => (v && v.length === 7) || v === '', {
-          message: error.validation.invalidPhoneNumber.defaultMessage,
-        })
-        .optional(),
+      email: z.string().refine((v) => (v && isValidEmail(v)) || v === '', {
+        message: error.validation.invalidEmail.defaultMessage,
+      }),
+      phoneNumber: z.string().refine((v) => (v && v.length === 7) || v === '', {
+        message: error.validation.invalidPhoneNumber.defaultMessage,
+      }),
     })
     .refine((v) => v.email || v.phoneNumber, {
       message: error.validation.counterParty.defaultMessage,

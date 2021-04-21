@@ -35,7 +35,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const { clearErrors } = useFormContext()
   const emailError = errors?.parentA?.email
   const phoneNumberError = errors?.parentA?.phoneNumber
-  const counterPartyError = errors?.counterParty as string
+  const counterPartyError = (errors?.counterParty as unknown) as string
   const isCounterPartyError = typeof counterPartyError === 'string'
   const counterPartyEmailError = errors?.counterParty?.email
   const counterPartyPhoneError = errors?.counterParty?.phoneNumber
@@ -102,7 +102,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               error={
                 isCounterPartyError ? counterPartyError : counterPartyEmailError
               }
-              defaultValue={answers?.counterParty?.email}
+              defaultValue={answers?.counterParty?.email || ''}
               onChange={() => {
                 clearErrors([counterPartyEmail, 'counterParty'])
               }}
@@ -120,7 +120,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               onChange={() => {
                 clearErrors([counterPartyPhoneNumber, 'counterParty'])
               }}
-              defaultValue={answers?.counterParty?.phoneNumber}
+              defaultValue={answers?.counterParty?.phoneNumber || ''}
             />
           </GridColumn>
         </GridRow>
