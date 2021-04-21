@@ -18,6 +18,7 @@ import {
   GridRow,
   ToastContainer,
   toast,
+  Stack,
 } from '@island.is/island-ui/core'
 
 import {
@@ -178,59 +179,45 @@ const Editor: FC = () => {
 
   return (
     <Box marginY={3}>
-      <GridContainer className={styles.gridContainer}>
-        <GridRow>
-          <GridColumn span={['12/12', '8/12']}>
-            <Input
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (searchQuery.length > 1) {
-                    doSearch()
-                  }
-                }
-              }}
-              name="q"
-              ref={inputRef}
-              label="Nafn"
-              placeholder="Leitaðu að nafni eða hluta af nafni"
-              size="md"
-              onChange={(e) => {
-                setNothingFound(false)
-                setSearchQuery(e.target.value)
-              }}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '4/12']}>
-            <Button
-              variant="ghost"
-              icon="add"
-              size="large"
-              fluid
-              onClick={onAddNewName}
-            >
-              Bæta við nafni
-            </Button>
-          </GridColumn>
-        </GridRow>
+      <Stack space={3}>
+        <Input
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (searchQuery.length > 1) {
+                doSearch()
+              }
+            }
+          }}
+          name="q"
+          ref={inputRef}
+          label="Nafnaleit"
+          placeholder="Leitaðu að nafni eða hluta af nafni"
+          size="md"
+          onChange={(e) => {
+            setNothingFound(false)
+            setSearchQuery(e.target.value)
+          }}
+        />
+        <Button variant="ghost" icon="add" size="small" onClick={onAddNewName}>
+          Bæta við nafni
+        </Button>
         {tableData !== null && (
-          <GridRow>
-            <GridColumn span={'12/12'} paddingTop={3}>
-              {nothingFound ? (
-                <Text variant="intro">{`Ekkert fannst með leitarstrengnum „${searchQuery}“.`}</Text>
-              ) : (
-                !!tableData.length && (
-                  <TableList
-                    names={tableData}
-                    loading={loading}
-                    setCurrentName={setCurrentName}
-                    setNameToDelete={setNameToDelete}
-                  />
-                )
-              )}
-            </GridColumn>
-          </GridRow>
+          <>
+            {nothingFound ? (
+              <Text variant="intro">{`Ekkert fannst með leitarstrengnum „${searchQuery}“.`}</Text>
+            ) : (
+              !!tableData.length && (
+                <TableList
+                  names={tableData}
+                  loading={loading}
+                  setCurrentName={setCurrentName}
+                  setNameToDelete={setNameToDelete}
+                />
+              )
+            )}
+          </>
         )}
-      </GridContainer>
+      </Stack>
       <ToastContainer closeButton={true} useKeyframeStyles={false} />
       <ModalBase
         baseId="icelandicNameDialog"
