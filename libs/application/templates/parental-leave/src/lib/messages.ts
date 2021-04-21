@@ -1247,7 +1247,7 @@ export const errorMessages = defineMessages({
   periodsPeriodRange: {
     id: 'pl.application:answerValidators.periodsPeriodRange',
     defaultMessage:
-      'Þú getur ekki sótt um í meira en {{usageMaxMonths}} mánuði frá fæðingardegi.',
+      'Þú getur ekki sótt um í meira en {usageMaxMonths} mánuði frá fæðingardegi.',
     description: 'Copy for invalid period',
   },
   employerEmail: {
@@ -1280,7 +1280,7 @@ export const errorMessages = defineMessages({
   periodsEndDate: {
     id: 'pl.application:answerValidators.periodsEndDate',
     defaultMessage:
-      'Lokadagur má ekki vera minni en {{minPeriodDays}} dagar frá fæðingardegi.',
+      'Lokadagur má ekki vera minni en {minPeriodDays} dagar frá fæðingardegi.',
     description: 'Copy when end date is invalid',
   },
   periodsEndDateBeforeStartDate: {
@@ -1290,7 +1290,7 @@ export const errorMessages = defineMessages({
   },
   periodsEndDateMinimumPeriod: {
     id: 'pl.application:answerValidators.periodsEndDateMinimumPeriod',
-    defaultMessage: 'Þú getur ekki sótt um skemur en {{minPeriodDays}} daga.',
+    defaultMessage: 'Þú getur ekki sótt um skemur en {minPeriodDays} daga.',
     description: 'Copy when period is less than minimum required',
   },
   periodsEndDateOverlapsPeriod: {
@@ -1302,7 +1302,7 @@ export const errorMessages = defineMessages({
   periodsRatio: {
     id: 'pl.application:answerValidators.periodsRatio',
     defaultMessage:
-      'Lágmarkið er {{minPeriodDays}} dagar í orlofi, þú hefur valið {{diff}} daga á {{ratio}}% sem endar sem aðeins {{diffWithRatio}} daga leyfi.',
+      'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
   },
 })
