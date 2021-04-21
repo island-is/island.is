@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Box, Text, BulletList, Bullet } from '@island.is/island-ui/core'
+import { Box, Text, BulletList, Bullet, Link } from '@island.is/island-ui/core'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
   return (
@@ -31,6 +31,15 @@ const textOverride = {
   },
 }
 
+const anchorOverride = {
+  component: Link,
+  props: {
+    color: 'blue600',
+    underline: 'normal',
+    underlineVisibility: 'always',
+  },
+}
+
 const DescriptionText = ({ text, format }: Props) => {
   const { formatMessage } = useIntl()
   const markdown = formatMessage(text, format)
@@ -49,6 +58,7 @@ const DescriptionText = ({ text, format }: Props) => {
           h2: headingOverride,
           h3: headingOverride,
           h4: headingOverride,
+          a: anchorOverride,
           ul: {
             component: BulletListBox,
           },

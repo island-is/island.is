@@ -12,12 +12,13 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 
+import { YES, API_MODULE_ACTIONS } from '../constants'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { YES, API_MODULE_ACTIONS } from '../constants'
-
+import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
@@ -71,7 +72,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
-  name: 'Umsókn um fæðingarorlof',
+  name: parentalLeaveFormMessages.shared.name,
+  translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -79,6 +81,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
+          title: statesMessages.stateDraftTitle,
+          description: statesMessages.stateDraftDescription,
           progress: 0.25,
           roles: [
             {

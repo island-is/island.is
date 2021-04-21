@@ -4,7 +4,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
 import { Query, Mutation, License } from '@island.is/api/schema'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
 import { EducationCard, EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 
@@ -30,10 +30,11 @@ const FetchEducationSignedLicenseUrlMutation = gql`
 `
 
 const LicenseCards = () => {
-  const { data } = useQuery<Query>(EducationLicenseQuery)
-  const [fetchEducationSignedLicenseUrl, { loading }] = useMutation<Mutation>(
-    FetchEducationSignedLicenseUrlMutation,
-  )
+  const { data, loading: queryLoading } = useQuery<Query>(EducationLicenseQuery)
+  const [
+    fetchEducationSignedLicenseUrl,
+    { loading: mutationLoading },
+  ] = useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
 
   const { educationLicense = [] } = data || {}
   const anchorRef = useRef<HTMLAnchorElement>(null)
@@ -58,6 +59,10 @@ const LicenseCards = () => {
       .catch((err) => console.error(err))
   }
 
+  if (queryLoading) {
+    return <SkeletonLoader width="100%" height={158} />
+  }
+
   return (
     <>
       {educationLicense.map((license, index) => (
@@ -75,13 +80,15 @@ const LicenseCards = () => {
             CTA={
               <Button
                 variant="text"
-                icon={loading ? undefined : 'download'}
+                icon={mutationLoading ? undefined : 'download'}
                 iconType="outline"
                 nowrap
                 onClick={() => handleDownload(license)}
-                disabled={loading}
+                disabled={mutationLoading}
               >
-                {loading ? 'Innsiglun skjals í vinnslu…' : 'Sækja skjal'}
+                {mutationLoading
+                  ? 'Innsiglun skjals í vinnslu…'
+                  : 'Sækja skjal'}
               </Button>
             }
           />
