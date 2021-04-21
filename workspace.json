@@ -6641,6 +6641,77 @@
         "docker-express": {}
       }
     },
+    "financial-aid-api": {
+      "root": "apps/financial-aid/api",
+      "sourceRoot": "apps/financial-aid/api/src",
+      "projectType": "application",
+      "prefix": "financial-aid-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/api",
+            "main": "apps/financial-aid/api/src/main.ts",
+            "tsConfig": "apps/financial-aid/api/tsconfig.app.json",
+            "assets": [],
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/api/src/environments/environment.ts",
+                  "with": "apps/financial-aid/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/api/tsconfig.app.json",
+              "apps/financial-aid/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/financial-aid/api/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/api/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/api"]
+        },
+        "schemas/build-graphql-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/financial-aid/api/tsconfig.json scripts/build-graphql-schema.ts apps/financial-aid/api/src/app/app.module"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config apps/financial-aid/codegen.yml"
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "financial-aid-types": {
       "root": "libs/financial-aid/types",
       "sourceRoot": "libs/financial-aid/types/src",
