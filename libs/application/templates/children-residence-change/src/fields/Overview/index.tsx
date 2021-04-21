@@ -201,11 +201,12 @@ const Overview = ({
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.childBenefit.label)}
         </Text>
-        <Text>
-          {formatMessage(m.contract.childBenefit.text, {
-            otherParent: childResidenceInfo.future.parentName,
-          })}
-        </Text>
+        <DescriptionText
+          text={m.contract.childBenefit.text}
+          format={{
+            currentResidenceParentName: childResidenceInfo.current.parentName,
+          }}
+        />
       </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
