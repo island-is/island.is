@@ -13,9 +13,9 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
-  const subject = 'Afrit af samning'
+  const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
-        Í viðhengi er afrit af undirrituðum samning um breytt lögheimili barns.
+        Í viðhengi er afrit af samningi, um breytt lögheimili barna, sem þú undirritaðir.
 
         Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
 

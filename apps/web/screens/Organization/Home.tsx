@@ -27,6 +27,7 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   LatestNewsSection,
+  lightThemes,
   OrganizationSlice,
   OrganizationWrapper,
   Section,
@@ -78,6 +79,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       pageDescription={organizationPage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
+      fullWidthContent={true}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -93,10 +95,15 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         items: navList,
       }}
       mainContent={organizationPage.slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          fullWidth={true}
+        />
       ))}
       sidebarContent={organizationPage.sidebarCards.map((card) => (
-        <SidebarCard sidebarCard={card} />
+        <SidebarCard key={card.id} sidebarCard={card} />
       ))}
     >
       <Section
@@ -170,15 +177,15 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization not found')
   }
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     news,
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(Home, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(Home)

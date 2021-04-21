@@ -49,6 +49,7 @@ export const CreateCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
@@ -56,7 +57,6 @@ export const CreateCaseMutation = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -77,6 +77,8 @@ export const CreateCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -112,12 +114,12 @@ export const CasesQuery = gql`
       policeCaseNumber
       accusedNationalId
       accusedName
-      isCourtDateInThePast
       custodyEndDate
       decision
       isCustodyEndDateInThePast
       courtCaseNumber
       rulingDate
+      courtEndTime
       parentCase {
         id
       }
@@ -155,6 +157,7 @@ export const ExtendCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
@@ -162,7 +165,6 @@ export const ExtendCaseMutation = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -183,6 +185,8 @@ export const ExtendCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title

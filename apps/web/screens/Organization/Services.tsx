@@ -33,7 +33,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -108,7 +108,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const matches = services.filter(
     (x) =>
-      x.title.toLowerCase().includes(parameters.query) &&
+      x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
@@ -124,6 +124,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
+      stickySidebar={false}
       sidebarContent={
         <Box marginTop={[3, 3, 8]}>
           <Filter
@@ -288,6 +289,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           organization: query.slug as string,
           lang: locale as ContentLanguage,
           sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
+          size: 500,
         },
       },
     }),
@@ -333,6 +335,8 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -341,10 +345,8 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(ServicesPage, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(ServicesPage)

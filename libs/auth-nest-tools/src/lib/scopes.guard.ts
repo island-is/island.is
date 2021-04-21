@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
-import { getRequest } from "./getRequest";
+import { getRequest } from './getRequest'
 
 @Injectable()
 export class ScopesGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class ScopesGuard implements CanActivate {
     const authScopes = this.getScopes(context)
 
     const hasPermission = () =>
-      allowedScopes.every((scope) => authScopes.includes(scope))
+      allowedScopes.some((scope) => authScopes.includes(scope))
 
     return hasPermission()
   }

@@ -1,7 +1,8 @@
 import { Application } from '../types/Application'
+import { StaticText } from '../types/Form'
 
 export type AnswerValidationError =
-  | { message: string; path: string }
+  | { message: StaticText; path: string }
   | undefined
 
 export type AnswerValidator = (

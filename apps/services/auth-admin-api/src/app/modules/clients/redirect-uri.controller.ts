@@ -13,16 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsUserGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('redirect-uri')
 @Controller('backend/redirect-uri')
 export class RedirectUriController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new redirect uri to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientRedirectUri })
   async create(
@@ -32,6 +33,7 @@ export class RedirectUriController {
   }
 
   /** Removes an redirect uri for client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:redirectUri')
   @ApiCreatedResponse()
   async delete(

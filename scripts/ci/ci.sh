@@ -26,3 +26,4 @@ $PROJECT_ROOT/scripts/ci/90_docker-express.sh
 # Alternatively build different type of containers
 # $PROJECT_ROOT/scripts/ci/90_docker-next.sh
 # $PROJECT_ROOT/scripts/ci/90_docker-static.sh
+# $PROJECT_ROOT/scripts/ci/90_docker-cypress.sh

@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
-import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
+import { Box, Text, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
@@ -11,13 +11,12 @@ import {
 } from '@island.is/application/graphql'
 import {
   childrenResidenceInfo,
-  formatAddress,
   getSelectedChildrenFromExternalData,
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
-import { DescriptionText } from '../components'
+import { ApplicationStates, Roles } from '../../lib/constants'
+import { DescriptionText, TransferOverview } from '../components'
 import {
   fileSignatureReducer,
   initialFileSignatureState,
@@ -26,6 +25,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
+import * as style from './Overview.treat'
 
 const Overview = ({
   application,
@@ -105,13 +105,12 @@ const Overview = ({
         .then((response) => {
           return response.data?.requestFileSignature?.documentToken
         })
-        .catch((error) => {
+        .catch((error: ApolloError) => {
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: '500',
+            error: error.graphQLErrors[0].extensions?.code ?? 500,
           })
-          throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
       if (documentToken) {
         dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
@@ -127,13 +126,12 @@ const Overview = ({
           .then(() => {
             return true
           })
-          .catch((error) => {
+          .catch((error: ApolloError) => {
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: '500',
+              error: error.graphQLErrors[0].extensions?.code ?? 500,
             })
-            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
 
         if (success) {
@@ -147,10 +145,11 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   // TODO: Look into if we want to do this in a different way - using the application state seems wrong
-  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+  const parentKey =
+    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
-    <>
+    <Box className={style.container}>
       <SignatureModal
         controlCode={controlCode}
         onClose={() =>
@@ -158,45 +157,26 @@ const Overview = ({
             type: FileSignatureActionTypes.RESET,
           })
         }
-        modalOpen={fileSignatureState.modalOpen}
-        signatureStatus={fileSignatureState.status}
+        fileSignatureState={fileSignatureState}
       />
-      <AlertMessage
-        type="info"
-        title={formatMessage(m.contract.alert.title)}
-        message={formatMessage(m.contract.alert.message)}
-      />
-      <Box marginTop={5}>
+      <Box>
         <DescriptionText
           text={m.contract.general.description}
           format={{
             otherParent:
-              application.state === 'draft'
+              parentKey === Roles.ParentA
                 ? parentB.fullName
                 : applicant.fullName,
           }}
         />
       </Box>
-      <Box marginTop={5}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.childName, {
-            count: children.length,
-          })}
-        </Text>
-        {children.map((child) => (
-          <Text key={child.nationalId}>{child.fullName}</Text>
-        ))}
-      </Box>
+      <TransferOverview application={application} />
       <Box marginTop={4}>
-        <Text variant="h4" marginBottom={2}>
+        <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.contactInformation)}
         </Text>
-        <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
-        <Text fontWeight="medium" marginBottom={2}>
-          {answers[contactInfoKey]?.email}
-        </Text>
-        <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[contactInfoKey]?.phoneNumber}</Text>
+        <Text>{answers[parentKey]?.email}</Text>
+        <Text>{answers[parentKey]?.phoneNumber}</Text>
       </Box>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>
@@ -208,41 +188,25 @@ const Overview = ({
       )}
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.currentResidence, {
-            count: children.length,
-          })}
-        </Text>
-        <Text>{childResidenceInfo.current.parentName}</Text>
-        <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
-      </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.newResidence, {
-            count: children.length,
-          })}
-        </Text>
-        <Text>{childResidenceInfo.future.parentName}</Text>
-        <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.future.address)}
-        </Text>
-      </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.durationType === 'temporary' && answers.durationDate
-            ? formatDate(answers.durationDate)
+          {answers.selectDuration.type === 'temporary' &&
+          answers.selectDuration.date
+            ? formatDate(answers.selectDuration.date)
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.interview.general.sectionTitle)}
+          {formatMessage(m.contract.childBenefit.label)}
         </Text>
-        <Text>
-          {formatMessage(m.interview[answers.interview].overviewText)}
-        </Text>
+        <DescriptionText
+          text={m.contract.childBenefit.text}
+          format={{
+            currentResidenceParentName: childResidenceInfo.current.parentName,
+          }}
+        />
       </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
@@ -260,7 +224,7 @@ const Overview = ({
           {formatMessage(m.contract.pdfButton.label)}
         </Button>
       </Box>
-    </>
+    </Box>
   )
 }
 

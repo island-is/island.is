@@ -1,15 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCreateForm'
 import { Client } from './../../entities/models/client.model'
 import { useRouter } from 'next/router'
 import ClientDTO from './../../entities/dtos/client-dto'
+import LocalizationUtils from '../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const router = useRouter()
   const handleCancel = () => {
     router.back()
   }
+
+  useEffect(() => {
+    document.title = LocalizationUtils.getPageTitle('client.index')
+  }, [])
 
   const handleClientSaved = (clientSaved: Client) => {
     if (clientSaved.clientId) {

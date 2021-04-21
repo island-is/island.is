@@ -4,7 +4,7 @@ import {
   Application,
   Field,
   FieldBaseProps,
-  getValueViaPath,
+  getErrorViaPath,
   RecordObject,
   SetBeforeSubmitCallback,
 } from '@island.is/application/core'
@@ -35,9 +35,7 @@ const FormField: FC<{
     return null
   }
 
-  const error = getValueViaPath(errors, field.id, undefined) as
-    | string
-    | undefined
+  const error = getErrorViaPath(errors, field.id)
 
   const fieldProps: FieldBaseProps = {
     application,

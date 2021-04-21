@@ -395,7 +395,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
                   <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
-                    <DocumentLine document={document} />
+                    <DocumentLine documentLine={document} userInfo={userInfo} />
                   </Box>
                 ))}
             </Box>

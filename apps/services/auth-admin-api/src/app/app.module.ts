@@ -16,7 +16,7 @@ import { TranslationModule } from './modules/translation/translation.module'
 @Module({
   imports: [
     AuthModule.register({
-      audience: 'auth-admin-api',
+      audience: '@island.is/auth/admin',
       issuer: environment.auth.issuer,
       jwksUri: environment.auth.jwksUri,
     }),

@@ -13,6 +13,7 @@ import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
+import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
   cases: Case[]
@@ -60,7 +61,11 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
                 {row.row.original.accusedName}
               </Box>
               <Text as="span" variant="small">
-                {`kt. ${row.row.original.accusedNationalId}`}
+                {`kt. ${insertAt(
+                  row.row.original.accusedNationalId.replace('-', ''),
+                  '-',
+                  6,
+                )}`}
               </Text>
             </>
           )
@@ -115,15 +120,35 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
         accessor: 'rulingDate' as keyof Case,
         disableSortBy: true,
         Cell: (row: {
-          row: { original: { rulingDate: string; custodyEndDate: string } }
+          row: {
+            original: {
+              rulingDate: string
+              custodyEndDate: string
+              courtEndTime: string
+              state: CaseState
+            }
+          }
         }) => {
-          return `${formatDate(
-            parseISO(row.row.original.rulingDate),
-            'd.M.y',
-          )} - ${formatDate(
-            parseISO(row.row.original.custodyEndDate),
-            'd.M.y',
-          )}`
+          const rulingDate = row.row.original.rulingDate
+          const custodyEndDate = row.row.original.custodyEndDate
+          const courtEndDate = row.row.original.courtEndTime
+          const state = row.row.original.state
+
+          if (state === CaseState.REJECTED) {
+            return null
+          } else if (rulingDate) {
+            return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
+              parseISO(custodyEndDate),
+              'd.M.y',
+            )}`
+          } else if (courtEndDate) {
+            return `${formatDate(
+              parseISO(courtEndDate),
+              'd.M.y',
+            )} - ${formatDate(parseISO(custodyEndDate), 'd.M.y')}`
+          } else {
+            return formatDate(parseISO(custodyEndDate), 'd.M.y')
+          }
         },
       },
     ],

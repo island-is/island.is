@@ -1,3 +1,4 @@
+// DEPRECATED: will be removed after 18-05-21
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IHomepage } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'

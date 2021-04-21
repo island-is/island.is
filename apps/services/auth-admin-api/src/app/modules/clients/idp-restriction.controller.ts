@@ -15,16 +15,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsUserGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('idp-restriction')
 @Controller('backend/idp-restriction')
 export class IdpRestrictionController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new IDP restriction */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientIdpRestrictions })
   async create(
@@ -34,6 +35,7 @@ export class IdpRestrictionController {
   }
 
   /** Removes a idp restriction */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:name')
   @ApiCreatedResponse()
   async delete(
@@ -48,6 +50,7 @@ export class IdpRestrictionController {
   }
 
   /** Finds available idp providers that can be restricted */
+  @Scopes(Scope.root, Scope.full)
   @Get()
   @ApiOkResponse({ type: [IdpProvider] })
   async findAllIdpRestrictions(): Promise<IdpProvider[] | null> {

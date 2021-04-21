@@ -21,11 +21,19 @@ export enum FileSignatureActionTypes {
 
 type Action =
   | { type: Exclude<FileSignatureActionTypes, FileSignatureActionTypes.ERROR> }
-  | { type: FileSignatureActionTypes.ERROR; error: string; status: ErrorStatus }
+  | {
+      type: FileSignatureActionTypes.ERROR
+      error: number
+      status: ErrorStatus
+    }
 
 export type ReducerState =
   | { status: Exclude<FileSignatureStatus, ErrorStatus>; modalOpen: boolean }
-  | { status: ErrorStatus; errorCode: string; modalOpen: boolean }
+  | {
+      status: ErrorStatus
+      errorCode: number
+      modalOpen: boolean
+    }
 
 export const initialFileSignatureState: ReducerState = {
   status: FileSignatureStatus.INITIAL,

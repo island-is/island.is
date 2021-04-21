@@ -7,6 +7,8 @@ import { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
 
+const AUTH_BODY_FIELD_NAME = '__accessToken'
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
@@ -17,7 +19,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         jwksUri: config.jwksUri,
       }),
 
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
+      ]),
       audience: config.audience,
       issuer: config.issuer,
       algorithms: ['RS256'],

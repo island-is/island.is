@@ -25,6 +25,7 @@ import {
   PageLayout,
   PdfButton,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -49,6 +50,7 @@ import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const { features } = useContext(FeatureContext)
 
@@ -89,47 +91,46 @@ export const Overview: React.FC = () => {
     return data?.sendNotification?.notificationSent
   }
 
-  const handleNextButtonClick: () => Promise<boolean> = async () => {
+  const handleNextButtonClick = async () => {
     if (!workingCase) {
       return false
     }
 
-    switch (workingCase.state) {
-      case CaseState.DRAFT:
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            CaseTransition.SUBMIT,
-          )
+    if (workingCase.state === CaseState.DRAFT) {
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          CaseTransition.SUBMIT,
+        )
 
-          // Transition the case
-          const resCase = await transitionCase(
-            workingCase.id,
-            transitionRequest,
-          )
+        // Transition the case
+        const resCase = await transitionCase(workingCase.id, transitionRequest)
 
-          if (!resCase) {
-            return false
-          }
-
-          setWorkingCase({
-            ...workingCase,
-            state: resCase.state,
-            prosecutor: resCase.prosecutor,
-          })
-        } catch (e) {
+        if (!resCase) {
           return false
         }
-        break
-      case CaseState.SUBMITTED:
-      case CaseState.RECEIVED:
-        break
-      default:
-        return false
+
+        setWorkingCase({
+          ...workingCase,
+          state: resCase.state,
+        })
+
+        const notificationSent = await sendNotification(workingCase.id)
+
+        if (notificationSent) {
+          setModalText(
+            'Tilkynning hefur verið send á dómara og dómritara á vakt.',
+          )
+        } else {
+          // TODO: Handle error
+        }
+      } catch (e) {
+        // TODO: Handle error
+      }
     }
 
-    return sendNotification(workingCase.id)
+    setModalVisible(true)
   }
 
   useEffect(() => {
@@ -337,6 +338,36 @@ export const Overview: React.FC = () => {
                     </span>
                   </Text>
                 </AccordionItem>
+                {features.includes(Feature.CASE_FILES) && (
+                  <AccordionItem
+                    id="id_6"
+                    label={`Rannsóknargögn ${`(${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}`}
+                    labelVariant="h3"
+                  >
+                    <Box marginY={3}>
+                      <CaseFileList
+                        caseId={workingCase.id}
+                        files={workingCase.files || []}
+                      />
+                    </Box>
+                  </AccordionItem>
+                )}
+                {features.includes(Feature.CASE_FILES) &&
+                  !!workingCase.caseFilesComments && (
+                    <AccordionItem
+                      id="id_7"
+                      label="Athugasemdir vegna málsmeðferðar"
+                      labelVariant="h3"
+                    >
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.caseFilesComments}
+                        </span>
+                      </Text>
+                    </AccordionItem>
+                  )}
               </Accordion>
             </Box>
             <Box className={styles.prosecutorContainer}>
@@ -357,24 +388,18 @@ export const Overview: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={
-                workingCase.state === CaseState.RECEIVED &&
-                workingCase.isCourtDateInThePast
-                  ? Constants.REQUEST_LIST_ROUTE
-                  : features.includes(Feature.CASE_FILES)
+                features.includes(Feature.CASE_FILES)
                   ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
                   : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
               }
-              nextButtonText="Senda kröfu á héraðsdóm"
+              nextButtonText={
+                workingCase.state === CaseState.NEW ||
+                workingCase.state === CaseState.DRAFT
+                  ? 'Senda kröfu á héraðsdóm'
+                  : 'Endursenda kröfu á héraðsdóm'
+              }
               nextIsLoading={isSendingNotification}
-              onNextButtonClick={async () => {
-                const notificationSent = await handleNextButtonClick()
-
-                if (notificationSent) {
-                  setModalVisible(true)
-                } else {
-                  // TODO: Handle error
-                }
-              }}
+              onNextButtonClick={handleNextButtonClick}
             />
           </FormContentContainer>
           {modalVisible && (
@@ -384,7 +409,7 @@ export const Overview: React.FC = () => {
                   ? 'gæsluvarðhald'
                   : 'farbann'
               }  hefur verið send til dómstóls`}
-              text="Tilkynning hefur verið send á dómara og dómritara á vakt."
+              text={modalText}
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
                 window.open(Constants.FEEDBACK_FORM_URL, '_blank')

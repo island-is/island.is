@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
 
@@ -6,7 +7,16 @@ import {
   DocumentProviderClientConfig,
   DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD,
 } from './documentProviderClientConfig'
-import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import {
+  ClientCredentials,
+  AudienceAndScope,
+  TestResult,
+  Statistics,
+} from './models'
+
+interface StatisticPayload {
+  [key: string]: any
+}
 
 @Injectable()
 export class DocumentProviderClientProd {
@@ -51,7 +61,7 @@ export class DocumentProviderClientProd {
     return response.data
   }
 
-  private async postRequest<T>(requestRoute: string): Promise<T> {
+  private async postRequest<T>(requestRoute: string, body?: any): Promise<T> {
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
@@ -62,7 +72,11 @@ export class DocumentProviderClientProd {
     const response: {
       data: T
     } = await this.httpService
-      .post(`${this.clientConfig.basePath}${requestRoute}`, null, config)
+      .post(
+        `${this.clientConfig.basePath}${requestRoute}`,
+        body ?? null,
+        config,
+      )
       .toPromise()
 
     return response.data
@@ -92,5 +106,26 @@ export class DocumentProviderClientProd {
   ): Promise<TestResult[]> {
     const requestRoute = `/api/documentprovider/runtests?providerId=${providerId}&recipient=${recipient}&documentId=${documentId}`
     return await this.postRequest<TestResult[]>(requestRoute)
+  }
+
+  async statisticsTotal(
+    providers?: string[],
+    fromDate?: string,
+    toDate?: string,
+  ): Promise<Statistics> {
+    const requestRoute = '/api/documentprovider/statistics/total'
+
+    const payload: StatisticPayload = {}
+
+    if (providers) {
+      payload.providers = providers
+    }
+
+    if (fromDate && toDate) {
+      payload.from = fromDate
+      payload.to = toDate
+    }
+
+    return await this.postRequest<Statistics>(requestRoute, payload)
   }
 }

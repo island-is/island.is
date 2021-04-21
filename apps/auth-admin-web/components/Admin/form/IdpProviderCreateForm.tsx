@@ -6,6 +6,8 @@ import { IdpProviderDTO } from './../../../entities/dtos/idp-provider.dto'
 import { IdpProviderService } from './../../../services/IdpProviderService'
 import { IdpProvider } from './../../../entities/models/IdpProvider.model'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   idpProvider: IdpProviderDTO
   handleSaveButtonClicked?: (response: IdpProvider) => void
@@ -20,6 +22,9 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('IdpProviderCreateForm'),
+  )
   const idp = props.idpProvider
 
   useEffect(() => {
@@ -59,20 +64,22 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
     <div className="idp-provider-create-form">
       <div className="idp-provider-create-form__wrapper">
         <div className="idp-provider-create-form__container">
-          <h1>
-            {isEditing ? 'Edit Idp Provider' : 'Create a new Idp Provider'}
-          </h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="idp-provider-create-form__container__form">
             <div className="idp-provider-create-form__help">
-              Add or edit a IDP Provider
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(create)}>
               <div className="idp-provider-create-form__container__fields">
                 <div className="idp-provider-create-form__container__field">
-                  <label className="idp-provider-create-form__label">
-                    Name
+                  <label
+                    className="idp-provider-create-form__label"
+                    htmlFor="name"
+                  >
+                    {localization.fields['name'].label}
                   </label>
                   <input
+                    id="name"
                     type="text"
                     name="idp.name"
                     ref={register({
@@ -81,24 +88,28 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={idp.name}
                     className="idp-provider-create-form__input"
-                    placeholder="provider_name"
-                    title="The unique name of the provider with no spaces or symbols"
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
                     readOnly={isEditing}
                   />
-                  <HelpBox helpText="The unique name of the provider with no spaces or symbols" />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.name"
-                    message="Name is required and needs to be in the right format"
+                    message={localization.fields['name'].errorMessage}
                   />
                 </div>
 
                 <div className="idp-provider-create-form__container__field">
-                  <label className="idp-provider-create-form__label">
-                    Label
+                  <label
+                    className="idp-provider-create-form__label"
+                    htmlFor="description"
+                  >
+                    {localization.fields['description'].label}
                   </label>
                   <input
+                    id="description"
                     type="text"
                     ref={register({
                       required: true,
@@ -107,23 +118,29 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.description"
                     defaultValue={idp.description ?? ''}
                     className="idp-provider-create-form__input"
-                    title="Short description about this Identity Provider. This will be used as an label in the IDP Restriction form"
-                    placeholder="App from Example Firm"
+                    title={localization.fields['description'].helpText}
+                    placeholder={localization.fields['description'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.description"
-                    message="Description is required and needs to be in the right format"
+                    message={localization.fields['description'].errorMessage}
                   />
-                  <HelpBox helpText="Short description about this Identity Provider. This will be used as an label in the IDP Restriction form" />
+                  <HelpBox
+                    helpText={localization.fields['description'].helpText}
+                  />
                 </div>
 
                 <div className="idp-provider-create-form__container__field">
-                  <label className="idp-provider-create-form__label">
-                    Help Text
+                  <label
+                    className="idp-provider-create-form__label"
+                    htmlFor="helptext"
+                  >
+                    {localization.fields['helptext'].label}
                   </label>
                   <input
+                    id="helptext"
                     type="text"
                     className="idp-provider-create-form__input"
                     name="idp.helptext"
@@ -132,39 +149,45 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                       validate: ValidationUtils.validateDescription,
                     })}
                     defaultValue={idp.helptext}
-                    title="This text will be shown in the form where users to the Admin UI select this Identity Provider"
-                    placeholder="Add this provider to be able to connect with an App from Example Firm"
+                    title={localization.fields['helptext'].helpText}
+                    placeholder={localization.fields['helptext'].placeholder}
                   />
 
-                  <HelpBox helpText="This text will be shown in the form where users to the Admin UI select this Identity Provider" />
+                  <HelpBox
+                    helpText={localization.fields['helptext'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.helptext"
-                    message="Help text is required and needs to be in the right format"
+                    message={localization.fields['helptext'].errorMessage}
                   />
                 </div>
 
                 <div className="idp-provider-create-form__container__field">
-                  <label className="idp-provider-create-form__label">
-                    Level
+                  <label
+                    className="idp-provider-create-form__label"
+                    htmlFor="level"
+                  >
+                    {localization.fields['level'].label}
                   </label>
                   <input
+                    id="level"
                     type="number"
                     className="idp-provider-create-form__input"
                     name="idp.level"
                     ref={register({ required: true, min: 1, max: 4 })}
                     defaultValue={idp.level}
-                    placeholder="4"
-                    title="The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security"
+                    placeholder={localization.fields['level'].placeholder}
+                    title={localization.fields['level'].helpText}
                   />
 
-                  <HelpBox helpText="The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security" />
+                  <HelpBox helpText={localization.fields['level'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="idp.level"
-                    message="Level is required and needs to be a number from 1-4"
+                    message={localization.fields['level'].errorMessage}
                   />
                 </div>
               </div>
@@ -176,7 +199,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    Cancel
+                    {localization.cancelButton}
                   </button>
                 </div>
                 <div className="idp-provider-create-form__button__container">
@@ -184,7 +207,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="idp-provider-create-form__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    value={localization.saveButton}
                   />
                 </div>
               </div>

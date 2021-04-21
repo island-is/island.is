@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import { ApolloError } from 'apollo-server-express'
+import { Auth, User, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
+
+import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
-import { logger } from '@island.is/logging'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { ApolloError } from 'apollo-server-express'
-import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
@@ -38,22 +40,24 @@ export class ApplicationService {
     return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async findOne(id: string, auth: Auth) {
+  async findOne(id: string, auth: Auth, locale: Locale) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerFindOne({
         id,
+        locale,
       })
       .catch(handleError)
   }
 
   async findAll(
-    nationalId: string,
-    auth: Auth,
+    user: User,
+    locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(auth)
+    return await this.applicationApiWithAuth(user)
       .applicationControllerFindAll({
-        nationalId,
+        nationalId: user.nationalId,
+        locale,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
       })
@@ -68,13 +72,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async update(input: UpdateApplicationInput, auth: Auth) {
+  async update(
+    input: UpdateApplicationInput,
+    auth: Auth,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationDto } = input
 
     return await this.applicationApiWithAuth(auth)
       .applicationControllerUpdate({
         id,
         updateApplicationDto,
+        locale,
       })
       .catch(handleError)
   }

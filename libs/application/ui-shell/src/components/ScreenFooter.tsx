@@ -41,7 +41,9 @@ export const ScreenFooter: FC<FooterProps> = ({
   const showGoBack = activeScreenIndex > 0 && !isLastScreen
   if (
     (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.REVIEW && mode !== FormModes.APPLYING)
+    (mode !== FormModes.REVIEW &&
+      mode !== FormModes.APPLYING &&
+      mode !== FormModes.EDITING)
   ) {
     return null
   }

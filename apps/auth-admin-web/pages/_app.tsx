@@ -11,16 +11,17 @@ class AuthAdminWebApp extends App<Props> {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <Provider session={pageProps.session} options={{ clientMaxAge: 120 }}>
+      <Provider
+        session={pageProps.session}
+        options={{ clientMaxAge: 120, basePath: `/admin/api/auth` }}
+      >
         <Component {...pageProps} />
       </Provider>
     )
   }
 }
 
-const endpointDependencies = process.env.NEXTAUTH_URL
-  ? [process.env.NEXTAUTH_URL]
-  : []
+const endpointDependencies = process.env.BASE_URL ? [process.env.BASE_URL] : []
 const {
   serverRuntimeConfig: { backendUrl },
 } = getConfig()

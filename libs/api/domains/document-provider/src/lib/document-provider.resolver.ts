@@ -17,6 +17,7 @@ import {
   Organisation,
   Contact,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import {
   RunEndpointTestsInput,
@@ -26,6 +27,7 @@ import {
   UpdateHelpdeskInput,
   CreateContactInput,
   CreateHelpdeskInput,
+  StatisticsInput,
 } from './dto'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
@@ -264,6 +266,18 @@ export class DocumentProviderResolver {
       input.providerId,
       input.xroad || false,
       user,
+    )
+  }
+
+  @UseGuards(AdminGuard)
+  @Query(() => ProviderStatistics)
+  async getStatisticsTotal(
+    @Args('input', { nullable: true }) input: StatisticsInput,
+  ): Promise<ProviderStatistics> {
+    return this.documentProviderService.getStatisticsTotal(
+      input?.organisationId,
+      input?.fromDate,
+      input?.toDate,
     )
   }
 }

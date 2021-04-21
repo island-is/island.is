@@ -13,16 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsUserGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-grant-type')
 @Controller('backend/client-grant-type')
 export class ClientGrantTypeController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new Grant type to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientGrantType })
   async create(
@@ -32,6 +33,7 @@ export class ClientGrantTypeController {
   }
 
   /** Removes a grant type from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:grantType')
   @ApiCreatedResponse()
   async delete(

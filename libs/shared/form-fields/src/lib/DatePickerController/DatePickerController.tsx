@@ -21,6 +21,7 @@ interface Props {
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
   minDate?: DatePickerProps['minDate']
+  excludeDates?: DatePickerProps['excludeDates']
 }
 const df = 'yyyy-MM-dd'
 export const DatePickerController: FC<Props> = ({
@@ -35,6 +36,7 @@ export const DatePickerController: FC<Props> = ({
   backgroundColor,
   maxDate,
   minDate,
+  excludeDates,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -54,6 +56,7 @@ export const DatePickerController: FC<Props> = ({
           selected={value ? parseISO(value) : undefined}
           maxDate={maxDate}
           minDate={minDate}
+          excludeDates={excludeDates}
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)

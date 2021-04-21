@@ -64,7 +64,8 @@ export const FormShell: FC<{
   return (
     <Box
       className={cn(styles.root, {
-        [styles.rootApplying]: mode === FormModes.APPLYING,
+        [styles.rootApplying]:
+          mode === FormModes.APPLYING || mode === FormModes.EDITING,
         [styles.rootApproved]: mode === FormModes.APPROVED,
         [styles.rootPending]: mode === FormModes.PENDING,
         [styles.rootReviewing]: mode === FormModes.REVIEW,

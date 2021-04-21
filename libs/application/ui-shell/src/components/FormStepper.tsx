@@ -39,6 +39,7 @@ const FormStepper: FC<FormStepperProps> = ({
 
   const progressTheme: Record<FormModes, FormStepperThemes> = {
     [FormModes.APPLYING]: FormStepperThemes.PURPLE,
+    [FormModes.EDITING]: FormStepperThemes.PURPLE,
     [FormModes.APPROVED]: FormStepperThemes.GREEN,
     [FormModes.REVIEW]: FormStepperThemes.BLUE,
     [FormModes.PENDING]: FormStepperThemes.BLUE,

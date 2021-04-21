@@ -1,10 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 const ResourcesTabsNav: React.FC = () => {
   const router = useRouter()
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <nav className="resource-tab-nav">
       <ul>
@@ -19,7 +24,10 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('api-resource') ? 'active' : ''
               }
             >
-              Api Resources
+              {
+                localization.navigations['resourcesTabs'].items['apiResource']
+                  .text
+              }
             </a>
           </Link>
         </li>
@@ -32,7 +40,7 @@ const ResourcesTabsNav: React.FC = () => {
             <a
               className={router?.pathname.includes('api-scope') ? 'active' : ''}
             >
-              Api Scopes
+              {localization.navigations['resourcesTabs'].items['apiScope'].text}
             </a>
           </Link>
         </li>
@@ -47,7 +55,11 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('identity-resource') ? 'active' : ''
               }
             >
-              Identity Resources
+              {
+                localization.navigations['resourcesTabs'].items[
+                  'identityResource'
+                ].text
+              }
             </a>
           </Link>
         </li>

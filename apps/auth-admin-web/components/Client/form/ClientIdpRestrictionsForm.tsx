@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { IdpProvider } from './../../../entities/models/IdpProvider.model'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -15,6 +17,9 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   const [idpProviders, setIdpProviders] = useState<IdpProvider[]>([])
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,
+  )
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientIdpRestrictionsForm'),
   )
 
   useEffect(() => {
@@ -74,20 +79,16 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
     <div className="client-idp-restriction">
       <div className="client-idp-restriction__wrapper">
         <div className="client-idp-restriction__container">
-          <h1>Identity provider restrictions</h1>
+          <h1>{localization.title}</h1>
 
           <div className="client-idp-restriction__container__form">
             <div className="client-idp-restriction__help">
-              <p>
-                Specifies which external identity providers (IdPs) can be used
-                when authenticating.
-              </p>
-              <p>Note that Sim Card login is always allowed.</p>
+              {localization.help}
             </div>
             <div className="client-idp-restriction__container__fields">
               <div className="client-idp-restriction__container__radio__field">
                 <label htmlFor="all" className="client-idp-restriction__label">
-                  Allow All
+                  {localization.fields['all'].label}
                 </label>
                 <input
                   type="radio"
@@ -98,7 +99,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   onChange={(e) => {
                     setAllowAll(true)
                   }}
-                  title={'Allow all identity providers'}
+                  title={localization.fields['all'].helpText}
                 />
               </div>
               <div className="client-idp-restriction__container__radio__field">
@@ -106,7 +107,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   className="client-idp-restriction__label"
                   htmlFor="restricted"
                 >
-                  Allow Only:
+                  {localization.fields['restricted'].label}
                 </label>
                 <input
                   id="restricted"
@@ -117,7 +118,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   onChange={(e) => {
                     setAllowAll(false)
                   }}
-                  title={'Allow only selected identity providers'}
+                  title={localization.fields['restricted'].helpText}
                 />
               </div>
             </div>
@@ -158,7 +159,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   className="client-idp-restriction__button__cancel"
                   onClick={props.handleBack}
                 >
-                  Back
+                  {localization.cancelButton}
                 </button>
               </div>
               <div className="client-idp-restriction__button__container">
@@ -168,7 +169,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                   value="Next"
                   onClick={props.handleNext}
                 >
-                  Next
+                  {localization.saveButton}
                 </button>
               </div>
             </div>

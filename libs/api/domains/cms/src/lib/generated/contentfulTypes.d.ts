@@ -815,6 +815,9 @@ export interface IFrontpageSliderFields {
   /** Slide link */
   slideLink?: ILink | undefined
 
+  /** Animatinon JSON (Asset) */
+  animationJsonAsset?: Asset | undefined
+
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
 
@@ -849,8 +852,7 @@ export interface IFrontpageSliderListFields {
   items: IFrontpageSlider[]
 }
 
-/** Listi af efniseiningum sem hægt er að fletta á milli og birtast efst á forsíðu Ísland.is. */
-
+/** Á heima inni á 'Frontpage' núna */
 export interface IFrontpageSliderList
   extends Entry<IFrontpageSliderListFields> {
   sys: {
@@ -1887,6 +1889,9 @@ export interface IOrganizationPageFields {
   /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Menu */
+  secondaryMenu?: ILinkGroup | undefined
+
   /** Organization */
   organization: IOrganization
 
@@ -2358,7 +2363,16 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
 
 export interface ISidebarCardFields {
   /** Type */
-  type?: 'info' | 'warning' | undefined
+  type?:
+    | 'informationCircle'
+    | 'warning'
+    | 'notifications'
+    | 'time'
+    | 'heart'
+    | 'home'
+    | 'lockClosed'
+    | 'mail'
+    | undefined
 
   /** Title */
   title?: string | undefined

@@ -242,7 +242,7 @@ export class CaseService {
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
         existingCase.judge?.mobileNumber,
-        'Undirrita dóm - Öryggistala',
+        'Undirrita skjal - Öryggistala',
         existingCase.judge?.name,
         'Ísland',
         'ruling.pdf',

@@ -26,20 +26,17 @@ export const input = style({
   left: 0,
   opacity: 0,
   position: 'absolute',
-  top: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
   width: checkboxSize,
 })
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
-  fontWeight: theme.typography.light,
 })
 export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
-})
-export const labelChecked = style({
-  fontWeight: theme.typography.medium,
 })
 export const checkboxDisabled = style({
   background: 'transparent',

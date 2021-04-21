@@ -7,6 +7,7 @@ import fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
+import { arnType } from 'aws-sdk/clients/sts'
 
 import { environment } from '../environments/environment'
 
@@ -41,14 +42,19 @@ export class KibanaService {
     headers,
   }: ApiParams): Promise<object> {
     const sts = new AWS.STS()
-    const token = await readFile(awsWebIdentityTokenFile)
+    const token = await readFile(awsWebIdentityTokenFile as string)
+
     const { Credentials } = await sts
       .assumeRoleWithWebIdentity({
-        RoleArn: awsRoleName,
+        RoleArn: awsRoleName as arnType,
         RoleSessionName: 'kibana',
         WebIdentityToken: token.toString(),
       })
       .promise()
+
+    if (!Credentials) {
+      throw new Error('AWS STS credentials missing.')
+    }
 
     const opts = {
       host: url.hostname,
@@ -57,6 +63,7 @@ export class KibanaService {
       body,
       headers,
     }
+
     const signed = aws4.sign(opts, {
       accessKeyId: Credentials.AccessKeyId,
       secretAccessKey: Credentials.SecretAccessKey,

@@ -30,6 +30,7 @@ export const CaseQuery = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         id
         name
@@ -41,7 +42,6 @@ export const CaseQuery = gql`
       setCourtCaseNumberManually
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
       courtStartTime
       courtEndTime
@@ -63,6 +63,8 @@ export const CaseQuery = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       judge {
         id
@@ -88,9 +90,12 @@ export const CaseQuery = gql`
         type
       }
       files {
+        id
         name
         size
+        created
       }
+      isCaseAppealable
     }
   }
 `
@@ -148,6 +153,22 @@ export const CreateFileMutation = gql`
       name
       key
       size
+    }
+  }
+`
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
+    }
+  }
+`
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
     }
   }
 `

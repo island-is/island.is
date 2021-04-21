@@ -12,9 +12,6 @@ export class DocumentOauthConnection {
   static async fetchToken(
     config: DocumentProviderClientConfig,
   ): Promise<OauthConnectionResponse> {
-    logger.info(
-      `clientID: ${config.clientId}, clientSecret: ${config.clientSecret}, tokenUrl: ${config.tokenUrl}`,
-    )
     if (!config.clientId || !config.clientSecret || !config.tokenUrl) {
       logger.info(
         'No credentials provided to fetchToken for DocumentOauthConnection',

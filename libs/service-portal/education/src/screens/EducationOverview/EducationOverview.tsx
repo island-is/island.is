@@ -23,25 +23,6 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
       navigation={[
         {
           title: defineMessage({
-            id: 'sp.education:degree-title',
-            defaultMessage: 'Prófskírteini',
-          }),
-          intro: defineMessage({
-            id: 'sp.education:degree-intro',
-            defaultMessage:
-              'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
-          }),
-          image: './assets/images/educationDegree.svg',
-          link: {
-            title: defineMessage({
-              id: 'sp.education:degree-link-title',
-              defaultMessage: 'Skoða prófskírteinin mín',
-            }),
-            href: ServicePortalPath.EducationDegree,
-          },
-        },
-        {
-          title: defineMessage({
             id: 'sp.education:license-title',
             defaultMessage: 'Starfsleyfi',
           }),

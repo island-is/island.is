@@ -9,6 +9,7 @@ import {
   TestResult,
   Organisation,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
@@ -373,5 +374,53 @@ export class DocumentProviderService {
     }
 
     return audienceAndScope
+  }
+
+  //-------------------- STATISTICS --------------------------
+
+  async getStatisticsTotal(
+    organisationId?: string,
+    fromDate?: string,
+    toDate?: string,
+    authorization?: string,
+  ): Promise<ProviderStatistics> {
+    let providers = undefined
+
+    // Get external provider ids if organisationId is included
+    if (organisationId) {
+      const orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
+        {
+          id: organisationId,
+          authorization,
+        },
+      )
+
+      // Filter out null values and only set providers if organisation has external providers
+      if (orgProviders) {
+        const externalProviders = orgProviders
+          .filter(
+            (item) =>
+              item.externalProviderId !== null &&
+              item.externalProviderId !== undefined,
+          )
+          .map((item) => {
+            return item.externalProviderId
+          })
+
+        if (externalProviders.length > 0) {
+          providers = externalProviders as string[]
+        }
+      }
+    }
+
+    const result = await this.documentProviderClientProd
+      .statisticsTotal(providers, fromDate, toDate)
+      .catch(handleError)
+
+    return new ProviderStatistics(
+      result.published,
+      result.notifications,
+      result.opened,
+    )
   }
 }

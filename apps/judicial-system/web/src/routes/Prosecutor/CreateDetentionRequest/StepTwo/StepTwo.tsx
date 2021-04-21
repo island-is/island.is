@@ -145,6 +145,9 @@ export const StepTwo: React.FC = () => {
 
     if (transitionSuccess) {
       if (
+        (workingCase.state !== CaseState.NEW &&
+          workingCase.state !== CaseState.DRAFT) ||
+        // TODO: Ignore failed notifications
         workingCase.notifications?.find(
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
@@ -368,6 +371,7 @@ export const StepTwo: React.FC = () => {
                 }
                 timeLabel="Ósk um tíma (kk:mm)"
                 locked={workingCase.courtDate !== null}
+                minDate={new Date()}
                 required
               />
               {workingCase.courtDate && (

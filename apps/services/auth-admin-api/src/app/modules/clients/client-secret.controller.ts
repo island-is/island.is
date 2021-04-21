@@ -12,16 +12,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools';
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsUserGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-secret')
 @Controller('backend/client-secret')
 export class ClientSecretController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new secret to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientSecret })
   async create(@Body() clientSecret: ClientSecretDTO): Promise<ClientSecret> {
@@ -33,6 +34,7 @@ export class ClientSecretController {
   }
 
   /** Removes a secret from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete()
   @ApiCreatedResponse()
   async delete(@Body() clientSecret: ClientSecretDTO): Promise<number> {
