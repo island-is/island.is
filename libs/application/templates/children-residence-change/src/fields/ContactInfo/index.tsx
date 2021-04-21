@@ -13,6 +13,7 @@ import {
 import { contactInfo } from '../../lib/messages'
 import { childrenResidenceInfo } from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
+import { DescriptionText } from '../components'
 
 const emailId = 'parentA.email'
 const phoneNumberId = 'parentA.phoneNumber'
@@ -43,9 +44,9 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
 
   return (
     <>
-      <Text marginTop={3}>
-        {formatMessage(contactInfo.general.description)}
-      </Text>
+      <Box marginTop={3}>
+        <DescriptionText text={contactInfo.general.description} />
+      </Box>
       <Text marginTop={5} variant="h4">
         {childResidenceInfo.current.parentName}
       </Text>
