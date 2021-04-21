@@ -540,6 +540,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Phone number',
     },
   }),
+
   errors: defineMessages({
     loading: {
       id: 'pl.application:errors.loading',
@@ -645,32 +646,33 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 18 months after the date of birth.`,
+    },
+    estimatedDateOfBirthOption: {
+      id: 'pl.application:periods.first.period.estimatedDateOfBirth',
+      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     dateOfBirthOption: {
-      id: 'pl.application:periods.first.period.dateOfBirth',
-      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
-      description: 'I will start from the date of birth',
-    },
-    dateOfBirthOptionTooltip: {
-      id: 'pl.application:periods.first.period.dateOfBirth.tooltip',
-      defaultMessage:
-        'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess aðlagast raunverulegum fæðingardegi barnsins.',
+      id: 'pl.application:periods.first.period.actualDateOfBirth',
+      defaultMessage: 'Ég vil byrja frá raunverulegum fæðingardegi',
       description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will adjust to the real date of birth',
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOption: {
       id: 'pl.application:periods.first.period.specificDate',
       defaultMessage: 'Ég vil byrja á ákveðinni dagsetningu',
-      description: 'I will start on a specific date',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOptionTooltip: {
       id: 'pl.application:periods.first.period.specificDate.tooltip',
       defaultMessage:
         'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess EKKI aðlagast út frá raunverulegum fæðingardegi barnsins ef þessi valmöguleiki er valinn.',
       description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
+        'If the child is born on another date than the expected date of birth, the parental leave and its duration will NOT adjust to the real date of birth',
     },
   }),
 
@@ -902,6 +904,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Add translation',
     },
   }),
+
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
@@ -1016,7 +1019,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Your application was not approved',
     },
     draftNotApprovedOtherParentDesc: {
-      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
       defaultMessage: 'The other parent did not approve your request.',
       description: 'The other parent did not approve your request.',
     },
@@ -1225,16 +1228,29 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-// TODO: Add the translations to the dataSchema.ts
 export const dataSchemaMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
+    description: 'Error message when phone number is invalid.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'ID number must be valid.',
+    description: 'Error message when the kennitala is invalid.',
+  },
+})
+
+export const statesMessages = defineMessages({
+  stateDraftTitle: {
+    id: 'pl.application:state.draft.title',
+    defaultMessage: 'Drög',
+    description: 'Title of the first state of the parental application',
+  },
+
+  stateDraftDescription: {
+    id: 'pl.application:state.draft.description',
+    defaultMessage: 'Bið eftir samþykki',
+    description: 'Description of the first state of the parental application',
   },
 })

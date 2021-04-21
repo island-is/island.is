@@ -2,7 +2,7 @@
 
 ## About
 
-TODO
+This project forms the base for all business applications belonging to island.is.
 
 ## URLs
 

@@ -1,19 +1,33 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import { ContentfulRepository } from '@island.is/api/domains/cms'
+import { Locale } from '@island.is/shared/types'
 import { ApolloError } from 'apollo-server-express'
-import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
-import isEmpty from 'lodash/isEmpty'
-import mergeWith from 'lodash/mergeWith'
+import memoize from 'memoizee'
 
-export interface TranslationsDict {
-  [key: string]: string
+export type TranslationsDict = Record<string, string>
+
+interface Messages {
+  id: string
+  is: Record<string, string>
+  en: Record<string, string>
 }
+
+interface NamespaceFields {
+  namespace: string
+  strings?: Record<string, any>
+  defaults?: Record<string, any>
+  fallback?: Record<string, any>
+}
+
+const MAX_AGE = 1000 * 60 * 15 // 15 minutes
+const DEFAULT_LOCALE = 'is-IS'
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
 // this can be replaced by fetching Contentful locales if fallback is set in the future, same format.
 const locales = [
-  { code: 'is-IS', fallbackCode: null },
-  { code: 'en', fallbackCode: 'is-IS' },
+  { code: DEFAULT_LOCALE, locale: 'is', fallbackCode: null },
+  { code: 'en', locale: 'en', fallbackCode: DEFAULT_LOCALE },
 ]
 
 const errorHandler = (name: string) => {
@@ -27,32 +41,64 @@ const errorHandler = (name: string) => {
 export class TranslationsService {
   constructor(private contentfulRepository: ContentfulRepository) {}
 
-  getTranslations = async (
-    namespaces?: string[],
-    lang?: string,
-  ): Promise<TranslationsDict | null> => {
-    const locale = locales.find((l) => l.code === localeMap[lang])
+  getNamespaceMessages = memoize(
+    async (namespace: string) => {
+      const results = await this.contentfulRepository
+        .getLocalizedEntries<NamespaceFields>('*', {
+          ['content_type']: 'namespace',
+          select: 'fields.strings',
+          'fields.namespace': namespace,
+        })
+        .catch(errorHandler('getNamespace'))
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<any>('*', {
-        ['content_type']: 'namespace',
-        select: 'fields.strings',
-        'fields.namespace[in]': namespaces.join(','),
-      })
-      .catch(errorHandler('getNamespace'))
+      const messages = {
+        id: namespace,
+        is: {},
+        en: {},
+      } as Messages
 
-    return result.items.reduce((acc, cur) => {
-      const strings = cur.fields.strings
+      for (const item of results.items) {
+        const strings = item.fields.strings ?? {}
+        const defaultStrings = strings[DEFAULT_LOCALE] ?? {}
 
-      return {
-        ...acc,
-        ...mergeWith(
-          {},
-          locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
-          strings?.[locale.code],
-          (o, s) => (isEmpty(s) ? o : s),
-        ),
+        for (const contentfulLocale of Object.keys(strings)) {
+          const locale = locales.find((item) => item.code === contentfulLocale)!
+            .locale as Locale
+          const localeStrings = strings[contentfulLocale] ?? {}
+
+          for (const key of Object.keys(strings[contentfulLocale])) {
+            messages[locale][key] = localeStrings[key] || defaultStrings[key]
+          }
+        }
       }
-    }, {})
+
+      return messages
+    },
+    { maxAge: MAX_AGE, preFetch: true },
+  )
+
+  groupMessages = (
+    messages: Messages[],
+    { namespaces, lang }: { namespaces: string[]; lang: Locale },
+  ) =>
+    namespaces.reduce(
+      (acc, cur) => ({
+        ...acc,
+        ...messages.find((m) => m.id === cur)?.[lang],
+      }),
+      {},
+    )
+
+  getTranslations = async (
+    namespaces: string[],
+    lang: Locale,
+  ): Promise<TranslationsDict> => {
+    const messages = await Promise.all(
+      namespaces.map(
+        async (namespace) => await this.getNamespaceMessages(namespace),
+      ),
+    )
+
+    return this.groupMessages(messages, { namespaces, lang })
   }
 }

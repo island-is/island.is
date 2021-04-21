@@ -19,6 +19,7 @@ const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
 module.exports = withTreat(
   withTM(
     withHealthcheckConfig({
+      basePath: '/admin',
       cssModules: false,
       serverRuntimeConfig: {
         // Will only be available on the server side

@@ -121,7 +121,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
     return (
       <Box paddingTop={[1, 1, 0]}>
-        <Tag outlined={tag.outlined} variant={tag.variant}>
+        <Tag outlined={tag.outlined} variant={tag.variant} disabled>
           {tag.label}
         </Tag>
       </Box>

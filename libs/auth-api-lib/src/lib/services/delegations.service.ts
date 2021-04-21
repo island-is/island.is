@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
+import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
 
 @Injectable()
 export class DelegationsService {
   constructor(
+    @Inject(RskApi)
+    private rskApi: RskApi,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async findAllTo(toNationalId: string): Promise<IDelegation[]> {
@@ -25,7 +31,35 @@ export class DelegationsService {
   }
 
   async findAllCompaniesTo(toNationalId: string): Promise<IDelegation[]> {
-    return [] // TODO: company registry
+    try {
+      const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
+        { kennitala: toNationalId },
+      )
+
+      if (response?.memberCompanies) {
+        const companies = response.memberCompanies.filter(
+          (m) => m.erProkuruhafi == '1',
+        )
+
+        if (Array.isArray(companies) && companies.length > 0) {
+          return companies.map(
+            (p) =>
+              <IDelegation>{
+                toNationalId: toNationalId,
+                fromNationalId: p.kennitala,
+                fromName: p.nafn,
+                isFromCompany: true,
+                type: DelegationType.ProcurationHolder,
+                provider: DelegationProvider.CompanyRegistry,
+              },
+          )
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Error in findAllCompaniesTo: ${error}`)
+    }
+
+    return []
   }
 
   async findAllValidCustomTo(toNationalId: string): Promise<IDelegation[]> {

@@ -168,7 +168,8 @@
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"
       ],
-      "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
+      "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
+      "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
@@ -212,6 +213,7 @@
         "libs/island-ui/contentful/src/index.ts"
       ],
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],

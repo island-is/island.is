@@ -72,6 +72,7 @@
 
 ## Repository
 
+- [AWS Secrets](handbook/repository/aws-secrets.md)
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
@@ -111,6 +112,7 @@
     - [API Domains Education](libs/api/domains/education/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
+    - [API Domains Translations](libs/api/domains/translations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -139,7 +141,8 @@
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [Clients National Registry](libs/clients/national-registry/README.md)
-  - [Rsk](libs/clients/rsk/README.md)
+    - [Rsk](libs/clients/rsk/v1/README.md)
+    - [RSK V2](libs/clients/rsk/v2/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
 - [Content Search Index Manager](libs/content-search-index-manager/README.md)

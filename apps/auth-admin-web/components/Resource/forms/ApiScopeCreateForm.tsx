@@ -44,7 +44,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
   const save = async (data: ApiScopeDTO) => {
     let response = null
-
     if (!isEditing) {
       response = await ResourcesService.createApiScope(data)
     } else {
@@ -231,6 +230,29 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   />
                   <HelpBox
                     helpText={localization.fields['emphasize'].helpText}
+                  />
+                </div>
+
+                <div className="api-scope-form__container__checkbox__field">
+                  <label
+                    htmlFor="isAccessControlled"
+                    className="api-scope-form__label"
+                  >
+                    {localization.fields['isAccessControlled'].label}
+                  </label>
+                  <input
+                    ref={register}
+                    id="isAccessControlled"
+                    name="isAccessControlled"
+                    type="checkbox"
+                    defaultChecked={props.apiScope.isAccessControlled}
+                    className="api-scope-form__checkbox"
+                    title={localization.fields['isAccessControlled'].helpText}
+                  />
+                  <HelpBox
+                    helpText={
+                      localization.fields['isAccessControlled'].helpText
+                    }
                   />
                 </div>
 

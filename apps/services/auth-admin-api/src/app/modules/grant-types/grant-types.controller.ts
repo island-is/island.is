@@ -22,17 +22,17 @@ import {
   GrantTypeService,
   GrantTypeDTO,
 } from '@island.is/auth-api-lib'
-import { Scopes } from '@island.is/auth-nest-tools'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('backend/grants')
 export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 
   /** Gets all Grant Types */
+  @Scopes(Scope.root, Scope.full)
   @Get()
   @ApiOkResponse({ type: [GrantType] })
   async findAll(): Promise<GrantType[] | null> {
@@ -40,7 +40,8 @@ export class GrantTypeController {
     return grantTypes
   }
 
-  /** Gets all idp restrictions and count of rows */
+  /** Gets all grant types and count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get('search')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -78,7 +79,7 @@ export class GrantTypeController {
   }
 
   /** Gets a grant type by name */
-  @Scopes('@identityserver.api/authentication')
+  @Scopes(Scope.root, Scope.full)
   @Get('type/:name')
   @ApiOkResponse({ type: GrantType })
   async getGrantType(@Param('name') name: string): Promise<GrantType | null> {
@@ -96,7 +97,7 @@ export class GrantTypeController {
   }
 
   /** Creates a new grant type */
-  @Scopes('@identityserver.api/authentication')
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiOkResponse({ type: GrantType })
   async createGrantType(
@@ -110,7 +111,7 @@ export class GrantTypeController {
   }
 
   /** Updates an existing grantType */
-  @Scopes('@identityserver.api/authentication')
+  @Scopes(Scope.root, Scope.full)
   @Put(':name')
   @ApiOkResponse({ type: GrantType })
   async updateGrantType(
@@ -128,7 +129,7 @@ export class GrantTypeController {
   }
 
   /** Soft deletes a grant type */
-  @Scopes('@identityserver.api/authentication')
+  @Scopes(Scope.root, Scope.full)
   @Delete(':name')
   @ApiOkResponse({ type: Number })
   async deleteGrantType(@Param('name') name: string): Promise<number | null> {

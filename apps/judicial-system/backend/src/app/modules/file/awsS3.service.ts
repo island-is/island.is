@@ -63,7 +63,7 @@ export class AwsS3Service {
           Bucket: environment.files.bucket,
           Key: key,
         },
-        (err, data) => {
+        (err, _) => {
           if (err) {
             reject(err)
           } else {

@@ -16,22 +16,9 @@ There are additional steps required to run this template locally
 
 ### Prerequisites
 
-- You have `awscli` installed
-  - `brew install awscli`
-- You have access to the `island-is-development01` AWS account
-  - Contact someone from the [Core team](https://github.com/orgs/island-is/teams/core)
-- You have `jq` installed [JQ](https://stedolan.github.io/jq/)
-  - `brew install jq`
 - You have `kubectl` installed
   - `brew install kubectl`
-
-#### Configure AWS
-
-- Run `aws configure`
-- Region should be set to `eu-west-1`
-- Output should be set to `json`
-- Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
-- Or export them manually in the terminal
+- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
 #### Get kubeconfig
 

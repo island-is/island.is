@@ -11,7 +11,7 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',

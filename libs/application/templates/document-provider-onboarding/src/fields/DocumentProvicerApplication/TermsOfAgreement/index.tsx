@@ -97,7 +97,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.userTerms"
                 hasError={
-                  errors['termsOfAgreement.userTerms'] &&
+                  errors?.termsOfAgreement?.userTerms &&
                   getValues('termsOfAgreement.userTerms') === false
                 }
                 errorMessage={formatText(
@@ -134,7 +134,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.securityTerms"
                 hasError={
-                  errors['termsOfAgreement.securityTerms'] &&
+                  errors?.termsOfAgreement?.securityTerms &&
                   getValues('termsOfAgreement.securityTerms') === false
                 }
                 errorMessage={formatText(

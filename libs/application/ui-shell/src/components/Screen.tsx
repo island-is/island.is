@@ -89,20 +89,18 @@ const Screen: FC<ScreenProps> = ({
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
-    resolver,
+    resolver: (formValue, context) =>
+      resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-
   const refetch = useContext<() => void>(RefetchContext)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION,
@@ -202,6 +200,7 @@ const Screen: FC<ScreenProps> = ({
               screen,
             ),
           },
+          locale,
         },
       })
     }
@@ -264,6 +263,7 @@ const Screen: FC<ScreenProps> = ({
                         id: applicationId,
                         answers: { [screen.id]: newRepeaterItems },
                       },
+                      locale,
                     },
                   })
                   if (!newData.errors) {

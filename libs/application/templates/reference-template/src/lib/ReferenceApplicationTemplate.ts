@@ -7,12 +7,14 @@ import {
   Application,
   DefaultEvents,
   DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { ApiActions } from '../shared'
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+import { m } from './messages'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -43,8 +45,23 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z.string().min(7),
+    nationalId: z
+      .string()
+      /**
+       * We are depending on this template for the e2e tests on the application-system-api.
+       * Because we are not allowing committing valid kennitala, I reversed the condition
+       * to check for invalid kenitala so it passes the test.
+       */
+      .refine((n) => n && !kennitala.isValid(n), {
+        params: m.dataSchemeNationalId,
+      }),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      { params: m.dataSchemePhoneNumber },
+    ),
     email: z.string().email(),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
@@ -63,7 +80,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: 'Reference application',
+  name: m.name,
+  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
     initial: States.prerequisites,
@@ -101,6 +119,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+          title: m.draftTitle,
+          description: m.draftDescription,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [

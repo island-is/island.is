@@ -3,6 +3,10 @@ import { answersSchema } from '../lib/dataSchema'
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
+type NestedType<T> = {
+  [K in keyof T]: T[K] extends object ? NestedType<T[K]> : string
+}
+
 export interface Address {
   streetName: string
   postalCode: string
@@ -63,18 +67,15 @@ export type CRCApplication = Override<
   { answers: Answers; externalData: ExternalData }
 >
 
+type ErrorSchema = NestedType<answersSchema>
+
 export type CRCFieldBaseProps = Override<
   FieldBaseProps,
-  { application: CRCApplication }
+  { application: CRCApplication; errors: ErrorSchema }
 >
 
 export enum DataProviderTypes {
   MOCK_NationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
-}
-
-export enum InterviewFieldIds {
-  parentA = 'interviewParentA',
-  parentB = 'interviewParentB',
 }
