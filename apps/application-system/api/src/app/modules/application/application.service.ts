@@ -11,6 +11,23 @@ import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
+import { ApplicationLifecycle } from './types'
+
+const applicationIsNotSetToBePruned = () => ({
+  [Op.or]: [
+    {
+      pruneAt: {
+        [Op.is]: null,
+      },
+    },
+    {
+      pruneAt: {
+        [Op.gt]: new Date(),
+      },
+    },
+  ],
+})
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -18,8 +35,24 @@ export class ApplicationService {
     private applicationModel: typeof Application,
   ) {}
 
-  async findOneById(id: string): Promise<Application | null> {
-    return this.applicationModel.findOne({ where: { id } })
+  async findOneById(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { assignees: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+        ...applicationIsNotSetToBePruned(),
+      },
+    })
   }
 
   async findAllByNationalIdAndFilters(
@@ -34,10 +67,18 @@ export class ApplicationService {
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
-        [Op.or]: [
-          { applicant: nationalId },
-          { assignees: { [Op.contains]: [nationalId] } },
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { applicant: nationalId },
+              { assignees: { [Op.contains]: [nationalId] } },
+            ],
+          },
+          applicationIsNotSetToBePruned(),
         ],
+        isListed: {
+          [Op.eq]: true,
+        },
       },
       order: [['modified', 'DESC']],
     })
@@ -65,12 +106,13 @@ export class ApplicationService {
     answers: FormValue,
     assignees: string[],
     status: ApplicationStatus,
+    lifecycle: ApplicationLifecycle,
   ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state, answers, assignees, status },
+      { state, answers, assignees, status, ...lifecycle },
       {
         where: { id },
         returning: true,

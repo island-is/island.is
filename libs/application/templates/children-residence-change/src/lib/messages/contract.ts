@@ -45,8 +45,10 @@ export const contract = {
       description: 'Label for child benefit',
     },
     text: {
-      id: 'crc.application:section.contract.overview.childBenefit.text',
-      defaultMessage: '{otherParent} fær einfalt meðlag mánaðarlega.',
+      id:
+        'crc.application:section.contract.overview.childBenefit.text#markdown',
+      defaultMessage:
+        '{currentResidenceParentName} greiðir einfalt meðlag með hverju barni til nýs lögheimilisforeldris.\\nEf foreldrar greiða aukið meðlag þarf að semja að nýju og leita staðfestingar sýslumanns.',
       description: 'Text for child benefit',
     },
   }),

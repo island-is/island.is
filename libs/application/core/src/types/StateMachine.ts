@@ -60,8 +60,22 @@ export interface ApplicationTemplateAPIAction {
   throwOnError?: boolean
 }
 
+export type StateLifeCycle =
+  | {
+      // Controls visibility from my pages + /umsoknir/:type when in current state
+      shouldBeListed: boolean
+      shouldBePruned: false
+    }
+  | {
+      shouldBeListed: boolean
+      shouldBePruned: true
+      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+      whenToPrune: number | ((application: Application) => Date)
+    }
+
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
+  lifecycle: StateLifeCycle
   title?: StaticText
   description?: StaticText
   progress?: number

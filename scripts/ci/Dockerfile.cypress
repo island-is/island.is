@@ -190,7 +190,7 @@ RUN echo  " node version:    $(node -v) \n" \
 
 ENTRYPOINT ["cypress", "run"]
 
-FROM cypress-included as cypress-output
+FROM cypress-included as output-cypress
 
 RUN apt-get install jq -y
 RUN addgroup runners && adduser runner && adduser runner runners

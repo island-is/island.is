@@ -68,6 +68,11 @@ export const InputController: FC<Props> = ({
           suffix=" kr."
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}
@@ -89,6 +94,11 @@ export const InputController: FC<Props> = ({
           suffix={suffix}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}
@@ -110,6 +120,11 @@ export const InputController: FC<Props> = ({
           type={type as 'text' | 'tel'}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}

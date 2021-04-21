@@ -5,6 +5,7 @@ interface SequelizeConfig {
   database: string
   host: string
   dialect: Dialect
+  seederStorage: string
 }
 declare namespace SequelizeConfig {
   const test: SequelizeConfig
