@@ -79,7 +79,6 @@ export default {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
   endorsementSystem: {
-    isEnabled: process.env.ENDORSEMENT_SYSTEM_IS_ENABLED ?? false,
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
 }

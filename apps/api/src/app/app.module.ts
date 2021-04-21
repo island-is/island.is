@@ -148,13 +148,9 @@ const autoSchemaFile = environment.production
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
     }),
-    ...(environment.endorsementSystem.isEnabled
-      ? [
-          EndorsementSystemModule.register({
-            baseApiUrl: environment.endorsementSystem.baseApiUrl,
-          }),
-        ]
-      : []),
+    EndorsementSystemModule.register({
+      baseApiUrl: environment.endorsementSystem.baseApiUrl,
+    }),
   ],
 })
 export class AppModule {}
