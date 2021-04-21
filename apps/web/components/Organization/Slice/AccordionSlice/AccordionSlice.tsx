@@ -25,12 +25,12 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         <Text variant="h3" as="h2" marginBottom={2}>
           {slice.title}
         </Text>
-        {slice.accordionItems.map((item) => (
+        {slice.accordionItems?.map((item) => (
           <Box paddingY={1}>
             <AccordionCard
               id={item.id}
               label={item.title}
-              startExpanded={slice.accordionItems.length === 1}
+              startExpanded={slice.accordionItems?.length === 1}
             >
               <Box className={styles.accordionBox}>
                 {richText(item.content as SliceType[])}

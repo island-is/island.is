@@ -13,7 +13,7 @@ export const StorySlice: React.FC<SliceProps> = ({ slice }) => {
       <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
         <StoryList
           {...slice}
-          stories={(slice.stories as any[]).map((story) => ({
+          stories={slice.stories.map((story) => ({
             ...story,
             logoUrl: story.logo.url,
           }))}

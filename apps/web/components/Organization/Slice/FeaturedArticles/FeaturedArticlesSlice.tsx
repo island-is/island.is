@@ -31,56 +31,54 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  return (
-    !!slice.articles.length && (
-      <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6, 8]}
-          paddingBottom={[8, 6, 6]}
-        >
-          <Text as="h2" variant="h3" paddingBottom={6}>
-            {slice.title}
-          </Text>
-          <Stack space={2}>
-            {slice.articles.map(({ title, slug, processEntry }) => {
-              const url = linkResolver('Article' as LinkType, [slug])
-              return (
-                <FocusableBox
-                  key={slug}
-                  href={url.href}
-                  target={isMobile ? '' : '_blank'}
-                  borderRadius="large"
-                >
-                  {({ isFocused }) => (
-                    <LinkCard
-                      isFocused={isFocused}
-                      tag={!!processEntry && n('applicationProcess', 'Umsókn')}
-                    >
-                      {title}
-                    </LinkCard>
-                  )}
-                </FocusableBox>
-              )
-            })}
-          </Stack>
-          {!!slice.link && (
-            <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
-              <Link href={slice.link.url}>
-                <Button
-                  icon="arrowForward"
-                  iconType="filled"
-                  type="button"
-                  variant="text"
-                >
-                  {n('seeAllServices', 'Sjá allt efni')}
-                </Button>
-              </Link>
-            </Box>
-          )}
-        </Box>
-      </section>
-    )
-  )
+  return !!slice.articles.length ? (
+    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+      <Box
+        borderTopWidth="standard"
+        borderColor="standard"
+        paddingTop={[8, 6, 8]}
+        paddingBottom={[8, 6, 6]}
+      >
+        <Text as="h2" variant="h3" paddingBottom={6}>
+          {slice.title}
+        </Text>
+        <Stack space={2}>
+          {slice.articles.map(({ title, slug, processEntry }) => {
+            const url = linkResolver('Article' as LinkType, [slug])
+            return (
+              <FocusableBox
+                key={slug}
+                href={url.href}
+                target={isMobile ? '' : '_blank'}
+                borderRadius="large"
+              >
+                {({ isFocused }: { isFocused: boolean }) => (
+                  <LinkCard
+                    isFocused={isFocused}
+                    tag={!!processEntry && n('applicationProcess', 'Umsókn')}
+                  >
+                    {title}
+                  </LinkCard>
+                )}
+              </FocusableBox>
+            )
+          })}
+        </Stack>
+        {!!slice.link && (
+          <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
+            <Link href={slice.link.url}>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                type="button"
+                variant="text"
+              >
+                {n('seeAllServices', 'Sjá allt efni')}
+              </Button>
+            </Link>
+          </Box>
+        )}
+      </Box>
+    </section>
+  ) : null
 }

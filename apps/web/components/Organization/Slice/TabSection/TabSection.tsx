@@ -23,11 +23,11 @@ export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
               <GridRow>
                 <GridColumn
                   span={['9/9', '9/9', '9/9', '7/9']}
-                  offset={[null, null, null, '1/9']}
+                  offset={['0', '0', '0', '1/9']}
                 >
                   <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
                     <img
-                      src={tab.image.url}
+                      src={tab.image?.url}
                       className={styles.tabSectionImg}
                       alt=""
                     />

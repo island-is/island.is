@@ -37,7 +37,7 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
               <Box paddingY={1}>
                 <AccordionCard
                   id={office.id}
-                  label={office.name}
+                  label={office.name ?? ''}
                   startExpanded={slice.offices.length === 1}
                 >
                   <Box className={styles.accordionBox}>
