@@ -15,7 +15,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
 } from '../types/StateMachine'
-import { buildForm } from '@island.is/application/core'
+import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
 
 const createMockApplication = (
   data: {
@@ -67,6 +67,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -94,6 +95,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -117,12 +119,14 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

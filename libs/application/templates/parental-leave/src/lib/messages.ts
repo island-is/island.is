@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fæðingarorlof',
       description: 'Parental Leave',
     },
+    prerequisitesSection: {
+      id: 'pl.application:prerequisites.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
+    },
     applicationName: {
       id: 'pl.application:application.name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -357,6 +362,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
+    childrenInformationTitle: {
+      id: 'pl.application:childreninformation.title',
+      defaultMessage: 'Börnin þín',
+      description: 'Your children',
+    },
+    childrenInformationSubTitle: {
+      id: 'pl.application:childreninformation.subtitle',
+      defaultMessage:
+        'Upplýsingar um börn sem þú hefur forsjá fyrir eru sóttar til Þjóðskrár. Upplýsingar um áætlaðan fæðingardag barns eru sóttar úr sjúkraskrá.',
+      description:
+        'Information about children in your custody, source Þjóðskrá. Information on expected date of birth, source sjúkraskrá',
+    },
     expectedDateOfBirthTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
@@ -465,6 +482,34 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Nei, ég vil skipta fæðingarorlofinu mínu upp í fleiri tímabil og/eða teygja það yfir lengra tímabil.',
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
+    },
+  }),
+
+  selectChild: defineMessages({
+    subSection: {
+      id: 'pl.application:selectChild.subSection',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenTitle: {
+      id: 'pl.application:selectChild.screenTitle',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenDescription: {
+      id: 'pl.application:selectChild.screenDescription',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+      description: 'Children you can apply for parental leave',
+    },
+    title: {
+      id: 'pl.application:selectChild.title',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    choose: {
+      id: 'pl.application:selectChild.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
     },
   }),
 

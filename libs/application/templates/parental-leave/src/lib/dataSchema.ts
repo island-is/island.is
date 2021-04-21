@@ -22,6 +22,7 @@ const PersonalAllowance = z
  */
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  selectedChild: z.string(),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
