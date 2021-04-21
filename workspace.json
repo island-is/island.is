@@ -3572,7 +3572,8 @@
             "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/icelandic-names-registry/backend"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "icelandic-names-registry-types": {
