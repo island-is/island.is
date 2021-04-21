@@ -34,7 +34,7 @@ interface WrapperProps {
   pageTitle: string
   pageDescription?: string
   pageFeaturedImage?: Image
-  organizationPage?: OrganizationPage
+  organizationPage: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
   sidebarContent?: ReactNode
@@ -93,13 +93,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
 }) => {
-  const secondaryNavList: NavigationItem[] = organizationPage.secondaryMenu?.childrenLinks.map(
-    ({ text, url }) => ({
+  const secondaryNavList: NavigationItem[] =
+    organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
       active: text === pageTitle,
-    }),
-  )
+    })) ?? []
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
