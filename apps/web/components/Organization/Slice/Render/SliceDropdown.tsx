@@ -10,10 +10,18 @@ import {
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
+import { ValueType } from 'react-select/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface SliceProps {
   slices: Slice[]
   sliceExtraText: string
+}
+
+interface DropdownOption {
+  label: string
+  value: string
+  slug: string
 }
 
 export const SliceDropdown: React.FC<SliceProps> = ({
@@ -22,7 +30,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
-  const options = []
+  const options: DropdownOption[] = []
   for (const slice of slices) {
     if (slice.__typename === 'OneColumnText') {
       options.push({
@@ -36,9 +44,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
     setSelectedId(
-      hashString
-        ? options.find((x) => x.slug === hashString).value
-        : options[0].value,
+      (options.find((x) => x.slug === hashString) ?? options[0]).value,
     )
   }, [Router, options])
 
@@ -61,9 +67,11 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               name="select1"
               options={options}
               value={options.find((x) => x.value === selectedId)}
-              onChange={({ value }: Option) => {
-                const slug = options.find((x) => x.value === value).slug
-                setSelectedId(String(value))
+              onChange={(option: ValueType<Option>) => {
+                const slug = options.find(
+                  (x) => x.value === (option as Option).value,
+                )?.slug
+                setSelectedId((option as Option).value as string)
                 Router.replace(
                   window.location.protocol +
                     '//' +
@@ -77,11 +85,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         </GridRow>
       </GridContainer>
       {!!selectedSlice && (
-        <OrganizationSlice
-          key={selectedSlice.id}
-          slice={selectedSlice}
-          namespace={null}
-        />
+        <OrganizationSlice key={selectedSlice.id} slice={selectedSlice} />
       )}
     </>
   )
