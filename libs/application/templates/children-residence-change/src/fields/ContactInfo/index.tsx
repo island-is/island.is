@@ -85,7 +85,6 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-
       <Text marginTop={5} variant="h4">
         {childResidenceInfo.future.parentName}
       </Text>
