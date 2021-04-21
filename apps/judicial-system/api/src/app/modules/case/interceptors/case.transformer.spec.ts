@@ -1,3 +1,5 @@
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
@@ -73,6 +75,81 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.isCustodyEndDateInThePast).toBe(true)
+    })
+  })
+
+  describe('isCaseAppealable', () => {
+    it('should not set appealable when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBeUndefined()
+    })
+
+    it('should set appealable to false when neither party postponed', () => {
+      // Arrange
+      const theCase = { rulingDate: new Date().toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(false)
+    })
+
+    it('should set appealable to true when the accused postponed and the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = {
+        accusedAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(true)
+    })
+
+    it('should set appealable to true when the prosecutor postponed and the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = {
+        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(true)
+    })
+
+    it('should set appealable to false when either party postponed and the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      const theCase = {
+        accusedAppealDecision: CaseAppealDecision.POSTPONE,
+        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isCaseAppealable).toBe(false)
     })
   })
 })

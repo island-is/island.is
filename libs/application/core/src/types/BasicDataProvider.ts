@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { GraphQLError } from 'graphql'
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
 
 import { Application } from './Application'
 import {
@@ -20,6 +21,8 @@ export interface DataProviderConfig {
   user: User | undefined
   /** GraphQL api base url **/
   baseApiUrl: string
+  /** Front-end language selected */
+  locale: Locale
 }
 
 export interface GraphqlGatewayResponse<DataType> extends Response {
@@ -34,7 +37,11 @@ export abstract class BasicDataProvider implements DataProvider {
   readonly config: DataProviderConfig
 
   constructor(
-    config: DataProviderConfig = { user: undefined, baseApiUrl: '' },
+    config: DataProviderConfig = {
+      user: undefined,
+      baseApiUrl: '',
+      locale: 'is' as Locale,
+    },
   ) {
     this.config = config
   }

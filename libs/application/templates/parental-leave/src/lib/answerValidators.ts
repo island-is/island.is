@@ -3,13 +3,14 @@ import parseISO from 'date-fns/parseISO'
 import isValid from 'date-fns/isValid'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import isNumber from 'lodash/isNumber'
 import {
   Application,
   AnswerValidator,
-  AnswerValidationError,
   getValueViaPath,
   Answer,
+  buildValidationError,
+  coreErrorMessages,
+  StaticText,
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
 
@@ -20,27 +21,6 @@ import { NO } from '../constants'
 
 const emailRegex = /[^\\.\\s@:](?:[^\\s@:]*[^\\s@:\\.])?@[^\\.\\s@]+(?:\\.[^\\.\\s@]+)*/g
 const isValidEmail = (value: string) => emailRegex.test(value)
-
-const buildValidationError = (
-  path: string,
-  index?: number,
-): ((message: string, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
-  if (field && isNumber(index)) {
-    return {
-      message,
-      path: `${path}[${index}].${field}`,
-    }
-  }
-
-  return {
-    message,
-    path,
-  }
-}
-
 const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
 const PERIODS = 'periods'
@@ -49,11 +29,16 @@ const PERIODS = 'periods'
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
     const obj = newAnswer as Record<string, Answer>
-    const buildError = buildValidationError(`${EMPLOYER}.email`)
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${EMPLOYER}.${path}`)(message)
     const isSelfEmployed = getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
     )
+
+    if (obj.isSelfEmployed === '') {
+      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
+    }
 
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
@@ -61,11 +46,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     if (isSelfEmployed === NO && isEmpty(obj?.email)) {
-      return buildError(`You need to define your employer email address.`)
+      return buildError(
+        'You need to define your employer email address.',
+        'email',
+      )
     }
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
-      return buildError('You need to define a valid email address.')
+      return buildError('You need to define a valid email address.', 'email')
     }
 
     return undefined

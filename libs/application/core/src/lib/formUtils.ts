@@ -4,6 +4,7 @@
 
 import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
+import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
 import { shouldShowFormItem } from '@island.is/application/core'
@@ -32,6 +33,10 @@ const containsArray = (obj: RecordObject) => {
   }
 
   return contains
+}
+
+export function getErrorViaPath(obj: RecordObject, path: string): string {
+  return get(obj, path) as string
 }
 
 export function getValueViaPath(
@@ -206,8 +211,6 @@ export type MessageFormatter = (
   descriptor: StaticText,
   values?: StaticTextObject['values'],
 ) => string
-
-type ValueOf<T> = T[keyof T]
 
 const handleMessageFormatting = (
   message: StaticText,

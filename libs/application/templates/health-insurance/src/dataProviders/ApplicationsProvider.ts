@@ -20,6 +20,7 @@ export class ApplicationsProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway(query, {
       input: { typeId: [ApplicationTypes.HEALTH_INSURANCE] },
+      locale: this.config.locale,
     })
       .then(async (res: Response) => {
         const response = await res.json()

@@ -89,7 +89,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
@@ -108,19 +108,14 @@ export class AuthController {
         name: user.fullname,
         mobile: user.mobile,
       },
-      returnUrl ?? '/krofur', // looks like the return url gets lost sometimes
       res,
       new Entropy({ bits: 128 }).string(),
     )
   }
 
   @Get('login')
-  login(
-    @Res() res: Response,
-    @Query('returnUrl') returnUrl: string,
-    @Query('nationalId') nationalId: string,
-  ) {
-    this.logger.debug(`Received login request with return url ${returnUrl}`)
+  login(@Res() res: Response, @Query('nationalId') nationalId: string) {
+    this.logger.debug('Received login request')
 
     const { name, options } = REDIRECT_COOKIE
 
@@ -136,7 +131,6 @@ export class AuthController {
           name: '',
           mobile: '',
         },
-        returnUrl ?? '/krofur', // just in case the return url is missing
         res,
       )
     }
@@ -145,11 +139,7 @@ export class AuthController {
     const electronicIdOnly = '&qaa=4'
 
     return res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: EXPIRES_IN_MILLISECONDS },
-      )
+      .cookie(name, { authId }, { ...options, maxAge: EXPIRES_IN_MILLISECONDS })
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
@@ -165,7 +155,6 @@ export class AuthController {
 
   private async redirectAuthenticatedUser(
     authUser: AuthUser,
-    returnUrl: string,
     res: Response,
     csrfToken?: string,
   ) {
@@ -204,7 +193,7 @@ export class AuthController {
           ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl),
+        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : '/krofur'),
       user.id,
     )
   }

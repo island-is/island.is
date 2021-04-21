@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
 
 import { environment } from '../../../../environments'
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
@@ -24,12 +25,19 @@ export function buildDataProviders(
     new (dataProviderConfig: DataProviderConfig) => BasicDataProvider
   >,
   user: User,
+  locale: Locale,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
     const Provider = templateDataProviders[type]
     if (Provider) {
-      providers.push(new Provider({ baseApiUrl: environment.baseApiUrl, user }))
+      providers.push(
+        new Provider({
+          baseApiUrl: environment.baseApiUrl,
+          user,
+          locale,
+        }),
+      )
     } else {
       providers.push(new NotImplemented())
     }

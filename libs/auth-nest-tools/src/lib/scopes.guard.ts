@@ -22,7 +22,7 @@ export class ScopesGuard implements CanActivate {
     const userScopes = this.getUserScopes(context)
 
     const hasPermission = () =>
-      allowedScopes.every((scope) => userScopes.includes(scope))
+      allowedScopes.some((scope) => userScopes.includes(scope))
 
     return hasPermission()
   }
