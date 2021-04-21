@@ -19,6 +19,17 @@ export const ParentBForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'parentBIntro',
+      title: m.parentBIntro.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'parentBIntro',
+          title: m.parentBIntro.general.pageTitle,
+          component: 'ParentBIntro',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
