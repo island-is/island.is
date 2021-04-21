@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { isPerson } from 'kennitala'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
@@ -87,8 +88,8 @@ export class EndorsementService {
       validations: parentEndorsementList.validationRules,
       meta: { ...allEndorsementMetadata, nationalId },
     })
-    if (!isValid) {
-      this.logger.debug('Failed valdiation rules', {
+    if (!isValid || !isPerson(nationalId)) {
+      this.logger.debug('Failed validation rules', {
         listId,
         nationalId,
       })
