@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   GridContainer,
   GridRow,
   Icon,
-  Input,
   Text,
 } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'

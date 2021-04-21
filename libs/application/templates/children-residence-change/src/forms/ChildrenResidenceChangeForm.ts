@@ -141,7 +141,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: DataProviderTypes.MOCK_NationalRegistry,
+                  type: DataProviderTypes.MockNationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
