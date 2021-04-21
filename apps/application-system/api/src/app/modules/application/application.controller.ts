@@ -37,13 +37,16 @@ import {
   ApplicationStatus,
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
-import { Unwrap } from '@island.is/shared/types'
+import { Unwrap, Locale } from '@island.is/shared/types'
 import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
+  getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
+import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
+import { IntlService } from '@island.is/api/domains/translations'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -51,7 +54,6 @@ import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
@@ -80,17 +82,23 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import { getApplicationLifecycle } from './utils/application'
 import {
   DecodedAssignmentToken,
   StateChangeResult,
   TemplateAPIModuleActionResult,
 } from './types'
+import { CurrentLocale } from './utils/currentLocale'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
   description: 'Bearer token authorization',
+})
+@ApiHeader({
+  name: 'locale',
+  description: 'Front-end language selected',
 })
 @Controller()
 export class ApplicationController {
@@ -99,6 +107,7 @@ export class ApplicationController {
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
+    private intlService: IntlService,
   ) {}
 
   @Scopes(ApplicationIdentityServerScope.read)
@@ -164,6 +173,7 @@ export class ApplicationController {
       // We've already checked an application with this type and it is ready
       if (templateTypeToIsReady[application.typeId]) {
         filteredApplications.push(application)
+        continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
@@ -196,7 +206,6 @@ export class ApplicationController {
     nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
-
     const template = await getApplicationTemplateByTypeId(typeId)
 
     if (template === null) {
@@ -237,7 +246,24 @@ export class ApplicationController {
       typeId: application.typeId,
     }
 
-    return this.applicationService.create(applicationDto)
+    const createdApplication = await this.applicationService.create(
+      applicationDto,
+    )
+
+    // Make sure the application has the correct lifecycle values persisted to database.
+    // Requires an application object that is created in the previous step.
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateApplicationState(
+      createdApplication.id,
+      createdApplication.state,
+      createdApplication.answers as FormValue,
+      createdApplication.assignees,
+      createdApplication.status,
+      getApplicationLifecycle(createdApplication as BaseApplication, template),
+    )
+
+    return updatedApplication
   }
 
   @Scopes(ApplicationIdentityServerScope.write)
@@ -332,19 +358,26 @@ export class ApplicationController {
     @Body()
     application: UpdateApplicationDto,
     @NationalId() nationalId: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
     const newAnswers = application.answers as FormValue
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       nationalId,
       true,
+      intl.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       newAnswers,
+      intl.formatMessage,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
@@ -377,6 +410,7 @@ export class ApplicationController {
     externalDataDto: PopulateExternalDataDto,
     @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
@@ -392,6 +426,7 @@ export class ApplicationController {
         externalDataDto,
         templateDataProviders,
         authorization ?? '',
+        locale,
       ),
       existingApplication as BaseApplication,
     )
@@ -428,9 +463,11 @@ export class ApplicationController {
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @NationalId() nationalId: string,
     @AuthorizationHeader() authorization: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
+
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -439,18 +476,25 @@ export class ApplicationController {
     }
 
     const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       nationalId,
       false,
+      intl.formatMessage,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
+      intl.formatMessage,
     )
+
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       permittedAnswers,
@@ -550,7 +594,7 @@ export class ApplicationController {
     }
   }
 
-  async changeState(
+  private async changeState(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
@@ -641,6 +685,7 @@ export class ApplicationController {
         updatedApplication.answers,
         updatedApplication.assignees,
         status,
+        getApplicationLifecycle(updatedApplication, template),
       )
 
       updatedApplication = update.updatedApplication as BaseApplication

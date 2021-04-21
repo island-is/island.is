@@ -11,13 +11,12 @@ import {
 } from '@island.is/application/graphql'
 import {
   childrenResidenceInfo,
-  formatAddress,
   getSelectedChildrenFromExternalData,
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates, Roles } from '../../lib/constants'
-import { DescriptionText } from '../components'
+import { DescriptionText, TransferOverview } from '../components'
 import {
   fileSignatureReducer,
   initialFileSignatureState,
@@ -171,36 +170,7 @@ const Overview = ({
           }}
         />
       </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.childName, {
-            count: children.length,
-          })}
-        </Text>
-        {children.map((child) => (
-          <Text key={child.nationalId}>{child.fullName}</Text>
-        ))}
-      </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.currentResidence, {
-            count: children.length,
-          })}
-        </Text>
-        <Text>{childResidenceInfo.current.parentName}</Text>
-        <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
-      </Box>
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.newResidence, {
-            count: children.length,
-          })}
-        </Text>
-        <Text>{childResidenceInfo.future.parentName}</Text>
-        <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.future.address)}
-        </Text>
-      </Box>
+      <TransferOverview application={application} />
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.labels.contactInformation)}
@@ -231,11 +201,12 @@ const Overview = ({
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.contract.childBenefit.label)}
         </Text>
-        <Text>
-          {formatMessage(m.contract.childBenefit.text, {
-            otherParent: childResidenceInfo.future.parentName,
-          })}
-        </Text>
+        <DescriptionText
+          text={m.contract.childBenefit.text}
+          format={{
+            currentResidenceParentName: childResidenceInfo.current.parentName,
+          }}
+        />
       </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
