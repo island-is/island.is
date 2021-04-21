@@ -6,11 +6,13 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 import { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
-import { AuditService } from '../audit'
 import {
   CreateFileInput,
   CreatePresignedPostInput,
@@ -28,7 +30,7 @@ import {
 @Resolver()
 export class FileResolver {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -44,7 +46,7 @@ export class FileResolver {
 
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_PRESIGNED_POST,
       backendApi.createCasePresignedPost(caseId, createPresignedPost),
@@ -63,7 +65,7 @@ export class FileResolver {
 
     this.logger.debug(`Getting a signed url for file ${id} of case ${caseId}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SIGNED_URL,
       backendApi.getCaseFileSignedUrl(caseId, id),
@@ -82,7 +84,7 @@ export class FileResolver {
 
     this.logger.debug(`Deleting file ${id} of case ${caseId}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_FILE,
       backendApi.deleteCaseFile(caseId, id),
@@ -101,7 +103,7 @@ export class FileResolver {
 
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
       backendApi.createCaseFile(caseId, createFile),
