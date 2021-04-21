@@ -124,6 +124,7 @@
     - [Children Residence Change Template](libs/application/templates/children-residence-change/README.md)
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
+    - [Application Templates Funding Government Projects](libs/application/templates/funding-government-projects/README.md)
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)

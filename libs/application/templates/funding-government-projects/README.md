@@ -1,4 +1,4 @@
-# application-templates-funding-government-projects
+# Application Templates Funding Government Projects
 
 This library was generated with [Nx](https://nx.dev).
 
