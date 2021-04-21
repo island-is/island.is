@@ -1,8 +1,6 @@
-<!-- gitbook-ignore -->
+# API Domains Translations
 
-# api-domains-translations
-
-This library was generated with [Nx](https://nx.dev).
+Translations domain to fetch namespaces' messages from Contentful. Also used to create the Intl function to be able to use along with `formatMessage`.
 
 ## Running unit tests
 

@@ -11,6 +11,7 @@ const providers = [
     clientId: IdentityServer.clientId,
     domain: process.env.IDENTITYSERVER_DOMAIN,
     clientSecret: process.env.IDENTITYSERVER_SECRET,
+    protection: 'pkce',
   }),
 ]
 

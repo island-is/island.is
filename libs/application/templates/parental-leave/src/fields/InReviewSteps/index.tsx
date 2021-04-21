@@ -46,7 +46,11 @@ const statesMap: StatesMap = {
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+const InReviewSteps: FC<FieldBaseProps> = ({
+  application,
+  refetch,
+  errors,
+}) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -93,7 +97,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
     },
   ]
 
-  if (!isRequestingRights) steps.shift()
+  if (!isRequestingRights) {
+    steps.shift()
+  }
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
@@ -194,7 +200,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
         </Box>
       )) || (
         <Box marginTop={7} marginBottom={8}>
-          <Review application={application} editable={false} />
+          <Review application={application} editable={false} errors={errors} />
         </Box>
       )}
     </Box>

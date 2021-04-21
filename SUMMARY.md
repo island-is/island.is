@@ -112,6 +112,7 @@
     - [API Domains Education](libs/api/domains/education/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
+    - [API Domains Translations](libs/api/domains/translations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
