@@ -18,11 +18,9 @@ enum Duration {
 }
 
 const parentContactInfo = z.object({
-  email: z
-    .string()
-    .refine((v) => isValidEmail(v), {
-      message: error.validation.invalidEmail.defaultMessage,
-    }),
+  email: z.string().refine((v) => isValidEmail(v), {
+    message: error.validation.invalidEmail.defaultMessage,
+  }),
   phoneNumber: z.string().min(7, {
     message: error.validation.invalidPhoneNumber.defaultMessage,
   }),
