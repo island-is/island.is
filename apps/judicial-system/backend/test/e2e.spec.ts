@@ -127,6 +127,7 @@ function remainingProsecutorCaseData() {
     caseFacts: 'Case Facts',
     legalArguments: 'Legal Arguments',
     comments: 'Comments',
+    caseFilesComments: 'Case Files Comments',
     prosecutorId: prosecutor.id,
   }
 }
@@ -316,6 +317,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
+  expect(caseOne.caseFilesComments || null).toBe(
+    caseTwo.caseFilesComments || null,
+  )
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
   expect(caseOne.setCourtCaseNumberManually || null).toBe(

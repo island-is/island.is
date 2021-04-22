@@ -5,6 +5,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -50,6 +51,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn um vegabréf',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -74,6 +76,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

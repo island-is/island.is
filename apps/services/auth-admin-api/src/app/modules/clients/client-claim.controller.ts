@@ -13,16 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('client-claim')
 @Controller('backend/client-claim')
 export class ClientClaimController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Adds new claim to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientClaim })
   async create(@Body() claim: ClientClaimDTO): Promise<ClientClaim> {
@@ -30,6 +31,7 @@ export class ClientClaimController {
   }
 
   /** Removes a claim from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:claimType/:claimValue')
   @ApiCreatedResponse()
   async delete(
