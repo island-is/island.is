@@ -19,12 +19,8 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Audit({
-  namespace: '@identityserver.api/grants',
-})
 @ApiTags('grants')
 @Controller('grants')
 export class GrantsController {
