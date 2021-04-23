@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import slugify from '@sindresorhus/slugify'
@@ -7,13 +7,8 @@ import {
   Text,
   Stack,
   Breadcrumbs,
-  GridColumn,
-  GridRow,
   Link,
-  Navigation,
-  TableOfContents,
   Button,
-  Tag,
   LinkContext,
 } from '@island.is/island-ui/core'
 import {

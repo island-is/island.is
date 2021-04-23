@@ -14,6 +14,7 @@ export const GET_ICELANDIC_NAME_BY_SEARCH = gql`
     }
   }
 `
+
 export const GET_ICELANDIC_NAME_BY_INITIAL_LETTER = gql`
   query GetIcelandicNameByInitialLetter(
     $input: GetIcelandicNameByInitialLetterInput!

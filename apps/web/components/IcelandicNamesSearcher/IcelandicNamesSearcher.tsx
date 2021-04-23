@@ -439,7 +439,6 @@ const ResetButton: FC<ButtonProps> = ({ children, ...rest }) => {
 
 const NameTypeStrings = {
   ST: 'Stúlkur',
-  DR: 'Drengir',
   MI: 'Millinafn',
   RST: 'Stúlkur (ritbr.)',
   RDR: 'Drengir (ritbr.)',
