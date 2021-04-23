@@ -26,6 +26,7 @@ export type IcelandicName = {
   status: StatusType | null
   visible: boolean | null
   description: string | null
+  verdict: string | null
   url: string | null
   created: Date
   modified: Date

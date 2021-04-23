@@ -14,14 +14,14 @@ export class Organisation {
   @Field(() => String)
   name!: string
 
-  @Field(() => String)
-  address!: string
+  @Field(() => String, { nullable: true })
+  address?: string
 
-  @Field(() => String)
-  email!: string
+  @Field(() => String, { nullable: true })
+  email?: string
 
-  @Field(() => String)
-  phoneNumber!: string
+  @Field(() => String, { nullable: true })
+  phoneNumber?: string
 
   @Field(() => Date)
   created!: Date
