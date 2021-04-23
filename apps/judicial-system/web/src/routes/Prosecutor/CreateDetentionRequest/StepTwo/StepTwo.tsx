@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 
-import { Text, Box, Tooltip, Option } from '@island.is/island-ui/core'
+import { Option } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
@@ -16,7 +16,6 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   FormFooter,
   PageLayout,
@@ -34,7 +33,6 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import StepTwoForm from './StepTwoForm'
 
 interface CaseData {
@@ -244,18 +242,16 @@ export const StepTwo: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <FormContentContainer>
-            <StepTwoForm
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              prosecutors={prosecutors}
-              defaultProsecutor={defaultProsecutor}
-              courts={courts}
-              defaultCourt={defaultCourt}
-              requestedCourtDateIsValid={requestedCourtDateIsValid}
-              setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
-            />
-          </FormContentContainer>
+          <StepTwoForm
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            prosecutors={prosecutors}
+            defaultProsecutor={defaultProsecutor}
+            courts={courts}
+            defaultCourt={defaultCourt}
+            requestedCourtDateIsValid={requestedCourtDateIsValid}
+            setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
+          />
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
