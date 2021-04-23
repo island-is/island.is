@@ -254,34 +254,6 @@ export const StepTwo: React.FC = () => {
               defaultCourt={defaultCourt}
             />
 
-            {!workingCase.parentCase && (
-              <Box component="section" marginBottom={5}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tími handtöku
-                  </Text>
-                </Box>
-                <DateTime
-                  name="arrestDate"
-                  selectedDate={
-                    workingCase.arrestDate
-                      ? new Date(workingCase.arrestDate)
-                      : undefined
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'arrestDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setArrestDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                />
-              </Box>
-            )}
             <Box component="section" marginBottom={10}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
