@@ -4,6 +4,7 @@ import { Box, Input, Text } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { reason } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
+import { DescriptionText } from '../components'
 
 const Reason = ({ application, field }: CRCFieldBaseProps) => {
   const { id } = field
@@ -12,7 +13,9 @@ const Reason = ({ application, field }: CRCFieldBaseProps) => {
 
   return (
     <Box>
-      <Text marginTop={3}>{formatMessage(reason.general.description)}</Text>
+      <Box marginTop={3}>
+        <DescriptionText text={reason.general.description} />
+      </Box>
       <Box marginTop={5}>
         <Controller
           name="reason"
