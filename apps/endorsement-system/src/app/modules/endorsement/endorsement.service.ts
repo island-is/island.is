@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { isPerson } from 'kennitala'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
@@ -77,18 +78,29 @@ export class EndorsementService {
       throw new BadRequestException('Endorsement already exists in list')
     }
 
+    // find all requested validation types
+    const requestedValidationRules = parentEndorsementList.validationRules.map(
+      (validation) => validation.type,
+    )
+    // find all metadata fields required for these types of validations
+    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
+      requestedValidationRules,
+    )
     // get all metadata required for this endorsement
     const allEndorsementMetadata = await this.metadataService.getMetadata({
-      fields: parentEndorsementList.endorsementMeta, // TODO: Add fields required by validation here
+      fields: [
+        ...parentEndorsementList.endorsementMeta,
+        ...metadataFieldsRequiredByValidation,
+      ],
       nationalId,
     })
-
+    // run requested validators with fetched metadata
     const isValid = this.validatorService.validate({
       validations: parentEndorsementList.validationRules,
       meta: { ...allEndorsementMetadata, nationalId },
     })
-    if (!isValid) {
-      this.logger.debug('Failed valdiation rules', {
+    if (!isValid || !isPerson(nationalId)) {
+      this.logger.debug('Failed validation rules', {
         listId,
         nationalId,
       })

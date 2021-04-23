@@ -2,10 +2,10 @@ import { NationalRegistryApi } from '@island.is/clients/national-registry'
 import { Injectable } from '@nestjs/common'
 import { MetadataProvider } from '../endorsementMetadata.service'
 
-export interface NationalRegistryInput {
+export interface NationalRegistryUserInput {
   nationalId: string
 }
-export interface NationalRegistryResponse {
+export interface NationalRegistryUserResponse {
   fullName: string
   address: {
     streetAddress: string
@@ -15,11 +15,11 @@ export interface NationalRegistryResponse {
 }
 
 @Injectable()
-export class NationalRegistryService implements MetadataProvider {
+export class NationalRegistryUserService implements MetadataProvider {
   constructor(private readonly nationalRegistryApi: NationalRegistryApi) {}
-  metadataKey = 'nationalRegistry'
+  metadataKey = 'nationalRegistryUser'
 
-  async getData(input: NationalRegistryInput) {
+  async getData(input: NationalRegistryUserInput) {
     const user = await this.nationalRegistryApi.getUser(input.nationalId)
     return {
       fullName: user.Fulltnafn,
