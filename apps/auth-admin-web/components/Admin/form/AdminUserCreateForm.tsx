@@ -259,8 +259,9 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-form__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="admin-user-create-form__button__container">
@@ -268,7 +269,8 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="admin-user-create-form__button__save"
                     disabled={isSubmitting}
-                    value={localization.saveButton}
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>

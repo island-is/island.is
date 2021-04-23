@@ -517,8 +517,16 @@
       "title": "Create a new Admin User",
       "editTitle": "Edit Admin User",
       "help": "Add user for the Admin UI by filling out the form.",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "nationalId": {
           "label": "National Id (Kennitala)",
@@ -548,8 +556,16 @@
       "title": "Create a new Grant Type",
       "editTitle": "Edit Grant Type",
       "help": "Add or edit a Grant Type",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "name": {
           "label": "Name",
@@ -570,8 +586,16 @@
       "title": "Create a new Idp Provider",
       "editTitle": "Edit Idp Provider",
       "help": "Add or edit a IDP Provider",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "name": {
           "label": "Name",
@@ -604,8 +628,16 @@
       "title": "Edit Language",
       "editTitle": "Create a new Language",
       "help": "Add new language by filling out the form",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "isoKey": {
           "label": "ISO 639-1 key",
@@ -1109,9 +1141,25 @@
       "title": "Create a new Client",
       "editTitle": "Edit Client",
       "help": "Enter some basic details for this client. Click advanced to configure preferences if default settings need to be changed. You will then go through steps to configure and add additional properties.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "",
+      "buttons": {
+        "advanced": {
+          "text": "Advanced",
+          "helpText": "Advanced settings for the client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
       "fields": {
         "clientType": {
           "label": "Client Type",

@@ -22,12 +22,24 @@ export class FormControl {
   saveButton: string
   cancelButton: string
   addButton?: string
+  toggleButton?: string
   removeButton?: string
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation
   infoEdit?: string
   infoCreate?: string
+  buttons: Record<string, Button>
+  sections: Record<string, Section>
+}
+
+export class Button {
+  text: string
+  helpText?: string
+}
+
+export class Section {
+  title: string
 }
 
 export class Environment {

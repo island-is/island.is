@@ -579,9 +579,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client__button__show"
                       onClick={() => setShow(!show)}
+                      title={localization.buttons['advanced'].helpText}
                     >
                       <i className="client__button__show__icon"></i>
-                      Advanced
+                      {localization.buttons['advanced'].text}
                     </button>
                   </div>
 
@@ -591,7 +592,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     }`}
                   >
                     <section className="client_section">
-                      <h3>Delegation section</h3>
+                      <h3>{localization.sections['delegations'].title}</h3>
 
                       <div className="client__container__checkbox__field">
                         <label
@@ -1183,8 +1184,9 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     className="client__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client__button__container">
@@ -1192,7 +1194,8 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="submit"
                     className="client__button__save"
                     disabled={isSubmitting || !available}
-                    value={localization.saveButton}
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>
