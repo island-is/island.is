@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -8,6 +9,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
 
@@ -34,6 +36,18 @@ export class EndorsementController {
     // TODO: Add auth here
     return await this.endorsementService.createEndorsementOnList({
       nationalId: '0101302989', // TODO: Replace this with requesting user
+      listId,
+    })
+  }
+
+  @Post('/bulk')
+  async bulkCreate(
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @Body() { nationalIds }: BulkEndorsementDto,
+  ): Promise<Endorsement[]> {
+    // TODO: Add auth here (only owner of list can bulk import)
+    return await this.endorsementService.bulkCreateEndorsementOnList({
+      nationalIds,
       listId,
     })
   }
