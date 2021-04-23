@@ -288,8 +288,9 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                       type="button"
                       className="api-resource-form__button__cancel"
                       onClick={props.handleCancel}
+                      title={localization.buttons['cancel'].text}
                     >
-                      {localization.cancelButton}
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="api-resource-form__button__container">
@@ -297,7 +298,8 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="api-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value={localization.saveButton}
+                      title={localization.buttons['save'].helpText}
+                      value={localization.buttons['save'].text}
                     />
                   </div>
                 </div>

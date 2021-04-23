@@ -136,7 +136,6 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="api-scope-user-claims__button__save"
-                  value={localization.saveButton}
                   onClick={props.handleNext}
                   title={localization.buttons['save'].helpText}
                 >
