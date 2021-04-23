@@ -36,7 +36,7 @@ export const ParentBForm: Form = buildForm({
         buildMultiField({
           id: 'contactInfo',
           title: m.contactInfo.general.pageTitle,
-          description: m.contactInfo.general.description,
+          description: m.contactInfo.general.parentBDescription,
           children: [
             buildTextField({
               id: 'parentB.email',
