@@ -1397,6 +1397,162 @@
           "errorMessage": "",
           "available": "",
           "unAvailable": ""
+        },
+        "supportsDelegation": {
+          "label": "Supports Delegation",
+          "helpText": "Specifies if the client supports delegation"
+        },
+        "supportsLegalGuardians": {
+          "label": "Supports Legal Guardians Delegation",
+          "helpText": "Specifies if the client supports legal guardian delegation"
+        },
+        "supportsProcuringHolders": {
+          "label": "Supports Procuring Holders Delegation",
+          "helpText": "Specifies if the client supports Procuring Holders delegation"
+        },
+        "promptDelegations": {
+          "label": "Prompt delegations",
+          "helpText": "Specifies if the user is prompt with delegation window"
+        },
+        "frontChannelLogoutUri": {
+          "label": "Front channel logout uri",
+          "placeholder": "https://example.org/logout",
+          "helpText": "Specifies logout URI at client for HTTP based front-channel logout.",
+          "errorMessage": "URL is not valid"
+        },
+        "pairWiseSubjectSalt": {
+          "label": "Rair wise subject salt",
+          "helpText": "Salt value used in pair-wise subjectId generation for users of this client.",
+          "errorMessage": "Value is not valid"
+        },
+        "userCodeType": {
+          "label": "User code type",
+          "helpText": "Specifies the type of user code to use for the client. Otherwise falls back to default.",
+          "errorMessage": "Value is not valid"
+        },
+        "accessTokenType": {
+          "label": "Access Token Type",
+          "helpText": "Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt).",
+          "errorMessage": "Access Token Type is required"
+        },
+        "accessTokenLifetime": {
+          "label": "Access Token Lifetime",
+          "helpText": "Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)",
+          "errorMessage": "Authorization code lifetime is required"
+        },
+        "authorizationCodeLifetime": {
+          "label": "Authorization code lifetime",
+          "helpText": "Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)",
+          "errorMessage": "Authorization code lifetime is required"
+        },
+        "consentLifetime": {
+          "label": "Consent lifetime",
+          "helpText": "Lifetime of a user consent in seconds. Defaults to null (no expiration).",
+          "errorMessage": "Value can not be negative"
+        },
+        "deviceCodeLifetime": {
+          "label": "Device code lifetime",
+          "helpText": "Lifetime to device code in seconds (defaults to 300 seconds / 5 minutes)",
+          "errorMessage": "Device code lifetime is required and value can not be negative",
+          "placeholder": "300"
+        },
+        "userSsoLifetime": {
+          "label": "User Sso Lifetime",
+          "helpText": "The maximum duration (in seconds) since the last time the user authenticated. (Default null)",
+          "errorMessage": "Value can not be negative"
+        },
+        "refreshTokenUsage": {
+          "label": "Refresh Token Usage",
+          "helpText": "'ReUse' the refresh token handle will stay the same when refreshing tokens. 'OneTime' the refresh token handle will be updated when refreshing tokens. This is the default",
+          "errorMessage": "Value is required"
+        },
+        "refreshTokenExpiration": {
+          "label": "Refresh token expiration",
+          "helpText": "Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime). Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime.",
+          "errorMessage": "Value is required"
+        },
+        "slidingRefreshTokenLifetime": {
+          "label": "Sliding refresh token lifetime",
+          "helpText": "Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days",
+          "errorMessage": "Value can not be negative",
+          "placeholder": "1296000"
+        },
+        "absoluteRefreshTokenLifetime": {
+          "label": "Absolute Refresh Token Lifetime",
+          "helpText": "Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days",
+          "errorMessage": "Absolute Refresh Token Lifetime is required",
+          "placeholder": "2592000"
+        },
+        "identityTokenLifetime": {
+          "label": "Identity token lifetime",
+          "helpText": "Lifetime to identity token in seconds (defaults to 300 seconds / 5 minutes)",
+          "errorMessage": "Identity token lifetime is required and the value can not be negative",
+          "placeholder": "300"
+        },
+        "protocolType": {
+          "label": "Protocol Type",
+          "helpText": "Typically set to oidc",
+          "errorMessage": "Protocol Type is required",
+          "placeholder": "oidc"
+        },
+        "clientClaimsPrefix": {
+          "label": "Client claims prefix",
+
+          "helpText": "If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims.",
+          "errorMessage": "Client claims prefix is required",
+          "placeholder": "client__"
+        },
+        "allowAccessTokenViaBrowser": {
+          "label": "Allow access Token Via Browser",
+          "helpText": "Specifies whether this client is allowed to receive access tokens via the browser. This is useful to harden flows that allow multiple response types (e.g. by disallowing a hybrid flow client that is supposed to use code id_token to add the token response type and thus leaking the token to the browser."
+        },
+        "allowOfflineAccess": {
+          "label": "Allow offline access",
+          "helpText": "Specifies whether this client can request refresh tokens (be requesting the offline_access scope)"
+        },
+        "allowPlainTextPkce": {
+          "label": "Allow plain text Pkce",
+          "helpText": "Specifies whether clients using PKCE can use a plain text code challenge (not recommended)"
+        },
+        "allowRememberConsent": {
+          "label": "Allow Remember Consent",
+          "helpText": "Specifies whether user can choose to store consent decisions."
+        },
+        "alwaysIncludeUserClaimsInIdToken": {
+          "label": "Always include user claims in Id token",
+          "helpText": "When requesting both an id token and access token, should the user claims always be added to the id token instead of requring the client to use the userinfo endpoint. Default is false."
+        },
+        "alwaysSendClientClaims": {
+          "label": "Always send client claims",
+          "helpText": "If set, the client claims will be sent for every flow. If not, only for client credentials flow (default is false)"
+        },
+        "backChannelLogoutSessionRequired": {
+          "label": "Back channel logout session required",
+          "helpText": "Specifies if the user’s session id should be sent in the request to the BackChannelLogoutUri"
+        },
+        "enableLocalLogin": {
+          "label": "Enable local login",
+          "helpText": "Specifies if this client can use local accounts, or external IdPs only"
+        },
+        "frontChannelLogoutSessionRequired": {
+          "label": "Front channel logout session required",
+          "helpText": "Specifies if the user’s session id should be sent to the FrontChannelLogoutUri"
+        },
+        "includeJwtId": {
+          "label": "Include Jwt Id",
+          "helpText": "Specifies whether JWT access tokens should have an embedded unique ID (via the jti claim)"
+        },
+        "requireClientSecret": {
+          "label": "Require Client Secret",
+          "helpText": "Specifies whether this client needs a secret to request tokens from the token endpoint"
+        },
+        "requirePkce": {
+          "label": "Require Pkce",
+          "helpText": "Specifies whether clients using an authorization code based grant type must send a proof key"
+        },
+        "updateAccessTokenClaimsOnRefresh": {
+          "label": "Update access token claims on refresh",
+          "helpText": "Gets or sets a value indicating whether the access token (and its claims) should be updated on a refresh token request."
         }
       }
     },
