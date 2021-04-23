@@ -5,7 +5,6 @@ import { confirmation, copyUrl } from '../../lib/messages'
 import { CopyUrl, DescriptionText } from '../components'
 import { CRCFieldBaseProps } from '../..'
 import ContractAccordionOverview from '../components/ContractOverviewAccordion/ContractOverviewAccordion'
-import { SubmittedApplicationImage } from '..'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -67,7 +66,12 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
         />
       </Box>
       <Box marginTop={5}>
-        <SubmittedApplicationImage />
+        <img
+          src={
+            'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
+          }
+          alt="Umsókn sent inn mynd"
+        />
       </Box>
     </>
   )
