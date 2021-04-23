@@ -1,7 +1,7 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { EndorsementList } from '../endorsementList.model'
+import { EndorsementList, EndorsementTag } from '../endorsementList.model'
 
 let app: INestApplication
 
@@ -30,7 +30,9 @@ describe('EndorsementList', () => {
   })
   it(`GET /endorsement-list?tag should return 200 and empty list when no data exists for given tag`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list?tag=reykjavikurkjordaemiSudur')
+      .get(
+        `/endorsement-list?tag=${EndorsementTag.PARTY_LETTER_REYKJAVIKURKJORDAEMI_SUDUR_2021}`,
+      )
       .send()
       .expect(200)
 
@@ -38,7 +40,9 @@ describe('EndorsementList', () => {
   })
   it(`GET /endorsement-list?tag should return 200 and list`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list?tag=nordausturkjordaemi')
+      .get(
+        `/endorsement-list?tag=${EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021}`,
+      )
       .send()
       .expect(200)
 
@@ -113,7 +117,7 @@ describe('EndorsementList', () => {
     const newEndorsementList = {
       title: 'Some title',
       description: 'Some description',
-      tags: ['nordausturkjordaemi'],
+      tags: [EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
       validationRules: [
         {
@@ -136,7 +140,7 @@ describe('EndorsementList', () => {
     const validEndorsementList = {
       title: 'Some title',
       description: 'Some description',
-      tags: ['nordausturkjordaemi'],
+      tags: [EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
       validationRules: [],
     }

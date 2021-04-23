@@ -78,12 +78,23 @@ export class EndorsementService {
       throw new BadRequestException('Endorsement already exists in list')
     }
 
+    // find all requested validation types
+    const requestedValidationRules = parentEndorsementList.validationRules.map(
+      (validation) => validation.type,
+    )
+    // find all metadata fields required for these types of validations
+    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
+      requestedValidationRules,
+    )
     // get all metadata required for this endorsement
     const allEndorsementMetadata = await this.metadataService.getMetadata({
-      fields: parentEndorsementList.endorsementMeta, // TODO: Add fields required by validation here
+      fields: [
+        ...parentEndorsementList.endorsementMeta,
+        ...metadataFieldsRequiredByValidation,
+      ],
       nationalId,
     })
-
+    // run requested validators with fetched metadata
     const isValid = this.validatorService.validate({
       validations: parentEndorsementList.validationRules,
       meta: { ...allEndorsementMetadata, nationalId },

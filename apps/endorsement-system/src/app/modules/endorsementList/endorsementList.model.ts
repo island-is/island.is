@@ -13,12 +13,13 @@ import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata
 import { ValidationRuleDto } from './dto/validationRule.dto'
 
 export enum EndorsementTag {
-  NORDAUSTURKJORDAEMI = 'nordausturkjordaemi',
-  NORDVESTURKJORDAEMI = 'nordvesturkjordaemi',
-  REYKJAVIKURKJORDAEMI_NORDUR = 'reykjavikurkjordaemiNordur',
-  REYKJAVIKURKJORDAEMI_SUDUR = 'reykjavikurkjordaemiSudur',
-  SUDURKJORDAEMI = 'sudurkjordaemi',
-  SUDVESTURKJORDAEMI = 'sudvesturkjordaemi',
+  PARTY_LETTER_2021 = 'partyLetter2021',
+  PARTY_LETTER_NORDAUSTURKJORDAEMI_2021 = 'partyLetterNordausturkjordaemi2021',
+  PARTY_LETTER_NORDVESTURKJORDAEMI_2021 = 'partyLetterNordvesturkjordaemi2021',
+  PARTY_LETTER_REYKJAVIKURKJORDAEMI_NORDUR_2021 = 'partyLetterReykjavikurkjordaemiNordur2021',
+  PARTY_LETTER_REYKJAVIKURKJORDAEMI_SUDUR_2021 = 'partyLetterReykjavikurkjordaemiSudur2021',
+  PARTY_LETTER_SUDURKJORDAEMI_2021 = 'partyLetterSudurkjordaemi2021',
+  PARTY_LETTER_SUDVESTURKJORDAEMI_2021 = 'partyLetterSudvesturkjordaemi2021',
 }
 
 @Table({

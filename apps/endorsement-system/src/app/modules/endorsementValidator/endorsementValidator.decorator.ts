@@ -6,9 +6,11 @@ import {
 } from 'class-validator'
 import { ValidationRule } from './endorsementValidator.service'
 import { MinAgeByDateInputType } from './validators/minAgeByDate/minAgeByDateValidator.service'
+import { UniqueWithinTagsInputType } from './validators/uniqueWithinTags/uniqueWithinTagsValidator.service'
 
 const validatorInputTypes = {
   [ValidationRule.MIN_AGE_AT_DATE]: MinAgeByDateInputType,
+  [ValidationRule.UNIQUE_WITHIN_TAGS]: UniqueWithinTagsInputType,
 }
 
 export const IsEndorsementValidator = (
