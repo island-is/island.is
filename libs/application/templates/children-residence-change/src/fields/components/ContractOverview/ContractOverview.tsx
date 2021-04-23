@@ -22,17 +22,15 @@ const ContractOverview = ({ application }: Props) => {
   return (
     <>
       <TransferOverview application={application} />
-      <Text marginTop={4} variant="h4" marginBottom={1}>
+      <Text marginTop={4} variant="h4">
         {formatMessage(m.contract.labels.contactInformation)}
       </Text>
-      <Text>{answers[parentKey]?.email}</Text>
+      <Text marginTop={1}>{answers[parentKey]?.email}</Text>
       <Text>{answers[parentKey]?.phoneNumber}</Text>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>
-          <Text variant="h4" marginBottom={1}>
-            {formatMessage(m.reason.input.label)}
-          </Text>
-          <Text>{answers.residenceChangeReason}</Text>
+          <Text variant="h4">{formatMessage(m.reason.input.label)}</Text>
+          <Text marginTop={1}>{answers.residenceChangeReason}</Text>
         </Box>
       )}
       <Text marginTop={4} variant="h4">
