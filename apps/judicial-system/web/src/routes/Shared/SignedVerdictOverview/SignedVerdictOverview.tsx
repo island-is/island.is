@@ -210,7 +210,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const areCaseFilesOpen = () => {
+  const canCaseFilesBeOpened = () => {
     if (
       workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
       workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL
@@ -402,7 +402,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files || []}
-                      canOpenFiles={areCaseFilesOpen()}
+                      canOpenFiles={canCaseFilesBeOpened()}
                     />
                   </AccordionItem>
                 )}
