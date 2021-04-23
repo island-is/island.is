@@ -13,14 +13,13 @@ import {
   Text,
   ModalBase,
   Button,
-  GridContainer,
-  GridColumn,
-  GridRow,
   ToastContainer,
   toast,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
+import { m } from '../../lib/messages'
 import {
   GetIcelandicNameBySearchQuery,
   GetIcelandicNameBySearchQueryVariables,
@@ -47,6 +46,7 @@ import { IcelandicNameInputs } from '../../types'
 import * as styles from './Editor.treat'
 
 const Editor: FC = () => {
+  const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [nothingFound, setNothingFound] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
@@ -121,44 +121,41 @@ const Editor: FC = () => {
     }
 
     if (id) {
-      await updateName({
-        variables: { input: { id, body } },
-      })
-        .then(() => {
-          toast.success(`Nafn var uppfært`)
-          setIsVisible(false)
-          doSearch()
+      try {
+        await updateName({
+          variables: { input: { id, body } },
         })
-        .catch(() => {
-          toast.error(`Villa kom upp`)
-        })
+        toast.success(formatMessage(m.notificationNameUpdated))
+        setIsVisible(false)
+        doSearch()
+      } catch (e) {
+        toast.error(formatMessage(m.notificationError))
+      }
     } else {
-      await createName({ variables: { input: body } })
-        .then(() => {
-          toast.success(`Nafni var bætt við`)
-          setIsVisible(false)
-          doSearch()
-        })
-        .catch(() => {
-          toast.error(`Villa kom upp`)
-        })
+      try {
+        await createName({ variables: { input: body } })
+        toast.success(formatMessage(m.notificationNameAdded))
+        setIsVisible(false)
+        doSearch()
+      } catch (e) {
+        toast.error(formatMessage(m.notificationError))
+      }
     }
   }
 
-  const onConfirmDelete = () => {
+  const onConfirmDelete = async () => {
     if (nameToDelete?.id) {
       const body: DeleteIcelandicNameByIdInput = {
         id: nameToDelete.id,
       }
 
-      deleteName({ variables: { input: { id: body.id } } })
-        .then(() => {
-          toast.success(`Nafni var eytt`)
-          doSearch()
-        })
-        .catch(() => {
-          toast.error(`Villa kom upp`)
-        })
+      try {
+        await deleteName({ variables: { input: { id: body.id } } })
+        toast.success(formatMessage(m.notificationNameDeleted))
+        doSearch()
+      } catch (e) {
+        toast.error(formatMessage(m.notificationError))
+      }
     }
   }
 
@@ -190,8 +187,8 @@ const Editor: FC = () => {
           }}
           name="q"
           ref={inputRef}
-          label="Nafnaleit"
-          placeholder="Leitaðu að nafni eða hluta af nafni"
+          label={formatMessage(m.searchName)}
+          placeholder={formatMessage(m.searchForNameOrPartOfName)}
           size="md"
           onChange={(e) => {
             setNothingFound(false)
@@ -199,12 +196,14 @@ const Editor: FC = () => {
           }}
         />
         <Button variant="ghost" icon="add" size="small" onClick={onAddNewName}>
-          Bæta við nafni
+          {formatMessage(m.addName)}
         </Button>
         {tableData !== null && (
           <>
             {nothingFound ? (
-              <Text variant="intro">{`Ekkert fannst með leitarstrengnum „${searchQuery}“.`}</Text>
+              <Text variant="intro">{`${formatMessage(
+                m.searchNothingFound,
+              )}} „${searchQuery}“.`}</Text>
             ) : (
               !!tableData.length && (
                 <TableList
@@ -249,7 +248,9 @@ const Editor: FC = () => {
       </ModalBase>
       <ConfirmModal
         isVisible={isConfirmationVisible}
-        message={`Ertu viss um að þú viljir eyða nafninu ${nameToDelete?.icelandicName}?`}
+        message={`${formatMessage(m.confirmDeleteName)} ${
+          nameToDelete?.icelandicName
+        }?`}
         onConfirm={onConfirmDelete}
         onVisibilityChange={(visibility: boolean) => {
           if (!visibility) {
