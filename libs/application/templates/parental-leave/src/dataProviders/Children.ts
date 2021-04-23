@@ -2,6 +2,7 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  Application,
 } from '@island.is/application/core'
 
 interface ChildInformation {
@@ -30,7 +31,15 @@ const createChildrenResponse = (): ChildInformation[] => {
 // TODO: will finish this data provider in another PR
 export class Children extends BasicDataProvider {
   type = 'Children'
-  provide(): Promise<ChildInformation[]> {
+  async provide(
+    application: Application,
+    customTemplateFindQuery: any,
+  ): Promise<ChildInformation[]> {
+    const result = await customTemplateFindQuery({
+      'answers.otherParentId': '1805922889',
+    })
+    console.log(result)
+
     return Promise.resolve(createChildrenResponse())
   }
 

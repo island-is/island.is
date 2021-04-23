@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import {
   ExternalData,
   FormValue,
@@ -72,6 +72,30 @@ export class ApplicationService {
       },
       order: [['modified', 'DESC']],
     })
+  }
+
+  /**
+   * A function to pass to data providers / template api modules to be able to
+   * query applicaons of their respective type in order to infer some data to
+   * use in an application
+   *
+   * @param templateTypeId The id of the template to restrict the query to
+   * @returns A promise to a list of applications matching the custom query conditions
+   */
+  customTemplateFindQuery(templateTypeId: string) {
+    return (whereQueryOptions: WhereOptions) => {
+      return this.applicationModel.findAll({
+        where: {
+          ...whereQueryOptions,
+          typeId: {
+            [Op.eq]: templateTypeId,
+          },
+          ...applicationIsNotSetToBePruned(),
+        },
+        order: [['modified', 'DESC']],
+        raw: true,
+      })
+    }
   }
 
   async create(application: CreateApplicationDto): Promise<Application> {
