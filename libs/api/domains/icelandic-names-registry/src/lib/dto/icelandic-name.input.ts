@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql'
 import {
   IsBoolean,
   IsNumber,
+  IsObject,
+  IsOptional,
   IsString,
   Length,
   MinLength,
@@ -9,6 +11,13 @@ import {
 
 @InputType()
 export class GetIcelandicNameByIdInput {
+  @Field()
+  @IsNumber()
+  id!: number
+}
+
+@InputType()
+export class DeleteIcelandicNameByIdInput {
   @Field()
   @IsNumber()
   id!: number
@@ -31,11 +40,7 @@ export class GetIcelandicNameBySearchInput {
 }
 
 @InputType()
-export class IcelandicNameBody {
-  @Field()
-  @IsNumber()
-  id!: number
-
+export class CreateIcelandicNameInput {
   @Field()
   @IsString()
   icelandicName!: string
@@ -48,19 +53,30 @@ export class IcelandicNameBody {
   @IsString()
   status!: string
 
-  @Field()
-  @IsString()
-  verdict!: string
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  verdict?: string | null
 
-  @Field()
-  @IsString()
-  description!: string
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  description?: string | null
 
   @Field()
   @IsBoolean()
   visible!: boolean
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  url!: string | null
+}
+
+@InputType()
+export class UpdateIcelandicNameInput {
   @Field()
-  @IsString()
-  url!: string
+  @IsNumber()
+  id!: number
+
+  @Field(() => CreateIcelandicNameInput)
+  @IsObject()
+  body!: CreateIcelandicNameInput
 }

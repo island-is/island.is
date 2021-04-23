@@ -1,5 +1,6 @@
 export { default as CopyUrl } from './CopyUrl/CopyUrl'
 export { default as DescriptionText } from './DescriptionText/DescriptionText'
+export { default as InfoBanner } from './InfoBanner/InfoBanner'
 export { default as TransferOverview } from './TransferOverview/TransferOverview'
 export { default as ContractOverviewAccordion } from './ContractOverviewAccordion/ContractOverviewAccordion'
 export { default as ContractOverview } from './ContractOverview/ContractOverview'

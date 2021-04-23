@@ -94,7 +94,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="address"
-            defaultValue={organisation?.address}
+            defaultValue={organisation?.address || ''}
             rules={{
               required: {
                 value: true,
@@ -111,7 +111,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="email"
-            defaultValue={organisation?.email}
+            defaultValue={organisation?.email || ''}
             rules={{
               required: {
                 value: true,
@@ -134,7 +134,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="phoneNumber"
-            defaultValue={organisation?.phoneNumber}
+            defaultValue={organisation?.phoneNumber || ''}
             rules={{
               required: {
                 value: true,

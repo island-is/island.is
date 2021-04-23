@@ -35,6 +35,10 @@ export class IcelandicName implements TIcelandicName {
 
   @Field({ nullable: true })
   @IsString()
+  verdict!: string | null
+
+  @Field({ nullable: true })
+  @IsString()
   url!: string | null
 
   @Field()
