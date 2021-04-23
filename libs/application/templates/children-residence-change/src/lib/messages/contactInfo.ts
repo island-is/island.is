@@ -35,4 +35,13 @@ export const contactInfo = {
       description: 'Phone number label',
     },
   }),
+  counterParty: defineMessages({
+    info: {
+      id:
+        'crc.application:section.backgroundInformation.contactInfo.counterParty.info',
+      defaultMessage:
+        'Hlekk á umsóknina verður deilt sjálfkrafa með hinu foreldrinu í SMS og/eða tölvupósti þegar þú hefur undirritað samninginn.',
+      description: 'Counterparty information text',
+    },
+  }),
 }

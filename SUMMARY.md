@@ -72,6 +72,7 @@
 
 ## Repository
 
+- [AWS Secrets](handbook/repository/aws-secrets.md)
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
@@ -112,6 +113,7 @@
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
+    - [API Domains Translations](libs/api/domains/translations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)

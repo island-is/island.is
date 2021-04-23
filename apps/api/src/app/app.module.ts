@@ -22,6 +22,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
+import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 
 const debug = process.env.NODE_ENV === 'development'
@@ -147,6 +148,9 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+    }),
+    IcelandicNamesModule.register({
+      backendUrl: environment.icelandicNamesRegistry.backendUrl,
     }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,

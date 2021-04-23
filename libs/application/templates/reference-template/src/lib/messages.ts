@@ -1,6 +1,26 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  conditionsSection: {
+    id: 'example.application:conditions.section',
+    defaultMessage: 'Skilyrði',
+    description: 'Some description',
+  },
+  name: {
+    id: 'example.application:name',
+    defaultMessage: 'Umsókn um tilvísunar sniðmát',
+    description: `Application's name`,
+  },
+  draftTitle: {
+    id: 'example.application:draft.title',
+    defaultMessage: 'Drög',
+    description: 'First state title',
+  },
+  draftDescription: {
+    id: 'example.application:draft.description',
+    defaultMessage: 'Notendur hafa ekkert að gera á þessu stigi',
+    description: 'Description of the state',
+  },
   introSection: {
     id: 'example.application:intro.section',
     defaultMessage: 'Upplýsingar',
@@ -22,7 +42,7 @@ export const m = defineMessages({
     defaultMessage: 'Um þig',
     description: 'Some description',
   },
-  name: {
+  personName: {
     id: 'example.application:person.name',
     defaultMessage: 'Nafn',
     description: 'Some description',
@@ -97,5 +117,15 @@ export const m = defineMessages({
     defaultMessage:
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: 'Some description',
+  },
+  dataSchemePhoneNumber: {
+    id: 'example.application:dataSchema.phoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'Error message when phone number is invalid.',
+  },
+  dataSchemeNationalId: {
+    id: 'example.application:dataSchema.national.id',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'Error message when the kennitala is invalid.',
   },
 })

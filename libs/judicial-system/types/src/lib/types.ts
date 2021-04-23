@@ -76,6 +76,7 @@ export enum CaseTransition {
   DELETE = 'DELETE',
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum CaseCustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -86,6 +87,7 @@ export enum CaseCustodyProvisions {
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
   ISOLATION = 'ISOLATION',
@@ -149,6 +151,7 @@ export interface Case {
   investigationProgress?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutor?: User
   setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
@@ -174,6 +177,9 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string
+  prosecutorPostponedAppealDate?: string
+  isCaseAppealable?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
@@ -232,6 +238,7 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutorId?: string
   setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
@@ -256,6 +263,8 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string
+  prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
 }

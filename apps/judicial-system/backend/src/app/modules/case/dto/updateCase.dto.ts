@@ -119,6 +119,11 @@ export class UpdateCaseDto {
   readonly comments?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseFilesComments?: string
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly prosecutorId?: string
@@ -237,6 +242,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly prosecutorAppealAnnouncement?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly accusedPostponedAppealDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorPostponedAppealDate?: Date
 
   @IsOptional()
   @IsUUID()

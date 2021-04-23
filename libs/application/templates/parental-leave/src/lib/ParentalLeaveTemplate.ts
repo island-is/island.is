@@ -12,12 +12,14 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 
+import { YES, API_MODULE_ACTIONS } from '../constants'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { YES, API_MODULE_ACTIONS } from '../constants'
-
+import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
@@ -39,6 +41,8 @@ enum Roles {
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
+
   // Draft flow
   DRAFT = 'draft',
 
@@ -71,14 +75,49 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
-  name: 'Umsókn um fæðingarorlof',
+  name: parentalLeaveFormMessages.shared.name,
+  translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: States.PREREQUISITES,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          progress: 0.25,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: States.DRAFT,
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
+          title: statesMessages.stateDraftTitle,
+          description: statesMessages.stateDraftDescription,
           progress: 0.25,
           roles: [
             {
@@ -118,6 +157,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: 'Needs other parent approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -166,6 +206,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.OTHER_PARENT_ACTION]: {
         meta: {
           name: 'Other parent requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -187,6 +228,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: 'Waiting to assign employer',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -212,6 +254,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: 'Employer Approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -254,6 +297,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_ACTION]: {
         meta: {
           name: 'Employer requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -274,6 +318,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
           name: 'Vinnumálastofnun Approval',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -300,6 +345,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
           name: 'Vinnumálastofnun requires action',
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -320,6 +366,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
+          lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -345,6 +392,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -381,6 +429,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign employer to review period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
           },
@@ -406,6 +455,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Employer is reviewing the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -433,6 +483,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'Employer rejected the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -457,6 +508,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'VMLST is reviewing the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -481,6 +533,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: 'VMLST rejected the period edits',
           progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

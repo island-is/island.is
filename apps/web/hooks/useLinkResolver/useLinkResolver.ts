@@ -57,6 +57,10 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]/thjonusta',
     en: '/en/organizations/[slug]/services',
   },
+  auctions: {
+    is: '/stofnanir/syslumenn/uppbod',
+    en: '',
+  },
   organizationsubpage: {
     is: '/stofnanir/[slug]/[subSlug]',
     en: '/en/organizations/[slug]/[subSlug]',

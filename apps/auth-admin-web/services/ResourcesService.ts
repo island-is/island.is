@@ -94,6 +94,11 @@ export class ResourcesService extends BaseService {
     )
   }
 
+  /** Finds all access controlled Api scopes */
+  static async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+    return BaseService.GET('access-controlled-scopes')
+  }
+
   /** Gets Identity resource by name */
   static async getIdentityResourceByName(
     name: string,

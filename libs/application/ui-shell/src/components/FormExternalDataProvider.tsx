@@ -24,6 +24,7 @@ import { useLocale } from '@island.is/localization'
 
 import { verifyExternalData } from '../utils'
 import Markdown from 'markdown-to-jsx'
+import { ClassSerializerInterceptor } from '@nestjs/common'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -80,7 +81,7 @@ const FormExternalDataProvider: FC<{
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
+  const { setValue, clearErrors } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
@@ -181,6 +182,7 @@ const FormExternalDataProvider: FC<{
                 <Checkbox
                   onChange={(e) => {
                     const isChecked = e.target.checked
+                    clearErrors(id)
                     setValue(id as string, isChecked)
                     onChange(isChecked)
                     activateBeforeSubmitCallback(isChecked)

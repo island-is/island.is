@@ -506,12 +506,6 @@
           },
           "outputs": ["coverage/apps/api"]
         },
-        "get-secrets": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./scripts/secrets.sh api --reset"
-          }
-        },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2154,7 +2148,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/reference-template/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/reference-template/src/lib/messages.ts"
           }
         }
       }
@@ -3635,7 +3629,8 @@
             "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/icelandic-names-registry/backend"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "icelandic-names-registry-types": {

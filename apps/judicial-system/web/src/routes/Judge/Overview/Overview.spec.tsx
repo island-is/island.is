@@ -12,7 +12,6 @@ import {
   UserProvider,
 } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
-import userEvent from '@testing-library/user-event'
 
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
