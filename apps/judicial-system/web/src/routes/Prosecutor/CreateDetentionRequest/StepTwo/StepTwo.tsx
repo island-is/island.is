@@ -40,6 +40,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import StepTwoForm from './StepTwoForm'
 
 interface CaseData {
   case?: Case
@@ -249,6 +250,7 @@ export const StepTwo: React.FC = () => {
       {workingCase ? (
         <>
           <FormContentContainer>
+            <StepTwoForm theCase={workingCase} />
             <Box marginBottom={7}>
               <Text as="h1" variant="h1">
                 Óskir um fyrirtöku

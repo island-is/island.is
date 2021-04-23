@@ -5,7 +5,8 @@ interface Props {
   theCase: Case
 }
 
-const StepTwoForm = () => {
+const StepTwoForm: React.FC<Props> = (props) => {
+  const { theCase } = props
   return <p>StepTwoForm</p>
 }
 
