@@ -155,9 +155,13 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   }`}
                   key={selectedScope?.name}
                 >
+                  <h3>{localization.sections['selectedItem'].title}</h3>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Scope Name
+                      {
+                        localization.sections['selectedItem'].properties['name']
+                          .name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.name}
@@ -165,7 +169,11 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Display name
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'displayName'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.displayName}
@@ -173,7 +181,11 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Description
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'description'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.description}

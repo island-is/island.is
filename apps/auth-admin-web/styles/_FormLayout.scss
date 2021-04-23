@@ -178,7 +178,10 @@
     flex-wrap: wrap;
 
     h3 {
+      margin: 0;
+      font-size: 0.9rem;
       flex: 0 0 100%;
+      color: $color-link;
     }
 
     .selected-item-property {

@@ -14,16 +14,10 @@ export class FormControl {
   id: string
   fields: Record<string, FormItem>
   title: string
-  sectionTitle1?: string
   editTitle?: string
   help: string
   conditionalHelp?: string
   errorMessage?: string
-  saveButton: string
-  cancelButton: string
-  addButton?: string
-  toggleButton?: string
-  removeButton?: string
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation

@@ -889,6 +889,14 @@
       "sections": {
         "active": {
           "title": "Active Scopes"
+        },
+        "selectedItem": {
+          "title": "Info about this Scope",
+          "properties": {
+            "name": "Scope Name",
+            "description": "Description",
+            "displayName": "Display Name"
+          }
         }
       },
       "removeConfirmation": "Are you sure want to delete this scope",
