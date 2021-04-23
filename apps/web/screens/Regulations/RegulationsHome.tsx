@@ -1,12 +1,9 @@
 import {
   RegulationLawChapterTree,
-  RegulationListItem,
   RegulationMinistryList,
   RegulationSearchResults,
-} from './Regulations.types'
-import { RegulationHomeTexts } from './RegulationTexts.types'
-
-import { regulationsSearchResults } from './Regulations.mock'
+} from '../../components/Regulations/Regulations.types'
+import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
@@ -14,7 +11,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
-import { RegulationsHomeImg } from './RegulationsHomeImg'
+import { RegulationsHomeImg } from '../../components/Regulations/RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -27,17 +24,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import {
-  RegulationSearchFilters,
-  RegulationsSearchSection,
-} from './RegulationsSearchSection'
-import { shuffle } from 'lodash'
+import { RegulationsSearchSection } from '../../components/Regulations/RegulationsSearchSection'
 import {
   getParams,
   prettyName,
+  RegulationSearchFilters,
   useRegulationLinkResolver,
-} from './regulationUtils'
-import { getUiTexts } from './getUiTexts'
+} from '../../components/Regulations/regulationUtils'
+import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationsSearchQuery,
   QueryGetRegulationsSearchArgs,

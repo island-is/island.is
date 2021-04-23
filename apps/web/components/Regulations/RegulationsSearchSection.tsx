@@ -18,6 +18,10 @@ import {
 } from './Regulations.types'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
+import {
+  RegulationSearchFilters,
+  RegulationSearchKeys,
+} from './regulationUtils'
 
 // ---------------------------------------------------------------------------
 
@@ -102,9 +106,6 @@ const cleanQuery = (
       return newQuery
     }, {})
 
-export type RegulationSearchKeys = 'q' | 'rn' | 'year' | 'ch' | 'all'
-export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
-
 // ---------------------------------------------------------------------------
 
 export type RegulationsSearchSectionProps = {
@@ -134,7 +135,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         (m): Option => ({
           value: m.slug,
           label:
-            m.name + (m.current ? ` ${txt('searchLegacyMinistrySuffix')}` : ''),
+            m.name + (m.current ? '' : ` ${txt('searchLegacyMinistrySuffix')}`),
         }),
       ),
     ) as ReadonlyArray<Option>

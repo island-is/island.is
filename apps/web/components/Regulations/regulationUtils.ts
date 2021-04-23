@@ -32,6 +32,11 @@ export const nameToSlug = (regulationName: RegName): RegQueryName =>
 
 // ---------------------------------------------------------------------------
 
+export type RegulationSearchKeys = 'q' | 'rn' | 'year' | 'ch' | 'all'
+export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
+
+// ---------------------------------------------------------------------------
+
 export const useRegulationLinkResolver = () => {
   // const router = useRouter()
   const utils = useLinkResolver()
@@ -86,6 +91,13 @@ export const useRegulationLinkResolver = () => {
     //   )?.type
     //   return linkType === 'regulation'
     // },
+
+    linkToRegulationSearch: (
+      filters: Partial<Record<RegulationSearchKeys, string>>,
+    ) =>
+      utils.linkResolver('regulationshome').href +
+      '?' +
+      new URLSearchParams(filters).toString(),
   }
 }
 

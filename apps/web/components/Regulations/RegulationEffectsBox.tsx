@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { FocusableBox, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
-import { RegulationsSidebarBox } from './RegulationsSidebarBox'
+import {
+  RegulationsSidebarBox,
+  RegulationsSidebarLink,
+} from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import {
   interpolate,
@@ -29,7 +31,6 @@ export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
       title={interpolate(txt('effectsTitle'), {
         name: prettyName(regulation.name),
       })}
-      colorScheme="blueberry"
     >
       {regulation.effects.map((item, i) => {
         const name = prettyName(item.name)
@@ -40,33 +41,13 @@ export const RegulationEffectsBox: FC<RegulationEffectsBoxProps> = (props) => {
         const labelLong = label + ' ' + item.title
 
         return (
-          <Link
+          <RegulationsSidebarLink
             key={'effects-' + i}
             href={linkToRegulation(item.name)}
             aria-label={labelLong}
           >
-            <FocusableBox
-              flexDirection={'column'}
-              component="span"
-              title={labelLong}
-            >
-              {({
-                isFocused,
-                isHovered,
-              }: {
-                isFocused: boolean
-                isHovered: boolean
-              }) => (
-                <Text
-                  color={
-                    isFocused || isHovered ? 'blueberry400' : 'blueberry600'
-                  }
-                >
-                  {label}
-                </Text>
-              )}
-            </FocusableBox>
-          </Link>
+            {label}
+          </RegulationsSidebarLink>
         )
       })}
     </RegulationsSidebarBox>

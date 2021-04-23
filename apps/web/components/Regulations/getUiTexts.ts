@@ -3,7 +3,7 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { NamespaceMessages } from '@island.is/web/hooks/useNamespace'
 
 export type UiTextGetter = {

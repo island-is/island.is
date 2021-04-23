@@ -11,7 +11,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import SubpageLayout from '../Layouts/Layouts'
+import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationLayoutProps = {
