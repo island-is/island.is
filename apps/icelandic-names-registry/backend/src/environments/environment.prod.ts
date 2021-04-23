@@ -1,11 +1,13 @@
-import { Environment } from './environment.interface'
+import baseEnvironment from './environment'
 
-export default {
+const prodEnvironment: typeof baseEnvironment = {
   production: true,
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
-    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    audience: '',
+    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI ?? '',
   },
   allowedNationalIds: process.env.ALLOWED_NATIONAL_IDS ?? '',
-} as Environment
+}
+
+export default prodEnvironment
