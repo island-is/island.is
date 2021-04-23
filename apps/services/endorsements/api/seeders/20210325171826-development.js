@@ -16,7 +16,7 @@ module.exports = {
         description: faker.lorem.paragraph(1),
         closed_date: null,
         endorsement_meta: ['fullName'],
-        tags: ['sudurkjordaemi'],
+        tags: ['partyLetterSudurkjordaemi2021', 'partyLetter2021'],
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -35,7 +35,7 @@ module.exports = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
         closed_date: null,
-        tags: ['nordausturkjordaemi'],
+        tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
         endorsement_meta: ['fullName'],
         validation_rules: JSON.stringify([
           {
@@ -55,7 +55,7 @@ module.exports = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
         closed_date: new Date(),
-        tags: ['nordausturkjordaemi'],
+        tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
         endorsement_meta: ['fullName', 'address'], // this field is used in tests to validate metadata injection
         validation_rules: JSON.stringify([
           {
@@ -63,6 +63,12 @@ module.exports = {
             value: {
               date: '2021-04-15T00:00:00Z',
               age: 18,
+            },
+          },
+          {
+            type: 'uniqueWithinTags',
+            value: {
+              tags: ['partyLetter2021'],
             },
           },
         ]),
