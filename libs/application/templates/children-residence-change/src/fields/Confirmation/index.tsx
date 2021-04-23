@@ -4,6 +4,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { CopyUrl, DescriptionText } from '../components'
 import { CRCFieldBaseProps } from '../..'
+import ContractAccordionOverview from '../components/ContractOverviewAccordion/ContractOverviewAccordion'
+import { SubmittedApplicationImage } from '..'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -49,13 +51,23 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           }}
         />
       </Box>
-      <Box marginTop={5}>
+      <Box marginTop={4}>
         <CopyUrl
           title={formatMessage(copyUrl.title)}
           inputLabel={formatMessage(copyUrl.inputLabel)}
           buttonLabel={formatMessage(copyUrl.buttonLabel)}
           successMessage={formatMessage(copyUrl.successMessage)}
         />
+      </Box>
+      <Box marginTop={3}>
+        <ContractAccordionOverview
+          title={formatMessage(confirmation.contractOverview.accordionTitle)}
+          id="id_1"
+          application={application}
+        />
+      </Box>
+      <Box marginTop={5}>
+        <SubmittedApplicationImage />
       </Box>
     </>
   )
