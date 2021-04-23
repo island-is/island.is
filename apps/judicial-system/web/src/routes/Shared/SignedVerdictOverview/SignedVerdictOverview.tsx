@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -209,6 +210,17 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const areCaseFilesOpen = () => {
+    if (
+      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -390,7 +402,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files || []}
-                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                      canOpenFiles={areCaseFilesOpen()}
                     />
                   </AccordionItem>
                 )}
