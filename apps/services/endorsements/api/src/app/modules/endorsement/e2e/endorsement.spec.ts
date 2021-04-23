@@ -50,6 +50,7 @@ describe('Endorsement', () => {
       statusCode: 404,
     })
   })
+  // TODO: Add test for unique within tags endorsements here when auth is added
   it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
     const response = await request(app.getHttpServer())
