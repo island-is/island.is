@@ -670,8 +670,16 @@
       "title": "Create a new Translation",
       "editTitle": "Edit Translation",
       "help": "Add new translation by filling out the form",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "language": {
           "label": "Language",
@@ -710,11 +718,19 @@
       "editTitle": "Edit translation",
       "help": "Add new translation by filling out the form",
       "conditionalHelp": "The item you are creating needs to be saved before creating translations",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
       "infoEdit": "Translation has been updated for ",
       "infoCreate": "Translation has been created for ",
       "errorMessage": "Value is required and need to be in the right format",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "language": {
           "label": "Language",
@@ -734,9 +750,21 @@
       "title": "Create Identity Resource",
       "editTitle": "Edit Identity Resource",
       "help": "Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user. The client will use the scope parameter to request access to an identity resource.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "Delegation",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
       "fields": {
         "name": {
           "label": "Name",
@@ -840,11 +868,29 @@
       "id": "ApiResourceScopeForm",
       "title": "Allowed scopes",
       "help": "An API must have at least one scope. Each scope can have different settings.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "Active scopes",
-      "addButton": "Add",
-      "removeButton": "Remove",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Scope"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Scope"
+        }
+      },
+      "sections": {
+        "activeScopes": {
+          "title": "Active Scopes"
+        }
+      },
       "removeConfirmation": "Are you sure want to delete this scope",
       "noActiveConnections": {
         "title": "No active scopes",

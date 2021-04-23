@@ -228,18 +228,19 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                       className="translation-create-form-dropdown__button__cancel"
                       type="button"
                       onClick={close}
+                      title={localization.buttons['cancel'].helpText}
                     >
-                      {localization.cancelButton}
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="translation-create-form-dropdown__button__container">
                     <button
                       type="button"
                       className="translation-create-form-dropdown__button__save"
-                      value={localization.saveButton}
+                      title={localization.buttons['save'].helpText}
                       onClick={save}
                     >
-                      {localization.saveButton}
+                      {localization.buttons['save'].text}
                     </button>
                   </div>
                 </div>

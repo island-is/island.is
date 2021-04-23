@@ -145,7 +145,8 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="api-resource-scope-form__button__add"
                     disabled={isSubmitting}
-                    value={localization.addButton}
+                    title={localization.buttons['add'].helpText}
+                    value={localization.buttons['add'].text}
                   />
                 </div>
                 <div
@@ -192,7 +193,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{localization.sectionTitle1}</h3>
+                <h3>{localization.sections['activeScopes'].title}</h3>
                 {props.scopes?.map((scope: string) => {
                   return (
                     <div
@@ -205,10 +206,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(scope)}
                           className="api-resource-scope-form__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>{localization.removeButton}</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -222,8 +223,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-scope-form__button__cancel"
                     onClick={props.handleBack}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="api-resource-scope-form__button__container">
@@ -231,8 +233,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-scope-form__button__save"
                     onClick={props.handleNext}
+                    title={localization.buttons['save'].helpText}
                   >
-                    {localization.saveButton}
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -245,7 +248,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

@@ -411,8 +411,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     className="client-basic__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client-basic__button__container">
@@ -420,7 +421,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="client-basic__button__save"
                     disabled={isSubmitting || !available}
-                    value={localization.saveButton}
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>
