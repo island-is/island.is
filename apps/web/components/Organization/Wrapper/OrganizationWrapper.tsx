@@ -13,7 +13,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
-import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
+import {
+  ChatPanel,
+  HeadWithSocialSharing,
+  Main,
+  Sticky,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
@@ -29,7 +34,7 @@ interface WrapperProps {
   pageTitle: string
   pageDescription?: string
   pageFeaturedImage?: Image
-  organizationPage?: OrganizationPage
+  organizationPage: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
   sidebarContent?: ReactNode
@@ -65,6 +70,20 @@ const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
   }
 }
 
+const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+  // remove when organization chat-bot is ready for release
+  if (process.env.NODE_ENV !== 'development') {
+    return null
+  }
+
+  switch (slug) {
+    case 'syslumenn':
+      return <ChatPanel endpoint="syslumenn" />
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -79,13 +98,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
 }) => {
-  const secondaryNavList: NavigationItem[] = organizationPage.secondaryMenu?.childrenLinks.map(
-    ({ text, url }) => ({
+  const secondaryNavList: NavigationItem[] =
+    organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
       active: text === pageTitle,
-    }),
-  )
+    })) ?? []
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -229,6 +247,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
+      <OrganizationChatPanel slug={organizationPage?.slug} />
     </>
   )
 }

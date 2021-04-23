@@ -1,9 +1,18 @@
 import { theme } from '@island.is/island-ui/theme'
 import { ChatPanelConfig } from './types'
 
-export const ID = '246covid-island'
-export const CONVERSATION_KEY = `${ID}-conversationId`
-export const URL = 'https://246covid-island.boost.ai/chatPanel/chatPanel.js'
+export const endpoints = {
+  'covid-island': {
+    id: '246covid-island',
+    conversationKey: '246covid-island-conversationId',
+    url: 'https://246covid-island.boost.ai/chatPanel/chatPanel.js',
+  },
+  syslumenn: {
+    id: 'syslumenn',
+    conversationKey: 'syslumenn',
+    url: 'https://syslumenn.boost.ai/chatPanel/chatPanel.js',
+  },
+}
 
 export const config = {
   chatPanel: {
