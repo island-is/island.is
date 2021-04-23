@@ -1,3 +1,5 @@
+import { Environment } from './environment.interface'
+
 export default {
   production: true,
   auth: {
@@ -6,4 +8,4 @@ export default {
     jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   allowedNationalIds: process.env.ALLOWED_NATIONAL_IDS ?? '',
-}
+} as Environment
