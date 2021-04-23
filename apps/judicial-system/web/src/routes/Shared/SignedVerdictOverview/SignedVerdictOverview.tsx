@@ -212,8 +212,11 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const canCaseFilesBeOpened = () => {
     if (
-      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+      workingCase?.isCaseAppealable === false &&
+      (workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        !!workingCase?.accusedPostponedAppealDate ||
+        !!workingCase?.prosecutorPostponedAppealDate)
     ) {
       return true
     } else {
