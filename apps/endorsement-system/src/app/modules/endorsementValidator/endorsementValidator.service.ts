@@ -65,7 +65,6 @@ export class EndorsementValidatorService {
   getRequiredValidationMetadataFields(
     ruleTypes: ValidationRule[],
   ): EndorsementMetaField[] {
-    console.log('trying to get metadata fields')
     // we ask the requested validators what meta fields they need
     const metaFields = ruleTypes.reduce(
       (requiredMetaFields: EndorsementMetaField[], ruleType) => {
@@ -76,7 +75,6 @@ export class EndorsementValidatorService {
       },
       [],
     )
-    console.log('returning metadata fields', metaFields)
     return metaFields
   }
 }
