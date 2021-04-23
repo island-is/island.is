@@ -874,8 +874,8 @@
           "helpText": "Save changes and go to next step"
         },
         "cancel": {
-          "text": "Cancel",
-          "helpText": "Cancel changes"
+          "text": "Back",
+          "helpText": "Go Back"
         },
         "add": {
           "text": "Add",
@@ -908,11 +908,6 @@
       "id": "ApiResourceSecretForm",
       "title": "Api Resource Secrets",
       "help": "The API secret is used for the introspection endpoint. The API can authenticate with introspection using the API name and secret.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "Active secrets",
-      "addButton": "Add",
-      "removeButton": "Remove",
       "removeConfirmation": "Are you sure want to delete this secret",
       "buttons": {
         "save": {
@@ -920,16 +915,16 @@
           "helpText": "Save changes and go to next step"
         },
         "cancel": {
-          "text": "Cancel",
-          "helpText": "Cancel changes"
+          "text": "Back",
+          "helpText": "Go back"
         },
         "add": {
           "text": "Add",
-          "helpText": "Add Scope"
+          "helpText": "Add Secret"
         },
         "remove": {
           "text": "Remove",
-          "helpText": "Remove Scope"
+          "helpText": "Remove Secret"
         }
       },
       "sections": {
@@ -970,8 +965,16 @@
       "id": "UserClaimCreateForm",
       "title": "Create a new User Claim",
       "help": "Create a new claim if needed for this resource",
-      "saveButton": "Save",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "claimName": {
           "label": "Claim Name",
@@ -997,8 +1000,16 @@
       "id": "ApiResourceUserClaimsForm",
       "title": "Select the appropriate user claims",
       "help": "List of associated user claim types that should be included in the access token. The claims specified here will be added to the list of claims specified for the API.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
       "noActiveConnections": {
         "title": "No User Claims are selected",
         "helpText": "If necessary, check user the user claims needed"
@@ -1008,8 +1019,16 @@
       "id": "ApiScopeUserClaimsForm",
       "title": "Select the appropriate user claims",
       "help": "If needed, select the user claims for this Api Scope",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
       "noActiveConnections": {
         "title": "No user claims are selected",
         "helpText": "If necessary, check user the user claims needed"
@@ -1019,8 +1038,16 @@
       "id": "IdentityResourceUserClaims",
       "title": "Select the appropriate user claims",
       "help": "List of associated user claim types that should be included in the identity token.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
       "noActiveConnections": {
         "title": "No user claims are selected",
         "helpText": "Some claims need to be associated with this Identity Resource"
@@ -1031,9 +1058,21 @@
       "title": "Create Api Scope",
       "editTitle": "Edit Api Scope",
       "help": "Scope is a mechanism in OAuth 2.0 to limit an application's access to a user's account. An application can request one or more scopes, this information is then presented to the user in the consent screen, and the access token issued to the application will be limited to the scopes granted.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "Delegation",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
       "fields": {
         "name": {
           "label": "Name",
@@ -1139,13 +1178,20 @@
       }
     },
     {
-      "id": "ResourceCreateForm",
+      "id": "ApiResourceCreateForm",
       "title": "Create Api Resource",
       "editTitle": "Edit Api Resource",
       "help": "The server hosting the protected resources, and which is capable of accepting and responding to protected resource requests using access tokens.",
-      "saveButton": "Next",
-      "cancelButton": "Cancel",
-      "sectionTitle1": "",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
       "fields": {
         "nationalId": {
           "label": "National Id",
@@ -1350,12 +1396,30 @@
       "id": "ClientAllowedCorsOriginsForm",
       "title": "Enter allowed cors origins",
       "help": "Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources.",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Allowed cors origins",
       "removeConfirmation": "Are you sure want to delete this cors origin",
+      "buttons": {
+        "add": {
+          "text": "Add",
+          "helpText": "Add Cors Origin"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Cors Origin"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Allowed cors origins"
+        }
+      },
       "noActiveConnections": {
         "title": "No active cors origins",
         "helpText": "Define a cors origin and push the Add button to add a cors origin"
@@ -1373,12 +1437,44 @@
       "id": "ClientAllowedScopesForm",
       "title": "Allowed scopes",
       "help": "By default a client has no access to any resources. Specify the allowed resources by adding the corresponding scopes names.",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active scopes",
       "removeConfirmation": "Are you sure want to delete this scope",
+      "buttons": {
+        "add": {
+          "text": "Add",
+          "helpText": "Add Scope"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Scope"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active scopes"
+        },
+        "selectedItem": {
+          "title": "Scope Info",
+          "properties": {
+            "name": {
+              "name": "Scope Name"
+            },
+            "displayName": {
+              "name": "Display Name"
+            },
+            "description": {
+              "name": "Description"
+            }
+          }
+        }
+      },
       "noActiveConnections": {
         "title": "No active scopes",
         "helpText": "Select a scope and push the Add button to add a scope"
@@ -1396,8 +1492,16 @@
       "id": "ClientGrantTypesForm",
       "title": "Select the appropriate grant type",
       "help": "Select the types of authentication that are allowed for this Client",
-      "saveButton": "Next",
-      "cancelButton": "Back",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
       "noActiveConnections": {
         "title": "No grant types are defined",
         "helpText": "Check the appropriate grant type(s) for the client"
@@ -1407,8 +1511,16 @@
       "id": "ClientIdpRestrictionsForm",
       "title": "Identity provider restrictions",
       "help": "Specifies which external identity providers (IdPs) can be used when authenticating. Note that Sim Card login is always allowed.",
-      "saveButton": "Next",
-      "cancelButton": "Back",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
       "fields": {
         "all": {
           "label": "Allow All",
@@ -1425,12 +1537,30 @@
       "id": "ClientPostLogoutRedirectUriForm",
       "title": "Enter a post logout redirect URL",
       "help": "Specifies allowed URIs to redirect to after logout. See the <a href=\"https://openid.net/specs/openid-connect-session-1_0.html\" target=\"_blank\" rel=\"noreferrer\">OIDC Connect Session Management spec</a> for more details.",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active post logout URLs",
       "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove this Post logout URL"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Post logout URL"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active Post Logout URLs"
+        }
+      },
       "noActiveConnections": {
         "title": "No client post logout redirect uris are defined",
         "helpText": "Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
@@ -1452,12 +1582,30 @@
       "id": "ClientRedirectUriForm",
       "title": "Enter a callback URL",
       "help": "Specifies the allowed URIs to return tokens or authorization codes to",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active callback URLs",
       "removeConfirmation": "Are you sure want to delete this redirect uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Redirect URL"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this Redirect URL"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active callback URLs"
+        }
+      },
       "noActiveConnections": {
         "title": "No client redirect uris (Callback uris) are defined",
         "helpText": "Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
@@ -1475,12 +1623,30 @@
       "id": "ClientClaimForm",
       "title": "Add claims for the Client",
       "help": "Allows settings claims for the client (will be included in the access token).",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active client claims",
       "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Claim from Client"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this Claim to Client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active client claims"
+        }
+      },
       "noActiveConnections": {
         "title": "No active claims",
         "helpText": "Fill out the form and push the Add button to add a claim"
@@ -1505,12 +1671,30 @@
       "title": "Client Secrets",
       "help": "List of Client Secrets - credentials to access the token endpoint.",
       "conditionalHelp": "Your client type doesn't support a Client Secret. You don't need to add anything here.",
-      "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active secrets",
       "removeConfirmation": "Are you sure want to delete this secret",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Secret from Client"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this secret to Client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active secrets"
+        }
+      },
       "noActiveConnections": {
         "title": "No secrets are defined",
         "helpText": "Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."

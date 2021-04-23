@@ -40,6 +40,7 @@ export class Button {
 
 export class Section {
   title: string
+  properties?: Record<string, Property>
 }
 
 export class Environment {
@@ -103,6 +104,10 @@ export class NavigationItem {
 
 export class ColumnHeader {
   headerText: string
+}
+
+export class Property {
+  name: string
 }
 
 export class FormItem {

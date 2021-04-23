@@ -175,6 +175,11 @@
     padding: 13px;
     font-size: 0.8rem;
     display: flex;
+    flex-wrap: wrap;
+
+    h3 {
+      flex: 0 0 100%;
+    }
 
     .selected-item-property {
       flex: 1;

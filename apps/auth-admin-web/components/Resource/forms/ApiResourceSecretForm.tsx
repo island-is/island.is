@@ -161,7 +161,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     placeholder={localization.fields['secretValue'].placeholder}
                     title={localization.fields['secretValue'].helpText}
                   />
-                  <HelpBox helpText="Your secret value should be a rather complicated string" />
+                  <HelpBox
+                    helpText={localization.fields['secretValue'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -172,7 +174,8 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="api-resource-secret-form__button__add"
                     disabled={isSubmitting}
-                    value={localization.addButton}
+                    value={localization.buttons['add'].text}
+                    title={localization.buttons['add'].helpText}
                   />
                 </div>
                 <div className="api-resource-secret-form__container__field">
@@ -242,7 +245,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   props.secrets && props.secrets.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{localization.sectionTitle1}</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.secrets?.map((secret: ApiResourceSecret) => {
                   return (
                     <div
@@ -259,10 +262,10 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(secret)}
                           className="api-resource-secret-form__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -276,8 +279,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-secret-form__button__cancel"
                     onClick={props.handleBack}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="api-resource-secret-form__button__container">
@@ -285,8 +289,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-secret-form__button__save"
                     onClick={props.handleNext}
+                    title={localization.buttons['save'].helpText}
                   >
-                    {localization.saveButton}
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -299,7 +304,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
       <InfoModal
         modalIsOpen={infoModalIsOpen}

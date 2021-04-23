@@ -15,7 +15,7 @@ interface Props {
   apiResource: ApiResourcesDTO
 }
 
-const ResourceCreateForm: React.FC<Props> = (props) => {
+const ApiResourceCreateForm: React.FC<Props> = (props) => {
   const {
     register,
     handleSubmit,
@@ -27,7 +27,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
   const [localization] = useState<FormControl>(
-    LocalizationUtils.getFormControl('ResourceCreateForm'),
+    LocalizationUtils.getFormControl('ApiResourceCreateForm'),
   )
 
   useEffect(() => {
@@ -310,4 +310,4 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   )
 }
 
-export default ResourceCreateForm
+export default ApiResourceCreateForm
