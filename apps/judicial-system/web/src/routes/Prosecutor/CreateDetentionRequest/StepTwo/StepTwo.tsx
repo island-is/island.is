@@ -250,33 +250,13 @@ export const StepTwo: React.FC = () => {
       {workingCase ? (
         <>
           <FormContentContainer>
-            <StepTwoForm theCase={workingCase} />
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Ákærandi{' '}
-                  <Box component="span" data-testid="prosecutor-tooltip">
-                    <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
-                  </Box>
-                </Text>
-              </Box>
-              <Select
-                name="prosecutor"
-                label="Veldu saksóknara"
-                defaultValue={defaultProsecutor}
-                options={prosecutors}
-                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                  setAndSendToServer(
-                    'prosecutorId',
-                    (selectedOption as ReactSelectOption).value.toString(),
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-                required
-              />
-            </Box>
+            <StepTwoForm
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              prosecutors={prosecutors}
+              defaultProsecutor={defaultProsecutor}
+            />
+
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
