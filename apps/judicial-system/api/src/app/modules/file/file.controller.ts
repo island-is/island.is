@@ -17,17 +17,19 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 import { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { AuditService } from '../audit'
 
 @UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/case/:id')
 export class FileController {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -60,7 +62,7 @@ export class FileController {
 
     res.header('Content-length', result.headers.get('Content-Length') as string)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       stream.pipe(res),
@@ -96,7 +98,7 @@ export class FileController {
 
     res.header('Content-length', result.headers.get('Content-Length') as string)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_RULING_PDF,
       stream.pipe(res),
