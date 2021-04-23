@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { Case } from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  newSetAndSendDateToServer,
+  setAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {
   workingCase: Case
@@ -24,6 +28,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
     courts,
     defaultCourt,
   } = props
+
+  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
+
   const { updateCase } = useCase()
 
   return (
@@ -86,6 +93,34 @@ const StepTwoForm: React.FC<Props> = (props) => {
           }
         />
       </Box>
+      {!workingCase.parentCase && (
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              Tími handtöku
+            </Text>
+          </Box>
+          <DateTime
+            name="arrestDate"
+            selectedDate={
+              workingCase.arrestDate
+                ? new Date(workingCase.arrestDate)
+                : undefined
+            }
+            onChange={(date: Date | undefined, valid: boolean) => {
+              newSetAndSendDateToServer(
+                'arrestDate',
+                date,
+                valid,
+                workingCase,
+                setWorkingCase,
+                setArrestDateIsValid,
+                updateCase,
+              )
+            }}
+          />
+        </Box>
+      )}
     </>
   )
 }
