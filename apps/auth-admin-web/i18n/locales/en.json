@@ -887,7 +887,7 @@
         }
       },
       "sections": {
-        "activeScopes": {
+        "active": {
           "title": "Active Scopes"
         }
       },
@@ -914,6 +914,29 @@
       "addButton": "Add",
       "removeButton": "Remove",
       "removeConfirmation": "Are you sure want to delete this secret",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Scope"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Scope"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active secrets"
+        }
+      },
       "noActiveConnections": {
         "title": "No secrets are defined",
         "helpText": "Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."

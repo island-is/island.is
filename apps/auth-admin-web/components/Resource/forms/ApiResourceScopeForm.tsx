@@ -193,7 +193,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{localization.sections['activeScopes'].title}</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.scopes?.map((scope: string) => {
                   return (
                     <div
