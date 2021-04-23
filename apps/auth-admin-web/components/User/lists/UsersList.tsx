@@ -212,7 +212,7 @@ const UsersList: React.FC = () => {
             </table>
           </div>
           {showNotFound && (
-            <NotFound title="User Identity not found">
+            <NotFound title={localization.sections['notFound'].title}>
               {localization.notFound}: {id}
             </NotFound>
           )}

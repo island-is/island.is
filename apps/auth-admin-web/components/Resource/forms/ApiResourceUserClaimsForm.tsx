@@ -136,7 +136,6 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="api-resource-user-claims__button__save"
-                  value="Next"
                   onClick={props.handleNext}
                   title={localization.buttons['save'].helpText}
                 >

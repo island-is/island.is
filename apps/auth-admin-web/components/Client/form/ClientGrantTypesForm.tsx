@@ -126,7 +126,6 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="client-grant-types__button__save"
-                  value="Next"
                   onClick={props.handleNext}
                   title={localization.buttons['save'].helpText}
                 >

@@ -83,6 +83,7 @@ export class ListControl {
   deactivateButton?: string
   notFound?: string
   sectionTitle1?: string
+  sections: Record<string, Section>
 }
 
 export class HeaderTranslation {

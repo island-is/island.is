@@ -224,7 +224,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     placeholder={localization.fields['description'].placeholder}
                     title={localization.fields['description'].helpText}
                   />
-                  <HelpBox helpText="Description of the secret" />
+                  <HelpBox
+                    helpText={localization.fields['description'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}

@@ -452,8 +452,6 @@
       "deactivated": "User is deactivated. Click to activate",
       "activateButton": "Activate",
       "deactivateButton": "Deactivate",
-      "notFound": "Nothing found for",
-      "sectionTitle1": "Users found",
       "search": {
         "label": "Search by National Id or Subject Id",
         "placeholder": "0123456789",
@@ -474,6 +472,14 @@
         },
         "providerSubjectId": {
           "headerText": "Provider Subject Id"
+        }
+      },
+      "sections": {
+        "notFound": {
+          "title": "User Identity not found"
+        },
+        "found": {
+          "title": "Users found"
         }
       }
     },
@@ -778,89 +784,67 @@
           "label": "Display Name",
           "placeholder": "Default Display Name",
           "helpText": "The display name value will be used e.g. on the consent screen.",
-          "errorMessage": "Display name is required and needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Display name is required and needs to be in the right format"
         },
         "description": {
           "label": "Description",
           "placeholder": "Description for this resource",
           "helpText": "The description value will be used e.g. on the consent screen.",
-          "errorMessage": "Description needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Description needs to be in the right format"
         },
         "enabled": {
           "label": "Enabled",
           "placeholder": "",
           "helpText": "Specifies whether this scope is enabled.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "showInDiscoveryDocument": {
           "label": "Show In Discovery Document",
           "placeholder": "",
           "helpText": "Specifies whether this scope is shown in the discovery document.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "emphasize": {
           "label": "Emphasize",
           "placeholder": "",
           "helpText": "Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "required": {
           "label": "Required",
           "placeholder": "",
           "helpText": "Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "grantToLegalGuardians": {
           "label": "Grant To Legal Guardians",
           "placeholder": "",
           "helpText": "Should legal guardians automatically get this scope for their wards",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "grantToProcuringHolders": {
           "label": "Grant To Procuring Holders",
           "placeholder": "",
           "helpText": "Should procuring holders automatically get this scope for their organisations",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "allowExplicitDelegationGrant": {
           "label": "Allow Explicit Delegation Grant",
           "placeholder": "",
           "helpText": "Should identities be able to delegate this scope to other users. Some scopes should not support delegation",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "automaticDelegationGrant": {
           "label": "Automatic Delegation Grant",
           "placeholder": "",
           "helpText": "Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "alsoForDelegatedUser": {
           "label": "Also For Delegated User",
           "placeholder": "",
           "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         }
       }
     },
@@ -1094,49 +1078,37 @@
           "label": "Display Name",
           "placeholder": "Default Display Name",
           "helpText": "The display name value will be used e.g. on the consent screen.",
-          "errorMessage": "Display name is required and needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Display name is required and needs to be in the right format"
         },
         "description": {
           "label": "Description",
           "placeholder": "Description for this scope",
           "helpText": "The description value will be used e.g. on the consent screen.",
-          "errorMessage": "Description needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Description needs to be in the right format"
         },
         "enabled": {
           "label": "Enabled",
           "placeholder": "",
           "helpText": "Specifies whether this scope is enabled.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "showInDiscoveryDocument": {
           "label": "Show In Discovery Document",
           "placeholder": "",
           "helpText": "Specifies whether this scope is shown in the discovery document.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "emphasize": {
           "label": "Emphasize",
           "placeholder": "",
           "helpText": "Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "required": {
           "label": "Required",
           "placeholder": "",
           "helpText": "Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "isAccessControlled": {
           "label": "Is Accessed Controlled",
@@ -1147,41 +1119,31 @@
           "label": "Grant To Legal Guardians",
           "placeholder": "",
           "helpText": "Should legal guardians automatically get this scope for their wards",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "grantToProcuringHolders": {
           "label": "Grant To Procuring Holders",
           "placeholder": "",
           "helpText": "Should procuring holders automatically get this scope for their organisations",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "allowExplicitDelegationGrant": {
           "label": "Allow Explicit Delegation Grant",
           "placeholder": "",
           "helpText": "Should identities be able to delegate this scope to other users. Some scopes should not support delegation",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "automaticDelegationGrant": {
           "label": "Automatic Delegation Grant",
           "placeholder": "",
           "helpText": "Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "alsoForDelegatedUser": {
           "label": "Also For Delegated User",
           "placeholder": "",
           "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         }
       }
     },
@@ -1205,17 +1167,13 @@
           "label": "National Id",
           "placeholder": "0123456789",
           "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
-          "errorMessage": "NationalId must be 10 numeric characters",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "NationalId must be 10 numeric characters"
         },
         "contactEmail": {
           "label": "Contact Email",
           "placeholder": "john@example.com",
           "helpText": "Contact email for this Api Resource",
-          "errorMessage": "Contact email must be set and must be a valid email address",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Contact email must be set and must be a valid email address"
         },
         "name": {
           "label": "Name",
@@ -1229,33 +1187,25 @@
           "label": "Display Name",
           "placeholder": "Default Display Name",
           "helpText": "The display name value will be used e.g. on the consent screen.",
-          "errorMessage": "Display name is required and needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Display name is required and needs to be in the right format"
         },
         "description": {
           "label": "Description",
           "placeholder": "Description for this scope",
           "helpText": "The description value will be used e.g. on the consent screen.",
-          "errorMessage": "Description needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Description needs to be in the right format"
         },
         "enabled": {
           "label": "Enabled",
           "placeholder": "",
           "helpText": "Specifies whether this scope is enabled.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         },
         "showInDiscoveryDocument": {
           "label": "Show In Discovery Document",
           "placeholder": "",
           "helpText": "Specifies whether this scope is shown in the discovery document.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": ""
         }
       }
     },
@@ -1289,8 +1239,7 @@
           "placeholder": "",
           "helpText": "Select the appropriate Client Type",
           "errorMessage": "Client Type is required",
-          "available": "",
-          "unAvailable": "",
+
           "selectItems": {
             "": {
               "selectItemText": "Select Client Type",
@@ -1328,17 +1277,13 @@
           "label": "National Id",
           "placeholder": "0123456789",
           "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
-          "errorMessage": "NationalId must be 10 numeric characters",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "NationalId must be 10 numeric characters"
         },
         "contactEmail": {
           "label": "Contact Email",
           "placeholder": "john@example.com",
           "helpText": "Contact email for this Api Resource",
-          "errorMessage": "Contact email must be set and must be a valid email address",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Contact email must be set and must be a valid email address"
         },
         "clientId": {
           "label": "Client Id",
@@ -1352,25 +1297,20 @@
           "label": "Display Name",
           "placeholder": "Default Display Name",
           "helpText": "Application name that will be seen on consent screens",
-          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format"
         },
         "description": {
           "label": "Description",
           "placeholder": "Example description",
           "helpText": "Application description for use within AdminUI",
-          "errorMessage": "Description needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Description needs to be in the right format"
         },
         "baseUrl": {
           "label": "Base Url",
           "placeholder": "https://localhost:4200",
           "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
           "errorMessage": "Base Url is required and needs to be in the right format",
-          "available": "",
-          "unAvailable": "",
+
           "popUpTitle": "Redirect (Callback) Uri will be:",
           "popUpDescription": "This can be changed later"
         },
@@ -1378,25 +1318,15 @@
           "label": "Display URL",
           "placeholder": "https://example.com",
           "helpText": "Application URL that will be seen on consent screens",
-          "errorMessage": "Display url needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
+          "errorMessage": "Display url needs to be in the right format"
         },
         "enabled": {
           "label": "Enabled",
-          "placeholder": "",
-          "helpText": "Specifies whether this client is enabled.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "helpText": "Specifies whether this client is enabled."
         },
         "requireConsent": {
           "label": "Require consent",
-          "placeholder": "",
-          "helpText": "Specifies whether a consent screen is required",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+          "helpText": "Specifies whether a consent screen is required"
         },
         "supportsDelegation": {
           "label": "Supports Delegation",

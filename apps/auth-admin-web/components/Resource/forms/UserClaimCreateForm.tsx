@@ -113,7 +113,6 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="user-claim-create-form__button__cancel"
-                    value="Cancel"
                     onClick={(e) => setVisible(false)}
                     title={localization.buttons['cancel'].helpText}
                   >

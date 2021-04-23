@@ -120,7 +120,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       }
                       title={localization.fields['redirectUri'].helpText}
                     />
-                    <HelpBox helpText="Full path of the redirect URL. These protocols rely upon TLS in production" />
+                    <HelpBox
+                      helpText={localization.fields['redirectUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}

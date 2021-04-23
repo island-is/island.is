@@ -152,7 +152,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="admin.nationalId"
-                    message="NationalId must be 10 numeric characters"
+                    message={localization.fields['nationalId'].errorMessage}
                   />
                 </div>
 

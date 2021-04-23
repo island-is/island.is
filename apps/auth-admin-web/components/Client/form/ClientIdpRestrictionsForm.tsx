@@ -167,7 +167,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="client-idp-restriction__button__save"
-                  value="Next"
                   onClick={props.handleNext}
                   title={localization.buttons['save'].helpText}
                 >

@@ -236,7 +236,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       </option>
                     </select>
 
-                    <HelpBox helpText="Select the appropriate Client Type" />
+                    <HelpBox
+                      helpText={localization.fields['clientType'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}

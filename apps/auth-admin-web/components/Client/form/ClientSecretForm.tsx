@@ -173,7 +173,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       }
                       title={localization.fields['secretValue'].helpText}
                     />
-                    <HelpBox helpText="Your secret value should be a rather complicated string" />
+                    <HelpBox
+                      helpText={localization.fields['secretValue'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
