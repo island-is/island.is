@@ -21,7 +21,7 @@ export interface UniqueWithinTagsInput {
 @Injectable()
 export class UniqueWithinTagsValidatorService implements ValidatorService {
   requiredMetaFields = [EndorsementMetaField.SIGNED_TAGS]
-  validate(input: UniqueWithinTagsInput) {
+  validate (input: UniqueWithinTagsInput) {
     for (const tag of input.value.tags) {
       if (input.meta.signedTags.includes(tag)) {
         // we found existing tag, lets fail the validation

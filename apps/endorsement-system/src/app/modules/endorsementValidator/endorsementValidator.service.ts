@@ -30,7 +30,7 @@ export enum ValidationRule {
 @Injectable()
 export class EndorsementValidatorService {
   validatorTypesMap: ValidatorTypesMap
-  constructor(
+  constructor (
     private readonly minAgeByDateValidatorService: MinAgeByDateValidatorService,
     private readonly uniqueWithinTagsValidatorService: UniqueWithinTagsValidatorService,
   ) {
@@ -42,7 +42,7 @@ export class EndorsementValidatorService {
     }
   }
 
-  validate({ validations, meta }: EndorsementValidatorInput): boolean {
+  validate ({ validations, meta }: EndorsementValidatorInput): boolean {
     for (let i = 0; i < validations.length; i++) {
       const { type, value } = validations[i]
 
@@ -62,7 +62,7 @@ export class EndorsementValidatorService {
     return true
   }
 
-  getRequiredValidationMetadataFields(
+  getRequiredValidationMetadataFields (
     ruleTypes: ValidationRule[],
   ): EndorsementMetaField[] {
     // we ask the requested validators what meta fields they need
