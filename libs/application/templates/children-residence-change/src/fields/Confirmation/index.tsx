@@ -2,18 +2,19 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { confirmation, copyUrl } from '../../lib/messages'
-import { CopyUrl } from '../components'
+import { CopyUrl, DescriptionText } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { answers } = application
+  const { answers, externalData } = application
 
   return (
     <>
       <Box marginTop={3}>
-        <Text>
-          {formatMessage(confirmation.general.description, {
+        <DescriptionText
+          text={confirmation.general.description}
+          format={{
             emailParagraph: answers.counterParty.email
               ? formatMessage(
                   confirmation.general.description.paragraphs.email,
@@ -29,9 +30,24 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
             count: [
               answers.counterParty.email,
               answers.counterParty.phoneNumber,
-            ].filter((a) => a !== '').length,
-          })}
-        </Text>
+            ].reduce((value, item) => {
+              return item ? value + 1 : value
+            }, 0),
+          }}
+        />
+      </Box>
+      <Text variant="h4" marginTop={3}>
+        {formatMessage(confirmation.nextSteps.title)}
+      </Text>
+      <Box marginTop={2}>
+        <DescriptionText
+          text={confirmation.nextSteps.description}
+          format={{
+            parentBName:
+              externalData.nationalRegistry.data.children[0].otherParent
+                .fullName,
+          }}
+        />
       </Box>
       <Box marginTop={5}>
         <CopyUrl
