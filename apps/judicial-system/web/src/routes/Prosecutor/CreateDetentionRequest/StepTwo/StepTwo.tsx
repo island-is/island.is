@@ -251,11 +251,6 @@ export const StepTwo: React.FC = () => {
         <>
           <FormContentContainer>
             <StepTwoForm theCase={workingCase} />
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                Óskir um fyrirtöku
-              </Text>
-            </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
