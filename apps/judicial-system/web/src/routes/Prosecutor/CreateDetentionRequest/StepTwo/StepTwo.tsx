@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ValueType } from 'react-select/src/types'
 import { useMutation, useQuery } from '@apollo/client'
 
-import { Text, Box, Tooltip, Select, Option } from '@island.is/island-ui/core'
+import { Text, Box, Tooltip, Option } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
@@ -15,13 +14,9 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   ProsecutorSubsections,
-  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  setAndSendToServer,
-  newSetAndSendDateToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   FormFooter,
   PageLayout,
@@ -255,39 +250,10 @@ export const StepTwo: React.FC = () => {
               setWorkingCase={setWorkingCase}
               prosecutors={prosecutors}
               defaultProsecutor={defaultProsecutor}
+              courts={courts}
+              defaultCourt={defaultCourt}
             />
 
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Dómstóll
-                </Text>
-              </Box>
-              <Select
-                name="court"
-                label="Veldu dómstól"
-                defaultValue={{
-                  label:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].label
-                      : courts[0].label,
-                  value:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].value
-                      : courts[0].value,
-                }}
-                options={courts}
-                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                  setAndSendToServer(
-                    'court',
-                    (selectedOption as ReactSelectOption).label,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
             {!workingCase.parentCase && (
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={3}>

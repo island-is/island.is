@@ -11,10 +11,19 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
   defaultProsecutor: ReactSelectOption
+  courts: ReactSelectOption[]
+  defaultCourt: ReactSelectOption[]
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, prosecutors, defaultProsecutor } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    prosecutors,
+    defaultProsecutor,
+    courts,
+    defaultCourt,
+  } = props
   const { updateCase } = useCase()
 
   return (
@@ -48,6 +57,33 @@ const StepTwoForm: React.FC<Props> = (props) => {
             )
           }
           required
+        />
+      </Box>
+      <Box component="section" marginBottom={5}>
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3">
+            Dómstóll
+          </Text>
+        </Box>
+        <Select
+          name="court"
+          label="Veldu dómstól"
+          defaultValue={{
+            label:
+              defaultCourt.length > 0 ? defaultCourt[0].label : courts[0].label,
+            value:
+              defaultCourt.length > 0 ? defaultCourt[0].value : courts[0].value,
+          }}
+          options={courts}
+          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            setAndSendToServer(
+              'court',
+              (selectedOption as ReactSelectOption).label,
+              workingCase,
+              setWorkingCase,
+              updateCase,
+            )
+          }
         />
       </Box>
     </>
