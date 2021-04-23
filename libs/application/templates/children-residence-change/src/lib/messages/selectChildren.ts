@@ -23,6 +23,16 @@ export const selectChildren = {
       description: 'Select children subtitle',
     },
   }),
+  ineligible: defineMessages({
+    text: {
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.ineligible.text#markdown',
+      defaultMessage:
+        'Samkvæmt upplýsingum frá Þjóðskrá Íslands eru eingöngu börn frá núverandi sambýlismaka í þinni forsjá. Hægt er að breyta lögheimili fjölskyldumeðlima með [flutningstilkynningu](https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/) til Þjóðskrár Íslands.',
+      description:
+        'Text when children are not eligible for transfer because their parents live together',
+    },
+  }),
   checkboxes: defineMessages({
     title: {
       id:
