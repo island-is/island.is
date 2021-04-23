@@ -1,6 +1,4 @@
-import baseEnvironment from './environment'
-
-const prodEnvironment: typeof baseEnvironment = {
+export default {
   production: true,
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
@@ -9,5 +7,3 @@ const prodEnvironment: typeof baseEnvironment = {
   },
   allowedNationalIds: process.env.ALLOWED_NATIONAL_IDS ?? '',
 }
-
-export default prodEnvironment
