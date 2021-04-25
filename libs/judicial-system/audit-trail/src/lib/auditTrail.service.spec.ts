@@ -4,7 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AuditedAction, AuditTrailService } from './auditTrail.service'
+import {
+  AuditedAction,
+  AuditTrailService,
+  AUDIT_TRAIL_OPTIONS,
+} from './auditTrail.service'
 
 jest.mock('@island.is/logging', () => {
   return {
@@ -26,13 +30,17 @@ jest.mock('winston-cloudwatch', () => {
   }
 })
 
-describe('AuditTrailService', () => {
+describe('AuditTrailService generic', () => {
   const genericLogger = mock<Logger>()
   let service: AuditTrailService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: AUDIT_TRAIL_OPTIONS,
+          useFactory: () => ({ useGenericLogger: true }),
+        },
         {
           provide: LOGGER_PROVIDER,
           useValue: genericLogger,
@@ -44,56 +52,15 @@ describe('AuditTrailService', () => {
     service = module.get<AuditTrailService>(AuditTrailService)
   })
 
-  it('should be defined', () => {
-    expect(service).toBeDefined()
-  })
-
-  it('should throw an exception if not initialized', () => {
-    // Arrange
-    const userId = 'some-user-id'
-    const action = AuditedAction.GET_CASES
-    const ids = ['some-id', 'another-id']
-    const act = () => {
-      service.audit(userId, action, ids)
-    }
-
-    // Act and assert
-    expect(act).toThrowError(ReferenceError)
-  })
-
-  it('should write to a dedicated audit trail', () => {
-    // Arrange
-    const spy = jest.spyOn(auditTrail, 'info')
-    const userId = 'some-user-id'
-    const action = AuditedAction.GET_CASE
-    const id = 'some-id'
-    service.initTrail({ useGenericLogger: false })
-
-    // Act
-    service.audit(userId, action, id)
-
-    // Assert
-    expect(spy).toHaveBeenCalledWith({
-      user: userId,
-      action,
-      entities: id,
-    })
-
-    // Cleanup
-    spy.mockReset()
-    spy.mockRestore()
-  })
-
-  it('should use generic logger', () => {
+  it('should use generic logger', async () => {
     // Arrange
     const spy = jest.spyOn(genericLogger, 'info')
     const userId = 'some-user-id'
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
-    service.initTrail({ useGenericLogger: true })
 
     // Act
-    service.audit(userId, action, id)
+    await service.audit(userId, action, null, id)
 
     // Assert
     expect(spy).toHaveBeenCalledWith(
@@ -103,9 +70,121 @@ describe('AuditTrailService', () => {
         entities: id,
       }),
     )
+  })
 
-    // Cleanup
-    spy.mockReset()
-    spy.mockRestore()
+  it('should log a single id', async () => {
+    // Arrange
+    const spy = jest.spyOn(genericLogger, 'info')
+    const userId = 'some-user-id'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+    const result = 'some-result'
+
+    // Act
+    const res = await service.audit(userId, action, result, id)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        entities: id,
+      }),
+    )
+    expect(res).toBe(result)
+  })
+
+  it('should log an id from result', async () => {
+    // Arrange
+    const spy = jest.spyOn(genericLogger, 'info')
+    const userId = 'some-user-id'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+    const result = 'some-result'
+    const idFromResult = jest.fn().mockReturnValue(id)
+
+    // Act
+    const res = await service.audit(userId, action, result, idFromResult)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        entities: id,
+      }),
+    )
+    expect(idFromResult).toHaveBeenCalledWith(result)
+    expect(res).toBe(result)
+  })
+
+  it('should log an id from a promised result', async () => {
+    // Arrange
+    const spy = jest.spyOn(genericLogger, 'info')
+    const userId = 'some-user-id'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+    const result = 'some-result'
+    const idFromResult = jest.fn().mockReturnValue(id)
+
+    // Act
+    const res = await service.audit(
+      userId,
+      action,
+      Promise.resolve(result),
+      idFromResult,
+    )
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        entities: id,
+      }),
+    )
+    expect(idFromResult).toHaveBeenCalledWith(result)
+    expect(res).toBe(result)
+  })
+})
+
+describe('AuditTrailService generic', () => {
+  const genericLogger = mock<Logger>()
+  let service: AuditTrailService
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        {
+          provide: AUDIT_TRAIL_OPTIONS,
+          useFactory: () => ({ useGenericLogger: false }),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: genericLogger,
+        },
+        AuditTrailService,
+      ],
+    }).compile()
+
+    service = module.get<AuditTrailService>(AuditTrailService)
+  })
+
+  it('should write to a dedicated audit trail', async () => {
+    // Arrange
+    const spy = jest.spyOn(auditTrail, 'info')
+    const userId = 'some-user-id'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+
+    // Act
+    await service.audit(userId, action, null, id)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith({
+      user: userId,
+      action,
+      entities: id,
+    })
   })
 })
