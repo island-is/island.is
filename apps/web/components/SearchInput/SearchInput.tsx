@@ -426,11 +426,14 @@ const Results: FC<{
               <Text variant="eyebrow" color="purple400">
                 {quickContentLabel}
               </Text>
-              {(search.results.items as
-                | (Article[] & LifeEventPage[] & AboutPage[] & News[])
-                | SubArticle[])
+              {(search.results.items as Article[] &
+                LifeEventPage[] &
+                AboutPage[] &
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
                 .map((item) => {
+                  console.log(item)
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
