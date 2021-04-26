@@ -44,7 +44,7 @@ const judgeRule = UserRole.JUDGE as RolesRule
 // Allows registrars to perform any action
 const registrarRule = UserRole.REGISTRAR as RolesRule
 
-const completedCaseStates = [CaseState.ACCEPTED, CaseState.RECEIVED]
+const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -181,7 +181,9 @@ export class FileController {
       if (
         !completedCaseStates.includes(existingCase.state) ||
         (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
-          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL)
+          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL &&
+          !existingCase.prosecutorPostponedAppealDate &&
+          !existingCase.accusedPostponedAppealDate)
       ) {
         throw new ForbiddenException(
           'Registrars can only get files of appealed cases',
