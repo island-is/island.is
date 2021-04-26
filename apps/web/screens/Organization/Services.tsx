@@ -310,7 +310,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  if (!getArticles) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Organization services page not found')
   }
 
