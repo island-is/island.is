@@ -2,9 +2,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { confirmation, copyUrl } from '../../lib/messages'
-import { CopyUrl, DescriptionText } from '../components'
+import {
+  CopyUrl,
+  DescriptionText,
+  BorderedAccordion,
+  ContractOverview,
+} from '../components'
 import { CRCFieldBaseProps } from '../..'
-import ContractAccordionOverview from '../components/ContractOverviewAccordion/ContractOverviewAccordion'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -15,6 +19,9 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
       <Box marginTop={3}>
         <DescriptionText
           text={confirmation.general.description}
+          // In confirmation.general.description we render conditionally what message appears depending on what values are defined in the application answers counter party object.
+          // The emailParagraph, phoneNumberParagraph and count that are passed to format to handle this logic.
+          // We could have gone another route of defining three translations strings, one for each situation, but we were not sure what would be better for the translator.
           format={{
             emailParagraph: answers.counterParty.email
               ? formatMessage(
@@ -31,9 +38,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
             count: [
               answers.counterParty.email,
               answers.counterParty.phoneNumber,
-            ].reduce((value, item) => {
-              return item ? value + 1 : value
-            }, 0),
+            ].filter((item) => item).length,
           }}
         />
       </Box>
@@ -59,18 +64,19 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
         />
       </Box>
       <Box marginTop={3}>
-        <ContractAccordionOverview
+        <BorderedAccordion
           title={formatMessage(confirmation.contractOverview.accordionTitle)}
           id="id_1"
-          application={application}
-        />
+        >
+          <ContractOverview application={application} />
+        </BorderedAccordion>
       </Box>
       <Box marginTop={5}>
         <img
           src={
             'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
           }
-          alt="Umsókn sent inn mynd"
+          alt=""
         />
       </Box>
     </>
