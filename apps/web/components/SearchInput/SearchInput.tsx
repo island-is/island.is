@@ -448,9 +448,7 @@ const Results: FC<{
                       <Link
                         {...linkResolver(
                           item.__typename as LinkType,
-                          item.slug.split('/').length > 1
-                            ? item.slug.split('/')
-                            : [item.slug],
+                          item.slug.split('/')
                         )}
                       >
                         <Text variant="h5" color="blue400">
