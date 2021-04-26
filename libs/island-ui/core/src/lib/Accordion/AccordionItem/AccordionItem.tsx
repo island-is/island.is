@@ -35,7 +35,6 @@ export type AccordionItemBaseProps = {
   labelUse?: AccordionItemLabelTags
   labelColor?: Colors
   iconVariant?: IconVariantTypes
-  iconColor?: Colors
   visibleContent?: ReactNode
   children: ReactNode
   startExpanded?: boolean
@@ -61,7 +60,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       labelUse = 'h3',
       labelColor = 'currentColor',
       iconVariant = 'default',
-      iconColor = 'currentColor',
       visibleContent,
       expanded: expandedProp,
       onToggle,
