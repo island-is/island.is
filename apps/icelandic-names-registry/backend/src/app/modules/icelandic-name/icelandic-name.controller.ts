@@ -106,6 +106,7 @@ export class IcelandicNameController {
   @Post()
   @ApiBearerAuth()
   @HttpCode(201)
+  @ApiOkResponse()
   @ApiCreatedResponse({
     description: 'The name has been successfully created.',
     type: IcelandicName,
@@ -121,6 +122,7 @@ export class IcelandicNameController {
   @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Delete(':id')
   @ApiBearerAuth()
+  @ApiOkResponse()
   @HttpCode(204)
   @ApiNoContentResponse({
     description: 'The name has been successfully deleted.',
