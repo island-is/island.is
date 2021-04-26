@@ -5,9 +5,9 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import NotFound from '../../common/NotFound'
 import { UserService } from '../../../services/UserService'
-import UserIdentity from './../../../entities/models/user-identity.model'
-import { Claim } from './../../../entities/models/claim.model'
-import ValidationUtils from './../../../utils/validation.utils'
+import UserIdentity from '../../../entities/models/user-identity.model'
+import { Claim } from '../../../entities/models/claim.model'
+import ValidationUtils from '../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
@@ -117,7 +117,8 @@ const UsersList: React.FC = () => {
                   />
                   <input
                     type="submit"
-                    value={localization.searchButton}
+                    value={localization.buttons['search'].text}
+                    title={localization.buttons['search'].helpText}
                     disabled={isSubmitting}
                     className="users__button__search"
                   />
@@ -131,7 +132,7 @@ const UsersList: React.FC = () => {
               users && users.length > 0 ? 'show' : 'hidden'
             }`}
           >
-            <h3>{localization.sectionTitle1}</h3>
+            <h3>{localization.sections['usersList'].title}</h3>
             <table className="users__table">
               <thead>
                 <tr>
@@ -157,8 +158,9 @@ const UsersList: React.FC = () => {
                           type="button"
                           className="users__button__view"
                           onClick={() => handleShowClaimsClicked(user)}
+                          title={localization.buttons['view'].helpText}
                         >
-                          {localization.viewButton}
+                          {localization.buttons['view'].text}
                         </button>
 
                         <div
@@ -196,13 +198,13 @@ const UsersList: React.FC = () => {
                           onClick={() => toggleActive(user)}
                           title={
                             user.active
-                              ? localization.active
-                              : localization.deactivated
+                              ? localization.buttons['deactivate'].helpText
+                              : localization.buttons['activate'].helpText
                           }
                         >
                           {user.active
-                            ? localization.deactivateButton
-                            : localization.activateButton}
+                            ? localization.buttons['deactivate'].text
+                            : localization.buttons['activate'].text}
                         </button>
                       </td>
                     </tr>
@@ -213,7 +215,7 @@ const UsersList: React.FC = () => {
           </div>
           {showNotFound && (
             <NotFound title={localization.sections['notFound'].title}>
-              {localization.notFound}: {id}
+              {localization.sections['notFound'].title}: {id}
             </NotFound>
           )}
         </div>
