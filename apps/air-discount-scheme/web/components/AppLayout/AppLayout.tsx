@@ -67,11 +67,9 @@ export const AppLayout: NextComponentType<
       ? { ...link, href: islandHref + link.href }
       : link
   const footerUpperMenuFiltered = footerUpperMenu
-    .map((link) => link)
     .filter(noEmptyOrHash)
     .map(mapLocalLinks)
   const footerLowerMenuFiltered = footerLowerMenu
-    .map((link) => link)
     .filter(noEmptyOrHash)
     .map(mapLocalLinks)
   const footerMiddleMenuFiltered = [] // footerMiddleMenu.filter(noEmptyOrHash)
