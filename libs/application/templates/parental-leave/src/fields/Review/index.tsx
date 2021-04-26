@@ -519,7 +519,10 @@ const Review: FC<ReviewScreenProps> = ({
             </Box>
           </AccordionItem>
 
-          <AccordionItem
+          {/* TODO: Bring back payment calculation info, once we have an api
+              https://app.asana.com/0/1182378413629561/1200214178491335/f
+          */}
+          {/* <AccordionItem
             id="id_4"
             label={formatMessage(
               parentalLeaveFormMessages.paymentPlan.subSection,
@@ -534,7 +537,7 @@ const Review: FC<ReviewScreenProps> = ({
                 />
               )}
             </Box>
-          </AccordionItem>
+          </AccordionItem> */}
 
           <AccordionItem
             id="id_4"
