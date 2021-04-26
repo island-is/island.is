@@ -41,6 +41,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'You must select one of the above',
       path: 'status.type',
+      values: undefined,
     })
   })
 
@@ -65,6 +66,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Please attach a confirmation of studies',
       path: 'status.confirmationOfStudies',
+      values: undefined,
     })
   })
 
@@ -94,6 +96,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'You must select one of the above',
       path: 'formerInsurance.registration',
+      values: undefined,
     })
   })
 
@@ -111,6 +114,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Please select a country',
       path: 'formerInsurance.country',
+      values: undefined,
     })
   })
 
@@ -128,6 +132,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: '',
       path: 'formerInsurance',
+      values: undefined,
     })
   })
 
@@ -150,6 +155,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: '',
       path: 'formerInsurance',
+      values: undefined,
     })
   })
 
@@ -167,6 +173,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Please fill in your ID number in previous country',
       path: 'formerInsurance.personalId',
+      values: undefined,
     })
   })
 
@@ -185,6 +192,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Should be at most 20 characters long',
       path: 'formerInsurance.personalId',
+      values: undefined,
     })
   })
 
@@ -203,6 +211,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Should be at least 6 characters',
       path: 'formerInsurance.personalId',
+      values: undefined,
     })
   })
 
@@ -222,6 +231,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Please attach a confirmation of residency',
       path: 'formerInsurance.confirmationOfResidencyDocument',
+      values: undefined,
     })
   })
 
@@ -243,6 +253,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'You must select one of the above',
       path: 'formerInsurance.entitlement',
+      values: undefined,
     })
   })
 
@@ -265,6 +276,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'You must select one of the above',
       path: 'formerInsurance.entitlement',
+      values: undefined,
     })
   })
 
@@ -284,6 +296,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'Please fill in a reason',
       path: 'formerInsurance.entitlementReason',
+      values: undefined,
     })
   })
 

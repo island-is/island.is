@@ -815,7 +815,7 @@ export interface IFrontpageSliderFields {
   /** Slide link */
   slideLink?: ILink | undefined
 
-  /** Animatinon JSON (Asset) */
+  /** Animation JSON (Asset) */
   animationJsonAsset?: Asset | undefined
 
   /** Animation (JSON) */
@@ -852,7 +852,8 @@ export interface IFrontpageSliderListFields {
   items: IFrontpageSlider[]
 }
 
-/** Á heima inni á 'Frontpage' núna */
+/** Á heima inni í 'Frontpage' núna */
+
 export interface IFrontpageSliderList
   extends Entry<IFrontpageSliderListFields> {
   sys: {
@@ -2606,6 +2607,12 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** url */
+  url: string
+
+  /** Parent */
+  parent: IArticle
 }
 
 /** A sub article that's a part of another main article */

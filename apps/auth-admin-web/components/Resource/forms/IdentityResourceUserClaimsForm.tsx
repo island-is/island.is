@@ -127,18 +127,19 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="identity-resource-user-claims__button__cancel"
                   onClick={props.handleBack}
+                  title={localization.buttons['cancel'].helpText}
                 >
-                  {localization.cancelButton}
+                  {localization.buttons['cancel'].text}
                 </button>
               </div>
               <div className="identity-resource-user-claims__button__container">
                 <button
                   type="button"
                   className="identity-resource-user-claims__button__save"
-                  value="Next"
+                  title={localization.buttons['save'].helpText}
                   onClick={props.handleNext}
                 >
-                  {localization.saveButton}
+                  {localization.buttons['save'].text}
                 </button>
               </div>
             </div>
