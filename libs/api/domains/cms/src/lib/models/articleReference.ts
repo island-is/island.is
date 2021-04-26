@@ -1,3 +1,13 @@
+/*
+  TODO: refactor when Articles has been refactored
+
+  This model, article reference, is here because of a Webpack circularity issue
+  The subArticle model points to this instead of an article model.
+
+  When articles no longer have references to their children, this can be
+  removed and the subArticle model made to reference the article model
+  directly
+*/
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IArticle } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
