@@ -11,6 +11,7 @@ import {
   EndorsementListControllerCreateRequest,
   EndorsementListControllerFindListsRequest,
   EndorsementListControllerFindOneRequest,
+  EndorsementControllerBulkCreateRequest,
 } from '../../gen/fetch'
 
 const handleError = async (error: any) => {
@@ -46,6 +47,14 @@ export class EndorsementSystemService {
   async endorsementControllerCreate(input: EndorsementControllerCreateRequest) {
     return await this.endorsementApi
       .endorsementControllerCreate(input)
+      .catch(handleError)
+  }
+
+  async endorsementControllerBulkCreate(
+    input: EndorsementControllerBulkCreateRequest,
+  ) {
+    return await this.endorsementApi
+      .endorsementControllerBulkCreate(input)
       .catch(handleError)
   }
 
