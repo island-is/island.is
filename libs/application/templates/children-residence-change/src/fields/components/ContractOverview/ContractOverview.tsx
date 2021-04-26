@@ -4,7 +4,8 @@ import { CRCApplication } from '../../../types'
 import { useIntl } from 'react-intl'
 import { childrenResidenceInfo, formatDate } from '../../..'
 import * as m from '../../../lib/messages'
-import { DescriptionText, TransferOverview } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import TransferOverview from '../TransferOverview/TransferOverview'
 import { Roles } from '../../../lib/constants'
 
 interface Props {
