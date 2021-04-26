@@ -121,6 +121,16 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
+  const [
+    statefulSelfEmployed,
+    setStatefulSelfEmployed,
+  ] = useState<ValidAnswers>(
+    getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    ) as ValidAnswers,
+  )
+
   const dob = getExpectedDateOfBirth(application)
 
   /* TODO: Bring back payment calculation info, once we have an api
@@ -457,31 +467,79 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </Box>
           </AccordionItem>
+
           <AccordionItem
             id="id_1"
             label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
+            <Text variant="h5" marginTop={1} marginBottom={2}>
+              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
+            </Text>
+
             {editable ? (
-              <Box paddingY={4}>
-                <Input
-                  id="employer.email"
-                  name="employer.email"
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  ref={register}
-                />
-              </Box>
+              <RadioController
+                id="employer.isSelfEmployed"
+                disabled={false}
+                name="employer.isSelfEmployed"
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    'employer.isSelfEmployed',
+                  ) as string[]
+                }
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStatefulSelfEmployed(s as ValidAnswers)
+                }}
+              />
             ) : (
-              <Text paddingY={4}>
+              <Text>
                 {
                   getValueViaPath(
                     application.answers,
-                    'employer.email',
+                    'employer.isSelfEmployed',
                   ) as string[]
                 }
               </Text>
+            )}
+            {statefulSelfEmployed === NO && (
+              <>
+                {editable ? (
+                  <Box paddingY={4}>
+                    <Input
+                      id="employer.email"
+                      name="employer.email"
+                      label={formatMessage(
+                        parentalLeaveFormMessages.employer.email,
+                      )}
+                      ref={register}
+                    />
+                  </Box>
+                ) : (
+                  <Text paddingY={4}>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'employer.email',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </>
             )}
           </AccordionItem>
 
