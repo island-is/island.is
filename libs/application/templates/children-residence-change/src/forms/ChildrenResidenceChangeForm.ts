@@ -96,8 +96,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  id: 'nationalRegistry',
+                  type: 'DataProviderTypes.NationalRegistry',
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
