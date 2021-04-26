@@ -45,13 +45,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
         const subArticles = (entry.fields.subArticles || [])
           .map(({ sys, fields }) => {
             // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
-            if (!fields?.parent) {
+            if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { parent, ...prunedSubArticleFields } = fields
+            const { title, url } = fields
             return {
               sys,
-              fields: prunedSubArticleFields,
+              fields: {
+                title,
+                slug: url,
+              },
             }
           })
           .filter((subArticle) => Boolean(subArticle))
