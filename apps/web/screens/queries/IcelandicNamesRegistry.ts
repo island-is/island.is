@@ -1,0 +1,33 @@
+import { gql } from '@apollo/client'
+
+export const GET_ICELANDIC_NAME_BY_SEARCH = gql`
+  query GetIcelandicNameBySearch($input: GetIcelandicNameBySearchInput!) {
+    getIcelandicNameBySearch(input: $input) {
+      id
+      icelandicName
+      type
+      status
+      verdict
+      visible
+      description
+      url
+    }
+  }
+`
+
+export const GET_ICELANDIC_NAME_BY_INITIAL_LETTER = gql`
+  query GetIcelandicNameByInitialLetter(
+    $input: GetIcelandicNameByInitialLetterInput!
+  ) {
+    getIcelandicNameByInitialLetter(input: $input) {
+      id
+      icelandicName
+      type
+      status
+      verdict
+      visible
+      description
+      url
+    }
+  }
+`

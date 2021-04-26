@@ -175,6 +175,14 @@
     padding: 13px;
     font-size: 0.8rem;
     display: flex;
+    flex-wrap: wrap;
+
+    h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      flex: 0 0 100%;
+      color: $color-link;
+    }
 
     .selected-item-property {
       flex: 1;
