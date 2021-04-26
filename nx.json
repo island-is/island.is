@@ -222,6 +222,9 @@
     "auth-nest-tools": {
       "tags": []
     },
+    "auth-react": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },

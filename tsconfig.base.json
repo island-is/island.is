@@ -171,6 +171,7 @@
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
+      "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"

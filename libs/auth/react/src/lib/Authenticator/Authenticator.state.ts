@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useReducer } from 'react'
 import { User } from 'oidc-client'
+import { Dispatch, ReducerAction } from 'react'
 
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
@@ -10,9 +10,11 @@ export interface AuthReducerState {
 }
 
 export enum ActionType {
-  SET_USER_PENDING = 'SET_USER_PENDING',
-  SET_USER_FULFILLED = 'SET_USER_FULFILLED',
-  SET_USER_LOGGED_OUT = 'SET_USER_LOGGED_OUT',
+  SIGNIN_START = 'SIGNIN_START',
+  SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
+  SIGNIN_FAILURE = 'SIGNIN_FAILURE',
+  LOG_OUT = 'LOG_OUT',
+  USER_LOADED = 'USER_LOADED',
 }
 
 interface Action {
@@ -22,8 +24,7 @@ interface Action {
 }
 
 const USER_MOCKED = process.env.API_MOCKS === 'true'
-
-const initialState: AuthReducerState = USER_MOCKED
+export const initialState: AuthReducerState = USER_MOCKED
   ? {
       userInfo: ({
         profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
@@ -36,31 +37,39 @@ const initialState: AuthReducerState = USER_MOCKED
       userInfoState: 'passive',
       isAuthenticated: false,
     }
-export const AuthContext = createContext<
-  [AuthReducerState, (action: Action) => void]
->([
-  initialState,
-  () => {
-    return undefined
-  },
-])
 
-const reducer = (state: AuthReducerState, action: Action): AuthReducerState => {
+export type AuthDispatch = Dispatch<Action>
+
+export const reducer = (
+  state: AuthReducerState,
+  action: Action,
+): AuthReducerState => {
   switch (action.type) {
-    case ActionType.SET_USER_PENDING:
+    case ActionType.SIGNIN_START:
       return {
         ...state,
         userInfoState: 'pending',
-        isAuthenticated: false,
       }
-    case ActionType.SET_USER_FULFILLED:
+    case ActionType.SIGNIN_SUCCESS:
       return {
         ...state,
         userInfo: action.payload,
         userInfoState: 'fulfilled',
         isAuthenticated: true,
       }
-    case ActionType.SET_USER_LOGGED_OUT:
+    case ActionType.USER_LOADED:
+      return state.isAuthenticated
+        ? {
+            ...state,
+            userInfo: action.payload,
+          }
+        : state
+    case ActionType.SIGNIN_FAILURE:
+      return {
+        ...state,
+        userInfoState: 'failed',
+      }
+    case ActionType.LOG_OUT:
       return {
         ...initialState,
       }
@@ -68,16 +77,3 @@ const reducer = (state: AuthReducerState, action: Action): AuthReducerState => {
       return state
   }
 }
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <AuthContext.Provider value={useReducer(reducer, initialState)}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
-export const useAuthState: () => [
-  AuthReducerState,
-  (action: Action) => void,
-] = () => useContext(AuthContext)

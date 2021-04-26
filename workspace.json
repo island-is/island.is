@@ -2517,6 +2517,27 @@
         }
       }
     },
+    "auth-react": {
+      "root": "libs/auth/react",
+      "sourceRoot": "libs/auth/react/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/react"],
+          "options": {
+            "jestConfig": "libs/auth/react/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
