@@ -13,6 +13,7 @@ import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
+import { SubArticleSyncService } from './importers/subArticle.service'
 
 @Module({
   providers: [
@@ -20,6 +21,7 @@ import { FrontpageSyncService } from './importers/frontpage.service'
     ContentfulService,
     CmsSyncService,
     ArticleSyncService,
+    SubArticleSyncService,
     LifeEventsPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
