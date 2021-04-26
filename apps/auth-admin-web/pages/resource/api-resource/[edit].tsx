@@ -10,7 +10,7 @@ import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
 import StepEnd from '../../../components/common/StepEnd'
 import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourceSecretForm'
 import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm'
-import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm'
+import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimsForm'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import LocalizationUtils from '../../../utils/localization.utils'
 
