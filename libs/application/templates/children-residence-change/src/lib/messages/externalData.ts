@@ -68,20 +68,4 @@ export const externalData = {
         'Subtitle: External Info about applicants children from the National Registry',
     },
   }),
-  otherParents: defineMessages({
-    title: {
-      id:
-        'crc.application:section.backgroundInformation.externalData.otherParents.title',
-      defaultMessage: 'Grunnupplýsingar um foreldra',
-      description:
-        'Title: External Info about other parents from the National Registry',
-    },
-    subTitle: {
-      id:
-        'crc.application:section.backgroundInformation.externalData.otherParents.subTitle',
-      defaultMessage: 'Nöfn, kennitölur og lögheimili forelda barnanna.',
-      description:
-        'Subtitle: External Info about other parents from the National Registry',
-    },
-  }),
 }
