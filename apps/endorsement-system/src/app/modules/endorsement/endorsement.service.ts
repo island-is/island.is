@@ -163,7 +163,7 @@ export class EndorsementService {
     // parent list contains rules and metadata field
     const parentEndorsementList = await this.getEndorsementList(listId)
 
-    // get all metadata required for this endorsement
+    // create an endorsement document for each national id
     const endorsements = await Promise.all(
       nationalIds.map(async (nationalId) => {
         // get metadata for this national id
@@ -194,7 +194,10 @@ export class EndorsementService {
       }),
     )
 
-    return this.endorsementModel.bulkCreate(endorsements)
+    return this.endorsementModel.bulkCreate(endorsements, {
+      ignoreDuplicates: true, // this ignores existing endorsements conflicts
+      returning: true,
+    })
   }
 
   async deleteFromListByNationalId({
@@ -221,6 +224,3 @@ export class EndorsementService {
     }
   }
 }
-
-// TODO: Add tests for bulk import
-// TODO: Make sure collision is protected

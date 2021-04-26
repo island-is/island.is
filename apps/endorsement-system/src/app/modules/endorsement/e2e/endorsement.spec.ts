@@ -73,6 +73,61 @@ describe('Endorsement', () => {
     })
   })
 
+  it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
+    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
+    const nationalIds = ['0101304339', '0101304339']
+    const response = await request(app.getHttpServer())
+      .post(`/endorsement-list/${listId}/endorsement/bulk`)
+      .send({ nationalIds })
+      .expect(201)
+
+    // should return the created endorsements and error objects
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          endorsementListId: listId,
+          // lets make sure metadata got populated
+          meta: {
+            fullName: expect.any(String),
+            address: {
+              streetAddress: expect.any(String),
+              city: expect.any(String),
+              postalCode: expect.any(String),
+            },
+            bulkEndorsement: expect.any(Boolean),
+          },
+        }),
+      ]),
+    )
+  })
+  it(`POST /endorsement-list/:listId/endorsement/bulk should create a new endorsements and populate metadata`, async () => {
+    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
+    const nationalIds = ['0101303369', '0101305069', '0101303019']
+    const response = await request(app.getHttpServer())
+      .post(`/endorsement-list/${listId}/endorsement/bulk`)
+      .send({ nationalIds })
+      .expect(201)
+
+    // should return the created endorsements
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          endorsementListId: listId,
+          // lets make sure metadata got populated
+          meta: {
+            fullName: expect.any(String),
+            address: {
+              streetAddress: expect.any(String),
+              city: expect.any(String),
+              postalCode: expect.any(String),
+            },
+            bulkEndorsement: expect.any(Boolean),
+          },
+        }),
+      ]),
+    )
+  })
+
   it(`DELETE /endorsement-list/:listId/endorsement should return 404 when supplied with a non existing list`, async () => {
     const response = await request(app.getHttpServer())
       .delete(
