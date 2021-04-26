@@ -212,6 +212,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const canCaseFilesBeOpened = () => {
     if (
+      user?.role === UserRole.PROSECUTOR ||
       workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
       workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
       !!workingCase?.accusedPostponedAppealDate ||

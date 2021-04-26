@@ -158,26 +158,28 @@ export class FileController {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     if (user.role === UserRole.JUDGE) {
-      if (user.id !== existingCase.judgeId) {
-        throw new ForbiddenException(
-          `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
-        )
-      }
+      if (existingCase.state === CaseState.RECEIVED) {
+        if (user.id !== existingCase.judgeId) {
+          throw new ForbiddenException(
+            `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
+          )
+        }
 
-      if (existingCase.state !== CaseState.RECEIVED) {
+        // The assigned judge can get files of received cases
+      } else if (
+        !completedCaseStates.includes(existingCase.state) ||
+        (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
+          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL &&
+          !existingCase.prosecutorPostponedAppealDate &&
+          !existingCase.accusedPostponedAppealDate)
+      ) {
         throw new ForbiddenException(
-          'Judges can only get files of uncompleted received cases',
+          'Judges can only get files of appealed cases or uncompleted received cases they have been assigned to',
         )
       }
     }
 
     if (user.role === UserRole.REGISTRAR) {
-      if (user.id !== existingCase.registrarId) {
-        throw new ForbiddenException(
-          `User ${user.id} is not the assigned registrar of case ${existingCase.id}`,
-        )
-      }
-
       if (
         !completedCaseStates.includes(existingCase.state) ||
         (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
