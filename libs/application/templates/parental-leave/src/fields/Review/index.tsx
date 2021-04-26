@@ -31,9 +31,13 @@ import {
   getExpectedDateOfBirth,
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
-import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+
+// TODO: Bring back payment calculation info, once we have an api
+// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import {
@@ -118,22 +122,27 @@ const Review: FC<ReviewScreenProps> = ({
     })) ?? []
 
   const dob = getExpectedDateOfBirth(application)
-  const { data, error, loading } = useQuery(getEstimatedPayments, {
-    variables: {
-      input: {
-        dateOfBirth: dob,
-        period: [
-          {
-            from: '2021-01-01',
-            to: '2021-01-01',
-            ratio: 100,
-            approved: true,
-            paid: true,
-          },
-        ],
-      },
-    },
-  })
+
+  /* TODO: Bring back payment calculation info, once we have an api
+     https://app.asana.com/0/1182378413629561/1200214178491335/f
+  */
+  // const { data, error, loading } = useQuery(getEstimatedPayments, {
+  //   variables: {
+  //     input: {
+  //       dateOfBirth: dob,
+  //       period: [
+  //         {
+  //           from: '2021-01-01',
+  //           to: '2021-01-01',
+  //           ratio: 100,
+  //           approved: true,
+  //           paid: true,
+  //         },
+  //       ],
+  //     },
+  //   },
+  // })
+
   if (!dob) {
     return null
   }
