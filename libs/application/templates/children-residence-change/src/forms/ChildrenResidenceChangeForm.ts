@@ -120,12 +120,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: 'DataProviderTypes.NationalRegistry',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
-                }),
-                buildDataProviderItem({
                   id: 'userProfile',
                   type: DataProviderTypes.UserProfile,
                   title: '',
@@ -162,12 +156,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   type: '',
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: '',
-                  type: '',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
