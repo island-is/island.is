@@ -31,7 +31,7 @@ import {
   GetOrganizationQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { SidebarLayout } from './Layouts/SidebarLayout'
-import IcelandicNamesSearcher from '../components/IcelandicNamesSearcher/IcelandicNamesSearcher'
+import { IcelandicNamesSearcher } from '../components/IcelandicNamesSearcher/IcelandicNamesSearcher'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 const RelatedContent: FC = () => {
