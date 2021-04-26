@@ -9,6 +9,7 @@ import {
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
 import { ArticleSyncService } from './importers/article.service'
+import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
@@ -49,6 +50,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
+    private readonly subArticleSyncService: SubArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
@@ -61,6 +63,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
+      this.subArticleSyncService,
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
