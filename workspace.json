@@ -3498,7 +3498,29 @@
             "outputPath": "dist/apps/icelandic-names-registry/backend",
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
             "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
-            "assets": ["apps/icelandic-names-registry/backend/src/assets"],
+            "assets": [
+              "apps/icelandic-names-registry/backend/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/icelandic-names-registry/backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/icelandic-names-registry/backend/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              }
+            ],
             "webpackConfig": "apps/icelandic-names-registry/backend/webpack.config.js",
             "maxWorkers": 2
           },
