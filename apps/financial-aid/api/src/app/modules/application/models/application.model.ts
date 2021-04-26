@@ -12,4 +12,16 @@ export class ApplicationModel implements Application {
 
   @Field()
   readonly modified!: string
+
+  @Field()
+  readonly nationalId!: string
+
+  @Field()
+  readonly name!: string
+
+  @Field()
+  readonly phoneNumber!: string
+
+  @Field()
+  readonly email!: string
 }

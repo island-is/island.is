@@ -4,6 +4,9 @@ import { Injectable } from '@nestjs/common'
 
 import { Application } from '@island.is/financial-aid/types'
 
+import { CreateApplicationInput } from '../app/modules/application/dto'
+
+
 import { environment } from '../environments'
 
 @Injectable()
@@ -17,6 +20,10 @@ class BackendAPI extends RESTDataSource {
 
   getApplications(): Promise<Application[]> {
     return this.get('applications')
+  }
+  
+  createApplication(createApplication: CreateApplicationInput): Promise<Application> {
+    return this.post('application', createApplication)
   }
 }
 
