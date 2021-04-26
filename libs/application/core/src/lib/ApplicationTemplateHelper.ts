@@ -244,7 +244,7 @@ export class ApplicationTemplateHelper<
           hasError = true
           errorMap[result.path] =
             typeof result.message === 'object'
-              ? formatMessage(result.message)
+              ? formatMessage(result.message, result.values)
               : result.message
         }
       }

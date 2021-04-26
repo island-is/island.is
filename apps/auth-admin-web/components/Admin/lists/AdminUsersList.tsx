@@ -89,9 +89,12 @@ const AdminUsersList: React.FC = () => {
             <div className="admin-users-list__container__options">
               <div className="admin-users-list__container__options__button">
                 <Link href={'/admin/admin-user'}>
-                  <a className="admin-users-list__button__new">
+                  <a
+                    className="admin-users-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    {localization.createNewItem}
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
@@ -109,8 +112,9 @@ const AdminUsersList: React.FC = () => {
                   <button
                     type="submit"
                     className="admin-users-list__button__search"
+                    title={localization.buttons['search'].helpText}
                   >
-                    {localization.searchButton}
+                    {localization.buttons['search'].text}
                   </button>
                 </div>
               </form>
@@ -141,10 +145,10 @@ const AdminUsersList: React.FC = () => {
                             <button
                               type="button"
                               className={`admin-users-list__button__edit`}
-                              title={localization.editButton}
+                              title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
-                              <span>{localization.editButton}</span>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
                           </Link>
                         </td>
@@ -152,11 +156,11 @@ const AdminUsersList: React.FC = () => {
                           <button
                             type="button"
                             className={`admin-users-list__button__delete`}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                             onClick={() => confirmDelete(admin.nationalId)}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -177,7 +181,7 @@ const AdminUsersList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={deleteUser}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

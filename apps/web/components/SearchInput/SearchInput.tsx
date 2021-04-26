@@ -32,6 +32,7 @@ import {
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
+  SubArticle,
   SearchableContentTypes,
   LifeEventPage,
   AboutPage,
@@ -120,6 +121,7 @@ const useSearch = (
                 SearchableContentTypes['WebLifeEventPage'],
                 SearchableContentTypes['WebAboutPage'],
                 SearchableContentTypes['WebNews'],
+                SearchableContentTypes['WebSubArticle'],
               ],
             },
           },
@@ -427,24 +429,30 @@ const Results: FC<{
               {(search.results.items as Article[] &
                 LifeEventPage[] &
                 AboutPage[] &
-                News[])
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
-                .map(({ id, title, slug, __typename }) => {
+                .map((item) => {
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
                   return (
                     <div
-                      key={id}
+                      key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
                     >
-                      <Link {...linkResolver(__typename as LinkType, [slug])}>
+                      <Link
+                        {...linkResolver(
+                          item.__typename as LinkType,
+                          item.slug.split('/'),
+                        )}
+                      >
                         <Text variant="h5" color="blue400">
-                          {title}
+                          {item.title}
                         </Text>
                       </Link>
                     </div>

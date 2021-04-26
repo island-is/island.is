@@ -6,4 +6,5 @@ export enum AdminTab {
   Logs = 5,
   Language = 6,
   Translation = 7,
+  Users = 8,
 }

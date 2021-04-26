@@ -203,6 +203,7 @@ const Overview = ({
         </Text>
         <DescriptionText
           text={m.contract.childBenefit.text}
+          textProps={{ marginBottom: 0 }}
           format={{
             currentResidenceParentName: childResidenceInfo.current.parentName,
           }}

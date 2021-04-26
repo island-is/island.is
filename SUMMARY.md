@@ -170,6 +170,7 @@
   - [Service Portal Education License](libs/service-portal/education-license/README.md)
   - [Service Portal Education Student Assessment](libs/service-portal/education-student-assessment/README.md)
   - [Service Portal Eligibility](libs/service-portal/eligibility/README.md)
+  - [Icelandic Names Registry](libs/service-portal/icelandic-names-registry/README.md)
 - [Shared](libs/shared/README.md)
   - [Shared Constants](libs/shared/constants/README.md)
   - [Shared Form Fields](libs/shared/form-fields/README.md)
