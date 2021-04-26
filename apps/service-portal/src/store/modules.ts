@@ -6,6 +6,7 @@ import { financeModule } from '@island.is/service-portal/finance'
 import { settingsModule } from '@island.is/service-portal/settings'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
+import { endorsementsModule } from '@island.is/service-portal/endorsements'
 import { educationDegreeModule } from '@island.is/service-portal/education-degree'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
@@ -30,6 +31,7 @@ export type ModuleKeys =
   | 'settings'
   | 'education'
   | 'educationLicense'
+  | 'endorsements'
   | 'educationCareer'
   | 'educationStudentAssessment'
   | 'applications'
@@ -50,6 +52,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   settings: settingsModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
+  endorsements: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   applications: applicationsModule,

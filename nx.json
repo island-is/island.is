@@ -444,6 +444,9 @@
     "service-portal-eligibility": {
       "tags": []
     },
+    "service-portal-endorsements": {
+      "tags": []
+    },
     "service-portal-family": {
       "tags": []
     },

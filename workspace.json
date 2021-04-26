@@ -5376,6 +5376,36 @@
         }
       }
     },
+    "service-portal-endorsements": {
+      "root": "libs/service-portal/endorsements",
+      "sourceRoot": "libs/service-portal/endorsements/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/eligibility/tsconfig.lib.json",
+              "libs/service-portal/eligibility/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/eligibility/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/eligibility/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/service-portal/eligibility"]
+        }
+      }
+    },
     "service-portal-family": {
       "root": "libs/service-portal/family",
       "sourceRoot": "libs/service-portal/family/src",
