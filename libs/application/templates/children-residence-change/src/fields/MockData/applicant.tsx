@@ -3,7 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { CRCFieldBaseProps } from '../../types'
 
-const applicantDefaults = {
+const applicantDefault = {
   fullName: 'Applicant Mockname',
   address: {
     streetName: 'Borgartún 26',
@@ -15,7 +15,7 @@ const applicantDefaults = {
 const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
   const { id } = field
   const { answers } = application
-  const applicant = answers.mockData?.applicant || applicantDefaults
+  const applicant = answers.mockData?.applicant || applicantDefault
 
   return (
     <Box marginTop={5}>
