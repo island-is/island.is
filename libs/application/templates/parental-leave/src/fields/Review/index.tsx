@@ -117,11 +117,15 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
-  const isSelfEmployed =
-    (getValueViaPath(
+  const [
+    statefulSelfEmployed,
+    setStatefulSelfEmployed,
+  ] = useState<ValidAnswers>(
+    getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
-    ) as ValidAnswers) === YES
+    ) as ValidAnswers,
+  )
 
   const dob = getExpectedDateOfBirth(application)
   const { data, error, loading } = useQuery(getEstimatedPayments, {
@@ -455,37 +459,80 @@ const Review: FC<ReviewScreenProps> = ({
             </Box>
           </AccordionItem>
 
-          {!isSelfEmployed && (
-            <AccordionItem
-              id="id_1"
-              label={formatMessage(
-                parentalLeaveFormMessages.employer.subSection,
-              )}
-              startExpanded={allItemsExpanded}
-            >
-              {editable ? (
-                <Box paddingY={4}>
-                  <Input
-                    id="employer.email"
-                    name="employer.email"
-                    label={formatMessage(
-                      parentalLeaveFormMessages.employer.email,
-                    )}
-                    ref={register}
-                  />
-                </Box>
-              ) : (
-                <Text paddingY={4}>
+          <AccordionItem
+            id="id_1"
+            label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
+            startExpanded={allItemsExpanded}
+          >
+            <Text variant="h5" marginTop={1} marginBottom={2}>
+              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
+            </Text>
+
+            {editable ? (
+              <RadioController
+                id="employer.isSelfEmployed"
+                disabled={false}
+                name="employer.isSelfEmployed"
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    'employer.isSelfEmployed',
+                  ) as string[]
+                }
+                options={[
                   {
-                    getValueViaPath(
-                      application.answers,
-                      'employer.email',
-                    ) as string[]
-                  }
-                </Text>
-              )}
-            </AccordionItem>
-          )}
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStatefulSelfEmployed(s as ValidAnswers)
+                }}
+              />
+            ) : (
+              <Text>
+                {
+                  getValueViaPath(
+                    application.answers,
+                    'employer.isSelfEmployed',
+                  ) as string[]
+                }
+              </Text>
+            )}
+            {statefulSelfEmployed === NO && (
+              <>
+                {editable ? (
+                  <Box paddingY={4}>
+                    <Input
+                      id="employer.email"
+                      name="employer.email"
+                      label={formatMessage(
+                        parentalLeaveFormMessages.employer.email,
+                      )}
+                      ref={register}
+                    />
+                  </Box>
+                ) : (
+                  <Text paddingY={4}>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'employer.email',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </>
+            )}
+          </AccordionItem>
 
           <AccordionItem
             id="id_4"
