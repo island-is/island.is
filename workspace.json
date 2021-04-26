@@ -1855,6 +1855,29 @@
         }
       }
     },
+    "application-templates-login-service": {
+      "root": "libs/application/templates/login-service",
+      "sourceRoot": "libs/application/templates/login-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/login-service/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/login-service"],
+          "options": {
+            "jestConfig": "libs/application/templates/login-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",

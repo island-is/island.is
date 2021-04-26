@@ -124,6 +124,9 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
+      "@island.is/application/templates/login-service": [
+        "libs/application/templates/login-service/src/index.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
