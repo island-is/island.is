@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
 import { FormValue } from '@island.is/application/core'
 import { StaticText } from '../types/Form'
+import { coreErrorMessages } from '../lib/messages'
 
 const dataSchema = z.object({
   nested: z.object({
@@ -438,16 +439,21 @@ describe('validateAnswers', () => {
 describe('buildValidationError', () => {
   it('should return correctly formatted error object when skipping optional values', () => {
     const buildError = buildValidationError('descriptiveNamespaceString')
+
     expect(buildError('Some message')).toStrictEqual({
       message: 'Some message',
       path: 'descriptiveNamespaceString',
+      values: undefined,
     })
   })
+
   it('should return correctly formatted error object when provided all values', () => {
     const buildError = buildValidationError('descriptiveNamespaceString', 1337)
+
     expect(buildError('Some message', 'someField')).toStrictEqual({
       message: 'Some message',
       path: 'descriptiveNamespaceString[1337].someField',
+      values: undefined,
     })
   })
 })
