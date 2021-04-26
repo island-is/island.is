@@ -4,16 +4,18 @@ import { InputController } from '@island.is/shared/form-fields'
 import { CRCFieldBaseProps } from '../../types'
 
 const applicantDefaults = {
-  name: 'Applicant Mockname',
-  address: 'Borgartún 26',
-  postalCode: '105',
-  city: 'Reykjavík',
+  fullName: 'Applicant Mockname',
+  address: {
+    streetName: 'Borgartún 26',
+    postalCode: '105',
+    city: 'Reykjavík',
+  },
 }
 
 const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
   const { id } = field
   const { answers } = application
-  const applicant = answers.mockData?.applicant
+  const applicant = answers.mockData?.applicant || applicantDefaults
 
   return (
     <Box marginTop={5}>
@@ -32,7 +34,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.fullName`}
             name={`${id}.fullName`}
             label="Nafn"
-            defaultValue={applicant?.fullName || applicantDefaults.name}
+            defaultValue={applicant?.fullName}
           />
         </Box>
         <Box marginTop={2}>
@@ -40,9 +42,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.streetName`}
             name={`${id}.address.streetName`}
             label="Heimilisfang"
-            defaultValue={
-              applicant?.address.streetName || applicantDefaults.address
-            }
+            defaultValue={applicant?.address.streetName}
           />
         </Box>
         <Box marginTop={2}>
@@ -50,9 +50,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.postalCode`}
             name={`${id}.address.postalCode`}
             label="Póstnúmer"
-            defaultValue={
-              applicant?.address.postalCode || applicantDefaults.postalCode
-            }
+            defaultValue={applicant?.address.postalCode}
           />
         </Box>
         <Box marginTop={2}>
@@ -60,7 +58,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.city`}
             name={`${id}.address.city`}
             label="Borg"
-            defaultValue={applicant?.address.city || applicantDefaults.city}
+            defaultValue={applicant?.address.city}
           />
         </Box>
       </Box>
