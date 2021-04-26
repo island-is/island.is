@@ -10,6 +10,9 @@ import {
   Link,
   Button,
   LinkContext,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -76,6 +79,7 @@ const IcelandicNames: Screen<IcelandicNamesProps> = ({
       />
       <SidebarLayout
         isSticky={false}
+        fullWidthContent
         sidebarContent={
           <Sticky>
             <Stack space={3}>
@@ -106,86 +110,106 @@ const IcelandicNames: Screen<IcelandicNamesProps> = ({
           </Sticky>
         }
       >
-        <Box
-          paddingBottom={[2, 2, 4]}
-          display={['none', 'none', 'block']}
-          printHidden
-        >
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                typename: 'homepage',
-                href: '/',
-              },
-              {
-                isTag: true,
-                title: 'Mannanafnaskrá',
-              },
-            ]}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
-        </Box>
-        <Box
-          paddingBottom={[2, 2, 4]}
-          display={['flex', 'flex', 'none']}
-          justifyContent="spaceBetween"
-          alignItems="center"
-          printHidden
-        >
-          <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-            <LinkContext.Provider
-              value={{
-                linkRenderer: (href, children) => (
-                  <Link href={href} pureChildren skipTab>
-                    Til baka
-                  </Link>
-                ),
-              }}
+        <GridContainer id="main-content">
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
             >
-              <Text truncate>
-                <a href={'/'}>
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
-                    Til baka
-                  </Button>
-                </a>
-              </Text>
-            </LinkContext.Provider>
-          </Box>
-        </Box>
-        <Box marginBottom={3}>
-          <Box marginBottom={4}>
-            <Text variant="h1" as="h1">
-              <span id={slugify('mannanafnaskrá')}>Leit í mannanafnaskrá</span>
-            </Text>
-          </Box>
-          <Box marginBottom={1}>
-            <Text variant="intro">
-              Þú getur leitað eftir upphafsstaf, hluta úr nafni eða heilu nafni.
-            </Text>
-          </Box>
-          <Text>
-            Í úrskurðarsafni er hægt að sjá rökstuðning mannanafnanefndar fyrir
-            höfnun eða samþykki nafns, allt frá árinu 2000. Úrskurðir með höfnun
-            eru rauðir, samþykki bláir.
-          </Text>
-        </Box>
-        <IcelandicNamesSearcher />
+              <Box paddingLeft={[0, 0, 6, 6, 0]}>
+                <Box
+                  paddingBottom={[2, 2, 4]}
+                  display={['none', 'none', 'block']}
+                  printHidden
+                >
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        typename: 'homepage',
+                        href: '/',
+                      },
+                      {
+                        isTag: true,
+                        title: 'Mannanafnaskrá',
+                      },
+                    ]}
+                    renderLink={(link, { typename, slug }) => {
+                      return (
+                        <NextLink
+                          {...linkResolver(typename as LinkType, slug)}
+                          passHref
+                        >
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
+                </Box>
+                <Box
+                  paddingBottom={[2, 2, 4]}
+                  display={['flex', 'flex', 'none']}
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  printHidden
+                >
+                  <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                    <LinkContext.Provider
+                      value={{
+                        linkRenderer: (href, children) => (
+                          <Link href={href} pureChildren skipTab>
+                            Til baka
+                          </Link>
+                        ),
+                      }}
+                    >
+                      <Text truncate>
+                        <a href={'/'}>
+                          <Button
+                            preTextIcon="arrowBack"
+                            preTextIconType="filled"
+                            size="small"
+                            type="button"
+                            variant="text"
+                          >
+                            Til baka
+                          </Button>
+                        </a>
+                      </Text>
+                    </LinkContext.Provider>
+                  </Box>
+                </Box>
+                <Box marginBottom={3}>
+                  <Box marginBottom={4}>
+                    <Text variant="h1" as="h1">
+                      <span id={slugify('mannanafnaskrá')}>
+                        Leit í mannanafnaskrá
+                      </span>
+                    </Text>
+                  </Box>
+                  <Box marginBottom={1}>
+                    <Text variant="intro">
+                      Þú getur leitað eftir upphafsstaf, hluta úr nafni eða
+                      heilu nafni.
+                    </Text>
+                  </Box>
+                  <Text>
+                    Í úrskurðarsafni er hægt að sjá rökstuðning
+                    mannanafnanefndar fyrir höfnun eða samþykki nafns, allt frá
+                    árinu 2000. Úrskurðir með höfnun eru rauðir, samþykki bláir.
+                  </Text>
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn offset={['0', '0', '0', '0', '1/9']} span={'9/9'}>
+              <Box paddingLeft={[0, 0, 6, 6, 0]}>
+                <IcelandicNamesSearcher />
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
         <Box display={['block', 'block', 'none']} printHidden>
           <RelatedContent />
         </Box>

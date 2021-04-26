@@ -8,8 +8,7 @@ export const container = style({
 
 export const alphabetButton = style({
   display: 'inline-flex',
-  marginBottom: theme.spacing[1],
-  marginRight: theme.spacing[1],
+  margin: theme.spacing.smallGutter,
   fontSize: 18,
   justifyContent: 'center',
   alignItems: 'center',
@@ -41,8 +40,6 @@ export const alphabetButtonSelected = style({
 })
 
 export const alphabetList = style({
-  display: 'flex',
-  flexWrap: 'wrap',
+  display: 'table',
   width: '100%',
-  justifyContent: 'space-between',
 })

@@ -42,8 +42,6 @@ import {
 
 import * as styles from './IcelandicNamesSearcher.treat'
 
-interface IcelandicNamesSearcherProps {}
-
 type ToggledFiltersState = {
   males: boolean
   females: boolean
@@ -112,7 +110,7 @@ type NameType = Pick<
 
 const paddingTop = [3, 3, 3, 3, 0] as ResponsiveSpace
 
-export const IcelandicNamesSearcher: FC<IcelandicNamesSearcherProps> = () => {
+export const IcelandicNamesSearcher: FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedLetter, setSelectedLetter] = useState<string>('')
   const [hasSearched, setHasSearched] = useState<boolean>(false)
@@ -203,6 +201,13 @@ export const IcelandicNamesSearcher: FC<IcelandicNamesSearcherProps> = () => {
     })
     inputRef?.current?.focus()
   }, [])
+
+  const statusFilterSelected =
+    filters.approved || filters.denied || filters.pending
+  const typeFilterSelected =
+    filters.females || filters.males || filters.middleNames
+  const someFilterSelected = Object.keys(filters).filter((key) => filters[key])
+    .length
 
   return (
     <Box marginBottom={[3, 3, 3, 10, 20]} className={styles.container}>
@@ -381,11 +386,13 @@ export const IcelandicNamesSearcher: FC<IcelandicNamesSearcherProps> = () => {
                       checked={filters.middleNames}
                       onChange={() => dispatch({ type: 'toggleMiddleNames' })}
                     />
-                    <ResetButton
-                      onClick={() => dispatch({ type: 'clearCategories' })}
-                    >
-                      Hreinsa val
-                    </ResetButton>
+                    {!!typeFilterSelected && (
+                      <ResetButton
+                        onClick={() => dispatch({ type: 'clearCategories' })}
+                      >
+                        Hreinsa val
+                      </ResetButton>
+                    )}
                   </Stack>
                 </SidebarAccordion>
                 <Box paddingY={2}>
@@ -403,17 +410,21 @@ export const IcelandicNamesSearcher: FC<IcelandicNamesSearcherProps> = () => {
                       checked={filters.denied}
                       onChange={() => dispatch({ type: 'toggleDenied' })}
                     />
-                    <ResetButton
-                      onClick={() => dispatch({ type: 'clearStatuses' })}
-                    >
-                      Hreinsa val
-                    </ResetButton>
+                    {!!statusFilterSelected && (
+                      <ResetButton
+                        onClick={() => dispatch({ type: 'clearStatuses' })}
+                      >
+                        Hreinsa val
+                      </ResetButton>
+                    )}
                   </Stack>
                 </SidebarAccordion>
               </Box>
-              <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
-                Hreinsa síu
-              </ResetButton>
+              {!!someFilterSelected && (
+                <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
+                  Hreinsa síu
+                </ResetButton>
+              )}
             </Stack>
           </GridColumn>
         </GridRow>
@@ -439,6 +450,7 @@ const ResetButton: FC<ButtonProps> = ({ children, ...rest }) => {
 
 const NameTypeStrings = {
   ST: 'Stúlkur',
+  DR: 'Drengir',
   MI: 'Millinafn',
   RST: 'Stúlkur (ritbr.)',
   RDR: 'Drengir (ritbr.)',
