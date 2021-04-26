@@ -49,7 +49,7 @@ export const confirmation = {
       id:
         'crc.application:section.confirmation.contractOverview.accordionTitle',
       defaultMessage: 'Yfirlit samnings',
-      description: 'Confirmation page accordion contract overiew title',
+      description: 'Confirmation page accordion contract overview title',
     },
   }),
 }
