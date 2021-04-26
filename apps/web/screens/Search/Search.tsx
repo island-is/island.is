@@ -218,7 +218,7 @@ const Search: Screen<CategoryProps> = ({
       item.seoDescription ??
       item.description ??
       item.parent.intro,
-    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/'))
+    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
