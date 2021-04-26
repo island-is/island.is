@@ -16,14 +16,14 @@ export const duration = {
     description: {
       id: 'crc.application:section.arrangement.duration.description#markdown',
       defaultMessage:
-        'Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.\\n\\nEkki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.\\n\\nAthugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.\\n\\nSamningurinn verður staðfestur innan 14 daga.',
+        'Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til 18 ára aldurs barnsins/barnanna.\\n\\nEkki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.\\n\\nAthugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.\\n\\nSamningurinn verður staðfestur innan 14 daga.',
       description: 'Duration page description',
     },
   }),
   permanentInput: defineMessages({
     label: {
       id: 'crc.application:section.arrangement.duration.permanent.label',
-      defaultMessage: 'Til frambúðar',
+      defaultMessage: 'Varanlegur samningur',
       description: 'Label for permanent change',
     },
     subLabel: {

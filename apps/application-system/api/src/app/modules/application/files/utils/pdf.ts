@@ -210,7 +210,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.LARGE_LINE_GAP,
     durationType === PdfConstants.TEMPORARY && durationDate
       ? `Samningurinn gildir til ${formatDate(durationDate)}`
-      : 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.',
+      : 'Samningurinn er til varanlegur þar til barnið hefur náð 18 ára aldri.',
   )
 
   addToDoc(
