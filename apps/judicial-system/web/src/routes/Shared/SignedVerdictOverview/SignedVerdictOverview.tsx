@@ -1,5 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  GridColumn,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
   formatDate,
@@ -10,6 +18,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -23,12 +32,18 @@ import {
   RulingAccordionItem,
   CourtRecordAccordionItem,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import AppealSection from './Components/AppealSection/AppealSection'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import formatISO from 'date-fns/formatISO'
 
 interface CaseData {
   case?: Case
@@ -40,6 +55,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
+  const { features } = useContext(FeatureContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -164,6 +181,34 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleAccusedAppeal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: formatISO(new Date()),
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('accusedPostponedAppealDate', formatISO(new Date())),
+      )
+    }
+  }
+
+  const handleProsecutorAppeal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: formatISO(new Date()),
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('prosecutorPostponedAppealDate', formatISO(new Date())),
+      )
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -273,7 +318,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            <Box marginBottom={5}>
+            <Box marginBottom={6}>
               <InfoCard
                 data={[
                   {
@@ -303,11 +348,52 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
+            {workingCase.isCaseAppealable &&
+              workingCase.rulingDate &&
+              workingCase.accusedGender &&
+              (user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR) && (
+                <GridColumn span="11/12">
+                  <Box marginBottom={7}>
+                    <AppealSection
+                      rulingDate={workingCase.rulingDate}
+                      accusedGender={workingCase.accusedGender}
+                      accusedAppealDecision={workingCase.accusedAppealDecision}
+                      prosecutorAppealDecision={
+                        workingCase.prosecutorAppealDecision
+                      }
+                      accusedPostponedAppealDate={
+                        workingCase.accusedPostponedAppealDate
+                      }
+                      prosecutorPostponedAppealDate={
+                        workingCase.prosecutorPostponedAppealDate
+                      }
+                      handleAccusedAppeal={handleAccusedAppeal}
+                      handleProsecutorAppeal={handleProsecutorAppeal}
+                    />
+                  </Box>
+                </GridColumn>
+              )}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
+                {features.includes(Feature.CASE_FILES) && (
+                  <AccordionItem
+                    id="id_4"
+                    label={`Rannsóknargögn (${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}
+                    labelVariant="h3"
+                  >
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files || []}
+                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                    />
+                  </AccordionItem>
+                )}
               </Accordion>
             </Box>
             <Box marginBottom={15}>

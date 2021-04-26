@@ -46,7 +46,7 @@ export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
-export { default as Table } from './lib/Table'
+export { Table } from './lib/Table'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
@@ -92,8 +92,8 @@ export * from './treat/global.treat'
 export * from './utils/globalStyles'
 
 // Type exports:
-export type { BoxProps } from './lib/Box/Box'
-export type { InputBackgroundColor, InputProps } from './lib/Input/Input'
+export type { BoxProps } from './lib/Box/types'
+export type { InputBackgroundColor, InputProps } from './lib/Input/types'
 export type {
   DatePickerBackgroundColor,
   DatePickerProps,

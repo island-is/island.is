@@ -1,6 +1,11 @@
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getErrorViaPath,
+} from '@island.is/application/core'
+import get from 'lodash/get'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -42,6 +47,9 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
   return (
     <Box marginTop={5}>
       {fields.map((field, index) => {
+        const fieldIndex = `${id}[${index}]`
+        const nameField = `${fieldIndex}.name`
+        const nationalIdField = `${fieldIndex}.nationalId`
         return (
           <Box position="relative" key={field.id} marginTop={3}>
             {index > 0 && (
@@ -62,30 +70,28 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
             <GridRow>
               <GridColumn span={['1/1', '1/2']}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
+                  id={nameField}
+                  name={nameField}
                   label={formatText(
                     info.labels.name,
                     application,
                     formatMessage,
                   )}
-                  error={errors && (errors[`${id}[${index}].name`] as string)}
+                  error={errors && getErrorViaPath(errors, nameField)}
                   backgroundColor="blue"
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
                 <InputController
-                  id={`${id}[${index}].nationalId`}
-                  name={`${id}[${index}].nationalId`}
+                  id={nationalIdField}
+                  name={nationalIdField}
                   label={formatText(
                     info.labels.nationalId,
                     application,
                     formatMessage,
                   )}
                   format="######-####"
-                  error={
-                    errors && (errors[`${id}[${index}].nationalId`] as string)
-                  }
+                  error={errors && getErrorViaPath(errors, nationalIdField)}
                   backgroundColor="blue"
                 />
               </GridColumn>

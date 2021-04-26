@@ -7,6 +7,8 @@ import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
 import { TranslationDTO } from '../../../entities/dtos/translation.dto'
 import { Translation } from '../../../entities/models/translation.model'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   translation: TranslationDTO
@@ -25,6 +27,9 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
   const translation = props.translation
   const [languages, setLanguages] = useState<Language[]>([])
   const [selectedLanguage, setSelectedLanguage] = useState<string>('is')
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('TranslationCreateForm'),
+  )
 
   useEffect(() => {
     if (props.translation && props.translation.key) {
@@ -71,10 +76,10 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
     <div className="translation-create-form">
       <div className="translation-create-form__wrapper">
         <div className="translation-create-form__container">
-          <h1>{isEditing ? 'Edit Translation' : 'Create a new Translation'}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="translation-create-form__container__form">
             <div className="translation-create-form__help">
-              Add new translation by filling out the form
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="translation-create-form__container__fields">
@@ -83,7 +88,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__label"
                     htmlFor="language"
                   >
-                    Language
+                    {localization.fields['language'].label}
                   </label>
                   <select
                     id="language"
@@ -95,6 +100,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={translation.language}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
+                    title={localization.fields['language'].helpText}
                   >
                     {languages.map((language: Language) => {
                       return (
@@ -104,12 +110,14 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                       )
                     })}
                   </select>
-                  <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
+                  <HelpBox
+                    helpText={localization.fields['language'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="translation.language"
-                    message="Language is required"
+                    message={localization.fields['language'].errorMessage}
                   />
                 </div>
 
@@ -118,7 +126,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__label"
                     htmlFor="className"
                   >
-                    Class Name
+                    {localization.fields['className'].label}
                   </label>
                   <input
                     id="className"
@@ -131,16 +139,18 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     name="translation.className"
                     defaultValue={translation.className ?? ''}
                     className="translation-create-form__input"
-                    title="The name of the class (entity/model) that this translation belongs to"
-                    placeholder="Client"
+                    title={localization.fields['className'].helpText}
+                    placeholder={localization.fields['className'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="translation.className"
-                    message="The class name is required and needs to be in the right format"
+                    message={localization.fields['className'].errorMessage}
                   />
-                  <HelpBox helpText="The name of the class (entity/model) that this translation belongs to" />
+                  <HelpBox
+                    helpText={localization.fields['className'].helpText}
+                  />
                 </div>
 
                 <div className="translation-create-form__container__field">
@@ -148,7 +158,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__label"
                     htmlFor="property"
                   >
-                    Property
+                    {localization.fields['property'].label}
                   </label>
                   <input
                     id="property"
@@ -160,23 +170,25 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     name="translation.property"
                     defaultValue={translation.property ?? ''}
                     className="translation-create-form__input"
-                    title="The property with in the class that is being translated"
-                    placeholder="description"
+                    title={localization.fields['property'].helpText}
+                    placeholder={localization.fields['property'].placeholder}
                     disabled={isEditing}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="translation.property"
-                    message="The property is required and needs to be in the right format"
+                    message={localization.fields['property'].errorMessage}
                   />
-                  <HelpBox helpText="The property with in the class that is being translated" />
+                  <HelpBox
+                    helpText={localization.fields['property'].helpText}
+                  />
                 </div>
               </div>
 
               <div className="translation-create-form__container__field">
                 <label className="translation-create-form__label" htmlFor="key">
-                  Key
+                  {localization.fields['key'].label}
                 </label>
                 <input
                   id="key"
@@ -188,17 +200,17 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   name="translation.key"
                   defaultValue={translation.key ?? ''}
                   className="translation-create-form__input"
-                  title="The key of the item that is being translated"
-                  placeholder="island-is-1"
+                  title={localization.fields['key'].helpText}
+                  placeholder={localization.fields['key'].placeholder}
                   disabled={isEditing}
                 />
                 <ErrorMessage
                   as="span"
                   errors={errors}
                   name="translation.key"
-                  message="The key is required and needs to be in the right format"
+                  message={localization.fields['key'].errorMessage}
                 />
-                <HelpBox helpText="The key of the item that is being translated" />
+                <HelpBox helpText={localization.fields['key'].helpText} />
               </div>
 
               <div className="translation-create-form__container__field">
@@ -206,7 +218,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   className="translation-create-form__label"
                   htmlFor="value"
                 >
-                  Value
+                  {localization.fields['value'].label}
                 </label>
                 <input
                   id="value"
@@ -218,16 +230,16 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   name="translation.value"
                   defaultValue={translation.value ?? ''}
                   className="translation-create-form__input"
-                  title="The translated text in the selected language"
-                  placeholder="Some description"
+                  title={localization.fields['value'].helpText}
+                  placeholder={localization.fields['value'].placeholder}
                 />
                 <ErrorMessage
                   as="span"
                   errors={errors}
                   name="translation.value"
-                  message="The value is required and needs to be in the right format"
+                  message={localization.fields['value'].errorMessage}
                 />
-                <HelpBox helpText="The translated text in the selected language" />
+                <HelpBox helpText={localization.fields['value'].helpText} />
               </div>
 
               <div className="translation-create-form__buttons__container">
@@ -236,8 +248,9 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Cancel
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="translation-create-form__button__container">
@@ -245,7 +258,8 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="translation-create-form__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    value={localization.buttons['save'].text}
+                    title={localization.buttons['save'].helpText}
                   />
                 </div>
               </div>

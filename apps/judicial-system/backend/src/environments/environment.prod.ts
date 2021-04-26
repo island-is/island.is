@@ -5,7 +5,7 @@ export default {
     secretToken: process.env.SECRET_TOKEN,
   },
   notifications: {
-    judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
@@ -37,5 +37,6 @@ export default {
     region: process.env.S3_REGION,
     bucket: process.env.S3_BUCKET,
     timeToLivePost: process.env.S3_TIME_TO_LIVE_POST,
+    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET,
   },
 }

@@ -6,6 +6,10 @@ import { AdminAccessDTO } from './../../../entities/dtos/admin-acess.dto'
 import { AdminAccess } from './../../../entities/models/admin-access.model'
 import { AdminAccessService } from './../../../services/AdminAccessService'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
+import { ResourcesService } from './../../../services/ResourcesService'
+import { ApiScope } from './../../../entities/models/api-scope.model'
 interface Props {
   adminAccess: AdminAccessDTO
   handleSaveButtonClicked?: (admin: AdminAccess) => void
@@ -20,13 +24,42 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('AdminUserCreateForm'),
+  )
+  const [accessControlledScopes, setAccessControlledScopes] = useState<
+    ApiScope[]
+  >([])
+  const [showScopeInfo, setShowScopeInfo] = useState<boolean>(false)
+  const [scopeInfo, setScopeInfo] = useState<JSX.Element>(<div></div>)
+
   const admin = props.adminAccess
 
   useEffect(() => {
+    const setScopes = async () => {
+      const scopes = await ResourcesService.findAllAccessControlledApiScopes()
+      if (scopes) {
+        setAccessControlledScopes(scopes)
+      }
+    }
     if (props.adminAccess && props.adminAccess.nationalId) {
       setIsEditing(true)
     }
+
+    setScopes()
   }, [props.adminAccess])
+
+  useEffect(() => {
+    if (accessControlledScopes) {
+      if (admin.scope) {
+        getScopeInfo(admin.scope)
+      } else {
+        if (accessControlledScopes.length > 0) {
+          getScopeInfo(accessControlledScopes[0].name)
+        }
+      }
+    }
+  }, [accessControlledScopes])
 
   const pushEvent = (response: AdminAccess | null) => {
     if (response) {
@@ -58,22 +91,45 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     await create(data.admin)
   }
 
+  const getScopeInfo = (name: string): void => {
+    const scope = accessControlledScopes.find((x) => x.name === name)
+    setScopeInfo(getScopeHtml(scope))
+  }
+
+  const getScopeHtml = (scope: ApiScope): JSX.Element => {
+    if (scope) {
+      return (
+        <div className="detail-container">
+          <div className="detail-title">{scope.name}</div>
+          {/* <div className="detail-description">{scope.displayName}</div> */}
+          <div className="detail-description">{scope.description}</div>
+        </div>
+      )
+    } else {
+      return <div></div>
+    }
+  }
+
   return (
     <div className="admin-user-create-form">
       <div className="admin-user-create-form__wrapper">
         <div className="admin-user-create-form__container">
-          <h1>{isEditing ? 'Edit Admin User' : 'Create a new Admin User'}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="admin-user-create-form__container__form">
             <div className="admin-user-create-form__help">
-              Add user for the Admin UI by filling out the form
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="admin-user-create-form__container__fields">
                 <div className="admin-user-create-form__container__field">
-                  <label className="admin-user-create-form__label">
-                    National Id (Kennitala)
+                  <label
+                    className="admin-user-create-form__label"
+                    htmlFor="nationalId"
+                  >
+                    {localization.fields['nationalId'].label}
                   </label>
                   <input
+                    id="nationalId"
                     type="text"
                     name="admin.nationalId"
                     ref={register({
@@ -84,25 +140,31 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={admin.nationalId}
                     className="admin-user-create-form__input"
-                    placeholder="0123456789"
+                    placeholder={localization.fields['nationalId'].placeholder}
                     maxLength={10}
-                    title="The nationalId (Kennitala) of the Admin User"
+                    title={localization.fields['nationalId'].helpText}
                     readOnly={isEditing}
                   />
-                  <HelpBox helpText="The nationalId (Kennitala) of the Admin User" />
+                  <HelpBox
+                    helpText={localization.fields['nationalId'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="admin.nationalId"
-                    message="NationalId must be 10 numeric characters"
+                    message={localization.fields['nationalId'].errorMessage}
                   />
                 </div>
 
                 <div className="admin-user-create-form__container__field">
-                  <label className="admin-user-create-form__label">
-                    User email
+                  <label
+                    className="admin-user-create-form__label"
+                    htmlFor="email"
+                  >
+                    {localization.fields['email'].label}
                   </label>
                   <input
+                    id="email"
                     type="text"
                     ref={register({
                       required: true,
@@ -111,49 +173,83 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     name="admin.email"
                     defaultValue={admin.email ?? ''}
                     className="admin-user-create-form__input"
-                    title="The email of the admin user"
-                    placeholder="john@example.com"
+                    title={localization.fields['email'].helpText}
+                    placeholder={localization.fields['email'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="admin.email"
-                    message="Email is required and needs to be in a right format"
+                    message={localization.fields['email'].errorMessage}
                   />
-                  <HelpBox helpText="The email of the admin user" />
+                  <HelpBox helpText={localization.fields['email'].helpText} />
                 </div>
 
                 <div className="admin-user-create-form__container__field">
-                  <label className="admin-user-create-form__label">Scope</label>
+                  <label
+                    className="admin-user-create-form__label"
+                    htmlFor="scope"
+                  >
+                    {localization.fields['scope'].label}
+                  </label>
+
                   <select
+                    id="scope"
                     name="admin.scope"
                     ref={register({ required: true })}
-                    title="Select the appropriate Scope for this Admin User"
+                    title={localization.fields['scope'].helpText}
+                    onChange={(e) => getScopeInfo(e.target.value)}
+                    onFocus={() => setShowScopeInfo(true)}
+                    onBlur={() => setShowScopeInfo(false)}
                   >
-                    <option value="auth-admin-api.full_control" selected>
-                      Full control
-                    </option>
+                    {accessControlledScopes &&
+                      accessControlledScopes.map((scope: ApiScope) => {
+                        return (
+                          <option
+                            value={scope.name}
+                            key={scope.name}
+                            title={scope.description}
+                            selected={scope.name === admin.scope}
+                          >
+                            {scope.name}
+                          </option>
+                        )
+                      })}
                   </select>
 
-                  <HelpBox helpText="Select the appropriate Scope for this Admin User" />
+                  <HelpBox helpText={localization.fields['scope'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="admin.scope"
-                    message="Select the appropriate Scope for this Admin User"
+                    message={localization.fields['scope'].errorMessage}
                   />
+                  <div
+                    className={`admin-user-create-form__container__field__details${
+                      showScopeInfo ? ' show' : ' hidden'
+                    }`}
+                  >
+                    {scopeInfo}
+                  </div>
                 </div>
 
                 <div className="admin-user-create-formcontainer__checkbox__field hidden">
-                  <label className="admin-user-create-formlabel">Active</label>
+                  <label
+                    className="admin-user-create-formlabel"
+                    htmlFor="active"
+                  >
+                    {localization.fields['active'].label}
+                  </label>
                   <input
+                    id="active"
                     type="checkbox"
                     name="admin.active"
                     className="admin-user-create-formcheckbox"
                     defaultChecked={true}
                     ref={register}
+                    title={localization.fields['active'].helpText}
                   ></input>
-                  <HelpBox helpText="Sets if user is active or not" />
+                  <HelpBox helpText={localization.fields['active'].helpText} />
                 </div>
               </div>
 
@@ -163,8 +259,9 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     className="admin-user-create-form__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Cancel
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="admin-user-create-form__button__container">
@@ -172,7 +269,8 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="admin-user-create-form__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>

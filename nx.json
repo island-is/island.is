@@ -100,6 +100,9 @@
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -167,10 +170,16 @@
     "application-templates-login-service": {
       "tags": []
     },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
     "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-party-application": {
       "tags": []
     },
     "application-templates-party-letter": {
@@ -210,13 +219,19 @@
     "clients-document-provider": {
       "tags": []
     },
+    "clients-documents": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
     "clients-national-registry": {
       "tags": []
     },
-    "clients-rsk": {
+    "clients-rsk-v1": {
+      "tags": []
+    },
+    "clients-rsk-v2": {
       "tags": []
     },
     "clients-vmst": {
@@ -246,7 +261,13 @@
     "dokobit-signing": {
       "tags": []
     },
+    "download-service": {
+      "tags": []
+    },
     "email-service": {
+      "tags": []
+    },
+    "endorsement-system": {
       "tags": []
     },
     "feature-flags": {
@@ -279,6 +300,12 @@
       "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
+      "tags": []
+    },
+    "icelandic-names-registry-backend": {
+      "tags": []
+    },
+    "icelandic-names-registry-types": {
       "tags": []
     },
     "infra-express-server": {
@@ -432,6 +459,9 @@
     "service-portal-health": {
       "tags": []
     },
+    "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
     "service-portal-settings": {
       "tags": []
     },
@@ -485,6 +515,9 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "system-e2e": {
       "tags": []
     },
     "utils-api": {

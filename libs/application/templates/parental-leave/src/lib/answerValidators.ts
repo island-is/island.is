@@ -3,60 +3,41 @@ import parseISO from 'date-fns/parseISO'
 import isValid from 'date-fns/isValid'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import isNumber from 'lodash/isNumber'
 import {
   Application,
   AnswerValidator,
-  AnswerValidationError,
   getValueViaPath,
   Answer,
+  buildValidationError,
+  coreErrorMessages,
+  StaticText,
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
 
-import {
-  getAvailableRights,
-  getExpectedDateOfBirth,
-} from '../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO } from '../constants'
-
-const emailRegex = /[^\\.\\s@:](?:[^\\s@:]*[^\\s@:\\.])?@[^\\.\\s@]+(?:\\.[^\\.\\s@]+)*/g
-const isValidEmail = (value: string) => emailRegex.test(value)
-
-const buildValidationError = (
-  path: string,
-  index?: number,
-): ((message: string, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
-  if (field && isNumber(index)) {
-    return {
-      message,
-      path: `${path}[${index}].${field}`,
-    }
-  }
-
-  return {
-    message,
-    path,
-  }
-}
+import { isValidEmail } from './isValidEmail'
+import { errorMessages } from './messages'
 
 const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
 const PERIODS = 'periods'
 
-// TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
     const obj = newAnswer as Record<string, Answer>
-    const buildError = buildValidationError(`${EMPLOYER}.email`)
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${EMPLOYER}.${path}`)(message)
     const isSelfEmployed = getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
     )
+
+    if (obj.isSelfEmployed === '') {
+      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
+    }
 
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
@@ -64,11 +45,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     if (isSelfEmployed === NO && isEmpty(obj?.email)) {
-      return buildError(`You need to define your employer email address.`)
+      return buildError(errorMessages.employerEmail, 'email')
     }
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
-      return buildError('You need to define a valid email address.')
+      return buildError(errorMessages.email, 'email')
     }
 
     return undefined
@@ -78,9 +59,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
     if (!expectedDateOfBirth) {
-      return buildError(
-        'We haven’t been able to fetch automatically the date of birth for your baby. Please try again later.',
-      )
+      return buildError(errorMessages.dateOfBirth)
     }
 
     return undefined
@@ -99,25 +78,21 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
       // We need a valid start date
       if (typeof startDate !== 'string' || !isValid(parseISO(startDate))) {
-        return buildError('The start date is not valid.', field)
+        return buildError(errorMessages.periodsStartDate, field)
       }
 
       // Start date needs to be after or equal to the expectedDateOfBirth
       if (startDate < dob) {
-        return buildError(
-          'Start date cannot be before expected date of birth.',
-          field,
-        )
+        return buildError(errorMessages.periodsStartDateBeforeDob, field)
       }
 
       // We check if the start date is within the allowed period
       if (
         differenceInMonths(parseISO(startDate), parseISO(dob)) > usageMaxMonths
       ) {
-        return buildError(
-          `You can't apply for a period beyond ${usageMaxMonths} months from the DOB.`,
-          field,
-        )
+        return buildError(errorMessages.periodsPeriodRange, field, {
+          usageMaxMonths,
+        })
       }
 
       // We check if the startDate is within previous periods saved
@@ -135,17 +110,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
               }),
           )
       ) {
-        return buildError(
-          `A new period cannot start within another period already saved.`,
-          field,
-        )
+        return buildError(errorMessages.periodsStartDateOverlaps, field)
       }
     }
 
     if (period?.endDate !== undefined) {
       const field = 'endDate'
       const { startDate, endDate } = period
-      const { days, months } = getAvailableRights(application)
 
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
@@ -157,47 +128,32 @@ export const answerValidators: Record<string, AnswerValidator> = {
         !startDate &&
         differenceInDays(parseISO(endDate), parseISO(dob)) < minPeriodDays
       ) {
-        return buildError(
-          `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
-          field,
-        )
+        return buildError(errorMessages.periodsEndDate, field, {
+          minPeriodDays,
+        })
       }
 
       // We check if endDate is after startDate
       if (endDate < startDate) {
-        return buildError('End date cannot be before the start date.', field)
+        return buildError(errorMessages.periodsEndDateBeforeStartDate, field)
       }
 
       // We check if the user selected at least the minimum period required
       if (
         differenceInDays(parseISO(endDate), parseISO(startDate)) < minPeriodDays
       ) {
-        return buildError(
-          `You cannot apply for a period shorter than ${minPeriodDays} days.`,
-          field,
-        )
-      }
-
-      // We check if the endDate is inside the allowed range of days/months
-      if (
-        (!startDate &&
-          differenceInDays(parseISO(endDate), parseISO(dob)) > days) ||
-        differenceInDays(parseISO(endDate), parseISO(startDate)) > days
-      ) {
-        return buildError(
-          `You cannot apply for a period longer than the allowed period of ${months} months.`,
-          field,
-        )
+        return buildError(errorMessages.periodsEndDateMinimumPeriod, field, {
+          minPeriodDays,
+        })
       }
 
       // We check if the start date is within the allowed period
       if (
         differenceInMonths(parseISO(endDate), parseISO(dob)) > usageMaxMonths
       ) {
-        return buildError(
-          `You can't apply for a period beyond ${usageMaxMonths} months from the DOB.`,
-          field,
-        )
+        return buildError(errorMessages.periodsPeriodRange, field, {
+          usageMaxMonths,
+        })
       }
 
       // We check if the endDate is within previous periods saved
@@ -215,10 +171,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
               }),
           )
       ) {
-        return buildError(
-          `A new period cannot end within another period already saved.`,
-          field,
-        )
+        return buildError(errorMessages.periodsEndDateOverlapsPeriod, field)
       }
     }
 
@@ -230,10 +183,12 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
       // We want to make sure the ratio doesn't affect the minimum number of days selected
       if (diffWithRatio < minPeriodDays) {
-        return buildError(
-          `The minimum is ${minPeriodDays} days of leave, you've chosen ${diff} days at ${ratio}% which ends up as only ${diffWithRatio} days leave.`,
-          field,
-        )
+        return buildError(errorMessages.periodsRatio, field, {
+          minPeriodDays,
+          diff,
+          ratio,
+          diffWithRatio,
+        })
       }
     }
 

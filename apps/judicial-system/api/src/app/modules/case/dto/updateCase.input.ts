@@ -100,6 +100,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly caseFilesComments?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly prosecutorId?: string
 
   @Allow()
@@ -193,6 +197,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  accusedPostponedAppealDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  prosecutorPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })

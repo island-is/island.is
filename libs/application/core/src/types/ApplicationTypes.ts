@@ -11,6 +11,8 @@ export enum ApplicationTypes {
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
   LOGIN_SERVICE = 'LoginService',
+  PARTY_APPLICATION = 'PartyApplication',
+  INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
 }
 
 export const ApplicationConfigurations = {
@@ -61,5 +63,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
     translation: 'ls.application',
+  },
+  [ApplicationTypes.PARTY_APPLICATION]: {
+    slug: 'frambod',
+    translation: 'pa.application',
+  },
+  [ApplicationTypes.INSTITUTION_COLLABORATION]: {
+    slug: 'samstarf',
+    translation: 'ia.application',
   },
 }

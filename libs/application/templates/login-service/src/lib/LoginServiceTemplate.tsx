@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { LoginServiceSchema } from './dataSchema'
 
@@ -32,6 +33,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn um innskráningarþjónustu',
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -56,6 +58,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

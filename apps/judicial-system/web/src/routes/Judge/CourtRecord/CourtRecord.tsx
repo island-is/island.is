@@ -157,7 +157,7 @@ export const CourtRecord: React.FC = () => {
       ) {
         theCase = {
           ...theCase,
-          policeDemands: formatProsecutorDemands(
+          policeDemands: `${formatProsecutorDemands(
             theCase.type,
             theCase.accusedNationalId,
             theCase.accusedName,
@@ -168,7 +168,11 @@ export const CourtRecord: React.FC = () => {
             ) || false,
             theCase.parentCase !== undefined,
             theCase.parentCase?.decision,
-          ),
+          )}${
+            theCase.otherDemands && theCase.otherDemands.length > 0
+              ? `\n\n${theCase.otherDemands}`
+              : ''
+          }`,
         }
 
         if (theCase.policeDemands) {

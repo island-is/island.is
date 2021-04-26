@@ -18,6 +18,11 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
   presignBucket: string
+  smsOptions: {
+    url: string
+    username: string
+    password: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {
@@ -25,7 +30,7 @@ export interface TemplateApiModuleActionProps {
   authorization: string
 }
 
-interface EmailTemplateGeneratorProps {
+export interface EmailTemplateGeneratorProps {
   application: Application
   options: {
     clientLocationOrigin: string

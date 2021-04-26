@@ -9,6 +9,8 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   apiResourceName: string
@@ -30,6 +32,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ApiResourceScopeForm'),
+  )
 
   const add = async (data: ApiResourceScopeDTO) => {
     const allowedScope = new ApiResourceScopeDTO()
@@ -89,7 +94,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this scope: <span>{scopeForDelete}</span>
+        {localization.removeConfirmation}:<span>{scopeForDelete}</span>
       </p>
     )
   }
@@ -98,11 +103,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
     <div className="api-resource-scope-form">
       <div className="api-resource-scope-form__wrapper">
         <div className="api-resource-scope-form__container">
-          <h1>Allowed scopes</h1>
+          <h1>{localization.title}</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-              An API must have at least one scope. Each scope can have different
-              settings.
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">
@@ -111,12 +115,13 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     className="api-resource-scope-form__label"
                     htmlFor="scopeName"
                   >
-                    Scope Name
+                    {localization.fields['scopeName'].label}
                   </label>
                   <select
                     id="scopeName"
                     className="api-resource-scope-form__select"
                     name="scopeName"
+                    title={localization.fields['scopeName'].helpText}
                     ref={register({
                       required: true,
                       validate: ValidationUtils.validateScope,
@@ -127,18 +132,21 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                       return <option value={scope.name}>{scope.name}</option>
                     })}
                   </select>
-                  <HelpBox helpText="Select an allowed scope" />
+                  <HelpBox
+                    helpText={localization.fields['scopeName'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="scopeName"
-                    message="Scope Name is required"
+                    message={localization.fields['scopeName'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="api-resource-scope-form__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    title={localization.buttons['add'].helpText}
+                    value={localization.buttons['add'].text}
                   />
                 </div>
                 <div
@@ -147,9 +155,13 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   }`}
                   key={selectedScope?.name}
                 >
+                  <h3>{localization.sections['selectedItem'].title}</h3>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Scope Name
+                      {
+                        localization.sections['selectedItem'].properties['name']
+                          .name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.name}
@@ -157,7 +169,11 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Display name
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'displayName'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.displayName}
@@ -165,7 +181,11 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Description
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'description'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.description}
@@ -175,9 +195,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title="No active scopes"
+                title={localization.noActiveConnections?.title}
                 show={!props.scopes || props.scopes.length === 0}
-                helpText="Select a scope and push the Add button to add a scope"
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -185,7 +205,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active scopes</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.scopes?.map((scope: string) => {
                   return (
                     <div
@@ -198,10 +218,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(scope)}
                           className="api-resource-scope-form__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -215,8 +235,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-scope-form__button__cancel"
                     onClick={props.handleBack}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Back
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="api-resource-scope-form__button__container">
@@ -224,8 +245,9 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="api-resource-scope-form__button__save"
                     onClick={props.handleNext}
+                    title={localization.buttons['save'].helpText}
                   >
-                    Next
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -238,7 +260,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

@@ -2,34 +2,32 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text, ModalBase } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
-import { FileSignatureStatus } from '../fileSignatureReducer'
+import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
 import ModalConditionalContent from './ModalConditionalContent'
 import * as style from './Modal.treat'
 
 interface SignatureModalProps {
-  signatureStatus: FileSignatureStatus
+  fileSignatureState: ReducerState
   onClose: () => void
-  modalOpen: boolean
   controlCode: string
 }
 
 const SignatureModal = ({
+  fileSignatureState,
   controlCode,
-  signatureStatus,
-  modalOpen,
   onClose,
 }: SignatureModalProps) => {
   const { formatMessage } = useIntl()
   const hasError = [
     FileSignatureStatus.REQUEST_ERROR,
     FileSignatureStatus.UPLOAD_ERROR,
-  ].includes(signatureStatus)
+  ].includes(fileSignatureState.status)
   return (
     <ModalBase
       baseId="signatureDialog"
       className={style.modal}
       modalLabel={formatMessage(signatureModal.general.title)}
-      isVisible={modalOpen}
+      isVisible={fileSignatureState.modalOpen}
       onVisibilityChange={(visibility: boolean) => {
         if (!visibility) {
           onClose()
@@ -52,9 +50,9 @@ const SignatureModal = ({
           {formatMessage(signatureModal.general.title)}
         </Text>
         <ModalConditionalContent
+          fileSignatureState={fileSignatureState}
           onClose={onClose}
           controlCode={controlCode}
-          signatureStatus={signatureStatus}
         />
       </Box>
     </ModalBase>

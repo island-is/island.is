@@ -1,9 +1,9 @@
 import { Colors } from '@island.is/island-ui/theme'
-import {
+import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -101,6 +101,7 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
+  excludeDates?: MaybeWithApplication<Date[]>
   backgroundColor?: DatePickerBackgroundColor
 }
 
@@ -151,6 +152,7 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  required?: boolean
 }
 
 export interface FileUploadField extends BaseField {
@@ -170,6 +172,7 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
+  readonly refetchApplicationAfterSubmit?: boolean
 }
 
 export interface DividerField extends BaseField {

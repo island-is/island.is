@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import {
   ApplicationTypes,
   ExternalData,
@@ -23,7 +22,6 @@ export const useModalContent = (
   typeId: ApplicationTypes,
 ) => {
   const [content, setContent] = useState<ContentType>()
-  const history = useHistory()
   const baseUrl = getBaseUrl()
   const { lang } = useLocale()
   const applicationSlug = getSlugFromType(typeId)
@@ -86,7 +84,7 @@ export const useModalContent = (
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../${applicationSlug}/${oldestDraftApplicationId}`),
+          (window.location.href = `/umsoknir/${applicationSlug}/${oldestDraftApplicationId}`),
       })
     }
   }, [externalData])

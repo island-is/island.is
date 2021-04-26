@@ -1,0 +1,1822 @@
+{
+  "version": "1",
+  "title": "IDS Managament",
+  "header": {
+    "title": "IDS admin management",
+    "loginButton": "Login",
+    "logoutButton": "Logout"
+  },
+  "environment": {
+    "production": {
+      "title": "Production",
+      "description": "You are on Production environment",
+      "helpText": ""
+    },
+    "staging": {
+      "title": "Staging",
+      "description": "You are on Staging environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "development": {
+      "title": "Development",
+      "description": "You are on Development environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    },
+    "local": {
+      "title": "Localhost",
+      "description": "You are on Local environment",
+      "helpText": "If you need to add changes to production, please contact Fuglar"
+    }
+  },
+  "pages": {
+    "admin.index": {
+      "title": "Admin Controls"
+    },
+    "admin.admin-user.[admin]": {
+      "title": "Edit Admin User"
+    },
+    "admin.admin-user.index": {
+      "title": "Create admin user"
+    },
+    "admin.grant-type.[grantType]": {
+      "title": "Edit Grant Type"
+    },
+    "admin.grant-type.index": {
+      "title": "Create Grant Type"
+    },
+    "admin.idp-provider.[idp]": {
+      "title": "Edit Identity Provider"
+    },
+    "admin.idp-provider.index": {
+      "title": "Create Identity Provider"
+    },
+    "admin.language.[isoKey]": {
+      "title": "Edit Language"
+    },
+    "admin.language.index": {
+      "title": "Create Language"
+    },
+    "admin.translation.[key]": {
+      "title": "Edit Translation"
+    },
+    "admin.translation.index": {
+      "title": "Create Translation"
+    },
+    "client.[client]": {
+      "title": "Edit Client",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Client, have been completed",
+        "infoDescription": "You can review your settings by clicking on the steps above"
+      }
+    },
+    "client.index": {
+      "title": "Create a Client"
+    },
+    "clients.index": {
+      "title": "Clients"
+    },
+    "resource.api-resource.[edit]": {
+      "title": "Edit Api Resource",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Api Resource, have been completed"
+      }
+    },
+    "resource.api-resource.index": {
+      "title": "Create an Api Resource"
+    },
+    "resource.api-scope.[edit]": {
+      "title": "Edit an Api Scope",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Api Scope, have been completed"
+      }
+    },
+    "resource.api-scope.index": {
+      "title": "Create an Api Scope"
+    },
+    "resource.identity-resource.[edit]": {
+      "title": "Edit an Identity Resource",
+      "endStep": {
+        "buttonText": "Go Back",
+        "title": "Steps have been completed",
+        "infoTitle": "The steps needed, to create the Identity Resource, have been completed"
+      }
+    },
+    "resource.identity-resource.index": {
+      "title": "Create an Identity Resource"
+    },
+    "resources.api-resources.index": {
+      "title": "Api Resources"
+    },
+    "resources.api-scopes.index": {
+      "title": "Api Scopes"
+    },
+    "resources.identity-resources.index": {
+      "title": "Identity Resources"
+    },
+    "users.index": {
+      "title": "Users"
+    }
+  },
+  "navigations": {
+    "navigation": {
+      "items": {
+        "home": {
+          "text": "Home"
+        },
+        "clients": {
+          "text": "Clients"
+        },
+        "resources": {
+          "text": "Resources"
+        },
+        "users": {
+          "text": "Users"
+        },
+        "admin": {
+          "text": "Admin control"
+        }
+      }
+    },
+    "clientSteps": {
+      "items": {
+        "client": {
+          "text": "Client Settings"
+        },
+        "clientRedirectUri": {
+          "text": "Redirect Uri"
+        },
+        "clientIdpRestrictions": {
+          "text": "Identity Providers"
+        },
+        "clientPostLogoutRedirectUri": {
+          "text": "Post Logout Uris"
+        },
+        "clientAllowedCorsOrigin": {
+          "text": "Cors Origins"
+        },
+        "clientGrantTypes": {
+          "text": "Grant types"
+        },
+        "clientAllowedScopes": {
+          "text": "Scopes"
+        },
+        "clientClaims": {
+          "text": "Claims"
+        },
+        "clientSecret": {
+          "text": "Secrets"
+        }
+      }
+    },
+    "apiResourceSteps": {
+      "items": {
+        "apiResourceBasics": {
+          "text": "Api resource basics"
+        },
+        "apiResourceScopes": {
+          "text": "Api resource scopes"
+        },
+        "apiResourceSecrets": {
+          "text": "Api resource secrets"
+        },
+        "apiResourceUserClaims": {
+          "text": "Api resource user claims"
+        }
+      }
+    },
+    "apiScopeSteps": {
+      "items": {
+        "apiScope": {
+          "text": "Api Scope"
+        },
+        "claims": {
+          "text": "Claims"
+        }
+      }
+    },
+    "identityResourceSteps": {
+      "items": {
+        "identityResource": {
+          "text": "Identity Resource"
+        },
+        "claims": {
+          "text": "Claims"
+        }
+      }
+    },
+    "resourcesTabs": {
+      "items": {
+        "apiResource": {
+          "text": "Api Resources"
+        },
+        "apiScope": {
+          "text": "Api Scopes"
+        },
+        "identityResource": {
+          "text": "Identity Resources"
+        }
+      }
+    },
+    "clientTabNav": {
+      "items": {
+        "basicForm": {
+          "text": "Simple Form",
+          "title": "Simple form for easily creating a client"
+        },
+        "detailedForm": {
+          "text": "Detailed form"
+        }
+      }
+    },
+    "adminTabNav": {
+      "items": {
+        "adminUsers": {
+          "text": "Admin Users",
+          "title": "List of Admin Users"
+        },
+        "idpProviders": {
+          "text": "Identity Providers",
+          "title": "List of Identity Providers"
+        },
+        "grantTypes": {
+          "text": "Grant Types",
+          "title": "List of Grant Types"
+        },
+        "ipNumbersControl": {
+          "text": "IP Addresses",
+          "title": "White and blacklisting of IP Addresses"
+        },
+        "logs": {
+          "text": "Logs",
+          "title": "IDS logging"
+        },
+        "language": {
+          "text": "Language",
+          "title": "List of languages"
+        },
+        "translation": {
+          "text": "Translations",
+          "title": "List of Translations"
+        }
+      }
+    }
+  },
+  "paginator": {
+    "nextButton": "Next",
+    "backButton": "Back",
+    "count": "Count"
+  },
+  "listControls": [
+    {
+      "id": "TranslationList",
+      "removeConfirmation": "Are you sure want to delete this Translation:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Translations",
+      "createNewItem": "Create new Translation",
+      "search": {
+        "label": "Text value"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "language": {
+          "headerText": "Language"
+        },
+        "key": {
+          "headerText": "Key"
+        },
+        "className": {
+          "headerText": "Class Name"
+        },
+        "property": {
+          "headerText": "Property"
+        },
+        "value": {
+          "headerText": "Value"
+        }
+      }
+    },
+    {
+      "id": "LanguageList",
+      "removeConfirmation": "Are you sure want to delete this language:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Languages",
+      "createNewItem": "Create new language",
+      "search": {
+        "label": "IDP name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "isoKey": {
+          "headerText": "Iso Key"
+        },
+        "description": {
+          "headerText": "Description"
+        },
+        "englishDescription": {
+          "headerText": "English Description"
+        }
+      }
+    },
+    {
+      "id": "IdpProvidersList",
+      "removeConfirmation": "Are you sure want to delete this IDP Provider:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Identity Providers",
+      "createNewItem": "Create new Identity Provider",
+      "search": {
+        "label": "IDP name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        },
+        "level": {
+          "headerText": "Level"
+        }
+      }
+    },
+    {
+      "id": "GrantTypesList",
+      "removeConfirmation": "Are you sure want to delete this Grant Type:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Grant Types",
+      "createNewItem": "Create new Grant Type",
+      "search": {
+        "label": "Grant Type name"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        }
+      }
+    },
+    {
+      "id": "AdminUsersList",
+      "removeConfirmation": "Are you sure want to delete this admin user:",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Admin UI users",
+      "createNewItem": "Create new Admin UI User",
+      "search": {
+        "label": "National Id"
+      },
+      "searchButton": "Search",
+      "columns": {
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "email": {
+          "headerText": "Email"
+        },
+        "scope": {
+          "headerText": "Scope"
+        }
+      }
+    },
+    {
+      "id": "ClientsList",
+      "removeConfirmation": "Are you sure want to archive this client",
+      "removeButton": "Archive",
+      "editButton": "Edit",
+      "title": "Clients",
+      "createNewItem": "Create new client",
+      "search": {
+        "label": "National Id or Client Id"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "clientId": {
+          "headerText": "Name"
+        },
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "contactEmail": {
+          "headerText": "Contact Email"
+        },
+        "clientType": {
+          "headerText": "Type"
+        }
+      }
+    },
+    {
+      "id": "ApiResourcesList",
+      "removeConfirmation": "Are you sure want to archive this Api resource",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Api resources",
+      "createNewItem": "Create new Api resource",
+      "search": {
+        "label": "National Id or Resource name"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "contactEmail": {
+          "headerText": "Contact Email"
+        }
+      }
+    },
+    {
+      "id": "UsersList",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "User management",
+      "viewButton": "View Claims",
+      "active": "User is active. Click to deactivate",
+      "deactivated": "User is deactivated. Click to activate",
+      "activateButton": "Activate",
+      "deactivateButton": "Deactivate",
+      "search": {
+        "label": "Search by National Id or Subject Id",
+        "placeholder": "0123456789",
+        "helpText": "You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id",
+        "errorMessage": "SubjectId or nationalId is required and should be in the right format. NationalId must 10 numeric characters"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "subjectId": {
+          "headerText": "Subject Id"
+        },
+        "name": {
+          "headerText": "Name"
+        },
+        "providerName": {
+          "headerText": "Provider Name"
+        },
+        "providerSubjectId": {
+          "headerText": "Provider Subject Id"
+        }
+      },
+      "sections": {
+        "notFound": {
+          "title": "User Identity not found"
+        },
+        "found": {
+          "title": "Users found"
+        }
+      }
+    },
+    {
+      "id": "ApiScopeList",
+      "removeConfirmation": "Are you sure want to archive this Api scope",
+      "removeButton": "Archive",
+      "title": "Api scopes",
+      "createNewItem": "Create new Api scope"
+    },
+    {
+      "id": "IdentityResourcesList",
+      "removeConfirmation": "Are you sure want to archive this Identity resource",
+      "removeButton": "Archive",
+      "title": "Identity resources",
+      "createNewItem": "Create new Identity Resource"
+    },
+    {
+      "id": "ResourceListDisplay",
+      "removeConfirmation": "Are you sure want to archive this Identity resource",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Identity resources",
+      "createNewItem": "Create new Identity Resource",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "displayName": {
+          "headerText": "Display Name"
+        },
+        "contactEmail": {
+          "headerText": "Contact Email"
+        }
+      }
+    }
+  ],
+  "formControls": [
+    {
+      "id": "AdminUserCreateForm",
+      "title": "Create a new Admin User",
+      "editTitle": "Edit Admin User",
+      "help": "Add user for the Admin UI by filling out the form.",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "nationalId": {
+          "label": "National Id (Kennitala)",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) of the Admin User",
+          "errorMessage": "NationalId must be 10 numeric characters"
+        },
+        "email": {
+          "label": "User email",
+          "placeholder": "john@example.com",
+          "helpText": "The email of the admin user",
+          "errorMessage": "Email is required and needs to be in a right format"
+        },
+        "scope": {
+          "label": "Scope",
+          "helpText": "Select the appropriate Scope for this Admin User",
+          "errorMessage": "Select the appropriate Scope for this Admin User"
+        },
+        "active": {
+          "label": "Active",
+          "helpText": "Sets if user is active or not"
+        }
+      }
+    },
+    {
+      "id": "GrantTypeCreateForm",
+      "title": "Create a new Grant Type",
+      "editTitle": "Edit Grant Type",
+      "help": "Add or edit a Grant Type",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "grant-example",
+          "helpText": "The unique name of the Grant Type",
+          "errorMessage": "Name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Grant type description",
+          "helpText": "Grant type description",
+          "errorMessage": "Description is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "IdpProviderCreateForm",
+      "title": "Create a new Idp Provider",
+      "editTitle": "Edit Idp Provider",
+      "help": "Add or edit a IDP Provider",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "provider_name",
+          "helpText": "The unique name of the provider with no spaces or symbols",
+          "errorMessage": "Name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Auth-App from Example Firm",
+          "helpText": "Short description about this Identity Provider. This will be used as an label in the IDP Restriction form",
+          "errorMessage": "Description is required and needs to be in the right format"
+        },
+        "helptext": {
+          "label": "Help Text",
+          "placeholder": "Add this provider to be able to connect with an App from Example Firm",
+          "helpText": "This text will be shown in the form where users to the Admin UI select this Identity Provider",
+          "errorMessage": "Help text is required and needs to be in the right format"
+        },
+        "level": {
+          "label": "Level",
+          "placeholder": "4",
+          "helpText": "The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security",
+          "errorMessage": "Level is required and needs to be a number from 1-4"
+        }
+      }
+    },
+    {
+      "id": "LanguageCreateForm",
+      "title": "Edit Language",
+      "editTitle": "Create a new Language",
+      "help": "Add new language by filling out the form",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "isoKey": {
+          "label": "ISO 639-1 key",
+          "placeholder": "is",
+          "helpText": "The iso key (identifier)  for this language",
+          "errorMessage": "The iso key must 2 characters"
+        },
+        "description": {
+          "label": "Language name",
+          "placeholder": "Íslenska",
+          "helpText": "The language name in it's own language",
+          "errorMessage": "Language name is required and needs to be in the right format"
+        },
+        "englishDescription": {
+          "label": "Language name in English",
+          "placeholder": "Icelandic",
+          "helpText": "The language name in English",
+          "errorMessage": "Language name in English is required and needs to be in the right format"
+        },
+        "level": {
+          "label": "Level",
+          "placeholder": "4",
+          "helpText": "The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security",
+          "errorMessage": "Level is required and needs to be a number from 1-4"
+        }
+      }
+    },
+    {
+      "id": "TranslationCreateForm",
+      "title": "Create a new Translation",
+      "editTitle": "Edit Translation",
+      "help": "Add new translation by filling out the form",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "language": {
+          "label": "Language",
+          "helpText": "The language for this translation (iso key in the select box for this language)",
+          "errorMessage": "Language is required"
+        },
+        "className": {
+          "label": "Class Name",
+          "placeholder": "Client",
+          "helpText": "The name of the class (entity/model) that this translation belongs to",
+          "errorMessage": "The class name is required and needs to be in the right format"
+        },
+        "property": {
+          "label": "Property",
+          "placeholder": "description",
+          "helpText": "The property with in the class that is being translated",
+          "errorMessage": "The property is required and needs to be in the right format"
+        },
+        "key": {
+          "label": "Key",
+          "placeholder": "island-is-1",
+          "helpText": "The key of the item that is being translated",
+          "errorMessage": "The key is required and needs to be in the right format"
+        },
+        "value": {
+          "label": "Value",
+          "placeholder": "Some text value",
+          "helpText": "The translated text in the selected language",
+          "errorMessage": "The key is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "TranslationCreateFormDropdown",
+      "title": "Create new Translation",
+      "editTitle": "Edit translation",
+      "help": "Add new translation by filling out the form",
+      "conditionalHelp": "The item you are creating needs to be saved before creating translations",
+      "infoEdit": "Translation has been updated for ",
+      "infoCreate": "Translation has been created for ",
+      "errorMessage": "Value is required and need to be in the right format",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "language": {
+          "label": "Language",
+          "helpText": "The language for this translation (iso key in the select box for this language)",
+          "errorMessage": "Language is required"
+        },
+        "value": {
+          "label": "Value",
+          "placeholder": "Some text value",
+          "helpText": "The translated text in the selected language",
+          "errorMessage": "The key is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "IdentityResourceCreateForm",
+      "title": "Create Identity Resource",
+      "editTitle": "Edit Identity Resource",
+      "help": "Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user. The client will use the scope parameter to request access to an identity resource.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Unique identifier",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "errorMessage": "Name is required and needs to be in the right format",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "The display name value will be used e.g. on the consent screen.",
+          "errorMessage": "Display name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description for this resource",
+          "helpText": "The description value will be used e.g. on the consent screen.",
+          "errorMessage": "Description needs to be in the right format"
+        },
+        "enabled": {
+          "label": "Enabled",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is enabled.",
+          "errorMessage": ""
+        },
+        "showInDiscoveryDocument": {
+          "label": "Show In Discovery Document",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is shown in the discovery document.",
+          "errorMessage": ""
+        },
+        "emphasize": {
+          "label": "Emphasize",
+          "placeholder": "",
+          "helpText": "Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.",
+          "errorMessage": ""
+        },
+        "required": {
+          "label": "Required",
+          "placeholder": "",
+          "helpText": "Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)",
+          "errorMessage": ""
+        },
+        "grantToLegalGuardians": {
+          "label": "Grant To Legal Guardians",
+          "placeholder": "",
+          "helpText": "Should legal guardians automatically get this scope for their wards",
+          "errorMessage": ""
+        },
+        "grantToProcuringHolders": {
+          "label": "Grant To Procuring Holders",
+          "placeholder": "",
+          "helpText": "Should procuring holders automatically get this scope for their organisations",
+          "errorMessage": ""
+        },
+        "allowExplicitDelegationGrant": {
+          "label": "Allow Explicit Delegation Grant",
+          "placeholder": "",
+          "helpText": "Should identities be able to delegate this scope to other users. Some scopes should not support delegation",
+          "errorMessage": ""
+        },
+        "automaticDelegationGrant": {
+          "label": "Automatic Delegation Grant",
+          "placeholder": "",
+          "helpText": "Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile",
+          "errorMessage": ""
+        },
+        "alsoForDelegatedUser": {
+          "label": "Also For Delegated User",
+          "placeholder": "",
+          "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
+          "errorMessage": ""
+        }
+      }
+    },
+    {
+      "id": "ApiResourceScopeForm",
+      "title": "Allowed scopes",
+      "help": "An API must have at least one scope. Each scope can have different settings.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Scope"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Scope"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active Scopes"
+        },
+        "selectedItem": {
+          "title": "Info about this Scope",
+          "properties": {
+            "name": "Scope Name",
+            "description": "Description",
+            "displayName": "Display Name"
+          }
+        }
+      },
+      "removeConfirmation": "Are you sure want to delete this scope",
+      "noActiveConnections": {
+        "title": "No active scopes",
+        "helpText": "Select a scope and push the Add button to add a scope"
+      },
+      "fields": {
+        "scopeName": {
+          "label": "Scope Name",
+          "helpText": "Select an allowed scope",
+          "errorMessage": "Scope Name is required"
+        }
+      }
+    },
+    {
+      "id": "ApiResourceSecretForm",
+      "title": "Api Resource Secrets",
+      "help": "The API secret is used for the introspection endpoint. The API can authenticate with introspection using the API name and secret.",
+      "removeConfirmation": "Are you sure want to delete this secret",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go back"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Secret"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Secret"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active secrets"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No secrets are defined",
+        "helpText": "Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+      },
+      "infoModal": {
+        "buttonText": "Ok",
+        "headerText": "Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
+      },
+      "fields": {
+        "secretValue": {
+          "label": "Api resource Secret",
+          "placeholder": "Some complicated text",
+          "helpText": "Your secret value should be a rather complicated string",
+          "errorMessage": "Value is required"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required"
+        }
+      }
+    },
+    {
+      "id": "UserClaimCreateForm",
+      "title": "Create a new User Claim",
+      "help": "Create a new claim if needed for this resource",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "claimName": {
+          "label": "Claim Name",
+          "placeholder": "example-name",
+          "helpText": "Write a name for the claim. It needs to be one word without special characters",
+          "errorMessage": "Claim name is required and needs to be in the right format"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required"
+        }
+      }
+    },
+    {
+      "id": "ApiResourceUserClaimsForm",
+      "title": "Select the appropriate user claims",
+      "help": "List of associated user claim types that should be included in the access token. The claims specified here will be added to the list of claims specified for the API.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No User Claims are selected",
+        "helpText": "If necessary, check user the user claims needed"
+      }
+    },
+    {
+      "id": "ApiScopeUserClaimsForm",
+      "title": "Select the appropriate user claims",
+      "help": "If needed, select the user claims for this Api Scope",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No user claims are selected",
+        "helpText": "If necessary, check user the user claims needed"
+      }
+    },
+    {
+      "id": "IdentityResourceUserClaims",
+      "title": "Select the appropriate user claims",
+      "help": "List of associated user claim types that should be included in the identity token.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No user claims are selected",
+        "helpText": "Some claims need to be associated with this Identity Resource"
+      }
+    },
+    {
+      "id": "ApiScopeCreateForm",
+      "title": "Create Api Scope",
+      "editTitle": "Edit Api Scope",
+      "help": "Scope is a mechanism in OAuth 2.0 to limit an application's access to a user's account. An application can request one or more scopes, this information is then presented to the user in the consent screen, and the access token issued to the application will be limited to the scopes granted.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Unique identifier",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "errorMessage": "Name is required and needs to be in the right format",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "The display name value will be used e.g. on the consent screen.",
+          "errorMessage": "Display name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description for this scope",
+          "helpText": "The description value will be used e.g. on the consent screen.",
+          "errorMessage": "Description needs to be in the right format"
+        },
+        "enabled": {
+          "label": "Enabled",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is enabled.",
+          "errorMessage": ""
+        },
+        "showInDiscoveryDocument": {
+          "label": "Show In Discovery Document",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is shown in the discovery document.",
+          "errorMessage": ""
+        },
+        "emphasize": {
+          "label": "Emphasize",
+          "placeholder": "",
+          "helpText": "Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.",
+          "errorMessage": ""
+        },
+        "required": {
+          "label": "Required",
+          "placeholder": "",
+          "helpText": "Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)",
+          "errorMessage": ""
+        },
+        "isAccessControlled": {
+          "label": "Is Accessed Controlled",
+          "placeholder": "",
+          "helpText": "Indicates that the Identity Server needs to do a look up in the access table with the user national identity for the user to have access"
+        },
+        "grantToLegalGuardians": {
+          "label": "Grant To Legal Guardians",
+          "placeholder": "",
+          "helpText": "Should legal guardians automatically get this scope for their wards",
+          "errorMessage": ""
+        },
+        "grantToProcuringHolders": {
+          "label": "Grant To Procuring Holders",
+          "placeholder": "",
+          "helpText": "Should procuring holders automatically get this scope for their organisations",
+          "errorMessage": ""
+        },
+        "allowExplicitDelegationGrant": {
+          "label": "Allow Explicit Delegation Grant",
+          "placeholder": "",
+          "helpText": "Should identities be able to delegate this scope to other users. Some scopes should not support delegation",
+          "errorMessage": ""
+        },
+        "automaticDelegationGrant": {
+          "label": "Automatic Delegation Grant",
+          "placeholder": "",
+          "helpText": "Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile",
+          "errorMessage": ""
+        },
+        "alsoForDelegatedUser": {
+          "label": "Also For Delegated User",
+          "placeholder": "",
+          "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
+          "errorMessage": ""
+        }
+      }
+    },
+    {
+      "id": "ApiResourceCreateForm",
+      "title": "Create Api Resource",
+      "editTitle": "Edit Api Resource",
+      "help": "The server hosting the protected resources, and which is capable of accepting and responding to protected resource requests using access tokens.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
+          "errorMessage": "NationalId must be 10 numeric characters"
+        },
+        "contactEmail": {
+          "label": "Contact Email",
+          "placeholder": "john@example.com",
+          "helpText": "Contact email for this Api Resource",
+          "errorMessage": "Contact email must be set and must be a valid email address"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Unique identifier",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "errorMessage": "Name is required and needs to be in the right format",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "The display name value will be used e.g. on the consent screen.",
+          "errorMessage": "Display name is required and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description for this scope",
+          "helpText": "The description value will be used e.g. on the consent screen.",
+          "errorMessage": "Description needs to be in the right format"
+        },
+        "enabled": {
+          "label": "Enabled",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is enabled.",
+          "errorMessage": ""
+        },
+        "showInDiscoveryDocument": {
+          "label": "Show In Discovery Document",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is shown in the discovery document.",
+          "errorMessage": ""
+        }
+      }
+    },
+    {
+      "id": "ClientCreateForm",
+      "title": "Create a new Client",
+      "editTitle": "Edit Client",
+      "help": "Enter some basic details for this client. Click advanced to configure preferences if default settings need to be changed. You will then go through steps to configure and add additional properties.",
+      "buttons": {
+        "advanced": {
+          "text": "Advanced",
+          "helpText": "Advanced settings for the client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "sections": {
+        "delegations": {
+          "title": "Delegations"
+        }
+      },
+      "fields": {
+        "clientType": {
+          "label": "Client Type",
+          "placeholder": "",
+          "helpText": "Select the appropriate Client Type",
+          "errorMessage": "Client Type is required",
+
+          "selectItems": {
+            "": {
+              "selectItemText": "Select Client Type",
+              "flow": "",
+              "helpText": "You need to select the appropriate Client Type. Information about each type will be shown here when you change the selection."
+            },
+            "spa": {
+              "selectItemText": "SPA Client",
+              "flow": "Authorization code flow + PKCE",
+              "helpText": "A single-page application (spa) doesn't need to reload the page during its use and works within a browser, e.g. Facebook. Since it is running in the users browser, it cannot keep a secret."
+            },
+            "native": {
+              "selectItemText": "Native Client",
+              "flow": "Authorization code flow + PKCE",
+              "helpText": "A native application is designed specifically for use on a particular platform or device. Since it runs on user´s devices it cannot keep a secret"
+            },
+            "web": {
+              "selectItemText": "Web Client",
+              "flow": "Hybrid flow with client authentication",
+              "helpText": "A web application runs on a web server and is accessed by a web browser. Examples of common web applications are online banking and online retail sales. Is capable of keeping a secret"
+            },
+            "machine": {
+              "selectItemText": "Machine Client Type",
+              "flow": "Hybrid flow with client authentication",
+              "helpText": "An application or service running on a confidential server. This type of application is capable of keeping a secret."
+            },
+            "device": {
+              "selectItemText": "Device Type Client (not supported)",
+              "flow": "Device flow using external browser",
+              "helpText": "Description for this client type is not present."
+            }
+          }
+        },
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
+          "errorMessage": "NationalId must be 10 numeric characters"
+        },
+        "contactEmail": {
+          "label": "Contact Email",
+          "placeholder": "john@example.com",
+          "helpText": "Contact email for this Api Resource",
+          "errorMessage": "Contact email must be set and must be a valid email address"
+        },
+        "clientId": {
+          "label": "Client Id",
+          "placeholder": "example-client",
+          "helpText": "The unique identifier for this application. No spaces or special characters.",
+          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "clientName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "Application name that will be seen on consent screens",
+          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Example description",
+          "helpText": "Application description for use within AdminUI",
+          "errorMessage": "Description needs to be in the right format"
+        },
+        "baseUrl": {
+          "label": "Base Url",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
+          "errorMessage": "Base Url is required and needs to be in the right format",
+
+          "popUpTitle": "Redirect (Callback) Uri will be:",
+          "popUpDescription": "This can be changed later"
+        },
+        "clientUri": {
+          "label": "Display URL",
+          "placeholder": "https://example.com",
+          "helpText": "Application URL that will be seen on consent screens",
+          "errorMessage": "Display url needs to be in the right format"
+        },
+        "enabled": {
+          "label": "Enabled",
+          "helpText": "Specifies whether this client is enabled."
+        },
+        "requireConsent": {
+          "label": "Require consent",
+          "helpText": "Specifies whether a consent screen is required"
+        },
+        "supportsDelegation": {
+          "label": "Supports Delegation",
+          "helpText": "Specifies if the client supports delegation"
+        },
+        "supportsLegalGuardians": {
+          "label": "Supports Legal Guardians Delegation",
+          "helpText": "Specifies if the client supports legal guardian delegation"
+        },
+        "supportsProcuringHolders": {
+          "label": "Supports Procuring Holders Delegation",
+          "helpText": "Specifies if the client supports Procuring Holders delegation"
+        },
+        "promptDelegations": {
+          "label": "Prompt delegations",
+          "helpText": "Specifies if the user is prompt with delegation window"
+        },
+        "frontChannelLogoutUri": {
+          "label": "Front channel logout uri",
+          "placeholder": "https://example.org/logout",
+          "helpText": "Specifies logout URI at client for HTTP based front-channel logout.",
+          "errorMessage": "URL is not valid"
+        },
+        "pairWiseSubjectSalt": {
+          "label": "Rair wise subject salt",
+          "helpText": "Salt value used in pair-wise subjectId generation for users of this client.",
+          "errorMessage": "Value is not valid"
+        },
+        "userCodeType": {
+          "label": "User code type",
+          "helpText": "Specifies the type of user code to use for the client. Otherwise falls back to default.",
+          "errorMessage": "Value is not valid"
+        },
+        "accessTokenType": {
+          "label": "Access Token Type",
+          "helpText": "Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt).",
+          "errorMessage": "Access Token Type is required"
+        },
+        "accessTokenLifetime": {
+          "label": "Access Token Lifetime",
+          "helpText": "Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)",
+          "errorMessage": "Authorization code lifetime is required"
+        },
+        "authorizationCodeLifetime": {
+          "label": "Authorization code lifetime",
+          "helpText": "Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)",
+          "errorMessage": "Authorization code lifetime is required"
+        },
+        "consentLifetime": {
+          "label": "Consent lifetime",
+          "helpText": "Lifetime of a user consent in seconds. Defaults to null (no expiration).",
+          "errorMessage": "Value can not be negative"
+        },
+        "deviceCodeLifetime": {
+          "label": "Device code lifetime",
+          "helpText": "Lifetime to device code in seconds (defaults to 300 seconds / 5 minutes)",
+          "errorMessage": "Device code lifetime is required and value can not be negative",
+          "placeholder": "300"
+        },
+        "userSsoLifetime": {
+          "label": "User Sso Lifetime",
+          "helpText": "The maximum duration (in seconds) since the last time the user authenticated. (Default null)",
+          "errorMessage": "Value can not be negative"
+        },
+        "refreshTokenUsage": {
+          "label": "Refresh Token Usage",
+          "helpText": "'ReUse' the refresh token handle will stay the same when refreshing tokens. 'OneTime' the refresh token handle will be updated when refreshing tokens. This is the default",
+          "errorMessage": "Value is required"
+        },
+        "refreshTokenExpiration": {
+          "label": "Refresh token expiration",
+          "helpText": "Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime). Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime.",
+          "errorMessage": "Value is required"
+        },
+        "slidingRefreshTokenLifetime": {
+          "label": "Sliding refresh token lifetime",
+          "helpText": "Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days",
+          "errorMessage": "Value can not be negative",
+          "placeholder": "1296000"
+        },
+        "absoluteRefreshTokenLifetime": {
+          "label": "Absolute Refresh Token Lifetime",
+          "helpText": "Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days",
+          "errorMessage": "Absolute Refresh Token Lifetime is required",
+          "placeholder": "2592000"
+        },
+        "identityTokenLifetime": {
+          "label": "Identity token lifetime",
+          "helpText": "Lifetime to identity token in seconds (defaults to 300 seconds / 5 minutes)",
+          "errorMessage": "Identity token lifetime is required and the value can not be negative",
+          "placeholder": "300"
+        },
+        "protocolType": {
+          "label": "Protocol Type",
+          "helpText": "Typically set to oidc",
+          "errorMessage": "Protocol Type is required",
+          "placeholder": "oidc"
+        },
+        "clientClaimsPrefix": {
+          "label": "Client claims prefix",
+
+          "helpText": "If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims.",
+          "errorMessage": "Client claims prefix is required",
+          "placeholder": "client__"
+        },
+        "allowAccessTokenViaBrowser": {
+          "label": "Allow access Token Via Browser",
+          "helpText": "Specifies whether this client is allowed to receive access tokens via the browser. This is useful to harden flows that allow multiple response types (e.g. by disallowing a hybrid flow client that is supposed to use code id_token to add the token response type and thus leaking the token to the browser."
+        },
+        "allowOfflineAccess": {
+          "label": "Allow offline access",
+          "helpText": "Specifies whether this client can request refresh tokens (be requesting the offline_access scope)"
+        },
+        "allowPlainTextPkce": {
+          "label": "Allow plain text Pkce",
+          "helpText": "Specifies whether clients using PKCE can use a plain text code challenge (not recommended)"
+        },
+        "allowRememberConsent": {
+          "label": "Allow Remember Consent",
+          "helpText": "Specifies whether user can choose to store consent decisions."
+        },
+        "alwaysIncludeUserClaimsInIdToken": {
+          "label": "Always include user claims in Id token",
+          "helpText": "When requesting both an id token and access token, should the user claims always be added to the id token instead of requring the client to use the userinfo endpoint. Default is false."
+        },
+        "alwaysSendClientClaims": {
+          "label": "Always send client claims",
+          "helpText": "If set, the client claims will be sent for every flow. If not, only for client credentials flow (default is false)"
+        },
+        "backChannelLogoutSessionRequired": {
+          "label": "Back channel logout session required",
+          "helpText": "Specifies if the user’s session id should be sent in the request to the BackChannelLogoutUri"
+        },
+        "enableLocalLogin": {
+          "label": "Enable local login",
+          "helpText": "Specifies if this client can use local accounts, or external IdPs only"
+        },
+        "frontChannelLogoutSessionRequired": {
+          "label": "Front channel logout session required",
+          "helpText": "Specifies if the user’s session id should be sent to the FrontChannelLogoutUri"
+        },
+        "includeJwtId": {
+          "label": "Include Jwt Id",
+          "helpText": "Specifies whether JWT access tokens should have an embedded unique ID (via the jti claim)"
+        },
+        "requireClientSecret": {
+          "label": "Require Client Secret",
+          "helpText": "Specifies whether this client needs a secret to request tokens from the token endpoint"
+        },
+        "requirePkce": {
+          "label": "Require Pkce",
+          "helpText": "Specifies whether clients using an authorization code based grant type must send a proof key"
+        },
+        "updateAccessTokenClaimsOnRefresh": {
+          "label": "Update access token claims on refresh",
+          "helpText": "Gets or sets a value indicating whether the access token (and its claims) should be updated on a refresh token request."
+        }
+      }
+    },
+    {
+      "id": "ClientAllowedCorsOriginsForm",
+      "title": "Enter allowed cors origins",
+      "help": "Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources.",
+      "removeConfirmation": "Are you sure want to delete this cors origin",
+      "buttons": {
+        "add": {
+          "text": "Add",
+          "helpText": "Add Cors Origin"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Cors Origin"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Allowed cors origins"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No active cors origins",
+        "helpText": "Define a cors origin and push the Add button to add a cors origin"
+      },
+      "fields": {
+        "origin": {
+          "label": "Allow cors origin",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Enter an allowed cors origin",
+          "errorMessage": "Cors origin is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "ClientAllowedScopesForm",
+      "title": "Allowed scopes",
+      "help": "By default a client has no access to any resources. Specify the allowed resources by adding the corresponding scopes names.",
+      "removeConfirmation": "Are you sure want to delete this scope",
+      "buttons": {
+        "add": {
+          "text": "Add",
+          "helpText": "Add Scope"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Scope"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active scopes"
+        },
+        "selectedItem": {
+          "title": "Scope Info",
+          "properties": {
+            "name": {
+              "name": "Scope Name"
+            },
+            "displayName": {
+              "name": "Display Name"
+            },
+            "description": {
+              "name": "Description"
+            }
+          }
+        }
+      },
+      "noActiveConnections": {
+        "title": "No active scopes",
+        "helpText": "Select a scope and push the Add button to add a scope"
+      },
+      "fields": {
+        "scopeName": {
+          "label": "Scope Name",
+          "placeholder": "",
+          "helpText": "Select an allowed scope",
+          "errorMessage": "Scope is required"
+        }
+      }
+    },
+    {
+      "id": "ClientGrantTypesForm",
+      "title": "Select the appropriate grant type",
+      "help": "Select the types of authentication that are allowed for this Client",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No grant types are defined",
+        "helpText": "Check the appropriate grant type(s) for the client"
+      }
+    },
+    {
+      "id": "ClientIdpRestrictionsForm",
+      "title": "Identity provider restrictions",
+      "help": "Specifies which external identity providers (IdPs) can be used when authenticating. Note that Sim Card login is always allowed.",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "fields": {
+        "all": {
+          "label": "Allow All",
+          "helpText": "Allow all identity providers",
+          "errorMessage": "Claim type is required and needs to be in the right format"
+        },
+        "restricted": {
+          "label": "Allow Only",
+          "helpText": "Allow only selected identity providers"
+        }
+      }
+    },
+    {
+      "id": "ClientPostLogoutRedirectUriForm",
+      "title": "Enter a post logout redirect URL",
+      "help": "Specifies allowed URIs to redirect to after logout. See the <a href=\"https://openid.net/specs/openid-connect-session-1_0.html\" target=\"_blank\" rel=\"noreferrer\">OIDC Connect Session Management spec</a> for more details.",
+      "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove this Post logout URL"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add Post logout URL"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active Post Logout URLs"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No client post logout redirect uris are defined",
+        "helpText": "Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+      },
+      "fields": {
+        "redirectUri": {
+          "label": "Logout URL",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Users can be returned to this URL after logging out. These protocols rely upon TLS in production",
+          "errorMessage": "Path is required and needs to be in the right format"
+        },
+        "restricted": {
+          "label": "Allow Only",
+          "helpText": "Allow only selected identity providers"
+        }
+      }
+    },
+    {
+      "id": "ClientRedirectUriForm",
+      "title": "Enter a callback URL",
+      "help": "Specifies the allowed URIs to return tokens or authorization codes to",
+      "removeConfirmation": "Are you sure want to delete this redirect uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Redirect URL"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this Redirect URL"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active callback URLs"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No client redirect uris (Callback uris) are defined",
+        "helpText": "Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+      },
+      "fields": {
+        "redirectUri": {
+          "label": "Callback URL",
+          "placeholder": "https://localhost:4200/signin-oidc",
+          "helpText": "Full path of the redirect URL. These protocols rely upon TLS in production",
+          "errorMessage": "Path is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "ClientClaimForm",
+      "title": "Add claims for the Client",
+      "help": "Allows settings claims for the client (will be included in the access token).",
+      "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Claim from Client"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this Claim to Client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active client claims"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No active claims",
+        "helpText": "Fill out the form and push the Add button to add a claim"
+      },
+      "fields": {
+        "type": {
+          "label": "Claim type (key)",
+          "placeholder": "example-claim",
+          "helpText": "The key that represents this claim",
+          "errorMessage": "Claim type is required and needs to be in the right format"
+        },
+        "value": {
+          "label": "Claim value",
+          "placeholder": "example-value",
+          "helpText": "The value of the claim",
+          "errorMessage": "Value is required and can not contain special characters"
+        }
+      }
+    },
+    {
+      "id": "ClientSecretForm",
+      "title": "Client Secrets",
+      "help": "List of Client Secrets - credentials to access the token endpoint.",
+      "conditionalHelp": "Your client type doesn't support a Client Secret. You don't need to add anything here.",
+      "removeConfirmation": "Are you sure want to delete this secret",
+      "buttons": {
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove Secret from Client"
+        },
+        "add": {
+          "text": "Add",
+          "helpText": "Add this secret to Client"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "active": {
+          "title": "Active secrets"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No secrets are defined",
+        "helpText": "Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+      },
+      "infoModal": {
+        "headerText": "Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:",
+        "buttonText": "Ok"
+      },
+      "fields": {
+        "secretValue": {
+          "label": "Client Secret",
+          "placeholder": "Some secret text",
+          "helpText": "Your secret value should be a rather complicated string",
+          "errorMessage": "Value is required"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required and needs to be in the right format"
+        }
+      }
+    }
+  ]
+}

@@ -33,11 +33,6 @@ export const error = {
       defaultMessage: 'Samþykkja þarf alla skilmála',
       description: 'Error message when terms are not approved',
     },
-    interview: {
-      id: 'crc.application:error.interview',
-      defaultMessage: 'Velja þarf valmöguleika',
-      description: 'Error message when interview option is not selected',
-    },
     durationType: {
       id: 'crc.application:error.durationType',
       defaultMessage: 'Velja þarf valmöguleika',
@@ -48,6 +43,12 @@ export const error = {
       defaultMessage: 'Velja þarf dagsetningu',
       description:
         'Error message when durationType is temporary and no date is selected',
+    },
+    counterParty: {
+      id: 'crc.application:error.counterParty',
+      defaultMessage: 'Fylla þarf út netfang eða símanúmer',
+      description:
+        'Error message when neither email or phonenumber are filled in for counter party',
     },
   }),
 }

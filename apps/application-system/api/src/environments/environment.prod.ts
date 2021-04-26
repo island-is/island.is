@@ -27,9 +27,14 @@ export default {
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
     syslumenn: {
-      url: 'https://api.syslumenn.is/api',
+      url: process.env.SYSLUMENN_HOST,
       username: process.env.SYSLUMENN_USERNAME,
       password: process.env.SYSLUMENN_PASSWORD,
+    },
+    smsOptions: {
+      url: process.env.NOVA_URL,
+      username: process.env.NOVA_USERNAME,
+      password: process.env.NOVA_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
   },

@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { answerValidators } from './answerValidators'
 import { PartyLetterSchema } from './dataSchema'
@@ -14,6 +15,12 @@ type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
+
+enum States {
+  DRAFT = 'draft',
+  COLLECT_ENDORSEMENTS = 'collectEndorsements',
+  APPROVED = 'approved',
+}
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -26,15 +33,16 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.PARTY_LETTER,
-  name: 'Party letter',
+  name: 'Listabókstafur',
   dataSchema: PartyLetterSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'draft',
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -51,52 +59,61 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'collectSignatures',
+            target: States.COLLECT_ENDORSEMENTS,
           },
         },
       },
-      collectSignatures: {
+      [States.COLLECT_ENDORSEMENTS]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.SIGNATUREE,
               formLoader: () =>
-                import('../forms/CollectSignatures').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementForm),
                 ),
-              actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-              ],
               read: 'all',
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectSignatures').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/CollectEndorsements').then((val) =>
+                  Promise.resolve(val.CollectEndorsements),
                 ),
-              read: 'all',
+              actions: [
+                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+              ],
+              write: 'all',
             },
           ],
         },
         on: {
           APPROVE: {
-            target: 'approved',
+            target: States.APPROVED,
           },
         },
       },
-      approved: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementApproved').then((val) =>
+                  Promise.resolve(val.EndorsementApproved),
+                ),
+            },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/LetterApplicationApproved').then((val) =>
+                  Promise.resolve(val.LetterApplicationApproved),
                 ),
               read: 'all',
             },
@@ -107,15 +124,19 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === 'inReview') {
+    // TODO: Applicant can recommend his own list
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
+      // TODO: Maybe display collection as closed in final state for signaturee
+      // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE
+    } else {
+      return undefined
     }
-    return Roles.APPLICANT
   },
-  answerValidators,
 }
-
 export default PartyLetterApplicationTemplate

@@ -73,6 +73,35 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'people',
         },
       },
+
+      // Menntun
+      {
+        name: defineMessage({
+          id: 'service.portal:education',
+          defaultMessage: 'Menntun',
+        }),
+        path: ServicePortalPath.EducationRoot,
+        icon: {
+          type: 'outline',
+          icon: 'school',
+        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:educationLicense',
+              defaultMessage: 'Starfsleyfi',
+            }),
+            path: ServicePortalPath.EducationLicense,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:educationCareer',
+              defaultMessage: 'Námsferill',
+            }),
+            path: ServicePortalPath.EducationCareer,
+          },
+        ],
+      },
       {
         name: defineMessage({
           id: 'service.portal:document-provider',
@@ -124,6 +153,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         // ],
       },
 
+      // Mannanafnaskrá
+      {
+        name: defineMessage({
+          id: 'service.portal:icelandic-names-registry',
+          defaultMessage: 'Mannanafnaskrá',
+        }),
+        path: ServicePortalPath.IcelandicNamesRegistryRoot,
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({
@@ -163,42 +205,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'cellular',
         },
-      },
-
-      // Menntun
-      {
-        name: defineMessage({
-          id: 'service.portal:education',
-          defaultMessage: 'Menntun',
-        }),
-        path: ServicePortalPath.EducationRoot,
-        icon: {
-          type: 'outline',
-          icon: 'school',
-        },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:educationDegree',
-              defaultMessage: 'Prófskírteini',
-            }),
-            path: ServicePortalPath.EducationDegree,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:educationLicense',
-              defaultMessage: 'Starfsleyfi',
-            }),
-            path: ServicePortalPath.EducationLicense,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:educationCareer',
-              defaultMessage: 'Námsferill',
-            }),
-            path: ServicePortalPath.EducationCareer,
-          },
-        ],
       },
 
       // Fasteignir

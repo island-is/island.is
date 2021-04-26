@@ -20,6 +20,7 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+import { FormatMessage, StaticText } from '../types/Form'
 
 enum FinalStates {
   REJECTED = 'rejected',
@@ -70,6 +71,16 @@ export class ApplicationTemplateHelper<
     }
 
     return ApplicationStatus.IN_PROGRESS
+  }
+
+  getApplicationStateInfo(
+    stateKey: string = this.application.state,
+  ): { title?: StaticText; description?: StaticText } {
+    return {
+      title: this.template.stateMachineConfig.states[stateKey]?.meta?.title,
+      description: this.template.stateMachineConfig.states[stateKey]?.meta
+        ?.description,
+    }
   }
 
   getApplicationProgress(stateKey: string = this.application.state): number {
@@ -208,6 +219,7 @@ export class ApplicationTemplateHelper<
 
   async applyAnswerValidators(
     newAnswers: FormValue,
+    formatMessage: FormatMessage,
   ): Promise<undefined | Record<string, string>> {
     const validators = this.template.answerValidators
 
@@ -216,7 +228,7 @@ export class ApplicationTemplateHelper<
     }
 
     let hasError = false
-    const errorMap: Record<string, string> = {}
+    const errorMap: Record<string, StaticText | null> = {}
     const validatorPaths = Object.keys(validators)
 
     for (const validatorPath of validatorPaths) {
@@ -230,7 +242,10 @@ export class ApplicationTemplateHelper<
 
         if (result) {
           hasError = true
-          errorMap[result.path] = result.message
+          errorMap[result.path] =
+            typeof result.message === 'object'
+              ? formatMessage(result.message, result.values)
+              : result.message
         }
       }
     }

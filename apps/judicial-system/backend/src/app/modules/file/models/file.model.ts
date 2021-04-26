@@ -13,10 +13,10 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Case } from '../../case'
 
 @Table({
-  tableName: 'file',
-  timestamps: false,
+  tableName: 'case_file',
+  timestamps: true,
 })
-export class File extends Model<File> {
+export class CaseFile extends Model<CaseFile> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

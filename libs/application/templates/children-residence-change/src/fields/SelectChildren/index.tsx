@@ -3,20 +3,43 @@ import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
-import { CRCFieldBaseProps, Child } from '../../types'
-import { DescriptionText } from '../components'
+import { formatAddress } from '../../lib/utils'
+import { CRCFieldBaseProps, Child, Address } from '../../types'
+import { DescriptionText, InfoBanner } from '../components'
+
+const allChildrenLiveWithBothParents = (
+  applicantAddress: Address,
+  children: Child[],
+) => {
+  const formattedApplicantAddress = formatAddress(applicantAddress)
+  return children.every(
+    (child) =>
+      formatAddress(child.otherParent.address) === formattedApplicantAddress,
+  )
+}
 
 const shouldBeDisabled = (
   children: Child[],
   childOption: Child,
+  applicantAddress: Address,
   selectedChildren?: string[],
 ) => {
+  // If the applicant and the other parent live together
+  // it should not be possible to request a transfer for the children
+  const formattedApplicantAddress = formatAddress(applicantAddress)
+  const formattedOtherParentAddress = formatAddress(
+    childOption.otherParent.address,
+  )
+  if (formattedApplicantAddress === formattedOtherParentAddress) {
+    return true
+  }
   if (!selectedChildren || selectedChildren?.length === 0) {
     return false
   }
   const firstSelectedChild = children.find(
     (child) => selectedChildren[0] === child.nationalId,
   )
+
   if (
     firstSelectedChild?.livesWithApplicant !== childOption.livesWithApplicant ||
     firstSelectedChild?.otherParent.nationalId !==
@@ -34,12 +57,15 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
     externalData: { nationalRegistry },
     answers,
   } = application
-  const children = nationalRegistry.data.children
-  const currentAnswer = answers.selectedChildren
-  const [selectedChildrenState, setSelectedChildrenState] = useState<
-    string[] | undefined
-  >(currentAnswer)
-
+  const { address, children } = nationalRegistry.data
+  const currentAnswer = answers.selectedChildren || []
+  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
+    currentAnswer,
+  )
+  const childrenNotEligibleForTransfer = allChildrenLiveWithBothParents(
+    address,
+    children,
+  )
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -48,6 +74,16 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
       <Text variant="h3" marginBottom={2}>
         {formatMessage(selectChildren.checkboxes.title)}
       </Text>
+      {childrenNotEligibleForTransfer && (
+        <Box marginBottom={2}>
+          <InfoBanner>
+            <DescriptionText
+              text={selectChildren.ineligible.text}
+              textProps={{ variant: 'small', marginBottom: 0 }}
+            />
+          </InfoBanner>
+        </Box>
+      )}
       <CheckboxController
         id={id}
         disabled={disabled}
@@ -58,7 +94,12 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         options={children.map((child) => ({
           value: child.nationalId,
           label: child.fullName,
-          disabled: shouldBeDisabled(children, child, selectedChildrenState),
+          disabled: shouldBeDisabled(
+            children,
+            child,
+            address,
+            selectedChildrenState,
+          ),
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
             parentName: child.otherParent.fullName,
           }),

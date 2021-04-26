@@ -6,23 +6,19 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { getSelectedChildrenFromExternalData } from './utils'
+import { Roles, ApplicationStates } from './constants'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-export enum ApplicationStates {
-  DRAFT = 'draft',
-  IN_REVIEW = 'inReview',
-  SUBMITTED = 'submitted',
-}
-
-enum Roles {
-  ParentA = 'parentA',
-  ParentB = 'parentB',
+enum TemplateApiActions {
+  submitApplication = 'submitApplication',
+  sendNotificationToCounterParty = 'sendNotificationToCounterParty',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -34,6 +30,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: 'Children residence change application',
+  readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
@@ -42,6 +39,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentA,
@@ -71,6 +69,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
+          },
           roles: [
             {
               id: Roles.ParentB,
@@ -106,8 +108,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: 'submitApplication',
+            apiModuleAction: TemplateApiActions.submitApplication,
           },
           roles: [
             {

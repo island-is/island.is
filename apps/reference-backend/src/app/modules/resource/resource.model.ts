@@ -6,7 +6,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'resource',
@@ -23,22 +22,18 @@ export class Resource extends Model<Resource> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
-  id: string
+  id!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
-  @ApiProperty()
-  nationalId: string
+  nationalId!: string
 
   @CreatedAt
-  @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

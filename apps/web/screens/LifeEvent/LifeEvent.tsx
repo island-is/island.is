@@ -57,6 +57,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         title={`${title} | Ísland.is`}
         description={intro}
         imageUrl={image.url}
+        imageContentType={image.contentType}
         imageWidth={image.width.toString()}
         imageHeight={image.height.toString()}
       />

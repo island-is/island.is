@@ -22,6 +22,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
+import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -80,10 +81,15 @@ const autoSchemaFile = environment.production
     DirectorateOfLabourModule.register(),
     FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
+      documentClientConfig: {
+        basePath: environment.documentService.basePath,
+        clientId: environment.documentService.clientId,
+        clientSecret: environment.documentService.clientSecret,
+        tokenUrl: environment.documentService.tokenUrl,
+      },
+      downloadServiceConfig: {
+        downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      },
     }),
     DocumentProviderModule.register({
       test: {
@@ -141,6 +147,9 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+    }),
+    IcelandicNamesModule.register({
+      backendUrl: environment.icelandicNamesRegistry.backendUrl,
     }),
   ],
 })
