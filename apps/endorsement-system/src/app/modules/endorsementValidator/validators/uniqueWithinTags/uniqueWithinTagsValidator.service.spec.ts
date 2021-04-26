@@ -15,7 +15,7 @@ const getNestModule = async () => {
   )
 }
 
-describe('getCompaniesByNationalId', () => {
+describe('uniqueWithinTagsValidator', () => {
   let UniqueWithinTagsValidatorService: UniqueWithinTagsValidatorService
 
   beforeEach(async () => {
