@@ -117,6 +117,12 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
+  const isSelfEmployed =
+    (getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    ) as ValidAnswers) === YES
+
   const dob = getExpectedDateOfBirth(application)
   const { data, error, loading } = useQuery(getEstimatedPayments, {
     variables: {
@@ -448,33 +454,38 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </Box>
           </AccordionItem>
-          <AccordionItem
-            id="id_1"
-            label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
-            startExpanded={allItemsExpanded}
-          >
-            {editable ? (
-              <Box paddingY={4}>
-                <Input
-                  id="employer.email"
-                  name="employer.email"
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  ref={register}
-                />
-              </Box>
-            ) : (
-              <Text paddingY={4}>
-                {
-                  getValueViaPath(
-                    application.answers,
-                    'employer.email',
-                  ) as string[]
-                }
-              </Text>
-            )}
-          </AccordionItem>
+
+          {!isSelfEmployed && (
+            <AccordionItem
+              id="id_1"
+              label={formatMessage(
+                parentalLeaveFormMessages.employer.subSection,
+              )}
+              startExpanded={allItemsExpanded}
+            >
+              {editable ? (
+                <Box paddingY={4}>
+                  <Input
+                    id="employer.email"
+                    name="employer.email"
+                    label={formatMessage(
+                      parentalLeaveFormMessages.employer.email,
+                    )}
+                    ref={register}
+                  />
+                </Box>
+              ) : (
+                <Text paddingY={4}>
+                  {
+                    getValueViaPath(
+                      application.answers,
+                      'employer.email',
+                    ) as string[]
+                  }
+                </Text>
+              )}
+            </AccordionItem>
+          )}
 
           <AccordionItem
             id="id_4"
