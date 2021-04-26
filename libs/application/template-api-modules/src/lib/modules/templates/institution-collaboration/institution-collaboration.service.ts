@@ -65,13 +65,14 @@ export class InstitutionCollaborationService {
       return []
     }
 
-    return Promise.all(attachments.map(async ({ key, name }) => {
-      const url = (application.attachments as {
-        [key: string]: string
-      })[key]
-      const signedUrl = await this.fileStorageService.generateSignedUrl(url)
-      return { name, url: signedUrl }
-    }))
-
+    return Promise.all(
+      attachments.map(async ({ key, name }) => {
+        const url = (application.attachments as {
+          [key: string]: string
+        })[key]
+        const signedUrl = await this.fileStorageService.generateSignedUrl(url)
+        return { name, url: signedUrl }
+      }),
+    )
   }
 }

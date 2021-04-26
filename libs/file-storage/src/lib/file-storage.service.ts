@@ -52,7 +52,7 @@ export class FileStorageService {
     const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
 
     return new Promise((resolve, reject) => {
-      this.s3.getSignedUrl('getObject',params, (err, signedUrl) => {
+      this.s3.getSignedUrl('getObject', params, (err, signedUrl) => {
         if (err) {
           reject(err)
         } else {
