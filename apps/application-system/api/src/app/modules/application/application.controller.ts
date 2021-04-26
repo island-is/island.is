@@ -13,6 +13,7 @@ import {
   Optional,
   Query,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -53,7 +54,7 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/api/domains/translations'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
@@ -111,6 +112,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
+    private readonly auditService: AuditService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -166,12 +168,17 @@ export class ApplicationController {
     resources: (apps) => apps.map((app) => app.id),
   })
   async findAll(
+    @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
+    if (nationalId !== user.nationalId) {
+      throw new UnauthorizedException()
+    }
+
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
-      user.nationalId,
+      nationalId,
       typeId,
       status,
     )
@@ -209,9 +216,6 @@ export class ApplicationController {
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  @Audit<ApplicationResponseDto>({
-    resources: (app) => app.id,
-  })
   async create(
     @Body()
     application: CreateApplicationDto,
@@ -276,6 +280,12 @@ export class ApplicationController {
       getApplicationLifecycle(createdApplication as BaseApplication, template),
     )
 
+    this.auditService.audit({
+      user,
+      action: 'create',
+      resources: updatedApplication.id,
+      meta: { type: application.typeId },
+    })
     return updatedApplication
   }
 
@@ -369,9 +379,6 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  @Audit<ApplicationResponseDto>({
-    resources: (app) => app.id,
-  })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() application: UpdateApplicationDto,
@@ -411,6 +418,12 @@ export class ApplicationController {
       },
     )
 
+    this.auditService.audit({
+      user,
+      action: 'update',
+      resources: updatedApplication.id,
+      meta: { fields: Object.keys(newAnswers) },
+    })
     return updatedApplication
   }
 
@@ -470,6 +483,12 @@ export class ApplicationController {
       )
     }
 
+    this.auditService.audit({
+      user,
+      action: 'updateExternalData',
+      resources: updatedApplication.id,
+      meta: { providers: externalDataDto },
+    })
     return updatedApplication
   }
 
@@ -545,6 +564,16 @@ export class ApplicationController {
       updateApplicationStateDto.event,
       user.authorization,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'submitApplication',
+      resources: existingApplication.id,
+      meta: {
+        event: updateApplicationStateDto.event,
+        fields: Object.keys(permittedAnswers).length,
+      },
+    })
 
     if (hasError) {
       throw new BadRequestException(error)
@@ -772,6 +801,15 @@ export class ApplicationController {
       attachmentUrl: url,
     })
 
+    this.auditService.audit({
+      user,
+      action: 'addAttachment',
+      resources: updatedApplication.id,
+      meta: {
+        file: key,
+      },
+    })
+
     return updatedApplication
   }
 
@@ -804,6 +842,15 @@ export class ApplicationController {
       },
     )
 
+    this.auditService.audit({
+      user,
+      action: 'deleteAttachment',
+      resources: updatedApplication.id,
+      meta: {
+        file: key,
+      },
+    })
+
     return updatedApplication
   }
 
@@ -830,6 +877,13 @@ export class ApplicationController {
       existingApplication,
       input.type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'createPdf',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
 
     return { url }
   }
@@ -862,6 +916,13 @@ export class ApplicationController {
       input.type,
     )
 
+    this.auditService.audit({
+      user,
+      action: 'requestFileSignature',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
+
     return { controlCode, documentToken }
   }
 
@@ -891,6 +952,13 @@ export class ApplicationController {
       input.type,
     )
 
+    this.auditService.audit({
+      user,
+      action: 'uploadSignedFile',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
+
     return {
       documentSigned: true,
     }
@@ -919,6 +987,13 @@ export class ApplicationController {
       existingApplication,
       type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'getPresignedUrl',
+      resources: existingApplication.id,
+      meta: { type },
+    })
 
     return { url }
   }
