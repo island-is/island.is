@@ -50,6 +50,18 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'applicantMock',
+          title: 'Umsækjandi',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
+            buildCustomField({
+              id: 'mockData.applicant',
+              title: 'Mock Umsækjandi',
+              component: 'ApplicantMock',
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'parentMock',
           title: 'Foreldrar',
           condition: (answers) => answers.useMocks === 'yes',
