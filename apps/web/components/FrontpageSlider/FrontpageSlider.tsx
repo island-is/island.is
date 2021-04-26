@@ -31,6 +31,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
+import fetch from 'isomorphic-fetch'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]

@@ -25,13 +25,16 @@ export const getSelectedChildrenFromExternalData = (
 interface ChildrenResidenceInfo {
   parentName: string
   address: Address
+  nationalId: string
 }
 
 const extractParentInfo = ({
   address,
   fullName,
+  nationalId,
 }: NationalRegistry | PersonResidenceChange): ChildrenResidenceInfo => {
   return {
+    nationalId,
     address,
     parentName: fullName,
   }

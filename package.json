@@ -6,6 +6,10 @@
     "node": "^14.16",
     "yarn": "^1.22"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/island-is/island.is.git"
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",

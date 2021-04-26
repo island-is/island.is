@@ -19,7 +19,21 @@ export class IntlService {
       namespaces,
       locale,
     )
-    const intl = createIntl({ locale, messages }, this.intlCache)
+    const intl = createIntl(
+      {
+        locale,
+        messages,
+        onError: (err) => {
+          if (err.code === 'MISSING_TRANSLATION') {
+            logger.warn({ message: err.message })
+            return
+          }
+
+          throw err
+        },
+      },
+      this.intlCache,
+    )
 
     return {
       ...intl,
