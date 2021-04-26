@@ -46,7 +46,7 @@ export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
-export { default as Table } from './lib/Table'
+export { Table } from './lib/Table'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
