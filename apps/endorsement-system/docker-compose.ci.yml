@@ -21,4 +21,5 @@ services:
       - ../..:/code
 
   db_endorsement_system:
-    ports: []
+    ports:
+      - 5433:5432
