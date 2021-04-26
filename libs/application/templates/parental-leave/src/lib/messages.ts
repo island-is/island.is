@@ -646,8 +646,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your rights end 18 months after the date of birth.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 24 months after the date of birth.`,
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -684,8 +684,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:end.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
     },
     label: {
       id: 'pl.application:end.date.label',
@@ -707,8 +707,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:start.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth`,
     },
     label: {
       id: 'pl.application:start.date.label',
