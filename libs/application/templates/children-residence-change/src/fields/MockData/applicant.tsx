@@ -34,7 +34,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.fullName`}
             name={`${id}.fullName`}
             label="Nafn"
-            defaultValue={applicant?.fullName}
+            defaultValue={applicant.fullName}
           />
         </Box>
         <Box marginTop={2}>
@@ -42,7 +42,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.streetName`}
             name={`${id}.address.streetName`}
             label="Heimilisfang"
-            defaultValue={applicant?.address.streetName}
+            defaultValue={applicant.address.streetName}
           />
         </Box>
         <Box marginTop={2}>
@@ -50,7 +50,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.postalCode`}
             name={`${id}.address.postalCode`}
             label="Póstnúmer"
-            defaultValue={applicant?.address.postalCode}
+            defaultValue={applicant.address.postalCode}
           />
         </Box>
         <Box marginTop={2}>
@@ -58,7 +58,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.city`}
             name={`${id}.address.city`}
             label="Borg"
-            defaultValue={applicant?.address.city}
+            defaultValue={applicant.address.city}
           />
         </Box>
       </Box>
