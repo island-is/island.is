@@ -96,8 +96,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  id: 'nationalRegistry',
+                  type: 'DataProviderTypes.NationalRegistry',
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
@@ -106,12 +106,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   type: '',
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: 'DataProviderTypes.NationalRegistry',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
@@ -150,12 +144,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   type: '',
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: '',
-                  type: '',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
