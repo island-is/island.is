@@ -18,7 +18,6 @@ import {
   HeadWithSocialSharing,
   InstitutionPanel,
   Sticky,
-  IcelandicNamesSearcher,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_QUERY } from './queries'
@@ -32,6 +31,7 @@ import {
   GetOrganizationQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { SidebarLayout } from './Layouts/SidebarLayout'
+import { IcelandicNamesSearcher } from '../components/IcelandicNamesSearcher/IcelandicNamesSearcher'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 const RelatedContent: FC = () => {
