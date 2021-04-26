@@ -15,13 +15,18 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { ApiActions } from '../shared'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Atvinnuleysisbætur',
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'conditions',
+      title: m.conditionsSection,
+      children: [],
+    }),
     buildSection({
       id: 'intro',
       title: m.introSection,

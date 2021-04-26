@@ -11,6 +11,7 @@ import AmazonS3URI from 'amazon-s3-uri'
 
 interface JobData {
   applicationId: string
+  nationalId: string
   attachmentUrl: string
 }
 
@@ -53,10 +54,11 @@ export class UploadProcessor {
 
   @OnQueueCompleted()
   async onCompleted(job: Job, result: JobResult) {
-    const { applicationId }: JobData = job.data
+    const { applicationId, nationalId }: JobData = job.data
 
     const existingApplication = await this.applicationService.findOneById(
       applicationId,
+      nationalId,
     )
 
     if (
@@ -69,7 +71,7 @@ export class UploadProcessor {
       return
     }
 
-    // Update application attatchments
+    // Update application attachments
     return await this.applicationService.update(job.data.applicationId, {
       attachments: {
         ...(existingApplication?.attachments ?? {}),

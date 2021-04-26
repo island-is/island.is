@@ -109,12 +109,13 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
-    const durationType = answers.durationType as string
+    const durationType = answers.selectDuration?.type
+    const durationDate = answers.selectDuration?.date
     const extraData = {
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
-        durationType === 'temporary' && answers.durationDate
-          ? formatDate(answers.durationDate)
+        durationType === 'temporary' && durationDate
+          ? formatDate(durationDate)
           : durationType,
     }
 
@@ -145,15 +146,14 @@ export class ChildrenResidenceChangeService {
     const { answers } = application
     const { counterParty } = answers
 
-    // TODO Remove null check on counter party once we add it to the template.
-    if (counterParty?.email) {
+    if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
         (application as unknown) as Application,
       )
     }
 
-    if (counterParty?.phoneNumber) {
+    if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
         'Borist hefur umsókn um breytt lögheimili barns.',

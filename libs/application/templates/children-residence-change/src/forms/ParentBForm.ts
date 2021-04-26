@@ -19,13 +19,24 @@ export const ParentBForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'parentBIntro',
+      title: m.parentBIntro.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'parentBIntro',
+          title: m.parentBIntro.general.pageTitle,
+          component: 'ParentBIntro',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildMultiField({
           id: 'contactInfo',
           title: m.contactInfo.general.pageTitle,
-          description: m.contactInfo.general.description,
+          description: m.contactInfo.general.parentBDescription,
           children: [
             buildTextField({
               id: 'parentB.email',

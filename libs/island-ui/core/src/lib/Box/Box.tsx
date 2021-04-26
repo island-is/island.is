@@ -1,16 +1,7 @@
-import {
-  createElement,
-  forwardRef,
-  AllHTMLAttributes,
-  ElementType,
-} from 'react'
-import { useBoxStyles, UseBoxStylesProps } from './useBoxStyles'
+import { createElement, forwardRef } from 'react'
 
-export interface BoxProps
-  extends Omit<UseBoxStylesProps, 'component'>,
-    Omit<AllHTMLAttributes<HTMLElement>, 'width' | 'height' | 'className'> {
-  component?: ElementType
-}
+import { BoxProps } from './types'
+import { useBoxStyles } from './useBoxStyles'
 
 export const Box = forwardRef<HTMLElement, BoxProps>(
   (

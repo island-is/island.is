@@ -115,10 +115,19 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
 
   useEffect(() => {
     if (!animationData.length) {
-      const data = slides.map((x) =>
-        x.animationJson ? JSON.parse(x.animationJson) : null,
-      )
-      setAnimationData(data)
+      const requests = slides.reduce((all, slide) => {
+        if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
+          all.push(
+            fetch(slide.animationJsonAsset.url).then((res) => res.json()),
+          )
+        }
+
+        return all
+      }, [])
+
+      Promise.all(requests).then((res) => {
+        setAnimationData(res)
+      })
     }
   }, [slides, animationData])
 
@@ -337,10 +346,12 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             height="full"
             justifyContent="center"
           >
-            <LottieLoader
-              animationData={animationData}
-              selectedIndex={selectedIndex}
-            />
+            {animationData.length > 0 && (
+              <LottieLoader
+                animationData={animationData}
+                selectedIndex={selectedIndex}
+              />
+            )}
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />

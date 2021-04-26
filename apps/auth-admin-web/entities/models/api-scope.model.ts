@@ -15,6 +15,7 @@ export class ApiScope {
   allowExplicitDelegationGrant!: boolean
   automaticDelegationGrant!: boolean
   alsoForDelegatedUser!: boolean
+  isAccessControlled: boolean
   readonly created!: Date
   readonly modified?: Date
 }

@@ -3,6 +3,7 @@ import { documentProviderModule } from '@island.is/service-portal/document-provi
 import { documentsModule } from '@island.is/service-portal/documents'
 import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
+import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { settingsModule } from '@island.is/service-portal/settings'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
@@ -28,6 +29,7 @@ export type ModuleKeys =
   | 'documents'
   | 'family'
   | 'finance'
+  | 'icelandicNamesRegistry'
   | 'settings'
   | 'education'
   | 'educationLicense'
@@ -42,6 +44,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationLicense',
   'educationCareer',
   'educationStudentAssessment',
+  'icelandicNamesRegistry',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -49,6 +52,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documents: documentsModule,
   family: familyModule,
   finance: financeModule,
+  icelandicNamesRegistry: icelandicNamesRegistryModule,
   settings: settingsModule,
   education: educationModule,
   educationLicense: educationLicenseModule,

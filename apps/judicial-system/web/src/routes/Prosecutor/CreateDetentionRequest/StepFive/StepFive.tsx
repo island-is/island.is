@@ -47,7 +47,12 @@ export const StepFive: React.FC = () => {
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
     >
-      {workingCase ? <StepFiveForm case={workingCase} /> : null}
+      {workingCase ? (
+        <StepFiveForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      ) : null}
     </PageLayout>
   )
 }

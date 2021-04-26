@@ -16,6 +16,6 @@ export const login = async () => {
 export const logout = (session: SessionInfo) => {
   session &&
     signOut({
-      callbackUrl: `${window.location.origin}/api/auth/logout?id_token=${session.idToken}`,
+      callbackUrl: `${window.location.origin}/admin/api/auth/logout?id_token=${session.idToken}`,
     })
 }

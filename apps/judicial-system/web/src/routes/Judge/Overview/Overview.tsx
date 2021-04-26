@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
-import {
-  Box,
-  Text,
-  Input,
-  Button,
-  AccordionCard,
-} from '@island.is/island-ui/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -524,6 +518,21 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
+              {features.includes(Feature.CASE_FILES) &&
+                workingCase.caseFilesComments && (
+                  <div className={styles.infoSection}>
+                    <Box marginBottom={1}>
+                      <Text variant="h3" as="h3">
+                        Athugasemdir vegna rannsóknargagna
+                      </Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.caseFilesComments}
+                      </span>
+                    </Text>
+                  </div>
+                )}
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>

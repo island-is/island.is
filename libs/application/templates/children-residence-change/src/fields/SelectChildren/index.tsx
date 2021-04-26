@@ -5,7 +5,18 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
 import { formatAddress } from '../../lib/utils'
 import { CRCFieldBaseProps, Child, Address } from '../../types'
-import { DescriptionText } from '../components'
+import { DescriptionText, InfoBanner } from '../components'
+
+const allChildrenLiveWithBothParents = (
+  applicantAddress: Address,
+  children: Child[],
+) => {
+  const formattedApplicantAddress = formatAddress(applicantAddress)
+  return children.every(
+    (child) =>
+      formatAddress(child.otherParent.address) === formattedApplicantAddress,
+  )
+}
 
 const shouldBeDisabled = (
   children: Child[],
@@ -47,11 +58,14 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
     answers,
   } = application
   const { address, children } = nationalRegistry.data
-  const currentAnswer = answers.selectedChildren
-  const [selectedChildrenState, setSelectedChildrenState] = useState<
-    string[] | undefined
-  >(currentAnswer)
-
+  const currentAnswer = answers.selectedChildren || []
+  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
+    currentAnswer,
+  )
+  const childrenNotEligibleForTransfer = allChildrenLiveWithBothParents(
+    address,
+    children,
+  )
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -60,6 +74,16 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
       <Text variant="h3" marginBottom={2}>
         {formatMessage(selectChildren.checkboxes.title)}
       </Text>
+      {childrenNotEligibleForTransfer && (
+        <Box marginBottom={2}>
+          <InfoBanner>
+            <DescriptionText
+              text={selectChildren.ineligible.text}
+              textProps={{ variant: 'small', marginBottom: 0 }}
+            />
+          </InfoBanner>
+        </Box>
+      )}
       <CheckboxController
         id={id}
         disabled={disabled}

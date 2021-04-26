@@ -1,4 +1,4 @@
-import { DynamicModule, Global, Module } from '@nestjs/common'
+import { DynamicModule, Global } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'

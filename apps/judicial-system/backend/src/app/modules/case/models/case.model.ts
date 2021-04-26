@@ -205,6 +205,13 @@ export class Case extends Model<Case> {
   @ApiProperty()
   comments: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseFilesComments: string
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
@@ -389,6 +396,20 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   rulingDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedPostponedAppealDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorPostponedAppealDate: Date
 
   @ForeignKey(() => User)
   @Column({

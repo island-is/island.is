@@ -163,6 +163,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         // ],
       },
 
+      // Mannanafnaskrá
+      {
+        name: defineMessage({
+          id: 'service.portal:icelandic-names-registry',
+          defaultMessage: 'Mannanafnaskrá',
+        }),
+        path: ServicePortalPath.IcelandicNamesRegistryRoot,
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({

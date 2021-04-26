@@ -72,6 +72,7 @@
 
 ## Repository
 
+- [AWS Secrets](handbook/repository/aws-secrets.md)
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
@@ -111,6 +112,7 @@
     - [API Domains Education](libs/api/domains/education/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
+    - [API Domains Translations](libs/api/domains/translations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -167,6 +169,7 @@
   - [Service Portal Education Student Assessment](libs/service-portal/education-student-assessment/README.md)
   - [Service Portal Eligibility](libs/service-portal/eligibility/README.md)
   - [Service Portal Endorsements](libs/service-portal/endorsements/README.md)
+  - [Icelandic Names Registry](libs/service-portal/icelandic-names-registry/README.md)
 - [Shared](libs/shared/README.md)
   - [Shared Constants](libs/shared/constants/README.md)
   - [Shared Form Fields](libs/shared/form-fields/README.md)

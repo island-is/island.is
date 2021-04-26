@@ -459,6 +459,9 @@
     "service-portal-health": {
       "tags": []
     },
+    "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
     "service-portal-settings": {
       "tags": []
     },

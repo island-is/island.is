@@ -62,6 +62,9 @@ export enum ServicePortalPath {
   UserProfileEditLanguage = '/stillingar/breyta-tungumali',
   UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
 
+  // Icelandic Names Registry
+  IcelandicNamesRegistryRoot = '/mannanafnaskra',
+
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in

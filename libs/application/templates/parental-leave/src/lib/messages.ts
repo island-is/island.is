@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fæðingarorlof',
       description: 'Parental Leave',
     },
+    prerequisitesSection: {
+      id: 'pl.application:prerequisites.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
+    },
     applicationName: {
       id: 'pl.application:application.name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -357,6 +362,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
+    childrenInformationTitle: {
+      id: 'pl.application:childreninformation.title',
+      defaultMessage: 'Börnin þín',
+      description: 'Your children',
+    },
+    childrenInformationSubTitle: {
+      id: 'pl.application:childreninformation.subtitle',
+      defaultMessage:
+        'Upplýsingar um börn sem þú hefur forsjá fyrir eru sóttar til Þjóðskrár. Upplýsingar um áætlaðan fæðingardag barns eru sóttar úr sjúkraskrá.',
+      description:
+        'Information about children in your custody, source Þjóðskrá. Information on expected date of birth, source sjúkraskrá',
+    },
     expectedDateOfBirthTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
@@ -468,6 +485,34 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
   }),
 
+  selectChild: defineMessages({
+    subSection: {
+      id: 'pl.application:selectChild.subSection',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenTitle: {
+      id: 'pl.application:selectChild.screenTitle',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenDescription: {
+      id: 'pl.application:selectChild.screenDescription',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+      description: 'Children you can apply for parental leave',
+    },
+    title: {
+      id: 'pl.application:selectChild.title',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    choose: {
+      id: 'pl.application:selectChild.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
+    },
+  }),
+
   applicant: defineMessages({
     subSection: {
       id: 'pl.application:applicant.subSection',
@@ -495,6 +540,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Phone number',
     },
   }),
+
   errors: defineMessages({
     loading: {
       id: 'pl.application:errors.loading',
@@ -858,6 +904,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Add translation',
     },
   }),
+
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
@@ -972,7 +1019,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Your application was not approved',
     },
     draftNotApprovedOtherParentDesc: {
-      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
       defaultMessage: 'The other parent did not approve your request.',
       description: 'The other parent did not approve your request.',
     },
@@ -1181,16 +1228,29 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-// TODO: Add the translations to the dataSchema.ts
 export const dataSchemaMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
+    description: 'Error message when phone number is invalid.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'ID number must be valid.',
+    description: 'Error message when the kennitala is invalid.',
+  },
+})
+
+export const statesMessages = defineMessages({
+  stateDraftTitle: {
+    id: 'pl.application:state.draft.title',
+    defaultMessage: 'Drög',
+    description: 'Title of the first state of the parental application',
+  },
+
+  stateDraftDescription: {
+    id: 'pl.application:state.draft.description',
+    defaultMessage: 'Bið eftir samþykki',
+    description: 'Description of the first state of the parental application',
   },
 })
