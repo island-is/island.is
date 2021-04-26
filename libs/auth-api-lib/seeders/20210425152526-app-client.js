@@ -8,6 +8,9 @@ module.exports = {
     const clients = [
       {
         client_id: '@island.is-app',
+        client_type: 'Native',
+        national_id: '5501692829',
+        contact_email: 'eirikur@aranja.com',
         require_client_secret: false,
         enable_local_login: true,
         require_pkce: true,
