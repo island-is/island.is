@@ -18,8 +18,6 @@ import {
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
-import { RegulationModel } from './model/regulation'
-import { RegulationsModel } from './model/regulations'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
@@ -28,7 +26,6 @@ const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
-  // @Query(() => RegulationModel)
   @Query(() => graphqlTypeJson)
   getRegulation(
     @Args('input') input: GetRegulationInput,
@@ -42,7 +39,6 @@ export class RegulationsResolver {
     )
   }
 
-  // @Query(() => RegulationsModel)
   @Query(() => graphqlTypeJson)
   getRegulations(
     @Args('input') input: GetRegulationsInput,
