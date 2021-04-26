@@ -14,7 +14,7 @@ interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
   hiddenOnTablet?: boolean
-  fullWidthContent?: boolean | 'right'
+  fullWidthContent?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
 }
@@ -51,19 +51,13 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         <GridContainer id="main-content">
           <GridRow>
             <GridColumn
-              offset={
-                fullWidthContent === true ? '0' : ['0', '0', '0', '0', '1/9']
-              }
+              offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
               span={[
                 '9/9',
                 '9/9',
                 '9/9',
                 '9/9',
-                !fullWidthContent
-                  ? '7/9'
-                  : fullWidthContent === 'right'
-                  ? '8/9'
-                  : '9/9',
+                fullWidthContent ? '9/9' : '7/9',
               ]}
             >
               <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
