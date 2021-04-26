@@ -297,6 +297,9 @@
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
       ],
+      "@island.is/service-portal/icelandic-names-registry": [
+        "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
