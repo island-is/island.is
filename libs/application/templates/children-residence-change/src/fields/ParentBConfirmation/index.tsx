@@ -2,9 +2,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { parentBConfirmation } from '../../lib/messages'
-import { DescriptionText } from '../components'
+import {
+  DescriptionText,
+  BorderedAccordion,
+  ContractOverview,
+} from '../components'
 import { CRCFieldBaseProps } from '../..'
-import ContractAccordionOverview from '../components/ContractOverviewAccordion/ContractOverviewAccordion'
 
 const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -21,20 +24,21 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
         <DescriptionText text={parentBConfirmation.nextSteps.description} />
       </Box>
       <Box marginTop={3}>
-        <ContractAccordionOverview
+        <BorderedAccordion
           title={formatMessage(
             parentBConfirmation.contractOverview.accordionTitle,
           )}
           id="id_1"
-          application={application}
-        />
+        >
+          <ContractOverview application={application} />
+        </BorderedAccordion>
       </Box>
       <Box marginTop={5}>
         <img
           src={
             'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
           }
-          alt="Umsókn sent inn mynd"
+          alt=""
         />
       </Box>
     </>
