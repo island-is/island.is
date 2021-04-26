@@ -358,7 +358,7 @@ export const Overview: React.FC = () => {
                   !!workingCase.caseFilesComments && (
                     <AccordionItem
                       id="id_7"
-                      label="Athugasemdir vegna málsmeðferðar"
+                      label="Athugasemdir vegna rannsóknargagna"
                       labelVariant="h3"
                     >
                       <Text>

@@ -1,4 +1,5 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { CurrentUser, User } from '@island.is/auth-nest-tools'
 
 import { BackendAPI } from './services'
 import { IcelandicName } from './models/icelandicName.model'
@@ -6,10 +7,15 @@ import {
   GetIcelandicNameByIdInput,
   GetIcelandicNameByInitialLetterInput,
   GetIcelandicNameBySearchInput,
-  IcelandicNameBody,
+  CreateIcelandicNameInput,
+  UpdateIcelandicNameInput,
+  DeleteIcelandicNameByIdInput,
 } from './dto/icelandic-name.input'
 
+const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
+
 @Resolver()
+@Directive(cacheControlDirective())
 export class IcelandicNamesResolver {
   constructor(private backendAPI: BackendAPI) {}
 
@@ -41,26 +47,27 @@ export class IcelandicNamesResolver {
 
   @Mutation(() => IcelandicName, { nullable: true })
   async updateIcelandicNameById(
-    @Args('input', { type: () => IcelandicNameBody })
-    input: IcelandicNameBody,
+    @Args('input', { type: () => UpdateIcelandicNameInput })
+    input: UpdateIcelandicNameInput,
+    @CurrentUser() { authorization }: User,
   ): Promise<IcelandicName> {
-    return this.backendAPI.updateById(input?.id, input)
+    return this.backendAPI.updateById(input.id, input.body, authorization ?? '')
   }
 
   @Mutation(() => IcelandicName, { nullable: true })
   async createIcelandicName(
-    @Args('input', { type: () => IcelandicNameBody })
-    input: IcelandicNameBody,
+    @Args('input') input: CreateIcelandicNameInput,
+    @CurrentUser() { authorization }: User,
   ): Promise<IcelandicName> {
-    return this.backendAPI.create(input)
+    return this.backendAPI.create(input, authorization ?? '')
   }
 
   @Mutation(() => IcelandicName, { nullable: true })
   async deleteIcelandicNameById(
-    @Args('input') input: GetIcelandicNameByIdInput,
+    @Args('input', { type: () => DeleteIcelandicNameByIdInput })
+    input: DeleteIcelandicNameByIdInput,
+    @CurrentUser() { authorization }: User,
   ): Promise<void> {
-    const { id, ...body } = input
-
-    return this.backendAPI.deleteById(id)
+    return this.backendAPI.deleteById(input.id, authorization ?? '')
   }
 }
