@@ -3,6 +3,7 @@ import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
 import cn from 'classnames'
 
+import { BoxProps } from '../Box/types'
 import { Box } from '../Box/Box'
 import * as styles from './Button.treat'
 import { Icon } from '../IconRC/Icon'
@@ -63,7 +64,7 @@ export interface ButtonProps {
   nowrap?: boolean
   title?: string
   inline?: boolean
-  isSpan?: boolean
+  as?: BoxProps['as']
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -84,7 +85,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       loading,
       nowrap,
       inline,
-      isSpan,
+      as,
       ...buttonProps
     },
     ref,
@@ -92,9 +93,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     return (
       <Box
         component={ReaButton}
-        as={variant === 'text' || isSpan ? 'span' : 'button'}
+        as={as ?? variant === 'text' ? 'span' : 'button'}
         ref={ref}
-        {...(!isSpan && { type })}
+        {...(as !== 'span' && { type })}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
@@ -115,7 +116,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
-            [styles.isSpan]: isSpan,
           },
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}

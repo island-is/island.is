@@ -9,6 +9,7 @@ const buttonBase = {
   fontWeight: theme.typography.semiBold,
   borderRadius: 8,
   outline: 'none',
+  cursor: 'pointer',
   transition: 'box-shadow .25s, color .25s, background-color .25s',
   ':focus': {
     color: theme.color.dark400,
@@ -17,6 +18,9 @@ const buttonBase = {
   ':active': {
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
+  ':disabled': {
+    cursor: 'normal',
+  },
 }
 
 const textBase = {
@@ -24,7 +28,6 @@ const textBase = {
   outline: 'none',
   cursor: 'pointer',
   transition: 'box-shadow .25s, color .25s, background-color .25s',
-
   ':focus': {
     color: theme.color.dark400,
     backgroundColor: theme.color.mint400,
@@ -554,11 +557,5 @@ export const loadingDot = style({
       transform: 'scale(1)',
       opacity: 1,
     },
-  },
-})
-
-export const isSpan = style({
-  ':hover': {
-    cursor: 'pointer',
   },
 })
