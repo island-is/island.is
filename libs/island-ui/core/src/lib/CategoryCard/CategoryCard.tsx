@@ -9,7 +9,7 @@ type Tag = {
   label: string
   href?: string
   onClick?: () => void
-  disabled?: true
+  disabled?: boolean
 }
 
 type CategoryCardProps = {

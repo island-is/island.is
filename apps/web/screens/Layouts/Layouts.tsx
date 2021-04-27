@@ -1,6 +1,5 @@
-import React, { FC, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { Box, GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
-import { NoChildren } from '@island.is/web/types'
 
 interface SubpageProps {
   main: ReactNode
@@ -9,12 +8,12 @@ interface SubpageProps {
   mainPaddingBottom?: ResponsiveSpace
 }
 
-export const SubpageLayout: FC<SubpageProps & NoChildren> = ({
+export const SubpageLayout = ({
   main,
   details,
   paddingTop,
   mainPaddingBottom,
-}) => {
+}: SubpageProps) => {
   return (
     <Box width="full" paddingTop={paddingTop} id="main-content">
       <Box paddingBottom={mainPaddingBottom}>
