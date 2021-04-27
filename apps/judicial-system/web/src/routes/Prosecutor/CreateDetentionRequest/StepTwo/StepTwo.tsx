@@ -19,13 +19,13 @@ import { parseTransition } from '@island.is/judicial-system-web/src/utils/format
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseQuery,
-  SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import StepTwoForm from './StepTwoForm'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface CaseData {
   case?: Case
@@ -44,6 +44,7 @@ export const StepTwo: React.FC = () => {
   )
 
   const { user } = useContext(UserContext)
+  const { sendNotification, isSendingNotification } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -66,24 +67,6 @@ export const StepTwo: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.HEADS_UP,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const courts = [
     {

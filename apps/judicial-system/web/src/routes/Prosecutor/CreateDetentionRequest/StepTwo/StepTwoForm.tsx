@@ -1,5 +1,9 @@
 import React from 'react'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   newSetAndSendDateToServer,
@@ -33,7 +37,10 @@ interface Props {
   modalVisible: boolean
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
   router: NextRouter
-  sendNotification: (id: string) => Promise<any>
+  sendNotification: (
+    id: string,
+    notificationType: NotificationType,
+  ) => Promise<any>
   isSendingNotification: boolean
 }
 
@@ -219,7 +226,10 @@ const StepTwoForm: React.FC<Props> = (props) => {
             router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
           }
           handlePrimaryButtonClick={async () => {
-            const notificationSent = await sendNotification(workingCase.id)
+            const notificationSent = await sendNotification(
+              workingCase.id,
+              NotificationType.HEADS_UP,
+            )
 
             if (notificationSent) {
               router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)

@@ -1,6 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/graphql'
+import {
+  Case,
+  NotificationType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+import {
+  SendNotificationMutation,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/graphql'
 import { CreateCaseMutation } from '../mutations'
 
 const useCase = () => {
@@ -8,6 +15,10 @@ const useCase = () => {
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
   )
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const createCase = async (theCase: Case): Promise<string | undefined> => {
     if (isCreatingCase === false) {
@@ -55,7 +66,29 @@ const useCase = () => {
     return resCase
   }
 
-  return { createCase, updateCase, isCreatingCase }
+  const sendNotification = async (
+    id: string,
+    notificationType: NotificationType,
+  ) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: notificationType,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
+
+  return {
+    updateCase,
+    createCase,
+    isCreatingCase,
+    sendNotification,
+    isSendingNotification,
+  }
 }
 
 export default useCase
