@@ -7,6 +7,11 @@ export const application = defineMessages({
     defaultMessage: 'Umsókn um innskráningarþjónustu',
     description: 'Name of the Login Service application',
   },
+  description: {
+    id: 'ls.application:application.description',
+    defaultMessage: 'Lýsing á umsókn um innskráningarþjónustu',
+    description: 'Description of the Login Service application',
+  },
 })
 
 // All sections in the application

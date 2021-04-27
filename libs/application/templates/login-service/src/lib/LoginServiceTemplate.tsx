@@ -7,9 +7,15 @@ import {
   Application,
   DefaultEvents,
   DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
+
+const States = {
+  draft: 'draft',
+  submitted: 'submitted',
+}
 
 type LoginServiceEvent =
   | { type: DefaultEvents.APPROVE }
@@ -24,15 +30,18 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<LoginServiceEvent>,
   LoginServiceEvent
 > = {
-  type: ApplicationTypes.EXAMPLE,
-  name: 'Reference application',
+  type: ApplicationTypes.LOGIN_SERVICE,
+  name: application.name,
+  translationNamespaces: [ApplicationConfigurations.LoginService.translation],
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.draft,
     states: {
-      draft: {
+      [States.draft]: {
         meta: {
-          name: application.name.defaultMessage,
+          name: States.draft,
+          title: application.name,
+          description: application.description,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -51,13 +60,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: States.submitted,
           },
         },
       },
-      inReview: {
+      [States.submitted]: {
         meta: {
-          name: 'In Review',
+          name: States.submitted,
+          title: application.name,
+          description: application.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -65,6 +76,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/LoginServiceFormInReview').then((module) =>
+                  // TODO: Rename this once we start work on it
                   Promise.resolve(module.LoginServiceFormInReview),
                 ),
               write: 'all',
@@ -78,6 +90,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    // TODO: Handle this correctly
     return Roles.APPLICANT
   },
 }
