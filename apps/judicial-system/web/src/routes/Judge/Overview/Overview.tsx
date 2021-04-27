@@ -38,6 +38,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -52,10 +53,6 @@ import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/s
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-
-interface CaseData {
-  case?: Case
-}
 
 interface CreateCustodyCourtCaseMutationResponse {
   createCustodyCourtCase: {

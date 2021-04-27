@@ -14,6 +14,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
+  CaseData,
   ProsecutorSubsections,
   ReactSelectOption,
   Sections,
@@ -40,10 +41,6 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-
-interface CaseData {
-  case?: Case
-}
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()

@@ -40,6 +40,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -54,10 +55,6 @@ import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
-
-interface CaseData {
-  case?: Case
-}
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -135,6 +132,7 @@ export const CourtRecord: React.FC = () => {
 
       return attendees
     }
+
     if (!workingCase && data?.case) {
       let theCase = data.case
 
