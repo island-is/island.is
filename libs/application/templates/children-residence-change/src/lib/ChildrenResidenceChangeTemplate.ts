@@ -116,10 +116,20 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.ParentA || Roles.ParentB,
+              id: Roles.ParentA,
               formLoader: () =>
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import(
+                  '../forms/ParentBApplicationConfirmation'
+                ).then((module) =>
+                  Promise.resolve(module.ParentBApplicationConfirmation),
                 ),
               read: 'all',
             },
