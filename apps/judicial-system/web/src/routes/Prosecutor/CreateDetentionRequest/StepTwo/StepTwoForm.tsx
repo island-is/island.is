@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Case } from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -22,6 +22,8 @@ interface Props {
   defaultProsecutor: ReactSelectOption
   courts: ReactSelectOption[]
   defaultCourt: ReactSelectOption[]
+  arrestDateIsValid: boolean
+  setArrestDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
   requestedCourtDateIsValid: boolean
   setRequestedCourtDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
   handleNextButtonClick: () => Promise<void>
@@ -36,13 +38,13 @@ const StepTwoForm: React.FC<Props> = (props) => {
     defaultProsecutor,
     courts,
     defaultCourt,
+    arrestDateIsValid,
+    setArrestDateIsValid,
     requestedCourtDateIsValid,
     setRequestedCourtDateIsValid,
     handleNextButtonClick,
     transitionLoading,
   } = props
-
-  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
 
   const { updateCase } = useCase()
 

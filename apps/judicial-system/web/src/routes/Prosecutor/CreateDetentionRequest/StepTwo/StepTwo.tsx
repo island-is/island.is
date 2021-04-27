@@ -8,7 +8,6 @@ import {
   CaseTransition,
   CaseType,
   NotificationType,
-  UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -28,7 +27,6 @@ import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -167,23 +165,6 @@ export const StepTwo: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
   const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
     TransitionCaseMutation,
   )
@@ -249,6 +230,8 @@ export const StepTwo: React.FC = () => {
             defaultProsecutor={defaultProsecutor}
             courts={courts}
             defaultCourt={defaultCourt}
+            arrestDateIsValid={arrestDateIsValid}
+            setArrestDateIsValid={setArrestDateIsValid}
             requestedCourtDateIsValid={requestedCourtDateIsValid}
             setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
             handleNextButtonClick={handleNextButtonClick}
