@@ -1,10 +1,17 @@
 import { useNamespace, useNamespaceStrict } from './useNamespace'
 
-const messages = {
+type Messages = {
+  title: 'My Title'
+  explicitlyEmpty: ''
+  maybeNully?: 'Optional'
+  nully: null
+}
+
+const messages: Messages = {
   title: 'My Title',
   explicitlyEmpty: '',
   nully: null,
-} as const
+}
 
 describe('useNamespaceStrict', () => {
   const n = useNamespaceStrict(messages)
@@ -15,6 +22,10 @@ describe('useNamespaceStrict', () => {
     const fooTyped2: 'nully' = n('nully')
     const fooTyped3: 'nully' = n('nully', null)
     const fooTyped4: 'hello' = n('nully', 'hello')
+    let fooTyped5 = n('maybeNully') // fooTyped5 should be of type `"Optional" | "maybeNully"`
+    fooTyped5 = 'Optional' // Allowed
+    // @ts-expect-error  (as long as strict mode is still turned off for `.spec.ts` files)
+    fooTyped5 = 'maybeNully' // This assignment should also be allowed
     // @ts-expect-error  (proof it doesn't return any)
     const fooErr1: RegExp = n('title')
     /* eslint-enable */
