@@ -1,5 +1,5 @@
 import React from 'react'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   newSetAndSendDateToServer,
@@ -12,8 +12,10 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { NextRouter } from 'next/router'
 
 interface Props {
   workingCase: Case
@@ -28,6 +30,11 @@ interface Props {
   setRequestedCourtDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
   handleNextButtonClick: () => Promise<void>
   transitionLoading: boolean
+  modalVisible: boolean
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+  router: NextRouter
+  sendNotification: (id: string) => Promise<any>
+  isSendingNotification: boolean
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -44,6 +51,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
     setRequestedCourtDateIsValid,
     handleNextButtonClick,
     transitionLoading,
+    modalVisible,
+    setModalVisible,
+    router,
+    sendNotification,
+    isSendingNotification,
   } = props
 
   const { updateCase } = useCase()
@@ -194,6 +206,28 @@ const StepTwoForm: React.FC<Props> = (props) => {
           nextIsLoading={transitionLoading}
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title="Viltu senda tilkynningu?"
+          text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
+            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+          } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
+          primaryButtonText="Senda tilkynningu"
+          secondaryButtonText="Halda áfram með kröfu"
+          handleClose={() => setModalVisible(false)}
+          handleSecondaryButtonClick={() =>
+            router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+          }
+          handlePrimaryButtonClick={async () => {
+            const notificationSent = await sendNotification(workingCase.id)
+
+            if (notificationSent) {
+              router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+            }
+          }}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
     </>
   )
 }

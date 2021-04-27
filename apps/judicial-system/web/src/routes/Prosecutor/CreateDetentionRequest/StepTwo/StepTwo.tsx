@@ -6,7 +6,6 @@ import {
   Case,
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
   User,
   UserRole,
@@ -15,12 +14,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  FormFooter,
-  PageLayout,
-  Modal,
-  FormContentContainer,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -236,43 +230,12 @@ export const StepTwo: React.FC = () => {
             setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
             handleNextButtonClick={handleNextButtonClick}
             transitionLoading={transitionLoading}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            router={router}
+            sendNotification={sendNotification}
+            isSendingNotification={isSendingNotification}
           />
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={
-                transitionLoading ||
-                !arrestDateIsValid ||
-                !requestedCourtDateIsValid
-              }
-              nextIsLoading={transitionLoading}
-            />
-          </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title="Viltu senda tilkynningu?"
-              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
-              primaryButtonText="Senda tilkynningu"
-              secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
-                router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-              }
-              handlePrimaryButtonClick={async () => {
-                const notificationSent = await sendNotification(workingCase.id)
-
-                if (notificationSent) {
-                  router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-                }
-              }}
-              isPrimaryButtonLoading={isSendingNotification}
-            />
-          )}
         </>
       ) : null}
     </PageLayout>
