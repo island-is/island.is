@@ -54,15 +54,15 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
         name: regulation.name,
       })}
     >
-      {timelineItems.map((item, i, arr) => {
+      {timelineItems.reverse().map((item, i, arr) => {
         const name = prettyName(item.name)
         const isCurrentVersion =
           item.date <= today &&
           item.effect === 'amend' &&
-          (i === arr.length - 1 || arr[i + 1].date > today)
+          (i === 0 || arr[i - 1].date > today)
 
         const label = interpolate(
-          i === 0 // item.effect === 'root'
+          i === arr.length - 1 // item.effect === 'root'
             ? txt('historyStart')
             : item.effect === 'amend'
             ? txt('historyChange')
@@ -77,7 +77,7 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
             (!viewingCurrent && regulation.lastAmendDate)) === item.date
 
         const futureSplitter = item.date > today &&
-          (i === 0 || arr[i - 1].date <= today) && (
+          (i === 0 || arr[i + 1].date <= today) && (
             <Text variant="small" marginBottom={1}>
               {txt('historyFutureSplitter')}:
             </Text>
@@ -86,6 +86,16 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
         return (
           <Fragment key={'history-' + i}>
             {futureSplitter}
+
+            {isCurrentVersion && (
+              <RegulationsSidebarLink
+                href={linkToRegulation(regulation.name)}
+                current={viewingCurrent}
+              >
+                {viewingCurrent && ' ▶︎ '}
+                {txt('historyCurrentVersion')}
+              </RegulationsSidebarLink>
+            )}
 
             <RegulationsSidebarLink
               href={
@@ -114,16 +124,6 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
                 {label}
               </span>
             </RegulationsSidebarLink>
-
-            {isCurrentVersion && (
-              <RegulationsSidebarLink
-                href={linkToRegulation(regulation.name)}
-                current={viewingCurrent}
-              >
-                {viewingCurrent && ' ▶︎ '}
-                {txt('historyCurrentVersion')}
-              </RegulationsSidebarLink>
-            )}
           </Fragment>
         )
       })}
