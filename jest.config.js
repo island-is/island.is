@@ -61,6 +61,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/document-provider-onboarding',
     '<rootDir>/libs/application/templates/driving-lessons',
     '<rootDir>/libs/application/templates/driving-license',
+    '<rootDir>/libs/application/templates/funding-government-projects',
     '<rootDir>/libs/application/templates/health-insurance',
     '<rootDir>/libs/application/templates/meta-application',
     '<rootDir>/libs/application/templates/parental-leave',
