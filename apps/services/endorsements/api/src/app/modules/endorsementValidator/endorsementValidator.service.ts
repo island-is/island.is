@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata.service'
+import { MinAgeValidatorService } from './validators/minAge/minAgeValidator.service'
 import { MinAgeByDateValidatorService } from './validators/minAgeByDate/minAgeByDateValidator.service'
 import { UniqueWithinTagsValidatorService } from './validators/uniqueWithinTags/uniqueWithinTagsValidator.service'
 
@@ -23,6 +24,7 @@ export interface ValidatorService {
 
 // add new validation rules here
 export enum ValidationRule {
+  MIN_AGE = 'minAge',
   MIN_AGE_AT_DATE = 'minAgeAtDate',
   UNIQUE_WITHIN_TAGS = 'uniqueWithinTags',
 }
@@ -31,11 +33,13 @@ export enum ValidationRule {
 export class EndorsementValidatorService {
   validatorTypesMap: ValidatorTypesMap
   constructor(
+    private readonly minAgeValidatorService: MinAgeValidatorService,
     private readonly minAgeByDateValidatorService: MinAgeByDateValidatorService,
     private readonly uniqueWithinTagsValidatorService: UniqueWithinTagsValidatorService,
   ) {
     // we map rules to rule validators here
     this.validatorTypesMap = {
+      [ValidationRule.MIN_AGE]: this.minAgeValidatorService,
       [ValidationRule.MIN_AGE_AT_DATE]: this.minAgeByDateValidatorService,
       [ValidationRule.UNIQUE_WITHIN_TAGS]: this
         .uniqueWithinTagsValidatorService,
