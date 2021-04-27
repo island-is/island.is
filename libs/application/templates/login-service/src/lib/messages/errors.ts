@@ -9,4 +9,9 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Skylda er að samþykkja skilmálana til að halda áfram',
     description: 'Terms agreement required error message',
   },
+  required: {
+    id: `${t}:errors.requiredDefaultMessage`,
+    defaultMessage: 'Skylda er að fylla út þennan reit',
+    description: 'Required default error message',
+  },
 })

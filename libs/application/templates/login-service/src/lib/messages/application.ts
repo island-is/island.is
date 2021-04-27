@@ -26,7 +26,7 @@ export const section = defineMessages({
   },
   applicant: {
     id: `${t}:section.applicant`,
-    defaultMessage: 'Upplýsingar',
+    defaultMessage: 'Upplýsingar um umsækjanda',
     description: 'Applicant Section Title',
   },
   technicalContact: {
