@@ -82,8 +82,8 @@ export const IntroductionSection = ({
               <Button
                 icon="arrowForward"
                 iconType="filled"
-                type="button"
                 variant="text"
+                isSpan
               >
                 {linkText}
               </Button>

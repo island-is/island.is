@@ -274,6 +274,7 @@ export const FrontpageSlider = ({
                                   variant="text"
                                   icon="arrowForward"
                                   aria-labelledby={tabTitleId}
+                                  isSpan
                                 >
                                   {gn('seeMore')}
                                 </Button>

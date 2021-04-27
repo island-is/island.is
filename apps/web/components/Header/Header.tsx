@@ -14,6 +14,7 @@ import {
   ColorSchemeContext,
   FocusableBox,
   ButtonTypes,
+  Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
@@ -87,19 +88,18 @@ export const Header: FC<HeaderProps> = ({
                       </Box>
                     )}
                     <Hidden below="lg">
-                      <FocusableBox
-                        href="//minarsidur.island.is/"
-                        marginLeft={marginLeft}
-                        borderRadius="large"
-                      >
-                        <Button
-                          colorScheme={buttonColorScheme}
-                          variant="utility"
-                          icon="person"
-                        >
-                          {t.login}
-                        </Button>
-                      </FocusableBox>
+                      <Box marginLeft={marginLeft}>
+                        <Link href="//minarsidur.island.is/" skipTab>
+                          <Button
+                            colorScheme={buttonColorScheme}
+                            variant="utility"
+                            icon="person"
+                            isSpan
+                          >
+                            {t.login}
+                          </Button>
+                        </Link>
+                      </Box>
                     </Hidden>
                     <Box
                       marginLeft={marginLeft}

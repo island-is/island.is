@@ -73,16 +73,9 @@ export const LifeEventsCardsSection = ({
         />
         <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
           <Link {...linkResolver('lifeevents')} skipTab>
-            <Text variant="h5" as="p" paddingBottom={2}>
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                type="button"
-                variant="text"
-              >
-                {linkTitle}
-              </Button>
-            </Text>
+            <Button icon="arrowForward" iconType="filled" variant="text" isSpan>
+              {linkTitle}
+            </Button>
           </Link>
         </Box>
       </Box>

@@ -93,7 +93,11 @@ export const Menu = ({
         )
       }}
       renderMyPagesButton={(button) => {
-        return <Link href="//minarsidur.island.is/">{button}</Link>
+        return (
+          <Link href="//minarsidur.island.is/" skipTab>
+            {button}
+          </Link>
+        )
       }}
       renderLanguageSwitch={(isMobile) => (
         <LanguageToggler
