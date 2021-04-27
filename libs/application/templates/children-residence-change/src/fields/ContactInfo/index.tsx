@@ -10,7 +10,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'
-import { childrenResidenceInfo } from '../../lib/utils'
+import {
+  childrenResidenceInfo,
+  getSelectedChildrenFromExternalData,
+} from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText, InfoBanner } from '../components'
 
@@ -39,7 +42,10 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const counterPartyEmailError = errors?.counterParty?.email
   const counterPartyPhoneError = errors?.counterParty?.phoneNumber
   const applicant = nationalRegistry.data
-  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+  const selectedChildren = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectedChildren,
+  )
 
   return (
     <>
@@ -47,7 +53,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
         <DescriptionText text={contactInfo.general.description} />
       </Box>
       <Text marginTop={5} variant="h4">
-        {childResidenceInfo.current.parentName}
+        {applicant.fullName}
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
@@ -86,7 +92,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
         </GridRow>
       </GridContainer>
       <Text marginTop={5} variant="h4">
-        {childResidenceInfo.future.parentName}
+        {selectedChildren[0].otherParent.fullName}
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
