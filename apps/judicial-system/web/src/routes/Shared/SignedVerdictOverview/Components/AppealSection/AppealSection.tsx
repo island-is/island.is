@@ -7,13 +7,18 @@ import {
   formatAccusedByGender,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { CaseGender } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import * as styles from './AppealSection.treat'
 
 interface Props {
   rulingDate: string
   accusedGender: CaseGender
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
   handleAccusedAppeal: () => void
   handleProsecutorAppeal: () => void
   accusedPostponedAppealDate?: string
@@ -24,6 +29,8 @@ const AppealSection: React.FC<Props> = (props) => {
   const {
     rulingDate,
     accusedGender,
+    accusedAppealDecision,
+    prosecutorAppealDecision,
     accusedPostponedAppealDate,
     prosecutorPostponedAppealDate,
     handleAccusedAppeal,
@@ -47,21 +54,22 @@ const AppealSection: React.FC<Props> = (props) => {
       </Box>
       <div className={styles.buttonContainer}>
         <AnimatePresence>
-          {!accusedPostponedAppealDate && (
-            <motion.div
-              key="prosecutorAppealButton"
-              className={styles.prosecutorAppealButton}
-              initial={false}
-              exit={{ y: 50, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Button size="small" onClick={handleAccusedAppeal}>
-                {`${capitalize(
-                  formatAccusedByGender(accusedGender),
-                )} kærir úrskurðinn`}
-              </Button>
-            </motion.div>
-          )}
+          {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+            !accusedPostponedAppealDate && (
+              <motion.div
+                key="prosecutorAppealButton"
+                className={styles.prosecutorAppealButton}
+                initial={false}
+                exit={{ y: 50, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Button size="small" onClick={handleAccusedAppeal}>
+                  {`${capitalize(
+                    formatAccusedByGender(accusedGender),
+                  )} kærir úrskurðinn`}
+                </Button>
+              </motion.div>
+            )}
         </AnimatePresence>
 
         <motion.div
@@ -86,19 +94,20 @@ const AppealSection: React.FC<Props> = (props) => {
       </div>
       <div className={styles.buttonContainer}>
         <AnimatePresence>
-          {!prosecutorPostponedAppealDate && (
-            <motion.div
-              key="prosecutorAppealButton"
-              className={styles.prosecutorAppealButton}
-              initial={false}
-              exit={{ y: 50, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Button size="small" onClick={handleProsecutorAppeal}>
-                Sækjandi kærir úrskurðinn
-              </Button>
-            </motion.div>
-          )}
+          {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+            !prosecutorPostponedAppealDate && (
+              <motion.div
+                key="prosecutorAppealButton"
+                className={styles.prosecutorAppealButton}
+                initial={false}
+                exit={{ y: 50, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Button size="small" onClick={handleProsecutorAppeal}>
+                  Sækjandi kærir úrskurðinn
+                </Button>
+              </motion.div>
+            )}
         </AnimatePresence>
 
         <motion.div

@@ -120,7 +120,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       }
                       title={localization.fields['redirectUri'].helpText}
                     />
-                    <HelpBox helpText="Users can be returned to this URL after logging out. These protocols rely upon TLS in production" />
+                    <HelpBox
+                      helpText={localization.fields['redirectUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -131,7 +133,8 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       type="submit"
                       className="client-post-logout__button__add"
                       disabled={isSubmitting}
-                      value={localization.addButton}
+                      title={localization.buttons['add'].helpText}
+                      value={localization.buttons['add'].text}
                     />
                   </div>
                 </div>
@@ -147,7 +150,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                   }`}
                 >
-                  <h3>{localization.sectionTitle1}</h3>
+                  <h3>{localization.sections['active'].title}</h3>
                   {props.uris?.map((uri: string) => {
                     return (
                       <div
@@ -160,10 +163,10 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                             type="button"
                             onClick={() => confirmRemove(uri)}
                             className="client-post-logout__container__list__button__remove"
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </div>
                       </div>
@@ -177,8 +180,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client-post-logout__button__cancel"
                       onClick={props.handleBack}
+                      title={localization.buttons['cancel'].helpText}
                     >
-                      {localization.cancelButton}
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="client-post-logout__button__container">
@@ -186,8 +190,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client-post-logout__button__save"
                       onClick={props.handleNext}
+                      title={localization.buttons['remove'].helpText}
                     >
-                      {localization.saveButton}
+                      {localization.buttons['save'].text}
                     </button>
                   </div>
                 </div>
@@ -201,7 +206,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

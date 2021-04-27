@@ -4,7 +4,7 @@ import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 import { Box } from '../Box/Box'
 import { Stack } from '../Stack/Stack'
 import { Divider } from '../Divider/Divider'
-import { BoxProps } from '../Box/Box'
+import { BoxProps } from '../Box/types'
 
 interface AccordionContextValue {
   toggledId: string

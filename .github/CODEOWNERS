@@ -30,6 +30,7 @@
 /apps/application-system/                                                                     @island-is/aranja
 /apps/reference-next-app/                                                                     @island-is/aranja
 /libs/api/domains/application/                                                                @island-is/aranja
+/libs/api/domains/translations/                                                               @island-is/aranja
 /libs/application/core/                                                                       @island-is/aranja
 /libs/application/data-providers/                                                             @island-is/aranja
 /libs/application/graphql/                                                                    @island-is/aranja

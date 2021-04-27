@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
@@ -29,6 +30,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: 'Children residence change application',
+  readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
@@ -37,6 +39,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentA,
@@ -66,6 +69,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
           },
@@ -91,6 +95,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -104,6 +109,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -114,6 +120,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
                 ),
+              read: 'all',
             },
           ],
         },

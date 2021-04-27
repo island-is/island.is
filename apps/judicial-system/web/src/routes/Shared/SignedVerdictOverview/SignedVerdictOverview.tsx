@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -209,6 +210,20 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const canCaseFilesBeOpened = () => {
+    if (
+      user?.role === UserRole.PROSECUTOR ||
+      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      !!workingCase?.accusedPostponedAppealDate ||
+      !!workingCase?.prosecutorPostponedAppealDate
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -348,7 +363,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {!workingCase.isCaseAppealable &&
+            {workingCase.isCaseAppealable &&
               workingCase.rulingDate &&
               workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
@@ -358,6 +373,10 @@ export const SignedVerdictOverview: React.FC = () => {
                     <AppealSection
                       rulingDate={workingCase.rulingDate}
                       accusedGender={workingCase.accusedGender}
+                      accusedAppealDecision={workingCase.accusedAppealDecision}
+                      prosecutorAppealDecision={
+                        workingCase.prosecutorAppealDecision
+                      }
                       accusedPostponedAppealDate={
                         workingCase.accusedPostponedAppealDate
                       }
@@ -386,7 +405,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files || []}
-                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                      canOpenFiles={canCaseFilesBeOpened()}
                     />
                   </AccordionItem>
                 )}

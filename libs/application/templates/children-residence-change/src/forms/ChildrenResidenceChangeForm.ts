@@ -11,16 +11,12 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  buildTextField,
-  Application,
   Comparators,
 } from '@island.is/application/core'
-import {
-  CRCApplication,
-  DataProviderTypes,
-} from '@island.is/application/templates/children-residence-change'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
+import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -50,6 +46,18 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   label: 'Nei',
                 },
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'applicantMock',
+          title: 'Umsækjandi',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
+            buildCustomField({
+              id: 'mockData.applicant',
+              title: 'Mock Umsækjandi',
+              component: 'ApplicantMock',
             }),
           ],
         }),
@@ -100,8 +108,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  id: 'nationalRegistry',
+                  type: 'DataProviderTypes.NationalRegistry',
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
@@ -110,12 +118,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   type: '',
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: 'DataProviderTypes.NationalRegistry',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
@@ -145,7 +147,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: DataProviderTypes.MOCK_NationalRegistry,
+                  type: DataProviderTypes.MockNationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
@@ -156,10 +158,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
+                  id: 'userProfile',
+                  type: DataProviderTypes.UserProfile,
+                  title: '',
+                  subTitle: '',
                 }),
               ],
             }),
@@ -180,32 +182,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'contact',
           title: m.contactInfo.general.sectionTitle,
           children: [
-            buildMultiField({
+            buildCustomField({
               id: 'contactInfo',
               title: m.contactInfo.general.pageTitle,
-              description: m.contactInfo.general.description,
-              children: [
-                buildTextField({
-                  id: 'parentA.email',
-                  title: m.contactInfo.inputs.emailLabel,
-                  variant: 'email',
-                  backgroundColor: 'blue',
-                  defaultValue: ({
-                    externalData: { userProfile },
-                  }: CRCApplication) => userProfile?.data?.email || '',
-                }),
-                buildTextField({
-                  id: 'parentA.phoneNumber',
-                  title: m.contactInfo.inputs.phoneNumberLabel,
-                  variant: 'tel',
-                  format: '###-####',
-                  backgroundColor: 'blue',
-                  defaultValue: ({
-                    externalData: { userProfile },
-                  }: CRCApplication) =>
-                    userProfile?.data?.mobilePhoneNumber || '',
-                }),
-              ],
+              childInputIds: contactInfoIds,
+              component: 'ContactInfo',
             }),
           ],
         }),

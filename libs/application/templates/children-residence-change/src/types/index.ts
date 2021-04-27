@@ -4,7 +4,9 @@ import { answersSchema } from '../lib/dataSchema'
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 type NestedType<T> = {
-  [K in keyof T]: T[K] extends object ? NestedType<T[K]> : string
+  [K in keyof T]: T[K] extends Record<string, unknown>
+    ? NestedType<T[K]>
+    : string
 }
 
 export interface Address {
@@ -53,6 +55,7 @@ interface MockChildren extends PersonResidenceChange {
   otherParent: number
 }
 interface MockData {
+  applicant: PersonResidenceChange
   parents: PersonResidenceChange[]
   children: MockChildren[]
 }
@@ -75,7 +78,7 @@ export type CRCFieldBaseProps = Override<
 >
 
 export enum DataProviderTypes {
-  MOCK_NationalRegistry = 'MockNationalRegistryProvider',
+  MockNationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
 }

@@ -6,6 +6,7 @@ import {
   ValidAnswers,
   formatAndParseAsHTML,
   buildFieldOptions,
+  RecordObject,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -31,9 +32,12 @@ import {
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
 
-import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// TODO: Bring back payment calculation info, once we have an api
+// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import {
@@ -46,7 +50,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../../types/schema'
-
 import { Period } from '../../types'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
@@ -55,15 +58,16 @@ interface ReviewScreenProps {
   application: Application
   goToScreen?: (id: string) => void
   editable?: boolean
+  errors?: RecordObject
 }
 
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
   editable = true,
+  errors,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
-
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -117,23 +121,38 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
+  const [
+    statefulSelfEmployed,
+    setStatefulSelfEmployed,
+  ] = useState<ValidAnswers>(
+    getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    ) as ValidAnswers,
+  )
+
   const dob = getExpectedDateOfBirth(application)
-  const { data, error, loading } = useQuery(getEstimatedPayments, {
-    variables: {
-      input: {
-        dateOfBirth: dob,
-        period: [
-          {
-            from: '2021-01-01',
-            to: '2021-01-01',
-            ratio: 100,
-            approved: true,
-            paid: true,
-          },
-        ],
-      },
-    },
-  })
+
+  /* TODO: Bring back payment calculation info, once we have an api
+     https://app.asana.com/0/1182378413629561/1200214178491335/f
+  */
+  // const { data, error, loading } = useQuery(getEstimatedPayments, {
+  //   variables: {
+  //     input: {
+  //       dateOfBirth: dob,
+  //       period: [
+  //         {
+  //           from: '2021-01-01',
+  //           to: '2021-01-01',
+  //           ratio: 100,
+  //           approved: true,
+  //           paid: true,
+  //         },
+  //       ],
+  //     },
+  //   },
+  // })
+
   if (!dob) {
     return null
   }
@@ -448,31 +467,79 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </Box>
           </AccordionItem>
+
           <AccordionItem
             id="id_1"
             label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
+            <Text variant="h5" marginTop={1} marginBottom={2}>
+              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
+            </Text>
+
             {editable ? (
-              <Box paddingY={4}>
-                <Input
-                  id="employer.email"
-                  name="employer.email"
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  ref={register}
-                />
-              </Box>
+              <RadioController
+                id="employer.isSelfEmployed"
+                disabled={false}
+                name="employer.isSelfEmployed"
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    'employer.isSelfEmployed',
+                  ) as string[]
+                }
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStatefulSelfEmployed(s as ValidAnswers)
+                }}
+              />
             ) : (
-              <Text paddingY={4}>
+              <Text>
                 {
                   getValueViaPath(
                     application.answers,
-                    'employer.email',
+                    'employer.isSelfEmployed',
                   ) as string[]
                 }
               </Text>
+            )}
+            {statefulSelfEmployed === NO && (
+              <>
+                {editable ? (
+                  <Box paddingY={4}>
+                    <Input
+                      id="employer.email"
+                      name="employer.email"
+                      label={formatMessage(
+                        parentalLeaveFormMessages.employer.email,
+                      )}
+                      ref={register}
+                    />
+                  </Box>
+                ) : (
+                  <Text paddingY={4}>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'employer.email',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </>
             )}
           </AccordionItem>
 
@@ -519,7 +586,10 @@ const Review: FC<ReviewScreenProps> = ({
             </Box>
           </AccordionItem>
 
-          <AccordionItem
+          {/* TODO: Bring back payment calculation info, once we have an api
+              https://app.asana.com/0/1182378413629561/1200214178491335/f
+          */}
+          {/* <AccordionItem
             id="id_4"
             label={formatMessage(
               parentalLeaveFormMessages.paymentPlan.subSection,
@@ -534,7 +604,7 @@ const Review: FC<ReviewScreenProps> = ({
                 />
               )}
             </Box>
-          </AccordionItem>
+          </AccordionItem> */}
 
           <AccordionItem
             id="id_4"
@@ -544,7 +614,7 @@ const Review: FC<ReviewScreenProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <Box marginTop={1} marginBottom={2} marginLeft={4}>
+              <Box marginTop={1} marginBottom={2}>
                 <Text variant="h5">
                   {formatMessage(
                     parentalLeaveFormMessages.shareInformation.title,
@@ -557,6 +627,10 @@ const Review: FC<ReviewScreenProps> = ({
                   id="shareInformationWithOtherParent"
                   disabled={false}
                   name="shareInformationWithOtherParent"
+                  error={
+                    (errors as RecordObject<string> | undefined)
+                      ?.shareInformationWithOtherParent
+                  }
                   defaultValue={
                     getValueViaPath(
                       application.answers,

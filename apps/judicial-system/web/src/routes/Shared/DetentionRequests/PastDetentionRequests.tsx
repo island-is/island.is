@@ -125,14 +125,18 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
               rulingDate: string
               custodyEndDate: string
               courtEndTime: string
+              state: CaseState
             }
           }
         }) => {
           const rulingDate = row.row.original.rulingDate
           const custodyEndDate = row.row.original.custodyEndDate
           const courtEndDate = row.row.original.courtEndTime
+          const state = row.row.original.state
 
-          if (rulingDate) {
+          if (state === CaseState.REJECTED) {
+            return null
+          } else if (rulingDate) {
             return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
               parseISO(custodyEndDate),
               'd.M.y',

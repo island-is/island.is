@@ -9,28 +9,13 @@ import { PersonResidenceChange } from '@island.is/application/templates/children
 import { NationalRegistry, DataProviderTypes, CRCApplication } from '../types'
 
 export class MockNationalRegistryProvider extends BasicDataProvider {
-  readonly type = DataProviderTypes.MOCK_NationalRegistry
+  readonly type = DataProviderTypes.MockNationalRegistry
 
   async provide(application: Application): Promise<NationalRegistry> {
-    const query = `
-      query NationalRegistryUserQuery {
-        nationalRegistryUser {
-          nationalId
-          fullName
-          address {
-            code
-            postalCode
-            city
-            streetAddress
-            lastUpdated
-          }
-        }
-      }
-    `
     const crcApplication = (application as unknown) as CRCApplication
     const {
       answers: {
-        mockData: { parents, children },
+        mockData: { parents, children, applicant },
       },
     } = crcApplication
     if (!children) {
@@ -41,30 +26,19 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
       livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
       otherParent: parents[child.otherParent],
     }))
-    return this.useGraphqlGateway(query)
-      .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors) {
-          throw new Error('Error from NationalRegistry')
-        }
 
-        const returnObject: NationalRegistry = {
-          fullName: response.data.nationalRegistryUser.fullName,
-          nationalId: response.data.nationalRegistryUser.nationalId,
-          address: {
-            city: response.data.nationalRegistryUser.address.city,
-            postalCode: response.data.nationalRegistryUser.address.postalCode,
-            streetName:
-              response.data.nationalRegistryUser.address.streetAddress,
-          },
-          children: childrenArray,
-        }
+    const returnObject: NationalRegistry = {
+      fullName: applicant.fullName,
+      nationalId: applicant.nationalId,
+      address: {
+        city: applicant.address.city,
+        postalCode: applicant.address.postalCode,
+        streetName: applicant.address.streetName,
+      },
+      children: childrenArray,
+    }
 
-        return Promise.resolve(returnObject)
-      })
-      .catch(() => {
-        throw new Error('Error from NationalRegistry')
-      })
+    return Promise.resolve(returnObject)
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
