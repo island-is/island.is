@@ -1866,6 +1866,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/funding-government-projects"
+          ],
           "options": {
             "jestConfig": "libs/application/templates/funding-government-projects/jest.config.js",
             "passWithNoTests": true
