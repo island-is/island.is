@@ -23,6 +23,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
+import getConfig from 'next/config'
 
 interface NavigationData {
   title: string
@@ -50,6 +51,8 @@ interface HeaderProps {
 
 export const lightThemes = ['digital_iceland']
 
+const { publicRuntimeConfig } = getConfig()
+
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -72,7 +75,8 @@ const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
 
 const OrganizationChatPanel = ({ slug }: { slug: string }) => {
   // remove when organization chat-bot is ready for release
-  if (process.env.NODE_ENV !== 'development') {
+  const { disableOrganizationChatbot } = publicRuntimeConfig
+  if (disableOrganizationChatbot) {
     return null
   }
 
