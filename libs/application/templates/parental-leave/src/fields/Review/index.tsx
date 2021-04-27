@@ -7,7 +7,6 @@ import {
   formatAndParseAsHTML,
   buildFieldOptions,
   RecordObject,
-  FormValue,
 } from '@island.is/application/core'
 import {
   Accordion,
