@@ -4,6 +4,7 @@ import {
   Form,
   FormModes,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import {
   section,
@@ -25,10 +26,10 @@ export const LoginServiceForm: Form = buildForm({
       id: 'terms',
       title: section.terms,
       children: [
-        buildDescriptionField({
-          id: 'placeholderDescription',
+        buildCustomField({
+          id: 'termsAgreement',
           title: terms.general.pageTitle,
-          description: 'Umsókn',
+          component: 'TermsOfAgreement',
         }),
       ],
     }),
