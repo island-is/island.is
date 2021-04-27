@@ -211,7 +211,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.BOLD_FONT,
     PdfConstants.SUB_HEADER_FONT_SIZE,
     PdfConstants.NORMAL_LINE_GAP,
-    'Um réttaráhrif þess að barn hafi lögheimili hjá foreldri með sameiginlega forsjá:',
+    'Um réttaráhrif þess að barn hafi lögheimili hjá foreldri með sameiginlega forsjá:',
   )
 
   addToDoc(
