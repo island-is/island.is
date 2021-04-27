@@ -66,6 +66,12 @@ module.exports = {
             },
           },
           {
+            type: 'minAge',
+            value: {
+              age: 18,
+            },
+          },
+          {
             type: 'uniqueWithinTags',
             value: {
               tags: ['partyLetter2021'],
