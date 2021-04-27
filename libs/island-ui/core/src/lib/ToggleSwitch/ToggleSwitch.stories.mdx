@@ -22,29 +22,29 @@ All three variant share some basic props, but each has a few props unique to it.
       checked={false}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
     />
-
     <ToggleSwitchCheckbox
       label="Large version (ckecked)"
       large={true}
       checked={true}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
     />
-
     <ToggleSwitchCheckbox
-      label={<>Full-width version <strog>(disabled)</strong></>}
+      label={
+        <>
+          Full-width version <strong>(disabled)</strong>
+        </>
+      }
       wide={true}
       disabled={true}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
     />
-
     <div>In rare instances you may need to hide the label:</div>
-
+    <br />
     <ToggleSwitchCheckbox
       label="The label is still required!"
       hiddenLabel={true}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
     />
-
   </Story>
 </Canvas>
 
@@ -82,14 +82,12 @@ if `expander` props is set. It accepts an optional `aria-controls` value.
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
       aria-controls="remote-content-area"
     />
-
     <ToggleSwitchButton
       label="Basic aria-expanded Switch"
       expander={true}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
       aria-controls="remote-content-area"
     />
-
   </Story>
 </Canvas>
 
@@ -115,7 +113,6 @@ cancel the browser's default click behavior.
         preventDefault()
       }}
     />
-
     <ToggleSwitchLink
       label="Simple Toggle Switch link"
       linkText={'Switch the ToggleSwitch back on'}
@@ -126,7 +123,6 @@ cancel the browser's default click behavior.
         preventDefault()
       }}
     />
-
   </Story>
 </Canvas>
 
