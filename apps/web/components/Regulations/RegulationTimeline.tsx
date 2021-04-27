@@ -54,12 +54,16 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
         name: regulation.name,
       })}
     >
+      <RegulationsSidebarLink
+        href={linkToRegulation(regulation.name)}
+        current={viewingCurrent}
+      >
+        {viewingCurrent && ' ▶︎ '}
+        {txt('historyCurrentVersion')}
+      </RegulationsSidebarLink>
+
       {timelineItems.reverse().map((item, i, arr) => {
         const name = prettyName(item.name)
-        const isCurrentVersion =
-          item.date <= today &&
-          item.effect === 'amend' &&
-          (i === 0 || arr[i - 1].date > today)
 
         const label = interpolate(
           i === arr.length - 1 // item.effect === 'root'
@@ -86,16 +90,6 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
         return (
           <Fragment key={'history-' + i}>
             {futureSplitter}
-
-            {isCurrentVersion && (
-              <RegulationsSidebarLink
-                href={linkToRegulation(regulation.name)}
-                current={viewingCurrent}
-              >
-                {viewingCurrent && ' ▶︎ '}
-                {txt('historyCurrentVersion')}
-              </RegulationsSidebarLink>
-            )}
 
             <RegulationsSidebarLink
               href={
