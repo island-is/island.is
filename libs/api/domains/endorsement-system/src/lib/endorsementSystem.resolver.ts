@@ -7,6 +7,7 @@ import { FindEndorsementListInput } from './dto/findEndorsementList.input'
 import { EndorsementList } from './models/endorsementList.model'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
+import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver('EndorsementSystemResolver')
@@ -30,6 +31,16 @@ export class EndorsementSystemResolver {
     return await this.endorsementSystemService.endorsementControllerCreate(
       input,
     )
+  }
+
+  @Mutation(() => [Endorsement])
+  async endorsementSystemBulkEndorseList(
+    @Args('input') { listId, nationalIds }: BulkEndorseListInput,
+  ): Promise<Endorsement[]> {
+    return await this.endorsementSystemService.endorsementControllerBulkCreate({
+      listId,
+      bulkEndorsementDto: { nationalIds },
+    })
   }
 
   @Mutation(() => Boolean)
