@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
-import { IdpProviderService } from './../../../services/IdpProviderService'
-import { IdpProvider } from './../../../entities/models/IdpProvider.model'
+import { IdpProviderService } from '../../../services/IdpProviderService'
+import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
@@ -90,9 +90,12 @@ const IdpProvidersList: React.FC = () => {
             <div className="idp-providers-list__container__options">
               <div className="idp-providers-list__container__options__button">
                 <Link href={'/admin/idp-provider'}>
-                  <a className="idp-providers-list__button__new">
+                  <a
+                    className="idp-providers-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    {localization.createNewItem}
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
@@ -110,8 +113,9 @@ const IdpProvidersList: React.FC = () => {
                   <button
                     type="submit"
                     className="idp-providers-list__button__search"
+                    title={localization.buttons['search'].helpText}
                   >
-                    {localization.searchButton}
+                    {localization.buttons['search'].text}
                   </button>
                 </div>
               </form>
@@ -142,10 +146,10 @@ const IdpProvidersList: React.FC = () => {
                             <button
                               type="button"
                               className={`idp-providers-list__button__edit`}
-                              title={localization.editButton}
+                              title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
-                              <span>{localization.editButton}</span>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
                           </Link>
                         </td>
@@ -153,12 +157,12 @@ const IdpProvidersList: React.FC = () => {
                           <button
                             type="button"
                             className={`idp-providers-list__button__delete`}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                             onClick={() => confirmDelete(idpItem.name)}
                           >
                             <i className="icon__delete"></i>
 
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -179,7 +183,7 @@ const IdpProvidersList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={deleteIdpProvider}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

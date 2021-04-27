@@ -56,6 +56,7 @@ import {
   SearchableContentTypes,
   SearchableTags,
   AdgerdirPage,
+  SubArticle,
   GetSearchResultsTotalQuery,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
@@ -194,15 +195,30 @@ const Search: Screen<CategoryProps> = ({
       labels.push(item.organization[0].title)
     }
 
+    if (item.parent) {
+      if (item.parent.group) {
+        labels.push(item.parent.group.title)
+      }
+
+      if (item.parent.organization?.length) {
+        labels.push(item.parent.organization[0].title)
+      }
+    }
+
     return labels
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News & AdgerdirPage
+    Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
   >).map((item) => ({
     title: item.title,
-    description: item.intro ?? item.seoDescription ?? item.description,
-    link: linkResolver(typenameResolver(item.__typename), [item.slug]),
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ??
+      item.seoDescription ??
+      item.description ??
+      item.parent.intro,
+    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -410,27 +426,30 @@ const Search: Screen<CategoryProps> = ({
           )}
         </Stack>
         <Stack space={2}>
-          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
-            const tags: Array<CardTagsProps> = []
+          {filteredItems.map(
+            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+              const tags: Array<CardTagsProps> = []
 
-            labels.forEach((label) => {
-              tags.push({
-                title: label,
-                tagProps: {
-                  outlined: true,
-                },
+              labels.forEach((label) => {
+                tags.push({
+                  title: label,
+                  tagProps: {
+                    outlined: true,
+                  },
+                })
               })
-            })
 
-            return (
-              <Card
-                key={index}
-                tags={tags}
-                image={thumbnail ? thumbnail : image}
-                {...rest}
-              />
-            )
-          })}{' '}
+              return (
+                <Card
+                  key={index}
+                  tags={tags}
+                  image={thumbnail ? thumbnail : image}
+                  subTitle={parentTitle}
+                  {...rest}
+                />
+              )
+            },
+          )}{' '}
           {totalSearchResults > 0 && (
             <Box paddingTop={8}>
               <Pagination
@@ -480,6 +499,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAboutPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
+      'webSubArticle' as SearchableContentTypes,
     ]
   }
 

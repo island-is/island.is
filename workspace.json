@@ -1915,6 +1915,35 @@
         }
       }
     },
+    "application-templates-login-service": {
+      "root": "libs/application/templates/login-service",
+      "sourceRoot": "libs/application/templates/login-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/login-service/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/login-service"],
+          "options": {
+            "jestConfig": "libs/application/templates/login-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/login-service/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",
@@ -3498,8 +3527,29 @@
             "outputPath": "dist/apps/icelandic-names-registry/backend",
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
             "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
-            "assets": ["apps/icelandic-names-registry/backend/src/assets"],
             "webpackConfig": "apps/icelandic-names-registry/backend/webpack.config.js",
+            "assets": [
+              {
+                "glob": "*sequelize*",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              },
+              {
+                "glob": "migrations/**",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              },
+              {
+                "glob": "seeders/**",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              },
+              {
+                "glob": "data/**",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
+              }
+            ],
             "maxWorkers": 2
           },
           "configurations": {
