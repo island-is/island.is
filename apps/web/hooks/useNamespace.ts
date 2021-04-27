@@ -2,22 +2,15 @@
 type Nully = undefined | null
 type NamespaceValues = string | ReadonlyArray<string>
 export type NamespaceMessages = Readonly<
-  Record<string, NamespaceValues | undefined>
+  Record<string, NamespaceValues | undefined | null>
 >
 
-type RetVal<Value, Fallback> = Value extends Nully
-  ? Fallback
-  : Value extends Exclude<Value, Nully>
-  ? Value
-  : Exclude<Value, Nully> | Fallback
-
 export type NamespaceGetter<M extends NamespaceMessages> = {
-  <K extends keyof M>(key: K, fallback?: Nully): RetVal<M[K], K>
-  <K extends keyof M, F extends NamespaceValues>(key: K, fallback: F): RetVal<
-    M[K],
-    F
-  >
-
+  <K extends keyof M>(key: K, fallback?: Nully): M[K] extends Nully ? K : M[K]
+  <K extends keyof M, F extends NamespaceValues>(
+    key: K,
+    fallback: F,
+  ): M[K] extends Nully ? F : M[K]
   /** @deprecated
    * Sloppy fallback version (based on the assumption that this is somehow desirable/practical)
    */

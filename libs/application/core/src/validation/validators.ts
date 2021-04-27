@@ -154,19 +154,22 @@ export function validateAnswers({
 export const buildValidationError = (
   path: string,
   index?: number,
-): ((message: StaticText, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
+): ((
+  message: StaticText,
+  field?: string,
+  values?: RecordObject<any>,
+) => AnswerValidationError) => (message, field, values) => {
   if (field && isNumber(index)) {
     return {
       message,
       path: `${path}[${index}].${field}`,
+      values,
     }
   }
 
   return {
     message,
     path,
+    values,
   }
 }

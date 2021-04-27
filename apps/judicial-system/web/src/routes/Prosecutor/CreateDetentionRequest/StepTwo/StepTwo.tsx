@@ -1,45 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ValueType } from 'react-select/src/types'
 import { useMutation, useQuery } from '@apollo/client'
 
-import { Text, Box, Tooltip, Select, Option } from '@island.is/island-ui/core'
+import { Option } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
-  UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
   ProsecutorSubsections,
-  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  setAndSendToServer,
-  newSetAndSendDateToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  FormFooter,
-  PageLayout,
-  Modal,
-  FormContentContainer,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseQuery,
-  SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import StepTwoForm from './StepTwoForm'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface CaseData {
   case?: Case
@@ -58,6 +44,7 @@ export const StepTwo: React.FC = () => {
   )
 
   const { user } = useContext(UserContext)
+  const { sendNotification, isSendingNotification } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -69,23 +56,17 @@ export const StepTwo: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
+  useEffect(() => {
+    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
+  }, [])
 
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.HEADS_UP,
-        },
-      },
-    })
+  useEffect(() => {
+    if (!workingCase && data) {
+      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
 
-    return data?.sendNotification?.notificationSent
-  }
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
 
   const courts = [
     {
@@ -161,35 +142,6 @@ export const StepTwo: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
-    if (!workingCase && data) {
-      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
-
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
   const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
     TransitionCaseMutation,
   )
@@ -247,179 +199,25 @@ export const StepTwo: React.FC = () => {
       caseType={workingCase?.type}
     >
       {workingCase ? (
-        <>
-          <FormContentContainer>
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                Óskir um fyrirtöku
-              </Text>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Ákærandi{' '}
-                  <Box component="span" data-testid="prosecutor-tooltip">
-                    <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
-                  </Box>
-                </Text>
-              </Box>
-              <Select
-                name="prosecutor"
-                label="Veldu saksóknara"
-                defaultValue={defaultProsecutor}
-                options={prosecutors}
-                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                  setAndSendToServer(
-                    'prosecutorId',
-                    (selectedOption as ReactSelectOption).value.toString(),
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-                required
-              />
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Dómstóll
-                </Text>
-              </Box>
-              <Select
-                name="court"
-                label="Veldu dómstól"
-                defaultValue={{
-                  label:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].label
-                      : courts[0].label,
-                  value:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].value
-                      : courts[0].value,
-                }}
-                options={courts}
-                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                  setAndSendToServer(
-                    'court',
-                    (selectedOption as ReactSelectOption).label,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
-            {!workingCase.parentCase && (
-              <Box component="section" marginBottom={5}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tími handtöku
-                  </Text>
-                </Box>
-                <DateTime
-                  name="arrestDate"
-                  selectedDate={
-                    workingCase.arrestDate
-                      ? new Date(workingCase.arrestDate)
-                      : undefined
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'arrestDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setArrestDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                />
-              </Box>
-            )}
-            <Box component="section" marginBottom={10}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Ósk um fyrirtökudag og tíma{' '}
-                  <Box
-                    data-testid="requested-court-date-tooltip"
-                    component="span"
-                  >
-                    <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
-                  </Box>
-                </Text>
-              </Box>
-              <DateTime
-                name="reqCourtDate"
-                selectedDate={
-                  workingCase.requestedCourtDate
-                    ? new Date(workingCase.requestedCourtDate)
-                    : undefined
-                }
-                onChange={(date: Date | undefined, valid: boolean) =>
-                  newSetAndSendDateToServer(
-                    'requestedCourtDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    setRequestedCourtDateIsValid,
-                    updateCase,
-                  )
-                }
-                timeLabel="Ósk um tíma (kk:mm)"
-                locked={workingCase.courtDate !== null}
-                minDate={new Date()}
-                required
-              />
-              {workingCase.courtDate && (
-                <Box marginTop={1}>
-                  <Text variant="eyebrow">
-                    Fyrirtökudegi og tíma hefur verið úthlutað
-                  </Text>
-                </Box>
-              )}
-            </Box>
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={async () => await handleNextButtonClick()}
-              nextIsDisabled={
-                transitionLoading ||
-                !arrestDateIsValid ||
-                !requestedCourtDateIsValid
-              }
-              nextIsLoading={transitionLoading}
-            />
-          </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title="Viltu senda tilkynningu?"
-              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
-              primaryButtonText="Senda tilkynningu"
-              secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
-                router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-              }
-              handlePrimaryButtonClick={async () => {
-                const notificationSent = await sendNotification(workingCase.id)
-
-                if (notificationSent) {
-                  router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-                }
-              }}
-              isPrimaryButtonLoading={isSendingNotification}
-            />
-          )}
-        </>
+        <StepTwoForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          prosecutors={prosecutors}
+          defaultProsecutor={defaultProsecutor}
+          courts={courts}
+          defaultCourt={defaultCourt}
+          arrestDateIsValid={arrestDateIsValid}
+          setArrestDateIsValid={setArrestDateIsValid}
+          requestedCourtDateIsValid={requestedCourtDateIsValid}
+          setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
+          handleNextButtonClick={handleNextButtonClick}
+          transitionLoading={transitionLoading}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          router={router}
+          sendNotification={sendNotification}
+          isSendingNotification={isSendingNotification}
+        />
       ) : null}
     </PageLayout>
   )

@@ -2,7 +2,7 @@ import React from 'react'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import ResourceListDisplay from './ListDisplay'
+import ResourceListDisplay from './ResourceListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import { ApiScope } from '../../../entities/models/api-scope.model'
 import ConfirmModal from '../../common/ConfirmModal'
@@ -78,7 +78,8 @@ const ApiScopeList: React.FC = () => {
       <ResourceListDisplay
         list={apiScopes}
         header={localization.title}
-        linkHeader={localization.createNewItem}
+        linkHeaderHelp={localization.buttons['new'].helpText}
+        linkHeader={localization.buttons['new'].text}
         createUri={'/resource/api-scope'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
@@ -90,7 +91,7 @@ const ApiScopeList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )
