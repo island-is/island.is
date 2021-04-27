@@ -31,6 +31,9 @@ export class EndorsementListController {
     return await this.endorsementListService.findListsByTag(tag)
   }
 
+  /**
+   * This exists so we can return all endorsements for user across all lists
+   */
   @Get('/endorsements')
   async findEndorsements(): Promise<Endorsement[]> {
     // TODO: Add auth here

@@ -19,13 +19,21 @@ export class EndorsementController {
   constructor(private readonly endorsementService: EndorsementService) {}
 
   @Get()
-  async findOne(
+  async findAll(
+    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+  ): Promise<Endorsement[]> {
+    // TODO: Add auth here
+    return await this.endorsementService.findEndorsements({ listId })
+  }
+
+  @Get('/exists')
+  async findByUser(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<Endorsement> {
     // TODO: Add auth here
     return await this.endorsementService.findSingleEndorsementByNationalId({
-      nationalId: '0000000000', // TODO: Replace this with requesting user
       listId,
+      nationalId: '0000000000',
     })
   }
 

@@ -19,7 +19,16 @@ export class EndorsementSystemResolver {
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
   ): Promise<Endorsement> {
-    return await this.endorsementSystemService.endorsementControllerFindOne(
+    return await this.endorsementSystemService.endorsementControllerFindByUser(
+      input,
+    )
+  }
+
+  @Query(() => [Endorsement], { nullable: true })
+  async endorsementSystemGetEndorsements(
+    @Args('input') input: FindEndorsementListInput,
+  ): Promise<Endorsement[]> {
+    return await this.endorsementSystemService.endorsementControllerFindAll(
       input,
     )
   }
