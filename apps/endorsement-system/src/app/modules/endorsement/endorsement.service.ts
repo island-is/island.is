@@ -13,7 +13,7 @@ import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMe
 import { EndorsementValidatorService } from '../endorsementValidator/endorsementValidator.service'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 
-interface EndorsementListInput {
+interface EndorsementInput {
   listId: string
   nationalId: string
 }
@@ -30,6 +30,11 @@ interface ValidateEndorsementInput {
   nationalId: string
   metadata: EndorsementMetadata
 }
+
+interface FindEndorsementsInput {
+  listId: string
+}
+
 @Injectable()
 export class EndorsementService {
   constructor(
@@ -103,10 +108,25 @@ export class EndorsementService {
     return true
   }
 
+  async findEndorsements({ listId }: FindEndorsementsInput) {
+    this.logger.debug(`Finding endorsements by list id "${listId}"`)
+
+    const result = await this.endorsementListModel.findOne({
+      where: { id: listId },
+      include: [Endorsement],
+    })
+
+    if (!result || !result.endorsements) {
+      throw new NotFoundException(["This endorsement list doesn't exist"])
+    }
+
+    return result.endorsements
+  }
+
   async findSingleEndorsementByNationalId({
     nationalId,
     listId,
-  }: EndorsementListInput) {
+  }: EndorsementInput) {
     this.logger.debug(
       `Finding endorsement in list "${listId}" by nationalId "${nationalId}"`,
     )
@@ -122,7 +142,7 @@ export class EndorsementService {
     return result
   }
 
-  async createEndorsementOnList({ listId, nationalId }: EndorsementListInput) {
+  async createEndorsementOnList({ listId, nationalId }: EndorsementInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // parent list contains rules and metadata field
@@ -200,10 +220,7 @@ export class EndorsementService {
     })
   }
 
-  async deleteFromListByNationalId({
-    nationalId,
-    listId,
-  }: EndorsementListInput) {
+  async deleteFromListByNationalId({ nationalId, listId }: EndorsementInput) {
     this.logger.debug(
       `Removing endorsement from list "${listId}" by nationalId "${nationalId}"`,
     )
