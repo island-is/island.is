@@ -251,6 +251,8 @@ export const StepTwo: React.FC = () => {
             defaultCourt={defaultCourt}
             requestedCourtDateIsValid={requestedCourtDateIsValid}
             setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
+            handleNextButtonClick={handleNextButtonClick}
+            transitionLoading={transitionLoading}
           />
           <FormContentContainer isFooter>
             <FormFooter

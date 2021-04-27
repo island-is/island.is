@@ -11,7 +11,9 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   DateTime,
   FormContentContainer,
+  FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
@@ -22,6 +24,8 @@ interface Props {
   defaultCourt: ReactSelectOption[]
   requestedCourtDateIsValid: boolean
   setRequestedCourtDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
+  handleNextButtonClick: () => Promise<void>
+  transitionLoading: boolean
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -34,6 +38,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
     defaultCourt,
     requestedCourtDateIsValid,
     setRequestedCourtDateIsValid,
+    handleNextButtonClick,
+    transitionLoading,
   } = props
 
   const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
@@ -173,6 +179,18 @@ const StepTwoForm: React.FC<Props> = (props) => {
             </Box>
           )}
         </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={async () => await handleNextButtonClick()}
+          nextIsDisabled={
+            transitionLoading ||
+            !arrestDateIsValid ||
+            !requestedCourtDateIsValid
+          }
+          nextIsLoading={transitionLoading}
+        />
       </FormContentContainer>
     </>
   )
