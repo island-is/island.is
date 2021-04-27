@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
+import { As } from 'reakit-utils/types'
 import cn from 'classnames'
 
-import { BoxProps } from '../Box/types'
 import { Box } from '../Box/Box'
 import * as styles from './Button.treat'
 import { Icon } from '../IconRC/Icon'
@@ -64,7 +64,7 @@ export interface ButtonProps {
   nowrap?: boolean
   title?: string
   inline?: boolean
-  as?: BoxProps['as']
+  as?: As
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -85,7 +85,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       loading,
       nowrap,
       inline,
-      as = variant === 'text' ? 'span' : 'button',
+      as,
       ...buttonProps
     },
     ref,
@@ -93,7 +93,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     return (
       <Box
         component={ReaButton}
-        as={as}
+        as={as || variant === 'text' ? 'span' : 'button'}
         ref={ref}
         {...(as !== 'span' && { type })}
         className={cn(
