@@ -92,7 +92,7 @@ export const knob = style({
       color: color.blueberry400,
       borderColor: 'currentColor',
     },
-    [`${toggleSwitch}:focus > &`]: {
+    [`${toggleSwitch}:focus > &, input[type="checkbox"]:focus + &`]: {
       outline: `3px solid ${color.mint400}`,
       borderColor: 'transparent',
     },
