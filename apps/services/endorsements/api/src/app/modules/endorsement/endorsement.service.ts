@@ -11,10 +11,24 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMetadata.service'
 import { EndorsementValidatorService } from '../endorsementValidator/endorsementValidator.service'
+import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 
 interface EndorsementListInput {
   listId: string
   nationalId: string
+}
+interface EndorsementListsInput {
+  listId: string
+  nationalIds: string[]
+}
+interface GetEndorsementMetadataForNationalIdInput {
+  endorsementList: EndorsementList
+  nationalId: string
+}
+interface ValidateEndorsementInput {
+  endorsementList: EndorsementList
+  nationalId: string
+  metadata: EndorsementMetadata
 }
 @Injectable()
 export class EndorsementService {
@@ -28,6 +42,66 @@ export class EndorsementService {
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
   ) {}
+
+  private getEndorsementList = async (listId: string) => {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+    })
+    if (!endorsementList) {
+      throw new NotFoundException(`Failed to find endorsement list: ${listId}`)
+    }
+    return endorsementList
+  }
+
+  private getEndorsementMetadataForNationalId = async ({
+    nationalId,
+    endorsementList,
+  }: GetEndorsementMetadataForNationalIdInput) => {
+    // find all requested validation types
+    const requestedValidationRules = endorsementList.validationRules.map(
+      (validation) => validation.type,
+    )
+    // find all metadata fields required for these types of validations
+    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
+      requestedValidationRules,
+    )
+    // get all metadata required for this endorsement
+    return this.metadataService.getMetadata({
+      fields: [
+        ...endorsementList.endorsementMeta,
+        ...metadataFieldsRequiredByValidation,
+      ],
+      nationalId,
+    })
+  }
+
+  private validateEndorsement = ({
+    nationalId,
+    endorsementList,
+    metadata,
+  }: ValidateEndorsementInput) => {
+    // we want this validation for all endorsements (in case request is made on behalf of a company)
+    if (!isPerson(nationalId)) {
+      throw new BadRequestException('National id must be a person')
+    }
+
+    // run requested validators with fetched metadata
+    const isValid = this.validatorService.validate({
+      validations: endorsementList.validationRules,
+      meta: { ...metadata, nationalId },
+    })
+
+    // throw error if not valid
+    if (!isValid) {
+      this.logger.debug('Failed validation rules', {
+        listId: endorsementList.id,
+        nationalId,
+      })
+      throw new BadRequestException('Failed list validation rules')
+    }
+
+    return true
+  }
 
   async findSingleEndorsementByNationalId({
     nationalId,
@@ -52,69 +126,77 @@ export class EndorsementService {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // parent list contains rules and metadata field
-    const parentEndorsementList = await this.endorsementListModel.findOne({
-      where: { id: listId },
-    })
-    if (!parentEndorsementList) {
-      this.logger.debug('Failed to find endorsement list', {
-        listId,
-        nationalId,
-      })
-      throw new NotFoundException('Failed to find endorsement list')
-    }
+    const parentEndorsementList = await this.getEndorsementList(listId)
 
-    // we can't add endorsement if it already exists in list
-    const endorsementExistsInList = await this.findSingleEndorsementByNationalId(
-      {
-        listId,
-        nationalId,
-      },
-    ).catch(() => false) // we return false if endorsement is not found
-    if (endorsementExistsInList) {
-      this.logger.debug('Endorsement already exists in list', {
-        listId,
-        nationalId,
-      })
-      throw new BadRequestException('Endorsement already exists in list')
-    }
-
-    // find all requested validation types
-    const requestedValidationRules = parentEndorsementList.validationRules.map(
-      (validation) => validation.type,
-    )
-    // find all metadata fields required for these types of validations
-    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
-      requestedValidationRules,
-    )
     // get all metadata required for this endorsement
-    const allEndorsementMetadata = await this.metadataService.getMetadata({
-      fields: [
-        ...parentEndorsementList.endorsementMeta,
-        ...metadataFieldsRequiredByValidation,
-      ],
+    const allEndorsementMetadata = await this.getEndorsementMetadataForNationalId(
+      { nationalId, endorsementList: parentEndorsementList },
+    )
+
+    // run requested validators with fetched metadata
+    await this.validateEndorsement({
+      endorsementList: parentEndorsementList,
+      metadata: allEndorsementMetadata,
       nationalId,
     })
-    // run requested validators with fetched metadata
-    const isValid = this.validatorService.validate({
-      validations: parentEndorsementList.validationRules,
-      meta: { ...allEndorsementMetadata, nationalId },
-    })
-    if (!isValid || !isPerson(nationalId)) {
-      this.logger.debug('Failed validation rules', {
-        listId,
-        nationalId,
-      })
-      throw new BadRequestException('Failed list validation rules')
-    }
 
     return this.endorsementModel.create({
       endorser: nationalId,
       endorsementListId: listId,
       // this removes validation fields fetched by meta service
-      meta: this.metadataService.pruneMetadataFields(
-        allEndorsementMetadata,
-        parentEndorsementList.endorsementMeta,
-      ),
+      meta: {
+        ...this.metadataService.pruneMetadataFields(
+          allEndorsementMetadata,
+          parentEndorsementList.endorsementMeta,
+        ),
+        bulkEndorsement: false,
+      },
+    })
+  }
+
+  async bulkCreateEndorsementOnList({
+    listId,
+    nationalIds,
+  }: EndorsementListsInput) {
+    this.logger.debug('Creating resource with nationalIds:', nationalIds)
+
+    // parent list contains rules and metadata field
+    const parentEndorsementList = await this.getEndorsementList(listId)
+
+    // create an endorsement document for each national id
+    const endorsements = await Promise.all(
+      nationalIds.map(async (nationalId) => {
+        // get metadata for this national id
+        const metadata = await this.getEndorsementMetadataForNationalId({
+          nationalId,
+          endorsementList: parentEndorsementList,
+        })
+
+        // run all validations for this national id
+        await this.validateEndorsement({
+          endorsementList: parentEndorsementList,
+          metadata,
+          nationalId,
+        })
+
+        return {
+          endorser: nationalId,
+          endorsementListId: parentEndorsementList.id,
+          // this removes validation fields fetched by meta service
+          meta: {
+            ...this.metadataService.pruneMetadataFields(
+              metadata,
+              parentEndorsementList.endorsementMeta,
+            ),
+            bulkEndorsement: true,
+          },
+        }
+      }),
+    )
+
+    return this.endorsementModel.bulkCreate(endorsements, {
+      ignoreDuplicates: true, // this ignores existing endorsements conflicts
+      returning: true,
     })
   }
 
