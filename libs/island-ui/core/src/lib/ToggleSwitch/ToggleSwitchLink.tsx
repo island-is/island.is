@@ -1,5 +1,5 @@
-import React, { FC, MouseEvent, useEffect, useState } from 'react'
-import { Link } from '../../'
+import React, { MouseEvent, useEffect, useState } from 'react'
+import { Link } from '../Link/Link'
 import {
   getContainerClass,
   getInteractiveProps,
@@ -35,7 +35,7 @@ export type ToggleSwitchLinkProps = Omit<
   onChange?: (newChecked: boolean, preventDefault: () => void) => void
 }
 
-export const ToggleSwitchLink: FC<ToggleSwitchLinkProps> = (props) => {
+export const ToggleSwitchLink = (props: ToggleSwitchLinkProps) => {
   const { checked, linkText } = props
   // maintain a local checked state because the href routing takes a while to kick in
   // and we want to give instant feedback in the UI...

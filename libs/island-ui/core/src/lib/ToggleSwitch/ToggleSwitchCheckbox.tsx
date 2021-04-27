@@ -13,7 +13,7 @@ export type ToggleSwitchCheckboxProps = ToggleSwitchBaseProps<HTMLInputElement> 
   value?: string
 }
 
-export const ToggleSwitchCheckbox: FC<ToggleSwitchCheckboxProps> = (props) => {
+export const ToggleSwitchCheckbox = (props: ToggleSwitchCheckboxProps) => {
   const { checked } = props
 
   return (

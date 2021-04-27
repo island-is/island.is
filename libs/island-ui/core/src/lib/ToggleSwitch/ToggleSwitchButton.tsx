@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   getContainerClass,
   getInteractiveProps,
@@ -16,7 +16,7 @@ export type ToggleSwitchButtonProps = ToggleSwitchBaseProps<HTMLButtonElement> &
   'aria-controls'?: string
 }
 
-export const ToggleSwitchButton: FC<ToggleSwitchButtonProps> = (props) => {
+export const ToggleSwitchButton = (props: ToggleSwitchButtonProps) => {
   const { checked } = props
 
   const checkedAttr = props.expander

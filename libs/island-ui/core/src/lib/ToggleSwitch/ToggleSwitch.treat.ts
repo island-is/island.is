@@ -3,12 +3,9 @@ import { theme } from '@island.is/island-ui/theme'
 const { spacing, color, typography } = theme
 
 export const toggleSwitchLarge = style({})
-// export const right = style({})
 export const toggleSwitchChecked = style({})
 export const toggleSwitchDisabled = style({})
 export const toggleSwitchHiddenLabel = style({})
-
-export const checkbox = style({})
 
 export const toggleSwitch = style({
   position: 'relative',

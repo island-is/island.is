@@ -3,9 +3,6 @@ import * as s from './ToggleSwitch.treat'
 import React from 'react'
 import cn from 'classnames'
 
-/** Type for React Components to signal they don't receive children  */
-export type NoChildren = { children?: undefined }
-
 type TogglerElms = HTMLAnchorElement | HTMLButtonElement | HTMLInputElement
 
 type InteractiveProps<Elm extends TogglerElms = TogglerElms> = Pick<
@@ -37,8 +34,7 @@ export type ToggleSwitchBaseProps<Elm extends TogglerElms = TogglerElms> = {
    * This can be useful if the "visible label needs to contain rich/interactive elements (links, etc.)"
    */
   hiddenLabel?: boolean
-} & NoChildren &
-  InteractiveProps<Elm>
+} & InteractiveProps<Elm>
 
 export const getContainerClass = (
   props: Pick<
