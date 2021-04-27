@@ -418,7 +418,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const getResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     expect(getResponse.body).toEqual([])
@@ -430,7 +430,7 @@ describe('Application system API', () => {
       .expect(200)
 
     const updatedGetResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     expect(updatedGetResponse.body).toEqual(
@@ -464,7 +464,7 @@ describe('Application system API', () => {
     })
 
     const getResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     // Assert
