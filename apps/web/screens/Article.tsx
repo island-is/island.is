@@ -96,7 +96,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: linkResolver('article', [article.slug, subArticle.slug]).href,
+      url: linkResolver('article', subArticle.slug.split('/')).href,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -189,7 +189,9 @@ const ArticleNavigation: FC<
         activeItemTitle={
           !activeSlug
             ? article.shortTitle || article.title
-            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+            : article.subArticles.find(
+                (sub) => activeSlug === sub.slug.split('/').pop(),
+              ).title
         }
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
@@ -209,8 +211,8 @@ const ArticleNavigation: FC<
           ...article.subArticles.map((item) => ({
             title: item.title,
             typename: item.__typename,
-            slug: [article.slug, item.slug],
-            active: activeSlug === item.slug,
+            slug: item.slug.split('/'),
+            active: activeSlug === item.slug.split('/').pop(),
           })),
         ]}
       />
@@ -317,7 +319,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   )
 
   const subArticle = article.subArticles.find((sub) => {
-    return sub.slug === query.subSlug
+    return sub.slug.split('/').pop() === query.subSlug
   })
 
   const contentOverviewOptions = useMemo(() => {
@@ -597,7 +599,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article/sub-article is found
-  const subArticle = article?.subArticles.find((a) => a.slug === query.subSlug)
+  const subArticle = article?.subArticles.find(
+    (a) => a.slug.split('/').pop() === query.subSlug,
+  )
   if (!article || (query.subSlug && !subArticle)) {
     throw new CustomNextError(404, 'Article not found')
   }
