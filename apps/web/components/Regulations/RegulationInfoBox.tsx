@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Button, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
@@ -14,7 +14,7 @@ export type RegulationInfoBoxProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
+export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { regulation, texts } = props
   const { ministry, lawChapters } = regulation
 

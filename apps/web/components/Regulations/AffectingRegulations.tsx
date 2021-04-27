@@ -1,4 +1,4 @@
-import React, { FC, Fragment, memo } from 'react'
+import React, { Fragment, memo } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -22,75 +22,73 @@ export type AffectingRegulationsProps = {
   texts: RegulationPageTexts
 }
 
-export const AffectingRegulations: FC<AffectingRegulationsProps> = memo(
-  (props) => {
-    const { regulation, texts } = props
-    const { showingDiff, history } = regulation
+export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
+  const { regulation, texts } = props
+  const { showingDiff, history } = regulation
 
-    const domid = useDomid()
-    const txt = useNamespace(texts)
-    const { linkToRegulation } = useRegulationLinkResolver()
+  const domid = useDomid()
+  const txt = useNamespace(texts)
+  const { linkToRegulation } = useRegulationLinkResolver()
 
-    if (!showingDiff) {
-      return null
-    }
+  if (!showingDiff) {
+    return null
+  }
 
-    const affectingRegulations = showingDiff
-      ? uniqBy(
-          regulation.history.filter(
-            ({ effect, date }) =>
-              effect === 'amend' &&
-              showingDiff.from < date &&
-              date <= showingDiff.to,
-          ),
-          'name',
-        )
-      : []
+  const affectingRegulations = showingDiff
+    ? uniqBy(
+        regulation.history.filter(
+          ({ effect, date }) =>
+            effect === 'amend' &&
+            showingDiff.from < date &&
+            date <= showingDiff.to,
+        ),
+        'name',
+      )
+    : []
 
-    if (affectingRegulations.length === 0) {
-      return null
-    }
+  if (affectingRegulations.length === 0) {
+    return null
+  }
 
-    return (
-      <Box marginTop={3} marginBottom={3}>
-        {affectingRegulations.length === 1 ? (
-          affectingRegulations.map(({ name, title }, i) => (
-            <Fragment key={i}>
-              {txt('affectingLinkPrefix')}{' '}
-              <Link
-                key={i}
-                href={linkToRegulation(name)}
-                color="blue400"
-                underline="small"
-              >
-                {prettyName(name)} {title}
-              </Link>
-            </Fragment>
-          ))
-        ) : (
-          <Accordion>
-            <AccordionItem
-              id={domid}
-              label={txt('affectingListLegend')}
-              labelVariant="h5"
+  return (
+    <Box marginTop={3} marginBottom={3}>
+      {affectingRegulations.length === 1 ? (
+        affectingRegulations.map(({ name, title }, i) => (
+          <Fragment key={i}>
+            {txt('affectingLinkPrefix')}{' '}
+            <Link
+              key={i}
+              href={linkToRegulation(name)}
+              color="blue400"
+              underline="small"
             >
-              <BulletList>
-                {affectingRegulations.map(({ name, title }, i) => (
-                  <Bullet key={i}>
-                    <Link
-                      href={linkToRegulation(name)}
-                      color="blue400"
-                      underline="small"
-                    >
-                      {prettyName(name)} {title}
-                    </Link>
-                  </Bullet>
-                ))}
-              </BulletList>
-            </AccordionItem>
-          </Accordion>
-        )}
-      </Box>
-    )
-  },
-)
+              {prettyName(name)} {title}
+            </Link>
+          </Fragment>
+        ))
+      ) : (
+        <Accordion>
+          <AccordionItem
+            id={domid}
+            label={txt('affectingListLegend')}
+            labelVariant="h5"
+          >
+            <BulletList>
+              {affectingRegulations.map(({ name, title }, i) => (
+                <Bullet key={i}>
+                  <Link
+                    href={linkToRegulation(name)}
+                    color="blue400"
+                    underline="small"
+                  >
+                    {prettyName(name)} {title}
+                  </Link>
+                </Bullet>
+              ))}
+            </BulletList>
+          </AccordionItem>
+        </Accordion>
+      )}
+    </Box>
+  )
+})

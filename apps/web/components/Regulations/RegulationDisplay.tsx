@@ -1,6 +1,6 @@
 import * as s from './RegulationDisplay.treat'
 
-import React, { FC } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -36,7 +36,7 @@ export type RegulationDisplayProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
+export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const router = useRouter()
   const { regulation, texts } = props
 

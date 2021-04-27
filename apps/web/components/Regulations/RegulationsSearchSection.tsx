@@ -1,7 +1,6 @@
-import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
-  Checkbox,
   Filter,
   GridColumn,
   GridContainer,
@@ -11,7 +10,6 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import { NoChildren } from '@island.is/web/types'
 import {
   RegulationLawChapterTree,
   RegulationMinistry,
@@ -114,10 +112,10 @@ export type RegulationsSearchSectionProps = {
   ministries: ReadonlyArray<RegulationMinistry>
   lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
-} & NoChildren
+}
 
-export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
-  props,
+export const RegulationsSearchSection = (
+  props: RegulationsSearchSectionProps,
 ) => {
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)

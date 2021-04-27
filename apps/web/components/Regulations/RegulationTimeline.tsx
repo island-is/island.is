@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
@@ -19,7 +19,7 @@ export type RegulationTimelineProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
+export const RegulationTimeline = (props: RegulationTimelineProps) => {
   const { regulation, texts } = props
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()

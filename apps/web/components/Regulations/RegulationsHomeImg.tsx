@@ -1,8 +1,6 @@
-import React, { FC } from 'react'
+import React from 'react'
 
-export const RegulationsHomeImg: FC<React.SVGProps<SVGSVGElement>> = (
-  props,
-) => {
+export const RegulationsHomeImg = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       width="100%"

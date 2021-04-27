@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from './regulationUtils'
@@ -13,8 +13,8 @@ export type RegulationRedirectMessageProps = {
   regulation: RegulationRedirect
 }
 
-export const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
-  props,
+export const RegulationRedirectMessage = (
+  props: RegulationRedirectMessageProps,
 ) => {
   const router = useRouter()
   const { regulation, texts } = props

@@ -3,6 +3,7 @@ import * as styles from './RegulationsSidebarBox.treat'
 // TODO: make this reuseable component?
 // - <Sidebar> has a bunch of some search specific code and <SidebarBox> is too barebones
 
+import React, { ReactNode, CSSProperties } from 'react'
 import {
   Box,
   Divider,
@@ -11,18 +12,15 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import React, { FC, ReactNode, CSSProperties } from 'react'
 
 type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
   colorScheme?: styles.ColorScheme
+  children: ReactNode
 }
 
-export const RegulationsSidebarBox: FC<RegulationsSidebarBoxProps> = ({
-  title,
-  children,
-  colorScheme = 'blueberry',
-}) => {
+export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
+  const { title, children, colorScheme = 'blueberry' } = props
   const c = styles.colors[colorScheme]
   const color = c.color
   const backgroundColor = c.backgroundColor
@@ -61,9 +59,7 @@ export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
   children: ReactNode
 }
 
-export const RegulationsSidebarLink: FC<RegulationsSidebarLinkProps> = (
-  props,
-) => (
+export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
   <Link href={props.href} pureChildren>
     <a
       className={
