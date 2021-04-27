@@ -10,28 +10,7 @@ import * as z from 'zod'
 
 type Events = { type: 'SUBMIT' }
 
-const ExampleSchema = z.object({
-  person: z.object({
-    name: z.string().nonempty().max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    phoneNumber: z.string().min(7),
-    email: z.string().email(),
-  }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
-})
+const ExampleSchema = z.object({})
 
 const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   ApplicationContext,
