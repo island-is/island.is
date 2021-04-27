@@ -19,52 +19,56 @@ enum Duration {
 
 const parentContactInfo = z.object({
   email: z.string().refine((v) => isValidEmail(v), {
-    message: error.validation.invalidEmail.defaultMessage,
+    params: error.validation.invalidEmail,
   }),
-  phoneNumber: z.string().min(7, {
-    message: error.validation.invalidPhoneNumber.defaultMessage,
+  phoneNumber: z.string().refine((v) => v && v.length >= 7, {
+    params: error.validation.invalidPhoneNumber,
   }),
 })
 
 const terms = z
   .array(z.string())
-  .length(3, error.validation.approveTerms.defaultMessage)
+  .refine((v) => v && v.length === 3, { params: error.validation.approveTerms })
 
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
   approveExternalData: z.boolean().refine((v) => v, {
-    message: error.validation.approveChildrenResidenceChange.defaultMessage,
+    params: error.validation.approveChildrenResidenceChange,
   }),
   selectedChildren: z
     .array(z.string())
-    .min(1, error.validation.selectChild.defaultMessage),
+    .refine((v) => v && v.length > 0, { params: error.validation.selectChild }),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
   counterParty: z
     .object({
       email: z.string().refine((v) => validateOptionalEmail(v), {
-        message: error.validation.invalidEmail.defaultMessage,
+        params: error.validation.invalidEmail,
       }),
       phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
-        message: error.validation.invalidPhoneNumber.defaultMessage,
+        params: error.validation.invalidPhoneNumber,
       }),
     })
     .refine((v) => v.email || v.phoneNumber, {
-      message: error.validation.counterParty.defaultMessage,
+      params: error.validation.counterParty,
     }),
   parentB: parentContactInfo,
   approveTerms: terms,
   approveTermsParentB: terms,
   confirmResidenceChangeInfo: z
     .array(z.string())
-    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
+    .refine((v) => v && v.length === 1, {
+      params: error.validation.approveChildrenResidenceChange,
+    }),
   selectDuration: z
     .object({
-      type: z.enum([Duration.Permanent, Duration.Temporary]),
+      type: z.enum([Duration.Permanent, Duration.Temporary]).refine((v) => v, {
+        params: error.validation.durationType,
+      }),
       date: z.string().optional(),
     })
     .refine((v) => (v.type === Duration.Temporary ? v.date : true), {
-      message: error.validation.durationDate.defaultMessage,
+      params: error.validation.durationDate,
       path: ['date'],
     }),
 })
