@@ -92,7 +92,7 @@ export interface TellUsAStoryFormProps {
   onSubmit: (formState: TellUsAStoryFormState) => Promise<void>
 }
 
-export const TellUsAStoryForm = ({
+export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
   introTitle,
   introImage,
   introDescription,
@@ -128,7 +128,7 @@ export const TellUsAStoryForm = ({
   state = 'edit',
   locale = 'is',
   onSubmit,
-}: TellUsAStoryFormProps) => {
+}) => {
   const methods = useForm()
   const { data, loading, error } = useQuery(GET_ORGANIZATIONS_QUERY, {
     variables: {
