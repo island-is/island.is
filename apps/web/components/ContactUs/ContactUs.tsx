@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   ContactUs as ContactUsForm,
   ContactUsProps as ContactUsFormProps,
@@ -26,7 +26,7 @@ const getState = (
 interface ContactUsProps
   extends Omit<ContactUsFormProps, 'state' | 'onSubmit'> {}
 
-export const ContactUs: FC<ContactUsProps> = (props) => {
+export const ContactUs = (props: ContactUsProps) => {
   const [submit, { data, loading, error }] = useMutation<
     ContactUsZendeskTicketMutation,
     ContactUsZendeskTicketMutationVariables
