@@ -301,7 +301,7 @@ const defaultTopLinksContact = [
   },
   {
     title: 'Sími: 426 5500',
-    href: 'tel: +3544265500',
+    href: 'tel:+3544265500',
   },
 ]
 
