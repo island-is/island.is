@@ -55,6 +55,18 @@ export const StepTwo: React.FC = () => {
     errorPolicy: 'all',
   })
 
+  useEffect(() => {
+    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
+    if (!workingCase && data) {
+      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
+
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -146,18 +158,6 @@ export const StepTwo: React.FC = () => {
       // TODO: Handle error
     }
   }
-
-  useEffect(() => {
-    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
-    if (!workingCase && data) {
-      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
-
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
     TransitionCaseMutation,
