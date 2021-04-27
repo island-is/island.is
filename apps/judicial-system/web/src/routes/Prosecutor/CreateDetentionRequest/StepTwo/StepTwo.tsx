@@ -199,27 +199,25 @@ export const StepTwo: React.FC = () => {
       caseType={workingCase?.type}
     >
       {workingCase ? (
-        <>
-          <StepTwoForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            prosecutors={prosecutors}
-            defaultProsecutor={defaultProsecutor}
-            courts={courts}
-            defaultCourt={defaultCourt}
-            arrestDateIsValid={arrestDateIsValid}
-            setArrestDateIsValid={setArrestDateIsValid}
-            requestedCourtDateIsValid={requestedCourtDateIsValid}
-            setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
-            handleNextButtonClick={handleNextButtonClick}
-            transitionLoading={transitionLoading}
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-            router={router}
-            sendNotification={sendNotification}
-            isSendingNotification={isSendingNotification}
-          />
-        </>
+        <StepTwoForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          prosecutors={prosecutors}
+          defaultProsecutor={defaultProsecutor}
+          courts={courts}
+          defaultCourt={defaultCourt}
+          arrestDateIsValid={arrestDateIsValid}
+          setArrestDateIsValid={setArrestDateIsValid}
+          requestedCourtDateIsValid={requestedCourtDateIsValid}
+          setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
+          handleNextButtonClick={handleNextButtonClick}
+          transitionLoading={transitionLoading}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          router={router}
+          sendNotification={sendNotification}
+          isSendingNotification={isSendingNotification}
+        />
       ) : null}
     </PageLayout>
   )

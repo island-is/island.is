@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client'
 import {
   Case,
   NotificationType,
+  SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -18,7 +19,9 @@ const useCase = () => {
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
+  ] = useMutation<{ sendNotification: SendNotificationResponse }>(
+    SendNotificationMutation,
+  )
 
   const createCase = async (theCase: Case): Promise<string | undefined> => {
     if (isCreatingCase === false) {

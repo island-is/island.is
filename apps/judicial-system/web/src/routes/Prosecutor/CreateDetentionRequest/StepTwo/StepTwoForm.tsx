@@ -40,7 +40,7 @@ interface Props {
   sendNotification: (
     id: string,
     notificationType: NotificationType,
-  ) => Promise<any>
+  ) => Promise<boolean | undefined>
   isSendingNotification: boolean
 }
 
