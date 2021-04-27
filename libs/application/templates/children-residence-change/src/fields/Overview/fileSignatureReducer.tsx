@@ -55,7 +55,7 @@ export const fileSignatureReducer = (
       return { ...state, status: FileSignatureStatus.UPLOAD }
     }
     case FileSignatureActionTypes.SUCCESS: {
-      return { ...state, status: FileSignatureStatus.SUCCESS, modalOpen: false }
+      return { ...state, status: FileSignatureStatus.SUCCESS, modalOpen: true }
     }
     case FileSignatureActionTypes.ERROR: {
       return {

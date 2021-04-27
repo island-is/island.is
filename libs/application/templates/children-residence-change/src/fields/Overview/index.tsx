@@ -84,8 +84,7 @@ const Overview = ({
     createResponse?.createPdfPresignedUrl?.url ||
     getResponse?.getPresignedUrl?.url
 
-  const parentKey =
-    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
+  const role = application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -153,15 +152,14 @@ const Overview = ({
           })
         }
         fileSignatureState={fileSignatureState}
+        role={role}
       />
       <Box>
         <DescriptionText
           text={m.contract.general.description}
           format={{
             otherParent:
-              parentKey === Roles.ParentA
-                ? parentB.fullName
-                : applicant.fullName,
+              role === Roles.ParentA ? parentB.fullName : applicant.fullName,
           }}
         />
       </Box>

@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text, ModalBase } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
+import { Roles } from '../../../lib/constants'
 import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
 import ModalConditionalContent from './ModalConditionalContent'
 import * as style from './Modal.treat'
@@ -10,12 +11,14 @@ interface SignatureModalProps {
   fileSignatureState: ReducerState
   onClose: () => void
   controlCode: string
+  role: Roles
 }
 
 const SignatureModal = ({
   fileSignatureState,
   controlCode,
   onClose,
+  role,
 }: SignatureModalProps) => {
   const { formatMessage } = useIntl()
   const hasError = [
@@ -53,6 +56,7 @@ const SignatureModal = ({
           fileSignatureState={fileSignatureState}
           onClose={onClose}
           controlCode={controlCode}
+          role={role}
         />
       </Box>
     </ModalBase>
