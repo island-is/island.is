@@ -1,4 +1,6 @@
 import React, { Fragment } from 'react'
+import * as s from './RegulationsSidebarBox.treat'
+import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
@@ -98,10 +100,17 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
               }
               current={isTimelineActive}
             >
-              {isTimelineActive && ' ▶︎ '}
               <strong>{formatDate(item.date)}</strong>
               <br />
-              <span title={labelLong}>{label}</span>
+              <span
+                className={cn(
+                  s.smallText,
+                  isTimelineActive && s.timelineCurrent,
+                )}
+                title={labelLong}
+              >
+                {label}
+              </span>
             </RegulationsSidebarLink>
 
             {isCurrentVersion && (

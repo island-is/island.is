@@ -39,13 +39,19 @@ export const colors: Record<ColorScheme, ColorValues> = {
   },
 }
 
+export const smallText = style({
+  fontSize: 14,
+})
 export const sidebarLink = style({
   color: 'var(--RegSidebarBox-linkColor)',
   ':hover': {
     color: 'var(--RegSidebarBox-linkColorHover)',
-    textDecoration: 'underline',
+    textDecoration: 'none',
   },
 })
-export const sidebarLinkCurrent = style({
-  fontWeight: typography.medium,
+export const sidebarLinkCurrent = style({})
+
+export const timelineCurrent = style({
+  paddingLeft: 10,
+  borderLeft: '1px solid ' + color.blueberry300,
 })

@@ -1,4 +1,5 @@
 import React from 'react'
+import * as s from './RegulationsSidebarBox.treat'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
 import {
@@ -46,7 +47,7 @@ export const RegulationEffectsBox = (props: RegulationEffectsBoxProps) => {
             href={linkToRegulation(item.name)}
             aria-label={labelLong}
           >
-            {label}
+            <span className={s.smallText}>{label}</span>
           </RegulationsSidebarLink>
         )
       })}

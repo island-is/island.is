@@ -1,4 +1,5 @@
 import React from 'react'
+import * as s from './RegulationsSidebarBox.treat'
 import { Button, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
@@ -32,7 +33,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               <RegulationsSidebarLink
                 href={linkToRegulationSearch({ rn: ministry.slug })}
               >
-                {ministry.name}
+                <span className={s.smallText}>{ministry.name}</span>
               </RegulationsSidebarLink>
             </li>
           </ul>
@@ -48,7 +49,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
                 <RegulationsSidebarLink
                   href={linkToRegulationSearch({ ch: chapter.slug })}
                 >
-                  {chapter.name}
+                  <span className={s.smallText}>{chapter.name}</span>
                 </RegulationsSidebarLink>
               </li>
             ))}
@@ -60,7 +61,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         <Text>
           <strong>{txt('infoboxEffectiveDate')}:</strong>
           <br />
-          {formatDate(regulation.effectiveDate)}
+          <span className={s.smallText}>
+            {formatDate(regulation.effectiveDate)}
+          </span>
         </Text>
       )}
 
@@ -68,14 +71,18 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         <Text>
           <strong>{txt('infoboxRepealed')}:</strong>
           <br />
-          {formatDate(regulation.repealedDate)}
+          <span className={s.smallText}>
+            {formatDate(regulation.repealedDate)}
+          </span>
         </Text>
       ) : (
         regulation.lastAmendDate && (
           <Text>
             <strong>{txt('infoboxLastAmended')}:</strong>
             <br />
-            {formatDate(regulation.lastAmendDate)}
+            <span className={s.smallText}>
+              {formatDate(regulation.lastAmendDate)}
+            </span>
           </Text>
         )
       )}
