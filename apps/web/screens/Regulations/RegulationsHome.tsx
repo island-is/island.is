@@ -149,14 +149,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             <GridContainer>
               {props.doSearch && (
                 <GridRow>
-                  <GridColumn span={'10/12'} paddingTop={3} paddingBottom={4}>
-                    <p>
+                  <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
+                    <Text>
                       {totalItems === 0
                         ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
                         : String(totalItems).substr(-1) === '1'
                         ? totalItems + ' reglugerð fannst'
                         : `${totalItems} reglugerðir fundust`}
-                    </p>
+                    </Text>
                   </GridColumn>
                 </GridRow>
               )}

@@ -1,7 +1,7 @@
 import * as s from './RegulationDisplay.treat'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+import React from 'react'
 import { HTMLDump } from './HTMLDump'
 import { RegulationMaybeDiff } from './Regulations.types'
 
@@ -10,7 +10,7 @@ export type CommentsBoxProps = {
   content: RegulationMaybeDiff['comments']
 }
 
-export const CommentsBox: FC<CommentsBoxProps> = (props) =>
+export const CommentsBox = (props: CommentsBoxProps) =>
   props.content && (
     <Box marginTop={[6, 10]} id="aths_ritstjora">
       <AlertMessage

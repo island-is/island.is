@@ -1,10 +1,10 @@
 import { style, styleMap } from 'treat'
 import { DividerProps } from '@island.is/island-ui/core'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors, theme, spacing } from '@island.is/island-ui/theme'
 
 const { color, typography, border } = theme
 
-export type ColorScheme = 'purple' | 'blueberry' | 'blue'
+export type ColorScheme = 'purple' | 'blueberry' | 'blue' | 'dark'
 type ColorValue = typeof color[keyof typeof color]
 
 type ColorValues = {
@@ -37,15 +37,30 @@ export const colors: Record<ColorScheme, ColorValues> = {
     linkColor: color.blue600,
     linkColorHover: color.blue400,
   },
+  dark: {
+    color: 'dark400',
+    dividerColor: 'alternate',
+    backgroundColor: 'dark100',
+    linkColor: color.blue600,
+    linkColorHover: color.blue400,
+  },
 }
 
+export const smallText = style({
+  fontSize: 14,
+})
 export const sidebarLink = style({
   color: 'var(--RegSidebarBox-linkColor)',
+  marginBottom: spacing[2],
+  display: 'block',
   ':hover': {
     color: 'var(--RegSidebarBox-linkColorHover)',
-    textDecoration: 'underline',
+    textDecoration: 'none',
   },
 })
-export const sidebarLinkCurrent = style({
-  fontWeight: typography.medium,
+export const sidebarLinkCurrent = style({})
+
+export const timelineCurrent = style({
+  paddingLeft: 10,
+  borderLeft: '1px solid ' + color.blueberry300,
 })

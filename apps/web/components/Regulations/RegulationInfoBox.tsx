@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React from 'react'
+import * as s from './RegulationsSidebarBox.treat'
 import { Button, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
@@ -14,7 +15,7 @@ export type RegulationInfoBoxProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
+export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { regulation, texts } = props
   const { ministry, lawChapters } = regulation
 
@@ -23,16 +24,16 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
   const { formatDate } = useDateUtils()
 
   return (
-    <RegulationsSidebarBox title={txt('infoboxTitle')}>
+    <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
       {ministry && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxMinistry')}:</strong>
           <ul>
             <li>
               <RegulationsSidebarLink
                 href={linkToRegulationSearch({ rn: ministry.slug })}
               >
-                {ministry.name}
+                <span className={s.smallText}>{ministry.name}</span>
               </RegulationsSidebarLink>
             </li>
           </ul>
@@ -40,7 +41,7 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
       )}
 
       {lawChapters.length > 0 && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxLawChapters')}:</strong>
           <ul>
             {lawChapters.map((chapter, i) => (
@@ -48,7 +49,7 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
                 <RegulationsSidebarLink
                   href={linkToRegulationSearch({ ch: chapter.slug })}
                 >
-                  {chapter.name}
+                  <span className={s.smallText}>{chapter.name}</span>
                 </RegulationsSidebarLink>
               </li>
             ))}
@@ -57,41 +58,49 @@ export const RegulationInfoBox: FC<RegulationInfoBoxProps> = (props) => {
       )}
 
       {regulation.effectiveDate && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxEffectiveDate')}:</strong>
           <br />
-          {formatDate(regulation.effectiveDate)}
+          <span className={s.smallText}>
+            {formatDate(regulation.effectiveDate)}
+          </span>
         </Text>
       )}
 
       {regulation.repealedDate ? (
-        <Text>
+        <Text marginBottom={3}>
           <strong>{txt('infoboxRepealed')}:</strong>
           <br />
-          {formatDate(regulation.repealedDate)}
+          <span className={s.smallText}>
+            {formatDate(regulation.repealedDate)}
+          </span>
         </Text>
       ) : (
         regulation.lastAmendDate && (
-          <Text>
+          <Text marginBottom={3}>
             <strong>{txt('infoboxLastAmended')}:</strong>
             <br />
-            {formatDate(regulation.lastAmendDate)}
+            <span className={s.smallText}>
+              {formatDate(regulation.lastAmendDate)}
+            </span>
           </Text>
         )
       )}
 
-      <Button
-        // icon="print"
-        // iconType="outline"
-        size="small"
-        type="button"
-        variant="text"
-        onClick={() => {
-          window.print()
-        }}
-      >
-        Prenta þessa útgáfu
-      </Button>
+      <Text marginBottom={2}>
+        <Button
+          // icon="print"
+          // iconType="outline"
+          size="small"
+          type="button"
+          variant="text"
+          onClick={() => {
+            window.print()
+          }}
+        >
+          Prenta þessa útgáfu
+        </Button>
+      </Text>
     </RegulationsSidebarBox>
   )
 }

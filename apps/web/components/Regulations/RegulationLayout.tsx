@@ -1,7 +1,7 @@
 import { RegName } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Box,
   Breadcrumbs,
@@ -21,7 +21,7 @@ export type RegulationLayoutProps = {
   sidebar?: JSX.Element | false
 }
 
-export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
+export const RegulationLayout = (props: RegulationLayoutProps) => {
   const n = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 

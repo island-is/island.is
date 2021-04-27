@@ -1,10 +1,9 @@
 import * as s from './RegulationDisplay.treat'
 
-import React, { FC, memo } from 'react'
+import React, { memo } from 'react'
 import { HTMLText, PlainText, RegulationMaybeDiff } from './Regulations.types'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { useDomid } from './regulationUtils'
-import { NoChildren } from '@island.is/web/types'
 import { HTMLDump } from './HTMLDump'
 
 const hasDiff = (text: string) => /<(del|ins)/.test(text)
@@ -30,7 +29,7 @@ export type AppendixesProps = {
   appendixes: ReadonlyArray<RegulationMaybeDiff['appendixes'][0]>
 }
 
-export const Appendixes: FC<AppendixesProps & NoChildren> = memo((props) => {
+export const Appendixes = memo((props: AppendixesProps) => {
   const { appendixes } = props
   const domid = useDomid()
 

@@ -1,6 +1,6 @@
 import * as s from './RegulationStatus.treat'
 
-import React, { FC } from 'react'
+import React from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Hidden, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
@@ -28,7 +28,7 @@ export type RegulationStatusProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationStatus: FC<RegulationStatusProps> = (props) => {
+export const RegulationStatus = (props: RegulationStatusProps) => {
   const { regulation, urlDate, texts } = props
   const { formatDate } = useDateUtils()
   const txt = useNamespace(texts)

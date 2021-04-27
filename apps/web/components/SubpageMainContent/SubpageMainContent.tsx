@@ -1,21 +1,12 @@
-import React, { FC, ReactNode } from 'react'
-import {
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import { NoChildren } from '@island.is/web/types'
+import React, { ReactNode } from 'react'
+import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 
 interface SubpageMainProps {
   main: ReactNode
   image?: ReactNode
 }
 
-export const SubpageMainContent: FC<SubpageMainProps & NoChildren> = ({
-  main,
-  image,
-}) => {
+export const SubpageMainContent = ({ main, image }: SubpageMainProps) => {
   return (
     <GridContainer>
       <GridRow>

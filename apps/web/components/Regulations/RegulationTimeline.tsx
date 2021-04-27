@@ -1,4 +1,6 @@
-import React, { FC, Fragment } from 'react'
+import React, { Fragment } from 'react'
+import * as s from './RegulationsSidebarBox.treat'
+import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
@@ -19,7 +21,7 @@ export type RegulationTimelineProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
+export const RegulationTimeline = (props: RegulationTimelineProps) => {
   const { regulation, texts } = props
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
@@ -52,15 +54,19 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
         name: regulation.name,
       })}
     >
-      {timelineItems.map((item, i, arr) => {
+      <RegulationsSidebarLink
+        href={linkToRegulation(regulation.name)}
+        current={viewingCurrent}
+      >
+        {viewingCurrent && ' ▶︎ '}
+        {txt('historyCurrentVersion')}
+      </RegulationsSidebarLink>
+
+      {timelineItems.reverse().map((item, i, arr) => {
         const name = prettyName(item.name)
-        const isCurrentVersion =
-          item.date <= today &&
-          item.effect === 'amend' &&
-          (i === arr.length - 1 || arr[i + 1].date > today)
 
         const label = interpolate(
-          i === 0 // item.effect === 'root'
+          i === arr.length - 1 // item.effect === 'root'
             ? txt('historyStart')
             : item.effect === 'amend'
             ? txt('historyChange')
@@ -75,8 +81,10 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
             (!viewingCurrent && regulation.lastAmendDate)) === item.date
 
         const futureSplitter = item.date > today &&
-          (i === 0 || arr[i - 1].date <= today) && (
-            <Text variant="small">{txt('historyFutureSplitter')}:</Text>
+          (i === 0 || arr[i + 1].date <= today) && (
+            <Text variant="small" marginBottom={1}>
+              {txt('historyFutureSplitter')}:
+            </Text>
           )
 
         return (
@@ -98,21 +106,18 @@ export const RegulationTimeline: FC<RegulationTimelineProps> = (props) => {
               }
               current={isTimelineActive}
             >
-              {isTimelineActive && ' ▶︎ '}
               <strong>{formatDate(item.date)}</strong>
               <br />
-              <span title={labelLong}>{label}</span>
-            </RegulationsSidebarLink>
-
-            {isCurrentVersion && (
-              <RegulationsSidebarLink
-                href={linkToRegulation(regulation.name)}
-                current={viewingCurrent}
+              <span
+                className={cn(
+                  s.smallText,
+                  isTimelineActive && s.timelineCurrent,
+                )}
+                title={labelLong}
               >
-                {viewingCurrent && ' ▶︎ '}
-                {txt('historyCurrentVersion')}
-              </RegulationsSidebarLink>
-            )}
+                {label}
+              </span>
+            </RegulationsSidebarLink>
           </Fragment>
         )
       })}

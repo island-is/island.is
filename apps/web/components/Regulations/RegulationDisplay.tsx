@@ -1,10 +1,15 @@
 import * as s from './RegulationDisplay.treat'
 
-import React, { FC } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Button,
+  Stack,
+  Text,
+  ToggleSwitchLink,
+} from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -12,7 +17,6 @@ import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLDump } from './HTMLDump'
 import { CommentsBox } from './CommentsBox'
-import { RegulationsToggleSwitch } from './RegulationsToggleSwitch'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationTimeline } from './RegulationTimeline'
@@ -32,7 +36,7 @@ export type RegulationDisplayProps = {
   texts: RegulationPageTexts
 }
 
-export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
+export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const router = useRouter()
   const { regulation, texts } = props
 
@@ -66,7 +70,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       main={
         <>
           {isDiffable && (
-            <RegulationsToggleSwitch
+            <ToggleSwitchLink
               className={s.diffToggler}
               checked={diffView}
               href={linkToRegulation(regulation.name, {
@@ -77,7 +81,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                   ? { d: timelineDate }
                   : undefined),
               })}
-              label={diffView ? txt('hideDiff') : txt('showDiff')}
+              linkText={diffView ? txt('hideDiff') : txt('showDiff')}
+              label={txt('showDiff')}
             />
           )}
           <RegulationStatus
@@ -115,7 +120,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
         </>
       }
       sidebar={
-        <Stack space={2}>
+        <Stack space={3}>
           <Button
             preTextIcon="arrowBack"
             preTextIconType="filled"
