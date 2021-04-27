@@ -46,9 +46,6 @@ export const toggleSwitchWide = style({
 
 export const text = style({
   selectors: {
-    // [`${checked} > &`]: {
-    //   fontWeight: typography.medium,
-    // }
     [`${toggleSwitchHiddenLabel} > &`]: {
       // Same as .visually-hidden
       position: 'absolute',
