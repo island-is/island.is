@@ -167,6 +167,23 @@ export const CourtRecord: React.FC = () => {
           )
         }
       }
+      if (!theCase.litigationPresentations) {
+        theCase = {
+          ...theCase,
+          litigationPresentations:
+            'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+        }
+
+        if (theCase.litigationPresentations) {
+          updateCase(
+            theCase.id,
+            parseString(
+              'litigationPresentations',
+              theCase.litigationPresentations,
+            ),
+          )
+        }
+      }
 
       setWorkingCase(theCase)
     }
@@ -490,7 +507,7 @@ export const CourtRecord: React.FC = () => {
                 !validate(workingCase.policeDemands || '', 'empty').isValid ||
                 !validate(workingCase.litigationPresentations || '', 'empty')
                   .isValid ||
-                workingCase.accusedPleaDecision === null
+                !workingCase.accusedPleaDecision
               }
             />
           </FormContentContainer>
