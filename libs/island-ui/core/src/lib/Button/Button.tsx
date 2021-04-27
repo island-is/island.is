@@ -63,6 +63,7 @@ export interface ButtonProps {
   nowrap?: boolean
   title?: string
   inline?: boolean
+  isSpan?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -83,6 +84,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       loading,
       nowrap,
       inline,
+      isSpan,
       ...buttonProps
     },
     ref,
@@ -90,9 +92,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     return (
       <Box
         component={ReaButton}
-        as={variant === 'text' ? 'span' : 'button'}
+        as={variant === 'text' || isSpan ? 'span' : 'button'}
         ref={ref}
-        type={type}
+        {...(!isSpan && { type })}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
@@ -113,6 +115,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
+            [styles.isSpan]: isSpan,
           },
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}

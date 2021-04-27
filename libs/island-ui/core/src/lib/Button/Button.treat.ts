@@ -556,3 +556,9 @@ export const loadingDot = style({
     },
   },
 })
+
+export const isSpan = style({
+  ':hover': {
+    cursor: 'pointer',
+  },
+})
