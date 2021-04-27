@@ -7,6 +7,7 @@ import {
   formatAndParseAsHTML,
   buildFieldOptions,
   RecordObject,
+  FormValue,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -57,15 +58,27 @@ interface ReviewScreenProps {
   errors?: RecordObject
 }
 
+type selectOption = {
+  label: string
+  value: string
+}
+
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
-  editable = true,
+  // TODO: SWITCH BACK TO TRUE
+  editable = false,
   errors,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const getSelectOptionLabel = (options: selectOption[], key: string) =>
+    options.find(
+      (option) =>
+        option.value === (getValueViaPath(application.answers, key) as string),
+    )?.label
 
   const [
     statefulOtherParentConfirmed,
@@ -324,12 +337,10 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.pensionFund',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(
+                        pensionFundOptions,
+                        'payments.pensionFund',
+                      )}
                     </Text>
                   )}
                 </GridColumn>
@@ -346,12 +357,7 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.union',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(unionOptions, 'payments.union')}
                     </Text>
                   )}
                 </GridColumn>
@@ -422,12 +428,10 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.pensionFund',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(
+                            privatePensionFundOptions,
+                            'payments.pensionFund',
+                          )}
                         </Text>
                       )}
                     </GridColumn>
@@ -444,12 +448,7 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.union',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(unionOptions, 'payments.union')}
                         </Text>
                       )}
                     </GridColumn>
