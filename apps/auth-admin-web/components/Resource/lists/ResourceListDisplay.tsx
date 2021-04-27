@@ -10,6 +10,7 @@ interface Props {
   list: any
   header: string
   linkHeader: string
+  linkHeaderHelp: string
   createUri: string
   lastPage: number
   handlePageChange: (page: number, count: number) => void
@@ -23,6 +24,7 @@ const ResourceListDisplay: React.FC<Props> = ({
   linkHeader,
   createUri,
   lastPage,
+  linkHeaderHelp,
   handlePageChange,
   edit,
   remove,
@@ -41,7 +43,10 @@ const ResourceListDisplay: React.FC<Props> = ({
               <div className="identity-resources__container__button">
                 {/* Change href link */}
                 <Link href={createUri}>
-                  <a className="identity-resources__button__new">
+                  <a
+                    className="identity-resources__button__new"
+                    title={linkHeaderHelp}
+                  >
                     <i className="icon__new"></i>
                     {linkHeader}
                   </a>
@@ -73,10 +78,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => edit(resource)}
-                            title={localization.editButton}
+                            title={localization.buttons['edit'].helpText}
                           >
                             <i className="icon__edit"></i>
-                            <span>{localization.editButton}</span>
+                            <span>{localization.buttons['edit'].text}</span>
                           </button>
                         </td>
                         <td className="identity-resources__table__button">
@@ -86,10 +91,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => remove(resource.name)}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>

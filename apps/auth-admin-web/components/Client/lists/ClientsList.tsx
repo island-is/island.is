@@ -106,9 +106,12 @@ const ClientsList: React.FC = () => {
             <div className="clients__container__options">
               <div className="clients__container__options__button">
                 <Link href={'/client'}>
-                  <a className="clients__button__new">
+                  <a
+                    className="clients__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    {localization.createNewItem}
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
@@ -123,8 +126,12 @@ const ClientsList: React.FC = () => {
                     value={searchString}
                     onChange={handleSearchChange}
                   ></input>
-                  <button type="submit" className="clients__button__search">
-                    {localization.searchButton}
+                  <button
+                    type="submit"
+                    className="clients__button__search"
+                    title={localization.buttons['search'].helpText}
+                  >
+                    {localization.buttons['search'].text}
                   </button>
                 </div>
               </form>
@@ -162,10 +169,10 @@ const ClientsList: React.FC = () => {
                               className={`clients__button__edit${
                                 client.archived ? ' hidden' : ''
                               }`}
-                              title={localization.editButton}
+                              title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
-                              <span>{localization.editButton}</span>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
                           </Link>
                         </td>
@@ -175,11 +182,11 @@ const ClientsList: React.FC = () => {
                             className={`clients__button__delete${
                               client.archived ? ' hidden' : ''
                             }`}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                             onClick={() => confirmArchive(client.clientId)}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -191,9 +198,13 @@ const ClientsList: React.FC = () => {
             <div>
               <div className="clients__container__export">
                 <div className="clients__container__export__container__button">
-                  <button type="button" onClick={() => exportCsv()}>
+                  <button
+                    type="button"
+                    onClick={() => exportCsv()}
+                    title={localization.buttons['export'].helpText}
+                  >
                     <i className="icon__export__csv" aria-hidden="true"></i>
-                    <span>{localization.exportButton}</span>
+                    <span>{localization.buttons['export'].text}</span>
                   </button>
                 </div>
               </div>
@@ -210,7 +221,7 @@ const ClientsList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={archive}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

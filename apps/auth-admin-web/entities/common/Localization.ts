@@ -68,21 +68,10 @@ export class Paginator {
 export class ListControl {
   id: string
   title: string
-  createNewItem?: string
   search?: FormItem
-  searchButton?: string
+  buttons: Record<string, Button>
   removeConfirmation?: string
-  removeButton?: string
-  editButton?: string
-  viewButton?: string
-  exportButton?: string
   columns?: Record<string, ColumnHeader>
-  active?: string
-  deactivated?: string
-  activateButton?: string
-  deactivateButton?: string
-  notFound?: string
-  sectionTitle1?: string
   sections: Record<string, Section>
 }
 
