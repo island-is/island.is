@@ -8,12 +8,7 @@ interface Props {
   successMessage: string
 }
 
-const DescriptionText = ({
-  title,
-  inputLabel,
-  buttonLabel,
-  successMessage,
-}: Props) => {
+const CopyUrl = ({ title, inputLabel, buttonLabel, successMessage }: Props) => {
   const [currentUrl, setCurrentUrl] = useState<string | undefined>(undefined)
 
   const copyToClipboard = (val: string) => {
@@ -78,4 +73,4 @@ const DescriptionText = ({
   )
 }
 
-export default DescriptionText
+export default CopyUrl

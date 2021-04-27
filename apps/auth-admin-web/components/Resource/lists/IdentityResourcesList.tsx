@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import { useRouter } from 'next/router'
-import ResourceListDisplay from './ListDisplay'
+import ResourceListDisplay from './ResourceListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
 import LocalizationUtils from '../../../utils/localization.utils'
@@ -81,7 +81,8 @@ const IdentityResourcesList: React.FC = () => {
       <ResourceListDisplay
         list={resources}
         header={localization.title}
-        linkHeader={localization.createNewItem}
+        linkHeader={localization.buttons['new'].text}
+        linkHeaderHelp={localization.buttons['new'].helpText}
         createUri={'/resource/identity-resource'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
@@ -93,7 +94,7 @@ const IdentityResourcesList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

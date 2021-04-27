@@ -77,9 +77,12 @@ const LanguageList: React.FC = () => {
             <div className="language-list__container__options">
               <div className="language-list__container__options__button">
                 <Link href={'/admin/language'}>
-                  <a className="language-list__button__new">
+                  <a
+                    className="language-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    {localization.createNewItem}
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
@@ -112,10 +115,10 @@ const LanguageList: React.FC = () => {
                             <button
                               type="button"
                               className={`language-list__button__edit`}
-                              title={localization.editButton}
+                              title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
-                              <span>{localization.editButton}</span>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
                           </Link>
                         </td>
@@ -123,11 +126,11 @@ const LanguageList: React.FC = () => {
                           <button
                             type="button"
                             className={`language-list__button__delete`}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                             onClick={() => confirmDelete(language.isoKey)}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -148,7 +151,7 @@ const LanguageList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={deleteLanguage}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

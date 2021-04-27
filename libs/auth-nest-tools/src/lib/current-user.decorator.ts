@@ -22,12 +22,16 @@ export const CurrentUser = createParamDecorator(
 
 export const getCurrentUser = (context: ExecutionContext): User => {
   const request = context.switchToHttp().getRequest()
+  const user = request.user
 
-  if (!request) {
+  if (!user) {
     throw new UnauthorizedException('You are not authenticated')
   }
 
-  return request.user
+  return {
+    ...user,
+    authorization: request.headers.authorization,
+  }
 }
 
 export const CurrentRestUser = createParamDecorator(

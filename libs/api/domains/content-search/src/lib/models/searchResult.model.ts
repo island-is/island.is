@@ -5,13 +5,21 @@ import {
   LifeEventPage,
   News,
   AdgerdirPage,
+  SubArticle,
 } from '@island.is/api/domains/cms'
 import { TagCount } from './tagCount'
 import { TypeCount } from './typeCount'
 
 const Items = createUnionType({
   name: 'Items',
-  types: () => [Article, LifeEventPage, News, AboutPage, AdgerdirPage], // add new return types here
+  types: () => [
+    Article,
+    LifeEventPage,
+    News,
+    AboutPage,
+    AdgerdirPage,
+    SubArticle,
+  ], // add new return types here
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })
 

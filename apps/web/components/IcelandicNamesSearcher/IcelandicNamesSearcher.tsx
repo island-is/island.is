@@ -19,7 +19,7 @@ import {
   SidebarAccordion,
   Stack,
   Text,
-  Table,
+  Table as T,
   ButtonProps,
   Icon,
   Input,
@@ -41,15 +41,6 @@ import {
 } from '@island.is/web/screens/queries/IcelandicNamesRegistry'
 
 import * as styles from './IcelandicNamesSearcher.treat'
-
-const {
-  Table: T,
-  Head: THead,
-  Body: TBody,
-  Data: TData,
-  Row: TRow,
-  HeadData: THeadData,
-} = Table
 
 type ToggledFiltersState = {
   males: boolean
@@ -252,35 +243,35 @@ export const IcelandicNamesSearcher: FC = () => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/5']}>
             <Box>
-              <T>
-                <THead>
-                  <TRow>
-                    <THeadData>Flokkur</THeadData>
-                    <THeadData>Nafn</THeadData>
-                    <THeadData>Úrskurður</THeadData>
-                  </TRow>
-                </THead>
-                <TBody>
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData>Flokkur</T.HeadData>
+                    <T.HeadData>Nafn</T.HeadData>
+                    <T.HeadData>Úrskurður</T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
                   {isBusy && (
-                    <TRow>
-                      <TData colSpan={3}>Augnablik...</TData>
-                    </TRow>
+                    <T.Row>
+                      <T.Data colSpan={3}>Augnablik...</T.Data>
+                    </T.Row>
                   )}
                   {hasSearched && !isBusy && !filteredNamesList.length && (
-                    <TRow>
-                      <TData colSpan={3}>
+                    <T.Row>
+                      <T.Data colSpan={3}>
                         {!tableData.length
                           ? 'Ekkert fannst'
                           : 'Ekkert fannst með völdum síum'}
-                      </TData>
-                    </TRow>
+                      </T.Data>
+                    </T.Row>
                   )}
                   {!isBusy &&
                     filteredNamesList.map(
                       ({ icelandicName, status, type, verdict }, index) => {
                         return (
-                          <TRow key={index}>
-                            <TData>
+                          <T.Row key={index}>
+                            <T.Data>
                               <Text>
                                 {
                                   NameTypeStrings[
@@ -288,15 +279,15 @@ export const IcelandicNamesSearcher: FC = () => {
                                   ]
                                 }
                               </Text>
-                            </TData>
-                            <TData>
+                            </T.Data>
+                            <T.Data>
                               <Text as="span" fontWeight="semiBold">
                                 {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
                                   1,
                                 )}`}
                               </Text>
-                            </TData>
-                            <TData>
+                            </T.Data>
+                            <T.Data>
                               {!!verdict && (
                                 <Text>
                                   <Button
@@ -314,13 +305,13 @@ export const IcelandicNamesSearcher: FC = () => {
                                   </Button>
                                 </Text>
                               )}
-                            </TData>
-                          </TRow>
+                            </T.Data>
+                          </T.Row>
                         )
                       },
                     )}
-                </TBody>
-              </T>
+                </T.Body>
+              </T.Table>
             </Box>
           </GridColumn>
           <GridColumn
@@ -464,3 +455,5 @@ const NameTypeStrings = {
   RST: 'Stúlkur (ritbr.)',
   RDR: 'Drengir (ritbr.)',
 }
+
+export default IcelandicNamesSearcher
