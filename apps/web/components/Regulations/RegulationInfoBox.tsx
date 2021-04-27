@@ -24,7 +24,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { formatDate } = useDateUtils()
 
   return (
-    <RegulationsSidebarBox title={txt('infoboxTitle')}>
+    <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
       {ministry && (
         <Text>
           <strong>{txt('infoboxMinistry')}:</strong>

@@ -4,7 +4,7 @@ import { Colors, theme } from '@island.is/island-ui/theme'
 
 const { color, typography, border } = theme
 
-export type ColorScheme = 'purple' | 'blueberry' | 'blue'
+export type ColorScheme = 'purple' | 'blueberry' | 'blue' | 'dark'
 type ColorValue = typeof color[keyof typeof color]
 
 type ColorValues = {
@@ -34,6 +34,13 @@ export const colors: Record<ColorScheme, ColorValues> = {
     color: 'blue600',
     dividerColor: 'regular',
     backgroundColor: 'blue100',
+    linkColor: color.blue600,
+    linkColorHover: color.blue400,
+  },
+  dark: {
+    color: 'dark400',
+    dividerColor: 'alternate',
+    backgroundColor: 'dark100',
     linkColor: color.blue600,
     linkColorHover: color.blue400,
   },
