@@ -99,9 +99,9 @@ export const ParentBForm: Form = buildForm({
       title: m.section.received,
       children: [
         buildCustomField({
-          id: 'residenceChangeConfirmation',
-          title: m.confirmation.general.pageTitle,
-          component: 'Confirmation',
+          id: 'parentBConfirmation',
+          title: m.parentBConfirmation.general.pageTitle,
+          component: 'ParentBConfirmation',
         }),
       ],
     }),
