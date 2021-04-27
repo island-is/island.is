@@ -99,9 +99,12 @@ const TranslationList: React.FC = () => {
             <div className="translation-list__container__options">
               <div className="translation-list__container__options__button">
                 <Link href={'/admin/translation'}>
-                  <a className="translation-list__button__new">
+                  <a
+                    className="translation-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    {localization.createNewItem}
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
@@ -119,8 +122,9 @@ const TranslationList: React.FC = () => {
                   <button
                     type="submit"
                     className="translation-list__button__search"
+                    title={localization.buttons['search'].helpText}
                   >
-                    {localization.searchButton}
+                    {localization.buttons['search'].text}
                   </button>
                 </div>
               </form>
@@ -168,10 +172,10 @@ const TranslationList: React.FC = () => {
                             <button
                               type="button"
                               className={`translation-list__button__edit`}
-                              title={localization.editButton}
+                              title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
-                              <span>{localization.editButton}</span>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
                           </Link>
                         </td>
@@ -179,11 +183,11 @@ const TranslationList: React.FC = () => {
                           <button
                             type="button"
                             className={`translation-list__button__delete`}
-                            title={localization.removeButton}
+                            title={localization.buttons['remove'].helpText}
                             onClick={() => confirmDelete(translation)}
                           >
                             <i className="icon__delete"></i>
-                            <span>{localization.removeButton}</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -204,7 +208,7 @@ const TranslationList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={deleteTranslation}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )
