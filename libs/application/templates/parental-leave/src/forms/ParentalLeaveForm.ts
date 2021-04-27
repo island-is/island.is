@@ -724,21 +724,25 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'paymentPlan',
-          title: parentalLeaveFormMessages.paymentPlan.subSection,
-          children: [
-            buildCustomField(
-              {
-                id: 'paymentPlan',
-                title: parentalLeaveFormMessages.paymentPlan.title,
-                description: parentalLeaveFormMessages.paymentPlan.description,
-                component: 'PaymentSchedule',
-              },
-              {},
-            ),
-          ],
-        }),
+
+        // TODO: Bring back payment calculation info, once we have an api
+        // app.asana.com/0/1182378413629561/1200214178491335/f
+        // buildSubSection({
+        //   id: 'paymentPlan',
+        //   title: parentalLeaveFormMessages.paymentPlan.subSection,
+        //   children: [
+        //     buildCustomField(
+        //       {
+        //         id: 'paymentPlan',
+        //         title: parentalLeaveFormMessages.paymentPlan.title,
+        //         description: parentalLeaveFormMessages.paymentPlan.description,
+        //         component: 'PaymentSchedule',
+        //       },
+        //       {},
+        //     ),
+        //   ],
+        // }),
+
         buildSubSection({
           id: 'shareInformation',
           title: parentalLeaveFormMessages.shareInformation.subSection,
