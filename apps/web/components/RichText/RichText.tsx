@@ -1,4 +1,4 @@
-import React, { FC, memo, ReactNode } from 'react'
+import React, { memo, ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import {
   renderSlices,
@@ -35,11 +35,13 @@ const renderComponent = (
   return children
 }
 
-export const RichText: FC<{
+type RichTextProps = {
   body: SliceType[]
   locale?: string
   config?: Partial<RenderConfig>
-}> = memo(({ body, locale, config = {} }) => {
+}
+
+export const RichText = memo(({ body, locale, config = {} }: RichTextProps) => {
   return (
     <LinkContext.Provider
       value={{
