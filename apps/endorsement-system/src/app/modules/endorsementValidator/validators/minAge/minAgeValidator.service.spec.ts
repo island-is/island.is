@@ -28,7 +28,7 @@ describe('minAgeValidator', () => {
     const results = await minAgeValidatorService.validate(input)
     expect(results).toBeTruthy()
   })
-  it('should return failure when national id is to young age', async () => {
+  it('should return failure when national id is too young age', async () => {
     const input: MinAgeInput = {
       value: {
         age: 100,
