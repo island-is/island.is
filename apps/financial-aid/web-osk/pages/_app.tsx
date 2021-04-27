@@ -2,7 +2,7 @@ import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
-import {  Header } from '../src/shared-components'
+import { Header } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
@@ -64,8 +64,7 @@ class FinancialAidApplication extends App<AppProps> {
             font-style: normal;
             font-weight: 600;
             font-display: swap;
-            src: local('IBM Plex Sans SemiBold'),
-              local('IBMPlexSans-SemiBold'),
+            src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
               url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff2')
                 format('woff2'),
               url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff')
