@@ -51,8 +51,6 @@ interface HeaderProps {
 
 export const lightThemes = ['digital_iceland']
 
-const { publicRuntimeConfig } = getConfig()
-
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -75,6 +73,7 @@ const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
 
 const OrganizationChatPanel = ({ slug }: { slug: string }) => {
   // remove when organization chat-bot is ready for release
+  const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
   if (disableOrganizationChatbot) {
     return null
