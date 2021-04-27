@@ -111,7 +111,7 @@ export const Footer = ({
                             iconType={isInternalLink ? 'filled' : undefined}
                             size="default"
                             variant="text"
-                            isSpan
+                            as="span"
                           >
                             {title}
                           </Button>

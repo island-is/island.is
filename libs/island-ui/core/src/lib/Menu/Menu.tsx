@@ -194,7 +194,7 @@ export const Menu = ({
   })
 
   const myPages = renderMyPagesButton(
-    <Button variant="utility" icon="person" isSpan>
+    <Button variant="utility" icon="person" as="span">
       {myPagesText}
     </Button>,
   )

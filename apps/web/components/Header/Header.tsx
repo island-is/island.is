@@ -94,7 +94,7 @@ export const Header: FC<HeaderProps> = ({
                             colorScheme={buttonColorScheme}
                             variant="utility"
                             icon="person"
-                            isSpan
+                            as="span"
                           >
                             {t.login}
                           </Button>

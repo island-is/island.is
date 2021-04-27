@@ -83,7 +83,7 @@ export const IntroductionSection = ({
                 icon="arrowForward"
                 iconType="filled"
                 variant="text"
-                isSpan
+                as="span"
               >
                 {linkText}
               </Button>

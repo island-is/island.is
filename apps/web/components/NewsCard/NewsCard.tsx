@@ -97,7 +97,12 @@ const NewsCard: React.FC<NewsCardProps> = ({
         )}
         <Text paddingBottom={3}>{introduction}</Text>
         <div className={styles.readMore}>
-          <Button icon="arrowForward" iconType="filled" variant="text" isSpan>
+          <Button
+            icon="arrowForward"
+            iconType="filled"
+            variant="text"
+            as="span"
+          >
             {readMoreText}
           </Button>
         </div>

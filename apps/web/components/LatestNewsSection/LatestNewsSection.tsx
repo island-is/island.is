@@ -61,7 +61,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   icon="arrowForward"
                   iconType="filled"
                   variant="text"
-                  isSpan
+                  as="span"
                 >
                   {n('seeMore')}
                 </Button>
