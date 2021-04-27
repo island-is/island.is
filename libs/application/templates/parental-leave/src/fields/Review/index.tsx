@@ -77,8 +77,7 @@ const RadioValue: FC = ({ children }) => (
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
-  // TODO: SWITCH BACK TO TRUE
-  editable = false,
+  editable = true,
   errors,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
