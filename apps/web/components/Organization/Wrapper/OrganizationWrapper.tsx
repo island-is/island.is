@@ -75,7 +75,7 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
-  if (disableOrganizationChatbot) {
+  if (disableOrganizationChatbot === 'true') {
     return null
   }
 
