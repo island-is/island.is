@@ -32,7 +32,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
       borderRadius="large"
       padding={[3, 3, 4]}
       position="relative"
-      marginBottom={2}
+      marginBottom={0}
       style={
         {
           '--RegSidebarBox-linkColor': c.linkColor,

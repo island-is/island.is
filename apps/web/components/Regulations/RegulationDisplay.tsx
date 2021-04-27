@@ -120,7 +120,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
         </>
       }
       sidebar={
-        <Stack space={2}>
+        <Stack space={3}>
           <Button
             preTextIcon="arrowBack"
             preTextIconType="filled"
