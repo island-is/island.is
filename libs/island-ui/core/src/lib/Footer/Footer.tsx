@@ -219,9 +219,21 @@ export const Footer = ({
                   <Inline space={2}>
                     {tagLinks.map(({ title, href }, index) => {
                       return (
-                        <Link key={index} href={href} skipTab>
-                          <Tag variant="white">{title}</Tag>
-                        </Link>
+                        <Tag
+                          key={index}
+                          variant="white"
+                          {...(href && href.startsWith('/')
+                            ? {
+                                CustomLink: ({ children, ...props }) => (
+                                  <Link key={title} {...props} href={href}>
+                                    {children}
+                                  </Link>
+                                ),
+                              }
+                            : { href })}
+                        >
+                          {title}
+                        </Tag>
                       )
                     })}
                   </Inline>
