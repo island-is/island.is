@@ -31,6 +31,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
       background={backgroundColor}
       borderRadius="large"
       padding={[3, 3, 4]}
+      paddingBottom={2}
       position="relative"
       marginBottom={0}
       style={
@@ -45,7 +46,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
           {title}
         </Text>
         <Divider weight={dividerColor} />
-        {children}
+        <div>{children}</div>
       </Stack>
     </Box>
   )

@@ -26,7 +26,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   return (
     <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
       {ministry && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxMinistry')}:</strong>
           <ul>
             <li>
@@ -41,7 +41,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       {lawChapters.length > 0 && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxLawChapters')}:</strong>
           <ul>
             {lawChapters.map((chapter, i) => (
@@ -58,7 +58,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       {regulation.effectiveDate && (
-        <Text>
+        <Text marginBottom={2}>
           <strong>{txt('infoboxEffectiveDate')}:</strong>
           <br />
           <span className={s.smallText}>
@@ -68,7 +68,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       {regulation.repealedDate ? (
-        <Text>
+        <Text marginBottom={3}>
           <strong>{txt('infoboxRepealed')}:</strong>
           <br />
           <span className={s.smallText}>
@@ -77,7 +77,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         </Text>
       ) : (
         regulation.lastAmendDate && (
-          <Text>
+          <Text marginBottom={3}>
             <strong>{txt('infoboxLastAmended')}:</strong>
             <br />
             <span className={s.smallText}>
@@ -87,18 +87,20 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         )
       )}
 
-      <Button
-        // icon="print"
-        // iconType="outline"
-        size="small"
-        type="button"
-        variant="text"
-        onClick={() => {
-          window.print()
-        }}
-      >
-        Prenta þessa útgáfu
-      </Button>
+      <Text marginBottom={2}>
+        <Button
+          // icon="print"
+          // iconType="outline"
+          size="small"
+          type="button"
+          variant="text"
+          onClick={() => {
+            window.print()
+          }}
+        >
+          Prenta þessa útgáfu
+        </Button>
+      </Text>
     </RegulationsSidebarBox>
   )
 }

@@ -1,6 +1,6 @@
 import { style, styleMap } from 'treat'
 import { DividerProps } from '@island.is/island-ui/core'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors, theme, spacing } from '@island.is/island-ui/theme'
 
 const { color, typography, border } = theme
 
@@ -51,6 +51,8 @@ export const smallText = style({
 })
 export const sidebarLink = style({
   color: 'var(--RegSidebarBox-linkColor)',
+  marginBottom: spacing[2],
+  display: 'block',
   ':hover': {
     color: 'var(--RegSidebarBox-linkColorHover)',
     textDecoration: 'none',

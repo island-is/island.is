@@ -78,7 +78,9 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
 
         const futureSplitter = item.date > today &&
           (i === 0 || arr[i - 1].date <= today) && (
-            <Text variant="small">{txt('historyFutureSplitter')}:</Text>
+            <Text variant="small" marginBottom={1}>
+              {txt('historyFutureSplitter')}:
+            </Text>
           )
 
         return (
