@@ -9,6 +9,7 @@ import {
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { LoginServiceSchema } from './dataSchema'
+import { application } from './messages'
 
 type LoginServiceEvent =
   | { type: DefaultEvents.APPROVE }
@@ -31,7 +32,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
     states: {
       draft: {
         meta: {
-          name: 'Umsókn um innskráningarþjónustu',
+          name: application.name.defaultMessage,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
