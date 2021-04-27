@@ -52,6 +52,7 @@ import {
   GetUnionsQuery,
 } from '../../types/schema'
 import { Period } from '../../types'
+import * as styles from './Review.treat'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -66,6 +67,12 @@ type selectOption = {
   label: string
   value: string
 }
+
+const RadioValue: FC = ({ children }) => (
+  <Box className={styles.radioValue}>
+    <Text>{children}</Text>
+  </Box>
+)
 
 const Review: FC<ReviewScreenProps> = ({
   application,
@@ -233,14 +240,14 @@ const Review: FC<ReviewScreenProps> = ({
                     }}
                   />
                 ) : (
-                  <Text>
+                  <RadioValue>
                     {
                       getValueViaPath(
                         application.answers,
                         'otherParent',
                       ) as string[]
                     }
-                  </Text>
+                  </RadioValue>
                 )}
               </Box>
               {statefulOtherParentConfirmed === 'manual' && (
@@ -410,14 +417,14 @@ const Review: FC<ReviewScreenProps> = ({
                   }}
                 />
               ) : (
-                <Text>
+                <RadioValue>
                   {
                     getValueViaPath(
                       application.answers,
                       'usePrivatePensionFund',
                     ) as string[]
                   }
-                </Text>
+                </RadioValue>
               )}
 
               {statefulPrivatePension === YES && (
@@ -506,14 +513,14 @@ const Review: FC<ReviewScreenProps> = ({
                 }}
               />
             ) : (
-              <Text>
+              <RadioValue>
                 {
                   getValueViaPath(
                     application.answers,
                     'employer.isSelfEmployed',
                   ) as string[]
                 }
-              </Text>
+              </RadioValue>
             )}
             {statefulSelfEmployed === NO && (
               <>
