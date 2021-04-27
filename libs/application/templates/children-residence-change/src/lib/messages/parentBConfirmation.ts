@@ -11,7 +11,7 @@ export const parentBConfirmation = {
     description: {
       id: 'crc.application:section.parentBConfirmation.description',
       defaultMessage:
-        'Umsókn þín um breytt lögheimili hefur verið móttekin og send nú verið send áfram í vinnslu hjá sýslumanni.',
+        'Umsókn ykkar um breytt lögheimili hefur verið móttekin og send áfram í vinnslu hjá sýslumanni.',
       description: 'Parent B Confirmation description',
     },
   }),
