@@ -20,7 +20,7 @@ const BulletListBox = ({ children }: { children: ReactNode }) => {
 
 interface Props {
   text: MessageDescriptor
-  format?: { [key: string]: string }
+  format?: { [key: string]: string | number }
   textProps?: TextProps
 }
 
