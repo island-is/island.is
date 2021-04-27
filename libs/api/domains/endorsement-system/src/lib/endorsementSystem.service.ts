@@ -6,12 +6,13 @@ import {
   EndorsementListApi,
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
-  EndorsementControllerFindOneRequest,
   EndorsementListControllerCloseRequest,
   EndorsementListControllerCreateRequest,
   EndorsementListControllerFindListsRequest,
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
+  EndorsementControllerFindAllRequest,
+  EndorsementControllerFindByUserRequest,
 } from '../../gen/fetch'
 
 const handleError = async (error: any) => {
@@ -36,11 +37,19 @@ export class EndorsementSystemService {
   ) {}
 
   // Endorsement endpoints
-  async endorsementControllerFindOne(
-    input: EndorsementControllerFindOneRequest,
+  async endorsementControllerFindAll(
+    input: EndorsementControllerFindAllRequest,
   ) {
     return await this.endorsementApi
-      .endorsementControllerFindOne(input)
+      .endorsementControllerFindAll(input)
+      .catch(handleError)
+  }
+
+  async endorsementControllerFindByUser(
+    input: EndorsementControllerFindByUserRequest,
+  ) {
+    return await this.endorsementApi
+      .endorsementControllerFindByUser(input)
       .catch(handleError)
   }
 
