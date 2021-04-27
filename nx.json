@@ -520,6 +520,9 @@
     "financial-aid-types": {
       "tags": []
     },
+    "financial-aid-web-osk": {
+      "tags": []
+    },
     "system-e2e": {
       "tags": []
     },

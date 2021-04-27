@@ -6742,6 +6742,97 @@
         }
       }
     },
+    "financial-aid-web-osk": {
+      "root": "apps/financial-aid/web-osk",
+      "sourceRoot": "apps/financial-aid/web-osk",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "commands": [
+              "yarn nx build-next financial-aid-web-osk",
+              "yarn nx build-server financial-aid-web-osk"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/financial-aid/web-osk",
+            "outputPath": "dist/apps/financial-aid/web-osk"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "main": "apps/financial-aid/web-osk/server.ts",
+            "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/financial-aid/web-osk/next-modules"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/web-osk/tsconfig.json",
+              "apps/financial-aid/web-osk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/financial-aid/web-osk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/web-osk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/web-osk"]
+        },
+        "docker-next": {}
+      }
+    },
     "system-e2e": {
       "root": "apps/system-e2e",
       "sourceRoot": "apps/system-e2e/src",
