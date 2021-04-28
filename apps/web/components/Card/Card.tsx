@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import Link, { LinkProps } from 'next/link'
+import { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
@@ -17,7 +17,6 @@ import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.treat'
-import { theme } from '@island.is/island-ui/theme'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -116,19 +115,15 @@ export const Card = ({
           {tags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
-                {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
+                {tags.map(({ title, ...props }: CardTagsProps, index) => {
                   const tagProps = {
                     ...tagPropsDefaults,
                     ...props.tagProps,
                     variant: tagVariant,
                   }
 
-                  return href ? (
-                    <Link key={index} {...link}>
-                      <Tag {...tagProps}>{title}</Tag>
-                    </Link>
-                  ) : (
-                    <Tag key={index} {...tagProps}>
+                  return (
+                    <Tag key={index} {...tagProps} disabled>
                       {title}
                     </Tag>
                   )
