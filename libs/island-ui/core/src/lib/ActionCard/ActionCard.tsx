@@ -226,7 +226,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       >
         <Box>
           <Text variant="h3">{heading}</Text>
-          <Text paddingTop={!!heading ? 1 : 0}>{text}</Text>
+          <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
 
         <Box
