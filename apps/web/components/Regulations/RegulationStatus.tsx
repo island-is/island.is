@@ -1,6 +1,6 @@
 import * as s from './RegulationStatus.treat'
 
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Hidden, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
@@ -12,8 +12,9 @@ import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 type BallProps = {
   type?: 'green' | 'red'
+  children?: ReactNode
 }
-const Ball: React.FC<BallProps> = ({ type, children }) => (
+const Ball = ({ type, children }: BallProps) => (
   <span className={cn(s.ball, type === 'red' && s.ballRed)}>{children}</span>
 )
 

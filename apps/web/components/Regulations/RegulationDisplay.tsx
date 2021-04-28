@@ -1,6 +1,6 @@
 import * as s from './RegulationDisplay.treat'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -19,8 +19,9 @@ import { HTMLDump } from './HTMLDump'
 import { CommentsBox } from './CommentsBox'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
-import { RegulationTimeline } from './RegulationTimeline'
+import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
+import { RegulationTimeline } from './RegulationTimeline'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -62,6 +63,8 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
     : s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
 
   const key = getKey(regulation)
+
+  const [showTimeline, setShowTimeline] = useState(false)
 
   return (
     <RegulationLayout
@@ -138,7 +141,20 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
           <RegulationInfoBox regulation={regulation} texts={texts} />
           <RegulationEffectsBox regulation={regulation} texts={texts} />
-          <RegulationTimeline regulation={regulation} texts={texts} />
+
+          {showTimeline ? (
+            <RegulationTimeline regulation={regulation} texts={texts} />
+          ) : (
+            <RegulationChangelog regulation={regulation} texts={texts} />
+          )}
+          <button
+            onClick={() => setShowTimeline(!showTimeline)}
+            {...((v) => ({
+              'aria-label': v,
+              title: v,
+            }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
+            style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
+          />
         </Stack>
       }
     />

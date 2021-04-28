@@ -60,7 +60,14 @@ export const sidebarLink = style({
 })
 export const sidebarLinkCurrent = style({})
 
-export const timelineCurrent = style({
+export const changelogCurrent = style({
   paddingLeft: 10,
   borderLeft: '1px solid ' + color.blueberry300,
+})
+
+export const timelineCurrent = changelogCurrent
+
+export const timelineCurrentVersion = style({
+  paddingTop: spacing[1],
+  paddingBottom: spacing[1],
 })
