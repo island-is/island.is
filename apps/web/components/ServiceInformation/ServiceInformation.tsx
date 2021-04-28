@@ -1,10 +1,8 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import { useNamespace } from '../../hooks'
-import capitalize from 'lodash/capitalize'
 import {
   Box,
   Inline,
-  Tag,
   Text,
   Divider,
   Link,
@@ -13,8 +11,6 @@ import {
   GridRow,
   GridColumn,
   Option,
-  Tooltip,
-  DialogPrompt,
 } from '@island.is/island-ui/core'
 import {
   Service,
@@ -32,7 +28,7 @@ export interface ServiceInformationProps {
   onSelectChange?: (value: ServiceDetail) => void
 }
 
-export const ServiceInformation: FC<ServiceInformationProps> = ({
+export const ServiceInformation = ({
   service,
   strings,
   onSelectChange,

@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Link, Button } from '@island.is/island-ui/core'
 
 interface ServiceInfoLinkProps {
   href: string
   link: string
 }
-export const ServiceInfoLink: FC<ServiceInfoLinkProps> = ({ href, link }) => {
+export const ServiceInfoLink = ({ href, link }: ServiceInfoLinkProps) => {
   return (
     <Link href={href}>
       <Button

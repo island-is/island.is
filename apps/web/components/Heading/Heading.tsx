@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Stack, Text } from '@island.is/island-ui/core'
 
 export interface HeadingProps {
@@ -6,7 +6,7 @@ export interface HeadingProps {
   body: string
 }
 
-export const Heading: FC<HeadingProps> = ({ title, body }) => (
+export const Heading = ({ title, body }: HeadingProps) => (
   <Stack space={3}>
     <Text variant="h1" as="h2">
       {title}
