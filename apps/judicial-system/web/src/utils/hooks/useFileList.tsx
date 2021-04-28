@@ -9,7 +9,7 @@ interface Parameters {
 const useFileList = ({ caseId }: Parameters) => {
   const [openFileId, setOpenFileId] = useState<string>()
 
-  const { data: fileSignedUrl } = useQuery(GetSignedUrlQuery, {
+  const { data: fileSignedUrl, error } = useQuery(GetSignedUrlQuery, {
     variables: {
       input: {
         id: openFileId,
@@ -18,6 +18,8 @@ const useFileList = ({ caseId }: Parameters) => {
     },
     skip: !caseId || !openFileId,
   })
+
+  console.log(error)
 
   useEffect(() => {
     if (fileSignedUrl) {

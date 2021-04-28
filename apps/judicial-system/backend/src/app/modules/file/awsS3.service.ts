@@ -71,14 +71,19 @@ export class AwsS3Service {
 
   objectExists(key: string): Promise<boolean> {
     return this.s3
-      .waitFor('objectExists', {
+      .headObject({
         Bucket: environment.files.bucket,
         Key: key,
       })
       .promise()
       .then(
         () => true,
-        () => false,
+        (err) => {
+          if (err.code === 'NotFound') {
+            return false
+          }
+          throw err
+        },
       )
   }
 }
