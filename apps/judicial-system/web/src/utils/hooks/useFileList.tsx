@@ -39,7 +39,11 @@ const useFileList = ({ caseId }: Parameters) => {
       setFileNotFound(true)
   }
 
-  return { handleOpenFile, fileNotFound }
+  const dismissFileNotFound = () => {
+    setFileNotFound(false)
+  }
+
+  return { handleOpenFile, fileNotFound, dismissFileNotFound }
 }
 
 export default useFileList

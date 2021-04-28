@@ -13,7 +13,9 @@ interface Props {
 const CaseFileList: React.FC<Props> = (props) => {
   const { caseId, files, canOpenFiles = true } = props
 
-  const { handleOpenFile, fileNotFound } = useFileList({ caseId })
+  const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
+    caseId,
+  })
 
   return files.length > 0 ? (
     <>
@@ -33,8 +35,8 @@ const CaseFileList: React.FC<Props> = (props) => {
         <Modal
           title="Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt"
           text="Rannsóknargögnum er eytt sjálfkrafa að loknum kærufresti."
-          handleClose={() => console.log('TODO')}
-          handlePrimaryButtonClick={() => console.log('TODO')}
+          handleClose={() => dismissFileNotFound()}
+          handlePrimaryButtonClick={() => dismissFileNotFound()}
           primaryButtonText="Loka glugga"
         />
       )}
