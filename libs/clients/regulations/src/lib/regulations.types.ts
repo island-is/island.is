@@ -1,21 +1,21 @@
-declare const _RegNameToken_: unique symbol
+declare const _RegName__Brand: unique symbol
 /** Regulation name – `0123/2012` */
-export type RegName = string & { [_RegNameToken_]: true }
+export type RegName = string & { [_RegName__Brand]: true }
 
-declare const _RegNameQueryToken_: unique symbol
+declare const _RegNameQuery__Brand: unique symbol
 /** Regulation name formatted for URL param insertion – `0123-2012` */
-export type RegQueryName = string & { [_RegNameQueryToken_]: true }
+export type RegQueryName = string & { [_RegNameQuery__Brand]: true }
 
-declare const _ISODateToken_: unique symbol
+declare const _ISODate__Brand: unique symbol
 /** Valid ISODate string – e.g. `2012-09-30` */
-export type ISODate = string & { [_ISODateToken_]: true }
+export type ISODate = string & { [_ISODate__Brand]: true }
 
-declare const _HTMLTextToken_: unique symbol
+declare const _HTMLText__Brand: unique symbol
 /** HTMLText string – e.g. `I &lt;3 You ` */
-export type HTMLText = string & { [_HTMLTextToken_]: true }
+export type HTMLText = string & { [_HTMLText__Brand]: true }
 
 /** Plain-text string – e.g. `I <3 You ` */
-export type PlainText = string & { [_HTMLTextToken_]?: false }
+export type PlainText = string & { [_HTMLText__Brand]?: false }
 
 // ---------------------------------------------------------------------------
 
