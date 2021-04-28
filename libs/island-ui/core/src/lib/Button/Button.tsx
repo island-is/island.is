@@ -90,12 +90,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     },
     ref,
   ) => {
+    console.log(as, children, type)
     return (
       <Box
         component={ReaButton}
         as={as || variant === 'text' ? 'span' : 'button'}
         ref={ref}
-        {...(as !== 'span' && { type })}
+        type={as === 'span' ? undefined : type}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
