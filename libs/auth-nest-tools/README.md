@@ -79,7 +79,7 @@ Information about the logged in user can be obtained by adding `@CurrentUser() u
 
 ### Opting out of auth
 
-If a small subsection of your controller or app has public endpoints you can explicitly opt out of auth for those section.
+If a small subsection of your controller or app has public endpoints you can explicitly opt out of auth for those sections.
 
 Decorate the resolver or controller with `@BypassAuth`:
 
