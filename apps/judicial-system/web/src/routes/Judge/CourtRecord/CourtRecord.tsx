@@ -7,7 +7,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   CourtDocuments,
@@ -26,19 +26,14 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AccusedPleaDecision,
   Case,
   CaseCustodyRestrictions,
   CaseGender,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
   JudgeSubsections,
@@ -123,26 +118,17 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       let theCase = data.case
 
-      if (!theCase.courtAttendees) {
-        theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
-        if (theCase.courtAttendees) {
-          updateCase(
-            theCase.id,
-            parseString('courtAttendees', theCase.courtAttendees),
-          )
-        }
-      }
       if (
-        !theCase.policeDemands &&
         theCase.accusedName &&
         theCase.court &&
         theCase.requestedCustodyEndDate
         // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
-        theCase = {
-          ...theCase,
-          policeDemands: `${formatProsecutorDemands(
+        autofill(
+          'policeDemands',
+          `${formatProsecutorDemands(
             theCase.type,
             theCase.accusedNationalId,
             theCase.accusedName,
@@ -158,14 +144,8 @@ export const CourtRecord: React.FC = () => {
               ? `\n\n${theCase.otherDemands}`
               : ''
           }`,
-        }
-
-        if (theCase.policeDemands) {
-          updateCase(
-            theCase.id,
-            parseString('policeDemands', theCase.policeDemands),
-          )
-        }
+          theCase,
+        )
       }
 
       autofill(

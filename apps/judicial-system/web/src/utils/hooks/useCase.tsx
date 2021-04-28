@@ -66,10 +66,12 @@ const useCase = () => {
     value: string,
     workingCase: Case,
   ) => {
-    workingCase[key] = value
+    if (!workingCase[key]) {
+      workingCase[key] = value
 
-    if (workingCase[key]) {
-      updateCase(workingCase.id, parseString(key, value))
+      if (workingCase[key]) {
+        updateCase(workingCase.id, parseString(key, value))
+      }
     }
   }
 
