@@ -90,7 +90,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     },
     ref,
   ) => {
-    console.log(as, children, type)
     return (
       <Box
         component={ReaButton}
