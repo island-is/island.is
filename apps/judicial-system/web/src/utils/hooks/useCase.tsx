@@ -2,6 +2,12 @@ import { useMutation } from '@apollo/client'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { UpdateCaseMutation } from '@island.is/judicial-system-web/graphql'
 import { CreateCaseMutation } from '../mutations'
+import { parseString } from '../formatters'
+
+type autofillProperties = Pick<
+  Case,
+  'courtAttendees' | 'policeDemands' | 'litigationPresentations'
+>
 
 const useCase = () => {
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -55,7 +61,19 @@ const useCase = () => {
     return resCase
   }
 
-  return { createCase, updateCase, isCreatingCase }
+  const autofill = (
+    key: keyof autofillProperties,
+    value: string,
+    workingCase: Case,
+  ) => {
+    workingCase[key] = value
+
+    if (workingCase[key]) {
+      updateCase(workingCase.id, parseString(key, value))
+    }
+  }
+
+  return { createCase, updateCase, isCreatingCase, autofill }
 }
 
 export default useCase

@@ -75,7 +75,7 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   const router = useRouter()
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
 
   const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -167,23 +167,12 @@ export const CourtRecord: React.FC = () => {
           )
         }
       }
-      if (!theCase.litigationPresentations) {
-        theCase = {
-          ...theCase,
-          litigationPresentations:
-            'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
-        }
 
-        if (theCase.litigationPresentations) {
-          updateCase(
-            theCase.id,
-            parseString(
-              'litigationPresentations',
-              theCase.litigationPresentations,
-            ),
-          )
-        }
-      }
+      autofill(
+        'litigationPresentations',
+        'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+        theCase,
+      )
 
       setWorkingCase(theCase)
     }
