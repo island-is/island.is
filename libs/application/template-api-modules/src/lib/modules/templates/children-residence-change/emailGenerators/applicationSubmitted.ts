@@ -28,8 +28,8 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: process.env.EMAIL_FROM_NAME ?? '',
+      address: process.env.EMAIL_FROM ?? 'development@island.is',
     },
     to: [
       {
