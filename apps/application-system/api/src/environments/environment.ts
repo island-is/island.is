@@ -28,6 +28,10 @@ export default {
     emailOptions: {
       useTestAccount: true,
     },
+    email: {
+      sender: 'Devland.is',
+      address: 'development@island.is',
+    },
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,

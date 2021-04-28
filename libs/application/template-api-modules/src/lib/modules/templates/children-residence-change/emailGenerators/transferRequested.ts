@@ -5,7 +5,7 @@ import { EmailTemplateGenerator } from '../../../../types'
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
   const application = (props.application as unknown) as CRCApplication
   const {
-    options: { clientLocationOrigin },
+    options: { clientLocationOrigin, email },
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
@@ -20,8 +20,8 @@ export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {
