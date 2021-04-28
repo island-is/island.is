@@ -3,6 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { CaseFile, Modal } from '..'
 import useFileList from '../../utils/hooks/useFileList'
+import { AnimatePresence } from 'framer-motion'
 
 interface Props {
   caseId: string
@@ -31,15 +32,17 @@ const CaseFileList: React.FC<Props> = (props) => {
           />
         </Box>
       ))}
-      {fileNotFound && (
-        <Modal
-          title="Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt"
-          text="Rannsóknargögnum er eytt sjálfkrafa að loknum kærufresti."
-          handleClose={() => dismissFileNotFound()}
-          handlePrimaryButtonClick={() => dismissFileNotFound()}
-          primaryButtonText="Loka glugga"
-        />
-      )}
+      <AnimatePresence>
+        {fileNotFound && (
+          <Modal
+            title="Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt"
+            text="Rannsóknargögnum er eytt sjálfkrafa að loknum kærufresti."
+            handleClose={() => dismissFileNotFound()}
+            handlePrimaryButtonClick={() => dismissFileNotFound()}
+            primaryButtonText="Loka glugga"
+          />
+        )}
+      </AnimatePresence>
     </>
   ) : (
     <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
