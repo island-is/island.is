@@ -1,26 +1,32 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
+    return queryInterface.sequelize.query(`
+      BEGIN;
+      
+        INSERT INTO api_scope_user (national_id, email)
+          SELECT national_id, email
+        FROM admin_access;
+      
 
-      Example:
-      return queryInterface.bulkInsert('People', [{
-        name: 'John Doe',
-        isBetaMember: false
-      }], {});
-    */
+        INSERT INTO api_scope_user_access (national_id, scope)
+          SELECT national_id, scope
+        FROM admin_access;
+
+
+      COMMIT;
+    `)
   },
 
   down: (queryInterface, Sequelize) => {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
+    return queryInterface.sequelize.query(`
+      BEGIN;
+    
+        DELETE FROM api_scope_user;
+        DELETE FROM api_scope_user_access;
 
-      Example:
-      return queryInterface.bulkDelete('People', null, {});
-    */
-  }
-};
+      COMMIT;
+    `)
+  },
+}
