@@ -116,7 +116,7 @@ export const CourtRecord: React.FC = () => {
     }
 
     if (!workingCase && data?.case) {
-      let theCase = data.case
+      const theCase = data.case
 
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
@@ -156,7 +156,7 @@ export const CourtRecord: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, updateCase, setWorkingCase, data])
+  }, [workingCase, updateCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout
