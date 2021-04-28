@@ -170,6 +170,9 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
+    "application-templates-login-service": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },

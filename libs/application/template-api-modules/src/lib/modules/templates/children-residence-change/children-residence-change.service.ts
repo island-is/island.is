@@ -156,7 +156,7 @@ export class ChildrenResidenceChangeService {
     if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
-        'Borist hefur umsókn um breytt lögheimili barns.',
+        'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
   }

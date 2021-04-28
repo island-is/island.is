@@ -23,7 +23,7 @@ const isBrowser = typeof window !== `undefined`
 const getScrollPosition = ({ element, useWindow }: GetScrollPositionProps) => {
   if (!isBrowser) return { x: 0, y: 0 }
 
-  const target = element ? element.current : document.body
+  const target = element?.current || document.body
   const position = target.getBoundingClientRect()
 
   return useWindow
@@ -40,7 +40,9 @@ export const useScrollPosition = (
 ) => {
   const position = useRef(getScrollPosition({ useWindow }))
 
-  let throttleTimeout = null
+  // ReturnType because of incompatible setTimeout signatures of Node and the browser.
+  // (Tests are run in browser mode)
+  let throttleTimeout: ReturnType<typeof setTimeout> | null = null
 
   const callBack = () => {
     const currPos = getScrollPosition({ element, useWindow })

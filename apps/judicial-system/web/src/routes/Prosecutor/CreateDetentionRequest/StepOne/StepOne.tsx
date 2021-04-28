@@ -8,16 +8,13 @@ import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
 import { StepOneForm } from './StepOneForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-
-interface CaseData {
-  case?: Case
-}
 
 interface Props {
   type?: CaseType
