@@ -302,7 +302,7 @@ export const m: MessageDir = {
   endorsementForm: defineMessages({
     title: {
       id: 'ple.application:endorsement.form.title',
-      defaultMessage: 'Listabókstafur',
+      defaultMessage: 'Meðmæli með listabókstafnum',
       description: 'Title for endorsements application',
     },
     stepTitle: {

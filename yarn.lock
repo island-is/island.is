@@ -16864,7 +16864,7 @@ joi@^13.4.0:
     isemail "3.x.x"
     topo "3.x.x"
 
-jose@1.28.1, jose@^1.27.2, jose@^1.28.0:
+jose@^1.27.2, jose@^1.28.0:
   version "1.28.1"
   resolved "https://registry.yarnpkg.com/jose/-/jose-1.28.1.tgz#34a0f851a534be59ffab82a6e8845f6874e8c128"
   integrity sha512-6JK28rFu5ENp/yxMwM+iN7YeaInnY9B9Bggjkz5fuwLiJhbVrl2O4SJr65bdNBPl9y27fdC3Mymh+FVCvozLIg==
