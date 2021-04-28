@@ -606,64 +606,71 @@ const Review: FC<ReviewScreenProps> = ({
             </Box>
           </AccordionItem> */}
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.shareInformation.subSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Box marginTop={1} marginBottom={2}>
-                <Text variant="h5">
-                  {formatMessage(
-                    parentalLeaveFormMessages.shareInformation.title,
-                  )}
-                </Text>
-              </Box>
-
-              {editable ? (
-                <RadioController
-                  id="shareInformationWithOtherParent"
-                  disabled={false}
-                  name="shareInformationWithOtherParent"
-                  error={
-                    (errors as RecordObject<string> | undefined)
-                      ?.shareInformationWithOtherParent
-                  }
-                  defaultValue={
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                />
-              ) : (
-                <Text>
-                  {
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                </Text>
+          {/* TODO: Bring back this feature post v1 launch
+              Would also be good to combine it with the first accordion item
+              and make just one section for the other parent info, and sharing with the other parent
+              https://app.asana.com/0/1182378413629561/1200214178491339/f
+          */}
+          {/* {statefulOtherParentConfirmed === 'manual' && (
+            <AccordionItem
+              id="id_4"
+              label={formatMessage(
+                parentalLeaveFormMessages.shareInformation.subSection,
               )}
-            </Box>
-          </AccordionItem>
+              startExpanded={allItemsExpanded}
+            >
+              <Box paddingY={4}>
+                <Box marginTop={1} marginBottom={2}>
+                  <Text variant="h5">
+                    {formatMessage(
+                      parentalLeaveFormMessages.shareInformation.title,
+                    )}
+                  </Text>
+                </Box>
+
+                {editable ? (
+                  <RadioController
+                    id="shareInformationWithOtherParent"
+                    disabled={false}
+                    name="shareInformationWithOtherParent"
+                    error={
+                      (errors as RecordObject<string> | undefined)
+                        ?.shareInformationWithOtherParent
+                    }
+                    defaultValue={
+                      getValueViaPath(
+                        application.answers,
+                        'shareInformationWithOtherParent',
+                      ) as string[]
+                    }
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                  />
+                ) : (
+                  <Text>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'shareInformationWithOtherParent',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </Box>
+            </AccordionItem>
+          )} */}
         </Accordion>
       </Box>
     </div>
