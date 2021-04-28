@@ -2,7 +2,7 @@
 type Nully = undefined | null
 type NamespaceValues = string | ReadonlyArray<string>
 export type NamespaceMessages = Readonly<
-  Record<string, NamespaceValues | undefined>
+  Record<string, NamespaceValues | undefined | null>
 >
 
 type RetVal<Value, Fallback> = Value extends Nully
