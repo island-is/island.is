@@ -10,6 +10,12 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CreateCaseMutation } from '../mutations'
+import { parseString } from '../formatters'
+
+type autofillProperties = Pick<
+  Case,
+  'courtAttendees' | 'policeDemands' | 'litigationPresentations'
+>
 
 const useCase = () => {
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -85,12 +91,27 @@ const useCase = () => {
     return data?.sendNotification?.notificationSent
   }
 
+  const autofill = (
+    key: keyof autofillProperties,
+    value: string,
+    workingCase: Case,
+  ) => {
+    if (!workingCase[key]) {
+      workingCase[key] = value
+
+      if (workingCase[key]) {
+        updateCase(workingCase.id, parseString(key, value))
+      }
+    }
+  }
+
   return {
     updateCase,
     createCase,
     isCreatingCase,
     sendNotification,
     isSendingNotification,
+    autofill,
   }
 }
 
