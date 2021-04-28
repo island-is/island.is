@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react'
+import React, { useRef } from 'react'
 import {
   Button,
   Menu as MenuUI,
@@ -25,13 +25,13 @@ interface Props {
   buttonColorScheme?: ButtonTypes['colorScheme']
 }
 
-export const Menu: FC<Props> = ({
+export const Menu = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
   mainLinks,
   buttonColorScheme = 'default',
-}) => {
+}: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
 

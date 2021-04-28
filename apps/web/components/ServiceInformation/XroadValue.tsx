@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Box, Inline, Text } from '@island.is/island-ui/core'
 
 interface XroadValueProps {
@@ -7,11 +7,7 @@ interface XroadValueProps {
   showDivider: boolean
 }
 
-export const XroadValue: FC<XroadValueProps> = ({
-  label,
-  value,
-  showDivider,
-}) => {
+export const XroadValue = ({ label, value, showDivider }: XroadValueProps) => {
   return (
     <Box display="flex" borderColor="blue200">
       <Inline space={1}>

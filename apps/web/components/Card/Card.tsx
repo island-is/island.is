@@ -42,7 +42,7 @@ export interface CardProps {
   status?: string
 }
 
-export const Card: FC<CardProps> = ({
+export const Card = ({
   title,
   subTitle,
   image,
@@ -50,7 +50,7 @@ export const Card: FC<CardProps> = ({
   tags = [],
   link,
   status,
-}) => {
+}: CardProps) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
