@@ -16,12 +16,12 @@ import {
   useRegulationLinkResolver,
 } from './regulationUtils'
 
-export type RegulationTimelineProps = {
+export type RegulationChangelogProps = {
   regulation: RegulationMaybeDiff
   texts: RegulationPageTexts
 }
 
-export const RegulationTimeline = (props: RegulationTimelineProps) => {
+export const RegulationChangelog = (props: RegulationChangelogProps) => {
   const { regulation, texts } = props
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
@@ -80,16 +80,23 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
           (regulation.timelineDate ||
             (!viewingCurrent && regulation.lastAmendDate)) === item.date
 
-        const futureSplitter = item.date > today &&
-          (i === 0 || arr[i + 1].date <= today) && (
+        const futureSplitter = item.date > today && i === 0 && (
+          <Text variant="small" marginBottom={1}>
+            {txt('historyFutureSplitter')}:
+          </Text>
+        )
+
+        const pastSplitter = item.date <= today &&
+          i > 0 &&
+          arr[i - 1].date > today && (
             <Text variant="small" marginBottom={1}>
-              {txt('historyFutureSplitter')}:
+              {txt('historyPastSplitter', 'Gildandi breytingar')}:
             </Text>
           )
 
         return (
           <Fragment key={'history-' + i}>
-            {futureSplitter}
+            {futureSplitter || pastSplitter}
 
             <RegulationsSidebarLink
               href={
@@ -111,7 +118,7 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
               <span
                 className={cn(
                   s.smallText,
-                  isTimelineActive && s.timelineCurrent,
+                  isTimelineActive && s.changelogCurrent,
                 )}
                 title={labelLong}
               >

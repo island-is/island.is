@@ -19,7 +19,7 @@ import { HTMLDump } from './HTMLDump'
 import { CommentsBox } from './CommentsBox'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
-import { RegulationTimeline } from './RegulationTimeline'
+import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
@@ -138,7 +138,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
           <RegulationInfoBox regulation={regulation} texts={texts} />
           <RegulationEffectsBox regulation={regulation} texts={texts} />
-          <RegulationTimeline regulation={regulation} texts={texts} />
+          <RegulationChangelog regulation={regulation} texts={texts} />
         </Stack>
       }
     />
