@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
@@ -57,16 +58,19 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
 export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
   current?: boolean
   'aria-label'?: string | undefined
+  /** Additional class-name for the link */
+  className?: string
   children: NonNullable<ReactNode>
 }
 
 export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
   <Link href={props.href} pureChildren>
     <a
-      className={
-        styles.sidebarLink +
-        (props.current ? ' ' + styles.sidebarLinkCurrent : '')
-      }
+      className={cn(
+        props.className,
+        styles.sidebarLink,
+        props.current && styles.sidebarLinkCurrent,
+      )}
       aria-label={props['aria-label']}
     >
       {props.children}
