@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common'
+import { logger } from '@island.is/logging'
 
 import { User } from './user'
 import { getRequest } from './getRequest'
@@ -12,7 +13,7 @@ export const getCurrentUser = (context: ExecutionContext): User => {
 
   const user = request.user
   if (!user) {
-    console.warn(
+    logger.warn(
       'No user authentication found. Did you forget to add IdsUserGuard?',
     )
     throw new UnauthorizedException()

@@ -124,10 +124,11 @@ describe('AuditInterceptor', () => {
     context.getClass.mockReturnValue(MyClass)
     context.getHandler.mockReturnValue(MyClass.prototype.handler)
     const user = 'Test user'
-    ;((getCurrentUser as unknown) as MockInstance<
+    const getCurrentUserMock = (getCurrentUser as unknown) as MockInstance<
       string,
       unknown[]
-    >).mockReturnValue(user)
+    >
+    getCurrentUserMock.mockReturnValue(user)
 
     // Act
     const observable = interceptor.intercept(context, next)
