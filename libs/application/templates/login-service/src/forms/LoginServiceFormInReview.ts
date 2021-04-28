@@ -14,7 +14,7 @@ export const LoginServiceFormInReview: Form = buildForm({
   children: [
     buildSection({
       id: 'stepOne',
-      title: section.stepOne,
+      title: section.submitted,
       children: [
         buildDescriptionField({
           id: 'confirmationCustomField',

@@ -8,6 +8,7 @@ import {
   buildMultiField,
   buildTextField,
   buildSelectField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import {
   section,
@@ -95,6 +96,7 @@ export const LoginServiceForm: Form = buildForm({
               id: 'applicant.responsiblePartyEmail',
               title: applicant.labels.responsiblePartyEmail,
               backgroundColor: 'blue',
+              variant: 'email',
               width: 'half',
               required: true,
             }),
@@ -113,10 +115,45 @@ export const LoginServiceForm: Form = buildForm({
       id: 'technicalContact',
       title: section.technicalContact,
       children: [
-        buildDescriptionField({
-          id: 'placeholderDescription3',
+        buildMultiField({
+          id: 'technicalContactMultiField',
           title: technicalContact.general.pageTitle,
-          description: 'Umsókn',
+          description: technicalContact.general.pageDescription,
+          children: [
+            buildTextField({
+              id: 'technicalContact.name',
+              title: technicalContact.labels.name,
+            }),
+            buildTextField({
+              id: 'technicalContact.email',
+              title: technicalContact.labels.email,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'technicalContact.phoneNumber',
+              title: technicalContact.labels.tel,
+              variant: 'tel',
+              format: '###-####',
+            }),
+            buildCheckboxField({
+              id: 'technicalContact.sameAsResponsibleParty',
+              title: '',
+              options: [
+                {
+                  label: technicalContact.labels.sameAsResponsibleParty,
+                  value: 'yes',
+                },
+              ],
+            }),
+            buildTextField({
+              id: 'technicalContact.techAnnouncementsEmail',
+              title: technicalContact.labels.techAnnouncementsEmail,
+              description:
+                technicalContact.labels.techAnnouncementsEmailDescription,
+              variant: 'email',
+              required: true,
+            }),
+          ],
         }),
       ],
     }),

@@ -11,6 +11,13 @@ export const LoginServiceSchema = z.object({
     responsiblePartyEmail: z.string().nonempty(),
     responsiblePartyTel: z.string().nonempty(),
   }),
+  technicalContact: z.object({
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
+    sameAsResponsibleParty: z.array(z.string()).optional(),
+    techAnnouncementsEmail: z.string().nonempty(),
+  }),
 })
 
 export type LoginService = z.TypeOf<typeof LoginServiceSchema>
