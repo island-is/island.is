@@ -73,6 +73,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: 'Application Application',
   dataSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
