@@ -1,4 +1,4 @@
-import { Case } from '@island.is/judicial-system/types'
+import { Case, User } from '@island.is/judicial-system/types'
 import { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
@@ -49,4 +49,12 @@ export type directionType = 'ascending' | 'descending'
 export interface SortConfig {
   key: keyof Case
   direction: directionType
+}
+
+export interface CaseData {
+  case?: Case
+}
+
+export interface UserData {
+  users: User[]
 }
