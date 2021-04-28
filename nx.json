@@ -267,7 +267,7 @@
     "email-service": {
       "tags": []
     },
-    "endorsement-system": {
+    "endorsement-system-api": {
       "tags": []
     },
     "feature-flags": {
