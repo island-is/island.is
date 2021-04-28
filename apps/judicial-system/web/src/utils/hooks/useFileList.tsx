@@ -8,6 +8,7 @@ interface Parameters {
 
 const useFileList = ({ caseId }: Parameters) => {
   const [openFileId, setOpenFileId] = useState<string>()
+  const [fileNotFound, setFileNotFound] = useState<boolean>()
 
   const { data: fileSignedUrl, error } = useQuery(GetSignedUrlQuery, {
     variables: {
@@ -19,20 +20,26 @@ const useFileList = ({ caseId }: Parameters) => {
     skip: !caseId || !openFileId,
   })
 
-  console.log(error)
-
   useEffect(() => {
     if (fileSignedUrl) {
       window.open(fileSignedUrl.getSignedUrl.url, '_blank')
-      setOpenFileId(undefined)
+    } else if (error) {
+      handleError()
     }
-  }, [fileSignedUrl])
+
+    setOpenFileId(undefined)
+  }, [fileSignedUrl, error])
 
   const handleOpenFile = (fileId: string) => {
     setOpenFileId(fileId)
   }
 
-  return { handleOpenFile }
+  const handleError = () => {
+    error?.graphQLErrors[0].extensions?.response.status === 404 &&
+      setFileNotFound(true)
+  }
+
+  return { handleOpenFile, fileNotFound }
 }
 
 export default useFileList

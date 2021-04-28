@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
-import { CaseFile } from '..'
+import { CaseFile, Modal } from '..'
 import useFileList from '../../utils/hooks/useFileList'
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 const CaseFileList: React.FC<Props> = (props) => {
   const { caseId, files, canOpenFiles = true } = props
 
-  const { handleOpenFile } = useFileList({ caseId })
+  const { handleOpenFile, fileNotFound } = useFileList({ caseId })
 
   return files.length > 0 ? (
     <>
@@ -29,6 +29,15 @@ const CaseFileList: React.FC<Props> = (props) => {
           />
         </Box>
       ))}
+      {fileNotFound && (
+        <Modal
+          title="Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt"
+          text="Rannsóknargögnum er eytt sjálfkrafa að loknum kærufresti."
+          handleClose={() => console.log('TODO')}
+          handlePrimaryButtonClick={() => console.log('TODO')}
+          primaryButtonText="Loka glugga"
+        />
+      )}
     </>
   ) : (
     <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
