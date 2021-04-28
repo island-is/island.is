@@ -12,11 +12,79 @@ export const modalContent = style({
   top: '240px',
   left: '50%',
   width: '90%',
-  maxWidth: '880px',
+  padding: '56px 40px 40px',
+  maxWidth: '500px',
+  textAlign: 'center',
+  borderRadius: '8px',
   transform: 'translateX(-50%)',
+  filter: 'drop-shadow(0px 4px 30px rgba(0, 97, 255, 0.16))',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: '64px 56px 48px',
+    },
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      padding: '96px 114px 80px',
+      maxWidth: '660px',
+    },
+  },
+})
+
+export const logoWrapper = style({
+  background: theme.color.white,
+  width: '70px',
+  height: '70px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'absolute',
+  left: '50%',
+  top: '-35px',
+  transform: 'translateX(-50%)',
+  borderRadius: '50%',
 })
 
 export const controlCode = style({
   color: theme.color.blue400,
   marginLeft: '8px',
+})
+
+export const loader = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const loadingDot = style({
+  marginTop: '48px',
+  width: 8,
+  height: 8,
+  borderRadius: '50%',
+  background: theme.color.blue400,
+  selectors: {
+    '&:not(:last-child)': {
+      marginRight: 10,
+    },
+    '&:nth-child(2)': {
+      animationDelay: '0.4s',
+    },
+    '&:nth-child(3)': {
+      animationDelay: '0.8s',
+    },
+  },
+  animation:
+    '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',
+  '@keyframes': {
+    '0%': {
+      transform: 'scale(1)',
+      opacity: 1,
+    },
+    '50%': {
+      transform: 'scale(0.8)',
+      opacity: 0.4,
+    },
+    '100%': {
+      transform: 'scale(1)',
+      opacity: 1,
+    },
+  },
 })
