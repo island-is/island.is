@@ -9,6 +9,7 @@ import {
   PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ApiScopeUserAccess } from './api-scope-user-access.model'
 
 @Table({
   tableName: 'api_scope_user',
@@ -32,11 +33,9 @@ export class ApiScopeUser extends Model<ApiScopeUser> {
   })
   email!: boolean
 
-  // @HasMany(() => ApiScopeUserClaim)
-  // @ApiProperty()
-  // userClaims?: ApiScopeUserClaim[]
-
-  // Common properties end
+  @HasMany(() => ApiScopeUserAccess)
+  @ApiProperty()
+  userAccess?: []
 
   @CreatedAt
   @ApiProperty()

@@ -5,7 +5,6 @@ import {
   Model,
   Table,
   UpdatedAt,
-  HasMany,
   PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
@@ -31,12 +30,6 @@ export class ApiScopeUserAccess extends Model<ApiScopeUserAccess> {
     example: true,
   })
   scope!: boolean
-
-  // @HasMany(() => ApiScopeUserClaim)
-  // @ApiProperty()
-  // userClaims?: ApiScopeUserClaim[]
-
-  // Common properties end
 
   @CreatedAt
   @ApiProperty()
