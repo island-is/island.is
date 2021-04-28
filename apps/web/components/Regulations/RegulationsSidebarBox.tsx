@@ -16,7 +16,7 @@ import {
 type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
   colorScheme?: styles.ColorScheme
-  children: ReactNode
+  children: NonNullable<ReactNode>
 }
 
 export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
@@ -57,7 +57,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
 export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
   current?: boolean
   'aria-label'?: string | undefined
-  children: ReactNode
+  children: NonNullable<ReactNode>
 }
 
 export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
