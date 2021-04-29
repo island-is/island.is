@@ -38,6 +38,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -52,10 +53,6 @@ import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/s
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-
-interface CaseData {
-  case?: Case
-}
 
 interface CreateCustodyCourtCaseMutationResponse {
   createCustodyCourtCase: {
@@ -518,6 +515,21 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </div>
               )}
+              {features.includes(Feature.CASE_FILES) &&
+                workingCase.caseFilesComments && (
+                  <div className={styles.infoSection}>
+                    <Box marginBottom={1}>
+                      <Text variant="h3" as="h3">
+                        Athugasemdir vegna rannsóknargagna
+                      </Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.caseFilesComments}
+                      </span>
+                    </Text>
+                  </div>
+                )}
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>

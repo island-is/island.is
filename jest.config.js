@@ -146,6 +146,7 @@ module.exports = {
     '<rootDir>/apps/download-service',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
+    '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/apps/endorsement-system',
   ],
 }

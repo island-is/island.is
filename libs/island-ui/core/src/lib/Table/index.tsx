@@ -1,2 +1,2 @@
-import * as Table from './Table'
-export default Table
+import * as TableExports from './Table'
+export const Table = { ...TableExports }

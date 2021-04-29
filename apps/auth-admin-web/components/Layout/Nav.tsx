@@ -77,13 +77,7 @@ const Nav: React.FC = () => {
             </a>
           </Link>
         </li>
-        <li className="nav__container">
-          <Link href="/users">
-            <a className={router?.pathname === '/users' ? 'active' : ''}>
-              {localization.navigations['navigation'].items['users'].text}
-            </a>
-          </Link>
-        </li>
+
         {adminRoute()}
       </ul>
     </nav>

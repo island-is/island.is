@@ -30,6 +30,7 @@
 /apps/application-system/                                                                     @island-is/aranja
 /apps/reference-next-app/                                                                     @island-is/aranja
 /libs/api/domains/application/                                                                @island-is/aranja
+/libs/api/domains/translations/                                                               @island-is/aranja
 /libs/application/core/                                                                       @island-is/aranja
 /libs/application/data-providers/                                                             @island-is/aranja
 /libs/application/graphql/                                                                    @island-is/aranja
@@ -73,6 +74,7 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/                                                                @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/login-service/                                                    @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
 

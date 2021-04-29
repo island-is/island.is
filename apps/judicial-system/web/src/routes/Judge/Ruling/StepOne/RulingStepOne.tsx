@@ -33,6 +33,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -47,10 +48,6 @@ import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-
-interface CaseData {
-  case?: Case
-}
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

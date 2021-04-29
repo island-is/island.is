@@ -60,7 +60,7 @@ const Paginator: React.FC<Props> = (props: Props) => {
             type="button"
             onClick={next}
             className="paginator__pagination-next"
-            disabled={page === props.lastPage}
+            disabled={page === props.lastPage || props.lastPage === 0}
           >
             {localization.paginator.nextButton}
           </button>

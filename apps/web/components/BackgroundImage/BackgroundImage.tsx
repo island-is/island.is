@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
@@ -10,7 +10,7 @@ export type BackgroundImageProps = {
   ratio?: string
   width?: number
   height?: number
-  background?: Colors
+  background?: typeof theme.color[Colors]
   boxProps?: BoxProps
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
@@ -33,7 +33,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const BackgroundImage: FC<BackgroundImageProps> = ({
+export const BackgroundImage = ({
   image = null,
   ratio = '',
   width = 1000,
@@ -48,7 +48,7 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
     overflow: 'hidden',
     borderRadius: 'large',
   },
-}) => {
+}: BackgroundImageProps) => {
   const src = `${image.url}?w=${width}`
   const thumbnail = image.url + '?w=50'
   const alt = image.title ?? ''

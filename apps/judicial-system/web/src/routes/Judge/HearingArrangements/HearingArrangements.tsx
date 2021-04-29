@@ -35,9 +35,11 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   ReactSelectOption,
   Sections,
+  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
@@ -49,14 +51,6 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-
-interface CaseData {
-  case?: Case
-}
-
-interface UserData {
-  users: User[]
-}
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)

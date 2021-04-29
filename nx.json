@@ -170,6 +170,9 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
+    "application-templates-login-service": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -454,6 +457,9 @@
       "tags": []
     },
     "service-portal-health": {
+      "tags": []
+    },
+    "service-portal-icelandic-names-registry": {
       "tags": []
     },
     "service-portal-settings": {

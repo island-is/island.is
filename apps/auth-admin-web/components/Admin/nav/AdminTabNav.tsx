@@ -34,6 +34,18 @@ const AdminTabNav: React.FC<Props> = ({
               {localization.navigations['adminTabNav'].items['adminUsers'].text}
             </button>
           </li>
+          <li className={activetab === AdminTab.Users ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.Users)}
+              className={activetab === AdminTab.Users ? 'active' : ''}
+              title={
+                localization.navigations['adminTabNav'].items['users'].title
+              }
+            >
+              {localization.navigations['adminTabNav'].items['users'].text}
+            </button>
+          </li>
           <li className={activetab === AdminTab.IdpProviders ? 'active' : ''}>
             <button
               type="button"
