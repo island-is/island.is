@@ -39,6 +39,7 @@ export type RegulationHomeTexts = Partial<
 
 export type RegulationPageTexts = Partial<
   Record<
+    | 'goBack' // 'Til baka'
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'
     | 'hideDiff' // 'Fela breytingar'

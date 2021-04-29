@@ -136,7 +136,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 : router.push(linkResolver('regulationshome').href)
             }}
           >
-            Til baka
+            {txt('goBack')}
           </Button>
 
           <RegulationInfoBox regulation={regulation} texts={texts} />

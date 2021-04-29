@@ -19,7 +19,7 @@ export const RegulationRedirectMessage = (
   const router = useRouter()
   const { linkResolver } = useRegulationLinkResolver()
   const { regulation, texts } = props
-  const n = useNamespace(texts)
+  const txt = useNamespace(texts)
 
   return (
     <RegulationLayout
@@ -35,7 +35,7 @@ export const RegulationRedirectMessage = (
           >
             {prettyName(regulation.name)} {regulation.title}
           </Text>
-          <Text>{n('redirectText')}</Text>
+          <Text>{txt('redirectText')}</Text>
           <Link color="blue400" underline="small" href={regulation.redirectUrl}>
             {regulation.redirectUrl}
           </Link>
@@ -56,7 +56,7 @@ export const RegulationRedirectMessage = (
                   : router.push(linkResolver('regulationshome').href)
               }}
             >
-              Til baka
+              {txt('goBack')}
             </Button>
           }
         </Stack>
