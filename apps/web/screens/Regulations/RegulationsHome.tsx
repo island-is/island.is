@@ -85,10 +85,6 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
-          /*{
-            title: 'Upplýsingasvæði',
-            href: linkResolver('article').href,
-          },*/
           {
             title: 'Reglugerðir',
             href: linkResolver('regulationshome').href,

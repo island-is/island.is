@@ -97,7 +97,7 @@ export class RegulationsService extends RESTDataSource {
       `search`,
       { q, rn, year, ch },
       {
-        cacheOptions: { ttl: 1 /* this.options.ttl ?? 600*/ }, // defaults to 10 minutes
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
     )
     return response

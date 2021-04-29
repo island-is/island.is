@@ -36,7 +36,6 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
     {
       name: regulation.name,
       date: regulation.effectiveDate,
-      // title: regulation.title,
       effect: 'root',
     } as const,
     ...regulation.history,

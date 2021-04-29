@@ -35,7 +35,6 @@ export const RegulationChangelog = (props: RegulationChangelogProps) => {
     {
       name: regulation.name,
       date: regulation.effectiveDate,
-      // title: regulation.title,
       effect: 'root',
     } as const,
     ...regulation.history,

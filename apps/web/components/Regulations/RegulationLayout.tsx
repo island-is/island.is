@@ -34,10 +34,6 @@ export const RegulationLayout = (props: RegulationLayoutProps) => {
             title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
-          /*{
-            title: 'Upplýsingasvæði',
-            href: linkResolver('article').href,
-          },*/
           {
             title: 'Reglugerðir',
             href: linkResolver('regulationshome').href,
