@@ -63,9 +63,9 @@ export class FileService {
 
     await this.signingService
       .getSignedDocument(DokobitFileName[pdfType], documentToken)
-      .then((file) => {
+      .then(async (file) => {
         const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-        this.awsService.uploadFile(
+        await this.awsService.uploadFile(
           Buffer.from(file, 'binary'),
           bucket,
           s3FileName,
