@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'application-templates-funding-government-projects',
+  displayName: 'application-templates-funding-government-projects',
   preset: '../../../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': [

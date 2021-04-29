@@ -1848,7 +1848,6 @@
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
       "projectType": "library",
-      "schematics": {},
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:lint",
