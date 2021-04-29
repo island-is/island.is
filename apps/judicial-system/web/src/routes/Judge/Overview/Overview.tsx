@@ -235,7 +235,7 @@ export const JudgeOverview: React.FC = () => {
                             disabled={!!workingCase.courtCaseNumber}
                             fluid
                           >
-                            Stofna mál
+                            Stofna nýtt mál
                           </Button>
                         </div>
                       )}
@@ -308,8 +308,7 @@ export const JudgeOverview: React.FC = () => {
                         )}
                     </div>
                   </Box>
-                  {courtCaseNumberErrorMessage &&
-                    showCreateCustodyCourtCase &&
+                  {showCreateCustodyCourtCase &&
                     !workingCase.setCourtCaseNumberManually && (
                       <div className={styles.enterCaseNrManuallyButton}>
                         <Button
@@ -317,7 +316,7 @@ export const JudgeOverview: React.FC = () => {
                           type="button"
                           onClick={handleSetCaseNrManuallyClick}
                         >
-                          Slá inn málsnúmer
+                          Slá inn málsnúmer sem þegar er til í Auði
                         </Button>
                       </div>
                     )}
