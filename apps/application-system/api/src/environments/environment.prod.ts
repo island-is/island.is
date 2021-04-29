@@ -53,4 +53,7 @@ export default {
     url: process.env.DOKOBIT_URL,
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  },
 } as Environment
