@@ -22,6 +22,7 @@ import {
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
+import { syslumennEmailFromPostalCode } from './utils'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -33,44 +34,6 @@ type props = Override<
 @Injectable()
 export class ChildrenResidenceChangeService {
   s3: S3
-  syslumennOffices = {
-    reykjavik: {
-      postalCodePrefixes: ['1', '20', '21', '22', '27'],
-      email: 'fjolskylda@syslumenn.is',
-    },
-    sudurnes: {
-      postalCodePrefixes: ['23', '24', '25', '26'],
-      email: 'sudurnes.fjolskylda@syslumenn.is',
-    },
-    vesturland: {
-      postalCodePrefixes: ['3'],
-      email: 'vesturland.sifjamal@syslumenn.is',
-    },
-    vestfirdir: {
-      postalCodePrefixes: ['4'],
-      email: 'vestfirdir.fjolskylda@syslumenn.is',
-    },
-    nordurlandVestra: {
-      postalCodePrefixes: ['5'],
-      email: 'nordurlandvestra.fjolskylda@syslumenn.is',
-    },
-    nordurlandEystra: {
-      postalCodePrefixes: ['6'],
-      email: 'nordurlandeystra.fjolskylda@syslumenn.is',
-    },
-    austurland: {
-      postalCodePrefixes: ['7'],
-      email: 'austurland.fjolskylda@syslumenn.is',
-    },
-    sudurland: {
-      postalCodePrefixes: ['8'],
-      email: 'sudurland.fjolskylda@syslumenn.is',
-    },
-    vestmannaeyjar: {
-      postalCodePrefixes: ['9'],
-      email: 'vestmannaeyjar.fjolskylda@syslumenn.is',
-    },
-  }
 
   constructor(
     private readonly syslumennService: SyslumennService,
@@ -79,18 +42,6 @@ export class ChildrenResidenceChangeService {
     private readonly smsService: SmsService,
   ) {
     this.s3 = new S3()
-  }
-
-  private syslumennEmailFromPostalCode(postalCode: string) {
-    for (const [, value] of Object.entries(this.syslumennOffices)) {
-      if (
-        value.postalCodePrefixes.some((prefix) => postalCode.startsWith(prefix))
-      ) {
-        return value.email
-      }
-    }
-    // This should not happen but if it does then it is better to send to some syslumenn office instead of skipping it
-    return this.syslumennOffices.reykjavik.email
   }
 
   async submitApplication({ application }: props) {
@@ -173,7 +124,7 @@ export class ChildrenResidenceChangeService {
     const response = await this.syslumennService
       .uploadData(participants, attachment, extraData)
       .catch(async () => {
-        const syslumennEmail = this.syslumennEmailFromPostalCode(
+        const syslumennEmail = syslumennEmailFromPostalCode(
           childResidenceInfo.future.address.postalCode,
         )
 
