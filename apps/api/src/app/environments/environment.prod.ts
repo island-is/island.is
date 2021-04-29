@@ -79,8 +79,6 @@ export default {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
   regulationsDomain: {
-    url:
-      process.env.REGULATIONS_API_URL ??
-      'https://reglugerdir-api.herokuapp.com/api/v1',
+    url: process.env.REGULATIONS_API_URL,
   },
 }
