@@ -443,35 +443,45 @@ export const JudgeOverview: React.FC = () => {
                   )}
                 </div>
               )}
-              {workingCase.comments && (
+              {(workingCase.comments || workingCase.caseFilesComments) && (
                 <div className={styles.infoSection}>
-                  <Box marginBottom={1}>
+                  <Box marginBottom={2}>
                     <Text variant="h3" as="h3">
-                      Athugasemdir vegna málsmeðferðar
+                      Athugasemdir
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
-                </div>
-              )}
-              {features.includes(Feature.CASE_FILES) &&
-                workingCase.caseFilesComments && (
-                  <div className={styles.infoSection}>
-                    <Box marginBottom={1}>
-                      <Text variant="h3" as="h3">
-                        Athugasemdir vegna rannsóknargagna
+                  {workingCase.comments && (
+                    <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                      <Box marginBottom={1}>
+                        <Text variant="h4" as="h3" color="blue400">
+                          Athugasemdir vegna málsmeðferðar
+                        </Text>
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.comments}
+                        </span>
                       </Text>
                     </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
-                    </Text>
-                  </div>
-                )}
+                  )}
+                  {features.includes(Feature.CASE_FILES) &&
+                    workingCase.caseFilesComments && (
+                      <>
+                        <Box marginBottom={1}>
+                          <Text variant="h4" as="h3" color="blue400">
+                            Athugasemdir vegna rannsóknargagna
+                          </Text>
+                        </Box>
+                        <Text>
+                          <span className={styles.breakSpaces}>
+                            {workingCase.caseFilesComments}
+                          </span>
+                        </Text>
+                      </>
+                    )}
+                </div>
+              )}
+
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>
