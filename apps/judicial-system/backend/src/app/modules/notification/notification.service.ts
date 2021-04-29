@@ -387,7 +387,7 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private sendRulingEmailNotificationToPrison(
+  private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
@@ -410,6 +410,13 @@ export class NotificationService {
       existingCase.parentCase !== null,
       existingCase.parentCase?.decision,
       existingCase.additionToConclusion,
+    )
+
+    await this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      existingCase.prosecutor.email,
+      subject,
+      html,
     )
 
     return this.sendEmail(
