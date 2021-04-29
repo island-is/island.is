@@ -51,6 +51,7 @@ import {
   GetUnionsQuery,
 } from '../../types/schema'
 import { Period } from '../../types'
+import * as styles from './Review.treat'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -61,6 +62,17 @@ interface ReviewScreenProps {
   errors?: RecordObject
 }
 
+type selectOption = {
+  label: string
+  value: string
+}
+
+const RadioValue: FC = ({ children }) => (
+  <Box className={styles.radioValue}>
+    <Text>{children}</Text>
+  </Box>
+)
+
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
@@ -70,6 +82,12 @@ const Review: FC<ReviewScreenProps> = ({
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const getSelectOptionLabel = (options: selectOption[], key: string) =>
+    options.find(
+      (option) =>
+        option.value === (getValueViaPath(application.answers, key) as string),
+    )?.label
 
   const [
     statefulOtherParentConfirmed,
@@ -220,14 +238,14 @@ const Review: FC<ReviewScreenProps> = ({
                     }}
                   />
                 ) : (
-                  <Text>
+                  <RadioValue>
                     {
                       getValueViaPath(
                         application.answers,
                         'otherParent',
                       ) as string[]
                     }
-                  </Text>
+                  </RadioValue>
                 )}
               </Box>
               {statefulOtherParentConfirmed === 'manual' && (
@@ -333,12 +351,10 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.pensionFund',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(
+                        pensionFundOptions,
+                        'payments.pensionFund',
+                      )}
                     </Text>
                   )}
                 </GridColumn>
@@ -355,12 +371,7 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.union',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(unionOptions, 'payments.union')}
                     </Text>
                   )}
                 </GridColumn>
@@ -404,14 +415,14 @@ const Review: FC<ReviewScreenProps> = ({
                   }}
                 />
               ) : (
-                <Text>
+                <RadioValue>
                   {
                     getValueViaPath(
                       application.answers,
                       'usePrivatePensionFund',
                     ) as string[]
                   }
-                </Text>
+                </RadioValue>
               )}
 
               {statefulPrivatePension === YES && (
@@ -431,12 +442,10 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.pensionFund',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(
+                            privatePensionFundOptions,
+                            'payments.pensionFund',
+                          )}
                         </Text>
                       )}
                     </GridColumn>
@@ -453,12 +462,7 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.union',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(unionOptions, 'payments.union')}
                         </Text>
                       )}
                     </GridColumn>
@@ -507,14 +511,14 @@ const Review: FC<ReviewScreenProps> = ({
                 }}
               />
             ) : (
-              <Text>
+              <RadioValue>
                 {
                   getValueViaPath(
                     application.answers,
                     'employer.isSelfEmployed',
                   ) as string[]
                 }
-              </Text>
+              </RadioValue>
             )}
             {statefulSelfEmployed === NO && (
               <>
