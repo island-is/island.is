@@ -226,7 +226,9 @@ export class NotificationService {
     const html = 'Sjá viðhengi'
     const attachments = [
       {
-        filename: `${existingCase.policeCaseNumber}.pdf`,
+        filename: `Krafa um ${
+          existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+        } ${existingCase.policeCaseNumber}.pdf`,
         content: pdf,
         encoding: 'binary',
       },
