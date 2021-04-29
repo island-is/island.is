@@ -27,8 +27,6 @@ export type RegulationHomeTexts = Partial<
     | 'searchMinistryEmptyOption' // 'Öll ráðuneyti'
     | 'searchLegacyMinistrySuffix' // '(fyrrverandi ráðuneyti)'
     | 'searchIncludeAmendingLabel', // 'Leita líka í breytingareglugerðum'
-    // |'crumbs_1' // 'Ísland.is'
-    // |'crumbs_2' // 'Upplýsingasvæði'
     string
   >
 >
@@ -66,9 +64,6 @@ export type RegulationPageTexts = Partial<
     | 'infoboxLastAmended' // 'Síðast breytt'
     | 'infoboxRepealed' // 'Féll úr gildi'
     | 'viewAffectingRegulation', // 'Skoða %{title}'
-    // |'crumbs_1' // 'Ísland.is'
-    // |'crumbs_2' // 'Upplýsingasvæði'
-    // |'crumbs_3', // 'Reglugerðir'
     string
   >
 >
