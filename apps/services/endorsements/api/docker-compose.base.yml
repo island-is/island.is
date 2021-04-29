@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_endorsement_system_api:
+  db_endorsements:
     image: postgres:11.6
-    container_name: db_endorsement_system_api
+    container_name: db_endorsements
     networks:
       - local
     environment:
