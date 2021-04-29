@@ -18,7 +18,6 @@ export const createCourtCaseContainer = style({
 export const createCourtCaseButton = style({
   display: 'flex',
   maxHeight: theme.spacing[8],
-  width: '144px',
   marginRight: theme.spacing[2],
 })
 
