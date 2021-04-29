@@ -8,4 +8,7 @@ export class EndorsementMetadata {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   address!: object | null
+
+  @Field({ nullable: true })
+  bulkEndorsement!: boolean | null
 }

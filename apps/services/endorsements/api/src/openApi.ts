@@ -1,4 +1,5 @@
 import { DocumentBuilder } from '@nestjs/swagger'
+import { environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
   .setTitle('EndorsementSystem')
@@ -6,5 +7,16 @@ export const openApi = new DocumentBuilder()
     'This API manages non-digital endorsements collected by systems within island.is.',
   )
   .setVersion('1.0')
-  .addTag('user')
+  .addOAuth2({
+    type: 'oauth2',
+    flows: {
+      authorizationCode: {
+        authorizationUrl: environment.swagger.authUrl,
+        tokenUrl: environment.swagger.tokenUrl,
+        scopes: {
+          'openid profile': 'Sækir OpenId, Profile og claimið sem þarf',
+        },
+      },
+    },
+  })
   .build()

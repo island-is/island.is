@@ -8,25 +8,27 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
+import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
+@ApiOAuth2([])
 export class EndorsementListController {
-  constructor(
+  constructor (
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
+  @BypassAuth()
   @Get()
-  async findLists(
+  async findLists (
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
-    // TODO: Add dto for tags here?
     // TODO: Add pagination
     return await this.endorsementListService.findListsByTag(tag)
   }
@@ -35,37 +37,37 @@ export class EndorsementListController {
    * This exists so we can return all endorsements for user across all lists
    */
   @Get('/endorsements')
-  async findEndorsements(): Promise<Endorsement[]> {
-    // TODO: Add auth here
+  async findEndorsements (@CurrentUser() user: User): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
-      '0000000000', // TODO: Replace with auth
+      user.nationalId,
     )
   }
 
   @Get(':listId')
-  async findOne(
+  async findOne (
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     return await this.endorsementListService.findSingleList(listId)
   }
 
+  // TODO: Add is owner check here
   @Put(':listId/close')
-  async close(
+  async close (
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
-    // TODO: Add auth here
     return await this.endorsementListService.close(listId)
   }
 
   @Post()
-  async create(
+  async create (
     @Body() endorsementList: EndorsementListDto,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     // TODO: Add auth here
     return await this.endorsementListService.create({
       ...endorsementList,
-      owner: '0000000000',
+      owner: user.nationalId,
     })
   }
 }

@@ -1,3 +1,4 @@
+import { CurrentUser, User } from '@island.is/auth-nest-tools'
 import {
   Body,
   Controller,
@@ -21,29 +22,34 @@ export class EndorsementController {
   @Get()
   async findAll(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
-    // TODO: Add auth here
     return await this.endorsementService.findEndorsements({ listId })
   }
 
   @Get('/exists')
   async findByUser(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @CurrentUser() user: User,
   ): Promise<Endorsement> {
+<<<<<<< HEAD:apps/services/endorsements/api/src/app/modules/endorsement/endorsement.controller.ts
     // TODO: Add auth here
     return await this.endorsementService.findSingleUserEndorsement({
+=======
+    return await this.endorsementService.findSingleEndorsementByNationalId({
+>>>>>>> b3c871424... Added first draft of authentication:apps/endorsement-system/src/app/modules/endorsement/endorsement.controller.ts
       listId,
-      nationalId: '0000000000',
+      nationalId: user.nationalId,
     })
   }
 
   @Post()
   async create(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    // TODO: Add auth here
     return await this.endorsementService.createEndorsementOnList({
-      nationalId: '0101302989', // TODO: Replace this with requesting user
+      nationalId: user.nationalId,
       listId,
     })
   }
@@ -64,10 +70,10 @@ export class EndorsementController {
   @HttpCode(204)
   async delete(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @CurrentUser() user: User,
   ): Promise<unknown> {
-    // TODO: Add auth here
     await this.endorsementService.deleteFromListByNationalId({
-      nationalId: '0000000000', // TODO: Replace this with requesting user
+      nationalId: user.nationalId,
       listId,
     })
     return
