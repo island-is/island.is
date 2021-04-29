@@ -1,5 +1,4 @@
 import React, {
-  FC,
   useState,
   useEffect,
   useCallback,
@@ -349,7 +348,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   },
 )
 
-const Results: FC<{
+type ResultsProps = {
   search: SearchState
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -357,14 +356,16 @@ const Results: FC<{
   autosuggest: boolean
   onRouting?: () => void
   quickContentLabel?: string
-}> = ({
+}
+
+const Results = ({
   search,
   highlightedIndex,
   getItemProps,
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
-}) => {
+}: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
   if (!search.term) {

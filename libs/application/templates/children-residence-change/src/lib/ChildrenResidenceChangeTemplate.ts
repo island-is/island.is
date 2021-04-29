@@ -13,6 +13,7 @@ import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { getSelectedChildrenFromExternalData } from './utils'
 import { Roles, ApplicationStates } from './constants'
+import { application } from './messages'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
@@ -29,7 +30,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
-  name: 'Children residence change application',
+  name: application.name,
   readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
@@ -115,10 +116,20 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.ParentA || Roles.ParentB,
+              id: Roles.ParentA,
               formLoader: () =>
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import(
+                  '../forms/ParentBApplicationConfirmation'
+                ).then((module) =>
+                  Promise.resolve(module.ParentBApplicationConfirmation),
                 ),
               read: 'all',
             },

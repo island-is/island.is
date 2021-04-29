@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Columns,
   Column,
@@ -15,12 +15,12 @@ export interface EmailSignupProps {
   buttonText: string
 }
 
-export const EmailSignup: FC<EmailSignupProps> = ({
+export const EmailSignup = ({
   title,
   description,
   inputLabel,
   buttonText,
-}) => {
+}: EmailSignupProps) => {
   return (
     <Stack space={4}>
       <div>

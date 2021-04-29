@@ -48,12 +48,13 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url } = fields
+            const { title, url, content } = fields
             return {
               sys,
               fields: {
                 title,
                 slug: url,
+                content,
               },
             }
           })

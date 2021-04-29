@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import {
   Box,
   GridContainer,
@@ -11,7 +11,7 @@ interface SubpageMainProps {
   image?: ReactNode
 }
 
-export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
+export const SubpageMainContent = ({ main, image }: SubpageMainProps) => {
   return (
     <GridContainer>
       <GridRow>
