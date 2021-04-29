@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
-import { prettyName } from './regulationUtils'
+import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 
 import { RegulationRedirect } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -17,6 +17,7 @@ export const RegulationRedirectMessage = (
   props: RegulationRedirectMessageProps,
 ) => {
   const router = useRouter()
+  const { linkResolver } = useRegulationLinkResolver()
   const { regulation, texts } = props
   const n = useNamespace(texts)
 
@@ -52,7 +53,7 @@ export const RegulationRedirectMessage = (
               onClick={() => {
                 window.history.length > 2
                   ? router.back()
-                  : router.push('/reglugerdir')
+                  : router.push(linkResolver('regulationshome').href)
               }}
             >
               Til baka

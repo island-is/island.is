@@ -42,7 +42,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const { regulation, texts } = props
 
   const txt = useNamespace(texts)
-  const { linkToRegulation } = useRegulationLinkResolver()
+  const { linkToRegulation, linkResolver } = useRegulationLinkResolver()
 
   const name = prettyName(regulation.name)
 
@@ -133,7 +133,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
             onClick={() => {
               window.history.length > 2
                 ? router.back()
-                : router.push('/reglugerdir')
+                : router.push(linkResolver('regulationshome').href)
             }}
           >
             Til baka
