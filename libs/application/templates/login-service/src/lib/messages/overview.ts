@@ -10,6 +10,18 @@ export const overview = {
       defaultMessage: 'Yfirlit og staðfesting umsóknar',
       description: 'Overview page title',
     },
+    pageDescription: {
+      id: `${t}:section.overview.pageDescription`,
+      defaultMessage:
+        'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá SÍ ef umsóknin er skýr og hnitmiðuð. ',
+      description: 'Overview page description',
+    },
   }),
-  labels: defineMessages({}),
+  labels: defineMessages({
+    submit: {
+      id: `${t}:section.overview.submit`,
+      defaultMessage: 'Staðfesta umsókn',
+      description: 'Over submit field label',
+    },
+  }),
 }

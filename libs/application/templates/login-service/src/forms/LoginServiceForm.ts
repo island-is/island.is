@@ -9,6 +9,8 @@ import {
   buildTextField,
   buildSelectField,
   buildCheckboxField,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import {
   section,
@@ -123,16 +125,19 @@ export const LoginServiceForm: Form = buildForm({
             buildTextField({
               id: 'technicalContact.name',
               title: technicalContact.labels.name,
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'technicalContact.email',
               title: technicalContact.labels.email,
               variant: 'email',
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               title: technicalContact.labels.tel,
               variant: 'tel',
+              backgroundColor: 'blue',
               format: '###-####',
             }),
             buildCheckboxField({
@@ -151,6 +156,7 @@ export const LoginServiceForm: Form = buildForm({
               description:
                 technicalContact.labels.techAnnouncementsEmailDescription,
               variant: 'email',
+              backgroundColor: 'blue',
               required: true,
             }),
           ],
@@ -161,10 +167,44 @@ export const LoginServiceForm: Form = buildForm({
       id: 'technicalInfo',
       title: section.technicalInfo,
       children: [
-        buildDescriptionField({
-          id: 'placeholderDescription4',
-          title: technicalInfo.general.pageTitle,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'technicalInfoMultiField',
+          title: section.technicalInfo,
+          children: [
+            buildTextField({
+              id: 'technicalInfo.type',
+              title: technicalInfo.labels.type,
+              description: technicalInfo.labels.typeDescription,
+              placeholder: technicalInfo.labels.typePlaceholder,
+              variant: 'textarea',
+              rows: 4,
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'technicalInfo.devReturnUrl',
+              title: technicalInfo.labels.devReturnUrl,
+              backgroundColor: 'blue',
+            }),
+            buildTextField({
+              id: 'technicalInfo.stagingReturnUrl',
+              title: technicalInfo.labels.stagingReturnUrl,
+              backgroundColor: 'blue',
+            }),
+            buildTextField({
+              id: 'technicalInfo.prodReturnUrl',
+              title: technicalInfo.labels.prodReturnUrl,
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'technicalInfo.clientId',
+              title: technicalInfo.labels.clientId,
+              description: technicalInfo.labels.clientIdDescription,
+              placeholder: technicalInfo.labels.clientIdPlaceholder,
+              backgroundColor: 'blue',
+            }),
+          ],
         }),
       ],
     }),
@@ -172,10 +212,29 @@ export const LoginServiceForm: Form = buildForm({
       id: 'overview',
       title: section.overview,
       children: [
-        buildDescriptionField({
-          id: 'placeholderDescription5',
+        buildMultiField({
+          id: 'overviewMultifield',
           title: overview.general.pageTitle,
-          description: 'Umsókn',
+          description: overview.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'overviewCustomField',
+              title: overview.general.pageTitle,
+              description: overview.general.pageDescription,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'overview.submitField',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -183,10 +242,10 @@ export const LoginServiceForm: Form = buildForm({
       id: 'submitted',
       title: section.submitted,
       children: [
-        buildDescriptionField({
-          id: 'placeholderDescription6',
+        buildCustomField({
+          id: 'submittedCustomField',
           title: submitted.general.pageTitle,
-          description: 'Umsókn',
+          component: 'Submitted',
         }),
       ],
     }),

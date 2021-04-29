@@ -18,6 +18,13 @@ export const LoginServiceSchema = z.object({
     sameAsResponsibleParty: z.array(z.string()).optional(),
     techAnnouncementsEmail: z.string().nonempty(),
   }),
+  technicalInfo: z.object({
+    type: z.string(),
+    devReturnUrl: z.string().optional(),
+    stagingReturnUrl: z.string().optional(),
+    prodReturnUrl: z.string(),
+    clientId: z.string().optional(),
+  }),
 })
 
 export type LoginService = z.TypeOf<typeof LoginServiceSchema>
