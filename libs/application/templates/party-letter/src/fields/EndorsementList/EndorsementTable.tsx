@@ -5,6 +5,7 @@ import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
+import { format as formatKennitala } from 'kennitala'
 
 const formatDate = (date: string) => {
   try {
@@ -31,7 +32,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
           {endorsement.name}
         </T.Data>
         <T.Data key={endorsement.id + endorsement.nationalId}>
-          {endorsement.nationalId}
+          {formatKennitala(endorsement.nationalId)}
         </T.Data>
         <T.Data
           key={endorsement.id + endorsement.address}

@@ -10,7 +10,6 @@ import { useMutation, useLazyQuery } from '@apollo/client'
 import { Endorsement } from '../../types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { PartyLetter } from '../../lib/dataSchema'
-import { format as formatKennitala } from 'kennitala'
 
 const GET_ENDORSEMENT_LIST = gql`
   query endorsementSystemUserEndorsements {
@@ -70,7 +69,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             ? endorsementSystemUserEndorsements.map((x: any) => ({
                 date: x.created,
                 name: x.meta.fullName,
-                nationalId: formatKennitala(x.endorser),
+                nationalId: x.endorser,
                 address: x.meta.address ? x.meta.address : '',
                 hasWarning: false,
                 id: x.id,
