@@ -351,7 +351,7 @@ export const Overview: React.FC = () => {
                       !!workingCase.caseFilesComments && (
                         <>
                           <Text variant="h4" as="h4">
-                            Athugasemdir vegna málsmeðferðar
+                            Athugasemdir vegna rannsóknargagna
                           </Text>
                           <Text>
                             <span className={styles.breakSpaces}>
