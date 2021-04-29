@@ -2,22 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
-import { AdminAccessDTO } from './../../../entities/dtos/admin-acess.dto'
-import { AdminAccess } from './../../../entities/models/admin-access.model'
 import { AdminAccessService } from './../../../services/AdminAccessService'
 import ValidationUtils from './../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ResourcesService } from './../../../services/ResourcesService'
 import { ApiScope } from './../../../entities/models/api-scope.model'
+import { ApiScopeUser } from './../../../entities/models/api-scope-user.model'
+import { ApiScopeUserDTO } from './../../../entities/dtos/api-scope-user.dto'
+import { ApiScopeUserAccess } from './../../../entities/models/api-scope-user-access.model'
+import { ApiScopeUserAccessDTO } from './../../../entities/dtos/api-scope-user-access.dto'
 interface Props {
-  adminAccess: AdminAccessDTO
-  handleSaveButtonClicked?: (admin: AdminAccess) => void
+  apiScopeUser: ApiScopeUserDTO
+  handleSaveButtonClicked?: (apiScopeUser: ApiScopeUser) => void
   handleCancel?: () => void
 }
 
 interface FormOutput {
-  admin: AdminAccessDTO
+  apiScopeUser: ApiScopeUserDTO
 }
 
 const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
@@ -30,38 +32,43 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const [accessControlledScopes, setAccessControlledScopes] = useState<
     ApiScope[]
   >([])
+  const [activeScopes, setActiveScopes] = useState<ApiScopeUserAccessDTO[]>([])
   const [showScopeInfo, setShowScopeInfo] = useState<boolean>(false)
   const [scopeInfo, setScopeInfo] = useState<JSX.Element>(<div></div>)
 
-  const admin = props.adminAccess
+  const user = props.apiScopeUser
 
   useEffect(() => {
     const setScopes = async () => {
       const scopes = await ResourcesService.findAllAccessControlledApiScopes()
+      console.log(scopes)
       if (scopes) {
         setAccessControlledScopes(scopes)
       }
     }
-    if (props.adminAccess && props.adminAccess.nationalId) {
+    if (props.apiScopeUser && props.apiScopeUser.nationalId) {
       setIsEditing(true)
     }
 
     setScopes()
-  }, [props.adminAccess])
+    setActiveScopes(props.apiScopeUser.userAccess)
+  }, [props.apiScopeUser])
 
   useEffect(() => {
-    if (accessControlledScopes) {
-      if (admin.scope) {
-        getScopeInfo(admin.scope)
-      } else {
-        if (accessControlledScopes.length > 0) {
-          getScopeInfo(accessControlledScopes[0].name)
-        }
-      }
-    }
+    user.userAccess.find((x) => x.scope === 'isAccessControlled')
+
+    // if (accessControlledScopes) {
+    //   if (user.userAccess) {
+    //     getScopeInfo(user.userAccess)
+    //   } else {
+    //     if (accessControlledScopes.length > 0) {
+    //       getScopeInfo(accessControlledScopes[0].name)
+    //     }
+    //   }
+    // }
   }, [accessControlledScopes])
 
-  const pushEvent = (response: AdminAccess | null) => {
+  const pushEvent = (response: ApiScopeUser | null) => {
     if (response) {
       if (props.handleSaveButtonClicked) {
         props.handleSaveButtonClicked(response)
@@ -70,10 +77,10 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const create = async (data: AdminAccessDTO): Promise<void> => {
+  const create = async (data: ApiScopeUserDTO): Promise<void> => {
     if (isEditing) {
       const response = await AdminAccessService.update(
-        props.adminAccess.nationalId,
+        props.apiScopeUser.nationalId,
         data,
       )
       if (response) {
@@ -88,12 +95,45 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const save = async (data: FormOutput) => {
-    await create(data.admin)
+    // console.log(props.apiScopeUser)
+    console.log(data.apiScopeUser.nationalId)
+    const user = new ApiScopeUserDTO()
+    user.nationalId = data.apiScopeUser.nationalId
+    user.email = data.apiScopeUser.email
+
+    for (let i = 0; i < activeScopes.length; i++) {
+      user.userAccess.push({
+        nationalId: data.apiScopeUser.nationalId,
+        scope: activeScopes[i].scope,
+      })
+    }
+    console.log(user)
+    await create(user)
   }
 
   const getScopeInfo = (name: string): void => {
     const scope = accessControlledScopes.find((x) => x.name === name)
     setScopeInfo(getScopeHtml(scope))
+  }
+
+  const handleScopeChange = (scopeName: string, active: boolean) => {
+    console.log(scopeName)
+    console.log(active)
+    const found = activeScopes.find((x) => x.scope === scopeName)
+    if (active) {
+      if (!found) {
+        activeScopes.push({
+          nationalId: props.apiScopeUser.nationalId,
+          scope: scopeName,
+        })
+      }
+    } else {
+      if (found) {
+        const index = activeScopes.indexOf(found)
+        activeScopes.splice(index, 1)
+      }
+    }
+    setActiveScopes([...activeScopes])
   }
 
   const getScopeHtml = (scope: ApiScope): JSX.Element => {
@@ -131,14 +171,14 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="nationalId"
                     type="text"
-                    name="admin.nationalId"
+                    name="apiScopeUser.nationalId"
                     ref={register({
                       required: true,
                       maxLength: 10,
                       minLength: 10,
                       validate: ValidationUtils.validateNationalId,
                     })}
-                    defaultValue={admin.nationalId}
+                    defaultValue={user.nationalId}
                     className="admin-user-create-form__input"
                     placeholder={localization.fields['nationalId'].placeholder}
                     maxLength={10}
@@ -151,7 +191,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="admin.nationalId"
+                    name="apiScopeUser.nationalId"
                     message={localization.fields['nationalId'].errorMessage}
                   />
                 </div>
@@ -170,8 +210,8 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                       required: true,
                       validate: ValidationUtils.validateEmail,
                     })}
-                    name="admin.email"
-                    defaultValue={admin.email ?? ''}
+                    name="apiScopeUser.email"
+                    defaultValue={user.email ?? ''}
                     className="admin-user-create-form__input"
                     title={localization.fields['email'].helpText}
                     placeholder={localization.fields['email'].placeholder}
@@ -179,78 +219,43 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="admin.email"
+                    name="apiScopeUser.email"
                     message={localization.fields['email'].errorMessage}
                   />
                   <HelpBox helpText={localization.fields['email'].helpText} />
                 </div>
 
-                <div className="admin-user-create-form__container__field">
-                  <label
-                    className="admin-user-create-form__label"
-                    htmlFor="scope"
-                  >
-                    {localization.fields['scope'].label}
-                  </label>
+                {accessControlledScopes &&
+                  accessControlledScopes.map((scope: ApiScope) => {
+                    let checked = props.apiScopeUser.userAccess?.some(
+                      (x) => x.scope === scope.name,
+                    )
 
-                  <select
-                    id="scope"
-                    name="admin.scope"
-                    ref={register({ required: true })}
-                    title={localization.fields['scope'].helpText}
-                    onChange={(e) => getScopeInfo(e.target.value)}
-                    onFocus={() => setShowScopeInfo(true)}
-                    onBlur={() => setShowScopeInfo(false)}
-                  >
-                    {accessControlledScopes &&
-                      accessControlledScopes.map((scope: ApiScope) => {
-                        return (
-                          <option
-                            value={scope.name}
-                            key={scope.name}
-                            title={scope.description}
-                            selected={scope.name === admin.scope}
-                          >
-                            {scope.name}
-                          </option>
-                        )
-                      })}
-                  </select>
+                    return (
+                      <div className="admin-user-create-form__container__checkbox__field">
+                        <label
+                          className="admin-user-create-form__label"
+                          htmlFor={scope.name}
+                        >
+                          {scope.name}
+                        </label>
 
-                  <HelpBox helpText={localization.fields['scope'].helpText} />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="admin.scope"
-                    message={localization.fields['scope'].errorMessage}
-                  />
-                  <div
-                    className={`admin-user-create-form__container__field__details${
-                      showScopeInfo ? ' show' : ' hidden'
-                    }`}
-                  >
-                    {scopeInfo}
-                  </div>
-                </div>
-
-                <div className="admin-user-create-formcontainer__checkbox__field hidden">
-                  <label
-                    className="admin-user-create-formlabel"
-                    htmlFor="active"
-                  >
-                    {localization.fields['active'].label}
-                  </label>
-                  <input
-                    id="active"
-                    type="checkbox"
-                    name="admin.active"
-                    className="admin-user-create-formcheckbox"
-                    defaultChecked={true}
-                    ref={register}
-                    title={localization.fields['active'].helpText}
-                  ></input>
-                  <HelpBox helpText={localization.fields['active'].helpText} />
-                </div>
+                        <input
+                          id={scope.name}
+                          type="checkbox"
+                          name={`apiScopeUser.userAccess[${scope.name}]`}
+                          className="admin-user-create-form__checkbox"
+                          checked={checked}
+                          ref={register}
+                          title={scope.name}
+                          onChange={(e) =>
+                            handleScopeChange(scope.name, e.target.checked)
+                          }
+                        ></input>
+                        <HelpBox helpText={scope.description} />
+                      </div>
+                    )
+                  })}
               </div>
 
               <div className="admin-user-create-form__buttons__container">

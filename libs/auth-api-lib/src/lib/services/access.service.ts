@@ -1,42 +1,49 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { AdminAccessDTO, AdminAccessUpdateDTO } from '../..'
-import { AdminAccess } from '../entities/models/admin-access.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
+import { ApiScopeUser } from '../entities/models/api-scope-user.model'
+import { ApiScopeUserAccess } from '../entities/models/api-scope-user-access.model'
+import { ApiScopeUserDTO } from '../entities/dto/api-scope-user.dto'
+import { ApiScopeUserUpdateDTO } from '../entities/dto/api-scope-user-update.dto'
+import { ApiScopeUserAccessDTO } from '../entities/dto/api-scope-user-access.dto'
 
 @Injectable()
 export class AccessService {
   constructor(
-    @InjectModel(AdminAccess)
-    private adminAccessModel: typeof AdminAccess,
+    @InjectModel(ApiScopeUser)
+    private apiScopeUser: typeof ApiScopeUser,
+    @InjectModel(ApiScopeUserAccess)
+    private apiScopeUserAccess: typeof ApiScopeUserAccess,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  /** Checks if nationalId has admin access */
-  async hasAccess(nationalId: string): Promise<boolean> {
-    const access = await this.adminAccessModel.findByPk(nationalId)
+  // /** Checks if nationalId has admin access */
+  // async hasAccess(nationalId: string): Promise<boolean> {
+  //   const access = await this.adminAccessModel.findByPk(nationalId)
 
-    return access ? true : false
-  }
+  //   return access ? true : false
+  // }
 
-  /** Gets the admin with the nationalId */
-  async findOne(nationalId: string): Promise<AdminAccess | null> {
+  /** Gets the Api Scope User with the nationalId */
+  async findOne(nationalId: string): Promise<ApiScopeUser | null> {
     this.logger.debug(`Finding admin for nationalId - "${nationalId}"`)
 
-    const admin = await this.adminAccessModel.findByPk(nationalId)
+    const apiScopeUser = await this.apiScopeUser.findByPk(nationalId, {
+      include: [ApiScopeUserAccess],
+    })
 
-    return admin
+    return apiScopeUser
   }
 
   async findAll(
     nationalId: string,
     requestedScopes: string[],
-  ): Promise<AdminAccess[] | null> {
+  ): Promise<ApiScopeUserAccess[] | null> {
     this.logger.debug(`Finding access for nationalId - "${nationalId}"`)
 
-    return await this.adminAccessModel.findAll({
+    return await this.apiScopeUserAccess.findAll({
       where: {
         [Op.and]: [
           { nationalId: nationalId },
@@ -51,22 +58,22 @@ export class AccessService {
     searchString: string,
     page: number,
     count: number,
-  ): Promise<{ rows: AdminAccess[]; count: number } | null> {
+  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
     this.logger.debug(
-      `Geting admin list with page "${page}" and count "${count} with searchString "${searchString}""`,
+      `Getting Api Scope Users list with page "${page}" and count "${count} with searchString "${searchString}""`,
     )
 
     page--
     const offset = page * count
     if (searchString) {
-      return this.adminAccessModel.findAndCountAll({
+      return this.apiScopeUser.findAndCountAll({
         limit: count,
         offset: offset,
         distinct: true,
         where: { nationalId: searchString },
       })
     } else {
-      return this.adminAccessModel.findAndCountAll({
+      return this.apiScopeUser.findAndCountAll({
         limit: count,
         offset: offset,
         distinct: true,
@@ -74,26 +81,29 @@ export class AccessService {
     }
   }
 
-  /** Creates a new admin */
-  async create(admin: AdminAccessDTO): Promise<AdminAccess> {
+  /** Creates a new Api Scope User */
+  async create(apiScopeUser: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
     this.logger.debug('Creating a new admin')
 
-    return await this.adminAccessModel.create({ ...admin })
+    const response = await this.apiScopeUser.create({ ...apiScopeUser })
+    const response2 = await this.createUserScopes(apiScopeUser.userAccess)
+
+    return response
   }
 
-  /** Updates an existing admin */
+  /** Updates an existing Api Scope User */
   async update(
-    admin: AdminAccessUpdateDTO,
+    apiScopeUser: ApiScopeUserUpdateDTO,
     nationalId: string,
-  ): Promise<AdminAccess | null> {
-    this.logger.debug('Updating admin with nationalId: ', nationalId)
+  ): Promise<ApiScopeUser | null> {
+    this.logger.debug('Updating Api Scope User with nationalId: ', nationalId)
 
     if (!nationalId) {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    await this.adminAccessModel.update(
-      { ...admin },
+    await this.apiScopeUser.update(
+      { ...apiScopeUser },
       {
         where: { nationalId: nationalId },
       },
@@ -102,18 +112,54 @@ export class AccessService {
     return await this.findOne(nationalId)
   }
 
-  /** Deleting an admin by nationalId */
+  /** Deleting an Api Scope User by nationalId */
   async delete(nationalId: string): Promise<number> {
-    this.logger.debug('Deleting an admin with nationalId: ', nationalId)
+    this.logger.debug(
+      'Deleting an Api Scope User with nationalId: ',
+      nationalId,
+    )
 
     if (!nationalId) {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    return await this.adminAccessModel.destroy({
+    const response = await this.deleteUserScopes(nationalId)
+
+    return await this.apiScopeUser.destroy({
       where: {
         nationalId: nationalId,
       },
     })
+  }
+
+  /** Deleting user scopes by nationalId */
+  async deleteUserScopes(nationalId: string): Promise<number> {
+    this.logger.debug(
+      'Deleting an Api Scopes for User with nationalId: ',
+      nationalId,
+    )
+
+    if (!nationalId) {
+      throw new BadRequestException('nationalId must be provided')
+    }
+
+    const response = await this.apiScopeUserAccess.destroy({
+      where: {
+        nationalId: nationalId,
+      },
+    })
+
+    return response
+  }
+
+  async createUserScopes(
+    scopes: ApiScopeUserAccessDTO[] | undefined,
+  ): Promise<ApiScopeUserAccess | null> {
+    if (scopes === undefined) return null
+
+    this.logger.debug('Insert scopes for Api Scope User: ', scopes)
+
+    const response = await this.apiScopeUserAccess.create(...scopes)
+    return response
   }
 }

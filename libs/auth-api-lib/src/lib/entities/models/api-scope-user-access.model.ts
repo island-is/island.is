@@ -6,8 +6,10 @@ import {
   Table,
   UpdatedAt,
   PrimaryKey,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ApiScopeUser } from './api-scope-user.model'
 
 @Table({
   tableName: 'api_scope_user_access',
@@ -18,6 +20,7 @@ export class ApiScopeUserAccess extends Model<ApiScopeUserAccess> {
     type: DataType.STRING,
     allowNull: false,
   })
+  @ForeignKey(() => ApiScopeUser)
   @ApiProperty()
   nationalId!: string
 
@@ -27,9 +30,9 @@ export class ApiScopeUserAccess extends Model<ApiScopeUserAccess> {
     defaultValue: true,
   })
   @ApiProperty({
-    example: true,
+    example: 'scope-example',
   })
-  scope!: boolean
+  scope!: string
 
   @CreatedAt
   @ApiProperty()
