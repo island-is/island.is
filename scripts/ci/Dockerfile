@@ -10,7 +10,7 @@ ADD package.json yarn.lock ./
 
 RUN mkdir -p /build/scripts
 ADD ./scripts/postinstall.js /build/scripts/
-RUN CI=true yarn install --frozen-lockfile && rm -rf /root/.cache
+RUN CI=true yarn install --frozen-lockfile
 
 FROM deps as src
 # image with the source code
@@ -18,11 +18,16 @@ ADD . .
 
 FROM src as builder
 ARG APP
+ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
+COPY yarn.lock /build/${APP_DIST_HOME}
+
+WORKDIR /build/${APP_DIST_HOME}
+RUN [ -f package.json ] && yarn install || echo "No package.json in build directory, skipping"
 
 FROM node:14.16.0-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
@@ -40,14 +45,29 @@ ENV NODE_ENV=production
 
 WORKDIR /webapp
 
-COPY --from=deps /build/node_modules /webapp/node_modules
-
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 USER runner
 
 FROM output-base as output-express
 # image with build of an Express.js app
+USER root
+# https://github.com/nrwl/nx/issues/1518#issuecomment-734995542
+RUN yarn add \
+    reflect-metadata \
+    tslib \
+    rxjs \
+    @nestjs/platform-express \
+    webpack \
+    webpack-cli \
+    html-webpack-plugin \
+    webpack-dev-server \
+    next-transpile-modules \
+    @statoscope/ui-webpack \
+    inspectpack \
+    webpack-bundle-analyzer \
+    --frozen-lockfile
+USER runner
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp
 

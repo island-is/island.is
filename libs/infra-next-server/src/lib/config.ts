@@ -1,9 +1,8 @@
-import { prepareConfig } from '@nrwl/next/src/utils/config'
-
 export const getNextConfig = (appDir: string, dev: boolean) => {
   const config = { dev }
 
   if (dev || process.env.API_MOCKS) {
+    const { prepareConfig } = require('@nrwl/next/src/utils/config')
     const options = {
       root: `${appDir}`,
       outputPath: `dist/${appDir}`,

@@ -83,7 +83,8 @@
             "main": "apps/air-discount-scheme/api/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
             "assets": [],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -168,7 +169,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -324,7 +326,8 @@
             "commands": [
               "yarn nx build-next air-discount-scheme-web",
               "yarn nx build-server air-discount-scheme-web"
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -336,7 +339,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/air-discount-scheme/web",
-            "outputPath": "dist/apps/air-discount-scheme/web"
+            "outputPath": "dist/apps/air-discount-scheme/web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -357,7 +361,8 @@
             "main": "apps/air-discount-scheme/web/server.ts",
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/air-discount-scheme/web/next-modules"]
+            "assets": ["apps/air-discount-scheme/web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -464,7 +469,8 @@
             "main": "apps/api/src/main.ts",
             "tsConfig": "apps/api/tsconfig.app.json",
             "showCircularDependencies": false,
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -1393,7 +1399,8 @@
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -2258,7 +2265,8 @@
             "commands": [
               "yarn nx build-next auth-admin-web",
               "yarn nx build-server auth-admin-web"
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -2270,7 +2278,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/auth-admin-web",
-            "outputPath": "dist/apps/auth-admin-web"
+            "outputPath": "dist/apps/auth-admin-web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {}
@@ -2284,7 +2293,8 @@
             "main": "apps/auth-admin-web/server.ts",
             "tsConfig": "apps/auth-admin-web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/auth-admin-web/next-modules"]
+            "assets": ["apps/auth-admin-web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -2867,7 +2877,8 @@
             "outputPath": "dist/apps/download-service",
             "main": "apps/download-service/src/main.ts",
             "tsConfig": "apps/download-service/tsconfig.app.json",
-            "assets": ["apps/download-service/src/assets"]
+            "assets": ["apps/download-service/src/assets"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3094,7 +3105,8 @@
             "main": "apps/gjafakort/api/src/main.ts",
             "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
             "assets": [],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3170,7 +3182,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3279,7 +3292,8 @@
             "outputPath": "dist/apps/gjafakort/queue-listener",
             "main": "apps/gjafakort/queue-listener/src/main.ts",
             "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3367,7 +3381,8 @@
             "commands": [
               "yarn nx build-next gjafakort-web",
               "yarn nx build-server gjafakort-web"
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3379,7 +3394,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/gjafakort/web",
-            "outputPath": "dist/apps/gjafakort/web"
+            "outputPath": "dist/apps/gjafakort/web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3400,7 +3416,8 @@
             "main": "apps/gjafakort/web/server.ts",
             "tsConfig": "apps/gjafakort/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/gjafakort/web/next-modules"]
+            "assets": ["apps/gjafakort/web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3550,7 +3567,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -3998,7 +4016,8 @@
             "main": "apps/judicial-system/api/src/main.ts",
             "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
             "assets": [],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4147,7 +4166,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4369,7 +4389,8 @@
             "commands": [
               "yarn nx build-next judicial-system-web",
               "yarn nx build-server judicial-system-web"
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4381,7 +4402,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/judicial-system/web",
-            "outputPath": "dist/apps/judicial-system/web"
+            "outputPath": "dist/apps/judicial-system/web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4402,7 +4424,8 @@
             "main": "apps/judicial-system/web/server.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/judicial-system/web/next-modules"]
+            "assets": ["apps/judicial-system/web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4499,7 +4522,8 @@
             "main": "apps/judicial-system/xrd-api/src/main.ts",
             "tsConfig": "apps/judicial-system/xrd-api/tsconfig.app.json",
             "assets": [],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -4702,7 +4726,8 @@
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
             "assets": ["apps/reference-backend/src/assets"],
             "maxWorkers": 2,
-            "webpackConfig": "apps/reference-backend/webpack.config.js"
+            "webpackConfig": "apps/reference-backend/webpack.config.js",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -5652,7 +5677,8 @@
             "main": "apps/services/auth-admin-api/src/main.ts",
             "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
             "assets": ["apps/services/auth-admin-api/src/assets"],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -5737,7 +5763,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -5849,7 +5876,8 @@
                 "input": "apps/services/documents",
                 "output": "./"
               }
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -5943,7 +5971,8 @@
               }
             ],
             "webpackConfig": "apps/services/search-indexer/webpack.config.js",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6040,7 +6069,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6130,7 +6160,8 @@
             "main": "apps/services/xroad-collector/src/main.ts",
             "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
             "assets": ["apps/services/xroad-collector/src/assets"],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6402,7 +6433,8 @@
             "commands": [
               "yarn nx build-next skilavottord-web",
               "yarn nx build-server skilavottord-web"
-            ]
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6414,7 +6446,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/skilavottord/web",
-            "outputPath": "dist/apps/skilavottord/web"
+            "outputPath": "dist/apps/skilavottord/web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6435,7 +6468,8 @@
             "main": "apps/skilavottord/web/server.ts",
             "tsConfig": "apps/skilavottord/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/skilavottord/web/next-modules"]
+            "assets": ["apps/skilavottord/web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6551,7 +6585,8 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6712,7 +6747,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/apps/web",
-            "commands": ["yarn nx build-next web", "yarn nx build-server web"]
+            "commands": ["yarn nx build-next web", "yarn nx build-server web"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6724,7 +6760,8 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/web",
-            "outputPath": "dist/apps/web"
+            "outputPath": "dist/apps/web",
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
@@ -6745,7 +6782,8 @@
             "main": "apps/web/server.ts",
             "tsConfig": "apps/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/web/next-modules"]
+            "assets": ["apps/web/next-modules"],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {
