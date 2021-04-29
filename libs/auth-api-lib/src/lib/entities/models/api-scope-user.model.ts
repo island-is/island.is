@@ -13,6 +13,11 @@ import { ApiScopeUserAccess } from './api-scope-user-access.model'
 
 @Table({
   tableName: 'api_scope_user',
+  indexes: [
+    {
+      fields: ['national_id'],
+    },
+  ],
 })
 export class ApiScopeUser extends Model<ApiScopeUser> {
   @PrimaryKey
