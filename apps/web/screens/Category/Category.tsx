@@ -302,7 +302,8 @@ const Category: Screen<CategoryProps> = ({
                   <Link
                     href={linkResolver(typename as LinkType, slug).href}
                     onClick={() => setHashArray([])}
-                    passHref
+                    skipTab
+                    pureChildren
                   >
                     {link}
                   </Link>
@@ -376,7 +377,8 @@ const Category: Screen<CategoryProps> = ({
                 <Link
                   href={linkResolver(typename as LinkType, slug).href}
                   onClick={() => setHashArray([])}
-                  passHref
+                  skipTab
+                  pureChildren
                 >
                   {link}
                 </Link>
