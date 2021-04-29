@@ -109,7 +109,7 @@ const StudentAssessmentTable = () => {
                   ...(res.englishGrade?.grammar.grade
                     ? [
                         {
-                          subject: 'Lesskilningur',
+                          subject: 'Málnotkun',
                           rate: `(${res.englishGrade?.grammar.weight}%)`,
                           serialRating: res.englishGrade?.grammar.grade,
                         },
@@ -118,7 +118,7 @@ const StudentAssessmentTable = () => {
                   ...(res.englishGrade?.reading.grade
                     ? [
                         {
-                          subject: 'Málnotkun',
+                          subject: 'Lesskilningur',
                           rate: `(${res.englishGrade?.reading.weight}%)`,
                           serialRating: res.englishGrade?.reading.grade,
                         },
@@ -148,7 +148,7 @@ const StudentAssessmentTable = () => {
                   ...(res.icelandicGrade?.grammar.grade
                     ? [
                         {
-                          subject: 'Lesskilningur',
+                          subject: 'Málnotkun',
                           rate: `(${res.icelandicGrade?.grammar.weight}%)`,
                           serialRating: res.icelandicGrade?.grammar.grade,
                         },
@@ -157,7 +157,7 @@ const StudentAssessmentTable = () => {
                   ...(res.icelandicGrade?.reading.grade
                     ? [
                         {
-                          subject: 'Málnotkun',
+                          subject: 'Lesskilningur',
                           rate: `(${res.icelandicGrade?.reading.weight}%)`,
                           serialRating: res.icelandicGrade?.reading.grade,
                         },
