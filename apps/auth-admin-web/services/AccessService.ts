@@ -1,10 +1,8 @@
-import { AdminAccessDTO } from '../entities/dtos/admin-acess.dto'
 import { ApiScopeUserDTO } from '../entities/dtos/api-scope-user.dto'
-import { AdminAccess } from '../entities/models/admin-access.model'
 import { ApiScopeUser } from '../entities/models/api-scope-user.model'
 import { BaseService } from './BaseService'
 
-export class AdminAccessService extends BaseService {
+export class AccessService extends BaseService {
   /** Gets Admin User by nationalId */
   static async findOne(nationalId: string): Promise<ApiScopeUser> {
     return BaseService.GET(`admin-access/${encodeURIComponent(nationalId)}`)
@@ -15,7 +13,7 @@ export class AdminAccessService extends BaseService {
     searchString,
     page,
     count,
-  ): Promise<{ rows: AdminAccess[]; count: number } | null> {
+  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
     return BaseService.GET(
       `admin-access?searchString=${encodeURIComponent(
         searchString,

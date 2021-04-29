@@ -32,10 +32,10 @@
     "admin.index": {
       "title": "Admin Controls"
     },
-    "admin.admin-user.[admin]": {
+    "admin.api-scope-user.[apiScopeUser]": {
       "title": "Edit Api Scope User"
     },
-    "admin.admin-user.index": {
+    "admin.api-scope-user.index": {
       "title": "Create Api Scope user"
     },
     "admin.grant-type.[grantType]": {

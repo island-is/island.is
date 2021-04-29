@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
-import { AdminAccess } from '../../../entities/models/admin-access.model'
 import ApiScopeUserCreateForm from '../../../components/Admin/form/ApiScopeUserCreateForm'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
@@ -15,7 +14,9 @@ const Index: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = LocalizationUtils.getPageTitle('admin.admin-user.index')
+    document.title = LocalizationUtils.getPageTitle(
+      'admin.api-scope-user.index',
+    )
   }, [])
 
   const handleUserSaved = (apiScopeUser: ApiScopeUser) => {

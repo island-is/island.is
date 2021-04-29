@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
-import { AdminAccessService } from '../../../services/AdminAccessService'
+import { AccessService } from '../../../services/AccessService'
 import ValidationUtils from '../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
@@ -66,7 +66,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
 
   const create = async (data: ApiScopeUserDTO): Promise<void> => {
     if (isEditing) {
-      const response = await AdminAccessService.update(
+      const response = await AccessService.update(
         props.apiScopeUser.nationalId,
         data,
       )
@@ -74,7 +74,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
         pushEvent(response)
       }
     } else {
-      const response = await AdminAccessService.create(data)
+      const response = await AccessService.create(data)
       if (response) {
         pushEvent(response)
       }

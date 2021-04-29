@@ -3,13 +3,13 @@ import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
-import { AdminAccess } from '../../../entities/models/admin-access.model'
-import { AdminAccessService } from '../../../services/AdminAccessService'
+import { AccessService } from '../../../services/AccessService'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
+import { ApiScopeUser } from '../../../entities/models/api-scope-user.model'
 
 const ApiScopeUsersList: React.FC = () => {
-  const [adminAccess, setAdminAccess] = useState<AdminAccess[]>([])
+  const [adminAccess, setAdminAccess] = useState<ApiScopeUser[]>([])
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [count, setCount] = useState(0)
@@ -25,7 +25,7 @@ const ApiScopeUsersList: React.FC = () => {
     page: number,
     count: number,
   ): Promise<void> => {
-    const response = await AdminAccessService.findAndCountAll(
+    const response = await AccessService.findAndCountAll(
       searchString,
       page,
       count,
@@ -46,7 +46,7 @@ const ApiScopeUsersList: React.FC = () => {
   }
 
   const deleteUser = async (): Promise<void> => {
-    const response = await AdminAccessService.delete(accessToRemove)
+    const response = await AccessService.delete(accessToRemove)
     if (response) {
       getAdmins(searchString, page, count)
     }
@@ -128,21 +128,19 @@ const ApiScopeUsersList: React.FC = () => {
                   <tr>
                     <th>{localization.columns['nationalId'].headerText}</th>
                     <th>{localization.columns['email'].headerText}</th>
-                    <th>{localization.columns['scope'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {adminAccess.map((admin: AdminAccess) => {
+                  {adminAccess.map((apiScopeUser: ApiScopeUser) => {
                     return (
-                      <tr key={admin.nationalId}>
-                        <td>{admin.nationalId}</td>
-                        <td>{admin.email}</td>
-                        <td>{admin.scope}</td>
+                      <tr key={apiScopeUser.nationalId}>
+                        <td>{apiScopeUser.nationalId}</td>
+                        <td>{apiScopeUser.email}</td>
                         <td className="api-scope-users-list__table__button">
                           <Link
-                            href={`/admin/admin-user/${encodeURIComponent(
-                              admin.nationalId,
+                            href={`/admin/api-scope-user/${encodeURIComponent(
+                              apiScopeUser.nationalId,
                             )}`}
                           >
                             <button
@@ -160,7 +158,9 @@ const ApiScopeUsersList: React.FC = () => {
                             type="button"
                             className={`api-scope-users-list__button__delete`}
                             title={localization.buttons['remove'].helpText}
-                            onClick={() => confirmDelete(admin.nationalId)}
+                            onClick={() =>
+                              confirmDelete(apiScopeUser.nationalId)
+                            }
                           >
                             <i className="icon__delete"></i>
                             <span>{localization.buttons['remove'].text}</span>
