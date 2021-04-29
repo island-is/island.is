@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'application-templates-funding-government-projects',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
