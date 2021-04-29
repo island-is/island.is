@@ -5,17 +5,17 @@ import { IsOptional } from 'class-validator'
 export class GetRegulationsSearchInput {
   @Field({ nullable: true })
   @IsOptional()
-  q!: string
+  q?: string
 
   @Field({ nullable: true })
   @IsOptional()
-  rn!: string
+  rn?: string
 
   @Field({ nullable: true })
   @IsOptional()
-  year!: string
+  year?: string
 
   @Field({ nullable: true })
   @IsOptional()
-  ch!: string
+  ch?: string
 }

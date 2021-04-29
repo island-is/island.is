@@ -1,4 +1,4 @@
-import { ISODate, RegName } from '@island.is/clients/regulations'
+import { ISODate, RegName, RegQueryName } from '@island.is/clients/regulations'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 
@@ -8,19 +8,19 @@ export class GetRegulationInput {
   @IsString()
   viewType!: 'current' | 'diff' | 'original' | 'd'
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  name!: string // RegQueryName
+  name!: RegQueryName
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  date?: string // ISODate
+  date?: ISODate
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   isCustomDiff?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  earlierDate?: string // ISODate | 'original'
+  earlierDate?: ISODate | 'original'
 }
