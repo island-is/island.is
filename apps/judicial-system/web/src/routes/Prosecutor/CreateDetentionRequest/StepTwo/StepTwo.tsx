@@ -11,6 +11,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
+  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -26,10 +27,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import StepTwoForm from './StepTwoForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-
-interface CaseData {
-  case?: Case
-}
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()

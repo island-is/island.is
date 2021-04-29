@@ -28,6 +28,10 @@ export default {
     emailOptions: {
       useTestAccount: true,
     },
+    email: {
+      sender: 'Devland.is',
+      address: 'development@island.is',
+    },
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
@@ -53,5 +57,8 @@ export default {
   signingOptions: {
     url: 'https://developers.dokobit.com',
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment

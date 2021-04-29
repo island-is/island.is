@@ -1,5 +1,4 @@
 import React, {
-  FC,
   ReactNode,
   useRef,
   useState,
@@ -42,7 +41,7 @@ export interface TabBulletProps {
   selected?: boolean
 }
 
-const TabBullet: FC<TabBulletProps> = ({ selected }) => {
+const TabBullet = ({ selected }: TabBulletProps) => {
   return (
     <div
       className={cn(styles.tabBullet, {
@@ -52,10 +51,10 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
   )
 }
 
-export const FrontpageSlider: FC<FrontpageSliderProps> = ({
+export const FrontpageSlider = ({
   slides,
   searchContent,
-}) => {
+}: FrontpageSliderProps) => {
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
 

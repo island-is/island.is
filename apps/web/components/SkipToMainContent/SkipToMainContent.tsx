@@ -1,10 +1,12 @@
-import React, { FC } from 'react'
+import React from 'react'
 
 import * as styles from './SkipToMainContent.treat'
 
-export const SkipToMainContent: FC<{
+type Props = {
   title?: string
-}> = ({ title = 'Fara beint í efnið' }) => {
+}
+
+export const SkipToMainContent = ({ title = 'Fara beint í efnið' }: Props) => {
   return (
     <a className={styles.container} href="#main-content">
       {title}

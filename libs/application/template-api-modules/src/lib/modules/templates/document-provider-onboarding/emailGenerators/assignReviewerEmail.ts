@@ -8,11 +8,11 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
 ) => {
   const {
     application,
-    options: { locale },
+    options: { email, locale },
   } = props
   const applicantNationalId = get(application.answers, 'applicant.nationalId')
   const applicantName = get(application.answers, 'applicant.name')
-  const email = process.env.DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
+  const emailRecipient = process.env.DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
 
   const subject =
     locale === 'is'
@@ -42,13 +42,13 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {
         name: '',
-        address: email as string,
+        address: emailRecipient as string,
       },
     ],
     subject,
