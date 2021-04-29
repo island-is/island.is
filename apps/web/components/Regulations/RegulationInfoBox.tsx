@@ -98,7 +98,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             window.print()
           }}
         >
-          Prenta þessa útgáfu
+          {txt('printThisVersion')}
         </Button>
       </Text>
     </RegulationsSidebarBox>

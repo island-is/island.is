@@ -2,7 +2,6 @@
 
 export type RegulationHomeTexts = Partial<
   Record<
-    // |'navigationTitle' // 'Upplýsingasvæði'
     | 'homeIntroLegend' // 'Reglugerðir'
     | 'homeIntro' // 'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.'
     | 'homeIntroImageUrl' // 'https://placekitten.com/400/400'
@@ -40,6 +39,7 @@ export type RegulationHomeTexts = Partial<
 export type RegulationPageTexts = Partial<
   Record<
     | 'goBack' // 'Til baka'
+    | 'printThisVersion' // 'Prenta þessa útgáfu'
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'
     | 'hideDiff' // 'Fela breytingar'
