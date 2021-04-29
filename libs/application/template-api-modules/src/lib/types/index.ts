@@ -28,7 +28,6 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
 }
-
 export interface TemplateApiModuleActionProps {
   application: Application
   authorization: string
