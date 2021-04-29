@@ -2,7 +2,7 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
-import { Regulation, RegName } from './regulations.types'
+import { Regulation, RegName, RegulationViewTypes } from './regulations.types'
 import { demoRegulation, demoRegName } from './regulations.mocks'
 
 // MOCK START
@@ -98,13 +98,13 @@ describe('getRegulation', () => {
     const watName: RegQueryName = expectedResult.SERVER_ERROR
 
     await expect(
-      regulationsService.getRegulation('original', emptyName),
+      regulationsService.getRegulation(RegulationViewTypes.Original, emptyName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation('current', badName),
+      regulationsService.getRegulation(RegulationViewTypes.Current, badName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation('original', watName),
+      regulationsService.getRegulation(RegulationViewTypes.Original, watName),
     ).rejects.toThrow()
   })
 })
