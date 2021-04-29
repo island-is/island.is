@@ -58,4 +58,7 @@ export default {
     url: 'https://developers.dokobit.com',
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  },
 } as Environment
