@@ -82,7 +82,9 @@ export class FileService {
     const exists = await this.awsS3Service.objectExists(file.key)
 
     if (!exists) {
-      throw new NotFoundException(`File ${file.id} of case ${caseId} does not exists in AWS S3`)
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
     }
 
     return this.awsS3Service.getSignedUrl(file.key)
