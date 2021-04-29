@@ -67,7 +67,7 @@ export const BackgroundImage = ({
 
   useLayoutEffect(() => {
     if (backgroundImageRef?.current && 'IntersectionObserver' in window) {
-      let lazyBackgroundObserver = new IntersectionObserver((entries) => {
+      const lazyBackgroundObserver = new IntersectionObserver((entries) => {
         const entry = entries[0]
 
         if (entry.isIntersecting) {
