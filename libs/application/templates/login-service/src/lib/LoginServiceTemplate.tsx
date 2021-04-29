@@ -80,7 +80,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/LoginServiceFormSubmitted').then((module) =>
-                  // TODO: Rename this once we start work on it
                   Promise.resolve(module.LoginServiceFormSubmitted),
                 ),
               write: 'all',
