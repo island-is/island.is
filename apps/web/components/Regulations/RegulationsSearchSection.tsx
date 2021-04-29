@@ -268,7 +268,9 @@ export const RegulationsSearchSection = (
         </GridRow>
       </GridContainer>
 
-      {/* <Checkbox
+      {/*
+      // TODO: awaiting feedback from client
+      <Checkbox
         id="regulations-search-amendments-checkbox"
         label={txt('searchIncludeAmendingLabel')}
         checked={!!filters.all}
