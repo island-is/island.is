@@ -12,6 +12,21 @@ import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 
+const GET_ENDORSEMENTS = gql`
+  query endorsementSystemUserEndorsements {
+    endorsementSystemUserEndorsements {
+      id
+      endorser
+      endorsementListId
+      meta {
+        fullName
+        address
+      }
+      created
+      modified
+    }
+  }
+`
 const CREATE_ENDORSEMENT = gql`
   mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
     endorsementSystemEndorseList(input: $input) {
@@ -48,7 +63,19 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const partyLetter = answers.party.letter
   const partyName = answers.party.name
 
-  const { data } = useQuery(GET_FULLNAME)
+  const { data: userData } = useQuery(GET_FULLNAME)
+
+  const { loading, error } = useQuery(GET_ENDORSEMENTS, {
+    onCompleted: async ({ endorsementSystemUserEndorsements }) => {
+      if (!loading && endorsementSystemUserEndorsements) {
+        const hasEndorsements =
+          !error && !loading && endorsementSystemUserEndorsements?.length
+            ? endorsementSystemUserEndorsements.length > 0
+            : false
+        setHasEndorsed(hasEndorsements)
+      }
+    },
+  })
 
   const onEndorse = async () => {
     const success = await createEndorsement({
@@ -88,7 +115,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               disabled
               label={formatMessage(m.endorsementForm.nameInput)}
               name={formatMessage(m.endorsementForm.nameInput)}
-              value={data?.nationalRegistryUser?.fullName}
+              value={userData?.nationalRegistryUser?.fullName}
               backgroundColor="blue"
             />
           </Box>
