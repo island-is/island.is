@@ -1,6 +1,5 @@
 import {
   AccessService,
-  AdminAccess,
   ApiScopeUserDTO,
   ApiScopeUser,
   ApiScopeUserUpdateDTO,
@@ -36,7 +35,7 @@ export class AccessController {
   /** Gets admin's access rights by id */
   @Scopes(Scope.root, Scope.full)
   @Get(':nationalId')
-  @ApiOkResponse({ type: AdminAccess })
+  @ApiOkResponse({ type: ApiScopeUser })
   async findOne(
     @Param('nationalId') nationalId: string,
   ): Promise<ApiScopeUser | null> {
@@ -91,7 +90,8 @@ export class AccessController {
   async create(
     @Body() apiScopeUser: ApiScopeUserDTO,
   ): Promise<ApiScopeUser | null> {
-    return await this.accessService.create(apiScopeUser)
+    const response = await this.accessService.create(apiScopeUser)
+    return response
   }
 
   /** Updates an existing Api Scope User */

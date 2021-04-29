@@ -13,6 +13,11 @@ import { ApiScopeUser } from './api-scope-user.model'
 
 @Table({
   tableName: 'api_scope_user_access',
+  indexes: [
+    {
+      fields: ['national_id', 'scope'],
+    },
+  ],
 })
 export class ApiScopeUserAccess extends Model<ApiScopeUserAccess> {
   @PrimaryKey
@@ -24,6 +29,7 @@ export class ApiScopeUserAccess extends Model<ApiScopeUserAccess> {
   @ApiProperty()
   nationalId!: string
 
+  @PrimaryKey
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,

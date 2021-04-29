@@ -32,7 +32,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const [accessControlledScopes, setAccessControlledScopes] = useState<
     ApiScope[]
   >([])
-  const [activeScopes, setActiveScopes] = useState<ApiScopeUserAccessDTO[]>([])
+  const [activeScopes, setActiveScopes] = useState<string[]>([])
   const [showScopeInfo, setShowScopeInfo] = useState<boolean>(false)
   const [scopeInfo, setScopeInfo] = useState<JSX.Element>(<div></div>)
 
@@ -51,7 +51,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     }
 
     setScopes()
-    setActiveScopes(props.apiScopeUser.userAccess)
+    setActiveScopes(props.apiScopeUser.userAccess.map((x) => x.scope))
   }, [props.apiScopeUser])
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     for (let i = 0; i < activeScopes.length; i++) {
       user.userAccess.push({
         nationalId: data.apiScopeUser.nationalId,
-        scope: activeScopes[i].scope,
+        scope: activeScopes[i],
       })
     }
     console.log(user)
@@ -119,13 +119,10 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
   const handleScopeChange = (scopeName: string, active: boolean) => {
     console.log(scopeName)
     console.log(active)
-    const found = activeScopes.find((x) => x.scope === scopeName)
+    const found = activeScopes.find((x) => x === scopeName)
     if (active) {
       if (!found) {
-        activeScopes.push({
-          nationalId: props.apiScopeUser.nationalId,
-          scope: scopeName,
-        })
+        activeScopes.push(scopeName)
       }
     } else {
       if (found) {
@@ -227,9 +224,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
 
                 {accessControlledScopes &&
                   accessControlledScopes.map((scope: ApiScope) => {
-                    let checked = props.apiScopeUser.userAccess?.some(
-                      (x) => x.scope === scope.name,
-                    )
+                    let checked = activeScopes.some((x) => x === scope.name)
 
                     return (
                       <div className="admin-user-create-form__container__checkbox__field">

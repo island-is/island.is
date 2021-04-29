@@ -7,6 +7,7 @@ import { ApiScopeUserAccess } from '../entities/models/api-scope-user-access.mod
 import { ApiScopeUserDTO } from '../entities/dto/api-scope-user.dto'
 import { ApiScopeUserUpdateDTO } from '../entities/dto/api-scope-user-update.dto'
 import { ApiScopeUserAccessDTO } from '../entities/dto/api-scope-user-access.dto'
+import { throwError } from 'rxjs'
 
 @Injectable()
 export class AccessService {
@@ -19,16 +20,9 @@ export class AccessService {
     private logger: Logger,
   ) {}
 
-  // /** Checks if nationalId has admin access */
-  // async hasAccess(nationalId: string): Promise<boolean> {
-  //   const access = await this.adminAccessModel.findByPk(nationalId)
-
-  //   return access ? true : false
-  // }
-
   /** Gets the Api Scope User with the nationalId */
   async findOne(nationalId: string): Promise<ApiScopeUser | null> {
-    this.logger.debug(`Finding admin for nationalId - "${nationalId}"`)
+    this.logger.debug(`Finding Api Scope User for nationalId - "${nationalId}"`)
 
     const apiScopeUser = await this.apiScopeUser.findByPk(nationalId, {
       include: [ApiScopeUserAccess],
@@ -53,7 +47,7 @@ export class AccessService {
     })
   }
 
-  /** Gets all admins with paging */
+  /** Gets all Api Scope Users with paging */
   async findAndCountAll(
     searchString: string,
     page: number,
@@ -86,7 +80,16 @@ export class AccessService {
     this.logger.debug('Creating a new admin')
 
     const response = await this.apiScopeUser.create({ ...apiScopeUser })
-    const response2 = await this.createUserScopes(apiScopeUser.userAccess)
+    if (response) {
+      const apiScopeResponse = await this.createUserScopes(
+        apiScopeUser.userAccess,
+      )
+      if (apiScopeResponse) {
+        return response
+      } else {
+        throwError('Error inserting scopes')
+      }
+    }
 
     return response
   }
@@ -102,12 +105,16 @@ export class AccessService {
       throw new BadRequestException('nationalId must be provided')
     }
 
+    await this.deleteUserScopes(nationalId)
+
     await this.apiScopeUser.update(
       { ...apiScopeUser },
       {
         where: { nationalId: nationalId },
       },
     )
+
+    await this.createUserScopes(apiScopeUser.userAccess)
 
     return await this.findOne(nationalId)
   }
@@ -123,7 +130,7 @@ export class AccessService {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    const response = await this.deleteUserScopes(nationalId)
+    await this.deleteUserScopes(nationalId)
 
     return await this.apiScopeUser.destroy({
       where: {
@@ -159,7 +166,21 @@ export class AccessService {
 
     this.logger.debug('Insert scopes for Api Scope User: ', scopes)
 
-    const response = await this.apiScopeUserAccess.create(...scopes)
+    let response = null
+    scopes.forEach(async (x) => {
+      response = await this.apiScopeUserAccess.create(x)
+    })
+
+    return response
+  }
+
+  async findUserScopes(
+    nationalId: string,
+  ): Promise<ApiScopeUserAccess[] | null> {
+    const response = await this.apiScopeUserAccess.findAll({
+      where: { nationalId: nationalId },
+      raw: true,
+    })
     return response
   }
 }
