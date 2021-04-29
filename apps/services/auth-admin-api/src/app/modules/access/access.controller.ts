@@ -1,8 +1,9 @@
 import {
   AccessService,
   AdminAccess,
-  AdminAccessDTO,
-  AdminAccessUpdateDTO,
+  ApiScopeUserDTO,
+  ApiScopeUser,
+  ApiScopeUserUpdateDTO,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -36,13 +37,15 @@ export class AccessController {
   @Scopes(Scope.root, Scope.full)
   @Get(':nationalId')
   @ApiOkResponse({ type: AdminAccess })
-  async findOne(@Param('nationalId') nationalId: string): Promise<AdminAccess> {
+  async findOne(
+    @Param('nationalId') nationalId: string,
+  ): Promise<ApiScopeUser | null> {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
     }
 
-    const admin = await this.accessService.findOne(nationalId)
-    return admin
+    const apiScopeUser = await this.accessService.findOne(nationalId)
+    return apiScopeUser
   }
 
   /** Gets x many admins based on pagenumber and count variable */
@@ -61,7 +64,7 @@ export class AccessController {
             },
             rows: {
               type: 'array',
-              items: { $ref: getSchemaPath(AdminAccess) },
+              items: { $ref: getSchemaPath(ApiScopeUser) },
             },
           },
         },
@@ -72,7 +75,7 @@ export class AccessController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: AdminAccess[]; count: number } | null> {
+  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
     const admins = await this.accessService.findAndCountAll(
       searchString,
       page,
@@ -81,22 +84,24 @@ export class AccessController {
     return admins
   }
 
-  /** Creates a new admin */
+  /** Creates a new Api Scope User */
   @Scopes(Scope.root, Scope.full)
   @Post()
-  @ApiCreatedResponse({ type: AdminAccess })
-  async create(@Body() admin: AdminAccessDTO): Promise<AdminAccess> {
-    return await this.accessService.create(admin)
+  @ApiCreatedResponse({ type: ApiScopeUser })
+  async create(
+    @Body() apiScopeUser: ApiScopeUserDTO,
+  ): Promise<ApiScopeUser | null> {
+    return await this.accessService.create(apiScopeUser)
   }
 
-  /** Updates an existing admin */
+  /** Updates an existing Api Scope User */
   @Scopes(Scope.root, Scope.full)
   @Put(':nationalId')
-  @ApiCreatedResponse({ type: AdminAccess })
+  @ApiCreatedResponse({ type: ApiScopeUser })
   async update(
-    @Body() admin: AdminAccessUpdateDTO,
+    @Body() admin: ApiScopeUserUpdateDTO,
     @Param('nationalId') nationalId: string,
-  ): Promise<AdminAccess | null> {
+  ): Promise<ApiScopeUser | null> {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
     }
@@ -107,7 +112,7 @@ export class AccessController {
   /** Deleting an admin by nationalId */
   @Scopes(Scope.root, Scope.full)
   @Delete(':nationalId')
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: Number })
   async delete(@Param('nationalId') nationalId: string): Promise<number> {
     if (!nationalId) {
       throw new BadRequestException('nationalId must be provided')

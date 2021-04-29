@@ -35,7 +35,7 @@ export class ApiScopeUser extends Model<ApiScopeUser> {
 
   @HasMany(() => ApiScopeUserAccess)
   @ApiProperty()
-  userAccess?: []
+  userAccess?: ApiScopeUserAccess[]
 
   @CreatedAt
   @ApiProperty()
