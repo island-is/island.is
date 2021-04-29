@@ -413,8 +413,8 @@ export class NotificationService {
     )
 
     await this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      existingCase.prosecutor.email,
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
       subject,
       html,
     )
