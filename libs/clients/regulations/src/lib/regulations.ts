@@ -10,6 +10,7 @@ import {
   RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
+  RegulationViewTypes,
   RegulationYears,
 } from './regulations.types'
 
@@ -43,7 +44,7 @@ export class RegulationsService extends RESTDataSource {
   regulation/[name]/d/[date]/diff/[earlierDate]
 */
   async getRegulation(
-    viewType: 'current' | 'diff' | 'original' | 'd',
+    viewType: RegulationViewTypes,
     name: RegQueryName,
     date?: ISODate,
     isCustomDiff?: boolean,

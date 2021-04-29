@@ -231,3 +231,10 @@ export type RegulationRedirect = {
   /** The regulation data has not been fully migrated and should be viewed at this URL */
   redirectUrl: string
 }
+
+export const enum RegulationViewTypes {
+  Current = 'current',
+  Diff = 'diff',
+  Original = 'original',
+  Date = 'd',
+}
