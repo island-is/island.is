@@ -31,6 +31,7 @@ export class AccessService {
     return apiScopeUser
   }
 
+  /** Finds all Api Scope User Access Scopes */
   async findAll(
     nationalId: string,
     requestedScopes: string[],
@@ -159,6 +160,7 @@ export class AccessService {
     return response
   }
 
+  /** Creates User Scopes of Api Scope User */
   async createUserScopes(
     scopes: ApiScopeUserAccessDTO[] | undefined,
   ): Promise<ApiScopeUserAccess | null> {
@@ -171,16 +173,6 @@ export class AccessService {
       response = await this.apiScopeUserAccess.create(x)
     })
 
-    return response
-  }
-
-  async findUserScopes(
-    nationalId: string,
-  ): Promise<ApiScopeUserAccess[] | null> {
-    const response = await this.apiScopeUserAccess.findAll({
-      where: { nationalId: nationalId },
-      raw: true,
-    })
     return response
   }
 }
