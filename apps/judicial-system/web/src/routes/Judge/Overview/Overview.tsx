@@ -509,7 +509,7 @@ export const JudgeOverview: React.FC = () => {
                     </Text>
                   </Box>
                   {workingCase.comments && (
-                    <>
+                    <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
                       <Box marginBottom={1}>
                         <Text variant="h4" as="h3" color="blue400">
                           Athugasemdir vegna málsmeðferðar
@@ -520,11 +520,11 @@ export const JudgeOverview: React.FC = () => {
                           {workingCase.comments}
                         </span>
                       </Text>
-                    </>
+                    </Box>
                   )}
                   {features.includes(Feature.CASE_FILES) &&
                     workingCase.caseFilesComments && (
-                      <Box marginTop={3}>
+                      <>
                         <Box marginBottom={1}>
                           <Text variant="h4" as="h3" color="blue400">
                             Athugasemdir vegna rannsóknargagna
@@ -535,7 +535,7 @@ export const JudgeOverview: React.FC = () => {
                             {workingCase.caseFilesComments}
                           </span>
                         </Text>
-                      </Box>
+                      </>
                     )}
                 </div>
               )}
