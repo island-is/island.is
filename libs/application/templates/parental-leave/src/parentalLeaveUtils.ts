@@ -191,3 +191,12 @@ export const getAllPeriodDates = (periods: Period[]) => {
 
   return dates.map((d) => new Date(d))
 }
+
+export const createRange = <T>(
+  length: number,
+  output: (index: number) => T,
+): T[] => {
+  return Array(length)
+    .fill(1)
+    .map((_, i) => output(i))
+}
