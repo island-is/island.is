@@ -47,7 +47,6 @@ import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/u
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
-import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)

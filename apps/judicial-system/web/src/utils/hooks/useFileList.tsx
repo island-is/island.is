@@ -21,6 +21,11 @@ const useFileList = ({ caseId }: Parameters) => {
   })
 
   useEffect(() => {
+    const handleError = () => {
+      error?.graphQLErrors[0].extensions?.response.status === 404 &&
+        setFileNotFound(true)
+    }
+
     if (fileSignedUrl) {
       window.open(fileSignedUrl.getSignedUrl.url, '_blank')
     } else if (error) {
@@ -32,11 +37,6 @@ const useFileList = ({ caseId }: Parameters) => {
 
   const handleOpenFile = (fileId: string) => {
     setOpenFileId(fileId)
-  }
-
-  const handleError = () => {
-    error?.graphQLErrors[0].extensions?.response.status === 404 &&
-      setFileNotFound(true)
   }
 
   const dismissFileNotFound = () => {
