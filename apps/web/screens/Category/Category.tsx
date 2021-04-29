@@ -345,15 +345,16 @@ const Category: Screen<CategoryProps> = ({
             <LinkContext.Provider
               value={{
                 linkRenderer: (href, children) => (
-                  <Link href={href} pureChildren skipTab>
+                  <Link href={href} skipTab>
                     {children}
                   </Link>
                 ),
               }}
             >
               <Text truncate>
-                <Link {...linkResolver('homepage')} passHref>
+                <a {...linkResolver('homepage')}>
                   <Button
+                    as="span"
                     preTextIcon="arrowBack"
                     preTextIconType="filled"
                     size="small"
@@ -362,7 +363,7 @@ const Category: Screen<CategoryProps> = ({
                   >
                     Ísland.is
                   </Button>
-                </Link>
+                </a>
               </Text>
             </LinkContext.Provider>
           </Box>
