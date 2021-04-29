@@ -65,7 +65,7 @@ export const RegulationChangelog = (props: RegulationChangelogProps) => {
         const name = prettyName(item.name)
 
         const label = interpolate(
-          i === arr.length - 1 // item.effect === 'root'
+          i === arr.length - 1 // NOTE: item.effect === 'root'
             ? txt('historyStart')
             : item.effect === 'amend'
             ? txt('historyChange')

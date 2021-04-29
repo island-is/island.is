@@ -62,7 +62,7 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
           (i === arr.length - 1 || arr[i + 1].date > today)
 
         const label = interpolate(
-          i === 0 // item.effect === 'root'
+          i === 0 // NOTE: item.effect === 'root'
             ? txt('historyStart')
             : item.effect === 'amend'
             ? txt('historyChange')
