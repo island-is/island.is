@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Case,
@@ -9,18 +10,34 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
-import { CreateCaseMutation } from '../mutations'
+import {
+  CreateCaseMutation,
+  CreateCustodyCourtCaseMutation,
+} from '../mutations'
 import { parseString } from '../formatters'
+import { setAndSendToServer } from '../formHelper'
 
 type autofillProperties = Pick<
   Case,
   'courtAttendees' | 'policeDemands' | 'litigationPresentations'
 >
 
+interface CreateCustodyCourtCaseMutationResponse {
+  createCustodyCourtCase: {
+    courtCaseNumber: string
+  }
+}
+
 const useCase = () => {
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
+  )
+  const [
+    createCustodyCourtCaseMutation,
+    { loading: creatingCustodyCourtCase },
+  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
+    CreateCustodyCourtCaseMutation,
   )
   const [
     sendNotificationMutation,
@@ -54,6 +71,47 @@ const useCase = () => {
     }
 
     return undefined
+  }
+
+  const createCourtCase = async (
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    setCourtCaseNumberErrorMessage: React.Dispatch<
+      React.SetStateAction<string>
+    >,
+  ): Promise<void> => {
+    if (creatingCustodyCourtCase === false) {
+      try {
+        const { data, errors } = await createCustodyCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+            },
+          },
+        })
+
+        if (data && workingCase && !errors) {
+          setAndSendToServer(
+            'courtCaseNumber',
+            data.createCustodyCourtCase.courtCaseNumber,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
+      }
+
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+      )
+    }
   }
 
   const updateCase = async (id: string, updateCase: UpdateCase) => {
@@ -112,6 +170,8 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     autofill,
+    createCourtCase,
+    creatingCustodyCourtCase,
   }
 }
 

@@ -53,12 +53,6 @@ import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
-interface CreateCustodyCourtCaseMutationResponse {
-  createCustodyCourtCase: {
-    courtCaseNumber: string
-  }
-}
-
 export const JudgeOverview: React.FC = () => {
   const [
     courtCaseNumberErrorMessage,
@@ -75,53 +69,13 @@ export const JudgeOverview: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const { updateCase } = useCase()
-  const [
-    createCustodyCourtCaseMutation,
-    { loading: creatingCustodyCourtCase },
-  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
-    CreateCustodyCourtCaseMutation,
-  )
+  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
+
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const createCase = async (): Promise<void> => {
-    if (creatingCustodyCourtCase === false) {
-      try {
-        const { data, errors } = await createCustodyCourtCaseMutation({
-          variables: {
-            input: {
-              caseId: workingCase?.id,
-              policeCaseNumber: workingCase?.policeCaseNumber,
-            },
-          },
-        })
-
-        if (data && workingCase && !errors) {
-          setAndSendToServer(
-            'courtCaseNumber',
-            data.createCustodyCourtCase.courtCaseNumber,
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
-
-          setCourtCaseNumberErrorMessage('')
-
-          return
-        }
-      } catch (error) {
-        // Catch all so we can set an eror message
-      }
-
-      setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
-      )
-    }
-  }
 
   const handleSetCaseNrManuallyClick = () => {
     if (workingCase) {
@@ -230,7 +184,13 @@ export const JudgeOverview: React.FC = () => {
                         <div className={styles.createCourtCaseButton}>
                           <Button
                             size="small"
-                            onClick={createCase}
+                            onClick={() =>
+                              createCourtCase(
+                                workingCase,
+                                setWorkingCase,
+                                setCourtCaseNumberErrorMessage,
+                              )
+                            }
                             loading={creatingCustodyCourtCase}
                             disabled={!!workingCase.courtCaseNumber}
                             fluid
