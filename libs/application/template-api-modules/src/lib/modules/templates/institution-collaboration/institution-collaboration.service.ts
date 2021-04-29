@@ -25,7 +25,7 @@ export class InstitutionCollaborationService {
   ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const attachments = this.prepareAttachments(application)
+    const attachments = await this.prepareAttachments(application)
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
@@ -53,9 +53,9 @@ export class InstitutionCollaborationService {
   }
 
   // Generating signedUrls for mail attachments
-  private prepareAttachments(
+  private async prepareAttachments(
     application: Application,
-  ): InstitutionAttachment[] {
+  ): Promise<InstitutionAttachment[]> {
     const attachments = getValueViaPath(
       application.answers,
       'attachments',
@@ -64,11 +64,15 @@ export class InstitutionCollaborationService {
     if (!hasattachments) {
       return []
     }
-    return attachments.map(({ key, name }) => {
-      const url = (application.attachments as {
-        [key: string]: string
-      })[key]
-      return { name, url: this.fileStorageService.generateSignedUrl(url) }
-    })
+
+    return Promise.all(
+      attachments.map(async ({ key, name }) => {
+        const url = (application.attachments as {
+          [key: string]: string
+        })[key]
+        const signedUrl = await this.fileStorageService.generateSignedUrl(url)
+        return { name, url: signedUrl }
+      }),
+    )
   }
 }

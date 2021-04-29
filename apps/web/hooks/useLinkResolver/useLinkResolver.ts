@@ -1,6 +1,6 @@
 import { useContext } from 'react'
+import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-
 import { I18nContext } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
@@ -167,13 +167,17 @@ Returns /404 if no path is found
 export const linkResolver = (
   linkType: LinkResolverInput['linkType'],
   variables: LinkResolverInput['variables'] = [],
-  locale: LinkResolverInput['locale'],
+  locale: LinkResolverInput['locale'] = defaultLanguage,
 ): LinkResolverResponse => {
   /*
   We lowercase here to allow components to pass unmodified __typename fields
   The __typename fields seem to have case issues, that will be addressed at a later time
+  We also guard against accidental passing of nully values. ??
   */
-  const type = linkType?.toLowerCase() ?? ''
+  const type = linkType?.toLowerCase() as
+    | LinkResolverInput['linkType']
+    | undefined
+    | null
 
   // special case for external url resolution
   if (type === 'linkurl') {
@@ -183,7 +187,7 @@ export const linkResolver = (
   }
 
   // We consider path not found if it has no entry in routesTemplate or if the found path is empty
-  if (routesTemplate[type] && routesTemplate[type][locale]) {
+  if (type && routesTemplate[type] && routesTemplate[type][locale]) {
     const typePath = routesTemplate[type][locale]
 
     if (variables.length) {
@@ -257,7 +261,7 @@ export const useLinkResolver = () => {
   const wrappedLinkResolver = (
     linkType: LinkResolverInput['linkType'],
     variables: LinkResolverInput['variables'] = [],
-    locale: LinkResolverInput['locale'] = context.activeLocale,
+    locale: LinkResolverInput['locale'] = context?.activeLocale,
   ) => linkResolver(linkType, variables, locale)
   return {
     typeResolver,

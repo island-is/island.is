@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
+  LOGIN_SERVICE = 'LoginService',
   PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
@@ -59,6 +60,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARTY_LETTER]: {
     slug: 'listabokstafur',
     translation: 'ple.application',
+  },
+  [ApplicationTypes.LOGIN_SERVICE]: {
+    slug: 'innskraningarthjonusta',
+    translation: 'ls.application',
   },
   [ApplicationTypes.PARTY_APPLICATION]: {
     slug: 'frambod',

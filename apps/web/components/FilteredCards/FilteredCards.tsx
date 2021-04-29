@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import intersection from 'lodash/intersection'
 import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
@@ -31,14 +31,14 @@ interface FilteredCardsProps {
   startingIds?: Array<string>
 }
 
-export const FilteredCards: FC<FilteredCardsProps> = ({
+export const FilteredCards = ({
   title,
   items,
   tags,
   showAll,
   namespace,
   startingIds = [],
-}) => {
+}: FilteredCardsProps) => {
   const n = useNamespace(namespace)
   const [filterString, setFilterString] = useState<string>('')
   const [filtersToggled, setFiltersToggled] = useState<boolean>(true)

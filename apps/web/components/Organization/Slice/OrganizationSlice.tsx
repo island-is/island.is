@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
@@ -92,11 +92,11 @@ const renderSlice = (slice, namespace) => {
   }
 }
 
-export const OrganizationSlice: FC<OrganizationSliceProps> = ({
+export const OrganizationSlice = ({
   slice,
   namespace,
   fullWidth = false,
-}) => (
+}: OrganizationSliceProps) => (
   <GridContainer>
     <GridRow>
       <GridColumn

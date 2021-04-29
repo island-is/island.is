@@ -7,3 +7,7 @@ export const key = style({
   height: 16,
   marginRight: theme.spacing[2],
 })
+
+export const radioValue = style({
+  textTransform: 'capitalize',
+})

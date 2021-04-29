@@ -74,6 +74,7 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/                                                                @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/login-service/                                                    @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
