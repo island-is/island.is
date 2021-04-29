@@ -4,6 +4,15 @@ import { Endorsement } from '../../types'
 import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
+
+const formatDate = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
+}
 
 interface EndorsementTableProps {
   application: Application
@@ -12,46 +21,40 @@ interface EndorsementTableProps {
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
-  const renderRow = (endorsements: Endorsement, index: number) => {
-    const cell = Object.entries(endorsements)
+  const renderRow = (endorsement: Endorsement) => {
     return (
-      <T.Row key={index}>
-        {cell.map(([_key, value], i) => {
-          if (typeof value === 'string') {
-            return (
-              <T.Data
-                key={i}
-                box={{
-                  background: endorsements.hasWarning ? 'yellow200' : 'white',
-                  textAlign: value === endorsements.address ? 'right' : 'left',
-                }}
-              >
-                {endorsements.hasWarning && value === endorsements.address ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                  >
-                    {value}
-                    <Box marginLeft={2}>
-                      <Tooltip
-                        color="blue400"
-                        iconSize="medium"
-                        text={formatMessage(
-                          m.validationMessages.signatureInvalid,
-                        )}
-                      />
-                    </Box>
-                  </Box>
-                ) : (
-                  value
-                )}
-              </T.Data>
-            )
-          } else {
-            return null
-          }
-        })}
+      <T.Row key={endorsement.id}>
+        <T.Data key={endorsement.id + endorsement.date}>
+          {formatDate(endorsement.date)}
+        </T.Data>
+        <T.Data key={endorsement.id + endorsement.name}>
+          {endorsement.name}
+        </T.Data>
+        <T.Data key={endorsement.id + endorsement.nationalId}>
+          {endorsement.nationalId}
+        </T.Data>
+        <T.Data
+          key={endorsement.id + endorsement.address}
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            textAlign: 'right',
+          }}
+        >
+          {endorsement.hasWarning ? (
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
+              {endorsement.address}
+              <Box marginLeft={2}>
+                <Tooltip
+                  color="blue400"
+                  iconSize="medium"
+                  text={formatMessage(m.validationMessages.signatureInvalid)}
+                />
+              </Box>
+            </Box>
+          ) : (
+            endorsement.address
+          )}
+        </T.Data>
       </T.Row>
     )
   }
@@ -73,9 +76,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
       <T.Body>
         {endorsements &&
           endorsements.length &&
-          endorsements.map((endorsements, index) =>
-            renderRow(endorsements, index),
-          )}
+          endorsements.map((endorsements) => renderRow(endorsements))}
       </T.Body>
     </T.Table>
   )
