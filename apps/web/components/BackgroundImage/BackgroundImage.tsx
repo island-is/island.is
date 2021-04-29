@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
@@ -14,21 +14,24 @@ export type BackgroundImageProps = {
   boxProps?: BoxProps
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
+  useThumbnail?: boolean
 }
 
-const useImageLoader = (url: string): boolean => {
+const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
   const isMounted = useMountedState()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const img = new window.Image(100)
-    img.onload = img.onerror = () => {
-      if (isMounted) {
-        setLoaded(true)
+    if (shouldLoad) {
+      const img = new window.Image(100)
+      img.onload = img.onerror = () => {
+        if (isMounted) {
+          setLoaded(true)
+        }
       }
+      img.src = url
     }
-    img.src = url
-  }, [url])
+  }, [url, shouldLoad])
 
   return loaded
 }
@@ -41,6 +44,7 @@ export const BackgroundImage = ({
   background = theme.color.dark100,
   backgroundSize = 'cover',
   positionX,
+  useThumbnail,
   boxProps = {
     alignItems: 'center',
     width: 'full',
@@ -49,7 +53,9 @@ export const BackgroundImage = ({
     borderRadius: 'large',
   },
 }: BackgroundImageProps) => {
+  const [shouldLoad, setShouldLoad] = useState<boolean>(false)
   const src = `${image.url}?w=${width}`
+  const backgroundImageRef = useRef<HTMLDivElement | null>(null)
   const thumbnail = image.url + '?w=50'
   const alt = image.title ?? ''
   const imageProps = alt
@@ -59,7 +65,22 @@ export const BackgroundImage = ({
       }
     : {}
 
-  const imageLoaded = useImageLoader(src)
+  useLayoutEffect(() => {
+    if (backgroundImageRef?.current && 'IntersectionObserver' in window) {
+      let lazyBackgroundObserver = new IntersectionObserver((entries) => {
+        const entry = entries[0]
+
+        if (entry.isIntersecting) {
+          setShouldLoad(true)
+          lazyBackgroundObserver.unobserve(entry.target)
+        }
+      })
+
+      lazyBackgroundObserver.observe(backgroundImageRef.current)
+    }
+  }, [])
+
+  const imageLoaded = useImageLoader(src, shouldLoad)
 
   let paddingTop = '0px'
 
@@ -109,7 +130,9 @@ export const BackgroundImage = ({
             [styles.thumbnailHide]: imageLoaded,
           })}
           style={{
-            backgroundImage: `url(${thumbnail})`,
+            ...(useThumbnail
+              ? { backgroundImage: `url(${thumbnail})` }
+              : { backgroundColor: theme.color.dark100 }),
             backgroundSize,
             backgroundPosition,
             height,
@@ -117,6 +140,7 @@ export const BackgroundImage = ({
         />
         <div
           {...imageProps}
+          ref={backgroundImageRef}
           className={cn(styles.image, styles.bgImage, {
             [styles.imageShow]: imageLoaded,
           })}
