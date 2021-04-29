@@ -106,21 +106,21 @@ const StudentAssessmentTable = () => {
                 abilityRating: res.englishGrade?.competence,
                 status: res.englishGrade?.competenceStatus,
                 breakdown: [
-                  ...(res.englishGrade?.grammar.grade
-                    ? [
-                        {
-                          subject: 'Málnotkun',
-                          rate: `(${res.englishGrade?.grammar.weight}%)`,
-                          serialRating: res.englishGrade?.grammar.grade,
-                        },
-                      ]
-                    : []),
                   ...(res.englishGrade?.reading.grade
                     ? [
                         {
                           subject: 'Lesskilningur',
                           rate: `(${res.englishGrade?.reading.weight}%)`,
                           serialRating: res.englishGrade?.reading.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.englishGrade?.grammar.grade
+                    ? [
+                        {
+                          subject: 'Málnotkun',
+                          rate: `(${res.englishGrade?.grammar.weight}%)`,
+                          serialRating: res.englishGrade?.grammar.grade,
                         },
                       ]
                     : []),
@@ -145,21 +145,21 @@ const StudentAssessmentTable = () => {
                 abilityRating: res.icelandicGrade?.competence,
                 status: res.icelandicGrade?.competenceStatus,
                 breakdown: [
-                  ...(res.icelandicGrade?.grammar.grade
-                    ? [
-                        {
-                          subject: 'Málnotkun',
-                          rate: `(${res.icelandicGrade?.grammar.weight}%)`,
-                          serialRating: res.icelandicGrade?.grammar.grade,
-                        },
-                      ]
-                    : []),
                   ...(res.icelandicGrade?.reading.grade
                     ? [
                         {
                           subject: 'Lesskilningur',
                           rate: `(${res.icelandicGrade?.reading.weight}%)`,
                           serialRating: res.icelandicGrade?.reading.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.icelandicGrade?.grammar.grade
+                    ? [
+                        {
+                          subject: 'Málnotkun',
+                          rate: `(${res.icelandicGrade?.grammar.weight}%)`,
+                          serialRating: res.icelandicGrade?.grammar.grade,
                         },
                       ]
                     : []),
