@@ -71,6 +71,8 @@ export const JudgeOverview: React.FC = () => {
   )
 
   const router = useRouter()
+  const id = router.query.id
+
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
@@ -80,8 +82,11 @@ export const JudgeOverview: React.FC = () => {
   ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
     CreateCustodyCourtCaseMutation,
   )
-
-  const id = router.query.id
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
 
   const createCase = async (): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
@@ -131,12 +136,6 @@ export const JudgeOverview: React.FC = () => {
       setCourtCaseNumberErrorMessage('')
     }
   }
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   useEffect(() => {
     const transitionCase = async (theCase: Case) => {
