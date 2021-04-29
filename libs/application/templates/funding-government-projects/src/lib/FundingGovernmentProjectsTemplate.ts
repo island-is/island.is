@@ -5,36 +5,55 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultEvents,
   DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
-import * as z from 'zod'
+import { FundingGovernmentProjectsSchema } from './dataSchema'
+import { application } from './messages'
 
-type Events = { type: 'SUBMIT' }
+const States = {
+  draft: 'draft',
+  submitted: 'submitted',
+}
 
-const ExampleSchema = z.object({})
+type FundingGovernmentProjectsEvent =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.SUBMIT }
+
+enum Roles {
+  APPLICANT = 'applicant',
+}
 
 const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<Events>,
-  Events
+  ApplicationStateSchema<FundingGovernmentProjectsEvent>,
+  FundingGovernmentProjectsEvent
 > = {
-  type: ApplicationTypes.APPLICATION_FOR_FUNDING_GOVERNMENT_PROJECTS,
-  name: 'Umsókn um fjármögnun vegna ríkisverkefnis',
-  dataSchema: ExampleSchema,
+  type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
+  name: 'Umsókn um fjármögnun ríkisverkefnis',
+  translationNamespaces: [
+    ApplicationConfigurations.FundingGovernmentProjects.translation,
+  ],
+  dataSchema: FundingGovernmentProjectsSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.draft,
     states: {
-      draft: {
+      [States.draft]: {
         meta: {
-          name: 'Umsókn',
+          name: States.draft,
+          title: application.general.name,
+          description: application.general.description,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
-                  Promise.resolve(module.ExampleForm),
+                import(
+                  '../forms/FundingGovernmentProjectsForm'
+                ).then((module) =>
+                  Promise.resolve(module.FundingGovernmentProjectsForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -45,35 +64,41 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'approved',
+            target: States.submitted,
           },
         },
       },
-      approved: {
+      [States.submitted]: {
         meta: {
-          name: 'Samþykkt',
+          name: States.submitted,
+          title: application.general.name,
+          description: application.general.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/FundingGovernmentProjectsFormInReview').then(
+                  (module) =>
+                    // TODO: Rename this once we start work on it
+                    Promise.resolve(
+                      module.FundingGovernmentProjectsFormInReview,
+                    ),
                 ),
+              write: 'all',
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      // TODO
-      return 'reviewer'
-    }
-    return 'applicant'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    // TODO: Handle this correctly
+    return Roles.APPLICANT
   },
 }
 
