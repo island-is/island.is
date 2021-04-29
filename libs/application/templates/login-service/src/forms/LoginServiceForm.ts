@@ -3,7 +3,6 @@ import {
   buildSection,
   Form,
   FormModes,
-  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildTextField,
