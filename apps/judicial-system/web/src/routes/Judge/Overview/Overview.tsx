@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -29,13 +29,11 @@ import {
   CaseTransition,
   CaseType,
   Feature,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
@@ -53,6 +51,7 @@ import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/s
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface CreateCustodyCourtCaseMutationResponse {
   createCustodyCourtCase: {
@@ -61,26 +60,28 @@ interface CreateCustodyCourtCaseMutationResponse {
 }
 
 export const JudgeOverview: React.FC = () => {
-  const router = useRouter()
-  const id = router.query.id
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
-  const { features } = useContext(FeatureContext)
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
-  const { user } = useContext(UserContext)
 
+  const router = useRouter()
+  const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
   const [
     createCustodyCourtCaseMutation,
     { loading: creatingCustodyCourtCase },
   ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
     CreateCustodyCourtCaseMutation,
   )
+
+  const id = router.query.id
 
   const createCase = async (): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
@@ -134,22 +135,6 @@ export const JudgeOverview: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
