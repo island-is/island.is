@@ -136,6 +136,7 @@ export interface Case {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
   arrestDate?: string
@@ -227,6 +228,7 @@ export interface UpdateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
   arrestDate?: string
