@@ -19,7 +19,7 @@ type autofillProperties = Pick<
 >
 
 interface CreateCourtCaseMutationResponse {
-  createCustodyCourtCase: {
+  createCourtCase: {
     courtCaseNumber: string
   }
 }
@@ -80,19 +80,17 @@ const useCase = () => {
           variables: {
             input: {
               caseId: workingCase?.id,
+              type: workingCase?.type,
               policeCaseNumber: workingCase?.policeCaseNumber,
             },
           },
         })
 
         if (data && workingCase && !errors) {
-          setAndSendToServer(
-            'courtCaseNumber',
-            data.createCustodyCourtCase.courtCaseNumber,
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
+          setWorkingCase({
+            ...workingCase,
+            courtCaseNumber: data.createCourtCase.courtCaseNumber,
+          })
 
           setCourtCaseNumberErrorMessage('')
 

@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { formatISO } from 'date-fns'
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
@@ -72,9 +72,9 @@ export class CourtService {
         createCaseData: {
           authenticationToken,
           caseType: 'R - Rannsóknarmál',
-          subtype: 'Gæsluvarðhald',
+          subtype: type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann',
           status: 'Skráð',
-          receivalDate: format(new Date(), 'yyyyMMdd'),
+          receivalDate: formatISO(new Date(), { representation: 'date' }),
           basedOn: 'Rannsóknarhagsmunir',
           sourceNumber: policeCaseNumber,
         },

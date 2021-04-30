@@ -1,6 +1,7 @@
 export enum Feature {
   CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
   CASE_FILES = 'CASE_FILES',
+  CREATE_COURT_CASE = 'CREATE_COURT_CASE',
 }
 
 export enum UserRole {
