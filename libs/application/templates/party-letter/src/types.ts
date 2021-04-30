@@ -1,7 +1,8 @@
 export interface Endorsement {
   date: string
   name: string
-  nationalRegistry: string
+  nationalId: string
   address: string
   hasWarning?: boolean
+  id: string
 }
