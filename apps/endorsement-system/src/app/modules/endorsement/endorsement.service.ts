@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  MethodNotAllowedException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -148,6 +149,11 @@ export class EndorsementService {
     // parent list contains rules and metadata field
     const parentEndorsementList = await this.getEndorsementList(listId)
 
+    // we don't allow endorsements on closed lists
+    if (parentEndorsementList.closedDate) {
+      throw new MethodNotAllowedException(['Unable to endorse closed list'])
+    }
+
     // get all metadata required for this endorsement
     const allEndorsementMetadata = await this.getEndorsementMetadataForNationalId(
       { nationalId, endorsementList: parentEndorsementList },
@@ -182,6 +188,11 @@ export class EndorsementService {
 
     // parent list contains rules and metadata field
     const parentEndorsementList = await this.getEndorsementList(listId)
+
+    // we don't allow endorsements on closed lists
+    if (parentEndorsementList.closedDate) {
+      throw new MethodNotAllowedException(['Unable to endorse closed list'])
+    }
 
     // create an endorsement document for each national id
     const endorsements = await Promise.all(
@@ -224,7 +235,17 @@ export class EndorsementService {
     this.logger.debug(
       `Removing endorsement from list "${listId}" by nationalId "${nationalId}"`,
     )
-    // TODO: Prevent this from deleting from a closed list
+
+    // parent list contains rules and metadata field
+    const parentEndorsementList = await this.getEndorsementList(listId)
+
+    // we don't allow endorsements on closed lists
+    if (parentEndorsementList.closedDate) {
+      throw new MethodNotAllowedException([
+        'Unable to remove endorsement form closed list',
+      ])
+    }
+
     const results = await this.endorsementModel.destroy({
       where: {
         endorser: nationalId,

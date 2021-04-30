@@ -15,7 +15,7 @@ module.exports = {
         title: faker.lorem.words(2),
         description: faker.lorem.paragraph(1),
         closed_date: null,
-        endorsement_meta: ['fullName'],
+        endorsement_meta: ['fullName', 'address'], // this field is used in tests to validate metadata injection
         tags: ['partyLetterSudurkjordaemi2021', 'partyLetter2021'],
         validation_rules: JSON.stringify([
           {
@@ -56,7 +56,7 @@ module.exports = {
         description: faker.lorem.paragraph(1),
         closed_date: new Date(),
         tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
-        endorsement_meta: ['fullName', 'address'], // this field is used in tests to validate metadata injection
+        endorsement_meta: ['fullName', 'address'],
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -114,6 +114,17 @@ module.exports = {
       id: faker.random.uuid(),
       endorser: '0000000000',
       endorsement_list_id: endorsementIds[1],
+      meta: JSON.stringify({
+        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
+      }),
+      created: new Date(),
+      modified: new Date(),
+    })
+
+    endorsements.push({
+      id: faker.random.uuid(),
+      endorser: '0000000000',
+      endorsement_list_id: endorsementIds[2],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
       }),
