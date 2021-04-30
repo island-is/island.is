@@ -5,12 +5,25 @@ export const signatureModal = {
   general: defineMessages({
     title: {
       id: 'crc.application:signatureModal.title',
-      defaultMessage: 'Rafræn undirritun',
+      defaultMessage: 'Þú ert að fara að undirrita',
       description: 'Signature modal title',
     },
     closeButtonLabel: {
       id: 'crc.application:signatureModal.closeButtonLabel',
       defaultMessage: 'Loka',
+      description: 'Close modal button label',
+    },
+  }),
+  success: defineMessages({
+    title: {
+      id: 'crc.application:signatureModal.success.title',
+      defaultMessage: 'Undirritun tókst',
+      description: 'Signature succes title',
+    },
+    message: {
+      id: 'crc.application:signatureModal.success.text',
+      defaultMessage:
+        'Augnablik, við erum að taka saman gögnin sem getur tekið nokkrar sekúndur.',
       description: 'Close modal button label',
     },
   }),
