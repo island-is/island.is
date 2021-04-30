@@ -216,6 +216,7 @@ export interface CreateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
 }
