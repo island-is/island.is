@@ -94,6 +94,16 @@ export const CreateCaseMutation = gql`
   }
 `
 
+export const CreateCustodyCourtCaseMutation = gql`
+  mutation CreateCustodyCourtCaseMutation(
+    $input: CreateCustodyCourtCaseInput!
+  ) {
+    createCustodyCourtCase(input: $input) {
+      courtCaseNumber
+    }
+  }
+`
+
 export const CreateCourtCaseMutation = gql`
   mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
     createCourtCase(input: $input) {

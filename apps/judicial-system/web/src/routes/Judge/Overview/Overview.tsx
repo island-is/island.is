@@ -68,7 +68,13 @@ export const JudgeOverview: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
+  const {
+    updateCase,
+    createCustodyCourtCase,
+    creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
+  } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -184,7 +190,7 @@ export const JudgeOverview: React.FC = () => {
                           <Button
                             size="small"
                             onClick={() =>
-                              createCourtCase(
+                              createCustodyCourtCase(
                                 workingCase,
                                 setWorkingCase,
                                 setCourtCaseNumberErrorMessage,

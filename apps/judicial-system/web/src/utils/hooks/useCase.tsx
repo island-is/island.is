@@ -9,14 +9,23 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
-import { CreateCaseMutation, CreateCourtCaseMutation } from '../mutations'
+import {
+  CreateCaseMutation,
+  CreateCustodyCourtCaseMutation,
+  CreateCourtCaseMutation,
+} from '../mutations'
 import { parseString } from '../formatters'
-import { setAndSendToServer } from '../formHelper'
 
 type autofillProperties = Pick<
   Case,
   'courtAttendees' | 'policeDemands' | 'litigationPresentations'
 >
+
+interface CreateCustodyCourtCaseMutationResponse {
+  createCustodyCourtCase: {
+    courtCaseNumber: string
+  }
+}
 
 interface CreateCourtCaseMutationResponse {
   createCourtCase: {
@@ -29,9 +38,16 @@ const useCase = () => {
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
   )
+
+  const [
+    createCustodyCourtCaseMutation,
+    { loading: creatingCustodyCourtCase },
+  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
+    CreateCustodyCourtCaseMutation,
+  )
   const [
     createCourtCaseMutation,
-    { loading: creatingCustodyCourtCase },
+    { loading: creatingCourtCase },
   ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
   const [
     sendNotificationMutation,
@@ -67,7 +83,7 @@ const useCase = () => {
     return undefined
   }
 
-  const createCourtCase = async (
+  const createCustodyCourtCase = async (
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
     setCourtCaseNumberErrorMessage: React.Dispatch<
@@ -75,6 +91,43 @@ const useCase = () => {
     >,
   ): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
+      try {
+        const { data, errors } = await createCustodyCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+            },
+          },
+        })
+
+        if (data && workingCase && !errors) {
+          setWorkingCase({
+            ...workingCase,
+            courtCaseNumber: data.createCustodyCourtCase.courtCaseNumber,
+          })
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
+      }
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+      )
+    }
+  }
+
+  const createCourtCase = async (
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    setCourtCaseNumberErrorMessage: React.Dispatch<
+      React.SetStateAction<string>
+    >,
+  ): Promise<void> => {
+    if (creatingCourtCase === false) {
       try {
         const { data, errors } = await createCourtCaseMutation({
           variables: {
@@ -162,8 +215,10 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     autofill,
-    createCourtCase,
+    createCustodyCourtCase,
     creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
   }
 }
 

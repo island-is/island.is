@@ -14,7 +14,7 @@ import {
 
 import { BackendAPI } from '../../../services'
 import { Case } from '../case'
-import { CreateCourtCaseInput } from './dto'
+import { CreateCustodyCourtCaseInput, CreateCourtCaseInput } from './dto'
 import { CourtService } from './court.service'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -26,6 +26,29 @@ export class CourtResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  @Mutation(() => Case, { nullable: true })
+  async createCustodyCourtCase(
+    @Args('input', { type: () => CreateCustodyCourtCaseInput })
+    input: CreateCustodyCourtCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Case> {
+    const { caseId, policeCaseNumber } = input
+
+    this.logger.debug(`Creating custody court case for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_CUSTODY_COURT_CASE,
+      backendApi.updateCase(caseId, {
+        courtCaseNumber: await this.courtService.createCustodyCourtCase(
+          policeCaseNumber,
+        ),
+      }),
+      caseId,
+    )
+  }
 
   @Mutation(() => Case, { nullable: true })
   async createCourtCase(

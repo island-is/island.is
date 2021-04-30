@@ -294,6 +294,10 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
+export interface CreateCustodyCourtCase {
+  policeCaseNumber: string
+}
+
 export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string

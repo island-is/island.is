@@ -9,6 +9,7 @@ import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 import {
   AuthenticateApi,
   CreateCaseApi,
+  CreateCustodyCaseApi,
 } from '@island.is/judicial-system/court-client'
 
 import { BackendAPI } from '../../../services'
@@ -49,6 +50,10 @@ describe('CourtModule', () => {
           useClass: jest.fn(() => ({
             authenticate: () => Promise.resolve(`"${authenticationToken}"`),
           })),
+        },
+        {
+          provide: CreateCustodyCaseApi,
+          useClass: jest.fn(() => {}),
         },
         {
           provide: CreateCaseApi,
