@@ -6,6 +6,7 @@ export type Validation =
   | 'police-casenumber-format'
   | 'national-id'
   | 'email-format'
+  | 'phonenumber'
 
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
@@ -48,6 +49,12 @@ export const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),
         errorMessage: 'Netfang ekki á réttu formi',
+      }
+    case 'phonenumber':
+      return {
+        // ^(\d{3})(-?(\d{4}))?$
+        regex: new RegExp(/^(\d{3})(-?(\d{4}))$/g),
+        errorMessage: 'Dæmi: 555-5555',
       }
   }
 }
