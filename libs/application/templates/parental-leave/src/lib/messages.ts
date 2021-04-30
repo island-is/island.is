@@ -367,6 +367,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Áætlaður fæðingardagur barns og réttindi',
       description: 'Title for the data of birth and rights data provider',
     },
+    pregnancyStatusAndRightsError: {
+      id: 'pl.application:pregnancyStatusAndRights.error',
+      defaultMessage:
+        'Ekki er hægt að ná fæðingardegi barnsins og ekki er hægt að reikna réttindin.',
+      description: 'Error message for pregnancy status and rights providers', // The child's date of birth cannot be retrieved and the rights cannot be calculated.
+    },
     childrenInformationTitle: {
       id: 'pl.application:childreninformation.title',
       defaultMessage: 'Börnin þín',

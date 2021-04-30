@@ -1,44 +1,49 @@
 import get from 'lodash/get'
 import {
   Application,
-  DataProviderResult,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import { Right } from '@island.is/clients/vmst'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import {
+  ParentalLeave,
+  PregnancyStatus,
+} from '@island.is/api/domains/directorate-of-labour'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
-import { daysInMonth, defaultMonths } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
+import { PregnancyStatusAndRightsResults } from './dataProviders/PregnancyStatusAndRights'
+import { daysToMonths } from './lib/directorateOfLabour.utils'
 
 export function getExpectedDateOfBirth(
   application: Application,
 ): string | undefined {
-  const pregnancyStatusResult = application.externalData
-    .pregnancyStatus as DataProviderResult
+  const pregnancyStatusAndRights =
+    application.externalData.pregnancyStatusAndRights
 
-  if (pregnancyStatusResult.status === 'success') {
-    const pregnancyStatus = pregnancyStatusResult.data as PregnancyStatus
-    if (pregnancyStatus.pregnancyDueDate)
+  if (pregnancyStatusAndRights.status === 'success') {
+    const pregnancyStatus = (pregnancyStatusAndRights.data as {
+      pregnancyStatus: PregnancyStatus
+    }).pregnancyStatus
+
+    if (pregnancyStatus.pregnancyDueDate) {
       return pregnancyStatus.pregnancyDueDate
-  }
-  // applicant is not a mother giving birth
-  const parentalLeavesResult = application.externalData
-    .parentalLeaves as DataProviderResult
+    }
 
-  if (parentalLeavesResult.status === 'success') {
-    const parentalLeaves = parentalLeavesResult.data as ParentalLeave[]
+    const parentalLeaves = (pregnancyStatusAndRights.data as {
+      parentalLeaves: ParentalLeave[]
+    }).parentalLeaves
+
     if (parentalLeaves.length) {
       if (parentalLeaves.length === 1) {
         return parentalLeaves[0].expectedDateOfBirth
       }
+
       // here we have multiple parental leaves... must store the selected application id or something
     }
   }
@@ -98,19 +103,11 @@ export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 /**
- * Uses `daysInMonth`: 30 as the number of days in a month on average
+ * Returns the number of months available for the applicant.
  */
-const daysToMonths = (n: number) => n / daysInMonth
-
-/**
- * Returns the maximum number of months available for the applicant.
- * Returns as well the days given or requested by the applicant.
- */
-export const getAvailableRights = (application: Application) => {
-  const rights = application.externalData.rights.data as Right
-  const independentMonths = rights.independentMonths ?? 0
-  const transferableMonths = rights.transferableMonths ?? 0
-
+export const getAvailableRightsInMonths = (application: Application) => {
+  const pregnancyStatusAndRights = application.externalData
+    .pregnancyStatusAndRights.data as PregnancyStatusAndRightsResults
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -120,33 +117,26 @@ export const getAvailableRights = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let requestedDays = 0
-  let givenDays = 0
-  let days = independentMonths * daysInMonth
-  let months = independentMonths
+  let days = pregnancyStatusAndRights.remainingDays
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    requestedDays = requestRights.requestDays
+    const requestedDays = requestRights.requestDays
+
     days = days + requestedDays
-    months = months + daysToMonths(requestedDays)
   }
 
   if (
-    transferableMonths > 0 &&
+    (pregnancyStatusAndRights.parentalLeavesEntitlements.independentMonths ??
+      0) > 0 &&
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
-    givenDays = giveRights.giveDays
-    days = days + givenDays
-    months = months + daysToMonths(givenDays)
+    const givenDays = giveRights.giveDays
+
+    days = days - givenDays
   }
 
-  return {
-    requestedDays,
-    givenDays,
-    days,
-    months: Number(months.toFixed(1)), // TODO: do we want to truncate decimals?
-  }
+  return daysToMonths(days)
 }
 
 export const getOtherParentOptions = (application: Application) => {

@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 
@@ -13,12 +17,15 @@ describe('answerValidators', () => {
     attachments: {},
     created: new Date(),
     externalData: {
-      pregnancyStatus: {
+      pregnancyStatusAndRights: {
         date: new Date(),
         status: 'success',
         data: {
-          hasActivePregnancy: true,
-          pregnancyDueDate: '2021-01-15',
+          pregnancyStatus: {
+            hasActivePregnancy: true,
+            pregnancyDueDate: '2021-01-15',
+          },
+          parentalLeaves: [],
         },
       },
     },
@@ -26,6 +33,7 @@ describe('answerValidators', () => {
     modified: new Date(),
     state: '',
     typeId: ApplicationTypes.EXAMPLE,
+    status: ApplicationStatus.IN_PROGRESS,
   }
 
   it('should return error when DOB is undefined', () => {
@@ -33,12 +41,7 @@ describe('answerValidators', () => {
       ...application,
       externalData: {
         ...application.externalData,
-        parentalLeaves: {
-          date: new Date(),
-          reason: 'Sync failed',
-          status: 'failure',
-        },
-        pregnancyStatus: {
+        pregnancyStatusAndRights: {
           date: new Date(),
           reason: 'Sync failed',
           status: 'failure',

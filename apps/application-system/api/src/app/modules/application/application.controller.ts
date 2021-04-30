@@ -422,12 +422,22 @@ export class ApplicationController {
       externalDataDto,
       user.nationalId,
     )
+
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
-
     const results = await callDataProviders(
-      buildDataProviders(externalDataDto, templateDataProviders, user, locale),
+      buildDataProviders(
+        externalDataDto,
+        templateDataProviders,
+        user,
+        locale,
+        intl.formatMessage,
+      ),
       existingApplication as BaseApplication,
     )
     const {

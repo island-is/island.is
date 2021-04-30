@@ -114,14 +114,15 @@ export class ApplicationService {
 
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
-    authorization: string,
+    auth: Auth,
+    locale: Locale,
   ) {
     const { id, ...populateExternalDataDto } = input
 
     return this.applicationApi.applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
-      authorization,
+      locale,
     })
   }
 

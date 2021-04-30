@@ -6,14 +6,5 @@ export class PregnancyStatus {
   hasActivePregnancy?: boolean
 
   @Field(() => String, { nullable: true })
-  pregnancyDueDate?: string
-
-  @Field(() => String, { nullable: true })
-  errorMessage?: string
-
-  @Field(() => Int, { nullable: true })
-  errorCode?: number
-
-  @Field(() => Boolean, { nullable: true })
-  hasError?: boolean
+  pregnancyDueDate?: string | string
 }

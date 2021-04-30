@@ -18,7 +18,6 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { Right } from '@island.is/clients/vmst'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
@@ -41,6 +40,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/PregnancyStatusAndRights'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -496,11 +496,13 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
               condition: (answers, externalData: ExternalData) => {
-                const rights = externalData?.rights?.data as Right
+                const data = externalData?.pregnancyStatusAndRights
+                  ?.data as PregnancyStatusAndRightsResults
 
                 if (
-                  !rights?.transferableMonths ||
-                  rights.transferableMonths === 0
+                  !data.parentalLeavesEntitlements.transferableMonths ||
+                  data.parentalLeavesEntitlements.transferableMonths === 0 ||
+                  data.remainingDays === 0
                 ) {
                   return false
                 }

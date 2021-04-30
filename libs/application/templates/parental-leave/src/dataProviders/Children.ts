@@ -15,14 +15,14 @@ const createChildrenResponse = (): ChildInformation[] => {
   return [
     {
       id: '0',
-      dateOfBirth: '2020-08-01',
-      expectedDateOfBirth: '2020-07-28',
-      parentalRelation: 'secondary',
+      dateOfBirth: '2021-01-15',
+      expectedDateOfBirth: '2021-01-12',
+      parentalRelation: 'primary',
     },
     {
       id: '1',
       expectedDateOfBirth: '2021-07-25',
-      parentalRelation: 'primary',
+      parentalRelation: 'secondary',
     },
   ]
 }
