@@ -112,6 +112,43 @@ export class DirectorateOfLabourRepository {
     })
   }
 
+  async getParentalLeaves(nationalId: string) {
+    if (isRunningInDevelopment) {
+      return [
+        {
+          applicationId: '1234uuid1234',
+          applicant: nationalId,
+          otherParentId: '1234567789',
+          expectedDateOfBirth: '2021-01-12',
+          dateOfBirth: '2021-01-15',
+          email: 'mock@mock.is',
+          phoneNumber: '555-1234',
+          paymentInfo: {
+            bankAccount: '44426123456',
+            personalAllowance: 100,
+            personalAllowanceFromSpouse: 0,
+            union: { id: 'vr', name: 'VR' },
+            pensionFund: { id: 'freedom', name: 'Frjálsi' },
+            privatePensionFund: { id: 'private', name: 'Private' },
+            privatePensionFundRatio: 0,
+          },
+          periods: [],
+          employers: [
+            { nationalRegistryId: '6543212245', email: 'asdf@boss.is' },
+          ],
+          status: 'status',
+          rightsCode: 'code',
+        },
+      ]
+    }
+
+    const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+      nationalRegistryId: nationalId,
+    })
+
+    return results.parentalLeaves ?? []
+  }
+
   async getParentalLeavesEstimatedPaymentPlan(
     dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
     period: ParentalLeavePeriod[],

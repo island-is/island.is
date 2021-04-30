@@ -15,6 +15,7 @@ import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
+import { ParentalLeave } from '../models/parentalLeaves.model'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
@@ -31,6 +32,13 @@ export class DirectorateOfLabourResolver {
       input.dateOfBirth,
       user.nationalId,
     )
+  }
+
+  @Query(() => [ParentalLeave], { nullable: true })
+  async getParentalLeaves(
+    @CurrentUser() user: User,
+  ): Promise<ParentalLeave[] | null> {
+    return this.directorateOfLabourService.getParentalLeaves(user.nationalId)
   }
 
   @Query(() => [ParentalLeavePaymentPlan], { nullable: true })

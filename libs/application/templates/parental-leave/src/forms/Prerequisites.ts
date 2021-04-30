@@ -71,16 +71,6 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .pregnancyStatusAndRightsSubtitle,
                 }),
-                buildDataProviderItem({
-                  id: 'parentalLeaves',
-                  type: 'ParentalLeaves',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesSubTitle,
-                }),
               ],
             }),
           ],

@@ -17,7 +17,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
-  getAvailableRights,
+  getAvailableRightsInMonths,
   getExpectedDateOfBirth,
 } from '../../parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -53,7 +53,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
-  const { months } = getAvailableRights(application)
+  const months = getAvailableRightsInMonths(application)
 
   useEffect(() => {
     if (chosenDuration > months) {
@@ -65,7 +65,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     } else {
       setPercent(100)
     }
-  }, [months, chosenDuration, monthsToUse])
+  }, [months, chosenDuration])
 
   return (
     <Box>

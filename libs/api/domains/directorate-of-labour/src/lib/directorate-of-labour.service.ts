@@ -7,6 +7,7 @@ import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeave } from '../models/parentalLeaves.model'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 
 const handleError = (error: any) => {
@@ -48,6 +49,12 @@ export class DirectorateOfLabourService {
   ): Promise<ParentalLeaveEntitlement> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEntitlements(dateOfBirth, nationalId)
+      .catch(handleError)
+  }
+
+  async getParentalLeaves(nationalId: string): Promise<ParentalLeave[]> {
+    return await this.directorateOfLabourRepository
+      .getParentalLeaves(nationalId)
       .catch(handleError)
   }
 
