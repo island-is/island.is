@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import addDays from 'date-fns/addDays'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
 import {
@@ -21,7 +21,7 @@ import {
   getExpectedDateOfBirth,
 } from '../../parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { usageMaxMonths, usageMinMonths } from '../../config'
+import { usageMaxMonths, usageMinMonths, daysInMonth } from '../../config'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
@@ -30,6 +30,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentRepeaterIndex = extractRepeaterIndexFromField(field)
+
   const currentStartDateAnswer = getValueViaPath(
     answers,
     `periods[${
@@ -37,16 +38,21 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     }].startDate`,
     expectedDateOfBirth,
   ) as string
+
+  const addPLMonthsFromStartDate = (months: number) =>
+    addDays(parseISO(currentStartDateAnswer), months * daysInMonth)
+
   const currentEndDateAnswer = getValueViaPath(
     answers,
     id,
-    formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
+    formatISO(addPLMonthsFromStartDate(1)),
   ) as string
 
-  const monthsToUse = differenceInMonths(
-    parseISO(currentEndDateAnswer),
-    parseISO(currentStartDateAnswer),
-  )
+  const monthsToUse =
+    differenceInDays(
+      parseISO(currentEndDateAnswer),
+      parseISO(currentStartDateAnswer),
+    ) / daysInMonth
 
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
@@ -163,10 +169,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)
-                  const newEndDate = addMonths(
-                    parseISO(currentStartDateAnswer),
-                    selectedMonths,
-                  )
+                  const newEndDate = addPLMonthsFromStartDate(selectedMonths)
                   onChange(formatISO(newEndDate))
                   setChosenEndDate(formatISO(newEndDate))
                   setChosenDuration(selectedMonths)
