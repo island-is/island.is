@@ -327,13 +327,14 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {(workingCase.comments || workingCase.caseFilesComments) && (
+                {(!!workingCase.comments ||
+                  !!workingCase.caseFilesComments) && (
                   <AccordionItem
                     id="id_5"
                     label="Athugasemdir"
                     labelVariant="h3"
                   >
-                    {workingCase.comments && (
+                    {!!workingCase.comments && (
                       <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
                         <Box marginBottom={1}>
                           <Text variant="h4" as="h4">
