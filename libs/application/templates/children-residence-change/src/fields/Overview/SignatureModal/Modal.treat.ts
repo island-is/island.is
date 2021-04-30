@@ -9,18 +9,21 @@ export const modal = style({
 
 export const modalContent = style({
   position: 'absolute',
-  top: '240px',
-  left: '50%',
-  width: '90%',
   padding: '56px 40px 40px',
-  maxWidth: '500px',
+  width: '100%',
+  height: '100vh',
   textAlign: 'center',
-  borderRadius: '8px',
-  transform: 'translateX(-50%)',
-  filter: 'drop-shadow(0px 4px 30px rgba(0, 97, 255, 0.16))',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      filter: 'drop-shadow(0px 4px 30px rgba(0, 97, 255, 0.16))',
       padding: '64px 56px 48px',
+      top: '240px',
+      left: '50%',
+      width: '90%',
+      borderRadius: '8px',
+      height: 'auto',
+      maxWidth: '500px',
+      transform: 'translateX(-50%)',
     },
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       padding: '96px 114px 80px',
@@ -30,17 +33,53 @@ export const modalContent = style({
 })
 
 export const logoWrapper = style({
-  background: theme.color.white,
-  width: '70px',
-  height: '70px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  position: 'absolute',
-  left: '50%',
-  top: '-35px',
-  transform: 'translateX(-50%)',
-  borderRadius: '50%',
+  marginBottom: '40px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      marginBottom: '0',
+      width: '70px',
+      height: '70px',
+      position: 'absolute',
+      background: theme.color.white,
+      left: '50%',
+      top: '-35px',
+      transform: 'translateX(-50%)',
+      borderRadius: '50%',
+    },
+  },
+})
+
+export const controlCodeContainer = style({
+  height: '96px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      height: '112px',
+    },
+  },
+})
+
+export const upload = style({
+  display: 'block',
+})
+
+export const error = style({
+  display: 'none',
+})
+
+export const iconContainer = style({
+  height: '50px',
+  width: '50px',
+  // borderRadius: '50%',
+  // display: 'flex',
+  // justifyContent: 'center',
+  // alignItems: 'center',
+  // background: theme.color.blue400,
 })
 
 export const controlCode = style({
@@ -54,8 +93,11 @@ export const loader = style({
   justifyContent: 'center',
 })
 
+export const noLoader = style({
+  opacity: '0',
+})
+
 export const loadingDot = style({
-  marginTop: '48px',
   width: 8,
   height: 8,
   borderRadius: '50%',

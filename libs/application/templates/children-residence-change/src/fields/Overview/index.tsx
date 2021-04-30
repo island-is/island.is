@@ -148,11 +148,10 @@ const Overview = ({
         controlCode={controlCode}
         onClose={() =>
           dispatchFileSignature({
-            type: FileSignatureActionTypes.RESET,
+            type: FileSignatureActionTypes.CLOSE_MODAL,
           })
         }
         fileSignatureState={fileSignatureState}
-        role={role}
       />
       <Box>
         <DescriptionText

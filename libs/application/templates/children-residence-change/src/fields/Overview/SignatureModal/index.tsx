@@ -1,37 +1,79 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { Box, Text, ModalBase, Logo } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  ModalBase,
+  Logo,
+  SkeletonLoader,
+  Icon,
+  IconMapIcon,
+  Button,
+} from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
-import { Roles } from '../../../lib/constants'
-import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
-import ModalConditionalContent from './ModalConditionalContent'
+import {
+  FileSignatureStatus,
+  ReducerState,
+  ContentTypes,
+} from '../fileSignatureReducer'
 import * as styles from './Modal.treat'
+import { Colors } from '@island.is/island-ui/theme'
 
 interface SignatureModalProps {
   fileSignatureState: ReducerState
   onClose: () => void
   controlCode: string
-  role: Roles
+}
+
+const statusVariantStyles: {
+  [key in ContentTypes]: {
+    background: Colors
+    iconColor: Colors
+    icon: IconMapIcon
+  }
+} = {
+  error: {
+    background: 'red100',
+    iconColor: 'red400',
+    icon: 'warning',
+  },
+  info: {
+    background: 'blue100',
+    iconColor: 'blue400',
+    icon: 'informationCircle',
+  },
+  success: {
+    background: 'blue100',
+    iconColor: 'blue400',
+    icon: 'checkmarkCircle',
+  },
+  warning: {
+    background: 'yellow300',
+    iconColor: 'yellow600',
+    icon: 'warning',
+  },
 }
 
 const SignatureModal = ({
   fileSignatureState,
   controlCode,
   onClose,
-  role,
 }: SignatureModalProps) => {
   const { formatMessage } = useIntl()
   const hasError = [
     FileSignatureStatus.REQUEST_ERROR,
     FileSignatureStatus.UPLOAD_ERROR,
   ].includes(fileSignatureState.status)
+  const isRequest = fileSignatureState.status === FileSignatureStatus.REQUEST
+  const isUpload = fileSignatureState.status === FileSignatureStatus.UPLOAD
+  const isInitial = fileSignatureState.status === FileSignatureStatus.INITIAL
   return (
     <ModalBase
       baseId="signatureDialog"
       className={styles.modal}
       modalLabel={formatMessage(signatureModal.general.title)}
-      isVisible={true}
+      isVisible={fileSignatureState.modalOpen}
       onVisibilityChange={(visibility: boolean) => {
         if (!visibility) {
           onClose()
@@ -52,42 +94,82 @@ const SignatureModal = ({
           <Logo id="modal" iconOnly={true} />
         </Box>
         <Text variant="h2" marginBottom={1} lineHeight="md">
-          {/* {formatMessage(signatureModal.general.title)} */}
-          Þú ert að fara að undirrita
+          {formatMessage(fileSignatureState.content.title)}
         </Text>
-        <Text>
-          Athugaðu að talan er ekki lykilorðið þitt heldur aðeins öryggistala.
-        </Text>
-        <Box
-          marginTop={4}
-          background="blue100"
-          borderRadius="large"
-          paddingY={2}
-          textAlign="center"
-        >
-          <Text lineHeight="xl" variant="small">
-            Öryggistalan þín er:
-          </Text>
-          <Text lineHeight="sm" variant="h1">
-            0000
-          </Text>
-        </Box>
-        {[FileSignatureStatus.UPLOAD, FileSignatureStatus.SUCCESS].includes(
-          fileSignatureState.status,
-        ) && (
-          <div className={cn(styles.loader)}>
-            <div className={styles.loadingDot} />
-            <div className={styles.loadingDot} />
-            <div className={styles.loadingDot} />
-          </div>
+        {isRequest ? (
+          <>
+            <SkeletonLoader height={20} space={1} />
+            <SkeletonLoader height={20} width="50%" space={1} />
+          </>
+        ) : (
+          <>
+            {fileSignatureState.content?.message && (
+              <Text>{formatMessage(fileSignatureState.content.message)}</Text>
+            )}
+          </>
         )}
+        <Box
+          className={cn(styles.controlCodeContainer, {
+            [styles.upload]: isUpload,
+            [styles.error]: hasError || isInitial,
+          })}
+          marginTop={4}
+          background={
+            statusVariantStyles[fileSignatureState.content.type].background
+          }
+          borderRadius="large"
+          textAlign="center"
+          overflow="hidden"
+        >
+          {!isRequest && (
+            <>
+              {isUpload ? (
+                <>
+                  <Text lineHeight="xl" variant="small" marginTop={2}>
+                    {formatMessage(signatureModal.security.numberLabel)}
+                  </Text>
+                  <Text lineHeight="sm" variant="h1">
+                    {controlCode}
+                  </Text>
+                </>
+              ) : (
+                <Icon
+                  className={styles.iconContainer}
+                  color={
+                    statusVariantStyles[fileSignatureState.content.type]
+                      .iconColor
+                  }
+                  icon={
+                    statusVariantStyles[fileSignatureState.content.type].icon
+                  }
+                  size="large"
+                  type="filled"
+                />
+              )}
+            </>
+          )}
+        </Box>
+        <Box marginTop={6} display="flex" justifyContent="center">
+          {hasError || isInitial ? (
+            <Button
+              onClick={onClose}
+              fluid={true}
+              variant="ghost"
+              colorScheme="destructive"
+            >
+              {formatMessage(signatureModal.general.closeButtonLabel)}
+            </Button>
+          ) : (
+            <div
+              className={cn(styles.loader, { [styles.noLoader]: isRequest })}
+            >
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+            </div>
+          )}
+        </Box>
       </Box>
-      {/* <ModalConditionalContent
-          fileSignatureState={fileSignatureState}
-          onClose={onClose}
-          controlCode={controlCode}
-          role={role}
-        /> */}
     </ModalBase>
   )
 }
