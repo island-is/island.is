@@ -106,9 +106,9 @@ const SignatureModal = ({
           )
         )}
         <Box
-          className={cn(styles.controlCodeContainer, {
-            [styles.upload]: isUpload,
-            [styles.error]: hasError,
+          className={cn(styles.controlCodeContainer.general, {
+            [styles.controlCodeContainer.upload]: isUpload,
+            [styles.controlCodeContainer.error]: hasError,
           })}
           marginTop={4}
           background={
@@ -152,7 +152,9 @@ const SignatureModal = ({
             </Button>
           ) : (
             <div
-              className={cn(styles.loader, { [styles.noLoader]: isRequest })}
+              className={cn(styles.loader.general, {
+                [styles.loader.noLoader]: isRequest,
+              })}
             >
               <div className={styles.loadingDot} />
               <div className={styles.loadingDot} />

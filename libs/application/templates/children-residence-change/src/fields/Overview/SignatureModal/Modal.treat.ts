@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 
 export const modal = style({
   position: 'absolute',
@@ -52,34 +52,29 @@ export const logoWrapper = style({
   },
 })
 
-export const controlCodeContainer = style({
-  height: '96px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      height: '112px',
+export const controlCodeContainer = styleMap({
+  general: {
+    height: '96px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        height: '112px',
+      },
     },
   },
-})
-
-export const upload = style({
-  display: 'block',
-})
-
-export const error = style({
-  display: 'none',
+  upload: {
+    display: 'block',
+  },
+  error: {
+    display: 'none',
+  },
 })
 
 export const iconContainer = style({
   height: '50px',
   width: '50px',
-  // borderRadius: '50%',
-  // display: 'flex',
-  // justifyContent: 'center',
-  // alignItems: 'center',
-  // background: theme.color.blue400,
 })
 
 export const controlCode = style({
@@ -87,14 +82,15 @@ export const controlCode = style({
   marginLeft: '8px',
 })
 
-export const loader = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-})
-
-export const noLoader = style({
-  opacity: '0',
+export const loader = styleMap({
+  general: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noLoader: {
+    opacity: 0,
+  },
 })
 
 export const loadingDot = style({
