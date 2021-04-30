@@ -9,10 +9,18 @@ import { InjectModel } from '@nestjs/sequelize'
 import { isPerson } from 'kennitala'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { EndorsementList } from '../endorsementList/endorsementList.model'
+import {
+  EndorsementList,
+  EndorsementTag,
+} from '../endorsementList/endorsementList.model'
 import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMetadata.service'
-import { EndorsementValidatorService } from '../endorsementValidator/endorsementValidator.service'
+import {
+  EndorsementValidatorService,
+  ValidationRule,
+} from '../endorsementValidator/endorsementValidator.service'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
+import { Op, Sequelize } from 'sequelize'
+import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 
 interface EndorsementInput {
   listId: string
@@ -27,13 +35,19 @@ interface GetEndorsementMetadataForNationalIdInput {
   nationalId: string
 }
 interface ValidateEndorsementInput {
-  endorsementList: EndorsementList
+  listId: string
+  validationRules: ValidationRuleDto[]
   nationalId: string
   metadata: EndorsementMetadata
 }
 
 interface FindEndorsementsInput {
   listId: string
+}
+
+interface InvalidateEndorsementsInput {
+  nationalId: string
+  tags: EndorsementTag[]
 }
 
 @Injectable()
@@ -83,7 +97,8 @@ export class EndorsementService {
 
   private validateEndorsement = ({
     nationalId,
-    endorsementList,
+    listId,
+    validationRules,
     metadata,
   }: ValidateEndorsementInput) => {
     // we want this validation for all endorsements (in case request is made on behalf of a company)
@@ -93,18 +108,43 @@ export class EndorsementService {
 
     // run requested validators with fetched metadata
     const isValid = this.validatorService.validate({
-      validations: endorsementList.validationRules,
+      validations: validationRules,
       meta: { ...metadata, nationalId },
     })
 
     // throw error if not valid
     if (!isValid) {
       this.logger.debug('Failed validation rules', {
-        listId: endorsementList.id,
+        listId: listId,
         nationalId,
       })
       throw new BadRequestException('Failed list validation rules')
     }
+
+    return true
+  }
+
+  private invalidateEndorsementsIfExist = async (
+    input: InvalidateEndorsementsInput,
+  ) => {
+    const endorsementsToInvalidate = await this.findUserEndorsementsByTags(
+      input,
+    )
+
+    // we have no endorsements to invalidate, return false to indicate so
+    if (!endorsementsToInvalidate.length) {
+      return false
+    }
+
+    await Promise.all(
+      endorsementsToInvalidate.map((endorsement) => {
+        return endorsement.update({
+          meta: Sequelize.literal(
+            `meta || '${JSON.stringify({ invalidated: true })}'`, // || operator in postgres concatenates objects in jsonb fields
+          ),
+        })
+      }),
+    )
 
     return true
   }
@@ -124,10 +164,7 @@ export class EndorsementService {
     return result.endorsements
   }
 
-  async findSingleEndorsementByNationalId({
-    nationalId,
-    listId,
-  }: EndorsementInput) {
+  async findSingleUserEndorsement({ nationalId, listId }: EndorsementInput) {
     this.logger.debug(
       `Finding endorsement in list "${listId}" by nationalId "${nationalId}"`,
     )
@@ -141,6 +178,24 @@ export class EndorsementService {
     }
 
     return result
+  }
+
+  async findUserEndorsementsByTags({
+    nationalId,
+    tags,
+  }: InvalidateEndorsementsInput) {
+    this.logger.debug(
+      `Finding endorsements by tags "${tags.join(
+        ', ',
+      )}" for user "${nationalId}"`,
+    )
+
+    return await this.endorsementModel.findAll({
+      where: { endorser: nationalId },
+      include: [
+        { model: EndorsementList, where: { tags: { [Op.contains]: tags } } },
+      ],
+    })
   }
 
   async createEndorsementOnList({ listId, nationalId }: EndorsementInput) {
@@ -161,7 +216,8 @@ export class EndorsementService {
 
     // run requested validators with fetched metadata
     await this.validateEndorsement({
-      endorsementList: parentEndorsementList,
+      listId: parentEndorsementList.id,
+      validationRules: parentEndorsementList.validationRules,
       metadata: allEndorsementMetadata,
       nationalId,
     })
@@ -176,6 +232,7 @@ export class EndorsementService {
           parentEndorsementList.endorsementMeta,
         ),
         bulkEndorsement: false,
+        invalidated: false,
       },
     })
   }
@@ -203,11 +260,26 @@ export class EndorsementService {
           endorsementList: parentEndorsementList,
         })
 
+        // we remove unique within tag cause bulk imports invalidate existing signatures
+        const bulkValidationRules = parentEndorsementList.validationRules.filter(
+          (rule) => rule.type !== ValidationRule.UNIQUE_WITHIN_TAGS,
+        )
         // run all validations for this national id
         await this.validateEndorsement({
-          endorsementList: parentEndorsementList,
+          listId: parentEndorsementList.id,
+          validationRules: bulkValidationRules,
           metadata,
           nationalId,
+        })
+
+        /**
+         * Bulk imported endorsement might already exist.
+         * If we find an endorsement belonging to the same set of tags as the bulk imported endorsement
+         * all endorsements are invalidated as instructed by the Ministry of Justice
+         */
+        const invalidated = await this.invalidateEndorsementsIfExist({
+          nationalId,
+          tags: parentEndorsementList.tags,
         })
 
         return {
@@ -220,13 +292,14 @@ export class EndorsementService {
               parentEndorsementList.endorsementMeta,
             ),
             bulkEndorsement: true,
+            invalidated,
           },
         }
       }),
     )
 
     return this.endorsementModel.bulkCreate(endorsements, {
-      ignoreDuplicates: true, // this ignores existing endorsements conflicts
+      ignoreDuplicates: true, // this ignores existing endorsements in this list conflicts
       returning: true,
     })
   }

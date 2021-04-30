@@ -47,7 +47,7 @@ describe('EndorsementList', () => {
       .expect(200)
 
     expect(Array.isArray(response.body)).toBeTruthy()
-    expect(response.body).toHaveLength(2)
+    expect(response.body).toHaveLength(3)
   })
 
   it(`GET /endorsement-list/:listId should return 404 error when uid does not exist`, async () => {
