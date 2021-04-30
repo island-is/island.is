@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
@@ -22,6 +21,10 @@ import {
 } from '../../parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
+import {
+  calculateDateWithNewPeriod,
+  monthsToDays,
+} from '../../lib/directorateOfLabour.utils'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
@@ -42,18 +45,12 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     id,
     formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
   ) as string
-
-  const monthsToUse = differenceInMonths(
-    parseISO(currentEndDateAnswer),
-    parseISO(currentStartDateAnswer),
-  )
-
+  const months = getAvailableRightsInMonths(application)
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )
-  const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
+  const [chosenDuration, setChosenDuration] = useState<number>(months)
   const [percent, setPercent] = useState<number>(100)
-  const months = getAvailableRightsInMonths(application)
 
   useEffect(() => {
     if (chosenDuration > months) {
@@ -163,10 +160,14 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)
-                  const newEndDate = addMonths(
+
+                  const days = monthsToDays(selectedMonths)
+
+                  const newEndDate = calculateDateWithNewPeriod(
                     parseISO(currentStartDateAnswer),
-                    selectedMonths,
+                    days,
                   )
+
                   onChange(formatISO(newEndDate))
                   setChosenEndDate(formatISO(newEndDate))
                   setChosenDuration(selectedMonths)

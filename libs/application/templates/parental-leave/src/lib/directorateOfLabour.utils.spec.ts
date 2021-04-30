@@ -1,6 +1,7 @@
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 
 import {
+  calculateDateWithNewPeriod,
   calculateNumberOfDaysForOnePeriod,
   calculateRemainingNumberOfDays,
   daysToMonths,
@@ -49,6 +50,7 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
     const end = new Date(2021, 3, 26)
 
     expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(0)
+    expect(calculateDateWithNewPeriod(start, 0)).toStrictEqual(end)
   })
 
   it('should throw an error if end date is before start date', () => {
@@ -72,6 +74,7 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
     const end = new Date(2020, 1, 28)
 
     expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(45)
+    expect(calculateDateWithNewPeriod(start, 45)).toStrictEqual(end)
   })
 
   it('should calculate 45 days between february 14th 2021 and march 31st 2021', () => {
@@ -79,6 +82,7 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
     const end = new Date(2021, 2, 31)
 
     expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(45)
+    expect(calculateDateWithNewPeriod(start, 45)).toStrictEqual(end)
   })
 
   it('should calculate 46 days between february 14th 2020 and march 31st 2020', () => {
@@ -156,6 +160,96 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
         }
       }
     }
+  })
+})
+
+describe('calculateDateWithNewPeriod', () => {
+  it('should add 1.5 months to the start date Date(2020, 1, 1)', () => {
+    const start = new Date(2020, 1, 1)
+    const end = new Date(2020, 2, 17)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(45)
+    expect(calculateDateWithNewPeriod(start, 45)).toStrictEqual(end)
+  })
+
+  it('should add 1 month to the start date Date(2020, 1, 1)', () => {
+    const start = new Date(2020, 1, 1)
+    const end = new Date(2020, 2, 1)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(30)
+    expect(calculateDateWithNewPeriod(start, 30)).toStrictEqual(end)
+  })
+
+  it('should add 0.5 month days to the start date Date(2021, 1, 1)', () => {
+    const start = new Date(2021, 1, 1)
+    const end = new Date(2021, 1, 15)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(15)
+    expect(calculateDateWithNewPeriod(start, 15)).toStrictEqual(end)
+  })
+
+  it('should add 0.5 month to the start date Date(2020, 1, 25)', () => {
+    const start = new Date(2020, 1, 25)
+    const end = new Date(2020, 2, 11)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(15)
+    expect(calculateDateWithNewPeriod(start, 15)).toStrictEqual(end)
+  })
+
+  it('should add 0.5 month to the start date Date(2021, 1, 18)', () => {
+    const start = new Date(2021, 1, 18)
+    const end = new Date(2021, 2, 4)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(15)
+    expect(calculateDateWithNewPeriod(start, 15)).toStrictEqual(end)
+  })
+
+  it('should add 1.5 months to the start date Date(2021, 1, 18)', () => {
+    const start = new Date(2021, 1, 18)
+    const end = new Date(2021, 3, 4)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(45)
+    expect(calculateDateWithNewPeriod(start, 45)).toStrictEqual(end)
+  })
+
+  it('should add 1 month to the start date Date(2021, 1, 1)', () => {
+    const start = new Date(2021, 1, 1)
+    const end = new Date(2021, 1, 28)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(30)
+    expect(calculateDateWithNewPeriod(start, 30)).toStrictEqual(end)
+  })
+
+  it('should add 3 months to the start date Date(2021, 0, 15)', () => {
+    const start = new Date(2021, 0, 15)
+    const end = new Date(2021, 3, 15)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(90)
+    expect(calculateDateWithNewPeriod(start, 90)).toStrictEqual(end)
+  })
+
+  it('should add 3 months to the start date Date(2021, 5, 20)', () => {
+    const start = new Date(2021, 5, 20)
+    const end = new Date(2021, 8, 20)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(90)
+    expect(calculateDateWithNewPeriod(start, 90)).toStrictEqual(end)
+  })
+
+  it('should add 6 months to the start date Date(2021, 0, 15)', () => {
+    const start = new Date(2021, 0, 15)
+    const end = new Date(2021, 6, 15)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(180)
+    expect(calculateDateWithNewPeriod(start, 180)).toStrictEqual(end)
+  })
+
+  it('should add 9 months to the start date Date(2021, 0, 1)', () => {
+    const start = new Date(2021, 0, 1)
+    const end = new Date(2021, 8, 31)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(270)
+    expect(calculateDateWithNewPeriod(start, 270)).toStrictEqual(end)
   })
 })
 

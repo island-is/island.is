@@ -12,6 +12,7 @@ import {
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30
+const ONE_DAY = 24 * 3600 * 1000
 
 /**
  * Convert a number of days into a floored number of months
@@ -34,7 +35,7 @@ export const monthsToDays = (months: number) => {
 /**
  * Return true if the dates are the first day and the last day of the same month
  */
-const isFullMonth = (start: Date, end: Date) => {
+const fullMonthDates = (start: Date, end: Date) => {
   if (!isSameMonth(start, end)) {
     return false
   }
@@ -51,12 +52,12 @@ export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
   }
 
   if (isSameMonth(start, end)) {
-    const fullMonth = isFullMonth(start, end)
+    const isFullMonth = fullMonthDates(start, end)
     const ratioOfDaysUsed =
       (end.getDate() - start.getDate()) / getDaysInMonth(start)
     const daysUsed = Math.round(ratioOfDaysUsed * DAYS_IN_MONTH)
 
-    return fullMonth ? DAYS_IN_MONTH : daysUsed
+    return isFullMonth ? DAYS_IN_MONTH : daysUsed
   }
 
   const ratioLeftOfStartMonth = 1 - start.getDate() / getDaysInMonth(start)
@@ -69,8 +70,13 @@ export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
 
   const differenceInFullMonths = differenceInMonths(end, start)
   const monthsApart = differenceInCalendarMonths(end, start)
+
+  const isOneMonthBetweenStartAndEnd =
+    daysSpentInStartMonth + daysSpentInEndMonth >= DAYS_IN_MONTH
+  const diff = differenceInFullMonths - (isOneMonthBetweenStartAndEnd ? 1 : 0)
+
   const extraDaysFromGoingOverFullMonths =
-    monthsApart < 2 ? 0 : differenceInFullMonths * DAYS_IN_MONTH
+    monthsApart < 2 ? 0 : diff * DAYS_IN_MONTH
 
   return (
     daysSpentInStartMonth +
@@ -130,4 +136,61 @@ export const calculateRemainingNumberOfDays = (
   const existingDays = calculateExistingNumberOfDays(application.periods)
 
   return availableDays - existingDays
+}
+
+/**
+ * Calculate a new date according to VMST's rules
+ */
+export const calculateDateWithNewPeriod = (start: Date, daysToUse: number) => {
+  let daysLeft = daysToUse
+  let endDate = start
+
+  while (daysLeft > 0) {
+    const currentYear = endDate.getFullYear()
+    const currentMonthIndex = endDate.getMonth()
+    const currentDayOfMonth = endDate.getDate()
+    const daysInMonth = getDaysInMonth(new Date(currentYear, currentMonthIndex))
+    const weight = daysInMonth / DAYS_IN_MONTH
+    const reverseWeight = DAYS_IN_MONTH / daysInMonth
+    const daysLeftOfMonth = daysInMonth - currentDayOfMonth + 1
+    const daysLeftOfMonthCost = daysLeftOfMonth * reverseWeight
+
+    if (daysLeftOfMonthCost < daysLeft) {
+      const date = new Date(endDate.getTime() + daysLeftOfMonth * ONE_DAY)
+
+      endDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        0,
+        0,
+        0,
+      )
+
+      daysLeft -= daysLeftOfMonthCost
+    } else {
+      const realDaysLeftToSpend = daysLeft * weight
+      const realDecimal = realDaysLeftToSpend - Math.floor(realDaysLeftToSpend)
+      const days =
+        daysLeft === DAYS_IN_MONTH && daysInMonth === 28
+          ? daysInMonth - 1
+          : realDecimal > 0.49
+          ? realDaysLeftToSpend + 1
+          : realDaysLeftToSpend
+      const date = new Date(endDate.getTime() + days * ONE_DAY)
+
+      endDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        0,
+        0,
+        0,
+      )
+
+      daysLeft = 0
+    }
+  }
+
+  return endDate
 }
