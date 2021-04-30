@@ -301,6 +301,7 @@ export interface CreateCustodyCourtCase {
 export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
+  isExtension: boolean
 }
 
 export interface PresignedPost {

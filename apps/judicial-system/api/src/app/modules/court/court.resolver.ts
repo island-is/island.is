@@ -57,7 +57,7 @@ export class CourtResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    const { caseId, type, policeCaseNumber } = input
+    const { caseId, type, policeCaseNumber, isExtension } = input
 
     this.logger.debug(`Creating custody court case for case ${caseId}`)
 
@@ -68,6 +68,7 @@ export class CourtResolver {
         courtCaseNumber: await this.courtService.createCourtCase(
           type,
           policeCaseNumber,
+          isExtension,
         ),
       }),
       caseId,

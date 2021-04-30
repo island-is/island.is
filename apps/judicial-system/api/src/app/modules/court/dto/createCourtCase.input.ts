@@ -17,4 +17,8 @@ export class CreateCourtCaseInput implements CreateCourtCase {
   @Allow()
   @Field()
   readonly policeCaseNumber!: string
+
+  @Allow()
+  @Field()
+  readonly isExtension!: boolean
 }

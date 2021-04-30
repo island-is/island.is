@@ -80,13 +80,21 @@ export class CourtService {
   async createCourtCase(
     type: CaseType,
     policeCaseNumber: string,
+    isExtension: boolean,
   ): Promise<string> {
     const courtCaseNumber = await this.wrappedRequest(() =>
       this.createCaseApi.createCase({
         createCaseData: {
           authenticationToken,
           caseType: 'R - Rannsóknarmál',
-          subtype: type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann',
+          subtype:
+            type === CaseType.CUSTODY
+              ? isExtension
+                ? 'Framlenging gæsluvarðhalds'
+                : 'Gæsluvarðhald'
+              : isExtension
+              ? 'Framlenging farbanns'
+              : 'Farbann',
           status: 'Skráð',
           receivalDate: formatISO(new Date(), { representation: 'date' }),
           basedOn: 'Rannsóknarhagsmunir',

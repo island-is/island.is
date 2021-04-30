@@ -83,9 +83,10 @@ describe('CourtModule', () => {
 
     it('should create a custody case', async () => {
       const type = CaseType.CUSTODY
+      const isExtension = false
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber },
+        { caseId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
@@ -109,11 +110,41 @@ describe('CourtModule', () => {
       expect(res).toStrictEqual({ caseId, policeCaseNumber, courtCaseNumber })
     })
 
-    it('should create a travel ban case', async () => {
-      const type = CaseType.TRAVEL_BAN
+    it('should create an extended custody case', async () => {
+      const type = CaseType.CUSTODY
+      const isExtension = true
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber },
+        { caseId, type, policeCaseNumber, isExtension },
+        user,
+        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+      )
+
+      expect(createCase).toHaveBeenCalledTimes(1)
+      expect(createCase).toHaveBeenCalledWith({
+        createCaseData: {
+          authenticationToken,
+          caseType: 'R - Rannsóknarmál',
+          subtype: 'Framlenging gæsluvarðhalds',
+          basedOn: 'Rannsóknarhagsmunir',
+          sourceNumber: policeCaseNumber,
+          status: 'Skráð',
+          receivalDate,
+        },
+      })
+      expectReceivalDate(receivalDate)
+      expect(updateCase).toHaveBeenCalledTimes(1)
+      expect(updateCase).toHaveBeenCalledWith(caseId, { courtCaseNumber })
+
+      expect(res).toStrictEqual({ caseId, policeCaseNumber, courtCaseNumber })
+    })
+
+    it('should create a travel ban case', async () => {
+      const type = CaseType.TRAVEL_BAN
+      const isExtension = false
+
+      const res = await courtResolver.createCourtCase(
+        { caseId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
@@ -124,6 +155,35 @@ describe('CourtModule', () => {
           authenticationToken,
           caseType: 'R - Rannsóknarmál',
           subtype: 'Farbann',
+          basedOn: 'Rannsóknarhagsmunir',
+          sourceNumber: policeCaseNumber,
+          status: 'Skráð',
+          receivalDate,
+        },
+      })
+      expectReceivalDate(receivalDate)
+      expect(updateCase).toHaveBeenCalledTimes(1)
+      expect(updateCase).toHaveBeenCalledWith(caseId, { courtCaseNumber })
+
+      expect(res).toStrictEqual({ caseId, policeCaseNumber, courtCaseNumber })
+    })
+
+    it('should create an extended custody case', async () => {
+      const type = CaseType.TRAVEL_BAN
+      const isExtension = true
+
+      const res = await courtResolver.createCourtCase(
+        { caseId, type, policeCaseNumber, isExtension },
+        user,
+        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+      )
+
+      expect(createCase).toHaveBeenCalledTimes(1)
+      expect(createCase).toHaveBeenCalledWith({
+        createCaseData: {
+          authenticationToken,
+          caseType: 'R - Rannsóknarmál',
+          subtype: 'Framlenging farbanns',
           basedOn: 'Rannsóknarhagsmunir',
           sourceNumber: policeCaseNumber,
           status: 'Skráð',
