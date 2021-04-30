@@ -77,9 +77,22 @@ describe('Endorsement', () => {
       statusCode: 404,
     })
   })
+  it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement on a closed list`, async () => {
+    const response = await request(app.getHttpServer())
+      .post(
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c3/endorsement',
+      )
+      .send()
+      .expect(405)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 405,
+    })
+  })
   // TODO: Add test for unique within tags endorsements here when auth is added
   it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
-    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
+    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement`)
       .send()
@@ -101,7 +114,7 @@ describe('Endorsement', () => {
   })
 
   it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
-    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
+    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement/bulk`)
@@ -127,8 +140,22 @@ describe('Endorsement', () => {
       ]),
     )
   })
+  it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on a closed list`, async () => {
+    const nationalIds = ['0101304339']
+    const response = await request(app.getHttpServer())
+      .post(
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c3/endorsement/bulk',
+      )
+      .send({ nationalIds })
+      .expect(405)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 405,
+    })
+  })
   it(`POST /endorsement-list/:listId/endorsement/bulk should create a new endorsements and populate metadata`, async () => {
-    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c3'
+    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const nationalIds = ['0101303369', '0101305069', '0101303019']
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement/bulk`)
@@ -168,10 +195,23 @@ describe('Endorsement', () => {
       statusCode: 404,
     })
   })
+  it(`DELETE /endorsement-list/:listId/endorsement should fail when removing endorsement from closed list`, async () => {
+    const response = await request(app.getHttpServer())
+      .delete(
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c3/endorsement',
+      )
+      .send()
+      .expect(405)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 405,
+    })
+  })
   it(`DELETE /endorsement-list/:listId/endorsement should remove endorsement`, async () => {
     const response = await request(app.getHttpServer())
       .delete(
-        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c2/endorsement',
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1/endorsement',
       )
       .send()
       .expect(204)
