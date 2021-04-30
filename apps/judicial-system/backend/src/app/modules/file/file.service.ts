@@ -1,6 +1,11 @@
 import { uuid } from 'uuidv4'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -66,10 +71,21 @@ export class FileService {
     })
   }
 
-  getCaseFileSignedUrl(caseId: string, file: CaseFile): Promise<SignedUrl> {
+  async getCaseFileSignedUrl(
+    caseId: string,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
     this.logger.debug(
       `Getting a signed url for file ${file.id} of case ${caseId}`,
     )
+
+    const exists = await this.awsS3Service.objectExists(file.key)
+
+    if (!exists) {
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
+    }
 
     return this.awsS3Service.getSignedUrl(file.key)
   }
