@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
@@ -26,7 +26,7 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
-export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
+export const CardsSlider = ({ title, cards }: CardsSliderProps) => {
   const { width } = useWindowSize()
 
   const [cardHeight, setCardHeight] = useState<string>('auto')

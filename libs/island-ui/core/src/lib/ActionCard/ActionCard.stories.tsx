@@ -17,6 +17,7 @@ export const Default = () => (
     cta={{ label: 'Click me' }}
   />
 )
+
 export const Unavailable = () => (
   <ActionCard
     heading="Default"
@@ -34,7 +35,8 @@ export const SecondaryCTA = () => (
   <ActionCard
     heading="Hello"
     text="This is the text"
-    cta={{ label: 'Click me', variant: 'text' }}
+    cta={{ label: 'Click me' }}
+    secondaryCta={{ label: 'Click me' }}
   />
 )
 
