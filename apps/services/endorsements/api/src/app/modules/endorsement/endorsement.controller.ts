@@ -31,7 +31,7 @@ export class EndorsementController {
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<Endorsement> {
     // TODO: Add auth here
-    return await this.endorsementService.findSingleEndorsementByNationalId({
+    return await this.endorsementService.findSingleUserEndorsement({
       listId,
       nationalId: '0000000000',
     })
