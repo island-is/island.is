@@ -26,6 +26,7 @@
 
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
 /libs/service-portal/education/                                                               @island-is/kosmos-kaos
+/libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
 
 /apps/application-system/                                                                     @island-is/aranja
 /apps/reference-next-app/                                                                     @island-is/aranja
