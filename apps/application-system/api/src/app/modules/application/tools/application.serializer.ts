@@ -3,7 +3,6 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { classToPlain, plainToClass } from 'class-transformer'
 import { map } from 'rxjs/operators'
@@ -22,7 +21,7 @@ import { Locale } from '@island.is/shared/types'
 
 import { Application } from '../application.model'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
-import { getNationalIdFromToken } from '../utils/tokenUtils'
+import { getCurrentUser } from '@island.is/auth-nest-tools'
 import { getCurrentLocale } from '../utils/currentLocale'
 
 @Injectable()
@@ -34,25 +33,22 @@ export class ApplicationSerializer
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Promise<unknown>> {
+    const user = getCurrentUser(context)
     const locale = getCurrentLocale(context)
-    let nationalId: string
-
-    try {
-      nationalId = getNationalIdFromToken(context)
-    } catch (e) {
-      throw new UnauthorizedException('You are not authenticated')
-    }
 
     return next.handle().pipe(
       map(async (res: Application | Array<Application>) => {
         const isArray = Array.isArray(res)
-        return isArray
-          ? Promise.all(
-              (res as Application[]).map((item) =>
-                this.serialize(item, nationalId, locale),
-              ),
-            )
-          : this.serialize(res as Application, nationalId, locale)
+
+        if (isArray) {
+          return Promise.all(
+            (res as Application[]).map((item) =>
+              this.serialize(item, user.nationalId, locale),
+            ),
+          )
+        }
+
+        return this.serialize(res as Application, user.nationalId, locale)
       }),
     )
   }

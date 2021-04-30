@@ -736,46 +736,52 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'paymentPlan',
-          title: parentalLeaveFormMessages.paymentPlan.subSection,
-          children: [
-            buildCustomField(
-              {
-                id: 'paymentPlan',
-                title: parentalLeaveFormMessages.paymentPlan.title,
-                description: parentalLeaveFormMessages.paymentPlan.description,
-                component: 'PaymentSchedule',
-              },
-              {},
-            ),
-          ],
-        }),
-        buildSubSection({
-          id: 'shareInformation',
-          title: parentalLeaveFormMessages.shareInformation.subSection,
-          condition: (answers) => answers.otherParent !== NO,
-          children: [
-            buildRadioField({
-              id: 'shareInformationWithOtherParent',
-              title: parentalLeaveFormMessages.shareInformation.title,
-              description:
-                parentalLeaveFormMessages.shareInformation.description,
-              emphasize: false,
-              largeButtons: true,
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shareInformation.yesOption,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shareInformation.noOption,
-                  value: NO,
-                },
-              ],
-            }),
-          ],
-        }),
+
+        // TODO: Bring back payment calculation info, once we have an api
+        // app.asana.com/0/1182378413629561/1200214178491335/f
+        // buildSubSection({
+        //   id: 'paymentPlan',
+        //   title: parentalLeaveFormMessages.paymentPlan.subSection,
+        //   children: [
+        //     buildCustomField(
+        //       {
+        //         id: 'paymentPlan',
+        //         title: parentalLeaveFormMessages.paymentPlan.title,
+        //         description: parentalLeaveFormMessages.paymentPlan.description,
+        //         component: 'PaymentSchedule',
+        //       },
+        //       {},
+        //     ),
+        //   ],
+        // }),
+
+        // TODO: Bring back this feature post v1 launch
+        // https://app.asana.com/0/1182378413629561/1200214178491339/f
+        // buildSubSection({
+        //   id: 'shareInformation',
+        //   title: parentalLeaveFormMessages.shareInformation.subSection,
+        //   condition: (answers) => answers.otherParent !== NO,
+        //   children: [
+        //     buildRadioField({
+        //       id: 'shareInformationWithOtherParent',
+        //       title: parentalLeaveFormMessages.shareInformation.title,
+        //       description:
+        //         parentalLeaveFormMessages.shareInformation.description,
+        //       emphasize: false,
+        //       largeButtons: true,
+        //       options: [
+        //         {
+        //           label: parentalLeaveFormMessages.shareInformation.yesOption,
+        //           value: YES,
+        //         },
+        //         {
+        //           label: parentalLeaveFormMessages.shareInformation.noOption,
+        //           value: NO,
+        //         },
+        //       ],
+        //     }),
+        //   ],
+        // }),
       ],
     }),
     buildSection({

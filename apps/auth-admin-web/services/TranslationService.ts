@@ -16,7 +16,9 @@ export class TranslationService extends BaseService {
     count: number
   } | null> {
     return BaseService.GET(
-      `translation/translations?searchString=${searchString}&page=${page}&count=${count}`,
+      `translation/translations?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
     )
   }
 
@@ -85,7 +87,11 @@ export class TranslationService extends BaseService {
     key: string,
   ): Promise<Translation | null> {
     return BaseService.GET(
-      `translation/translation/${language}/${className}/${property}/${key}`,
+      `translation/translation/${encodeURIComponent(
+        language,
+      )}/${encodeURIComponent(className)}/${encodeURIComponent(
+        property,
+      )}/${encodeURIComponent(key)}`,
     )
   }
 }

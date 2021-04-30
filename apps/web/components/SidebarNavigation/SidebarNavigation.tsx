@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import useScrollSpy from '../../hooks/useScrollSpy'
 import { SidebarBox } from '../SidebarBox/SidebarBox'
 import { Bullet } from '../Bullet/Bullet'
@@ -10,11 +10,11 @@ export interface SidebarNavigationProps {
   position: 'left' | 'right'
 }
 
-export const SidebarNavigation: FC<SidebarNavigationProps> = ({
+export const SidebarNavigation = ({
   title,
   navigation,
   position = 'left',
-}) => {
+}: SidebarNavigationProps) => {
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
   const [bulletRef, setBulletRef] = useState<HTMLElement>(null)

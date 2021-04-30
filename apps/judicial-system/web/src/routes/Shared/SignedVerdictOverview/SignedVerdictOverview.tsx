@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -44,10 +45,7 @@ import { useRouter } from 'next/router'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
-
-interface CaseData {
-  case?: Case
-}
+import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -206,6 +204,20 @@ export const SignedVerdictOverview: React.FC = () => {
         workingCase.id,
         parseString('prosecutorPostponedAppealDate', formatISO(new Date())),
       )
+    }
+  }
+
+  const canCaseFilesBeOpened = () => {
+    if (
+      user?.role === UserRole.PROSECUTOR ||
+      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      !!workingCase?.accusedPostponedAppealDate ||
+      !!workingCase?.prosecutorPostponedAppealDate
+    ) {
+      return true
+    } else {
+      return false
     }
   }
 
@@ -390,7 +402,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     <CaseFileList
                       caseId={workingCase.id}
                       files={workingCase.files || []}
-                      canOpenFiles={user?.role === UserRole.PROSECUTOR}
+                      canOpenFiles={canCaseFilesBeOpened()}
                     />
                   </AccordionItem>
                 )}

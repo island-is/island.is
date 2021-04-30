@@ -16,8 +16,16 @@ export const contactInfo = {
     },
     description: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.description',
-      defaultMessage: 'Sláðu inn netfang og símanúmer',
+        'crc.application:section.backgroundInformation.contactInfo.description#markdown',
+      defaultMessage:
+        'Sláðu inn tengiliðaupplýsingar þínar og hins foreldrisins svo öll samskipti um umsóknina milli ykkar og sýslumanns gangi greiðlega fyrir sig.',
+      description: 'Contact info page description',
+    },
+    parentBDescription: {
+      id:
+        'crc.application:section.backgroundInformation.contactInfo.parentBDescription#markdown',
+      defaultMessage:
+        'Sláðu inn tengiliðaupplýsingar þínar svo öll samskipti um umsóknina milli ykkar foreldranna og sýslumanns gangi greiðlega fyrir sig.',
       description: 'Contact info page description',
     },
   }),

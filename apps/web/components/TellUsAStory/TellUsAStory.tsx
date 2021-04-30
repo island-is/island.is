@@ -28,7 +28,7 @@ const getState = (
 interface TellUsAStoryProps
   extends Omit<TellUsAStoryFormProps, 'state' | 'onSubmit'> {}
 
-export const TellUsAStory: FC<TellUsAStoryProps> = (props) => {
+export const TellUsAStory = (props: TellUsAStoryProps) => {
   const [submit, { data, loading, error }] = useMutation<
     TellUsAStoryMutation,
     TellUsAStoryMutationVariables

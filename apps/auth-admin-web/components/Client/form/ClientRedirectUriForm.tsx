@@ -120,7 +120,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       }
                       title={localization.fields['redirectUri'].helpText}
                     />
-                    <HelpBox helpText="Full path of the redirect URL. These protocols rely upon TLS in production" />
+                    <HelpBox
+                      helpText={localization.fields['redirectUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -131,7 +133,8 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       type="submit"
                       className="client-redirect__button__add"
                       disabled={isSubmitting}
-                      value={localization.addButton}
+                      value={localization.buttons['add'].text}
+                      title={localization.buttons['add'].helpText}
                     />
                   </div>
                 </div>
@@ -148,7 +151,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>{localization.sectionTitle1}</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.uris?.map((uri: string) => {
                   return (
                     <div
@@ -161,10 +164,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(uri)}
                           className="client-redirect__container__list__button__remove"
-                          title={localization.removeButton}
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>{localization.removeButton}</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -177,10 +180,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="client-redirect__button__cancel"
-                    title="Back"
+                    title={localization.buttons['cancel'].helpText}
                     onClick={props.handleBack}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client-redirect__button__container">
@@ -188,9 +191,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-redirect__button__save"
                     onClick={props.handleNext}
-                    title={localization.saveButton}
+                    title={localization.buttons['save'].helpText}
                   >
-                    {localization.saveButton}
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -203,7 +206,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText={localization.removeButton}
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

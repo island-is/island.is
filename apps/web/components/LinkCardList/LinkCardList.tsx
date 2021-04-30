@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { Button, Text, Box, Tiles } from '@island.is/island-ui/core'
 
@@ -15,7 +15,7 @@ export interface LinkCardListProps {
   cards: LinkCardProps[]
 }
 
-export const LinkCardList: FC<LinkCardListProps> = ({ title, cards }) => (
+export const LinkCardList = ({ title, cards }: LinkCardListProps) => (
   <>
     <Box paddingBottom={6}>
       <Text variant="h2" as="h2">
@@ -30,7 +30,7 @@ export const LinkCardList: FC<LinkCardListProps> = ({ title, cards }) => (
   </>
 )
 
-const LinkCard: FC<LinkCardProps> = ({ title, body, link, linkText }) => {
+const LinkCard = ({ title, body, link, linkText }: LinkCardProps) => {
   return (
     <Box
       display="flex"

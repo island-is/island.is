@@ -31,10 +31,11 @@ export class CourtService {
       })
 
       authenticationToken = stripResult(str)
-    } catch (error) {
-      this.logger.error('Unable to log into court service', error)
+    } catch (_) {
+      // Cannot log the error as it contains username and password in plain text
+      this.logger.error('Unable to log into the court service')
 
-      throw new BadGatewayException(error)
+      throw new BadGatewayException('Unable to log into the court service')
     }
   }
 
@@ -49,7 +50,7 @@ export class CourtService {
     try {
       return await request()
     } catch (error) {
-      this.logger.error('Error while creating court case', error)
+      this.logger.error('Error while creating a court case', error)
 
       if (isRetry) {
         throw error

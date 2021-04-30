@@ -15,6 +15,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -36,10 +37,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-
-interface CaseData {
-  case?: Case
-}
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

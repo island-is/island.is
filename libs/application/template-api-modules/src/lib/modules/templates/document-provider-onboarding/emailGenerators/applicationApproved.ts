@@ -9,7 +9,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
 ) => {
   const {
     application,
-    options: { locale, clientLocationOrigin },
+    options: { locale, clientLocationOrigin, email },
   } = props
 
   const applicantEmail = get(application.answers, 'applicant.email')
@@ -38,8 +38,8 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {

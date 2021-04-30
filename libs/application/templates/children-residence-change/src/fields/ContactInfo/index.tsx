@@ -7,12 +7,15 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Text,
 } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'
-import { childrenResidenceInfo } from '../../lib/utils'
+import {
+  childrenResidenceInfo,
+  getSelectedChildrenFromExternalData,
+} from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
+import { DescriptionText, InfoBanner } from '../components'
 
 const emailId = 'parentA.email'
 const phoneNumberId = 'parentA.phoneNumber'
@@ -39,15 +42,18 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const counterPartyEmailError = errors?.counterParty?.email
   const counterPartyPhoneError = errors?.counterParty?.phoneNumber
   const applicant = nationalRegistry.data
-  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+  const selectedChildren = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectedChildren,
+  )
 
   return (
     <>
-      <Text marginTop={3}>
-        {formatMessage(contactInfo.general.description)}
-      </Text>
+      <Box marginTop={3}>
+        <DescriptionText text={contactInfo.general.description} />
+      </Box>
       <Text marginTop={5} variant="h4">
-        {childResidenceInfo.current.parentName}
+        {applicant.fullName}
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
@@ -86,7 +92,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
         </GridRow>
       </GridContainer>
       <Text marginTop={5} variant="h4">
-        {childResidenceInfo.future.parentName}
+        {selectedChildren[0].otherParent.fullName}
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
@@ -121,27 +127,12 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      <Box
-        marginTop={3}
-        padding={2}
-        borderRadius="large"
-        background="blue100"
-        borderColor="blue200"
-        borderWidth="standard"
-      >
-        <Box display="flex" alignItems="flexStart">
-          <Box
-            display="flex"
-            alignItems="center"
-            marginRight={2}
-            flexShrink={0}
-          >
-            <Icon type="filled" color="blue400" icon="informationCircle" />
-          </Box>
+      <Box marginTop={3}>
+        <InfoBanner>
           <Text variant="small">
             {formatMessage(contactInfo.counterParty.info)}
           </Text>
-        </Box>
+        </InfoBanner>
       </Box>
     </>
   )
