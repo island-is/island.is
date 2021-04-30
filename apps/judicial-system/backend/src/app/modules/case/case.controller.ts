@@ -65,6 +65,7 @@ const prosecutorUpdateRule = {
     'accusedGender',
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'sendRequestToDefender',
     'court',
     'arrestDate',
