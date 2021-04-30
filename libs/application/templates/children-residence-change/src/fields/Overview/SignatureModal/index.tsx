@@ -67,7 +67,6 @@ const SignatureModal = ({
   ].includes(fileSignatureState.status)
   const isRequest = fileSignatureState.status === FileSignatureStatus.REQUEST
   const isUpload = fileSignatureState.status === FileSignatureStatus.UPLOAD
-  const isInitial = fileSignatureState.status === FileSignatureStatus.INITIAL
   return (
     <ModalBase
       baseId="signatureDialog"
@@ -109,7 +108,7 @@ const SignatureModal = ({
         <Box
           className={cn(styles.controlCodeContainer, {
             [styles.upload]: isUpload,
-            [styles.error]: hasError || isInitial,
+            [styles.error]: hasError,
           })}
           marginTop={4}
           background={
@@ -142,7 +141,7 @@ const SignatureModal = ({
             ))}
         </Box>
         <Box marginTop={6} display="flex" justifyContent="center">
-          {hasError || isInitial ? (
+          {hasError ? (
             <Button
               onClick={onClose}
               fluid={true}

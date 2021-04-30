@@ -2,7 +2,6 @@ import { MessageDescriptor } from '@formatjs/intl'
 import { signatureModal } from '../../lib/messages'
 
 export enum FileSignatureStatus {
-  INITIAL = 'INITIAL',
   REQUEST = 'REQUEST',
   UPLOAD = 'UPLOAD',
   SUCCESS = 'SUCCESS',
@@ -25,10 +24,7 @@ export enum FileSignatureActionTypes {
 export type ContentTypes = 'warning' | 'error' | 'info' | 'success'
 
 const modalContent: {
-  [key in Exclude<
-    FileSignatureStatus,
-    ErrorStatus | FileSignatureStatus.INITIAL
-  >]: ModalContent
+  [key in Exclude<FileSignatureStatus, ErrorStatus>]: ModalContent
 } = {
   [FileSignatureStatus.REQUEST]: {
     title: signatureModal.general.title,
@@ -113,13 +109,10 @@ export const fileSignatureReducer = (
       }
     }
     case FileSignatureActionTypes.REQUEST: {
-      const content = modalContent[action.type]
-      const { title, type } = content
       return {
         ...state,
-        status: FileSignatureStatus.REQUEST,
+        ...initialFileSignatureState,
         modalOpen: true,
-        content: { title, type },
       }
     }
     case FileSignatureActionTypes.UPLOAD: {

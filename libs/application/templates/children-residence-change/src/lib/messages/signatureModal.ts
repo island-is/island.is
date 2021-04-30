@@ -18,13 +18,13 @@ export const signatureModal = {
     title: {
       id: 'crc.application:signatureModal.success.title',
       defaultMessage: 'Undirritun tókst',
-      description: 'Signature succes title',
+      description: 'Signature success title',
     },
     message: {
       id: 'crc.application:signatureModal.success.text',
       defaultMessage:
         'Augnablik, við erum að taka saman gögnin sem getur tekið nokkrar sekúndur.',
-      description: 'Close modal button label',
+      description: 'Signature success message',
     },
   }),
   security: defineMessages({
