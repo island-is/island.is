@@ -120,6 +120,7 @@ describe('Signed Verdict Overview route', () => {
   describe('Accepted case with active custody', () => {
     fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
     fetchMock.mock('/api/feature/CASE_FILES', true)
+    fetchMock.mock('/api/feature/CREATE_COURT_CASE', true)
 
     test('should have the correct title', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')

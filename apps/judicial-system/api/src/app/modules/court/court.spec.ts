@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { formatISO } from 'date-fns'
+import { formatISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import { Test } from '@nestjs/testing'
 
@@ -53,7 +53,7 @@ describe('CourtModule', () => {
         },
         {
           provide: CreateCustodyCaseApi,
-          useClass: jest.fn(() => {}),
+          useClass: jest.fn(() => ({})),
         },
         {
           provide: CreateCaseApi,
@@ -76,7 +76,7 @@ describe('CourtModule', () => {
     let updateCase: jest.Mock
 
     beforeEach(() => {
-      updateCase = jest.fn((args) => {
+      updateCase = jest.fn(() => {
         return Promise.resolve({ caseId, policeCaseNumber, courtCaseNumber })
       })
     })

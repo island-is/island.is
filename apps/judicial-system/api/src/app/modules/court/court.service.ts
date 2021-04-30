@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns'
+import { formatISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
