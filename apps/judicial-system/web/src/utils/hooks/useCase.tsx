@@ -135,6 +135,7 @@ const useCase = () => {
               caseId: workingCase?.id,
               type: workingCase?.type,
               policeCaseNumber: workingCase?.policeCaseNumber,
+              isExtension: Boolean(workingCase?.parentCase?.id),
             },
           },
         })
