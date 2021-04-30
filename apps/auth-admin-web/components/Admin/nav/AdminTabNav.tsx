@@ -21,17 +21,20 @@ const AdminTabNav: React.FC<Props> = ({
     <div className="admin-tab-nav">
       <nav className="admin-tab-nav__nav">
         <ul>
-          <li className={activetab === AdminTab.AdminUsers ? 'active' : ''}>
+          <li className={activetab === AdminTab.ApiScopeUsers ? 'active' : ''}>
             <button
               type="button"
-              onClick={() => handleTabChange(AdminTab.AdminUsers)}
-              className={activetab === AdminTab.AdminUsers ? 'active' : ''}
+              onClick={() => handleTabChange(AdminTab.ApiScopeUsers)}
+              className={activetab === AdminTab.ApiScopeUsers ? 'active' : ''}
               title={
-                localization.navigations['adminTabNav'].items['adminUsers']
+                localization.navigations['adminTabNav'].items['apiScopeUsers']
                   .title
               }
             >
-              {localization.navigations['adminTabNav'].items['adminUsers'].text}
+              {
+                localization.navigations['adminTabNav'].items['apiScopeUsers']
+                  .text
+              }
             </button>
           </li>
           <li className={activetab === AdminTab.Users ? 'active' : ''}>
