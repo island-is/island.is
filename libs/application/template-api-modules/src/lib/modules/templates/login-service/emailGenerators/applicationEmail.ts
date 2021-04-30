@@ -25,12 +25,9 @@ export const generateApplicationEmail: ApplicationEmail = (
     application,
     options: { locale },
   } = props
-  const institutionName = getValueViaPath(
-    application.answers,
-    'applicant.institution',
-  )
+  const name = getValueViaPath(application.answers, 'applicant.name')
 
-  const subject = `Umsókn frá ${institutionName}`
+  const subject = `Umsókn um innskráningarþjónustu fyrir ${name}`
 
   const overview = applicationOverviewTemplate(application)
   const body = dedent(`<h2>Yfirlit umsóknar</h2> ${overview}`)

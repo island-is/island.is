@@ -21,27 +21,26 @@ export class LoginServiceService {
   ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('LOGIN SERVICE SEND APPLICATION')
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   (props) =>
-    //     generateApplicationEmail(
-    //       props,
-    //       this.loginServiceConfig.applicationSenderName,
-    //       this.loginServiceConfig.applicationSenderEmail,
-    //       this.loginServiceConfig.applicationRecipientName,
-    //       this.loginServiceConfig.applicationRecipientEmail,
-    //     ),
-    //   application,
-    // )
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationEmail(
+          props,
+          this.loginServiceConfig.applicationSenderName,
+          this.loginServiceConfig.applicationSenderEmail,
+          this.loginServiceConfig.applicationRecipientName,
+          this.loginServiceConfig.applicationRecipientEmail,
+        ),
+      application,
+    )
 
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   (props) =>
-    //     generateConfirmationEmail(
-    //       props,
-    //       this.loginServiceConfig.applicationSenderName,
-    //       this.loginServiceConfig.applicationSenderEmail,
-    //     ),
-    //   application,
-    // )
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateConfirmationEmail(
+          props,
+          this.loginServiceConfig.applicationSenderName,
+          this.loginServiceConfig.applicationSenderEmail,
+        ),
+      application,
+    )
   }
 }

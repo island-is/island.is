@@ -75,28 +75,125 @@ export const applicationOverviewTemplate = (
   return dedent(`
     <h3>${messages.applicant.general.pageTitle.defaultMessage}</h3>
     <p>
-      <b>${messages.applicant.labels.nameDescription}</b> </br>
+      <b>${messages.applicant.labels.nameDescription.defaultMessage}</b> </br>
       ${applicantName}
     </p>
     <p>
-      <b>${messages.applicant.labels.nationalId}</b> </br>
+      <b>${messages.applicant.labels.nationalId.defaultMessage}</b> </br>
       ${applicantNationalId}
     </p>
     <p>
-      <b>${messages.applicant.labels.typeOfOperation}</b> </br>
+      <b>${messages.applicant.labels.typeOfOperation.defaultMessage}</b> </br>
       ${applicanttypeOfOperation}
     </p>
     <p>
-      <b>${messages.applicant.labels.responsiblePartyName}</b> </br>
+      <b>${
+        messages.applicant.labels.responsiblePartyName.defaultMessage
+      }</b> </br>
       ${applicantResponsiblePartyName}
     </p>
     <p>
-      <b>${messages.applicant.labels.responsiblePartyEmail}</b> </br>
+      <b>${
+        messages.applicant.labels.responsiblePartyEmail.defaultMessage
+      }</b> </br>
       ${applicantResponsiblePartyEmail}
     </p>
     <p>
-      <b>${messages.applicant.labels.responsiblePartyTel}</b> </br>
+      <b>${
+        messages.applicant.labels.responsiblePartyTel.defaultMessage
+      }</b> </br>
       ${applicantResponsiblePartyTel}
     </p>
+
+
+    <h3>${messages.technicalContact.general.pageTitle.defaultMessage}</h3>
+    ${
+      technicalContactName
+        ? `
+          <p>
+            <b>${messages.technicalContact.labels.name.defaultMessage}</b> </br>
+            ${technicalContactName}
+          </p>
+        `
+        : ''
+    }
+    ${
+      technicalContactEmail
+        ? `
+          <p>
+            <b>${messages.technicalContact.labels.email.defaultMessage}</b> </br>
+            ${technicalContactEmail}
+          </p>
+        `
+        : ''
+    }
+    ${
+      technicalContactPhoneNumber
+        ? `
+          <p>
+            <b>${messages.technicalContact.labels.tel.defaultMessage}</b> </br>
+            ${technicalContactPhoneNumber}
+          </p>
+        `
+        : ''
+    }
+    ${
+      (technicalContactSameAsResponsibleParty as
+        | string[]
+        | undefined)?.includes('yes')
+        ? `
+          <p>
+            ${messages.technicalContact.labels.sameAsResponsibleParty.defaultMessage}
+          </p>
+        `
+        : ''
+    }
+    <p>
+      <b>${
+        messages.technicalContact.labels.techAnnouncementsEmail.defaultMessage
+      }</b> </br>
+      ${technicalContactTechAnnouncementsEmail}
+    </p>
+
+
+    <h3>${messages.technicalInfo.general.pageTitle.defaultMessage}</h3>
+    <p>
+      <b>${messages.technicalInfo.labels.type.defaultMessage}</b> </br>
+      ${technicalInfoType}
+    </p>
+    ${
+      technicalInfoDevReturnUrl
+        ? `
+          <p>
+            <b>${messages.technicalInfo.labels.devReturnUrl.defaultMessage}</b> </br>
+            ${technicalInfoDevReturnUrl}
+          </p>
+        `
+        : ''
+    }
+    ${
+      technicalInfoStagingReturnUrl
+        ? `
+          <p>
+            <b>${messages.technicalInfo.labels.stagingReturnUrl.defaultMessage}</b> </br>
+            ${technicalInfoStagingReturnUrl}
+          </p>
+        `
+        : ''
+    }
+    <p>
+      <b>${messages.technicalInfo.labels.prodReturnUrl.defaultMessage}</b> </br>
+      ${technicalInfoProdReturnUrl}
+    </p>
+    ${
+      technicalInfoClientId
+        ? `
+          <p>
+            <b>${messages.technicalInfo.labels.clientId.defaultMessage}</b> </br>
+            ${technicalInfoClientId}
+          </p>
+        `
+        : ''
+    }
   `)
 }

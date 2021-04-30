@@ -22,33 +22,30 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     options: { locale },
   } = props
 
-  const institutionName = getValueViaPath(
+  const name = getValueViaPath(application.answers, 'applicant.name')
+
+  const contactEmail = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.responsiblePartyEmail',
+  )
+  const contactName = getValueViaPath(
+    application.answers,
+    'applicant.responsiblePartyName',
   )
 
-  const contactEmail = getValueViaPath(application.answers, 'contact.email')
-  const contactName = getValueViaPath(application.answers, 'contact.name')
-
-  const secondaryContactEmail =
-    getValueViaPath(application.answers, 'secondaryContact.email') || ''
-
-  const secondaryContactName =
-    getValueViaPath(application.answers, 'secondaryContact.name') || ''
-
-  const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
+  const subject = `Umsókn þín fyrir ${name} hefur verið móttekin.`
   const overview = applicationOverviewTemplate(application)
 
   const body = dedent(`
-        <h2>Umsókn móttekin</h2>
-        <p>
-          Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar. </br>
-          Við verðum í sambandi ef okkur vantar frekari upplýsingar. </br>
-          Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
-        </p>
-        <h2>Yfirlit umsóknar</h2>
-        ${overview}
-      `)
+    <h2>Umsókn um innskráningarþjónustu móttekin</h2>
+    <p>
+      Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar. </br>
+      Við verðum í sambandi ef okkur vantar frekari upplýsingar. </br>
+      Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
+    </p>
+    <h2>Yfirlit umsóknar</h2>
+    ${overview}
+  `)
 
   return {
     from: {
@@ -61,10 +58,6 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         address: contactEmail as string,
       },
     ],
-    cc: {
-      name: secondaryContactName as string,
-      address: secondaryContactEmail as string,
-    },
     subject,
     html: body,
   }
