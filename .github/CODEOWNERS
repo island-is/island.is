@@ -14,7 +14,7 @@
 
 
 /apps/web*/                                                                                   @island-is/kosmos-kaos
-/apps/endorsement-system/                                                                     @island-is/kosmos-kaos
+/apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
