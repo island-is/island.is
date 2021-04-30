@@ -1,4 +1,4 @@
-# Service Portal Education License
+# Service Portal Endorsements
 
 This library was generated with [Nx](https://nx.dev).
 
