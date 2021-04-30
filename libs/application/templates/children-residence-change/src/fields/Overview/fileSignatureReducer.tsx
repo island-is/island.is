@@ -21,24 +21,29 @@ export enum FileSignatureActionTypes {
   ERROR = 'ERROR',
 }
 
-export type ContentTypes = 'warning' | 'error' | 'info' | 'success'
+export enum ContentTypes {
+  WARNING = 'warning',
+  ERROR = 'error',
+  INFO = 'info',
+  SUCCESS = 'success',
+}
 
 const modalContent: {
   [key in Exclude<FileSignatureStatus, ErrorStatus>]: ModalContent
 } = {
   [FileSignatureStatus.REQUEST]: {
     title: signatureModal.general.title,
-    type: 'info',
+    type: ContentTypes.INFO,
   },
   [FileSignatureStatus.UPLOAD]: {
     title: signatureModal.general.title,
     message: signatureModal.security.message,
-    type: 'info',
+    type: ContentTypes.INFO,
   },
   [FileSignatureStatus.SUCCESS]: {
     title: signatureModal.success.title,
     message: signatureModal.success.message,
-    type: 'success',
+    type: ContentTypes.SUCCESS,
   },
 }
 
@@ -48,22 +53,22 @@ export const errorMessages: {
   400: {
     title: signatureModal.userCancelledWarning.title,
     message: signatureModal.userCancelledWarning.message,
-    type: 'warning',
+    type: ContentTypes.WARNING,
   },
   404: {
     title: signatureModal.noElectronicIdError.title,
     message: signatureModal.noElectronicIdError.message,
-    type: 'error',
+    type: ContentTypes.ERROR,
   },
   408: {
     title: signatureModal.timeOutWarning.title,
     message: signatureModal.timeOutWarning.message,
-    type: 'warning',
+    type: ContentTypes.WARNING,
   },
   500: {
     title: signatureModal.defaultError.title,
     message: signatureModal.defaultError.message,
-    type: 'error',
+    type: ContentTypes.ERROR,
   },
 }
 
@@ -130,7 +135,6 @@ export const fileSignatureReducer = (
       return {
         ...state,
         status: FileSignatureStatus.SUCCESS,
-        modalOpen: true,
         content: { title, type, message },
       }
     }

@@ -33,22 +33,22 @@ const statusVariantStyles: {
     icon: IconMapIcon
   }
 } = {
-  error: {
+  [ContentTypes.ERROR]: {
     background: 'red100',
     iconColor: 'red400',
     icon: 'warning',
   },
-  info: {
+  [ContentTypes.INFO]: {
     background: 'blue100',
     iconColor: 'blue400',
     icon: 'informationCircle',
   },
-  success: {
+  [ContentTypes.SUCCESS]: {
     background: 'blue100',
     iconColor: 'blue400',
     icon: 'checkmarkCircle',
   },
-  warning: {
+  [ContentTypes.WARNING]: {
     background: 'yellow300',
     iconColor: 'yellow600',
     icon: 'warning',
