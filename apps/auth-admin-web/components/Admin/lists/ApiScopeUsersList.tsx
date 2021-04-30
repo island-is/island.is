@@ -88,7 +88,7 @@ const ApiScopeUsersList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="api-scope-users-list__container__options">
               <div className="api-scope-users-list__container__options__button">
-                <Link href={'/admin/admin-user'}>
+                <Link href={'/admin/api-scope-user'}>
                   <a
                     className="api-scope-users-list__button__new"
                     title={localization.buttons['new'].helpText}
