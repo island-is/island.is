@@ -51,10 +51,6 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
     setActiveScopes(props.apiScopeUser.userAccess.map((x) => x.scope))
   }, [props.apiScopeUser])
 
-  // useEffect(() => {
-
-  // }, [accessControlledScopes])
-
   const pushEvent = (response: ApiScopeUser | null) => {
     if (response) {
       if (props.handleSaveButtonClicked) {
