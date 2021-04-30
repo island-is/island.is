@@ -102,11 +102,9 @@ const SignatureModal = ({
             <SkeletonLoader height={20} width="50%" space={1} />
           </>
         ) : (
-          <>
-            {fileSignatureState.content?.message && (
-              <Text>{formatMessage(fileSignatureState.content.message)}</Text>
-            )}
-          </>
+          fileSignatureState.content?.message && (
+            <Text>{formatMessage(fileSignatureState.content.message)}</Text>
+          )
         )}
         <Box
           className={cn(styles.controlCodeContainer, {
@@ -121,33 +119,27 @@ const SignatureModal = ({
           textAlign="center"
           overflow="hidden"
         >
-          {!isRequest && (
-            <>
-              {isUpload ? (
-                <>
-                  <Text lineHeight="xl" variant="small" marginTop={2}>
-                    {formatMessage(signatureModal.security.numberLabel)}
-                  </Text>
-                  <Text lineHeight="sm" variant="h1">
-                    {controlCode}
-                  </Text>
-                </>
-              ) : (
-                <Icon
-                  className={styles.iconContainer}
-                  color={
-                    statusVariantStyles[fileSignatureState.content.type]
-                      .iconColor
-                  }
-                  icon={
-                    statusVariantStyles[fileSignatureState.content.type].icon
-                  }
-                  size="large"
-                  type="filled"
-                />
-              )}
-            </>
-          )}
+          {!isRequest &&
+            (isUpload ? (
+              <>
+                <Text lineHeight="xl" variant="small" marginTop={2}>
+                  {formatMessage(signatureModal.security.numberLabel)}
+                </Text>
+                <Text lineHeight="sm" variant="h1">
+                  {controlCode}
+                </Text>
+              </>
+            ) : (
+              <Icon
+                className={styles.iconContainer}
+                color={
+                  statusVariantStyles[fileSignatureState.content.type].iconColor
+                }
+                icon={statusVariantStyles[fileSignatureState.content.type].icon}
+                size="large"
+                type="filled"
+              />
+            ))}
         </Box>
         <Box marginTop={6} display="flex" justifyContent="center">
           {hasError || isInitial ? (
