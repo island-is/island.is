@@ -4,6 +4,7 @@ import { DocumentProviderOnboardingModule } from './document-provider-onboarding
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
 import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
+import { LoginServiceModule } from './login-service/login-service.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -12,6 +13,7 @@ export const modules = [
   InstitutionCollaborationModule,
   HealthInsuranceModule,
   ChildrenResidenceChangeModule,
+  LoginServiceModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -20,3 +22,4 @@ export { DocumentProviderOnboardingService } from './document-provider-onboardin
 export { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
 export { HealthInsuranceService } from './health-insurance/health-insurance.service'
 export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+export { LoginServiceService } from './login-service/login-service.service'
