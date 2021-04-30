@@ -2,6 +2,7 @@ import get from 'lodash/get'
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -61,25 +62,6 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .childrenInformationSubTitle,
                 }),
-                buildDataProviderItem({
-                  id: 'pregnancyStatus',
-                  type: 'PregnancyStatus',
-                  title:
-                    parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .expectedDateOfBirthSubtitle,
-                }),
-                buildDataProviderItem({
-                  id: 'parentalLeaves',
-                  type: 'ParentalLeaves',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .existingParentalLeavesSubTitle,
-                }),
               ],
             }),
           ],
@@ -92,6 +74,15 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.title,
               description: parentalLeaveFormMessages.selectChild.description,
+              condition: (answers, externalData) => {
+                const children = get(
+                  externalData,
+                  'children.data.children',
+                  [],
+                ) as unknown[]
+
+                return children.length > 0
+              },
               children: [
                 buildRadioField({
                   id: 'selectedChild',
@@ -100,19 +91,16 @@ export const PrerequisitesForm: Form = buildForm({
                   options: (application) => {
                     const children = get(
                       application.externalData,
-                      'children.data',
+                      'children.data.children',
                       [],
                     ) as {
-                      id: string
                       dateOfBirth: string
                       expectedDateOfBirth: string
                     }[]
 
-                    return children.map((child) => ({
-                      value: child.id,
-                      label: child.dateOfBirth
-                        ? child.dateOfBirth
-                        : child.expectedDateOfBirth,
+                    return children.map((child, index) => ({
+                      value: index.toString(),
+                      label: child.expectedDateOfBirth,
                     }))
                   },
                   largeButtons: true,
@@ -136,6 +124,22 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'thankYou',
               title: 'Nú getur þú byrjað umsóknina',
               component: 'Conclusion',
+              condition: (_, externalData) => {
+                const children = get(
+                  externalData,
+                  'children.data.children',
+                  [],
+                ) as unknown[]
+
+                return children.length > 0
+              },
+            }),
+            // TODO: Custom component with a lot more explanation of why you may not see any children
+            buildDescriptionField({
+              id: 'notEligible',
+              title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
+              description:
+                parentalLeaveFormMessages.selectChild.notEligibleDescription,
             }),
           ],
         }),
