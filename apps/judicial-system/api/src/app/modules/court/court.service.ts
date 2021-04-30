@@ -1,10 +1,13 @@
+import { format } from 'date-fns'
+
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AuthenticateApi,
-  CreateCustodyCaseApi,
+  CreateCaseApi,
 } from '@island.is/judicial-system/court-client'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 
@@ -18,7 +21,7 @@ function stripResult(str: string): string {
 export class CourtService {
   constructor(
     private readonly authenticateApi: AuthenticateApi,
-    private readonly createCustodyCaseApi: CreateCustodyCaseApi,
+    private readonly createCaseApi: CreateCaseApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -60,16 +63,23 @@ export class CourtService {
     }
   }
 
-  async createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
-    const courtCaseNumber = environment.production
-      ? await this.wrappedRequest(() =>
-          this.createCustodyCaseApi.createCustodyCase({
-            basedOn: 'Rannsóknarhagsmunir',
-            sourceNumber: policeCaseNumber,
-            authenticationToken,
-          }),
-        )
-      : '"R-1337/2021"'
+  async createCourtCase(
+    type: CaseType,
+    policeCaseNumber: string,
+  ): Promise<string> {
+    const courtCaseNumber = await this.wrappedRequest(() =>
+      this.createCaseApi.createCase({
+        createCaseData: {
+          authenticationToken,
+          caseType: 'R - Rannsóknarmál',
+          subtype: 'Gæsluvarðhald',
+          status: 'Skráð',
+          receivalDate: format(new Date(), 'yyyyMMdd'),
+          basedOn: 'Rannsóknarhagsmunir',
+          sourceNumber: policeCaseNumber,
+        },
+      }),
+    )
 
     return stripResult(courtCaseNumber)
   }

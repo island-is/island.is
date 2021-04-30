@@ -293,7 +293,8 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCustodyCourtCase {
+export interface CreateCourtCase {
+  type: CaseType
   policeCaseNumber: string
 }
 

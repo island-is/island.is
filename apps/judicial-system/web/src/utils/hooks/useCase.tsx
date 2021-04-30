@@ -9,10 +9,7 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
-import {
-  CreateCaseMutation,
-  CreateCustodyCourtCaseMutation,
-} from '../mutations'
+import { CreateCaseMutation, CreateCourtCaseMutation } from '../mutations'
 import { parseString } from '../formatters'
 import { setAndSendToServer } from '../formHelper'
 
@@ -21,7 +18,7 @@ type autofillProperties = Pick<
   'courtAttendees' | 'policeDemands' | 'litigationPresentations'
 >
 
-interface CreateCustodyCourtCaseMutationResponse {
+interface CreateCourtCaseMutationResponse {
   createCustodyCourtCase: {
     courtCaseNumber: string
   }
@@ -33,11 +30,9 @@ const useCase = () => {
     CreateCaseMutation,
   )
   const [
-    createCustodyCourtCaseMutation,
+    createCourtCaseMutation,
     { loading: creatingCustodyCourtCase },
-  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
-    CreateCustodyCourtCaseMutation,
-  )
+  ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -81,7 +76,7 @@ const useCase = () => {
   ): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
       try {
-        const { data, errors } = await createCustodyCourtCaseMutation({
+        const { data, errors } = await createCourtCaseMutation({
           variables: {
             input: {
               caseId: workingCase?.id,
