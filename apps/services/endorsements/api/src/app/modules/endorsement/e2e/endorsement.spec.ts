@@ -15,6 +15,17 @@ const errorExpectedStructure = {
   statusCode: expect.any(Number),
 }
 
+const metaDataResponse = {
+  fullName: expect.any(String),
+  address: {
+    streetAddress: expect.any(String),
+    city: expect.any(String),
+    postalCode: expect.any(String),
+  },
+  bulkEndorsement: expect.any(Boolean),
+  invalidated: expect.any(Boolean),
+}
+
 describe('Endorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should return 404 and error if list does not exist`, async () => {
     const response = await request(app.getHttpServer())
@@ -102,22 +113,16 @@ describe('Endorsement', () => {
     expect(response.body).toMatchObject({
       endorsementListId: listId,
       // lets make sure metadata got populated
-      meta: {
-        fullName: expect.any(String),
-        address: {
-          streetAddress: expect.any(String),
-          city: expect.any(String),
-          postalCode: expect.any(String),
-        },
-      },
+      meta: metaDataResponse,
     })
   })
 
   it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
-    const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
-      .post(`/endorsement-list/${listId}/endorsement/bulk`)
+      .post(
+        `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1/endorsement/bulk`,
+      )
       .send({ nationalIds })
       .expect(201)
 
@@ -125,16 +130,11 @@ describe('Endorsement', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          endorsementListId: listId,
-          // lets make sure metadata got populated
+          // lets make sure metadata got correctly populated
           meta: {
-            fullName: expect.any(String),
-            address: {
-              streetAddress: expect.any(String),
-              city: expect.any(String),
-              postalCode: expect.any(String),
-            },
-            bulkEndorsement: expect.any(Boolean),
+            ...metaDataResponse,
+            bulkEndorsement: true,
+            invalidated: false,
           },
         }),
       ]),
@@ -154,6 +154,30 @@ describe('Endorsement', () => {
       statusCode: 405,
     })
   })
+  it(`POST /endorsement-list/:listId/endorsement/bulk should create a new endorsement and invalidate all endorsements`, async () => {
+    const nationalId = '0101302209'
+    const bulkResponse = await request(app.getHttpServer())
+      .post(
+        `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c4/endorsement/bulk`,
+      )
+      .send({ nationalIds: [nationalId] })
+      .expect(201)
+
+    // should return the bulk created endorsement as invalidated
+    expect(bulkResponse.body).toMatchObject(
+      expect.arrayContaining([
+        expect.objectContaining({
+          // lets make sure endorsement got invalidated
+          meta: {
+            ...metaDataResponse,
+            invalidated: true,
+          },
+        }),
+      ]),
+    )
+
+    // TODO: Add test to make sure other endorsement is invalidated as well when auth is added
+  })
   it(`POST /endorsement-list/:listId/endorsement/bulk should create a new endorsements and populate metadata`, async () => {
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const nationalIds = ['0101303369', '0101305069', '0101303019']
@@ -167,15 +191,11 @@ describe('Endorsement', () => {
       expect.arrayContaining([
         expect.objectContaining({
           endorsementListId: listId,
-          // lets make sure metadata got populated
+          // lets make sure metadata got correctly populated
           meta: {
-            fullName: expect.any(String),
-            address: {
-              streetAddress: expect.any(String),
-              city: expect.any(String),
-              postalCode: expect.any(String),
-            },
-            bulkEndorsement: expect.any(Boolean),
+            ...metaDataResponse,
+            bulkEndorsement: true,
+            invalidated: false,
           },
         }),
       ]),
