@@ -12,7 +12,7 @@ export class ParentalLeave {
   @Field(() => String)
   applicant!: string
 
-  @Field(() => Float)
+  @Field(() => String)
   otherParentId!: string
 
   @Field(() => String)

@@ -163,7 +163,7 @@ describe('calculateRemainingNumberOfDays', () => {
   const mockUser = {
     applicationId: 'applicationId',
     applicant: '1234567890',
-    otherParentId: 1234567891,
+    otherParentId: '1234567891',
     expectedDateOfBirth: '2016-10-19',
     dateOfBirth: '2016-10-18',
     email: 'email@gmail.com',

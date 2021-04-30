@@ -37,17 +37,12 @@ describe('answerValidators', () => {
     status: ApplicationStatus.IN_PROGRESS,
   }
 
-  it.skip('should return error when DOB is undefined', () => {
+  it('should return error when DOB is undefined', () => {
     const newApplication = {
       ...application,
       externalData: {
         ...application.externalData,
-        parentalLeaves: {
-          date: new Date(),
-          reason: 'Sync failed',
-          status: 'failure',
-        },
-        pregnancyStatus: {
+        pregnancyStatusAndRights: {
           date: new Date(),
           reason: 'Sync failed',
           status: 'failure',

@@ -15,11 +15,10 @@ import {
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { daysInMonth } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/PregnancyStatusAndRights'
-import { daysToMonths, monthsToDays } from './lib/directorateOfLabour.utils'
+import { daysToMonths } from './lib/directorateOfLabour.utils'
 
 export function getExpectedDateOfBirth(
   application: Application,
