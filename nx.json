@@ -267,9 +267,6 @@
     "email-service": {
       "tags": []
     },
-    "endorsements-api": {
-      "tags": []
-    },
     "feature-flags": {
       "tags": []
     },
@@ -472,6 +469,9 @@
       "tags": []
     },
     "services-documents": {
+      "tags": []
+    },
+    "services-endorsements-api": {
       "tags": []
     },
     "services-search-indexer": {

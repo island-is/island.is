@@ -7,7 +7,7 @@ services:
       dockerfile: ../../../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: db_endorsements
-        APP: endorsements-api
+        APP: services-endorsements-api
     networks:
       - local
     depends_on:

@@ -4,6 +4,6 @@ import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
-  name: 'endorsements-api',
+  name: 'services-endorsements-api',
   openApi,
 })
