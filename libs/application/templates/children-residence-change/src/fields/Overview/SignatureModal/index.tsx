@@ -83,12 +83,7 @@ const SignatureModal = ({
       // Passing in tabIndex={0} when there is no tabbable element inside the modal
       tabIndex={!hasError ? 0 : undefined}
     >
-      <Box
-        className={styles.modalContent}
-        background="white"
-        borderRadius="large"
-        position="relative"
-      >
+      <Box className={styles.modalContent}>
         <Box className={styles.logoWrapper}>
           <Logo id="modal" iconOnly={true} />
         </Box>
@@ -114,9 +109,6 @@ const SignatureModal = ({
           background={
             statusVariantStyles[fileSignatureState.content.type].background
           }
-          borderRadius="large"
-          textAlign="center"
-          overflow="hidden"
         >
           {!isRequest &&
             (isUpload ? (

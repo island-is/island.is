@@ -9,6 +9,8 @@ export const modal = style({
 
 export const modalContent = style({
   position: 'absolute',
+  background: theme.color.white,
+  borderRadius: theme.border.radius.large,
   padding: '56px 40px 40px',
   width: '100%',
   height: '100vh',
@@ -58,6 +60,9 @@ export const controlCodeContainer = styleMap({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+    textAlign: 'center',
+    borderRadius: theme.border.radius.large,
     '@media': {
       [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
         height: '112px',
