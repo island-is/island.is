@@ -592,7 +592,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     useAsMuchAsPossibleFromSpouse: {
       id: 'pl.application:personal.allowance.useAsMuchAsPossibleFromSpouse',
-      defaultMessage: 'Viltu nota sem mestan persónuafslátt frá makanum?',
+      defaultMessage: 'Viltu fullnýta persónuafslátt maka?',
       description:
         "We ask the user if they want to use as much of the spouse's personal allowance as they can.",
     },
