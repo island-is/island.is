@@ -299,7 +299,7 @@ export class EndorsementService {
     )
 
     return this.endorsementModel.bulkCreate(endorsements, {
-      ignoreDuplicates: true, // this ignores existing endorsements in this list conflicts
+      ignoreDuplicates: true, // this ignores existing endorsements in this list conflicting
       returning: true,
     })
   }
