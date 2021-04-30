@@ -1,61 +1,130 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import gql from 'graphql-tag'
+import { useMutation, useLazyQuery } from '@apollo/client'
+import { Endorsement } from '../../types'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { PartyLetter } from '../../lib/dataSchema'
 
-const ENDORSEMENTS = [
-  {
-    date: '21.01.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
-    address: 'Baugholt 15',
-  },
-  {
-    date: '21.01.2021',
-    name: 'Þórhildur Tyrfingsdóttir',
-    nationalRegistry: '1991921335',
-    address: 'Miðskógar 17',
-  },
-  {
-    date: '21.01.2021',
-    name: 'Stefán Haukdal',
-    nationalRegistry: '1991921335',
-    address: 'Skúr hjá mömmu',
-    hasWarning: true,
-  },
-  {
-    date: '21.01.2021',
-    name: 'Brian Johannesen',
-    nationalRegistry: '1991921335',
-    address: 'Reykjavík',
-  },
-  {
-    date: '21.01.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
-    address: 'Baugholt 15',
-  },
-  {
-    date: '21.01.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
-    address: 'Baugholt 15',
-    hasWarning: true,
-  },
-]
+const GET_ENDORSEMENT_LIST = gql`
+  query endorsementSystemUserEndorsements {
+    endorsementSystemUserEndorsements {
+      id
+      endorser
+      endorsementListId
+      meta {
+        fullName
+        address
+      }
+      created
+      modified
+    }
+  }
+`
+const CREATE_ENDORSEMENT_LIST = gql`
+  mutation endorsementSystemCreateEndorsementList(
+    $input: CreateEndorsementListDto!
+  ) {
+    endorsementSystemCreateEndorsementList(input: $input) {
+      id
+      title
+      description
+      closedDate
+      endorsementMeta
+      tags
+      owner
+    }
+  }
+`
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
+  const answers = (application as any).answers as PartyLetter
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState(ENDORSEMENTS)
+  const [endorsements, setEndorsements] = useState<Endorsement[]>()
   const [showWarning, setShowWarning] = useState(false)
 
+  const [createEndorsementList, { loading: creatingLoad }] = useMutation(
+    CREATE_ENDORSEMENT_LIST,
+  )
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  const [getEndorsementList, { loading, error }] = useLazyQuery(
+    GET_ENDORSEMENT_LIST,
+    {
+      pollInterval: 2000,
+      onCompleted: async ({ endorsementSystemUserEndorsements }) => {
+        if (!loading && endorsementSystemUserEndorsements) {
+          const hasEndorsements =
+            !error && !loading && endorsementSystemUserEndorsements?.length
+              ? endorsementSystemUserEndorsements.length > 0
+              : false
+          const mapToEndorsementList: Endorsement[] = hasEndorsements
+            ? endorsementSystemUserEndorsements.map((x: any) => ({
+                date: x.created,
+                name: x.meta.fullName,
+                nationalId: x.endorser,
+                address: x.meta.address ? x.meta.address : '',
+                hasWarning: false,
+                id: x.id,
+              }))
+            : undefined
+          setEndorsements(mapToEndorsementList)
+        }
+      },
+    },
+  )
+
+  const onCreateEndorsementList = async () => {
+    const createEndorsement = await createEndorsementList({
+      variables: {
+        input: {
+          title: answers.party.name,
+          description: answers.party.letter,
+          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: ['partyLetterNordausturkjordaemi2021'],
+          validationRules: [],
+        },
+      },
+    })
+    if (!creatingLoad && createEndorsement.data) {
+      const endorsementId =
+        createEndorsement.data?.endorsementSystemCreateEndorsementList?.id ??
+        undefined
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              endorsementListId: endorsementId,
+              ...application.answers,
+            },
+          },
+          locale,
+        },
+      }).then((response) => {
+        application.answers = response.data?.updateApplication?.answers
+        getEndorsementList()
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (application.answers.endorsementListId === undefined) {
+      onCreateEndorsementList()
+    } else {
+      getEndorsementList()
+    }
+  })
+
   const namesCountString = formatMessage(
-    ENDORSEMENTS.length > 1
+    endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
@@ -69,11 +138,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         linkUrl={window.location.href}
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text
-        variant="h3"
-        marginBottom={2}
-        marginTop={5}
-      >{`${ENDORSEMENTS.length} ${namesCountString}`}</Text>
+      <Text variant="h3" marginBottom={2} marginTop={5}>{`${
+        endorsements && endorsements.length
+      } ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
           display="flex"
@@ -88,8 +155,12 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setShowWarning(!showWarning)
               setSearchTerm('')
               showWarning
-                ? setEndorsements(ENDORSEMENTS)
-                : setEndorsements(endorsements.filter((x) => x.hasWarning))
+                ? setEndorsements(endorsements)
+                : setEndorsements(
+                    endorsements
+                      ? endorsements.filter((x) => x.hasWarning)
+                      : endorsements,
+                  )
             }}
           />
           <Input
@@ -102,7 +173,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             onChange={(e) => {
               setSearchTerm(e.target.value)
               setEndorsements(
-                ENDORSEMENTS.filter((x) => x.name.startsWith(e.target.value)),
+                endorsements
+                  ? endorsements.filter((x) =>
+                      x.name.startsWith(e.target.value),
+                    )
+                  : endorsements,
               )
             }}
           />
