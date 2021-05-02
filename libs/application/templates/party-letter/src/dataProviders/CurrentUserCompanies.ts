@@ -2,7 +2,6 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  Application,
 } from '@island.is/application/core'
 import { CurrentUserCompanies } from '@island.is/api/schema'
 
@@ -17,7 +16,7 @@ type GetUserCompaniesResponse = {
 export class CurrentUserCompaniesProvider extends BasicDataProvider {
   type = 'CurrentUserCompanies'
 
-  async provide(application: Application): Promise<UserCompany[]> {
+  async provide(): Promise<UserCompany[]> {
     const query = `
       query GetUserCompanies {
         rskCurrentUserCompanies {
