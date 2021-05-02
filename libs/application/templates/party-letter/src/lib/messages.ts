@@ -73,12 +73,12 @@ export const m: MessageDir = {
     },
     nameCount: {
       id: 'ple.application:endorsement.list.name.count',
-      defaultMessage: 'nafn á lista {endorsementCount}',
+      defaultMessage: 'nafn á lista ({endorsementCount})',
       description: 'X name on list',
     },
     namesCount: {
       id: 'ple.application:endorsement.list.names.count',
-      defaultMessage: 'nöfn á lista {endorsementCount}',
+      defaultMessage: 'nöfn á lista ({endorsementCount})',
       description: 'X names on list',
     },
     invalidEndorsements: {
