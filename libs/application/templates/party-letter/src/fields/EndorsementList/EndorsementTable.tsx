@@ -35,7 +35,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
           {formatKennitala(endorsement.nationalId)}
         </T.Data>
         <T.Data
-          key={endorsement.id + endorsement.address}
+          key={endorsement.id}
           box={{
             background: endorsement.hasWarning ? 'yellow200' : 'white',
             textAlign: 'right',
@@ -43,7 +43,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         >
           {endorsement.hasWarning ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address}
+              {endorsement.address.streetAddress}
               <Box marginLeft={2}>
                 <Tooltip
                   color="blue400"
@@ -53,7 +53,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            endorsement.address
+            endorsement.address.streetAddress
           )}
         </T.Data>
       </T.Row>

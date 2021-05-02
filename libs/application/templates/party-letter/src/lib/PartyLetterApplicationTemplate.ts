@@ -7,7 +7,7 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import { answerValidators } from './answerValidators'
+import { API_MODULE_ACTIONS } from '../constants'
 import { PartyLetterSchema } from './dataSchema'
 
 type ReferenceTemplateEvent =
@@ -65,6 +65,9 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+          },
           roles: [
             {
               id: Roles.SIGNATUREE,
