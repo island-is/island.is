@@ -1,4 +1,3 @@
-import get from 'lodash/get'
 import {
   buildCustomField,
   buildDataProviderItem,
@@ -6,7 +5,6 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
@@ -16,6 +14,7 @@ import {
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
+import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
@@ -74,36 +73,13 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.title,
               description: parentalLeaveFormMessages.selectChild.description,
-              condition: (answers, externalData) => {
-                const children = get(
-                  externalData,
-                  'children.data.children',
-                  [],
-                ) as unknown[]
-
-                return children.length > 0
-              },
+              condition: (_, externalData) =>
+                isEligibleForParentalLeave(externalData),
               children: [
-                buildRadioField({
+                buildCustomField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.title,
-                  width: 'full',
-                  options: (application) => {
-                    const children = get(
-                      application.externalData,
-                      'children.data.children',
-                      [],
-                    ) as {
-                      dateOfBirth: string
-                      expectedDateOfBirth: string
-                    }[]
-
-                    return children.map((child, index) => ({
-                      value: index.toString(),
-                      label: child.expectedDateOfBirth,
-                    }))
-                  },
-                  largeButtons: true,
+                  title: 'Veldu barn',
+                  component: 'ChildSelector',
                 }),
                 buildSubmitField({
                   id: 'toDraft',
@@ -124,15 +100,8 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'thankYou',
               title: 'Nú getur þú byrjað umsóknina',
               component: 'Conclusion',
-              condition: (_, externalData) => {
-                const children = get(
-                  externalData,
-                  'children.data.children',
-                  [],
-                ) as unknown[]
-
-                return children.length > 0
-              },
+              condition: (_, externalData) =>
+                isEligibleForParentalLeave(externalData),
             }),
             // TODO: Custom component with a lot more explanation of why you may not see any children
             buildDescriptionField({

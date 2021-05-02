@@ -1,10 +1,10 @@
+import get from 'lodash/get'
+
 import {
   Application,
   buildAsyncSelectField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -24,6 +24,7 @@ import {
   getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
+  getSelectedChild,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -100,8 +101,13 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: () => {
-                // TODO this screen is only for the primary parent
+              condition: (answers, externalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (selectedChild !== null) {
+                  return selectedChild.parentalRelation === 'primary'
+                }
+
                 return true
               },
               children: [

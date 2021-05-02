@@ -1,7 +1,11 @@
 import get from 'lodash/get'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+
 import {
   Application,
   DataProviderResult,
+  ExternalData,
+  FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
@@ -12,11 +16,15 @@ import { parentalLeaveFormMessages } from './lib/messages'
 
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
+import {
+  ParentalLeave,
+  PregnancyStatus,
+  ChildInformation,
+  ChildrenAndExistingApplications,
+} from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -190,4 +198,33 @@ export const getAllPeriodDates = (periods: Period[]) => {
   )
 
   return dates.map((d) => new Date(d))
+}
+
+export const getSelectedChild = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedChildIndex = get(answers, 'selectedChild') as string
+  const selectedChild = get(
+    externalData,
+    `children.data.children[${selectedChildIndex}]`,
+    null,
+  ) as ChildInformation | null
+
+  return selectedChild
+}
+
+export const isEligibleForParentalLeave = (
+  externalData: ExternalData,
+): boolean => {
+  const { children, existingApplications } = get(
+    externalData,
+    'children.data',
+    {
+      children: [],
+      existingApplications: [],
+    },
+  ) as ChildrenAndExistingApplications
+
+  return children.length > 0 || existingApplications.length > 0
 }

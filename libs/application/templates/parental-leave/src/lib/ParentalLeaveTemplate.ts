@@ -1,6 +1,7 @@
 import { assign } from 'xstate'
 
 import set from 'lodash/set'
+import get from 'lodash/get'
 import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -25,6 +26,7 @@ import {
   needsOtherParentApproval,
   isDev,
 } from './parentalLeaveTemplateUtils'
+import { getSelectedChild } from '../parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -82,6 +84,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
+        exit: 'attemptToSavePrimaryParentAsOtherParent',
         meta: {
           name: States.PREREQUISITES,
           lifecycle: {
@@ -659,6 +662,32 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      attemptToSavePrimaryParentAsOtherParent: assign((context) => {
+        const { application } = context
+        const { answers, externalData } = application
+
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        if (!selectedChild) {
+          return context
+        }
+
+        if (selectedChild.parentalRelation === 'primary') {
+          return context
+        }
+
+        // Current parent is secondary parent, this will set otherParentId to the id of the primary parent
+        set(
+          answers,
+          'otherParentId',
+          selectedChild.primaryParentNationalRegistryId,
+        )
+
+        return {
+          ...context,
+          application,
+        }
+      }),
     },
   },
   mapUserToRole(
