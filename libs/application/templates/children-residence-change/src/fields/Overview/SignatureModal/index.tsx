@@ -26,18 +26,20 @@ const SignatureModal = ({
   onClose,
 }: SignatureModalProps) => {
   const { formatMessage } = useIntl()
+  const { status, modalOpen, content } = fileSignatureState
   const hasError = [
     FileSignatureStatus.REQUEST_ERROR,
     FileSignatureStatus.UPLOAD_ERROR,
-  ].includes(fileSignatureState.status)
-  const isRequest = fileSignatureState.status === FileSignatureStatus.REQUEST
-  const isUpload = fileSignatureState.status === FileSignatureStatus.UPLOAD
+  ].includes(status)
+  const isRequest = status === FileSignatureStatus.REQUEST
+  const isUpload = status === FileSignatureStatus.UPLOAD
+  const isSuccess = status === FileSignatureStatus.SUCCESS
   return (
     <ModalBase
       baseId="signatureDialog"
       className={styles.modal}
       modalLabel={formatMessage(signatureModal.general.title)}
-      isVisible={fileSignatureState.modalOpen}
+      isVisible={modalOpen}
       onVisibilityChange={(visibility: boolean) => {
         if (!visibility) {
           onClose()
@@ -53,7 +55,7 @@ const SignatureModal = ({
           <Logo id="modal" iconOnly={true} />
         </Box>
         <Text variant="h2" marginBottom={1} lineHeight="md">
-          {formatMessage(fileSignatureState.content.title)}
+          {formatMessage(content.title)}
         </Text>
         {isRequest ? (
           <>
@@ -61,36 +63,33 @@ const SignatureModal = ({
             <SkeletonLoader height={20} width="50%" space={1} />
           </>
         ) : (
-          fileSignatureState.content?.message && (
-            <Text>{formatMessage(fileSignatureState.content.message)}</Text>
-          )
+          content.message && <Text>{formatMessage(content.message)}</Text>
         )}
-        <Box
-          className={cn(styles.controlCodeContainer.general, {
-            [styles.controlCodeContainer.hide]: hasError,
-          })}
-        >
-          {isUpload ? (
-            <>
-              <Text lineHeight="xl" variant="small">
-                {formatMessage(signatureModal.security.numberLabel)}
-              </Text>
-              <Text lineHeight="sm" variant="h1">
-                {controlCode}
-              </Text>
-            </>
-          ) : (
-            <Icon
-              className={cn(styles.iconContainer.general, {
-                [styles.iconContainer.hideIcon]: isRequest,
-              })}
-              color="blue400"
-              icon="checkmarkCircle"
-              size="large"
-              type="filled"
-            />
-          )}
-        </Box>
+        {/* We only show the box when there is no error */}
+        {!hasError && (
+          <Box className={styles.controlCodeContainer}>
+            {/* isUpload and isSuccess can never both be 'true' */}
+            {isUpload && (
+              <>
+                <Text lineHeight="xl" variant="small">
+                  {formatMessage(signatureModal.security.numberLabel)}
+                </Text>
+                <Text lineHeight="sm" variant="h1">
+                  {controlCode}
+                </Text>
+              </>
+            )}
+            {isSuccess && (
+              <Icon
+                className={styles.iconContainer}
+                color="blue400"
+                icon="checkmarkCircle"
+                size="large"
+                type="filled"
+              />
+            )}
+          </Box>
+        )}
         <Box marginTop={6} display="flex" justifyContent="center">
           {hasError ? (
             <Button

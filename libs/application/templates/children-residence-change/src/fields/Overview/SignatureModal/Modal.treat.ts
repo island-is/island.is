@@ -54,37 +54,27 @@ export const logoWrapper = style({
   },
 })
 
-export const controlCodeContainer = styleMap({
-  general: {
-    background: theme.color.blue100,
-    height: '96px',
-    marginTop: theme.spacing[4],
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    textAlign: 'center',
-    borderRadius: theme.border.radius.large,
-    '@media': {
-      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-        height: '112px',
-      },
+export const controlCodeContainer = style({
+  background: theme.color.blue100,
+  height: '96px',
+  marginTop: theme.spacing[4],
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  overflow: 'hidden',
+  textAlign: 'center',
+  borderRadius: theme.border.radius.large,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      height: '112px',
     },
-  },
-  hide: {
-    display: 'none',
   },
 })
 
-export const iconContainer = styleMap({
-  general: {
-    height: '50px',
-    width: '50px',
-  },
-  hideIcon: {
-    display: 'none',
-  },
+export const iconContainer = style({
+  height: '50px',
+  width: '50px',
 })
 
 export const controlCode = style({
