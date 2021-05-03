@@ -2,7 +2,6 @@ import {
   IdpProvider,
   IdpProviderService,
   AccessService,
-  AdminAccess,
   ApiScopeUserAccess,
   ApiScopeUser,
 } from '@island.is/auth-api-lib'
@@ -12,12 +11,7 @@ import { IdpProviderController } from './idp-provider.controller'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      IdpProvider,
-      AdminAccess,
-      ApiScopeUserAccess,
-      ApiScopeUser,
-    ]),
+    SequelizeModule.forFeature([IdpProvider, ApiScopeUserAccess, ApiScopeUser]),
   ],
   controllers: [IdpProviderController],
   providers: [IdpProviderService, AccessService],
