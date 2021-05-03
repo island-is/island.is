@@ -34,7 +34,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.relatedArticles) {
               return undefined
             }
-            const { relatedArticles, ...prunedRelatedArticlesFields } = fields
+            const {
+              relatedArticles,
+              subArticles,
+              ...prunedRelatedArticlesFields
+            } = fields
             return {
               sys,
               fields: prunedRelatedArticlesFields,
