@@ -11,23 +11,25 @@ const ChildSupport = ({ field, error }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
   return (
     <>
-      <Box marginTop={3} marginBottom={5}>
+      <Box marginTop={3}>
         <DescriptionText text={childSupport.general.description} />
       </Box>
-      <CheckboxController
-        id={id}
-        disabled={disabled}
-        name={`${id}`}
-        error={error}
-        large={true}
-        defaultValue={[]}
-        options={[
-          {
-            value: 'yes',
-            label: formatMessage(childSupport.childBenefitCheckbox.label),
-          },
-        ]}
-      />
+      <Box marginTop={6}>
+        <CheckboxController
+          id={id}
+          disabled={disabled}
+          name={`${id}`}
+          error={error}
+          large={true}
+          defaultValue={[]}
+          options={[
+            {
+              value: 'yes',
+              label: formatMessage(childSupport.childBenefitCheckbox.label),
+            },
+          ]}
+        />
+      </Box>
     </>
   )
 }
