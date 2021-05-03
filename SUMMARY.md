@@ -132,6 +132,7 @@
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
     - [Party Application](libs/application/templates/party-application/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
+    - [Application Templates Public Debt Payment Plan](libs/application/templates/public-debt-payment-plan/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Components](libs/application/ui-components/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)

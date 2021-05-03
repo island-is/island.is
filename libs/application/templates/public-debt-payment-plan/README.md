@@ -1,4 +1,4 @@
-# application-templates-public-debt-payment-plan
+# Application Templates Public Debt Payment Plan
 
 This library was generated with [Nx](https://nx.dev).
 
