@@ -101,10 +101,18 @@ export const getChildrenAndExistingApplications = (
   }
 
   if (pregnancyStatus?.hasActivePregnancy) {
-    children.push({
-      expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
-      parentalRelation: 'primary',
-    })
+    const hasAlreadyAppliedForChild = existingApplications.find(
+      ({ expectedDateOfBirth }) =>
+        expectedDateOfBirth === pregnancyStatus.expectedDateOfBirth,
+    )
+
+    // TODO: revist this when we include twins in application
+    if (!hasAlreadyAppliedForChild) {
+      children.push({
+        expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
+        parentalRelation: 'primary',
+      })
+    }
   }
 
   return {

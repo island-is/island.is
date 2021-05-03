@@ -137,8 +137,6 @@ describe('getChildrenAndExistingApplications', () => {
   })
 
   it('should include child in list of children with primary relation when pregnancyStatus is defined', () => {
-    const children: ChildInformation[] = []
-
     const applicationsWhereApplicant: Application[] = []
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus: PregnancyStatus = {
@@ -165,6 +163,44 @@ describe('getChildrenAndExistingApplications', () => {
     )
 
     expect(result.children.length).toBe(1)
+    expect(result).toStrictEqual(expected)
+  })
+
+  it('should not duplicate expected date of birth in in result.children and result.existingApplications when primary parent has already applied for her unborn child', () => {
+    const childFromPregnancyStatus: ChildInformation = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: 'primary',
+    }
+
+    const children: ChildInformation[] = [childFromPregnancyStatus]
+
+    const applicationsWhereApplicant: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+    ]
+    const applicationsWhereOtherParent: Application[] = []
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const expected: ChildrenAndExistingApplications = {
+      children: [],
+      existingApplications: [
+        {
+          applicationId: applicationsWhereApplicant[0].id,
+          expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+        },
+      ],
+    }
+
+    const result = getChildrenAndExistingApplications(
+      applicationsWhereApplicant,
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
+    expect(result.existingApplications.length).toBe(1)
+    expect(result.children.length).toBe(0)
     expect(result).toStrictEqual(expected)
   })
 })
