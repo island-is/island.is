@@ -42,7 +42,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
 
     // National Id values
     tokenInput.type = 'hidden'
-    tokenInput.name = 'token'
+    tokenInput.name = '__accessToken'
     tokenInput.value = userInfo.access_token
 
     document.body.appendChild(form)

@@ -23,12 +23,12 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
-@ApiTags('admin-access')
-@Controller('backend/admin-access')
+@UseGuards(IdsUserGuard, ScopesGuard)
+@ApiTags('api-access')
+@Controller('backend/api-access')
 export class AccessController {
   constructor(private readonly accessService: AccessService) {}
 

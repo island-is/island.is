@@ -7,19 +7,19 @@ import {
 } from '@island.is/application/core'
 import { section, application } from '../lib/messages'
 
-export const FundingGovernmentProjectsFormInReview: Form = buildForm({
-  id: 'FundingGovernmentProjectsFormInReview',
-  title: section.stepOne.pageTitle,
-  mode: FormModes.PENDING,
+export const PaymentPlanForm: Form = buildForm({
+  id: 'PaymentPlanForm',
+  title: application.name,
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'stepOne',
-      title: section.stepOne.pageTitle,
+      title: section.stepOne,
       children: [
         buildDescriptionField({
           id: 'confirmationCustomField',
-          title: application.general.name,
-          description: 'In Review',
+          title: application.name,
+          description: 'Umsókn',
         }),
       ],
     }),

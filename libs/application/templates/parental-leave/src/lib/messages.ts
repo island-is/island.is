@@ -590,6 +590,12 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Makinn þinn fær tilkynningu og þarf að samþykkja þessa beiðni. Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
       description: 'Translation needed',
     },
+    useAsMuchAsPossibleFromSpouse: {
+      id: 'pl.application:personal.allowance.useAsMuchAsPossibleFromSpouse',
+      defaultMessage: 'Viltu fullnýta persónuafslátt maka?',
+      description:
+        "We ask the user if they want to use as much of the spouse's personal allowance as they can.",
+    },
     useAsMuchAsPossible: {
       id: 'pl.application:personal.allowance.useAsMuchAsPossible',
       defaultMessage:

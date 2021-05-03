@@ -15,10 +15,10 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('idp-restriction')
 @Controller('backend/idp-restriction')
 export class IdpRestrictionController {

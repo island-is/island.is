@@ -12,7 +12,6 @@ import {
   ApiScope,
   IdentityResourceUserClaim,
   AccessService,
-  AdminAccess,
   ApiScopeUserAccess,
   ApiScopeUser,
 } from '@island.is/auth-api-lib'
@@ -28,7 +27,6 @@ import {
       ApiResourceUserClaim,
       ApiResourceScope,
       ApiResourceSecret,
-      AdminAccess,
       ApiScopeUserAccess,
       ApiScopeUser,
     ]),
