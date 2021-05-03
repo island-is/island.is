@@ -42,8 +42,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
-          title: application.general.name,
-          description: application.general.description,
+          title: application.name,
+          description: application.description,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -71,8 +71,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
-          title: application.general.name,
-          description: application.general.description,
+          title: application.name,
+          description: application.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [

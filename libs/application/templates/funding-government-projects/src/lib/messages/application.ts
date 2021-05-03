@@ -1,16 +1,17 @@
 import { defineMessages } from 'react-intl'
+import { ApplicationConfigurations } from '@island.is/application/core'
+const t = ApplicationConfigurations.FundingGovernmentProjects.translation
 
-export const application = {
-  general: defineMessages({
-    name: {
-      id: 'affgp.application:general.name',
-      defaultMessage: 'Funding For Government Projects',
-      description: 'Name of the application',
-    },
-    description: {
-      id: 'affgp.application:general.description',
-      defaultMessage: 'Application description',
-      description: 'Application description',
-    },
-  }),
-}
+// Global string for the application
+export const application = defineMessages({
+  name: {
+    id: `${t}:application.name`,
+    defaultMessage: 'Umsókn um fjármögnun ríkisverkefnis',
+    description: 'Name of the Funding Government Projects application',
+  },
+  description: {
+    id: `${t}:application.description`,
+    defaultMessage: 'Lýsing á umsókn um fjármögnun ríkisverkefnis',
+    description: 'Description of the Funding Government Projects application',
+  },
+})
