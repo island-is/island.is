@@ -86,7 +86,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
       <Text variant="h3" marginBottom={2} marginTop={5}>
-        {endorsements && endorsements.length && `${namesCountString}`}
+        {`${namesCountString}`}
       </Text>
       <Box marginTop={2}>
         <Box
