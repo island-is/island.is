@@ -9,7 +9,9 @@ import {
   Stack,
   Text,
   ToggleSwitchLink,
+  Hidden,
 } from '@island.is/island-ui/core'
+import { Sticky } from '@island.is/web/components'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -96,7 +98,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
           <AffectingRegulations regulation={regulation} texts={texts} />
 
           <div className={waterMarkClass}>
-            <Text marginTop={[2, 3, 4, 5]} marginBottom={[1]}>
+            <Text marginTop={[2, 3, 4, 5]} marginBottom={1}>
               {name}
             </Text>
             <Text as="h1" variant="h3" marginBottom={[2, 4]}>
@@ -121,39 +123,47 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
         </>
       }
       sidebar={
-        <Stack space={3}>
-          <Button
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-            onClick={() => {
-              window.history.length > 2
-                ? router.back()
-                : router.push(linkResolver('regulationshome').href)
-            }}
-          >
-            {txt('goBack')}
-          </Button>
+        <Sticky>
+          <Stack space={3}>
+            <Hidden print={true}>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                onClick={() => {
+                  window.history.length > 2
+                    ? router.back()
+                    : router.push(linkResolver('regulationshome').href)
+                }}
+              >
+                {txt('goBack')}
+              </Button>
+            </Hidden>
 
-          <RegulationInfoBox regulation={regulation} texts={texts} />
-          <RegulationEffectsBox regulation={regulation} texts={texts} />
+            <RegulationInfoBox regulation={regulation} texts={texts} />
+            <Hidden print={true}>
+              <RegulationEffectsBox regulation={regulation} texts={texts} />
+            </Hidden>
 
-          {showTimeline ? (
-            <RegulationTimeline regulation={regulation} texts={texts} />
-          ) : (
-            <RegulationChangelog regulation={regulation} texts={texts} />
-          )}
-          <button
-            onClick={() => setShowTimeline(!showTimeline)}
-            {...((v) => ({
-              'aria-label': v,
-              title: v,
-            }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
-            style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
-          />
-        </Stack>
+            <Hidden print={true}>
+              {showTimeline ? (
+                <RegulationTimeline regulation={regulation} texts={texts} />
+              ) : (
+                <RegulationChangelog regulation={regulation} texts={texts} />
+              )}
+              <button
+                onClick={() => setShowTimeline(!showTimeline)}
+                {...((v) => ({
+                  'aria-label': v,
+                  title: v,
+                }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
+                style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
+              />
+            </Hidden>
+          </Stack>
+        </Sticky>
       }
     />
   )

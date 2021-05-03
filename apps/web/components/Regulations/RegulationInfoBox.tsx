@@ -1,6 +1,6 @@
 import React from 'react'
 import * as s from './RegulationsSidebarBox.treat'
-import { Button, Text } from '@island.is/island-ui/core'
+import { Button, Hidden, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
 import {
@@ -87,21 +87,23 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         )
       )}
 
-      <Text marginBottom={2}>
-        <Button
-          // FIXME: enable this icon when design is ready and implemented
-          // icon="print"
-          // iconType="outline"
-          size="small"
-          type="button"
-          variant="text"
-          onClick={() => {
-            window.print()
-          }}
-        >
-          {txt('printThisVersion')}
-        </Button>
-      </Text>
+      <Hidden print={true}>
+        <Text marginBottom={2}>
+          <Button
+            // FIXME: enable this icon when design is ready and implemented
+            // icon="print"
+            // iconType="outline"
+            size="small"
+            type="button"
+            variant="text"
+            onClick={() => {
+              window.print()
+            }}
+          >
+            {txt('printThisVersion')}
+          </Button>
+        </Text>
+      </Hidden>
     </RegulationsSidebarBox>
   )
 }
