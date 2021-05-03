@@ -1,8 +1,9 @@
 import { ZodObject } from 'zod'
-import { Condition } from './Condition'
 import { MessageDescriptor } from 'react-intl'
-import { BoxProps } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
+
+import { Condition } from './Condition'
 import { Application } from './Application'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
@@ -10,9 +11,14 @@ export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
 ) => void
 
-// TODO: refactor { values?: object } into { values?: RecordObject }
-export type StaticTextObject = MessageDescriptor & { values?: object }
+export type StaticTextObject = MessageDescriptor & {
+  values?: RecordObject<any>
+}
 export type StaticText = StaticTextObject | string
+export type FormatMessage = (
+  descriptor: StaticText,
+  values?: RecordObject<any>,
+) => string
 
 export type FormText =
   | StaticText

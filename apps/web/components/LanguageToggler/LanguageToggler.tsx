@@ -1,4 +1,4 @@
-import React, { FC, useContext, ReactElement } from 'react'
+import React, { useContext, ReactElement } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
 import {
@@ -15,16 +15,18 @@ import { ContentLanguage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
-export const LanguageToggler: FC<{
+type LanguageTogglerProps = {
   dialogId?: string
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
-}> = ({
+}
+
+export const LanguageToggler = ({
   hideWhenMobile,
   buttonColorScheme = 'default',
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
-}) => {
+}: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
   const { contentfulId, globalNamespace } = useContext(GlobalContext)

@@ -14,20 +14,27 @@ export class FormControl {
   id: string
   fields: Record<string, FormItem>
   title: string
-  sectionTitle1?: string
   editTitle?: string
   help: string
   conditionalHelp?: string
   errorMessage?: string
-  saveButton: string
-  cancelButton: string
-  addButton?: string
-  removeButton?: string
   removeConfirmation?: string
   noActiveConnections?: NoActiveConnectionsTranslation
   infoModal?: InfoModalTranslation
   infoEdit?: string
   infoCreate?: string
+  buttons: Record<string, Button>
+  sections: Record<string, Section>
+}
+
+export class Button {
+  text: string
+  helpText?: string
+}
+
+export class Section {
+  title: string
+  properties?: Record<string, Property>
 }
 
 export class Environment {
@@ -61,21 +68,11 @@ export class Paginator {
 export class ListControl {
   id: string
   title: string
-  createNewItem?: string
   search?: FormItem
-  searchButton?: string
+  buttons: Record<string, Button>
   removeConfirmation?: string
-  removeButton?: string
-  editButton?: string
-  viewButton?: string
-  exportButton?: string
   columns?: Record<string, ColumnHeader>
-  active?: string
-  deactivated?: string
-  activateButton?: string
-  deactivateButton?: string
-  notFound?: string
-  sectionTitle1?: string
+  sections: Record<string, Section>
 }
 
 export class HeaderTranslation {
@@ -91,6 +88,10 @@ export class NavigationItem {
 
 export class ColumnHeader {
   headerText: string
+}
+
+export class Property {
+  name: string
 }
 
 export class FormItem {

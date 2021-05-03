@@ -31,11 +31,13 @@ const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
+  const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
       input: {
         id: applicationId,
       },
+      locale,
     },
     // Setting this so that refetch causes a re-render
     // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392
@@ -46,10 +48,6 @@ const ApplicationLoader: FC<{
   })
   const application = data?.applicationApplication
 
-  if (!applicationId || error) {
-    return <NotFound />
-  }
-
   if (loading) {
     return (
       <Box
@@ -59,9 +57,13 @@ const ApplicationLoader: FC<{
         width="full"
         className={styles.root}
       >
-        <LoadingIcon animate color="blue400" size={50} />
+        <LoadingIcon animate size={50} />
       </Box>
     )
+  }
+
+  if (!applicationId || error) {
+    return <NotFound />
   }
 
   return (

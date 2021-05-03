@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Text,
   Box,
@@ -42,11 +42,11 @@ export interface LatestNewsProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-export const AboutLatestNews: FC<LatestNewsProps> = ({
+export const AboutLatestNews = ({
   title,
   news,
   namespace,
-}) => {
+}: LatestNewsProps) => {
   const { linkResolver } = useLinkResolver()
   const [first, ...rest] = news
   const n = useNamespace(namespace)

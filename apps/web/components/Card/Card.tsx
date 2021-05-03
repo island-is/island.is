@@ -15,7 +15,6 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { ColorSchemeContext } from '@island.is/web/context'
-import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
@@ -25,6 +24,7 @@ export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
   href?: string
   title: string
+  subTitle?: string
 }
 
 const tagPropsDefaults: Omit<TagProps, 'children'> = {
@@ -33,6 +33,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 export interface CardProps {
   title: string
+  subTitle?: string
   image?: { title: string; url: string }
   description: string
   tags?: Array<CardTagsProps>
@@ -41,14 +42,15 @@ export interface CardProps {
   status?: string
 }
 
-export const Card: FC<CardProps> = ({
+export const Card = ({
   title,
+  subTitle,
   image,
   description,
   tags = [],
   link,
   status,
-}) => {
+}: CardProps) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
@@ -86,6 +88,20 @@ export const Card: FC<CardProps> = ({
       <GridRow direction={stackImage ? 'columnReverse' : 'row'}>
         <GridColumn key={1} span={isImage && !stackImage ? '8/12' : '12/12'}>
           <Stack space={1}>
+            {!!subTitle && (
+              <Text
+                as="h4"
+                variant="small"
+                fontWeight="semiBold"
+                color={titleColor}
+              >
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Box display="inlineFlex" flexGrow={1}>
+                    {subTitle}
+                  </Box>
+                </Box>
+              </Text>
+            )}
             <Text as="h3" variant="h3" color={titleColor}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box display="inlineFlex" flexGrow={1}>

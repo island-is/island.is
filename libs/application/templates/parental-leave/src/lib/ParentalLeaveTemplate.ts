@@ -12,12 +12,14 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 
+import { YES, API_MODULE_ACTIONS } from '../constants'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { YES, API_MODULE_ACTIONS } from '../constants'
-
+import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
@@ -39,6 +41,8 @@ enum Roles {
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
+
   // Draft flow
   DRAFT = 'draft',
 
@@ -71,14 +75,49 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
-  name: 'Umsókn um fæðingarorlof',
+  name: parentalLeaveFormMessages.shared.name,
+  translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: States.PREREQUISITES,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          progress: 0.25,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: States.DRAFT,
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
+          title: statesMessages.draftTitle,
+          description: statesMessages.draftDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.25,
           roles: [
             {
@@ -117,7 +156,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         exit: 'clearAssignees',
         meta: {
-          name: 'Needs other parent approval',
+          name: States.OTHER_PARENT_APPROVAL,
+          title: statesMessages.otherParentApprovalTitle,
+          description: statesMessages.otherParentApprovalDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -165,7 +207,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_ACTION]: {
         meta: {
-          name: 'Other parent requires action',
+          name: States.OTHER_PARENT_ACTION,
+          title: statesMessages.otherParentActionTitle,
+          description: statesMessages.otherParentActionDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -186,7 +231,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
         exit: 'saveEmployerNationalRegistryId',
         meta: {
-          name: 'Waiting to assign employer',
+          name: States.EMPLOYER_WAITING_TO_ASSIGN,
+          title: statesMessages.employerWaitingToAssignTitle,
+          description: statesMessages.employerWaitingToAssignDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -211,7 +259,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_APPROVAL]: {
         exit: 'clearAssignees',
         meta: {
-          name: 'Employer Approval',
+          name: States.EMPLOYER_APPROVAL,
+          title: statesMessages.employerApprovalTitle,
+          description: statesMessages.employerApprovalDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -253,7 +304,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_ACTION]: {
         meta: {
-          name: 'Employer requires action',
+          name: States.EMPLOYER_ACTION,
+          title: statesMessages.employerActionTitle,
+          description: statesMessages.employerActionDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -273,7 +327,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
-          name: 'Vinnumálastofnun Approval',
+          name: States.VINNUMALASTOFNUN_APPROVAL,
+          title: statesMessages.vinnumalastofnunApprovalTitle,
+          description: statesMessages.vinnumalastofnunApprovalDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -299,7 +356,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
-          name: 'Vinnumálastofnun requires action',
+          name: States.VINNUMALASTOFNUN_ACTION,
+          title: statesMessages.vinnumalastofnunActionTitle,
+          description: statesMessages.vinnumalastofnunActionDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -319,7 +379,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.APPROVED]: {
         meta: {
-          name: 'Approved',
+          name: States.APPROVED,
+          title: statesMessages.approvedTitle,
+          description: statesMessages.approvedDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -344,6 +407,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
+          title: statesMessages.editOrAddPeriodsTitle,
+          description: statesMessages.editOrAddPeriodsDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -379,7 +445,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
         exit: 'saveEmployerNationalRegistryId',
         meta: {
-          name: 'Waiting to assign employer to review period edits',
+          name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+          title: statesMessages.employerWaitingToAssignForEditsTitle,
+          description:
+            statesMessages.employerWaitingToAssignForEditsDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -404,7 +474,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
       [States.EMPLOYER_APPROVE_EDITS]: {
         meta: {
-          name: 'Employer is reviewing the period edits',
+          name: States.EMPLOYER_APPROVE_EDITS,
+          title: statesMessages.employerApproveEditsTitle,
+          description: statesMessages.employerApproveEditsDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -431,7 +504,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_EDITS_ACTION]: {
         exit: 'restorePeriodsFromTemp',
         meta: {
-          name: 'Employer rejected the period edits',
+          name: States.EMPLOYER_EDITS_ACTION,
+          title: statesMessages.employerEditsActionTitle,
+          description: statesMessages.employerEditsActionDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -455,7 +531,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         exit: 'clearTemp',
         meta: {
-          name: 'VMLST is reviewing the period edits',
+          name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          title: statesMessages.vinnumalastofnunApproveEditsTitle,
+          description: statesMessages.vinnumalastofnunApproveEditsDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -479,7 +558,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
         exit: 'restorePeriodsFromTemp',
         meta: {
-          name: 'VMLST rejected the period edits',
+          name: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          title: statesMessages.vinnumalastofnunEditsActionTitle,
+          description: statesMessages.vinnumalastofnunEditsActionDescription,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {

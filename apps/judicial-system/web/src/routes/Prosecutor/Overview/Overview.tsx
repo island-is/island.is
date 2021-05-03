@@ -327,9 +327,45 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {features.includes(Feature.CASE_FILES) && (
+                {(Boolean(workingCase.comments) ||
+                  Boolean(workingCase.caseFilesComments)) && (
                   <AccordionItem
                     id="id_5"
+                    label="Athugasemdir"
+                    labelVariant="h3"
+                  >
+                    {Boolean(workingCase.comments) && (
+                      <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                        <Box marginBottom={1}>
+                          <Text variant="h4" as="h4">
+                            Athugasemdir vegna málsmeðferðar
+                          </Text>
+                        </Box>
+                        <Text>
+                          <span className={styles.breakSpaces}>
+                            {workingCase.comments}
+                          </span>
+                        </Text>
+                      </Box>
+                    )}
+                    {features.includes(Feature.CASE_FILES) &&
+                      Boolean(workingCase.caseFilesComments) && (
+                        <>
+                          <Text variant="h4" as="h4">
+                            Athugasemdir vegna rannsóknargagna
+                          </Text>
+                          <Text>
+                            <span className={styles.breakSpaces}>
+                              {workingCase.caseFilesComments}
+                            </span>
+                          </Text>
+                        </>
+                      )}
+                  </AccordionItem>
+                )}
+                {features.includes(Feature.CASE_FILES) && (
+                  <AccordionItem
+                    id="id_6"
                     label={`Rannsóknargögn ${`(${
                       workingCase.files ? workingCase.files.length : 0
                     })`}`}
@@ -343,17 +379,6 @@ export const Overview: React.FC = () => {
                     </Box>
                   </AccordionItem>
                 )}
-                <AccordionItem
-                  id="id_6"
-                  label="Athugasemdir vegna málsmeðferðar"
-                  labelVariant="h3"
-                >
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
-                </AccordionItem>
               </Accordion>
             </Box>
             <Box className={styles.prosecutorContainer}>

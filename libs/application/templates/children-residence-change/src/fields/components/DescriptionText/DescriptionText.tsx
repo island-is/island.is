@@ -1,7 +1,14 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Box, Text, BulletList, Bullet } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  BulletList,
+  Bullet,
+  Link,
+  TextProps,
+} from '@island.is/island-ui/core'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
   return (
@@ -13,7 +20,8 @@ const BulletListBox = ({ children }: { children: ReactNode }) => {
 
 interface Props {
   text: MessageDescriptor
-  format?: { [key: string]: string }
+  format?: { [key: string]: string | number }
+  textProps?: TextProps
 }
 
 const headingOverride = {
@@ -24,14 +32,20 @@ const headingOverride = {
   },
 }
 
-const textOverride = {
-  component: Text,
+const textOverrideProps: TextProps = {
+  marginBottom: 2,
+}
+
+const anchorOverride = {
+  component: Link,
   props: {
-    marginBottom: 2,
+    color: 'blue600',
+    underline: 'normal',
+    underlineVisibility: 'always',
   },
 }
 
-const DescriptionText = ({ text, format }: Props) => {
+const DescriptionText = ({ text, format, textProps }: Props) => {
   const { formatMessage } = useIntl()
   const markdown = formatMessage(text, format)
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
@@ -43,12 +57,19 @@ const DescriptionText = ({ text, format }: Props) => {
       options={{
         forceBlock: true,
         overrides: {
-          p: textOverride,
-          span: textOverride,
+          p: {
+            component: Text,
+            props: { ...textOverrideProps, ...textProps },
+          },
+          span: {
+            component: Text,
+            props: { ...textOverrideProps, ...textProps },
+          },
           h1: headingOverride,
           h2: headingOverride,
           h3: headingOverride,
           h4: headingOverride,
+          a: anchorOverride,
           ul: {
             component: BulletListBox,
           },

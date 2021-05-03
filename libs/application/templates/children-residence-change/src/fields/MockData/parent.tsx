@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -18,14 +18,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
 
   const { fields, append, remove } = useFieldArray({ name: id })
 
-  useEffect(() => {
-    // The repeater should include one line by default
-    if (fields.length === 0) {
-      handleAddPerson()
-    }
-  }, [fields])
-
-  const handleAddPerson = () =>
+  const handleAddPerson = useCallback(() => {
     append({
       name: '',
       nationalId: '',
@@ -35,7 +28,16 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
         city: '',
       },
     })
+  }, [append])
+
   const handleRemovePerson = (index: number) => remove(index)
+
+  useEffect(() => {
+    // The repeater should include one line by default
+    if (fields.length === 0) {
+      handleAddPerson()
+    }
+  }, [fields, handleAddPerson])
 
   return (
     <Box marginTop={5}>

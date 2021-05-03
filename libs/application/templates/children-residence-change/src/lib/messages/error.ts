@@ -44,5 +44,11 @@ export const error = {
       description:
         'Error message when durationType is temporary and no date is selected',
     },
+    counterParty: {
+      id: 'crc.application:error.counterParty',
+      defaultMessage: 'Fylla þarf út netfang eða símanúmer',
+      description:
+        'Error message when neither email or phonenumber are filled in for counter party',
+    },
   }),
 }

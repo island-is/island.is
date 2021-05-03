@@ -7,10 +7,12 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 
 import { BackendAPI } from '../../../services'
-import { AuditService } from '../audit'
 import { CreateUserInput, UpdateUserInput, UserQueryInput } from './dto'
 import { User } from './user.model'
 
@@ -18,7 +20,7 @@ import { User } from './user.model'
 @Resolver(() => User)
 export class UserResolver {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -30,7 +32,7 @@ export class UserResolver {
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USERS,
       backendApi.getUsers(),
@@ -47,7 +49,7 @@ export class UserResolver {
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USER,
       backendApi.getUser(input.id),
@@ -73,7 +75,7 @@ export class UserResolver {
   ): Promise<User> {
     this.logger.debug('Creating user')
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_USER,
       backendApi.createUser(input),
@@ -92,7 +94,7 @@ export class UserResolver {
 
     this.logger.debug(`Updating user ${id}`)
 
-    return this.auditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_USER,
       backendApi.updateUser(id, updateUser),

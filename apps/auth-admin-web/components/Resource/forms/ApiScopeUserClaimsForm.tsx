@@ -127,18 +127,19 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="api-scope-user-claims__button__cancel"
                   onClick={props.handleBack}
+                  title={localization.buttons['cancel'].helpText}
                 >
-                  {localization.cancelButton}
+                  {localization.buttons['cancel'].text}
                 </button>
               </div>
               <div className="api-scope-user-claims__button__container">
                 <button
                   type="button"
                   className="api-scope-user-claims__button__save"
-                  value={localization.saveButton}
                   onClick={props.handleNext}
+                  title={localization.buttons['save'].helpText}
                 >
-                  {localization.saveButton}
+                  {localization.buttons['save'].text}
                 </button>
               </div>
             </div>

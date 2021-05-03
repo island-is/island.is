@@ -47,9 +47,17 @@ current application and the new answer as parameters. The validators are only ru
 Behind the scenes, `application-core` has types and interfaces for state machines which are extended from [xstate](https://xstate.js.org/docs/).
 Each `state` in the application template state machine must include a `meta` object which describes the name of the state, what `roles` can access it, and what each role can do in said state.
 
-### States and status
+### States
 
-Each applications define their own states. It can be as much as needed depending on the application flow. You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41). To define the _final_ state of your application, XState has a property called `type: 'final'`. It can be defined multiple times for your application states. For example, the Meta Application (link above) is either approved or rejected, and in both case the application is in its final state.
+Each application defines their own [states](https://xstate.js.org/docs/guides/states.html#state-methods-and-properties). They can be as many as needed depending on how complicated or simple the application flow is.
+
+> A state is an abstract representation of a system (such as an application) at a specific point in time. As an application is interacted with, events cause it to change state. A finite state machine can be in only one of a finite number of states at any given time.
+
+You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
+
+#### Status
+
+To define the _final_ state of your application, XState has a property called `type: 'final'`. It can be defined multiple times for your application states. For example, the Meta Application (link above) is either approved or rejected, and in both case the application is in its final state. A final state is final, and there are no events that lead out of it.
 
 This `type: 'final'` is important because, out of it, we define a `status` column in the application model. This `status` is the same for every application template and give us the general progress of the application. We have, at the moment, 3 different status as follow, and let us filters and list applications by status type.
 
@@ -60,6 +68,39 @@ export enum ApplicationStatus {
   REJECTED = 'rejected',
 }
 ```
+
+#### Life cycle
+
+States can define their own life cycle:
+
+```typescript
+type StateLifeCycle =
+  | {
+      // Controls visibility from my pages + /umsoknir/:type when in current state
+      shouldBeListed: boolean
+      shouldBePruned: false
+    }
+  | {
+      shouldBeListed: boolean
+      shouldBePruned: true
+      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+      whenToPrune: number | ((application: Application) => Date)
+    }
+```
+
+By default states will not be pruned and will always be listed. The default options are defined in `libs/application/core/src/lib/constants.ts`.
+
+Sample use case:
+
+- An application template needs to validate some logic before "creating" the actual application, in this case "created means":
+  - visible to the user from my pages and application overview screen (`/umsoknir/:type`)
+  - not automatically pruned after a few hours of inactivity
+- The initial state will then define the life cycle property as following:
+  - `shouldBeListed: false` the application will not be listed in my pages or on `/umsoknir/:type`
+  - `shouldBePruned: true` inactive applications will be automatically pruned to not waste space in the database if they are not moved into another state after a certain period of time
+  - `whenToPrune: 12 * 3600 * 1000` the application can be deleted after 12 hours of inactivity
+
+These values are persisted into database for querying, so if an application has already been published and they are changed a database migration will also have to be included to update existing applications.
 
 ### Roles
 

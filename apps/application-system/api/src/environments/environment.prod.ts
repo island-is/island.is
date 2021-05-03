@@ -23,6 +23,10 @@ export default {
         region: process.env.EMAIL_REGION,
       },
     },
+    email: {
+      sender: process.env.EMAIL_FROM_NAME,
+      address: process.env.EMAIL_FROM,
+    },
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
@@ -48,5 +52,8 @@ export default {
   signingOptions: {
     url: process.env.DOKOBIT_URL,
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment

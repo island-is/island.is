@@ -6,6 +6,7 @@ import {
   ValidAnswers,
   formatAndParseAsHTML,
   buildFieldOptions,
+  RecordObject,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -31,9 +32,12 @@ import {
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
 
-import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// TODO: Bring back payment calculation info, once we have an api
+// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import {
@@ -46,8 +50,8 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../../types/schema'
-
 import { Period } from '../../types'
+import * as styles from './Review.treat'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -55,17 +59,35 @@ interface ReviewScreenProps {
   application: Application
   goToScreen?: (id: string) => void
   editable?: boolean
+  errors?: RecordObject
 }
+
+type selectOption = {
+  label: string
+  value: string
+}
+
+const RadioValue: FC = ({ children }) => (
+  <Box className={styles.radioValue}>
+    <Text>{children}</Text>
+  </Box>
+)
 
 const Review: FC<ReviewScreenProps> = ({
   application,
   goToScreen,
   editable = true,
+  errors,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
-
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const getSelectOptionLabel = (options: selectOption[], key: string) =>
+    options.find(
+      (option) =>
+        option.value === (getValueViaPath(application.answers, key) as string),
+    )?.label
 
   const [
     statefulOtherParentConfirmed,
@@ -117,23 +139,38 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
+  const [
+    statefulSelfEmployed,
+    setStatefulSelfEmployed,
+  ] = useState<ValidAnswers>(
+    getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    ) as ValidAnswers,
+  )
+
   const dob = getExpectedDateOfBirth(application)
-  const { data, error, loading } = useQuery(getEstimatedPayments, {
-    variables: {
-      input: {
-        dateOfBirth: dob,
-        period: [
-          {
-            from: '2021-01-01',
-            to: '2021-01-01',
-            ratio: 100,
-            approved: true,
-            paid: true,
-          },
-        ],
-      },
-    },
-  })
+
+  /* TODO: Bring back payment calculation info, once we have an api
+     https://app.asana.com/0/1182378413629561/1200214178491335/f
+  */
+  // const { data, error, loading } = useQuery(getEstimatedPayments, {
+  //   variables: {
+  //     input: {
+  //       dateOfBirth: dob,
+  //       period: [
+  //         {
+  //           from: '2021-01-01',
+  //           to: '2021-01-01',
+  //           ratio: 100,
+  //           approved: true,
+  //           paid: true,
+  //         },
+  //       ],
+  //     },
+  //   },
+  // })
+
   if (!dob) {
     return null
   }
@@ -201,14 +238,14 @@ const Review: FC<ReviewScreenProps> = ({
                     }}
                   />
                 ) : (
-                  <Text>
+                  <RadioValue>
                     {
                       getValueViaPath(
                         application.answers,
                         'otherParent',
                       ) as string[]
                     }
-                  </Text>
+                  </RadioValue>
                 )}
               </Box>
               {statefulOtherParentConfirmed === 'manual' && (
@@ -314,12 +351,10 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.pensionFund',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(
+                        pensionFundOptions,
+                        'payments.pensionFund',
+                      )}
                     </Text>
                   )}
                 </GridColumn>
@@ -336,12 +371,7 @@ const Review: FC<ReviewScreenProps> = ({
                     />
                   ) : (
                     <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.union',
-                        ) as string[]
-                      }
+                      {getSelectOptionLabel(unionOptions, 'payments.union')}
                     </Text>
                   )}
                 </GridColumn>
@@ -385,14 +415,14 @@ const Review: FC<ReviewScreenProps> = ({
                   }}
                 />
               ) : (
-                <Text>
+                <RadioValue>
                   {
                     getValueViaPath(
                       application.answers,
                       'usePrivatePensionFund',
                     ) as string[]
                   }
-                </Text>
+                </RadioValue>
               )}
 
               {statefulPrivatePension === YES && (
@@ -412,12 +442,10 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.pensionFund',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(
+                            privatePensionFundOptions,
+                            'payments.pensionFund',
+                          )}
                         </Text>
                       )}
                     </GridColumn>
@@ -434,12 +462,7 @@ const Review: FC<ReviewScreenProps> = ({
                         />
                       ) : (
                         <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.union',
-                            ) as string[]
-                          }
+                          {getSelectOptionLabel(unionOptions, 'payments.union')}
                         </Text>
                       )}
                     </GridColumn>
@@ -448,31 +471,79 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </Box>
           </AccordionItem>
+
           <AccordionItem
             id="id_1"
             label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
+            <Text variant="h5" marginTop={1} marginBottom={2}>
+              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
+            </Text>
+
             {editable ? (
-              <Box paddingY={4}>
-                <Input
-                  id="employer.email"
-                  name="employer.email"
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  ref={register}
-                />
-              </Box>
+              <RadioController
+                id="employer.isSelfEmployed"
+                disabled={false}
+                name="employer.isSelfEmployed"
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    'employer.isSelfEmployed',
+                  ) as string[]
+                }
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStatefulSelfEmployed(s as ValidAnswers)
+                }}
+              />
             ) : (
-              <Text paddingY={4}>
+              <RadioValue>
                 {
                   getValueViaPath(
                     application.answers,
-                    'employer.email',
+                    'employer.isSelfEmployed',
                   ) as string[]
                 }
-              </Text>
+              </RadioValue>
+            )}
+            {statefulSelfEmployed === NO && (
+              <>
+                {editable ? (
+                  <Box paddingY={4}>
+                    <Input
+                      id="employer.email"
+                      name="employer.email"
+                      label={formatMessage(
+                        parentalLeaveFormMessages.employer.email,
+                      )}
+                      ref={register}
+                    />
+                  </Box>
+                ) : (
+                  <Text paddingY={4}>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'employer.email',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </>
             )}
           </AccordionItem>
 
@@ -519,7 +590,10 @@ const Review: FC<ReviewScreenProps> = ({
             </Box>
           </AccordionItem>
 
-          <AccordionItem
+          {/* TODO: Bring back payment calculation info, once we have an api
+              https://app.asana.com/0/1182378413629561/1200214178491335/f
+          */}
+          {/* <AccordionItem
             id="id_4"
             label={formatMessage(
               parentalLeaveFormMessages.paymentPlan.subSection,
@@ -534,62 +608,73 @@ const Review: FC<ReviewScreenProps> = ({
                 />
               )}
             </Box>
-          </AccordionItem>
+          </AccordionItem> */}
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.shareInformation.subSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Box marginTop={1} marginBottom={2} marginLeft={4}>
-                <Text variant="h5">
-                  {formatMessage(
-                    parentalLeaveFormMessages.shareInformation.title,
-                  )}
-                </Text>
-              </Box>
-
-              {editable ? (
-                <RadioController
-                  id="shareInformationWithOtherParent"
-                  disabled={false}
-                  name="shareInformationWithOtherParent"
-                  defaultValue={
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                />
-              ) : (
-                <Text>
-                  {
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                </Text>
+          {/* TODO: Bring back this feature post v1 launch
+              Would also be good to combine it with the first accordion item
+              and make just one section for the other parent info, and sharing with the other parent
+              https://app.asana.com/0/1182378413629561/1200214178491339/f
+          */}
+          {/* {statefulOtherParentConfirmed === 'manual' && (
+            <AccordionItem
+              id="id_4"
+              label={formatMessage(
+                parentalLeaveFormMessages.shareInformation.subSection,
               )}
-            </Box>
-          </AccordionItem>
+              startExpanded={allItemsExpanded}
+            >
+              <Box paddingY={4}>
+                <Box marginTop={1} marginBottom={2}>
+                  <Text variant="h5">
+                    {formatMessage(
+                      parentalLeaveFormMessages.shareInformation.title,
+                    )}
+                  </Text>
+                </Box>
+
+                {editable ? (
+                  <RadioController
+                    id="shareInformationWithOtherParent"
+                    disabled={false}
+                    name="shareInformationWithOtherParent"
+                    error={
+                      (errors as RecordObject<string> | undefined)
+                        ?.shareInformationWithOtherParent
+                    }
+                    defaultValue={
+                      getValueViaPath(
+                        application.answers,
+                        'shareInformationWithOtherParent',
+                      ) as string[]
+                    }
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                  />
+                ) : (
+                  <Text>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'shareInformationWithOtherParent',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </Box>
+            </AccordionItem>
+          )} */}
         </Accordion>
       </Box>
     </div>

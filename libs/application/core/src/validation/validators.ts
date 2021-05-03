@@ -1,22 +1,47 @@
-import { Schema } from '../types/Form'
-import { Answer, FormValue } from '../types/Application'
-import { RecordObject } from '../types/Fields'
 import { ZodSuberror } from 'zod/lib/src/ZodError'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
 import set from 'lodash/set'
 import merge from 'lodash/merge'
+
+import {
+  FormatMessage,
+  Schema,
+  StaticText,
+  StaticTextObject,
+} from '../types/Form'
+import { Answer, FormValue } from '../types/Application'
+import { RecordObject } from '../types/Fields'
+import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
 
 function populateError(
   currentError: RecordObject = {},
   newError: ZodSuberror[],
-  pathToError?: string,
+  pathToError: string | undefined,
+  formatMessage: FormatMessage,
 ) {
   let errorObject = {}
+  const defaultZodError = newError[0].message === 'Invalid value.'
+
   newError.forEach((element) => {
-    errorObject = set(errorObject, pathToError || element.path, element.message)
+    const path = pathToError || element.path
+    let message = formatMessage(coreErrorMessages.defaultError)
+
+    if (element.code === 'custom_error') {
+      const namespaceRegex = /^\w*\.\w*:.*/g
+      const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
+
+      if (includeNamespace) {
+        message = formatMessage(element.params as StaticTextObject)
+      } else if (!defaultZodError) {
+        message = element.message
+      }
+    }
+
+    errorObject = set(errorObject, path, message)
   })
+
   return merge(currentError, errorObject)
 }
 
@@ -24,6 +49,7 @@ function constructPath(currentPath: string, newKey: string) {
   if (currentPath === '') {
     return newKey
   }
+
   return `${currentPath}.${newKey}`
 }
 
@@ -32,7 +58,8 @@ function partialSchemaValidation(
   originalSchema: Schema,
   error: RecordObject | undefined,
   currentPath = '',
-  sendConstructedPath?: boolean,
+  sendConstructedPath: boolean,
+  formatMessage: FormatMessage,
 ): RecordObject | undefined {
   Object.keys(answers).forEach((key) => {
     const constructedErrorPath = constructPath(currentPath, key)
@@ -47,15 +74,19 @@ function partialSchemaValidation(
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
       const zodErrors: ZodSuberror[] = e.errors
+
       if (!has(error, constructedErrorPath)) {
         error = populateError(
           error,
           zodErrors,
           sendConstructedPath ? constructedErrorPath : undefined,
+          formatMessage,
         )
       }
+
       if (Array.isArray(answer)) {
         const arrayElements = answer as Answer[]
+
         arrayElements.forEach((el, index) => {
           try {
             trimmedSchema.parse({ [key]: [el] })
@@ -67,6 +98,7 @@ function partialSchemaValidation(
                 error,
                 `${constructedErrorPath}[${index}]`,
                 true,
+                formatMessage,
               )
             }
           }
@@ -77,6 +109,8 @@ function partialSchemaValidation(
           originalSchema.shape[key],
           error,
           constructedErrorPath,
+          false,
+          formatMessage,
         )
       }
     }
@@ -85,39 +119,57 @@ function partialSchemaValidation(
   return error
 }
 
-export function validateAnswers(
-  dataSchema: Schema,
-  answers: FormValue,
-  isFullSchemaValidation?: boolean,
-): RecordObject | undefined {
+export function validateAnswers({
+  dataSchema,
+  answers,
+  isFullSchemaValidation,
+  formatMessage,
+}: {
+  dataSchema: Schema
+  answers: FormValue
+  isFullSchemaValidation?: boolean
+  formatMessage: FormatMessage
+}): RecordObject | undefined {
   if (!isFullSchemaValidation) {
-    return partialSchemaValidation(answers, dataSchema, undefined)
+    return partialSchemaValidation(
+      answers,
+      dataSchema,
+      undefined,
+      '',
+      false,
+      formatMessage,
+    )
   }
 
+  // This returns FieldsErrors<FormValue> the correct return type from the resolver
   try {
     dataSchema.parse(answers)
   } catch (e) {
     return e
   }
+
   return undefined
 }
 
 export const buildValidationError = (
   path: string,
   index?: number,
-): ((message: string, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
+): ((
+  message: StaticText,
+  field?: string,
+  values?: RecordObject<any>,
+) => AnswerValidationError) => (message, field, values) => {
   if (field && isNumber(index)) {
     return {
       message,
       path: `${path}[${index}].${field}`,
+      values,
     }
   }
 
   return {
     message,
     path,
+    values,
   }
 }

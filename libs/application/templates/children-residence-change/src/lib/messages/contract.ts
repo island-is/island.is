@@ -14,6 +14,13 @@ export const contract = {
         'Hér er yfirlit yfir samning um breytt lögheimili. __Þú og {otherParent}__ þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
       description: 'Contract page description',
     },
+    parentBDescription: {
+      id:
+        'crc.application:section.contract.overview.parentBDescription#markdown',
+      defaultMessage:
+        'Hér er yfirlit yfir samning um breytt lögheimili og meðlag. __{otherParent}__ hefur nú þegar undrritað samningin og næst þarft þú að undirrita áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
+      description: 'Contract page description for parent B',
+    },
   }),
   labels: defineMessages({
     childName: {
@@ -29,14 +36,12 @@ export const contract = {
     },
     currentResidence: {
       id: 'crc.application:section.contract.overview.labels.currentResidence',
-      defaultMessage:
-        'Núverandi lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      defaultMessage: 'Núverandi lögheimilisforeldri:',
       description: 'Label for current residence',
     },
     newResidence: {
       id: 'crc.application:section.contract.overview.labels.newResidence',
-      defaultMessage:
-        'Nýtt lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      defaultMessage: 'Nýtt lögheimilisforeldri:',
       description: 'Label for new residence',
     },
   }),
@@ -47,8 +52,10 @@ export const contract = {
       description: 'Label for child benefit',
     },
     text: {
-      id: 'crc.application:section.contract.overview.childBenefit.text',
-      defaultMessage: '{otherParent} fær einfalt meðlag mánaðarlega.',
+      id:
+        'crc.application:section.contract.overview.childBenefit.text#markdown',
+      defaultMessage:
+        '{currentResidenceParentName} greiðir einfalt meðlag með hverju barni til nýs lögheimilisforeldris.\\nEf foreldrar greiða aukið meðlag þarf að semja að nýju og leita staðfestingar sýslumanns.',
       description: 'Text for child benefit',
     },
   }),

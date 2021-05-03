@@ -47,6 +47,16 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   @Expose()
+  @IsString()
+  stateTitle?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  stateDescription?: string
+
+  @ApiPropertyOptional()
+  @Expose()
   @IsObject()
   attachments?: object
 

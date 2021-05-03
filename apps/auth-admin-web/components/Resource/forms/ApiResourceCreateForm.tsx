@@ -15,7 +15,7 @@ interface Props {
   apiResource: ApiResourcesDTO
 }
 
-const ResourceCreateForm: React.FC<Props> = (props) => {
+const ApiResourceCreateForm: React.FC<Props> = (props) => {
   const {
     register,
     handleSubmit,
@@ -27,7 +27,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
   const [localization] = useState<FormControl>(
-    LocalizationUtils.getFormControl('ResourceCreateForm'),
+    LocalizationUtils.getFormControl('ApiResourceCreateForm'),
   )
 
   useEffect(() => {
@@ -288,8 +288,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       type="button"
                       className="api-resource-form__button__cancel"
                       onClick={props.handleCancel}
+                      title={localization.buttons['cancel'].text}
                     >
-                      {localization.cancelButton}
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="api-resource-form__button__container">
@@ -297,7 +298,8 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="api-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value={localization.saveButton}
+                      title={localization.buttons['save'].helpText}
+                      value={localization.buttons['save'].text}
                     />
                   </div>
                 </div>
@@ -310,4 +312,4 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   )
 }
 
-export default ResourceCreateForm
+export default ApiResourceCreateForm

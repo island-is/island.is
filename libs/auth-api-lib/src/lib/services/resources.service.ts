@@ -156,6 +156,18 @@ export class ResourcesService {
     })
   }
 
+  /** Get's all Api scopes that are access controlled */
+  async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+    return this.apiScopeModel.findAll({
+      where: {
+        isAccessControlled: true,
+        name: {
+          [Op.not]: '@island.is/auth/admin:root',
+        },
+      },
+    })
+  }
+
   /** Gets Identity resource by name */
   async getIdentityResourceByName(
     name: string,

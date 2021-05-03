@@ -15,7 +15,7 @@ import { institutionApplicationMessages as m } from '../lib/messages'
 import { YES, FILE_SIZE_LIMIT } from '../constants'
 
 export const application: Form = buildForm({
-  id: 'InstitutionCollaborationDraftForm',
+  id: 'InstitutionCollaborationApplicationForm',
   title: m.applicant.formName,
   mode: FormModes.APPLYING,
   children: [
