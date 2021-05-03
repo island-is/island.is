@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
+  Button,
   Filter,
   GridColumn,
   GridContainer,
@@ -121,6 +122,8 @@ export const RegulationsSearchSection = (
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
   const router = useRouter()
+
+  const [showExtraSearch, setShowExtraSearch] = useState(false)
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -267,44 +270,60 @@ export const RegulationsSearchSection = (
               size="sm"
             />
           </GridColumn>
+
           <GridColumn
             span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-            paddingTop={[0, 0, 4]}
+            paddingTop={[2, 2, 6]}
             paddingBottom={[2, 2, 0]}
           >
-            <Select
-              name="ch"
-              isSearchable
-              label={txt('searchChapterLabel', 'Kafli í lagasafni')}
-              placeholder={txt('searchChapterPlaceholder', 'Veldu kafla')}
-              value={findValueOption(lawChapterOptions, filters.ch)}
-              options={lawChapterOptions}
-              onChange={(option) => doSearch('ch', getRSValue(option) || '')}
-              size="sm"
-            />
+            <Button
+              variant="text"
+              icon={showExtraSearch ? 'chevronUp' : 'chevronDown'}
+              onClick={() => setShowExtraSearch(!showExtraSearch)}
+            >
+              Ítarleit
+            </Button>
           </GridColumn>
         </GridRow>
-        <GridRow>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '3/12', '2/12']}
-            offset={['0', '0', '0', '0', '1/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="yearTo"
-              isSearchable
-              label={txt('searchYearToLabel', 'Tímabili til')}
-              placeholder={txt('searchYearToPlaceholder', 'Veldu ár')}
-              value={findValueOption(yearToOptions, filters.yearTo)}
-              options={yearToOptions}
-              onChange={(option) =>
-                doSearch('yearTo', getRSValue(option) || '')
-              }
-              size="sm"
-            />
-          </GridColumn>
-        </GridRow>
+        {showExtraSearch && (
+          <GridRow>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '3/12', '2/12']}
+              offset={['0', '0', '0', '0', '1/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="yearTo"
+                isSearchable
+                label={txt('searchYearToLabel', 'Tímabili til')}
+                placeholder={txt('searchYearToPlaceholder', 'Veldu ár')}
+                value={findValueOption(yearToOptions, filters.yearTo)}
+                options={yearToOptions}
+                onChange={(option) =>
+                  doSearch('yearTo', getRSValue(option) || '')
+                }
+                size="sm"
+              />
+            </GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="ch"
+                isSearchable
+                label={txt('searchChapterLabel', 'Kafli í lagasafni')}
+                placeholder={txt('searchChapterPlaceholder', 'Veldu kafla')}
+                value={findValueOption(lawChapterOptions, filters.ch)}
+                options={lawChapterOptions}
+                onChange={(option) => doSearch('ch', getRSValue(option) || '')}
+                size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+        )}
       </GridContainer>
 
       {/*
