@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
@@ -9,8 +10,12 @@ import { Box, Button, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-const ChildSelector: FC<FieldBaseProps> = ({ application }) => {
+const ChildSelector: FC<FieldBaseProps> = ({
+  application,
+  setBeforeSubmitCallback,
+}) => {
   const { formatMessage } = useLocale()
+  const history = useHistory()
 
   const { children, existingApplications } = get(
     application,
@@ -24,13 +29,30 @@ const ChildSelector: FC<FieldBaseProps> = ({ application }) => {
     }[]
   }
 
+  useEffect(() => {
+    if (setBeforeSubmitCallback) {
+      setBeforeSubmitCallback(async () => {
+        if (children.length === 0) {
+          // Application should not be able to move forward if there are no children
+          return [false, '']
+        }
+        return [true, null]
+      })
+    }
+  })
+
+  const selectExistingApplication = (id: string) => {
+    history.push(`/faedingarorlof/${id}`)
+  }
+
   return (
     <Box>
       {children.length > 0 && (
         <>
           <FieldDescription
-            // description={formatMessage(parentalLeaveFormMessages.selectChild.title)}
-            description="Börn sem þú getur sótt um fyrir"
+            description={formatMessage(
+              parentalLeaveFormMessages.selectChild.title,
+            )}
           />
           <Box marginY={3}>
             <RadioController
@@ -47,9 +69,6 @@ const ChildSelector: FC<FieldBaseProps> = ({ application }) => {
                 value: `${index}`,
                 label: child.expectedDateOfBirth,
               }))}
-              onSelect={(s: string) => {
-                console.log('selected', s)
-              }}
             />
           </Box>
         </>
@@ -57,25 +76,21 @@ const ChildSelector: FC<FieldBaseProps> = ({ application }) => {
       {existingApplications.length > 0 && (
         <>
           <FieldDescription
-            // description={formatMessage(parentalLeaveFormMessages.selectChild.title)}
-            description="Virkar umsóknir"
+            description={formatMessage(
+              parentalLeaveFormMessages.selectChild.activeApplications,
+            )}
           />
           <Box marginY={3}>
             {existingApplications.map(
               ({ applicationId, expectedDateOfBirth }) => (
-                <Link
-                  shallow={false}
-                  as={`/umsoknir/faedingarorlof/${applicationId}`}
-                  href={`/umsoknir/faedingarorlof/${applicationId}`}
+                <Button
+                  key={applicationId}
+                  icon="arrowForward"
+                  onClick={() => selectExistingApplication(applicationId)}
+                  variant="text"
                 >
-                  <Button
-                    variant="text"
-                    // size="default"
-                    icon="arrowForward"
-                  >
-                    {expectedDateOfBirth}
-                  </Button>
-                </Link>
+                  {expectedDateOfBirth}
+                </Button>
               ),
             )}
           </Box>

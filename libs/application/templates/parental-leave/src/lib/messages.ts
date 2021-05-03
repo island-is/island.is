@@ -494,6 +494,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Börn sem þú getur sótt um fyrir',
       description: 'Children you can apply for',
     },
+    activeApplications: {
+      id: 'pl.application:selectChild.activeApplications',
+      defaultMessage: 'Virkar umsóknir',
+      description: 'Active applications',
+    },
     choose: {
       id: 'pl.application:selectChild.choose',
       defaultMessage: 'Velja',
