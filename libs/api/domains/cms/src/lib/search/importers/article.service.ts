@@ -79,6 +79,10 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
         }
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
+        } else {
+          logger.warn('Circular reference found in article', {
+            id: entry.sys.id,
+          })
         }
       }
       return processedEntries
