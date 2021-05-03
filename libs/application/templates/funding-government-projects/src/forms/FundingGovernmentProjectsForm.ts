@@ -22,11 +22,11 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'definitionOfApplicants',
+      id: 'definitionOfApplicant',
       title: section.definitionOfApplicant,
       children: [
         buildCustomField({
-          id: 'placeholderId1',
+          id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
           component: 'DefinitionOfApplicant',
         }),
