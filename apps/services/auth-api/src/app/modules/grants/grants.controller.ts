@@ -1,4 +1,9 @@
-import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
+import {
+  Grant,
+  GrantDto,
+  GrantsService,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
