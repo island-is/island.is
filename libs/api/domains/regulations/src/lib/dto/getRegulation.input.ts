@@ -8,7 +8,7 @@ import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class GetRegulationInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   viewType!: RegulationViewTypes
 
