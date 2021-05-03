@@ -2,17 +2,17 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
-import { terms } from '../../lib/messages'
+import { childSupport } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
 
-const Terms = ({ field, error }: CRCFieldBaseProps) => {
+const ChildSupport = ({ field, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   return (
     <>
       <Box marginTop={3}>
-        <DescriptionText text={terms.general.description} />
+        <DescriptionText text={childSupport.general.description} />
       </Box>
       <Box marginTop={6}>
         <CheckboxController
@@ -24,12 +24,8 @@ const Terms = ({ field, error }: CRCFieldBaseProps) => {
           defaultValue={[]}
           options={[
             {
-              value: 'effect',
-              label: formatMessage(terms.residenceChangeCheckbox.label),
-            },
-            {
-              value: 'childBenefit',
-              label: formatMessage(terms.familySupportCheckbox.label),
+              value: 'yes',
+              label: formatMessage(childSupport.childBenefitCheckbox.label),
             },
           ]}
         />
@@ -38,4 +34,4 @@ const Terms = ({ field, error }: CRCFieldBaseProps) => {
   )
 }
 
-export default Terms
+export default ChildSupport
