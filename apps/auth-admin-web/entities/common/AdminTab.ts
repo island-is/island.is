@@ -1,5 +1,5 @@
 export enum AdminTab {
-  AdminUsers = 1,
+  ApiScopeUsers = 1,
   IdpProviders = 2,
   GrantTypes = 3,
   IPNumbersControl = 4,

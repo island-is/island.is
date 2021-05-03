@@ -155,15 +155,21 @@ const Overview = ({
         fileSignatureState={fileSignatureState}
       />
       <Box>
-        <DescriptionText
-          text={m.contract.general.description}
-          format={{
-            otherParent:
-              parentKey === Roles.ParentA
-                ? parentB.fullName
-                : applicant.fullName,
-          }}
-        />
+        {parentKey === Roles.ParentA ? (
+          <DescriptionText
+            text={m.contract.general.description}
+            format={{
+              otherParent: parentB.fullName,
+            }}
+          />
+        ) : (
+          <DescriptionText
+            text={m.contract.general.parentBDescription}
+            format={{
+              otherParent: applicant.fullName,
+            }}
+          />
+        )}
       </Box>
       <Box marginTop={4}>
         <ContractOverview application={application} />
