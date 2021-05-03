@@ -23,7 +23,7 @@ export const signatureModal = {
     message: {
       id: 'crc.application:signatureModal.success.text',
       defaultMessage:
-        'Augnablik, við erum að taka saman gögnin sem getur tekið nokkrar sekúndur.',
+        'Augnablik. Við erum að taka saman gögnin þín, það getur tekið nokkrar sekúndur.',
       description: 'Signature success message',
     },
   }),

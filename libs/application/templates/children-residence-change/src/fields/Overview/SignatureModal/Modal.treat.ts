@@ -56,8 +56,11 @@ export const logoWrapper = style({
 
 export const controlCodeContainer = styleMap({
   general: {
+    background: theme.color.blue100,
     height: '96px',
+    marginTop: theme.spacing[4],
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -69,17 +72,22 @@ export const controlCodeContainer = styleMap({
       },
     },
   },
-  upload: {
-    display: 'block',
-  },
-  error: {
+  // upload: {
+  //   display: 'block',
+  // },
+  hide: {
     display: 'none',
   },
 })
 
-export const iconContainer = style({
-  height: '50px',
-  width: '50px',
+export const iconContainer = styleMap({
+  general: {
+    height: '50px',
+    width: '50px',
+  },
+  hideIcon: {
+    display: 'none',
+  },
 })
 
 export const controlCode = style({

@@ -21,29 +21,19 @@ export enum FileSignatureActionTypes {
   ERROR = 'ERROR',
 }
 
-export enum ContentTypes {
-  WARNING = 'warning',
-  ERROR = 'error',
-  INFO = 'info',
-  SUCCESS = 'success',
-}
-
 const modalContent: {
   [key in Exclude<FileSignatureStatus, ErrorStatus>]: ModalContent
 } = {
   [FileSignatureStatus.REQUEST]: {
     title: signatureModal.general.title,
-    type: ContentTypes.INFO,
   },
   [FileSignatureStatus.UPLOAD]: {
     title: signatureModal.general.title,
     message: signatureModal.security.message,
-    type: ContentTypes.INFO,
   },
   [FileSignatureStatus.SUCCESS]: {
     title: signatureModal.success.title,
     message: signatureModal.success.message,
-    type: ContentTypes.SUCCESS,
   },
 }
 
@@ -53,22 +43,18 @@ export const errorMessages: {
   400: {
     title: signatureModal.userCancelledWarning.title,
     message: signatureModal.userCancelledWarning.message,
-    type: ContentTypes.WARNING,
   },
   404: {
     title: signatureModal.noElectronicIdError.title,
     message: signatureModal.noElectronicIdError.message,
-    type: ContentTypes.ERROR,
   },
   408: {
     title: signatureModal.timeOutWarning.title,
     message: signatureModal.timeOutWarning.message,
-    type: ContentTypes.WARNING,
   },
   500: {
     title: signatureModal.defaultError.title,
     message: signatureModal.defaultError.message,
-    type: ContentTypes.ERROR,
   },
 }
 
@@ -83,7 +69,6 @@ type Action =
     }
 
 interface ModalContent {
-  type: ContentTypes
   title: MessageDescriptor
   message?: MessageDescriptor
 }
@@ -98,7 +83,6 @@ export const initialFileSignatureState: ReducerState = {
   modalOpen: false,
   content: {
     title: modalContent[FileSignatureStatus.REQUEST].title,
-    type: modalContent[FileSignatureStatus.REQUEST].type,
   },
 }
 
@@ -122,20 +106,20 @@ export const fileSignatureReducer = (
     }
     case FileSignatureActionTypes.UPLOAD: {
       const content = modalContent[action.type]
-      const { title, message, type } = content
+      const { title, message } = content
       return {
         ...state,
         status: FileSignatureStatus.UPLOAD,
-        content: { title, type, message },
+        content: { title, message },
       }
     }
     case FileSignatureActionTypes.SUCCESS: {
       const content = modalContent[action.type]
-      const { title, message, type } = content
+      const { title, message } = content
       return {
         ...state,
         status: FileSignatureStatus.SUCCESS,
-        content: { title, type, message },
+        content: { title, message },
       }
     }
     case FileSignatureActionTypes.ERROR: {
@@ -146,7 +130,6 @@ export const fileSignatureReducer = (
         content: {
           title: error.title,
           message: error.message,
-          type: error.type,
         },
       }
     }

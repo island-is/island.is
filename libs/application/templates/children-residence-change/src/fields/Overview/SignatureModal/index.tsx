@@ -8,51 +8,16 @@ import {
   Logo,
   SkeletonLoader,
   Icon,
-  IconMapIcon,
   Button,
 } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
-import {
-  FileSignatureStatus,
-  ReducerState,
-  ContentTypes,
-} from '../fileSignatureReducer'
+import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
 import * as styles from './Modal.treat'
-import { Colors } from '@island.is/island-ui/theme'
 
 interface SignatureModalProps {
   fileSignatureState: ReducerState
   onClose: () => void
   controlCode: string
-}
-
-const statusVariantStyles: {
-  [key in ContentTypes]: {
-    background: Colors
-    iconColor: Colors
-    icon: IconMapIcon
-  }
-} = {
-  [ContentTypes.ERROR]: {
-    background: 'red100',
-    iconColor: 'red400',
-    icon: 'warning',
-  },
-  [ContentTypes.INFO]: {
-    background: 'blue100',
-    iconColor: 'blue400',
-    icon: 'informationCircle',
-  },
-  [ContentTypes.SUCCESS]: {
-    background: 'blue100',
-    iconColor: 'blue400',
-    icon: 'checkmarkCircle',
-  },
-  [ContentTypes.WARNING]: {
-    background: 'yellow300',
-    iconColor: 'yellow600',
-    icon: 'warning',
-  },
 }
 
 const SignatureModal = ({
@@ -102,35 +67,29 @@ const SignatureModal = ({
         )}
         <Box
           className={cn(styles.controlCodeContainer.general, {
-            [styles.controlCodeContainer.upload]: isUpload,
-            [styles.controlCodeContainer.error]: hasError,
+            [styles.controlCodeContainer.hide]: hasError,
           })}
-          marginTop={4}
-          background={
-            statusVariantStyles[fileSignatureState.content.type].background
-          }
         >
-          {!isRequest &&
-            (isUpload ? (
-              <>
-                <Text lineHeight="xl" variant="small" marginTop={2}>
-                  {formatMessage(signatureModal.security.numberLabel)}
-                </Text>
-                <Text lineHeight="sm" variant="h1">
-                  {controlCode}
-                </Text>
-              </>
-            ) : (
-              <Icon
-                className={styles.iconContainer}
-                color={
-                  statusVariantStyles[fileSignatureState.content.type].iconColor
-                }
-                icon={statusVariantStyles[fileSignatureState.content.type].icon}
-                size="large"
-                type="filled"
-              />
-            ))}
+          {isUpload ? (
+            <>
+              <Text lineHeight="xl" variant="small">
+                {formatMessage(signatureModal.security.numberLabel)}
+              </Text>
+              <Text lineHeight="sm" variant="h1">
+                {controlCode}
+              </Text>
+            </>
+          ) : (
+            <Icon
+              className={cn(styles.iconContainer.general, {
+                [styles.iconContainer.hideIcon]: isRequest,
+              })}
+              color="blue400"
+              icon="checkmarkCircle"
+              size="large"
+              type="filled"
+            />
+          )}
         </Box>
         <Box marginTop={6} display="flex" justifyContent="center">
           {hasError ? (

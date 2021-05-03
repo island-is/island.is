@@ -25,6 +25,7 @@ module.exports = {
     '<rootDir>/apps/services/search-indexer',
     '<rootDir>/apps/services/user-profile',
     '<rootDir>/apps/services/xroad-collector',
+    '<rootDir>/apps/services/endorsements/api',
     '<rootDir>/apps/skilavottord/web',
     '<rootDir>/apps/skilavottord/ws',
     '<rootDir>/apps/web',
@@ -61,6 +62,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/document-provider-onboarding',
     '<rootDir>/libs/application/templates/driving-lessons',
     '<rootDir>/libs/application/templates/driving-license',
+    '<rootDir>/libs/application/templates/funding-government-projects',
     '<rootDir>/libs/application/templates/health-insurance',
     '<rootDir>/libs/application/templates/meta-application',
     '<rootDir>/libs/application/templates/parental-leave',
@@ -146,6 +148,6 @@ module.exports = {
     '<rootDir>/apps/download-service',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
-    '<rootDir>/apps/endorsement-system',
+    '<rootDir>/libs/application/templates/login-service',
   ],
 }

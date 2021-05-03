@@ -45,10 +45,7 @@ import { useRouter } from 'next/router'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
-
-interface CaseData {
-  case?: Case
-}
+import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
