@@ -72,9 +72,6 @@ export const controlCodeContainer = styleMap({
       },
     },
   },
-  // upload: {
-  //   display: 'block',
-  // },
   hide: {
     display: 'none',
   },
