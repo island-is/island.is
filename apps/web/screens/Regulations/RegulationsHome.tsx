@@ -209,7 +209,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 RegulationsHome.getInitialProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const serviceId = String(query.slug)
-  const searchQuery = getParams(query, ['q', 'rn', 'year', 'ch', 'all'])
+  const searchQuery = getParams(query, [
+    'q',
+    'rn',
+    'year',
+    'yearTo',
+    'ch',
+    'all',
+  ])
   const doSearch = Object.values(searchQuery).some((value) => !!value)
 
   const [
@@ -234,6 +241,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
                 q: searchQuery.q,
                 rn: searchQuery.rn,
                 year: searchQuery.year,
+                yearTo: searchQuery.yearTo,
                 ch: searchQuery.ch,
               },
             },
