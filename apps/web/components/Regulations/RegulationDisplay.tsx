@@ -99,7 +99,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
           <div className={waterMarkClass}>
             <Text marginTop={[2, 3, 4, 5]} marginBottom={1}>
-              {name}
+              <strong>{name}</strong>
             </Text>
             <Text as="h1" variant="h3" marginBottom={[2, 4]}>
               {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
