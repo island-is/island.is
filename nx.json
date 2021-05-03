@@ -270,9 +270,6 @@
     "email-service": {
       "tags": []
     },
-    "endorsement-system": {
-      "tags": []
-    },
     "feature-flags": {
       "tags": []
     },
@@ -475,6 +472,9 @@
       "tags": []
     },
     "services-documents": {
+      "tags": []
+    },
+    "services-endorsements-api": {
       "tags": []
     },
     "services-search-indexer": {

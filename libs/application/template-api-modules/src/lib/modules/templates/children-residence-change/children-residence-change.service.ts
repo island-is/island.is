@@ -17,10 +17,12 @@ import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
+  generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
+import { syslumennEmailFromPostalCode } from './utils'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -119,11 +121,20 @@ export class ChildrenResidenceChangeService {
           : durationType,
     }
 
-    const response = await this.syslumennService.uploadData(
-      participants,
-      attachment,
-      extraData,
-    )
+    const response = await this.syslumennService
+      .uploadData(participants, attachment, extraData)
+      .catch(async () => {
+        const syslumennEmail = syslumennEmailFromPostalCode(
+          childResidenceInfo.future.address.postalCode,
+        )
+
+        await this.sharedTemplateAPIService.sendEmailWithAttachment(
+          generateSyslumennNotificationEmail,
+          (application as unknown) as Application,
+          fileContent.toString('binary'),
+          syslumennEmail,
+        )
+      })
 
     await this.sharedTemplateAPIService.sendEmailWithAttachment(
       generateApplicationSubmittedEmail,

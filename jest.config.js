@@ -25,6 +25,7 @@ module.exports = {
     '<rootDir>/apps/services/search-indexer',
     '<rootDir>/apps/services/user-profile',
     '<rootDir>/apps/services/xroad-collector',
+    '<rootDir>/apps/services/endorsements/api',
     '<rootDir>/apps/skilavottord/web',
     '<rootDir>/apps/skilavottord/ws',
     '<rootDir>/apps/web',
@@ -148,6 +149,5 @@ module.exports = {
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
-    '<rootDir>/apps/endorsement-system',
   ],
 }
