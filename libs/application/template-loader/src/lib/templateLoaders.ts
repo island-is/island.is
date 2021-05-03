@@ -29,6 +29,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/party-application'),
   [ApplicationTypes.INSTITUTION_COLLABORATION]: () =>
     import('@island.is/application/templates/institution-collaboration'),
+  [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: () =>
+    import('@island.is/application/templates/funding-government-projects'),
 }
 
 export default templates
