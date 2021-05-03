@@ -3,6 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
+  CustomTemplateFindQuery,
 } from '@island.is/application/core'
 
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
@@ -21,26 +22,22 @@ export class Children extends BasicDataProvider {
   type = 'Children'
   async provide(
     application: Application,
-    customTemplateFindQuery: any,
+    customTemplateFindQuery: CustomTemplateFindQuery,
   ): Promise<ChildrenAndExistingApplications> {
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
       await customTemplateFindQuery({
         applicant: application.applicant,
       })
-    ).filter(({ state }: Application) => state !== 'prerequisites')
+    ).filter(({ state }) => state !== 'prerequisites')
 
     // Applications where this parent is other parent
-    const applicationsWhereOtherParentHasApplied = await customTemplateFindQuery(
-      {
+    const applicationsWhereOtherParentHasApplied = (
+      await customTemplateFindQuery({
         'answers.otherParentId': application.applicant,
-      },
-    ).filter(
-      ({ state }: Application) =>
-        state !== 'prerequisites' && state !== 'draft',
-    )
+      })
+    ).filter(({ state }) => state !== 'prerequisites' && state !== 'draft')
 
-    // Pregnancy status
     const pregnancyStatusQueryResponse = await this.useGraphqlGateway(
       pregnancyStatusQuery,
     )
@@ -56,15 +53,11 @@ export class Children extends BasicDataProvider {
         return this.handleError(error)
       })
 
-    const result = getChildrenAndExistingApplications(
+    return getChildrenAndExistingApplications(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
       pregnancyStatusQueryResponse,
     )
-
-    console.log(JSON.stringify(result, null, '  '))
-
-    return result
   }
 
   handleError(error: Error | unknown) {
