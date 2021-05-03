@@ -1874,6 +1874,43 @@
         }
       }
     },
+    "application-templates-funding-government-projects": {
+      "root": "libs/application/templates/funding-government-projects",
+      "sourceRoot": "libs/application/templates/funding-government-projects/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/funding-government-projects/tsconfig.lib.json",
+              "libs/application/templates/funding-government-projects/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/funding-government-projects/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/funding-government-projects"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/funding-government-projects/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
       "sourceRoot": "libs/application/templates/health-insurance/src",
@@ -2987,99 +3024,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/email-service"]
-        }
-      }
-    },
-    "endorsement-system": {
-      "root": "apps/endorsement-system",
-      "sourceRoot": "apps/endorsement-system/src",
-      "projectType": "application",
-      "prefix": "endorsement-system",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/endorsement-system",
-            "main": "apps/endorsement-system/src/main.ts",
-            "tsConfig": "apps/endorsement-system/tsconfig.app.json",
-            "webpackConfig": "apps/endorsement-system/webpack.config.js"
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/endorsement-system/src/environments/environment.ts",
-                  "with": "apps/endorsement-system/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "endorsement-system:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/endorsement-system/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/endorsement-system"],
-          "options": {
-            "jestConfig": "apps/endorsement-system/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "dev-services": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/endorsement-system/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
-          }
-        },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:migrate",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed/undo": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:undo:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/endorsement-system"
-          }
         }
       }
     },
@@ -5974,6 +5918,100 @@
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/services/documents"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "services-endorsements-api": {
+      "root": "apps/services/endorsements/api",
+      "sourceRoot": "apps/services/endorsements/api/src",
+      "projectType": "application",
+      "prefix": "services-endorsements-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/endorsements/api",
+            "main": "apps/services/endorsements/api/src/main.ts",
+            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
+            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/endorsements/api/src/environments/environment.ts",
+                  "with": "apps/services/endorsements/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-endorsements-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/endorsements/api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/endorsements/api"],
+          "options": {
+            "jestConfig": "apps/services/endorsements/api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:all",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo:all",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/endorsements/api"
           }
         },
         "docker-express": {}

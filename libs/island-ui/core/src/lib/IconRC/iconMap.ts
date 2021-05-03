@@ -23,6 +23,7 @@ export type Icon =
   | 'closeCircle'
   | 'close'
   | 'copy'
+  | 'document'
   | 'documents'
   | 'download'
   | 'ellipse'
@@ -80,6 +81,7 @@ export default {
     closeCircle: 'CloseCircle',
     close: 'Close',
     copy: 'Copy',
+    document: 'Document',
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
@@ -136,6 +138,7 @@ export default {
     closeCircle: 'CloseCircleOutline',
     close: 'Close',
     copy: 'CopyOutline',
+    document: 'DocumentOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',

@@ -52,7 +52,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(module.LoginServiceForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
@@ -75,9 +79,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/LoginServiceFormInReview').then((module) =>
-                  // TODO: Rename this once we start work on it
-                  Promise.resolve(module.LoginServiceFormInReview),
+                import('../forms/LoginServiceFormSubmitted').then((module) =>
+                  Promise.resolve(module.LoginServiceFormSubmitted),
                 ),
               write: 'all',
             },

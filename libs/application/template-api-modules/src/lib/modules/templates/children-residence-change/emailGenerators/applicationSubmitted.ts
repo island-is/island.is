@@ -5,11 +5,11 @@ import { AttachmentEmailTemplateGenerator } from '../../../../types'
 export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator = (
   props,
   fileContent,
-  email,
+  recipientEmail,
 ) => {
   const {
     application,
-    options: { clientLocationOrigin },
+    options: { clientLocationOrigin, email },
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
@@ -28,13 +28,13 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {
         name: '',
-        address: email,
+        address: recipientEmail,
       },
     ],
     subject,

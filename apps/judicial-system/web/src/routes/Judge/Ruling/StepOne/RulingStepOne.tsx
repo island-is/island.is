@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import {
   Accordion,
+  AccordionItem,
   Box,
   Input,
   RadioButton,
@@ -13,6 +14,7 @@ import {
   BlueBox,
   CaseNumbers,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -177,6 +179,16 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
+                <AccordionItem
+                  id="caseFileList"
+                  label={`Rannsóknargögn (${workingCase.files?.length || 0})`}
+                  labelVariant="h3"
+                >
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                  />
+                </AccordionItem>
               </Accordion>
             </Box>
             <Box component="section" marginBottom={5}>

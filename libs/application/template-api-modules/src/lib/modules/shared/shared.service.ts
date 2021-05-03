@@ -32,11 +32,17 @@ export class SharedTemplateApiService {
       'clientLocationOrigin',
     ) as string
 
+    const email = getConfigValue(
+      this.configService,
+      'email',
+    ) as BaseTemplateAPIModuleConfig['email']
+
     const template = templateGenerator({
       application,
       options: {
         clientLocationOrigin,
         locale,
+        email,
       },
     })
 
@@ -58,6 +64,11 @@ export class SharedTemplateApiService {
       'clientLocationOrigin',
     ) as string
 
+    const email = getConfigValue(
+      this.configService,
+      'email',
+    ) as BaseTemplateAPIModuleConfig['email']
+
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
     const template = templateGenerator(
@@ -66,6 +77,7 @@ export class SharedTemplateApiService {
         options: {
           clientLocationOrigin,
           locale,
+          email,
         },
       },
       assignLink,
@@ -78,7 +90,7 @@ export class SharedTemplateApiService {
     templateGenerator: AttachmentEmailTemplateGenerator,
     application: Application,
     fileContent: string,
-    email: string,
+    recipientEmail: string,
     locale = 'is',
   ) {
     const clientLocationOrigin = getConfigValue(
@@ -86,16 +98,22 @@ export class SharedTemplateApiService {
       'clientLocationOrigin',
     ) as string
 
+    const email = getConfigValue(
+      this.configService,
+      'email',
+    ) as BaseTemplateAPIModuleConfig['email']
+
     const template = templateGenerator(
       {
         application,
         options: {
           clientLocationOrigin,
           locale,
+          email,
         },
       },
       fileContent,
-      email,
+      recipientEmail,
     )
 
     return this.emailService.sendEmail(template)

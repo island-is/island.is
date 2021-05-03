@@ -65,7 +65,7 @@ export class CaseService {
         html: 'Sjá viðhengi',
         attachments: [
           {
-            filename: `${courtCaseNumber}.pdf`,
+            filename: `Þingbók og úrskurður ${courtCaseNumber}.pdf`,
             content: signedRulingPdf,
             encoding: 'binary',
           },
