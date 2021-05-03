@@ -15,12 +15,37 @@ interface PageProps {
 }
 
 const FormLayout: React.FC<PageProps> = ({ children, activeSection }) => {
+  
   const sections = [
     {
       name: 'Gagnaöflun',
     },
     {
       name: 'Tengiliðaupplýsingar',
+    },
+    {
+      name: 'Heimili',
+    },
+    {
+      name: 'Búseta',
+    },
+    {
+      name: 'Staða',
+    },
+    {
+      name: 'Tekjur',
+    },
+    {
+      name: 'Persónuafsláttur',
+    },
+    {
+      name: 'Bankaupplýsingar',
+    },
+    {
+      name: 'Útreikningur',
+    },
+    {
+      name: 'Staðfesting',
     },
   ]
 
@@ -46,6 +71,7 @@ const FormLayout: React.FC<PageProps> = ({ children, activeSection }) => {
             <Box marginLeft={2}>
               <FormStepper sections={sections} activeSection={activeSection} />
             </Box>
+            
           </GridColumn>
         </GridRow>
       </GridContainer>

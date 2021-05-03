@@ -7,7 +7,6 @@ export const header = style({
   justifyContent: 'space-between',
   height: 112,
   width: 23,
-  borderBottom: `1px solid ${theme.color.blue200}`,
   padding: `0 ${theme.spacing[6]}px`,
 })
 

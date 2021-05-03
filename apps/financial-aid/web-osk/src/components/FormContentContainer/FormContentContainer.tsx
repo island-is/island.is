@@ -3,23 +3,17 @@ import { GridColumn } from '@island.is/island-ui/core'
 import * as styles from './FormContentContainer.treat'
 
 interface Props {
-  isFooter?: boolean
+  children: React.ReactNode;
 }
 
 const FormContentContainer: React.FC<Props> = (props) => {
-  const renderContainer = () => (
+  return ( 
     <GridColumn
       span={['9/9', '9/9', '7/9', '7/9']}
       offset={['0', '0', '1/9', '1/9']}
     >
       {props.children}
     </GridColumn>
-  )
-
-  return props.isFooter ? (
-    <div className={styles.footerContainer}>{renderContainer()}</div>
-  ) : (
-    renderContainer()
   )
 }
 

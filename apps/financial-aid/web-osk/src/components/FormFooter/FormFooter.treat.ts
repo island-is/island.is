@@ -8,3 +8,8 @@ export const infoBoxContainer = style({
   borderRadius: theme.border.radius.large,
   background: theme.color.blue100,
 })
+
+export const footerContainer = style({
+  borderTop: `${theme.border.width.large}px solid ${theme.color.purple100}`,
+  paddingTop: theme.spacing[5],
+})
