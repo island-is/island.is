@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as s from './RegulationsSidebarBox.treat'
 import { Button, Hidden, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -22,6 +22,15 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { linkToRegulationSearch } = useRegulationLinkResolver()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
+
+  const [showCopyCheckmark, setShowCopyCheckmark] = useState(false)
+  const showCopyCheck = () => {
+    setShowCopyCheckmark(true)
+
+    setTimeout(() => {
+      setShowCopyCheckmark(false)
+    }, 750)
+  }
 
   return (
     <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
@@ -88,7 +97,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       <Hidden print={true}>
-        <Text marginBottom={2}>
+        <Text marginBottom={1}>
           <Button
             // FIXME: enable this icon when design is ready and implemented
             // icon="print"
@@ -100,8 +109,23 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               window.print()
             }}
           >
-            {txt('printThisVersion')}
+            {txt('printThisVersion', 'Prenta þessa útgáfu')}
           </Button>
+        </Text>
+
+        <Text marginBottom={2}>
+          <Button
+            size="small"
+            type="button"
+            variant="text"
+            onClick={() => {
+              showCopyCheck()
+              navigator.clipboard.writeText(document.location.href)
+            }}
+          >
+            {txt('copyLink', 'Afrita hlekk á reglugerð')}
+          </Button>
+          {showCopyCheckmark && ' ✔'}
         </Text>
       </Hidden>
     </RegulationsSidebarBox>
