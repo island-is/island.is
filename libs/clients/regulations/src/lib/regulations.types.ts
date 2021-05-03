@@ -232,7 +232,7 @@ export type RegulationRedirect = {
   redirectUrl: string
 }
 
-export const enum RegulationViewTypes {
+export enum RegulationViewTypes {
   Current = 'current',
   Diff = 'diff',
   Original = 'original',
