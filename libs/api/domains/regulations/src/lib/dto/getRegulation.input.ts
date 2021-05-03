@@ -3,13 +3,16 @@ import {
   RegQueryName,
   RegulationViewTypes,
 } from '@island.is/clients/regulations'
-import { Field, InputType } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { IsEnum, IsOptional, IsString } from 'class-validator'
 
+registerEnumType(RegulationViewTypes, {
+  name: 'RegulationViewTypes',
+})
 @InputType()
 export class GetRegulationInput {
-  @Field(() => String)
-  @IsString()
+  @Field(() => RegulationViewTypes)
+  @IsEnum(RegulationViewTypes)
   viewType!: RegulationViewTypes
 
   @Field(() => String)
