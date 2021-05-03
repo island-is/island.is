@@ -57,26 +57,26 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'approveTerms',
+      id: 'termsParentB',
       title: m.section.effect,
       children: [
         buildSubSection({
-          id: 'approveTerms',
+          id: 'approveTermsParentB',
           title: m.terms.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'approveTerms',
+              id: 'approveTermsParentB',
               title: m.terms.general.pageTitle,
               component: 'Terms',
             }),
           ],
         }),
         buildSubSection({
-          id: 'approveChildSupportTerms',
+          id: 'approveChildSupportTermsParentB',
           title: m.childSupport.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'approveChildSupportTerms',
+              id: 'approveChildSupportTermsParentB',
               title: m.childSupport.general.pageTitle,
               component: 'ChildSupport',
             }),
