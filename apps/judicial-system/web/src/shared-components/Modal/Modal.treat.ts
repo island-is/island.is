@@ -25,3 +25,7 @@ export const modalContainer = style({
 export const closeButton = style({
   padding: theme.spacing[4],
 })
+
+export const breakSpaces = style({
+  whiteSpace: 'break-spaces',
+})

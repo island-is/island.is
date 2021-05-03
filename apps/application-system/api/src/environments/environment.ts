@@ -17,6 +17,9 @@ export default {
       'localhost:7005',
     ],
   },
+  audit: {
+    defaultNamespace: '@island.is/applications',
+  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',

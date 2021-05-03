@@ -12,14 +12,14 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
-  CurrentRestUser,
+  CurrentUser,
 } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('permissions')
 @Controller('permissions')
 export class PermissionsController {
@@ -33,7 +33,7 @@ export class PermissionsController {
   @Get('permitted-scopes')
   @ApiOkResponse({ isArray: true })
   async findAllPermittedScopes(
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @Query(
       'requestedScopes',
       new ParseArrayPipe({ optional: false, items: String, separator: ',' }),
