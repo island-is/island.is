@@ -25,6 +25,8 @@ export * from './lib/entities/models/idp-provider.model'
 export * from './lib/entities/models/translation.model'
 export * from './lib/entities/models/language.model'
 export * from './lib/entities/models/delegation.model'
+export * from './lib/entities/models/api-scope-user-access.model'
+export * from './lib/entities/models/api-scope-user.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -53,6 +55,9 @@ export * from './lib/entities/dto/grant-type.dto'
 export * from './lib/entities/dto/language.dto'
 export * from './lib/entities/dto/translation.dto'
 export * from './lib/entities/dto/user-claim.dto'
+export * from './lib/entities/dto/api-scope-user.dto'
+export * from './lib/entities/dto/api-scope-user-access.dto'
+export * from './lib/entities/dto/api-scope-user-update.dto'
 
 // Services
 export * from './lib/services/clients.service'
