@@ -327,13 +327,14 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {(workingCase.comments || workingCase.caseFilesComments) && (
+                {(Boolean(workingCase.comments) ||
+                  Boolean(workingCase.caseFilesComments)) && (
                   <AccordionItem
                     id="id_5"
                     label="Athugasemdir"
                     labelVariant="h3"
                   >
-                    {workingCase.comments && (
+                    {Boolean(workingCase.comments) && (
                       <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
                         <Box marginBottom={1}>
                           <Text variant="h4" as="h4">
@@ -348,7 +349,7 @@ export const Overview: React.FC = () => {
                       </Box>
                     )}
                     {features.includes(Feature.CASE_FILES) &&
-                      !!workingCase.caseFilesComments && (
+                      Boolean(workingCase.caseFilesComments) && (
                         <>
                           <Text variant="h4" as="h4">
                             Athugasemdir vegna rannsóknargagna

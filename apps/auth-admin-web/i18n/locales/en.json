@@ -32,11 +32,11 @@
     "admin.index": {
       "title": "Admin Controls"
     },
-    "admin.admin-user.[admin]": {
-      "title": "Edit Admin User"
+    "admin.api-scope-user.[apiScopeUser]": {
+      "title": "Edit Api Scope User"
     },
-    "admin.admin-user.index": {
-      "title": "Create admin user"
+    "admin.api-scope-user.index": {
+      "title": "Create Api Scope user"
     },
     "admin.grant-type.[grantType]": {
       "title": "Edit Grant Type"
@@ -136,7 +136,7 @@
           "text": "Resources"
         },
         "admin": {
-          "text": "Admin control"
+          "text": "Admin controls"
         }
       }
     },
@@ -237,9 +237,9 @@
           "text": "Users",
           "title": "User Identity Management"
         },
-        "adminUsers": {
-          "text": "Admin Users",
-          "title": "List of Admin Users"
+        "apiScopeUsers": {
+          "text": "Api Scope Users",
+          "title": "List of Api Scope Users"
         },
         "idpProviders": {
           "text": "Identity Providers",
@@ -426,28 +426,28 @@
       }
     },
     {
-      "id": "AdminUsersList",
-      "removeConfirmation": "Are you sure want to delete this admin user:",
-      "title": "Admin UI users",
+      "id": "ApiScopeUsersList",
+      "removeConfirmation": "Are you sure want to delete this user:",
+      "title": "Api Scope users",
       "search": {
         "label": "National Id"
       },
       "buttons": {
         "search": {
           "text": "Search",
-          "helpText": "Search for Admin User"
+          "helpText": "Search for Api Scope User"
         },
         "remove": {
           "text": "Delete",
-          "helpText": "Delete Admin User"
+          "helpText": "Delete Api Scope User"
         },
         "edit": {
           "text": "Edit",
-          "helpText": "Edit Admin User"
+          "helpText": "Edit Api Scope User"
         },
         "new": {
-          "text": "Create new Admin User",
-          "helpText": "Open Admin User Form"
+          "text": "Create new Api Scope User",
+          "helpText": "Open Api Scope User Form"
         }
       },
       "columns": {
@@ -458,7 +458,7 @@
           "headerText": "Email"
         },
         "scope": {
-          "headerText": "Scope"
+          "headerText": "Scopes"
         }
       }
     },
@@ -658,10 +658,10 @@
   ],
   "formControls": [
     {
-      "id": "AdminUserCreateForm",
-      "title": "Create a new Admin User",
-      "editTitle": "Edit Admin User",
-      "help": "Add user for the Admin UI by filling out the form.",
+      "id": "ApiScopeUserCreateForm",
+      "title": "Create a new Api Scope User",
+      "editTitle": "Edit Api Scope User",
+      "help": "Add user for Api Scope management",
       "buttons": {
         "save": {
           "text": "Save",
@@ -676,7 +676,7 @@
         "nationalId": {
           "label": "National Id (Kennitala)",
           "placeholder": "0123456789",
-          "helpText": "The nationalId (Kennitala) of the Admin User",
+          "helpText": "The nationalId (Kennitala) of the User",
           "errorMessage": "NationalId must be 10 numeric characters"
         },
         "email": {
@@ -687,12 +687,8 @@
         },
         "scope": {
           "label": "Scope",
-          "helpText": "Select the appropriate Scope for this Admin User",
-          "errorMessage": "Select the appropriate Scope for this Admin User"
-        },
-        "active": {
-          "label": "Active",
-          "helpText": "Sets if user is active or not"
+          "helpText": "Select the appropriate Scope for this User",
+          "errorMessage": "Select the appropriate Scope for this User"
         }
       }
     },

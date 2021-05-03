@@ -5,11 +5,20 @@ import {
   GrantTypeService,
   AccessService,
   AdminAccess,
+  ApiScopeUserAccess,
+  ApiScopeUser,
 } from '@island.is/auth-api-lib'
 import { GrantTypeController } from './grant-types.controller'
 
 @Module({
-  imports: [SequelizeModule.forFeature([GrantType, AdminAccess])],
+  imports: [
+    SequelizeModule.forFeature([
+      GrantType,
+      AdminAccess,
+      ApiScopeUserAccess,
+      ApiScopeUser,
+    ]),
+  ],
   controllers: [GrantTypeController],
   providers: [GrantTypeService, AccessService],
 })

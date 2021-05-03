@@ -13,6 +13,7 @@ export enum ApplicationTypes {
   LOGIN_SERVICE = 'LoginService',
   PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
+  FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
 }
 
 export const ApplicationConfigurations = {
@@ -71,5 +72,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
+  },
+  [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
+    slug: 'fjarmognun-rikisverkefni',
+    translation: 'affgp.application',
   },
 }
