@@ -25,6 +25,12 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication',
+}
+
 const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<FundingGovernmentProjectsEvent>,
@@ -75,6 +81,9 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           description: application.general.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
