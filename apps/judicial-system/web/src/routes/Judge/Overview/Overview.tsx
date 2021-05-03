@@ -337,6 +337,7 @@ export const JudgeOverview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
