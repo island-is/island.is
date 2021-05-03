@@ -4,6 +4,9 @@ import {
   Form,
   FormModes,
   buildDescriptionField,
+  buildMultiField,
+  buildCustomField,
+  buildTextField,
 } from '@island.is/application/core'
 import {
   section,
@@ -46,10 +49,40 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'project',
       title: section.project,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId3',
+        buildMultiField({
+          id: 'projectMultiField',
           title: project.general.pageTitle,
-          description: 'Umsókn',
+          description: project.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'projectInfoTitleField',
+              title: project.labels.projectInfoFieldTitle,
+              component: 'FieldTitle',
+            }),
+            buildTextField({
+              id: 'project.title',
+              title: project.labels.projectTitle,
+              backgroundColor: 'blue',
+              placeholder: project.labels.projectTitlePlaceholder,
+              required: true,
+            }),
+            buildTextField({
+              id: 'project.description',
+              title: project.labels.projectDescription,
+              backgroundColor: 'blue',
+              placeholder: project.labels.projectDescriptionPlaceholder,
+              required: true,
+              variant: 'textarea',
+              rows: 4,
+            }),
+            buildTextField({
+              id: 'project.cost',
+              title: project.labels.projectCost,
+              backgroundColor: 'blue',
+              placeholder: project.labels.projectCostPlaceholder,
+              required: true,
+            }),
+          ],
         }),
       ],
     }),
