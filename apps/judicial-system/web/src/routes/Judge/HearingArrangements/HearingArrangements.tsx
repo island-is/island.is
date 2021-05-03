@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react'
+import InputMask from 'react-input-mask'
+
 import {
   AlertMessage,
   Box,
@@ -7,7 +10,6 @@ import {
   Option,
   Tooltip,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -59,6 +61,10 @@ export const HearingArrangements: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
+  const [
+    defenderPhoneNumberErrorMessage,
+    setDefenderPhoneNumberErrorMessage,
+  ] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
@@ -147,6 +153,10 @@ export const HearingArrangements: React.FC = () => {
       {
         value: workingCase?.defenderEmail || '',
         validations: ['email-format'],
+      },
+      {
+        value: workingCase?.defenderPhoneNumber || '',
+        validations: ['phonenumber'],
       },
     ]
 
@@ -357,35 +367,71 @@ export const HearingArrangements: React.FC = () => {
                   }
                 />
               </Box>
-              <Input
-                name="defenderEmail"
-                label="Netfang verjanda"
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
+              <Box marginBottom={3}>
+                <Input
+                  name="defenderEmail"
+                  label="Netfang verjanda"
+                  defaultValue={workingCase.defenderEmail}
+                  placeholder="Netfang"
+                  errorMessage={defenderEmailErrorMessage}
+                  hasError={defenderEmailErrorMessage !== ''}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'defenderEmail',
+                      event,
+                      ['email-format'],
+                      workingCase,
+                      setWorkingCase,
+                      defenderEmailErrorMessage,
+                      setDefenderEmailErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'defenderEmail',
+                      event.target.value,
+                      ['email-format'],
+                      workingCase,
+                      updateCase,
+                      setDefenderEmailErrorMessage,
+                    )
+                  }
+                />
+              </Box>
+              <InputMask
+                mask="999-9999"
+                maskPlaceholder={null}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'defenderEmail',
+                    'defenderPhoneNumber',
                     event,
-                    ['email-format'],
+                    ['phonenumber'],
                     workingCase,
                     setWorkingCase,
-                    defenderEmailErrorMessage,
-                    setDefenderEmailErrorMessage,
+                    defenderPhoneNumberErrorMessage,
+                    setDefenderPhoneNumberErrorMessage,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'defenderEmail',
+                    'defenderPhoneNumber',
                     event.target.value,
-                    ['email-format'],
+                    ['phonenumber'],
                     workingCase,
                     updateCase,
-                    setDefenderEmailErrorMessage,
+                    setDefenderPhoneNumberErrorMessage,
                   )
                 }
-              />
+              >
+                <Input
+                  name="defenderPhoneNumber"
+                  label="Símanúmer verjanda"
+                  defaultValue={workingCase.defenderPhoneNumber}
+                  placeholder="Símanúmer"
+                  errorMessage={defenderPhoneNumberErrorMessage}
+                  hasError={defenderPhoneNumberErrorMessage !== ''}
+                />
+              </InputMask>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>

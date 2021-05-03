@@ -91,6 +91,7 @@ const judgeUpdateRule = {
   dtoFields: [
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'setCourtCaseNumberManually',
     'courtCaseNumber',
     'courtDate',
