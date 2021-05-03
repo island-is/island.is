@@ -13,10 +13,10 @@
 # Organisation name is @island-is, not @island.is
 
 
-/apps/web*/                                                                                   @island-is/kosmos-kaos @island-is/aranja
-/apps/endorsement-system/                                                                     @island-is/kosmos-kaos
+/apps/web*/                                                                                   @island-is/kosmos-kaos
+/apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
@@ -26,6 +26,7 @@
 
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
 /libs/service-portal/education/                                                               @island-is/kosmos-kaos
+/libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
 
 /apps/application-system/                                                                     @island-is/aranja
 /apps/reference-next-app/                                                                     @island-is/aranja
@@ -74,15 +75,17 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/                                                                @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/login-service/                                                    @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
+/libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 
-/apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/content-search-index-manager/                                                           @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/content-search-metrics/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+/apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-index-manager/                                                           @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-metrics/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos
 /libs/api/domains/syslumenn/                                                                  @island-is/stefna
 /apps/web/screens/Organization/                                                               @island-is/stefna
 /apps/web/components/Organization/                                                            @island-is/stefna

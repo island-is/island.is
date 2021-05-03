@@ -56,6 +56,7 @@ export * from './lib/Select/Select'
 export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
+export * from './lib/ToggleSwitch'
 
 // Layout
 export * from './lib/Box/Box'

@@ -14,8 +14,9 @@ import {
   ApiScope,
   IdentityResource,
   AccessService,
-  AdminAccess,
   IdpProvider,
+  ApiScopeUserAccess,
+  ApiScopeUser,
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpRestrictionController } from './idp-restriction.controller'
@@ -43,7 +44,8 @@ import { ClientSecretController } from './client-secret.controller'
       ApiScope,
       IdentityResource,
       IdpProvider,
-      AdminAccess,
+      ApiScopeUserAccess,
+      ApiScopeUser,
     ]),
   ],
   controllers: [

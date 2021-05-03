@@ -1,4 +1,4 @@
-import React, { FC, useMemo, ReactNode } from 'react'
+import React, { useMemo, ReactNode } from 'react'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useDateUtils } from '../../i18n/useDateUtils'
 import { Timeline, TimelineEvent } from './Timeline'
@@ -19,10 +19,7 @@ export interface TimelineSectionProps {
   events: TimelineEventProps[]
 }
 
-export const TimelineSection: FC<TimelineSectionProps> = ({
-  title,
-  events,
-}) => {
+export const TimelineSection = ({ title, events }: TimelineSectionProps) => {
   const mappedEvents = useMemo(() => events.map(mapEvent), [events])
   const { getMonthByIndex } = useDateUtils()
 

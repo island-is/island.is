@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './LogoList.treat'
 import cn from 'classnames'
@@ -10,12 +10,12 @@ export interface LogoListProps {
   variant?: 'light' | 'dark'
 }
 
-export const LogoList: FC<LogoListProps> = ({
+export const LogoList = ({
   title,
   body,
   images,
   variant = 'light',
-}) => (
+}: LogoListProps) => (
   <div>
     <Text
       variant="h1"

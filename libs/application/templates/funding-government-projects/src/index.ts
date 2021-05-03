@@ -1,0 +1,2 @@
+import FundingGovernmentProjectsTemplate from './lib/FundingGovernmentProjectsTemplate'
+export default FundingGovernmentProjectsTemplate

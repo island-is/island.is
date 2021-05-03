@@ -1,12 +1,48 @@
 import { useMutation } from '@apollo/client'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/graphql'
-import { CreateCaseMutation } from '../mutations'
+import {
+  Case,
+  NotificationType,
+  SendNotificationResponse,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+import {
+  SendNotificationMutation,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/graphql'
+import {
+  CreateCaseMutation,
+  CreateCustodyCourtCaseMutation,
+} from '../mutations'
+import { parseString } from '../formatters'
+import { setAndSendToServer } from '../formHelper'
+
+type autofillProperties = Pick<
+  Case,
+  'courtAttendees' | 'policeDemands' | 'litigationPresentations'
+>
+
+interface CreateCustodyCourtCaseMutationResponse {
+  createCustodyCourtCase: {
+    courtCaseNumber: string
+  }
+}
 
 const useCase = () => {
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
+  )
+  const [
+    createCustodyCourtCaseMutation,
+    { loading: creatingCustodyCourtCase },
+  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
+    CreateCustodyCourtCaseMutation,
+  )
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation<{ sendNotification: SendNotificationResponse }>(
+    SendNotificationMutation,
   )
 
   const createCase = async (theCase: Case): Promise<string | undefined> => {
@@ -36,6 +72,47 @@ const useCase = () => {
     return undefined
   }
 
+  const createCourtCase = async (
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    setCourtCaseNumberErrorMessage: React.Dispatch<
+      React.SetStateAction<string>
+    >,
+  ): Promise<void> => {
+    if (creatingCustodyCourtCase === false) {
+      try {
+        const { data, errors } = await createCustodyCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+            },
+          },
+        })
+
+        if (data && workingCase && !errors) {
+          setAndSendToServer(
+            'courtCaseNumber',
+            data.createCustodyCourtCase.courtCaseNumber,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
+      }
+
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+      )
+    }
+  }
+
   const updateCase = async (id: string, updateCase: UpdateCase) => {
     // Only update if id has been set
     if (!id) {
@@ -55,7 +132,46 @@ const useCase = () => {
     return resCase
   }
 
-  return { createCase, updateCase, isCreatingCase }
+  const sendNotification = async (
+    id: string,
+    notificationType: NotificationType,
+  ) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: notificationType,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
+
+  const autofill = (
+    key: keyof autofillProperties,
+    value: string,
+    workingCase: Case,
+  ) => {
+    if (!workingCase[key]) {
+      workingCase[key] = value
+
+      if (workingCase[key]) {
+        updateCase(workingCase.id, parseString(key, value))
+      }
+    }
+  }
+
+  return {
+    updateCase,
+    createCase,
+    isCreatingCase,
+    sendNotification,
+    isSendingNotification,
+    autofill,
+    createCourtCase,
+    creatingCustodyCourtCase,
+  }
 }
 
 export default useCase
