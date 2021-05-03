@@ -68,29 +68,6 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.submitted]: {
-        meta: {
-          name: States.submitted,
-          title: application.name,
-          description: application.description,
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/FundingGovernmentProjectsFormInReview').then(
-                  (module) =>
-                    // TODO: Rename this once we start work on it
-                    Promise.resolve(
-                      module.FundingGovernmentProjectsFormInReview,
-                    ),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-      },
     },
   },
   mapUserToRole(
