@@ -1,22 +1,27 @@
-import React from 'react'
-import { FeaturedArticles } from '@island.is/web/graphql/schema'
+import React, { useState } from 'react'
+import {
+  FeaturedArticles,
+  Query,
+  QueryGetArticlesArgs,
+  SortField,
+} from '@island.is/web/graphql/schema'
 import {
   Box,
   Button,
   FocusableBox,
-  GridColumn,
-  GridRow,
+  Input,
   Link,
   LinkCard,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './FeaturedArticlesSlice.treat'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
 import { Namespace } from '@island.is/api/schema'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useQuery } from '@apollo/client'
+import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
 
 interface SliceProps {
   slice: FeaturedArticles
@@ -31,6 +36,26 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+
+  const [query, setQuery] = useState('')
+
+  const { data } = useQuery<Query, QueryGetArticlesArgs>(
+    GET_ORGANIZATION_SERVICES_QUERY,
+    {
+      variables: {
+        input: {
+          lang: 'is',
+          organization: 'syslumenn',
+          sort: SortField.Popular,
+        },
+      },
+    },
+  )
+
+  const results = data?.getArticles.filter((x) =>
+    x.title.toLowerCase().includes(query.toLowerCase()),
+  )
+
   return (
     !!slice.articles.length && (
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -40,11 +65,24 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
           paddingTop={[8, 6, 8]}
           paddingBottom={[8, 6, 6]}
         >
-          <Text as="h2" variant="h3" paddingBottom={6}>
+          <Text as="h2" variant="h3" paddingBottom={4}>
             {slice.title}
           </Text>
+          <Box marginBottom={4}>
+            <Input
+              id="featured-search"
+              placeholder={'Leit'}
+              backgroundColor={['blue', 'blue', 'white']}
+              size="sm"
+              icon="search"
+              iconType="outline"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </Box>
+          {!results?.length && <Text>Ekkert fannst</Text>}
           <Stack space={2}>
-            {slice.articles.map(({ title, slug, processEntry }) => {
+            {results?.slice(0, 5).map(({ title, slug, processEntry }) => {
               const url = linkResolver('Article' as LinkType, [slug])
               return (
                 <FocusableBox
