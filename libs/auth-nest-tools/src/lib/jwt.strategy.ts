@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       actor: payload.act && {
         nationalId: payload.act.nationalId,
       },
-      ip: request.ip,
+      ip: String(request.headers['x-real-ip']) ?? request.ip,
       userAgent: request.headers['user-agent'],
     }
   }

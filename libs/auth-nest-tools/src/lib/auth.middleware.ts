@@ -28,7 +28,7 @@ export class AuthMiddleware implements Middleware {
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: this.auth.authorization,
       'User-Agent': this.auth.userAgent,
-      'X-Forwarded-For': this.auth.ip,
+      'X-Real-IP': this.auth.ip,
     })
   }
 }
