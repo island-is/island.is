@@ -165,12 +165,7 @@ export class DirectorateOfLabourRepository {
       },
     )
 
-    if (
-      pregnancyStatus.hasError ||
-      pregnancyStatus.hasActivePregnancy === undefined ||
-      pregnancyStatus.pregnancyDueDate === undefined ||
-      pregnancyStatus.pregnancyDueDate === null
-    ) {
+    if (pregnancyStatus.hasError) {
       throw new Error(
         pregnancyStatus.errorMessage ?? 'Could not fetch pregnancy status',
       )
