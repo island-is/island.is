@@ -44,6 +44,10 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
 
   @Allow()

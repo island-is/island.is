@@ -52,8 +52,7 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     case 'phonenumber':
       return {
-        // ^(\d{3})(-?(\d{4}))?$
-        regex: new RegExp(/^(\d{3})(-?(\d{4}))$/g),
+        regex: new RegExp(/^$|^(\d{3})(-?(\d{4}))$/g),
         errorMessage: 'Dæmi: 555-5555',
       }
   }

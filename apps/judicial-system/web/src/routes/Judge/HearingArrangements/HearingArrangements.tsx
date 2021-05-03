@@ -51,6 +51,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -58,11 +59,12 @@ export const HearingArrangements: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
+  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
 
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const { updateCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -75,23 +77,6 @@ export const HearingArrangements: React.FC = () => {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
-  )
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
   )
 
   const [
