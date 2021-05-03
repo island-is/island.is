@@ -4608,6 +4608,27 @@
         }
       }
     },
+    "nest-audit": {
+      "root": "libs/nest/audit",
+      "sourceRoot": "libs/nest/audit/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/audit/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/audit"],
+          "options": {
+            "jestConfig": "libs/nest/audit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nova-sms": {
       "root": "libs/nova-sms",
       "sourceRoot": "libs/nova-sms/src",

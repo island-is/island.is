@@ -1,16 +1,15 @@
 import { defineMessages } from 'react-intl'
 
-export const application = {
-  general: defineMessages({
-    name: {
-      id: 'affgp.application:general.name',
-      defaultMessage: 'Funding For Government Projects',
-      description: 'Name of the application',
-    },
-    description: {
-      id: 'affgp.application:general.description',
-      defaultMessage: 'Application description',
-      description: 'Application description',
-    },
-  }),
-}
+// Global string for the application
+export const application = defineMessages({
+  name: {
+    id: `affgp.application:application.name`,
+    defaultMessage: 'Umsókn um fjármögnun ríkisverkefnis',
+    description: 'Name of the Funding Government Projects application',
+  },
+  description: {
+    id: `affgp.application:application.description`,
+    defaultMessage: 'Lýsing á umsókn um fjármögnun ríkisverkefnis',
+    description: 'Description of the Funding Government Projects application',
+  },
+})

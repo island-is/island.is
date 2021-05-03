@@ -159,6 +159,8 @@
 - [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
+- [Nest Modules](libs/nest/README.md)
+  - [Audit Module](libs/nest/audit/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
 - [Service Portal](libs/service-portal/README.md)

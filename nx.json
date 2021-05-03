@@ -392,6 +392,9 @@
     "message-queue": {
       "tags": []
     },
+    "nest-audit": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
