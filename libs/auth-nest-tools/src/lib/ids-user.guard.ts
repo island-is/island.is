@@ -3,13 +3,18 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
+import { BYPASS_AUTH_KEY } from './bypass-auth.decorator'
 import { getRequest } from './getRequest'
 import { User } from './user'
 
 @Injectable()
 export class IdsUserGuard extends AuthGuard('jwt') {
   getRequest = getRequest
+  constructor(private readonly reflector: Reflector) {
+    super()
+  }
 
   handleRequest<TUser extends User>(
     error: unknown,
@@ -30,5 +35,21 @@ export class IdsUserGuard extends AuthGuard('jwt') {
     const request = this.getRequest(context)
     request.auth = user
     return user
+  }
+
+  canActivate(context: ExecutionContext) {
+    // we check for metadata set by the bypass auth decorator
+    const bypassAuth = this.reflector.getAllAndOverride<boolean>(
+      BYPASS_AUTH_KEY,
+      [context.getHandler(), context.getClass()],
+    )
+
+    // if the bypass auth exists and is truthy we bypass auth
+    if (bypassAuth) {
+      return true
+    }
+
+    // pass auth checking to JWT auth guard
+    return super.canActivate(context)
   }
 }

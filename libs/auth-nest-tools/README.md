@@ -76,3 +76,15 @@ and individual protected methods with `@Scopes`:
 If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
 Information about the logged in user can be obtained by adding `@CurrentUser() user: User` as an input parameter to the resolver method.
+
+### Opting out of auth
+
+If a small subsection of your controller or app has public endpoints you can explicitly opt out of auth for those sections.
+
+Decorate the resolver or controller with `@BypassAuth`:
+
+```typescript
+@BypassAuth()
+@Controller('clients')
+export class ClientsController {
+```
