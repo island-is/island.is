@@ -1,5 +1,4 @@
 import React, {
-  FC,
   useState,
   useEffect,
   useCallback,
@@ -32,6 +31,7 @@ import {
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
+  SubArticle,
   SearchableContentTypes,
   LifeEventPage,
   AboutPage,
@@ -120,6 +120,7 @@ const useSearch = (
                 SearchableContentTypes['WebLifeEventPage'],
                 SearchableContentTypes['WebAboutPage'],
                 SearchableContentTypes['WebNews'],
+                SearchableContentTypes['WebSubArticle'],
               ],
             },
           },
@@ -347,7 +348,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   },
 )
 
-const Results: FC<{
+type ResultsProps = {
   search: SearchState
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -355,14 +356,16 @@ const Results: FC<{
   autosuggest: boolean
   onRouting?: () => void
   quickContentLabel?: string
-}> = ({
+}
+
+const Results = ({
   search,
   highlightedIndex,
   getItemProps,
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
-}) => {
+}: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
   if (!search.term) {
@@ -427,24 +430,30 @@ const Results: FC<{
               {(search.results.items as Article[] &
                 LifeEventPage[] &
                 AboutPage[] &
-                News[])
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
-                .map(({ id, title, slug, __typename }) => {
+                .map((item) => {
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
                   return (
                     <div
-                      key={id}
+                      key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
                     >
-                      <Link {...linkResolver(__typename as LinkType, [slug])}>
+                      <Link
+                        {...linkResolver(
+                          item.__typename as LinkType,
+                          item.slug.split('/'),
+                        )}
+                      >
                         <Text variant="h5" color="blue400">
-                          {title}
+                          {item.title}
                         </Text>
                       </Link>
                     </div>

@@ -55,6 +55,7 @@ interface MockChildren extends PersonResidenceChange {
   otherParent: number
 }
 interface MockData {
+  applicant: PersonResidenceChange
   parents: PersonResidenceChange[]
   children: MockChildren[]
 }

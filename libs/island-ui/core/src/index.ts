@@ -46,7 +46,7 @@ export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
-export { default as Table } from './lib/Table'
+export { Table } from './lib/Table'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
@@ -56,6 +56,7 @@ export * from './lib/Select/Select'
 export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
+export * from './lib/ToggleSwitch'
 
 // Layout
 export * from './lib/Box/Box'

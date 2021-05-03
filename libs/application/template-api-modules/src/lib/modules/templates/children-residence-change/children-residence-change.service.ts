@@ -17,10 +17,12 @@ import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
+  generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
+import { syslumennEmailFromPostalCode } from './utils'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -119,11 +121,20 @@ export class ChildrenResidenceChangeService {
           : durationType,
     }
 
-    const response = await this.syslumennService.uploadData(
-      participants,
-      attachment,
-      extraData,
-    )
+    const response = await this.syslumennService
+      .uploadData(participants, attachment, extraData)
+      .catch(async () => {
+        const syslumennEmail = syslumennEmailFromPostalCode(
+          childResidenceInfo.future.address.postalCode,
+        )
+
+        await this.sharedTemplateAPIService.sendEmailWithAttachment(
+          generateSyslumennNotificationEmail,
+          (application as unknown) as Application,
+          fileContent.toString('binary'),
+          syslumennEmail,
+        )
+      })
 
     await this.sharedTemplateAPIService.sendEmailWithAttachment(
       generateApplicationSubmittedEmail,
@@ -156,7 +167,7 @@ export class ChildrenResidenceChangeService {
     if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
-        'Borist hefur umsókn um breytt lögheimili barns.',
+        'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
   }

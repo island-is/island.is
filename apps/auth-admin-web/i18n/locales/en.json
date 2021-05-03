@@ -32,11 +32,11 @@
     "admin.index": {
       "title": "Admin Controls"
     },
-    "admin.admin-user.[admin]": {
-      "title": "Edit Admin User"
+    "admin.api-scope-user.[apiScopeUser]": {
+      "title": "Edit Api Scope User"
     },
-    "admin.admin-user.index": {
-      "title": "Create admin user"
+    "admin.api-scope-user.index": {
+      "title": "Create Api Scope user"
     },
     "admin.grant-type.[grantType]": {
       "title": "Edit Grant Type"
@@ -135,11 +135,8 @@
         "resources": {
           "text": "Resources"
         },
-        "users": {
-          "text": "Users"
-        },
         "admin": {
-          "text": "Admin control"
+          "text": "Admin controls"
         }
       }
     },
@@ -236,9 +233,13 @@
     },
     "adminTabNav": {
       "items": {
-        "adminUsers": {
-          "text": "Admin Users",
-          "title": "List of Admin Users"
+        "users": {
+          "text": "Users",
+          "title": "User Identity Management"
+        },
+        "apiScopeUsers": {
+          "text": "Api Scope Users",
+          "title": "List of Api Scope Users"
         },
         "idpProviders": {
           "text": "Identity Providers",
@@ -276,14 +277,28 @@
     {
       "id": "TranslationList",
       "removeConfirmation": "Are you sure want to delete this Translation:",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "Translations",
-      "createNewItem": "Create new Translation",
       "search": {
         "label": "Text value"
       },
-      "searchButton": "Search",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for translation with text value"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Translation"
+        },
+        "edit": {
+          "text": "Delete",
+          "helpText": "Edit Translation"
+        },
+        "new": {
+          "text": "Create new Translation",
+          "helpText": "Open translation form"
+        }
+      },
       "columns": {
         "language": {
           "headerText": "Language"
@@ -305,14 +320,28 @@
     {
       "id": "LanguageList",
       "removeConfirmation": "Are you sure want to delete this language:",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "Languages",
-      "createNewItem": "Create new language",
       "search": {
-        "label": "IDP name"
+        "label": "Language"
       },
-      "searchButton": "Search",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for language"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Language"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Language"
+        },
+        "new": {
+          "text": "Create new Language",
+          "helpText": "Open Language form"
+        }
+      },
       "columns": {
         "isoKey": {
           "headerText": "Iso Key"
@@ -328,14 +357,28 @@
     {
       "id": "IdpProvidersList",
       "removeConfirmation": "Are you sure want to delete this IDP Provider:",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "Identity Providers",
-      "createNewItem": "Create new Identity Provider",
       "search": {
         "label": "IDP name"
       },
-      "searchButton": "Search",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Identity Provider"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Identity Provider"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Language"
+        },
+        "new": {
+          "text": "Create new Identity Provider",
+          "helpText": "Open Identity Provider Form"
+        }
+      },
       "columns": {
         "name": {
           "headerText": "Name"
@@ -351,14 +394,28 @@
     {
       "id": "GrantTypesList",
       "removeConfirmation": "Are you sure want to delete this Grant Type:",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "Grant Types",
-      "createNewItem": "Create new Grant Type",
       "search": {
         "label": "Grant Type name"
       },
-      "searchButton": "Search",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Grant Type"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Grant Type"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Grant Type"
+        },
+        "new": {
+          "text": "Create new Grant Type",
+          "helpText": "Open Grant Type Form"
+        }
+      },
       "columns": {
         "name": {
           "headerText": "Name"
@@ -369,16 +426,30 @@
       }
     },
     {
-      "id": "AdminUsersList",
-      "removeConfirmation": "Are you sure want to delete this admin user:",
-      "removeButton": "Delete",
-      "editButton": "Edit",
-      "title": "Admin UI users",
-      "createNewItem": "Create new Admin UI User",
+      "id": "ApiScopeUsersList",
+      "removeConfirmation": "Are you sure want to delete this user:",
+      "title": "Api Scope users",
       "search": {
         "label": "National Id"
       },
-      "searchButton": "Search",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Api Scope User"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Api Scope User"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Api Scope User"
+        },
+        "new": {
+          "text": "Create new Api Scope User",
+          "helpText": "Open Api Scope User Form"
+        }
+      },
       "columns": {
         "nationalId": {
           "headerText": "National Id"
@@ -387,22 +458,39 @@
           "headerText": "Email"
         },
         "scope": {
-          "headerText": "Scope"
+          "headerText": "Scopes"
         }
       }
     },
     {
       "id": "ClientsList",
       "removeConfirmation": "Are you sure want to archive this client",
-      "removeButton": "Archive",
-      "editButton": "Edit",
       "title": "Clients",
-      "createNewItem": "Create new client",
       "search": {
         "label": "National Id or Client Id"
       },
-      "searchButton": "Search",
-      "exportButton": "Export",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Client"
+        },
+        "remove": {
+          "text": "Archive",
+          "helpText": "Archive Client"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Client"
+        },
+        "new": {
+          "text": "Create new Client",
+          "helpText": "Open Client Form"
+        },
+        "export": {
+          "text": "Export",
+          "helpText": "Export CSV"
+        }
+      },
       "columns": {
         "clientId": {
           "headerText": "Name"
@@ -421,15 +509,32 @@
     {
       "id": "ApiResourcesList",
       "removeConfirmation": "Are you sure want to archive this Api resource",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "Api resources",
-      "createNewItem": "Create new Api resource",
       "search": {
         "label": "National Id or Resource name"
       },
-      "searchButton": "Search",
-      "exportButton": "Export",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Api Resource"
+        },
+        "remove": {
+          "text": "Archive",
+          "helpText": "Archive Api Resource"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Api Resource"
+        },
+        "new": {
+          "text": "Create new Api Resource",
+          "helpText": "Open Api Resource Form"
+        },
+        "export": {
+          "text": "Export",
+          "helpText": "Export Api Resources to CSV"
+        }
+      },
       "columns": {
         "name": {
           "headerText": "Name"
@@ -444,22 +549,31 @@
     },
     {
       "id": "UsersList",
-      "removeButton": "Delete",
-      "editButton": "Edit",
       "title": "User management",
-      "viewButton": "View Claims",
-      "active": "User is active. Click to deactivate",
-      "deactivated": "User is deactivated. Click to activate",
-      "activateButton": "Activate",
-      "deactivateButton": "Deactivate",
       "search": {
         "label": "Search by National Id or Subject Id",
         "placeholder": "0123456789",
         "helpText": "You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id",
         "errorMessage": "SubjectId or nationalId is required and should be in the right format. NationalId must 10 numeric characters"
       },
-      "searchButton": "Search",
-      "exportButton": "Export",
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for User"
+        },
+        "view": {
+          "text": "View Claims",
+          "helpText": "View all Claims for this user"
+        },
+        "deactivate": {
+          "text": "Deactivate",
+          "helpText": "User is active. Click to deactivate"
+        },
+        "activate": {
+          "text": "Activate",
+          "helpText": "User is deactivated. Click to activate"
+        }
+      },
       "columns": {
         "subjectId": {
           "headerText": "Subject Id"
@@ -480,30 +594,55 @@
         },
         "found": {
           "title": "Users found"
+        },
+        "usersList": {
+          "title": "Users"
         }
       }
     },
     {
       "id": "ApiScopeList",
       "removeConfirmation": "Are you sure want to archive this Api scope",
-      "removeButton": "Archive",
       "title": "Api scopes",
-      "createNewItem": "Create new Api scope"
+      "buttons": {
+        "new": {
+          "text": "Create new Api scope",
+          "helpText": "Open Api Scope Form"
+        },
+        "remove": {
+          "text": "Archive",
+          "helpText": "Archive Api Scope"
+        }
+      }
     },
     {
       "id": "IdentityResourcesList",
       "removeConfirmation": "Are you sure want to archive this Identity resource",
-      "removeButton": "Archive",
       "title": "Identity resources",
-      "createNewItem": "Create new Identity Resource"
+      "buttons": {
+        "new": {
+          "text": "Create new Identity Resource",
+          "helpText": "Open Identity Resource Form"
+        },
+        "remove": {
+          "text": "Archive",
+          "helpText": "Archive Identity Resource"
+        }
+      }
     },
     {
       "id": "ResourceListDisplay",
       "removeConfirmation": "Are you sure want to archive this Identity resource",
-      "removeButton": "Delete",
-      "editButton": "Edit",
-      "title": "Identity resources",
-      "createNewItem": "Create new Identity Resource",
+      "buttons": {
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Scope / Resource"
+        },
+        "remove": {
+          "text": "Archive",
+          "helpText": "Archive Resource / Scope"
+        }
+      },
       "columns": {
         "name": {
           "headerText": "Name"
@@ -519,10 +658,10 @@
   ],
   "formControls": [
     {
-      "id": "AdminUserCreateForm",
-      "title": "Create a new Admin User",
-      "editTitle": "Edit Admin User",
-      "help": "Add user for the Admin UI by filling out the form.",
+      "id": "ApiScopeUserCreateForm",
+      "title": "Create a new Api Scope User",
+      "editTitle": "Edit Api Scope User",
+      "help": "Add user for Api Scope management",
       "buttons": {
         "save": {
           "text": "Save",
@@ -537,7 +676,7 @@
         "nationalId": {
           "label": "National Id (Kennitala)",
           "placeholder": "0123456789",
-          "helpText": "The nationalId (Kennitala) of the Admin User",
+          "helpText": "The nationalId (Kennitala) of the User",
           "errorMessage": "NationalId must be 10 numeric characters"
         },
         "email": {
@@ -548,12 +687,8 @@
         },
         "scope": {
           "label": "Scope",
-          "helpText": "Select the appropriate Scope for this Admin User",
-          "errorMessage": "Select the appropriate Scope for this Admin User"
-        },
-        "active": {
-          "label": "Active",
-          "helpText": "Sets if user is active or not"
+          "helpText": "Select the appropriate Scope for this User",
+          "errorMessage": "Select the appropriate Scope for this User"
         }
       }
     },

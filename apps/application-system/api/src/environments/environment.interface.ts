@@ -1,10 +1,11 @@
 import { AuthConfig } from '@island.is/auth-nest-tools'
 import { TemplateAPIConfig } from '@island.is/application/template-api-modules'
-import { ApplicationConfig } from '../app/modules/application/application.configuration'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { SigningServiceOptions } from '@island.is/dokobit-signing'
 import { SyslumennClientConfig } from '@island.is/api/domains/syslumenn'
 import { SmsServiceOptions } from '@island.is/nova-sms'
+
+import { ApplicationConfig } from '../app/modules/application/application.configuration'
 
 export interface Environment {
   production: boolean
@@ -21,4 +22,7 @@ export interface Environment {
   signingOptions: SigningServiceOptions
   syslumenn: SyslumennClientConfig
   smsOptions: SmsServiceOptions
+  contentful: {
+    accessToken: string
+  }
 }

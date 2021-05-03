@@ -18,7 +18,6 @@ const FieldDescription: FC<FieldDescriptionProps> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-
   const { props = {} } = field
 
   return (
