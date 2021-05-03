@@ -27,10 +27,6 @@ const Terms = ({ field, error }: CRCFieldBaseProps) => {
             label: formatMessage(terms.residenceChangeCheckbox.label),
           },
           {
-            value: 'childSupport',
-            label: formatMessage(terms.childBenefitCheckbox.label),
-          },
-          {
             value: 'childBenefit',
             label: formatMessage(terms.familySupportCheckbox.label),
           },
