@@ -66,7 +66,7 @@ export const RegulationLayout = (props: RegulationLayoutProps) => {
                 span={['1/1', '1/1', '1/1', '3/12']}
                 order={[1, 1, 0]}
               >
-                <Hidden print={true}>{props.sidebar}</Hidden>
+                {props.sidebar}
               </GridColumn>
             </GridRow>
           </GridContainer>

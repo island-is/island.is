@@ -21,6 +21,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -70,6 +71,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
     throw new CustomNextError(404, 'Not found')
   }
 
+  const [showDetails, setShowDetails] = useState(false)
+
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const totalItems = props.regulations?.data?.length ?? 0
@@ -107,12 +110,60 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                 paddingBottom={[4, 4, 4, 4, 1]}
               >
                 {breadCrumbs}
-                <Text as="h1" variant="h1" marginTop={2}>
-                  {txt('homeIntroLegend')}
+                <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
+                  {txt('homeIntroLegend', 'Reglugerðasafn')}
                 </Text>
-                <Text variant="intro" as="p">
-                  {txt('homeIntro')}
+
+                <Text marginBottom={1}>
+                  Reglugerðir eru gefnar út í{' '}
+                  <Link href="https://www.stjornartidindi.is/">
+                    B-deild Stjórnartíðinda
+                  </Link>{' '}
+                  og miðast réttaráhrif við þá birtingu.
                 </Text>
+                <Button
+                  variant="text"
+                  icon={showDetails ? 'chevronUp' : 'chevronDown'}
+                  onClick={() => setShowDetails(!showDetails)}
+                >
+                  Sjá nánar um safnið og fyrirvara
+                </Button>
+                {showDetails && (
+                  <>
+                    <Text marginBottom={1} marginTop={2}>
+                      Reglugerðasafn er heildarsafn gildandi reglugerða.
+                      Reglugerðasafns&shy;vefurinn var opnaður í júní 2001,
+                      önnur útgáfa hans í apríl 2015 og þriðja útgáfa í ....
+                      2021.
+                    </Text>
+                    <Text marginBottom={1}>
+                      Við þriðju útgáfu verður sú nýbreytni að breytingar
+                      reglugerð verða felldar inn og hægt að nálgast samfelldan
+                      texta reglugerða eins og hann er á hverjum tíma. Gera
+                      verður ráð fyrir að það taki nokkurn tíma þar til allar
+                      reglugerðir verði komnar í þann búning.
+                    </Text>
+
+                    <Text marginTop={2} marginBottom={1}>
+                      <strong>Fyrirvari 2021</strong>
+                    </Text>
+                    <Text marginBottom={1}>
+                      Reglugerðir eru birtar í{' '}
+                      <Link href="https://www.stjornartidindi.is/">
+                        B-deild Stjórnartíðinda
+                      </Link>{' '}
+                      skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað,
+                      nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda{' '}
+                      <Link href="/reglugerdir/nr/0958-2005">nr. 958/2005</Link>
+                      .
+                    </Text>
+                    <Text marginBottom={1}>
+                      Sé misræmi milli þess texta sem birtist hér í safninu og
+                      þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal
+                      sá síðarnefndi ráða.
+                    </Text>
+                  </>
+                )}
               </GridColumn>
 
               <GridColumn
@@ -125,7 +176,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span="12/12" paddingTop={0} paddingBottom={[4, 4, 4]}>
+              <GridColumn span="12/12" paddingTop={2} paddingBottom={[4, 4, 4]}>
                 <RegulationsSearchSection
                   searchFilters={props.searchQuery}
                   lawChapters={props.lawChapters}
@@ -143,9 +194,9 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           header=""
           content={
             <GridContainer>
-              {props.doSearch && (
-                <GridRow>
-                  <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
+              <GridRow>
+                <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
+                  {props.doSearch ? (
                     <Text>
                       {totalItems === 0
                         ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
@@ -153,9 +204,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                         ? totalItems + ' reglugerð fannst'
                         : `${totalItems} reglugerðir fundust`}
                     </Text>
-                  </GridColumn>
-                </GridRow>
-              )}
+                  ) : (
+                    <Text>
+                      {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
+                    </Text>
+                  )}
+                </GridColumn>
+              </GridRow>
+
               <GridRow>
                 {props.regulations?.data?.length > 0 &&
                   props.regulations.data.slice(0, showCount).map((reg, i) => (
@@ -204,7 +260,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 RegulationsHome.getInitialProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const serviceId = String(query.slug)
-  const searchQuery = getParams(query, ['q', 'rn', 'year', 'ch', 'all'])
+  const searchQuery = getParams(query, [
+    'q',
+    'rn',
+    'year',
+    'yearTo',
+    'ch',
+    'all',
+  ])
   const doSearch = Object.values(searchQuery).some((value) => !!value)
 
   const [
@@ -229,6 +292,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
                 q: searchQuery.q,
                 rn: searchQuery.rn,
                 year: searchQuery.year,
+                yearTo: searchQuery.yearTo,
                 ch: searchQuery.ch,
               },
             },

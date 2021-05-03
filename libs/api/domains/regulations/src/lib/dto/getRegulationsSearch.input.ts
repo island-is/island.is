@@ -17,5 +17,9 @@ export class GetRegulationsSearchInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  yearTo?: string
+
+  @Field({ nullable: true })
+  @IsOptional()
   ch?: string
 }

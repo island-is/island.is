@@ -57,6 +57,7 @@ export class RegulationsResolver {
       input.q,
       input.rn,
       input.year,
+      input.yearTo,
       input.ch,
     )
   }

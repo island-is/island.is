@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as s from './RegulationsSidebarBox.treat'
-import { Button, Text } from '@island.is/island-ui/core'
+import { Button, Hidden, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
 import {
@@ -22,6 +22,15 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { linkToRegulationSearch } = useRegulationLinkResolver()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
+
+  const [showCopyCheckmark, setShowCopyCheckmark] = useState(false)
+  const showCopyCheck = () => {
+    setShowCopyCheckmark(true)
+
+    setTimeout(() => {
+      setShowCopyCheckmark(false)
+    }, 750)
+  }
 
   return (
     <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
@@ -87,20 +96,38 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         )
       )}
 
-      <Text marginBottom={2}>
-        <Button
-          // icon="print"
-          // iconType="outline"
-          size="small"
-          type="button"
-          variant="text"
-          onClick={() => {
-            window.print()
-          }}
-        >
-          {txt('printThisVersion')}
-        </Button>
-      </Text>
+      <Hidden print={true}>
+        <Text marginBottom={1}>
+          <Button
+            // FIXME: enable this icon when design is ready and implemented
+            // icon="print"
+            // iconType="outline"
+            size="small"
+            type="button"
+            variant="text"
+            onClick={() => {
+              window.print()
+            }}
+          >
+            {txt('printThisVersion', 'Prenta þessa útgáfu')}
+          </Button>
+        </Text>
+
+        <Text marginBottom={2}>
+          <Button
+            size="small"
+            type="button"
+            variant="text"
+            onClick={() => {
+              showCopyCheck()
+              navigator.clipboard.writeText(document.location.href)
+            }}
+          >
+            {txt('copyLink', 'Afrita hlekk á reglugerð')}
+          </Button>
+          {showCopyCheckmark && ' ✔'}
+        </Text>
+      </Hidden>
     </RegulationsSidebarBox>
   )
 }

@@ -49,10 +49,9 @@ export const Appendixes = memo((props: AppendixesProps) => {
               <AccordionItem
                 key={id}
                 id={id}
-                // label={title.asPlainText || props.genericTitle}
-                label={title.asPlainText || ''}
                 labelVariant="h3"
                 labelUse="h2"
+                label={title.asPlainText || ''}
                 visibleContent={
                   title.asHtml && (
                     // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode

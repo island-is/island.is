@@ -92,11 +92,12 @@ export class RegulationsService extends RESTDataSource {
     q?: string,
     rn?: string,
     year?: string,
+    yearTo?: string,
     ch?: string,
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(
       `search`,
-      { q, rn, year, ch },
+      { q, rn, year, yearTo, ch },
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
