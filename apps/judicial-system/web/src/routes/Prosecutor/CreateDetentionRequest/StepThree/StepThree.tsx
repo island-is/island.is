@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Input } from '@island.is/island-ui/core'
-import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
@@ -9,11 +9,8 @@ import {
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
   ProsecutorSubsections,
@@ -37,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -52,6 +50,7 @@ export const StepThree: React.FC = () => {
     setRequestedCustodyEndDateIsValid,
   ] = useState(false)
 
+  const { updateCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -70,23 +69,6 @@ export const StepThree: React.FC = () => {
       setWorkingCase(resCase)
     }
   }, [workingCase, setWorkingCase, resCase])
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
 
   return (
     <PageLayout
