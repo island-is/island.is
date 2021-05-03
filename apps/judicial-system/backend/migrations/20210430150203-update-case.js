@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
         'case',
-        'defenderPhoneNumber',
+        'defender_phone_number',
         {
           type: Sequelize.TEXT,
           allowNull: true,
@@ -15,9 +15,9 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('case', 'defenderPhoneNumber', {
+      queryInterface.removeColumn('case', 'defender_phone_number', {
         transaction: t,
       }),
     )
