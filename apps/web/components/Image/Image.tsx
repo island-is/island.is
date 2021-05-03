@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import { Image as ApiImage } from '@island.is/web/graphql/schema'
 
@@ -49,7 +49,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const Image: FC<AnyImageType> = (image) => {
+export const Image = (image: AnyImageType) => {
   const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
     image,
   )

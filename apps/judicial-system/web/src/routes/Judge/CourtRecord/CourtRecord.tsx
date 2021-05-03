@@ -7,7 +7,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   CourtDocuments,
@@ -26,20 +26,16 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AccusedPleaDecision,
   Case,
   CaseCustodyRestrictions,
   CaseGender,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
-import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -54,10 +50,7 @@ import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
-
-interface CaseData {
-  case?: Case
-}
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -75,7 +68,10 @@ export const CourtRecord: React.FC = () => {
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
+
   const router = useRouter()
+  const { updateCase, autofill } = useCase()
+
   const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -84,23 +80,6 @@ export const CourtRecord: React.FC = () => {
   const { isValidTime: isValidCourtStartTime } = useDateTime({
     time: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
   })
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -135,29 +114,21 @@ export const CourtRecord: React.FC = () => {
 
       return attendees
     }
+
     if (!workingCase && data?.case) {
-      let theCase = data.case
+      const theCase = data.case
 
-      if (!theCase.courtAttendees) {
-        theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
-        if (theCase.courtAttendees) {
-          updateCase(
-            theCase.id,
-            parseString('courtAttendees', theCase.courtAttendees),
-          )
-        }
-      }
       if (
-        !theCase.policeDemands &&
         theCase.accusedName &&
         theCase.court &&
         theCase.requestedCustodyEndDate
         // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
-        theCase = {
-          ...theCase,
-          policeDemands: `${formatProsecutorDemands(
+        autofill(
+          'policeDemands',
+          `${formatProsecutorDemands(
             theCase.type,
             theCase.accusedNationalId,
             theCase.accusedName,
@@ -173,19 +144,19 @@ export const CourtRecord: React.FC = () => {
               ? `\n\n${theCase.otherDemands}`
               : ''
           }`,
-        }
-
-        if (theCase.policeDemands) {
-          updateCase(
-            theCase.id,
-            parseString('policeDemands', theCase.policeDemands),
-          )
-        }
+          theCase,
+        )
       }
+
+      autofill(
+        'litigationPresentations',
+        'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+        theCase,
+      )
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, updateCase, setWorkingCase, data])
+  }, [workingCase, updateCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout
@@ -505,7 +476,7 @@ export const CourtRecord: React.FC = () => {
                 !validate(workingCase.policeDemands || '', 'empty').isValid ||
                 !validate(workingCase.litigationPresentations || '', 'empty')
                   .isValid ||
-                workingCase.accusedPleaDecision === null
+                !workingCase.accusedPleaDecision
               }
             />
           </FormContentContainer>

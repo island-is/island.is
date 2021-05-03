@@ -36,6 +36,7 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: 'You need to select a valid national id for your party',
       path: PARTY_NATIONAL_ID,
+      values: undefined,
     })
   })
 

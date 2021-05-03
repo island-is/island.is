@@ -3,19 +3,20 @@ import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import AdminTabNav from './../../components/Admin/nav/AdminTabNav'
 import { AdminTab } from './../../entities/common/AdminTab'
-import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
-import IdpProvidersList from './../../components/Admin/lists/IdpProviderList'
+import ApiScopeUsersList from '../../components/Admin/lists/ApiScopeUsersList'
+import IdpProvidersList from '../../components/Admin/lists/IdpProvidersList'
 import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
 import LanguageList from './../../components/Admin/lists/LanguageList'
 import TranslationList from './../../components/Admin/lists/TranslationList'
 import LocalizationUtils from '../../utils/localization.utils'
 import { RoleUtils } from './../../utils/role.utils'
+import UsersList from './../../components/Admin/lists/UsersList'
 
 const Index: React.FC = () => {
   const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab
-  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.AdminUsers)
+  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.ApiScopeUsers)
 
   useEffect(() => {
     async function resolveRoles() {
@@ -34,11 +35,20 @@ const Index: React.FC = () => {
   }
 
   switch (activeTab) {
-    case AdminTab.AdminUsers: {
+    case AdminTab.Users: {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <UsersList></UsersList>
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.ApiScopeUsers: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )
@@ -120,7 +130,7 @@ const Index: React.FC = () => {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )

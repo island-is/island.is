@@ -1,5 +1,4 @@
 import React, {
-  FC,
   ReactNode,
   useRef,
   useState,
@@ -31,6 +30,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
+import fetch from 'isomorphic-fetch'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
@@ -41,7 +41,7 @@ export interface TabBulletProps {
   selected?: boolean
 }
 
-const TabBullet: FC<TabBulletProps> = ({ selected }) => {
+const TabBullet = ({ selected }: TabBulletProps) => {
   return (
     <div
       className={cn(styles.tabBullet, {
@@ -51,10 +51,10 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
   )
 }
 
-export const FrontpageSlider: FC<FrontpageSliderProps> = ({
+export const FrontpageSlider = ({
   slides,
   searchContent,
-}) => {
+}: FrontpageSliderProps) => {
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
 

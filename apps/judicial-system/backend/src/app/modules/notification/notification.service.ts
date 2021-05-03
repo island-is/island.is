@@ -226,7 +226,9 @@ export class NotificationService {
     const html = 'Sjá viðhengi'
     const attachments = [
       {
-        filename: `${existingCase.policeCaseNumber}.pdf`,
+        filename: `Krafa um ${
+          existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+        } ${existingCase.policeCaseNumber}.pdf`,
         content: pdf,
         encoding: 'binary',
       },
@@ -387,7 +389,7 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private sendRulingEmailNotificationToPrison(
+  private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
@@ -410,6 +412,13 @@ export class NotificationService {
       existingCase.parentCase !== null,
       existingCase.parentCase?.decision,
       existingCase.additionToConclusion,
+    )
+
+    await this.sendEmail(
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
+      subject,
+      html,
     )
 
     return this.sendEmail(

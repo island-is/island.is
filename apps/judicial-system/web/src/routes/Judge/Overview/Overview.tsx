@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -29,15 +29,14 @@ import {
   CaseTransition,
   CaseType,
   Feature,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -48,77 +47,34 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
-import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-
-interface CaseData {
-  case?: Case
-}
-
-interface CreateCustodyCourtCaseMutationResponse {
-  createCustodyCourtCase: {
-    courtCaseNumber: string
-  }
-}
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const JudgeOverview: React.FC = () => {
-  const router = useRouter()
-  const id = router.query.id
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
-  const { features } = useContext(FeatureContext)
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
+
+  const router = useRouter()
+  const id = router.query.id
+
+  const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
+  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
 
-  const [
-    createCustodyCourtCaseMutation,
-    { loading: creatingCustodyCourtCase },
-  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
-    CreateCustodyCourtCaseMutation,
-  )
-
-  const createCase = async (): Promise<void> => {
-    if (creatingCustodyCourtCase === false) {
-      try {
-        const { data, errors } = await createCustodyCourtCaseMutation({
-          variables: {
-            input: {
-              caseId: workingCase?.id,
-              policeCaseNumber: workingCase?.policeCaseNumber,
-            },
-          },
-        })
-
-        if (data && workingCase && !errors) {
-          setAndSendToServer(
-            'courtCaseNumber',
-            data.createCustodyCourtCase.courtCaseNumber,
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
-
-          setCourtCaseNumberErrorMessage('')
-
-          return
-        }
-      } catch (error) {
-        // Catch all so we can set an eror message
-      }
-
-      setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
-      )
-    }
-  }
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
 
   const handleSetCaseNrManuallyClick = () => {
     if (workingCase) {
@@ -133,28 +89,6 @@ export const JudgeOverview: React.FC = () => {
       setCourtCaseNumberErrorMessage('')
     }
   }
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   useEffect(() => {
     const transitionCase = async (theCase: Case) => {
@@ -249,12 +183,18 @@ export const JudgeOverview: React.FC = () => {
                         <div className={styles.createCourtCaseButton}>
                           <Button
                             size="small"
-                            onClick={createCase}
+                            onClick={() =>
+                              createCourtCase(
+                                workingCase,
+                                setWorkingCase,
+                                setCourtCaseNumberErrorMessage,
+                              )
+                            }
                             loading={creatingCustodyCourtCase}
                             disabled={!!workingCase.courtCaseNumber}
                             fluid
                           >
-                            Stofna mál
+                            Stofna nýtt mál
                           </Button>
                         </div>
                       )}
@@ -327,8 +267,7 @@ export const JudgeOverview: React.FC = () => {
                         )}
                     </div>
                   </Box>
-                  {courtCaseNumberErrorMessage &&
-                    showCreateCustodyCourtCase &&
+                  {showCreateCustodyCourtCase &&
                     !workingCase.setCourtCaseNumberManually && (
                       <div className={styles.enterCaseNrManuallyButton}>
                         <Button
@@ -336,7 +275,7 @@ export const JudgeOverview: React.FC = () => {
                           type="button"
                           onClick={handleSetCaseNrManuallyClick}
                         >
-                          Slá inn málsnúmer
+                          Slá inn málsnúmer sem þegar er til í Auði
                         </Button>
                       </div>
                     )}
@@ -504,20 +443,45 @@ export const JudgeOverview: React.FC = () => {
                   )}
                 </div>
               )}
-              {workingCase.comments && (
+              {(workingCase.comments || workingCase.caseFilesComments) && (
                 <div className={styles.infoSection}>
-                  <Box marginBottom={1}>
+                  <Box marginBottom={2}>
                     <Text variant="h3" as="h3">
-                      Athugasemdir vegna málsmeðferðar
+                      Athugasemdir
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
+                  {workingCase.comments && (
+                    <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                      <Box marginBottom={1}>
+                        <Text variant="h4" as="h3" color="blue400">
+                          Athugasemdir vegna málsmeðferðar
+                        </Text>
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.comments}
+                        </span>
+                      </Text>
+                    </Box>
+                  )}
+                  {features.includes(Feature.CASE_FILES) &&
+                    workingCase.caseFilesComments && (
+                      <>
+                        <Box marginBottom={1}>
+                          <Text variant="h4" as="h3" color="blue400">
+                            Athugasemdir vegna rannsóknargagna
+                          </Text>
+                        </Box>
+                        <Text>
+                          <span className={styles.breakSpaces}>
+                            {workingCase.caseFilesComments}
+                          </span>
+                        </Text>
+                      </>
+                    )}
                 </div>
               )}
+
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>

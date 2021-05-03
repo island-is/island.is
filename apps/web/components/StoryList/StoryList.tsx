@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Button, Text, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
@@ -23,11 +23,11 @@ export interface StoryListProps {
   variant?: 'light' | 'dark'
 }
 
-export const StoryList: FC<StoryListProps> = ({
+export const StoryList = ({
   readMoreText,
   stories = [],
   variant = 'light',
-}) => {
+}: StoryListProps) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -57,7 +57,7 @@ export const StoryList: FC<StoryListProps> = ({
   )
 }
 
-const Story: FC<StoryProps> = ({
+const Story = ({
   logoUrl,
   label,
   title,
@@ -66,7 +66,7 @@ const Story: FC<StoryProps> = ({
   linkedPage,
   link,
   variant,
-}) => {
+}: StoryProps) => {
   return (
     <div className={styles.margin}>
       <div className={styles.icon}>

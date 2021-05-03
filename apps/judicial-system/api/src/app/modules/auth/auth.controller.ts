@@ -22,10 +22,12 @@ import {
 } from '@island.is/judicial-system/consts'
 import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../../../environments'
-import { AuditService } from '../audit'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
 
@@ -63,7 +65,7 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
@@ -177,7 +179,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    this.auditService.audit(
+    this.auditTrailService.audit(
       user.id,
       AuditedAction.LOGIN,
       res

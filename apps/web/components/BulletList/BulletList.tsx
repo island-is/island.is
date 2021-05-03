@@ -87,7 +87,11 @@ const Row: FC<{ left: ReactNode }> = ({ left, children }) => (
   </Box>
 )
 
-const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
+type NumberSectionProps = {
+  group: NumberBulletGroup
+}
+
+const NumberSection = ({ group }: NumberSectionProps) => {
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpand = () => setExpanded(!expanded)

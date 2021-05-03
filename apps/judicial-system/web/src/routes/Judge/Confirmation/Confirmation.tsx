@@ -33,6 +33,7 @@ import {
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AppealDecisionRole,
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -260,10 +261,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }}
     />
   )
-}
-
-interface CaseData {
-  case?: Case
 }
 
 export const Confirmation: React.FC = () => {

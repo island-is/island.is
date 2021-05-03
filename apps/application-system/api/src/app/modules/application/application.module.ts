@@ -19,6 +19,7 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -61,6 +62,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as ApplicationConfig,
     },
     AwsService,
+    ApplicationAccessService,
   ],
 })
 export class ApplicationModule {}

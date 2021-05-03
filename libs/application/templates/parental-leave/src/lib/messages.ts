@@ -679,8 +679,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your rights end 18 months after the date of birth.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 24 months after the date of birth.`,
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -717,8 +717,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:end.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
     },
     label: {
       id: 'pl.application:end.date.label',
@@ -740,8 +740,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:start.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth`,
     },
     label: {
       id: 'pl.application:start.date.label',
@@ -1261,7 +1261,7 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-export const dataSchemaMessages = defineMessages({
+export const errorMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
@@ -1272,18 +1272,239 @@ export const dataSchemaMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
   },
+  email: {
+    id: 'pl.application:answerValidators.email',
+    defaultMessage: 'Þú þarft að skilgreina gilt netfang.',
+    description: 'Invalid email copy',
+  },
+  periodsPeriodRange: {
+    id: 'pl.application:answerValidators.periodsPeriodRange',
+    defaultMessage:
+      'Þú getur ekki sótt um í meira en {usageMaxMonths} mánuði frá fæðingardegi.',
+    description: 'Copy for invalid period',
+  },
+  employerEmail: {
+    id: 'pl.application:answerValidators.employerEmail',
+    defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
+    description: 'Invalid employer copy',
+  },
+  dateOfBirth: {
+    id: 'pl.application:answerValidators.dateOfBirth',
+    defaultMessage:
+      'Við höfum ekki getað sótt sjálfkrafa fæðingardag barnsins þíns. Vinsamlegast reyndu aftur síðar.',
+    description: `Can't retrieve the DOB copy`,
+  },
+  periodsStartDate: {
+    id: 'pl.application:answerValidators.periodsStartDate',
+    defaultMessage: 'Upphafsdagsetningin er ekki gild.',
+    description: 'Copy for invalid start date of the period',
+  },
+  periodsStartDateBeforeDob: {
+    id: 'pl.application:answerValidators.periodsStartDateBeforeDob',
+    defaultMessage: 'Upphafsdagur getur ekki verið fyrir áætlaðan fæðingardag.',
+    description: 'Copy for invalid start date before DOB',
+  },
+  periodsStartDateOverlaps: {
+    id: 'pl.application:answerValidators.periodsStartDateOverlaps',
+    defaultMessage:
+      'Nýtt tímabil getur ekki byrjað innan annars tímabils sem þegar er vistað.',
+    description: 'Copy when start date overlaps other periods',
+  },
+  periodsEndDate: {
+    id: 'pl.application:answerValidators.periodsEndDate',
+    defaultMessage:
+      'Lokadagur má ekki vera minni en {minPeriodDays} dagar frá fæðingardegi.',
+    description: 'Copy when end date is invalid',
+  },
+  periodsEndDateBeforeStartDate: {
+    id: 'pl.application:answerValidators.periodsEndDateBeforeStartDate',
+    defaultMessage: 'Lokadagur getur ekki verið fyrir upphafsdag.',
+    description: 'Copy when end date is before start date',
+  },
+  periodsEndDateMinimumPeriod: {
+    id: 'pl.application:answerValidators.periodsEndDateMinimumPeriod',
+    defaultMessage: 'Þú getur ekki sótt um skemur en {minPeriodDays} daga.',
+    description: 'Copy when period is less than minimum required',
+  },
+  periodsEndDateOverlapsPeriod: {
+    id: 'pl.application:answerValidators.periodsEndDateOverlapsPeriod',
+    defaultMessage:
+      'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
+    description: 'Copy when end date overlaps other period',
+  },
+  periodsRatio: {
+    id: 'pl.application:answerValidators.periodsRatio',
+    defaultMessage:
+      'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
+    description: 'Copy when ratio is invalid',
+  },
 })
 
 export const statesMessages = defineMessages({
-  stateDraftTitle: {
-    id: 'pl.application:state.draft.title',
+  draftTitle: {
+    id: 'pl.application:draft.title',
     defaultMessage: 'Drög',
-    description: 'Title of the first state of the parental application',
+    description: 'Title of the state - draft',
+  },
+  draftDescription: {
+    id: 'pl.application:draft.description',
+    defaultMessage: 'Þú hefur verið búa til drög fyrir umsóknarinnar.',
+    description: 'Description of the state - draft',
   },
 
-  stateDraftDescription: {
-    id: 'pl.application:state.draft.description',
-    defaultMessage: 'Bið eftir samþykki',
-    description: 'Description of the first state of the parental application',
+  otherParentApprovalTitle: {
+    id: 'pl.application:otherParentApproval.title',
+    defaultMessage: 'Annað foreldra samþykki',
+    description: 'Title of the state - otherParentApproval',
+  },
+  otherParentApprovalDescription: {
+    id: 'pl.application:otherParentApproval.description',
+    defaultMessage: 'Umsókn þín þarf samþykki frá annað foreldra.',
+    description: 'Description of the state - otherParentApproval',
+  },
+
+  otherParentActionTitle: {
+    id: 'pl.application:otherParentAction.title',
+    defaultMessage: 'Annað foreldra krefst aðgerða',
+    description: 'Title of the state - otherParentAction',
+  },
+  otherParentActionDescription: {
+    id: 'pl.application:otherParentAction.description',
+    defaultMessage: 'Annað foreldra krefst aðgerðarinnar.',
+    description: 'Description of the state - otherParentAction',
+  },
+
+  employerWaitingToAssignTitle: {
+    id: 'pl.application:employerWaitingToAssign.Title',
+    defaultMessage: 'Bið eftir vinnuveitandann',
+    description: 'Title of the state - employerWaitingToAssign',
+  },
+  employerWaitingToAssignDescription: {
+    id: 'pl.application:employerWaitingToAssign.description',
+    defaultMessage: 'Umsóknarinnar er ætla til vinnuteitanda',
+    description: 'Description of the state - employerWaitingToAssign',
+  },
+
+  employerApprovalTitle: {
+    id: 'pl.application:employerApproval.title',
+    defaultMessage: 'Samþykki vinnuveitanda',
+    description: 'Title of the state - employerApproval',
+  },
+  employerApprovalDescription: {
+    id: 'pl.application:employerApproval.description',
+    defaultMessage: 'Vinnuveitandi samþykkti umsóknarinna.',
+    description: 'Description of the state - employerApproval',
+  },
+
+  employerActionTitle: {
+    id: 'pl.application:employerAction.title',
+    defaultMessage: 'Vinnuveitandi krefst aðgerða.',
+    description: 'Title of the state - employerAction',
+  },
+  employerActionDescription: {
+    id: 'pl.application:employerAction.description',
+    defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
+    description: 'Description of the state - employerAction',
+  },
+
+  vinnumalastofnunApprovalTitle: {
+    id: 'pl.application:vinnumalastofnunApproval.title',
+    defaultMessage: 'Vinnumálastofnun samþykkti',
+    description: 'Title of the state - vinnumalastofnunApproval',
+  },
+  vinnumalastofnunApprovalDescription: {
+    id: 'pl.application:vinnumalastofnunApproval.description',
+    defaultMessage: 'Vinnumálastofnun samþykkti umsóknarinnar.',
+    description: 'Description of the state - vinnumalastofnunApproval',
+  },
+
+  vinnumalastofnunActionTitle: {
+    id: 'pl.application:vinnumalastofnunAction.title',
+    defaultMessage: 'Vinnumálastofnun krefst aðgerða',
+    description: 'Title of the state - vinnumalastofnunAction',
+  },
+  vinnumalastofnunActionDescription: {
+    id: 'pl.application:vinnumalastofnunAction.description',
+    defaultMessage: 'Vinnumálastofnun krefst aðgerðar vegna umsóknarinnar.',
+    description: 'Description of the state - vinnumalastofnunAction',
+  },
+
+  approvedTitle: {
+    id: 'pl.application:approved.title',
+    defaultMessage: 'Samþykkt',
+    description: 'Title of the state - approved',
+  },
+  approvedDescription: {
+    id: 'pl.application:approved.description',
+    defaultMessage: 'Umsóknin hefur verið samþykkt',
+    description: 'Description of the state - approved',
+  },
+
+  editOrAddPeriodsTitle: {
+    id: 'pl.application:editOrAddPeriods.title',
+    defaultMessage: 'Breyta eða bæta við tímabil',
+    description: 'Title of the state - editOrAddPeriods',
+  },
+  editOrAddPeriodsDescription: {
+    id: 'pl.application:editOrAddPeriods.description',
+    defaultMessage: 'Þú ert að breyta eða bæta tímabil við umsókn.',
+    description: 'Description of the state - editOrAddPeriods',
+  },
+
+  employerWaitingToAssignForEditsTitle: {
+    id: 'pl.application:employerWaitingToAssignForEdits.title',
+    defaultMessage:
+      'Bíður eftir vinnuveitanda að fara yfir breytingar á tímabilinu',
+    description: 'Title of the state - employerWaitingToAssignForEdits',
+  },
+  employerWaitingToAssignForEditsDescription: {
+    id: 'pl.application:employerWaitingToAssignForEdits.description',
+    defaultMessage:
+      'Umsókn þinni er sent til vinnuveitanda til að fara yfir breytingar þínar á tímabilinu.',
+    description: 'Description of the state - employerWaitingToAssignForEdits',
+  },
+
+  employerApproveEditsTitle: {
+    id: 'pl.application:employerApproveEdits.title',
+    defaultMessage: 'Vinnuveitandi er að fara yfir tímabilið',
+    description: 'Title of the state - employerApproveEdits',
+  },
+  employerApproveEditsDescription: {
+    id: 'pl.application:employerApproveEdits.description',
+    defaultMessage: 'Vinnuveitandi er að fara yfir tímabilbreytingar þínar.',
+    description: 'Description of the state - employerApproveEdits',
+  },
+
+  employerEditsActionTitle: {
+    id: 'pl.application:employerEditsAction.title',
+    defaultMessage: 'Vinnuveitandi hafnaði breytingum á tímabilinu',
+    description: 'Title of the state - employerEditsAction',
+  },
+  employerEditsActionDescription: {
+    id: 'pl.application:employerEditsAction.description',
+    defaultMessage: 'Vinnuveitandi þinn hafnaði tímabreytingum þínum.',
+    description: 'Description of the state - employerEditsAction',
+  },
+
+  vinnumalastofnunApproveEditsTitle: {
+    id: 'pl.application:vinnumalastofnunApproveEdits.title',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir breytingar á tímabilinu',
+    description: 'Title of the state - vinnumalastofnunApproveEdits',
+  },
+  vinnumalastofnunApproveEditsDescription: {
+    id: 'pl.application:vinnumalastofnunApproveEdits.description',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir tímabilbreytingar þínar.',
+    description: 'Description of the state - vinnumalastofnunApproveEdits',
+  },
+
+  vinnumalastofnunEditsActionTitle: {
+    id: 'pl.application:vinnumalastofnunEditsAction.title',
+    defaultMessage: 'Vinnumálastofnun hafnaði breytingum á tímabilinu',
+    description: 'Title of the state - vinnumalastofnunEditsAction',
+  },
+  vinnumalastofnunEditsActionDescription: {
+    id: 'pl.application:vinnumalastofnunEditsAction.description',
+    defaultMessage: 'Vinnumálastofnun hafnaði tímabreytingum þínum.',
+    description: 'Description of the state - vinnumalastofnunEditsAction',
   },
 })

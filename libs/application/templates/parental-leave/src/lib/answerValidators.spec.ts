@@ -4,6 +4,7 @@ import parseISO from 'date-fns/parseISO'
 
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { answerValidators } from './answerValidators'
+import { errorMessages } from './messages'
 
 describe('answerValidators', () => {
   const application: Application = {
@@ -51,9 +52,9 @@ describe('answerValidators', () => {
     expect(
       answerValidators['firstPeriodStart'](newAnswers, newApplication),
     ).toStrictEqual({
-      message:
-        'We haven’t been able to fetch automatically the date of birth for your baby. Please try again later.',
+      message: errorMessages.dateOfBirth,
       path: 'firstPeriodStart',
+      values: undefined,
     })
   })
 
@@ -61,8 +62,9 @@ describe('answerValidators', () => {
     const newAnswers = [{ startDate: '2021-01-12' }]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: 'Start date cannot be before expected date of birth.',
+      message: errorMessages.periodsStartDateBeforeDob,
       path: 'periods[0].startDate',
+      values: undefined,
     })
   })
 
@@ -70,8 +72,9 @@ describe('answerValidators', () => {
     const newAnswers = [{ startDate: '2025-01-29' }]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: `You can't apply for a period beyond ${usageMaxMonths} months from the DOB.`,
+      message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
+      values: { usageMaxMonths },
     })
   })
 
@@ -79,8 +82,9 @@ describe('answerValidators', () => {
     const newAnswers = [{ startDate: '2021-01-29', endDate: '2021-01-20' }]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: 'End date cannot be before the start date.',
+      message: errorMessages.periodsEndDateBeforeStartDate,
       path: 'periods[0].endDate',
+      values: undefined,
     })
   })
 
@@ -88,8 +92,9 @@ describe('answerValidators', () => {
     const newAnswers = [{ endDate: '2021-01-20' }]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
+      message: errorMessages.periodsEndDate,
       path: 'periods[0].endDate',
+      values: { minPeriodDays },
     })
   })
 
@@ -99,8 +104,9 @@ describe('answerValidators', () => {
     ]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: `You cannot apply for a period shorter than ${minPeriodDays} days.`,
+      message: errorMessages.periodsEndDateMinimumPeriod,
       path: 'periods[0].endDate',
+      values: { minPeriodDays },
     })
   })
 
@@ -113,8 +119,14 @@ describe('answerValidators', () => {
     const diffWithRatio = (diff * ratio) / 100
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: `The minimum is ${minPeriodDays} days of leave, you've chosen ${diff} days at ${ratio}% which ends up as only ${diffWithRatio} days leave.`,
+      message: errorMessages.periodsRatio,
       path: 'periods[0].ratio',
+      values: {
+        minPeriodDays,
+        diff,
+        ratio,
+        diffWithRatio,
+      },
     })
   })
 })
