@@ -2,10 +2,11 @@
 
 export type RegulationHomeTexts = Partial<
   Record<
-    | 'homeIntroLegend' // 'Reglugerðir'
+    | 'homeIntroLegend' // 'Reglugerðasafn'
     | 'homeIntro' // 'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.'
     | 'homeIntroImageUrl' // 'https://placekitten.com/400/400'
     | 'homeIntroImageThumbnailUrl' // 'https://placekitten.com/50/50'
+    | 'homeNewestRegulations' // 'Nýjustu reglugerðirnar'
     | 'defaultRegulationListsLegend' // 'Nýlegar reglugerðir'
     | 'searchResultsLegend' // 'Leitarniðurstöður'
     | 'regTypeBase' // 'Stofnreglugerð'

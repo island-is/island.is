@@ -108,10 +108,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               >
                 {breadCrumbs}
                 <Text as="h1" variant="h1" marginTop={2}>
-                  {txt('homeIntroLegend')}
+                  {txt('homeIntroLegend', 'Reglugerðasafn')}
                 </Text>
                 <Text variant="intro" as="p">
-                  {txt('homeIntro')}
+                  {txt('homeIntro', '')}
                 </Text>
               </GridColumn>
 
@@ -143,9 +143,9 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           header=""
           content={
             <GridContainer>
-              {props.doSearch && (
-                <GridRow>
-                  <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
+              <GridRow>
+                <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
+                  {props.doSearch ? (
                     <Text>
                       {totalItems === 0
                         ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
@@ -153,9 +153,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                         ? totalItems + ' reglugerð fannst'
                         : `${totalItems} reglugerðir fundust`}
                     </Text>
-                  </GridColumn>
-                </GridRow>
-              )}
+                  ) : (
+                    <Text>
+                      {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
+                    </Text>
+                  )}
+                </GridColumn>
+              </GridRow>
+
               <GridRow>
                 {props.regulations?.data?.length > 0 &&
                   props.regulations.data.slice(0, showCount).map((reg, i) => (

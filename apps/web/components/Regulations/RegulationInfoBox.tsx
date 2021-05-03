@@ -89,6 +89,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
 
       <Text marginBottom={2}>
         <Button
+          // FIXME: enable this icon when design is ready and implemented
           // icon="print"
           // iconType="outline"
           size="small"
