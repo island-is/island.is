@@ -30,9 +30,11 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 
@@ -55,9 +57,11 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 
@@ -79,9 +83,11 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 
