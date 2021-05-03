@@ -3,20 +3,20 @@ import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
-import { AdminAccess } from './../../../entities/models/admin-access.model'
-import { AdminAccessService } from '../../../services/AdminAccessService'
+import { AccessService } from '../../../services/AccessService'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
+import { ApiScopeUser } from '../../../entities/models/api-scope-user.model'
 
-const AdminUsersList: React.FC = () => {
-  const [adminAccess, setAdminAccess] = useState<AdminAccess[]>([])
+const ApiScopeUsersList: React.FC = () => {
+  const [adminAccess, setAdminAccess] = useState<ApiScopeUser[]>([])
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [count, setCount] = useState(0)
   const [searchString, setSearchString] = useState<string>('')
   const [lastPage, setLastPage] = useState(1)
   const [localization] = useState<ListControl>(
-    LocalizationUtils.getListControl('AdminUsersList'),
+    LocalizationUtils.getListControl('ApiScopeUsersList'),
   )
   const [accessToRemove, setAccessToRemove] = useState('')
 
@@ -25,7 +25,7 @@ const AdminUsersList: React.FC = () => {
     page: number,
     count: number,
   ): Promise<void> => {
-    const response = await AdminAccessService.findAndCountAll(
+    const response = await AccessService.findAndCountAll(
       searchString,
       page,
       count,
@@ -46,7 +46,7 @@ const AdminUsersList: React.FC = () => {
   }
 
   const deleteUser = async (): Promise<void> => {
-    const response = await AdminAccessService.delete(accessToRemove)
+    const response = await AccessService.delete(accessToRemove)
     if (response) {
       getAdmins(searchString, page, count)
     }
@@ -82,15 +82,15 @@ const AdminUsersList: React.FC = () => {
 
   return (
     <div>
-      <div className="admin-users-list">
-        <div className="admin-users-list__wrapper">
-          <div className="admin-users-list__container">
+      <div className="api-scope-users-list">
+        <div className="api-scope-users-list__wrapper">
+          <div className="api-scope-users-list__container">
             <h1>{localization.title}</h1>
-            <div className="admin-users-list__container__options">
-              <div className="admin-users-list__container__options__button">
-                <Link href={'/admin/admin-user'}>
+            <div className="api-scope-users-list__container__options">
+              <div className="api-scope-users-list__container__options__button">
+                <Link href={'/admin/api-scope-user'}>
                   <a
-                    className="admin-users-list__button__new"
+                    className="api-scope-users-list__button__new"
                     title={localization.buttons['new'].helpText}
                   >
                     <i className="icon__new"></i>
@@ -99,19 +99,22 @@ const AdminUsersList: React.FC = () => {
                 </Link>
               </div>
               <form onSubmit={search}>
-                <div className="admin-users-list__container__options__search">
-                  <label htmlFor="search" className="admin-users-list__label">
+                <div className="api-scope-users-list__container__options__search">
+                  <label
+                    htmlFor="search"
+                    className="api-scope-users-list__label"
+                  >
                     {localization.search.label}
                   </label>
                   <input
                     id="search"
-                    className="admin-users-list__input__search"
+                    className="api-scope-users-list__input__search"
                     value={searchString}
                     onChange={handleSearchChange}
                   ></input>
                   <button
                     type="submit"
-                    className="admin-users-list__button__search"
+                    className="api-scope-users-list__button__search"
                     title={localization.buttons['search'].helpText}
                   >
                     {localization.buttons['search'].text}
@@ -119,32 +122,30 @@ const AdminUsersList: React.FC = () => {
                 </div>
               </form>
             </div>
-            <div className="admin-users-list__container__table">
-              <table className="admin-users-list__table">
+            <div className="api-scope-users-list__container__table">
+              <table className="api-scope-users-list__table">
                 <thead>
                   <tr>
                     <th>{localization.columns['nationalId'].headerText}</th>
                     <th>{localization.columns['email'].headerText}</th>
-                    <th>{localization.columns['scope'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {adminAccess.map((admin: AdminAccess) => {
+                  {adminAccess.map((apiScopeUser: ApiScopeUser) => {
                     return (
-                      <tr key={admin.nationalId}>
-                        <td>{admin.nationalId}</td>
-                        <td>{admin.email}</td>
-                        <td>{admin.scope}</td>
-                        <td className="admin-users-list__table__button">
+                      <tr key={apiScopeUser.nationalId}>
+                        <td>{apiScopeUser.nationalId}</td>
+                        <td>{apiScopeUser.email}</td>
+                        <td className="api-scope-users-list__table__button">
                           <Link
-                            href={`/admin/admin-user/${encodeURIComponent(
-                              admin.nationalId,
+                            href={`/admin/api-scope-user/${encodeURIComponent(
+                              apiScopeUser.nationalId,
                             )}`}
                           >
                             <button
                               type="button"
-                              className={`admin-users-list__button__edit`}
+                              className={`api-scope-users-list__button__edit`}
                               title={localization.buttons['edit'].helpText}
                             >
                               <i className="icon__edit"></i>
@@ -152,12 +153,14 @@ const AdminUsersList: React.FC = () => {
                             </button>
                           </Link>
                         </td>
-                        <td className="admin-users-list__table__button">
+                        <td className="api-scope-users-list__table__button">
                           <button
                             type="button"
-                            className={`admin-users-list__button__delete`}
+                            className={`api-scope-users-list__button__delete`}
                             title={localization.buttons['remove'].helpText}
-                            onClick={() => confirmDelete(admin.nationalId)}
+                            onClick={() =>
+                              confirmDelete(apiScopeUser.nationalId)
+                            }
                           >
                             <i className="icon__delete"></i>
                             <span>{localization.buttons['remove'].text}</span>
@@ -187,4 +190,4 @@ const AdminUsersList: React.FC = () => {
   )
 }
 
-export default AdminUsersList
+export default ApiScopeUsersList
