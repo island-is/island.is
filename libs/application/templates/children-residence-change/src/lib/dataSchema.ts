@@ -12,6 +12,12 @@ const validateOptionalPhoneNumber = (value: string) => {
   return (value && value.length === 7) || value === ''
 }
 
+const validateTerms = (arrayLength: number) => {
+  return z.array(z.string()).refine((v) => v && v.length === arrayLength, {
+    params: error.validation.approveTerms,
+  })
+}
+
 enum Duration {
   Permanent = 'permanent',
   Temporary = 'temporary',
@@ -25,10 +31,6 @@ const parentContactInfo = z.object({
     params: error.validation.invalidPhoneNumber,
   }),
 })
-
-const terms = z
-  .array(z.string())
-  .refine((v) => v && v.length === 3, { params: error.validation.approveTerms })
 
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
@@ -53,8 +55,10 @@ export const dataSchema = z.object({
       params: error.validation.counterParty,
     }),
   parentB: parentContactInfo,
-  approveTerms: terms,
-  approveTermsParentB: terms,
+  approveTerms: validateTerms(2),
+  approveTermsParentB: validateTerms(2),
+  approveChildSupportTerms: validateTerms(1),
+  approveChildSupportTermsParentB: validateTerms(1),
   confirmResidenceChangeInfo: z
     .array(z.string())
     .refine((v) => v && v.length === 1, {
