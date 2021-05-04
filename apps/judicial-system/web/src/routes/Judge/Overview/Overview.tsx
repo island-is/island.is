@@ -52,6 +52,7 @@ import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import ConclusionDraft from './Components/ConclusionDraft'
+import { AnimatePresence } from 'framer-motion'
 
 export const JudgeOverview: React.FC = () => {
   const [
@@ -542,18 +543,21 @@ export const JudgeOverview: React.FC = () => {
               primaryButtonText="Loka glugga"
             />
           )}
-          {isDraftingConclusion && (
-            <Modal
-              title="Skrifa drög að niðurstöðu"
-              text={
-                <ConclusionDraft
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              }
-              primaryButtonText="Yello"
-            />
-          )}
+          <AnimatePresence>
+            {isDraftingConclusion && (
+              <Modal
+                title="Skrifa drög að niðurstöðu"
+                text={
+                  <ConclusionDraft
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                }
+                primaryButtonText="Vista drög og loka glugga"
+                handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
+              />
+            )}
+          </AnimatePresence>
         </>
       ) : null}
     </PageLayout>
