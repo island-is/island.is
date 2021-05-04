@@ -13,6 +13,7 @@ import {
   ChildrenResidenceChangeService,
   LoginServiceService,
   FundingGovernmentProjectsService,
+  PartyLetterService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -33,7 +34,7 @@ type PerformActionResult =
 
 @Injectable()
 export class TemplateAPIService {
-  constructor(
+  constructor (
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
@@ -42,9 +43,10 @@ export class TemplateAPIService {
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
+    private readonly partyLetterService: PartyLetterService,
   ) {}
 
-  private async tryRunningActionOnService(
+  private async tryRunningActionOnService (
     service:
       | ReferenceTemplateService
       | ParentalLeaveService
@@ -53,7 +55,8 @@ export class TemplateAPIService {
       | InstitutionCollaborationService
       | ChildrenResidenceChangeService
       | LoginServiceService
-      | FundingGovernmentProjectsService,
+      | FundingGovernmentProjectsService
+      | PartyLetterService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -84,7 +87,7 @@ export class TemplateAPIService {
     }
   }
 
-  async performAction(
+  async performAction (
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     switch (action.templateId) {
@@ -122,6 +125,8 @@ export class TemplateAPIService {
           this.fundingGovernmentProjectsService,
           action,
         )
+      case ApplicationTypes.PARTY_LETTER:
+        return this.tryRunningActionOnService(this.partyLetterService, action)
     }
 
     return {
