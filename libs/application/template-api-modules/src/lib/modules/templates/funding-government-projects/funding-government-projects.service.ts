@@ -19,7 +19,7 @@ import { FundingAttachment } from './types'
 export class FundingGovernmentProjectsService {
   constructor(
     @Inject(FUNDING_GOVERNMENT_PROJECTS_CONFIG)
-    private institutionConfig: FundingGovernmentProjectsConfig,
+    private fundingConfig: FundingGovernmentProjectsConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fileStorageService: FileStorageService,
   ) {}
@@ -31,10 +31,10 @@ export class FundingGovernmentProjectsService {
       (props) =>
         generateApplicationEmail(
           props,
-          this.institutionConfig.applicationSenderName,
-          this.institutionConfig.applicationSenderEmail,
-          this.institutionConfig.applicationRecipientName,
-          this.institutionConfig.applicationRecipientEmail,
+          this.fundingConfig.applicationSenderName,
+          this.fundingConfig.applicationSenderEmail,
+          this.fundingConfig.applicationRecipientName,
+          this.fundingConfig.applicationRecipientEmail,
           attachments,
         ),
       application,
@@ -44,8 +44,8 @@ export class FundingGovernmentProjectsService {
       (props) =>
         generateConfirmationEmail(
           props,
-          this.institutionConfig.applicationSenderName,
-          this.institutionConfig.applicationSenderEmail,
+          this.fundingConfig.applicationSenderName,
+          this.fundingConfig.applicationSenderEmail,
           attachments,
         ),
       application,

@@ -52,9 +52,6 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           description: application.description,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -75,6 +72,32 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
+        },
+      },
+      [States.submitted]: {
+        meta: {
+          name: States.submitted,
+          title: application.name,
+          description: application.description,
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/FundingGovernmentProjectsFormSubmitted'
+                ).then((module) =>
+                  Promise.resolve(
+                    module.FundingGovernmentProjectsFormSubmitted,
+                  ),
+                ),
+              write: 'all',
+            },
+          ],
         },
       },
     },
