@@ -12,6 +12,7 @@ import {
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
+  Year,
 } from './regulations.types'
 
 export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
@@ -91,8 +92,8 @@ export class RegulationsService extends RESTDataSource {
   async getRegulationsSearch(
     q?: string,
     rn?: string,
-    year?: number,
-    yearTo?: number,
+    year?: Year,
+    yearTo?: Year,
     ch?: string,
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(
