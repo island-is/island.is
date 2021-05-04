@@ -7,19 +7,25 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultStateLifeCycle,
+  DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { ApiActions } from '../shared'
 
 type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.SUBMIT }
+
+enum States {
+  DRAFT = 'draft',
+  DONE = 'done',
+}
 
 const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   subType: z.array(z.string()).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
+  juristiction: z.string(),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum(['yes', 'no']),
     hasEpilepsy: z.enum(['yes', 'no']),
@@ -44,9 +50,9 @@ const template: ApplicationTemplate<
   name: 'Umsókn um ökuskilríki',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn um ökuskilríki',
           progress: 0.33,
@@ -59,81 +65,32 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'inReview',
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
+        },
+      },
+      [States.DONE]: {
+        meta: {
+          name: 'Done',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
           },
-        },
-      },
-      inReview: {
-        meta: {
-          name: 'In Review',
-          progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: 'reviewer',
-              formLoader: () =>
-                import('../forms/review').then((val) =>
-                  Promise.resolve(val.review),
-                ),
-              actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
-              ],
-              read: 'all',
-            },
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/pending').then((val) =>
-                  Promise.resolve(val.pending),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'rejected' },
-        },
-      },
-      approved: {
-        meta: {
-          name: 'Approved',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/approved').then((val) =>
-                  Promise.resolve(val.approved),
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
-            },
-          ],
-        },
-        type: 'final' as const,
-      },
-      rejected: {
-        meta: {
-          name: 'Rejected',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/rejected').then((val) =>
-                  Promise.resolve(val.rejected),
-                ),
             },
           ],
         },
@@ -142,9 +99,6 @@ const template: ApplicationTemplate<
     },
   },
   mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
-    }
     return 'applicant'
   },
 }

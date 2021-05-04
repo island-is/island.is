@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  externalDataAgreement: {
+    id: 'dl.application:externalData.agreement',
+    defaultMessage: 'Ég hef kynnt mér ofangreint',
+    description: 'I understand',
+  },
   yes: {
     id: 'dl.application:shared.yes',
     defaultMessage: 'Já',
@@ -121,13 +126,13 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'pl.application:informationSection.title',
-    defaultMessage: 'Upplýsingar:',
-    description: 'Information:',
+    defaultMessage: 'Upplýsingar',
+    description: 'Information',
   },
   informationMultiFieldTitle: {
     id: 'pl.application:informationMultiField.title',
-    defaultMessage: 'Upplýsingar:',
-    description: 'Information:',
+    defaultMessage: 'Upplýsingar',
+    description: 'Information',
   },
   informationApplicant: {
     id: 'pl.application:information.applicant',
@@ -280,8 +285,8 @@ export const m = defineMessages({
   },
   overviewBringPhoneData: {
     id: 'pl.application:overview.bringPhoneData',
-    defaultMessage: 'Ég kem með mynd og rithandarsýni til Sýslumanns',
-    description: 'I bring a picture and a handwriting sample to the sheriff',
+    defaultMessage: 'Ég kem með gæðamerkta ljósmynd',
+    description: 'I will bring a picture',
   },
   overviewBringCertificateData: {
     id: 'pl.application:overview.bringCertificateData',
@@ -293,27 +298,9 @@ export const m = defineMessages({
     defaultMessage: 'Smelltu hér til að senda inn umsókn',
     description: 'Click here to submit an application',
   },
-  overviewCongratulations: {
-    id: 'pl.application:overview.congratulations',
-    defaultMessage: 'Til hamingju',
-    description: 'Congratulations',
-  },
-  congratulationsBullet1: {
-    id: 'pl.application:congratulations.bullet1',
-    defaultMessage: 'Umsókn þín um almenn ökuréttindi hefur verið staðfest',
-    description:
-      'Your application for a general driving license has been confirmed',
-  },
-  congratulationsBullet2: {
-    id: 'pl.application:congratulations.bullet2',
-    defaultMessage:
-      'Þú munt fá póst á skráð netfang þegar ökuskírteini er gefið út',
-    description:
-      "You will receive an email at a registered email address when the driver's license is issued",
-  },
-  congratulationsBullet3: {
-    id: 'pl.application:congratulations.bullet3',
-    defaultMessage: 'Hægt er að fylgjast með virkum umsóknum á Mínum síðum',
-    description: 'You can follow active applications on the Service Portal',
+  overviewDone: {
+    id: 'pl.application:overview.done',
+    defaultMessage: 'Staðfesting',
+    description: 'Glæsilegt',
   },
 })

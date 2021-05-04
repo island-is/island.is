@@ -3,6 +3,7 @@ export enum ApplicationTypes {
   PASSPORT = 'Passport',
   DRIVING_LESSONS = 'DrivingLessons',
   DRIVING_LICENSE = 'DrivingLicense',
+  DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   META_APPLICATION = 'MetaApplication',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -33,6 +34,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
+    translation: 'dl.application',
+  },
+  [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
+    slug: 'akstursmat',
     translation: 'dl.application',
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {

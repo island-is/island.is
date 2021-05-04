@@ -10,22 +10,19 @@ import {
   buildDataProviderItem,
   buildSubmitField,
   buildCheckboxField,
-  buildTextField,
   buildCustomField,
-  buildRadioField,
   buildSelectField,
   buildDividerField,
   Form,
   FormModes,
-  formatText,
 } from '@island.is/application/core'
 import {
   NationalRegistryUser,
-  DrivingLicenseType,
   UserProfile,
 } from '@island.is/api/schema'
 import { m } from '../lib/messages'
-import { buildEntitlementOption } from '../utils'
+import { Juristiction } from '@island.is/api/schema'
+import { format as formatKennitala } from 'kennitala'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -38,7 +35,7 @@ export const application: Form = buildForm({
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: m.externalDataTitle,
+          title: 'Umsókn um fullnaðarskírteini',
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
@@ -54,82 +51,16 @@ export const application: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'penaltyPoints',
-              type: 'PenaltyPointsProvider',
-              title: m.penaltyPointsTitle,
-              subTitle: m.penaltyPointsSubTitle,
+              id: 'eligibility',
+              type: 'EligibilityProvider',
+              title: 'Upplýsingar úr ökuskírteinaskrá',
+              subTitle: 'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
             }),
             buildDataProviderItem({
-              id: 'residence',
-              type: undefined,
-              title: m.residenceTitle,
-              subTitle: m.residenceSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'entitlementTypes',
-              type: 'EntitlementTypesProvider',
+              id: 'juristictions',
+              type: 'JuristictionProvider',
               title: '',
               subTitle: '',
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'type',
-          title: m.typeFieldMultiFieldTitle,
-          children: [
-            buildCheckboxField({
-              id: 'type',
-              title: m.typeFieldCheckbox,
-              options: [
-                { value: 'car', label: m.typeFieldCar },
-                { value: 'motorcycle', label: m.typeFieldMotorcycle },
-                { value: 'trailer', label: m.typeFieldTrailer },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'subType',
-      title: m.subTypeFieldTitle,
-      children: [
-        buildMultiField({
-          id: 'subType',
-          title: m.subTypeFieldMultiFieldTitle,
-          space: 6,
-          children: [
-            buildCheckboxField({
-              id: 'subType',
-              title: m.subTypeFieldCar,
-              condition: ({ type }) =>
-                (type as string[])?.includes('car') ||
-                (type as string[])?.includes('trailer'),
-              options: (app) => {
-                const entitlementTypes = app.externalData.entitlementTypes
-                  .data as DrivingLicenseType[]
-                if ((app.answers.type as string[])?.includes('trailer')) {
-                  return [buildEntitlementOption(entitlementTypes, 'BE')]
-                }
-
-                return [buildEntitlementOption(entitlementTypes, 'B')]
-              },
-            }),
-            buildCheckboxField({
-              id: 'subType',
-              title: m.subTypeFieldMotorcycle,
-              condition: ({ type }) =>
-                (type as string[])?.includes('motorcycle'),
-              options: (app) => {
-                const entitlementTypes = app.externalData.entitlementTypes
-                  .data as DrivingLicenseType[]
-                return [
-                  buildEntitlementOption(entitlementTypes, 'A'),
-                  buildEntitlementOption(entitlementTypes, 'A1'),
-                  buildEntitlementOption(entitlementTypes, 'A2'),
-                  buildEntitlementOption(entitlementTypes, 'AM'),
-                ]
-              },
             }),
           ],
         }),
@@ -149,14 +80,26 @@ export const application: Form = buildForm({
                 (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildDividerField({
-              title: m.informationTeacher,
+              title: '',
               color: 'dark400',
             }),
-            buildTextField({
-              id: 'teacher',
-              title: m.informationTeacher,
-              width: 'half',
-              backgroundColor: 'blue',
+            buildDescriptionField({
+              id: 'afhending',
+              title: 'Afhending',
+              titleVariant: 'h4',
+              description: 'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
+            }),
+            buildSelectField({
+              id: 'juristiction',
+              title: 'Afhending',
+              disabled: false,
+              options: ({ externalData: { juristictions: { data } } }) => {
+                return (data as Juristiction[]).map(({ id, name, zip }) => ({
+                  value: id,
+                  label: name,
+                  tooltip: `Póstnúmer ${zip}`
+                }))
+              },
             }),
           ],
         }),
@@ -304,7 +247,7 @@ export const application: Form = buildForm({
               label: m.overviewNationalId,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).nationalId,
+                formatKennitala((nationalRegistry.data as NationalRegistryUser).nationalId),
             }),
             buildKeyValueField({
               label: m.overviewPostalCode,
@@ -355,29 +298,26 @@ export const application: Form = buildForm({
                 return options
               },
             }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: 'Greiðsla',
+      children: [
+        buildMultiField({
+          id: 'paymentFinal',
+          title: 'Greiðsla',
+          children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'submit',
+              title: 'Panta ökuskírteini',
               actions: [
-                {
-                  event: 'SUBMIT',
-                  name: m.overviewSubmit,
-                  type: 'primary',
-                },
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
             }),
-          ],
-        }),
-        buildCustomField({
-          id: 'overview',
-          component: 'Congratulations',
-          title: ({ externalData: { nationalRegistry } }) => [
-            m.overviewCongratulations,
-            ' ',
-            (nationalRegistry?.data as NationalRegistryUser)?.fullName.split(
-              ' ',
-            )[0],
           ],
         }),
       ],

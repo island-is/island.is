@@ -179,6 +179,12 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-driving-license-approvement": {
+      "tags": []
+    },
+    "application-templates-driving-assessment-approval": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },

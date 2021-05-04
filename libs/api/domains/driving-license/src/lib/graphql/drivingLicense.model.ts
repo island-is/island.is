@@ -8,12 +8,15 @@ export class DrivingLicense {
   id!: string
 
   @Field(() => String)
+  name!: string
+
+  @Field(() => String)
   issued!: string
 
   @Field(() => String)
   expires!: string
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   isProvisional!: boolean
 
   @Field(() => [Eligibility])

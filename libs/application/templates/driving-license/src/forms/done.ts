@@ -9,19 +9,24 @@ import {
   buildDividerField,
   buildRadioField,
   buildSelectField,
+  buildCustomField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import {
+  NationalRegistryUser,
+} from '@island.is/api/schema'
+import { m } from '../lib/messages'
 
-export const rejected: Form = buildForm({
-  id: 'rejected',
+export const done: Form = buildForm({
+  id: 'done',
   title: 'Í vinnslu',
-  mode: FormModes.REJECTED,
+  mode: FormModes.APPROVED,
   children: [
-    buildDescriptionField({
-      id: 'rejected',
-      title: 'Höfnuð',
-      description: 'Umsókn þín um ökuskilríki hefur verið höfnuð.',
+    buildCustomField({
+      id: 'overview',
+      component: 'Congratulations',
+      title: m.overviewDone,
     }),
   ],
 })

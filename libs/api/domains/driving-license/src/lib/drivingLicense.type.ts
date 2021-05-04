@@ -1,5 +1,6 @@
 export interface DrivingLicense {
   id: number
+  name: string
   issued: string
   expires: string
   isProvisional: boolean
@@ -11,6 +12,10 @@ export interface DrivingLicense {
   }[]
 }
 
+export interface StudentInformation {
+  name: string
+}
+
 export interface DrivingLicenseType {
   id: string
   name: string
@@ -19,4 +24,19 @@ export interface DrivingLicenseType {
 export interface PenaltyPointStatus {
   nationalId: string
   isPenaltyPointsOk: boolean
+}
+
+export interface TeachingRightsStatus {
+  nationalId: string
+  hasTeachingRights: boolean
+}
+
+export interface StudentQueryInput {
+  nationalId: string
+}
+
+export interface Juristiction {
+  id: number
+  name: string
+  zip: number
 }

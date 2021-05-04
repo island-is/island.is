@@ -73,3 +73,54 @@ export interface RemarkTypesResponse {
 export interface PenaltyPointStatusResponse {
   iLagi: boolean
 }
+
+export interface TeachingRightsResponse {
+  value: number
+}
+
+export interface FinishedSchoolResponse {
+  hefurLokidOkugerdi: number
+}
+
+export interface CanApplyForResponse {
+  value: number
+}
+
+export interface DrivingAssessmentDto {
+  kennitala: string
+  kennitalaOkukennara: string
+  dagsetningMats: Date
+}
+
+// TODO: these two are the same - should be refactored into containing rather than extending
+export interface GetDrivingAssessmentResponse extends DrivingAssessmentDto {}
+
+export interface NewDrivingAssessmentInput extends DrivingAssessmentDto {}
+
+export interface NewDrivingAssessmentResponse {
+  ok: boolean
+}
+
+export interface ApplicationEligibilityRequirement {
+  key: string
+  requirementMet: boolean
+}
+
+export interface ApplicationEligibilityResponse {
+  requirements: ApplicationEligibilityRequirement[]
+  isEligible: boolean
+}
+
+export interface EmbaettiDto {
+  nr: number
+  nafn: string
+  postnumer: number
+}
+
+export interface NewDrivingLicenseInput {
+  personIdNumber: string
+  authorityNumber: number
+  needsToPresentHealthCertificate: number
+}
+
+export type NewDrivingLicenseResponse = string
