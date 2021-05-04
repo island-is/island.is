@@ -32,7 +32,6 @@ import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { useRouter } from 'next/router'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -43,7 +42,6 @@ interface HomeProps {
 const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   const namespace = JSON.parse(page.namespace.fields)
   const { activeLocale, t } = useI18n()
-  const Router = useRouter()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
