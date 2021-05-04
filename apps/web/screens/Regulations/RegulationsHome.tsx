@@ -2,6 +2,7 @@ import {
   RegulationLawChapterTree,
   RegulationMinistryList,
   RegulationSearchResults,
+  Year,
 } from '../../components/Regulations/Regulations.types'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -257,9 +258,17 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   )
 }
 
+/** Asserts that string is a number between 1900 and 2150
+ *
+ * Guards against "Infinity" and unreasonably sized numbers
+ */
+const assertReasonableYear = (maybeYear?: string): Year | undefined =>
+  maybeYear && /^\d{4}$/.test(maybeYear)
+    ? (Math.max(1900, Math.min(2150, Number(maybeYear))) as Year)
+    : undefined
+
 RegulationsHome.getInitialProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
-  const serviceId = String(query.slug)
   const searchQuery = getParams(query, [
     'q',
     'rn',
@@ -291,8 +300,8 @@ RegulationsHome.getInitialProps = async (ctx) => {
               input: {
                 q: searchQuery.q,
                 rn: searchQuery.rn,
-                year: searchQuery.year,
-                yearTo: searchQuery.yearTo,
+                year: assertReasonableYear(searchQuery.year),
+                yearTo: assertReasonableYear(searchQuery.yearTo),
                 ch: searchQuery.ch,
               },
             },

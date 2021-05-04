@@ -8,12 +8,16 @@ import {
   RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
+  Year,
 } from './regulations.types'
 
 // Regulation name, need to replace / with - before sending to the api
 export const demoRegName = '0244/2021'.replace('/', '-') as RegQueryName
 
-export const demoRegulationsYears: RegulationYears = [2020, 2021]
+export const demoRegulationsYears: RegulationYears = [
+  2020 as Year,
+  2021 as Year,
+]
 
 export const demoRegulationsMinistries: RegulationMinistryList = [
   {

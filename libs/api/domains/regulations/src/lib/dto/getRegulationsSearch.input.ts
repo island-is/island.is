@@ -1,3 +1,4 @@
+import { Year } from '@island.is/clients/regulations'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsNumber, IsOptional, Max, Min } from 'class-validator'
 
@@ -20,12 +21,12 @@ export class GetRegulationsSearchInput {
   @IsNumber()
   @Min(1900)
   @Max(2150)
-  year?: number
+  year?: Year
 
   @Field({ nullable: true })
   @IsOptional()
   @IsNumber()
   @Min(1900)
   @Max(2150)
-  yearTo?: number
+  yearTo?: Year
 }
