@@ -25,6 +25,7 @@
     "graphql-tag": "*",
     "react-intl": "*",
     "configcat-js": "*",
-    "intl": "*"
+    "intl": "*",
+    "@formatjs/intl-datetimeformat": "*"
   }
 }

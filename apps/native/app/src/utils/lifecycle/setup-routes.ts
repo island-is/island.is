@@ -19,46 +19,65 @@ export function setupRoutes() {
     console.log('wallet', x)
   })
 
-  addRoute('/wallet/:passId', ({ passId, backgroundColor = '#f5e4ec' }: any) => {
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 2,
-      },
-    })
+  addRoute('/notification/:id', (passProps: any) => {
     Navigation.showModal({
       stack: {
-        children: [{
-          component: {
-            name: ComponentRegistry.WalletPassScreen,
-            passProps: {
-              id: passId,
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.NotificationDetailScreen,
+              passProps,
             },
-            options: {
-              layout: {
-                componentBackgroundColor: backgroundColor
-              }
-            }
           },
-        }],
-      }
+        ],
+      },
     })
-  });
+  })
+
+  addRoute(
+    '/wallet/:passId',
+    ({ passId, backgroundColor = '#f5e4ec' }: any) => {
+      Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+        bottomTabs: {
+          currentTabIndex: 2,
+        },
+      })
+      Navigation.showModal({
+        stack: {
+          children: [
+            {
+              component: {
+                name: ComponentRegistry.WalletPassScreen,
+                passProps: {
+                  id: passId,
+                },
+                options: {
+                  layout: {
+                    componentBackgroundColor: backgroundColor,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      })
+    },
+  )
 
   addRoute('/inbox/:docId', ({ docId }: any) => {
     Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
       bottomTabs: {
         currentTabIndex: 0,
       },
-    });
+    })
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
     Navigation.popToRoot('INBOX_SCREEN', {
       animations: {
         pop: {
           enabled: false,
-        }
-      }
-    })
-    .then(() => {
+        },
+      },
+    }).then(() => {
       Navigation.push('INBOX_TAB', {
         component: {
           name: ComponentRegistry.DocumentDetailScreen,
@@ -67,16 +86,30 @@ export function setupRoutes() {
           },
         },
       })
-    });
-  });
+    })
+  })
 
-  addRoute('/user', () => {
+  addRoute('/settings', () => {
     Navigation.showModal({
       stack: {
         children: [
           {
             component: {
-              name: ComponentRegistry.UserScreen
+              name: ComponentRegistry.SettingsScreen,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/notifications', () => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.NotificationsScreen,
             },
           },
         ],

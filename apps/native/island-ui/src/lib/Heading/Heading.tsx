@@ -1,14 +1,18 @@
 import React from 'react'
 import styled from 'styled-components/native';
 
-const Host = styled.Text<{ isCenter?: boolean }>`
-  padding: 20px 0;
-  margin-bottom: 20px;
+const Host = styled.View`
+  border-bottom-width: 1px;
+  border-bottom-color: ${props => props.theme.color.blue100};
+  padding-bottom: 16px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+`;
 
+const Text = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 27px;
-  font-weight: bold;
-  text-align: ${(props: any) => props.isCenter ? 'center' : 'left'};
+  font-size: 20px;
+  line-height: 26px;
   color: ${props => props.theme.shade.foreground};
 `;
 
@@ -19,8 +23,10 @@ interface HeadingProps {
 
 export function Heading({ children, isCenterAligned }: HeadingProps) {
   return (
-    <Host isCenter={isCenterAligned}>
-      {children}
+    <Host>
+      <Text>
+        {children}
+      </Text>
     </Host>
   )
 }

@@ -2,21 +2,21 @@ import { gql } from '@apollo/client'
 import { IDocument } from '../fragments/document.fragment'
 
 export const GET_DOCUMENT_QUERY = gql`
-  query getDocument($id: ID!) {
-    Document(id: $id) {
-      id
-      date
-      subject
-      senderName
-      senderNatReg
-      opened
+  query getDocument($input: GetDocumentInput!) {
+    getDocument(input: $input) {
       fileType
-      url
       content
+      html
+      url
     }
   }
 `
 
 export interface GetDocumentResponse {
-  Document?: IDocument
+  getDocument?: {
+    fileType: string;
+    content: string;
+    html: string;
+    url: string;
+  }
 }

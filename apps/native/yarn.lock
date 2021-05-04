@@ -1560,6 +1560,13 @@
   dependencies:
     deep-assign "^3.0.0"
 
+"@react-native-community/react-native-cookies@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/react-native-cookies/-/react-native-cookies-1.1.1.tgz#552ba779a4a941aaa1c476681c2b65d3ac4fbf6d"
+  integrity sha512-XA5IMvlrtjZ0sGvXiAgm+2xu30DlL7XbKeL1O3JXE5ETyqYCm4B0uEC38ShRxUn3Hl6WXMjf2V0QHfqjt0LQlQ==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-segmented-control/segmented-control@2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@react-native-segmented-control/segmented-control/-/segmented-control-2.3.0.tgz#f3ec8bf40a7e7df8c9ed15cc97513eb343e6f89c"
@@ -5708,6 +5715,11 @@ react-native-reanimated@2.0.0:
     fbjs "^3.0.0"
     mockdate "^3.0.2"
     string-hash-64 "^1.0.3"
+
+react-native-safe-area-context@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.2.0.tgz#06113c6b208f982d68ab5c3cebd199ca93db6941"
+  integrity sha512-k2Nty4PwSnrg9HwrYeeE+EYqViYJoOFwEy9LxL5RIRfoqxAq/uQXNGwpUg2/u4gnKpBbEPa9eRh15KKMe/VHkA==
 
 react-native-ultimate-config@3.3.1:
   version "3.3.1"

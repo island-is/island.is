@@ -1,8 +1,9 @@
 import create, { State } from 'zustand/vanilla';
 import createUse from 'zustand';
-import { authorize, refresh, revoke, AuthorizeResult, RefreshResult } from 'react-native-app-auth';
+import { authorize, refresh, revoke, AuthorizeResult, RefreshResult, AuthConfiguration } from 'react-native-app-auth';
 import Keychain from 'react-native-keychain';
 import { config } from '../utils/config';
+import { preferencesStore } from './preferences-store';
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
 
@@ -19,17 +20,18 @@ interface AuthStore extends State {
   lockScreenActivatedAt: number | undefined;
   lockScreenComponentId: string | undefined;
   lockScreenType: 'root' | 'overlay';
+  isCogitoAuth: boolean;
   fetchUserInfo(): Promise<UserInfo>;
   refresh(): Promise<boolean>
   login(): Promise<boolean>;
   logout(): Promise<boolean>;
 }
 
-const appAuthConfig = {
+const appAuthConfig: AuthConfiguration = {
   issuer: config.identityServer.issuer,
   clientId: config.identityServer.clientId,
   redirectUrl: `${config.bundleId}://oauth`,
-  scopes: config.identityServer.scopes, // ['openid', 'profile', 'api_resource.scope', 'offline_access', 'api','swagger_api.read', '@island.is/applications:read', '@identityserver.api/read'],
+  scopes: config.identityServer.scopes,
 };
 
 export const authStore = create<AuthStore>((set, get) => ({
@@ -38,6 +40,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
   lockScreenType: 'root',
+  isCogitoAuth: false,
   async fetchUserInfo() {
     return fetch(`${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`, {
       headers: {
@@ -73,7 +76,12 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false;
   },
   async login() {
-    const authorizeResult = await authorize(appAuthConfig);
+    const authorizeResult = await authorize({
+      ...appAuthConfig,
+      additionalParameters: {
+        ui_locales: preferencesStore.getState().locale,
+      },
+    });
     if (authorizeResult) {
       await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult), { service: KEYCHAIN_AUTH_KEY });
       set({ authorizeResult });
@@ -110,6 +118,8 @@ export async function checkIsAuthenticated() {
   } catch (err) {
     console.log('Unable to read from keystore: ', err);
   }
+
+  console.log(authStore.getState());
 
   // Attempt to fetch user info (validate the token is all good)
   try {

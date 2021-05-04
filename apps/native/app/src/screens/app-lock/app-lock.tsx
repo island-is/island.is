@@ -61,13 +61,13 @@ export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean; statu
 
   const unlockApp = useCallback(() => {
     const { lockScreenComponentId, lockScreenType } = authStore.getState();
+    resetLockScreen();
     if (lockScreenComponentId && lockScreenType === 'overlay') {
-      Navigation.dismissOverlay(lockScreenComponentId);
+      Navigation.dismissAllOverlays();
     } else {
       Navigation.setRoot({ root: getMainRoot() });
     }
-    resetLockScreen();
-  }, []);
+  }, [componentId]);
 
   const authenticateWithBiometrics = useCallback(async () => {
     if (!useBiometrics) {

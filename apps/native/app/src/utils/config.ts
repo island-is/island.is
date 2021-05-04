@@ -20,11 +20,13 @@ const { WebManifest, ...ConstantsRest } = Constants;
 
 export const config: Config = {
   identityServer: {
-    issuer: env.IDENTITYSERVER_ISSUER || 'https://identity-server.dev01.devland.is',
+    // issuer: env.IDENTITYSERVER_ISSUER || 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.island.is',
     clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
     scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || ['openid', 'profile', 'api_resource.scope', 'offline_access'],
   },
-  apiEndpoint: env.API_ENDPOINT || 'https://beta.dev01.devland.is/api',
+  // apiEndpoint: env.API_ENDPOINT || 'https://beta.dev01.devland.is/api',
+  apiEndpoint: 'https://island.is/api',
   bundleId: Platform.select({
     ios: env.BUNDLE_ID_IOS,
     android: env.BUNDLE_ID_ANDROID,

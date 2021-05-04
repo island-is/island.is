@@ -24,12 +24,20 @@ interface TableViewCellProps {
    * Component or image to render on the left side
    */
   image?: React.ReactNode;
+  /**
+   * Should show border. (default true)
+   */
+  border?: boolean;
+  /**
+   * Component to render below title and subtitle
+   */
+   bottom?: React.ReactNode;
 }
 
-const Cell = styled.View`
+const Cell = styled.View<{ border: boolean }>`
   flex-direction: row;
   min-height: 71px;
-  border-bottom-width: 1px;
+  border-bottom-width: ${props => props.border ? 1 : 0}px;
   border-bottom-color: ${props => props.theme.color.blue100};
 `;
 
@@ -40,11 +48,13 @@ const Left = styled.View`
   padding-bottom: 8px;
 `;
 
-const Center = styled.View`
+const Center = styled.View<{ accessory: boolean }>`
   flex: 1;
   justify-content: center;
   flex-direction: column;
-  padding-right: 15px;
+  padding-right: ${props => props.accessory ? 15 : 0}px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 `;
 
 const Right = styled.View`
@@ -78,23 +88,24 @@ const SubtitleText = styled.Text`
 `;
 
 export function TableViewCell(props: TableViewCellProps) {
-  const { title, subtitle, image, accessory, children } = props;
+  const { title, subtitle, image, accessory, children, border = true, bottom } = props;
 
   return (
     <SafeAreaView style={{ marginHorizontal: 16 }}>
-      <Cell>
+      <Cell border={border}>
         {image && <Left>{image}</Left>}
-        <Center>
+        <Center accessory={!!accessory}>
           {children !== undefined ? children : (
             <Content>
               {title && <Title>{typeof title === 'string' ? <TitleText>{title}</TitleText> : title}</Title>}
               {subtitle && <Subtitle>{typeof subtitle === 'string' ? <SubtitleText>{subtitle}</SubtitleText> : subtitle}</Subtitle>}
             </Content>
           )}
+          {bottom}
         </Center>
-        <Right>
+        {accessory && <Right>
           {accessory}
-        </Right>
+        </Right>}
       </Cell>
     </SafeAreaView>
   )

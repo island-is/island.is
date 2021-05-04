@@ -1,6 +1,10 @@
 import create, { State } from 'zustand/vanilla'
 import createUse from 'zustand'
 import { config } from './config'
+import { INotification } from '../graphql/fragments/notification.fragment'
+import { notificationsStore } from '../stores/notifications-store'
+import { openBrowser } from './rn-island'
+import { Navigation } from 'react-native-navigation'
 
 export type RouteCallbackArgs =
   | boolean
@@ -156,4 +160,30 @@ export function navigateTo(url: string, extraProps: any = {}) {
   return evaluateUrl(linkingUrl, extraProps)
   // @todo when to use native linking system?
   // return Linking.openURL(linkingUrl);
+}
+
+/**
+ * Navigate to a notification detail screen, or its link if defined.
+ * You may pass any one of its actions link if you want to go there as well.
+ * @param notification Notification object, requires `id` and an optional `link`
+ * @param componentId use specific componentId to open web browser in
+ */
+export function navigateToNotification(notification: { id: string; link?: string }, componentId?: string) {
+  const { id, link } = notification;
+  // mark notification as read
+  if (id) {
+    notificationsStore.getState().setRead(id);
+    const didNavigate = navigateTo(link ?? `/notification/${id}`);
+    if (!didNavigate && link) {
+      if (!componentId) {
+        // Use home tab for browser
+        Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+          bottomTabs: {
+            currentTabIndex: 1,
+          },
+        })
+      }
+      openBrowser(link, componentId ?? 'HOME_SCREEN');
+    }
+  }
 }

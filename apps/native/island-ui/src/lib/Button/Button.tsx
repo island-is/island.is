@@ -1,14 +1,17 @@
 import React from 'react'
+import { TouchableHighlightProps } from '../../../../../../node_modules/@types/react-native';
 import styled, { useTheme } from 'styled-components/native';
-import { TouchableHighlightProps } from 'react-native';
+
+// type TouchableHighlightProps = TouchableHighlightProps;
 
 interface ButtonProps extends TouchableHighlightProps {
   title: string;
-  disabled?: boolean;
   isTransparent?: boolean;
 }
 
-const Host = styled.TouchableHighlight<{ disabled?: boolean, isTransparent?: boolean }>`
+type HostProps = Omit<ButtonProps, "title">;
+
+const Host = styled.TouchableHighlight<HostProps>`
   padding: ${props => `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${(props) => props.disabled ?
     props.theme.color.dark200 :

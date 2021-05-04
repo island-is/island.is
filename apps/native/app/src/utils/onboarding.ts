@@ -76,8 +76,6 @@ export async function getOnboardingScreens() {
 export async function nextOnboardingStep() {
   const screens = await getOnboardingScreens()
 
-  console.log(screens);
-
   if (screens.length === 0) {
     Navigation.setRoot({ root: getMainRoot() })
     return

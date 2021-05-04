@@ -12,6 +12,9 @@ import { testIDs } from '../../utils/test-ids'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { Logo } from '../../components/logo/logo'
 import { LicenseType } from '../../types/license-type'
+import { ComponentRegistry } from '../../utils/navigation-registry'
+import { useIntl } from '../../utils/intl'
+import { useTranslatedTitle } from '../../utils/use-translated-title'
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -32,16 +35,14 @@ function mapLicenseColor(type: LicenseType) {
 
 export const WalletScreen: NavigationFunctionComponent = () => {
   const theme = useTheme()
+  const intl = useIntl();
   const res = useQuery(LIST_LICENSES_QUERY, { client })
   const licenseItems = res?.data?.listLicenses ?? []
 
+  useTranslatedTitle('WALLET_NAV_TITLE', 'wallet.screenTitle');
+
   useScreenOptions(
     () => ({
-      topBar: {
-        title: {
-          text: 'Skírteinin þín',
-        },
-      },
       bottomTab: {
         testID: testIDs.TABBAR_TAB_WALLET,
         selectedIconColor: theme.color.blue400,
@@ -52,6 +53,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
     }),
     [theme],
   )
+
 
   const myLicenses = licenseItems.length
     ? [licenseItems[1], licenseItems[0], licenseItems[2], licenseItems[3]]
@@ -118,4 +120,19 @@ export const WalletScreen: NavigationFunctionComponent = () => {
       <BottomTabsIndicator index={2} total={3} />
     </>
   )
+}
+
+WalletScreen.options = {
+  topBar: {
+    title: {
+      component: {
+        id: 'WALLET_NAV_TITLE',
+        name: ComponentRegistry.NavigationBarTitle,
+        passProps: {
+          title: 'Wallet',
+        }
+      },
+      alignment: 'fill'
+    },
+  },
 }

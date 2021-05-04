@@ -31,6 +31,11 @@ async function enforceLogout() {
   Navigation.setRoot({ root: await getAppRoot() });
 }
 
+function toggleLanguage() {
+  const { locale, setLocale } =preferencesStore.getState();
+  setLocale(locale === 'en-US' ? 'is-IS' : 'en-US');
+}
+
 export function setupDevMenu() {
   if (!__DEV__) {
     return null;
@@ -39,6 +44,7 @@ export function setupDevMenu() {
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
     const options = {
       STORYBOOK: devMenuOptions.storybook ? 'Disable Storybook' : 'Enable Storybook',
+      TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
       LOGOUT: 'Logout'
     };
@@ -54,6 +60,8 @@ export function setupDevMenu() {
     }, (buttonIndex: number) => {
       const optionKey = objectKeys[buttonIndex];
       switch (optionKey) {
+        case 'TOGGLE_LANGUAGE':
+          return toggleLanguage();
         case 'STORYBOOK':
           return toggleStorybook();
         case 'RESET_PREFERENCES':

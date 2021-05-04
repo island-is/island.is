@@ -4,7 +4,8 @@ const prefix = config.bundleId;
 
 export const ComponentRegistry = {
   // dev screens
-  StorybookScreen: `${prefix}.screens.Storybook`,
+  DevtoolsStorybookScreen: `${prefix}.screens.DevStorybook`,
+  DevtoolsCognitoAuthScreen: `${prefix}.screens.DevCognitoAuth`,
 
   // screens
   LoginScreen: `${prefix}.screens.Login`,
@@ -15,10 +16,11 @@ export const ComponentRegistry = {
   HomeScreen: `${prefix}.screens.Home`,
   InboxScreen: `${prefix}.screens.Inbox`,
   WalletScreen: `${prefix}.screens.Wallet`,
-  UserScreen: `${prefix}.screens.User`,
+  SettingsScreen: `${prefix}.screens.Settings`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
+  NotificationDetailScreen:  `${prefix}.screens.NotificationDetail`,
 
   // ui components
   NavigationBarTitle: `${prefix}.ui.NavigationBarTitle`,

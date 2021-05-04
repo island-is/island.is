@@ -47,7 +47,11 @@ export function setupEventHandlers() {
             lockScreenActivatedAt !== undefined &&
             lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()
           ) {
-            Navigation.dismissOverlay(lockScreenComponentId)
+            Navigation.dismissAllOverlays();
+            authStore.setState(() => ({
+              lockScreenActivatedAt: undefined,
+              lockScreenComponentId: undefined,
+            }));
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
@@ -73,7 +77,10 @@ export function setupEventHandlers() {
   Navigation.events().registerNavigationButtonPressedListener(
     ({ buttonId }) => {
       if (buttonId === ButtonRegistry.UserButton) {
-        navigateTo('/user')
+        navigateTo('/settings')
+      }
+      if (buttonId === ButtonRegistry.NotificationsButton) {
+        navigateTo('/notifications');
       }
     },
   )

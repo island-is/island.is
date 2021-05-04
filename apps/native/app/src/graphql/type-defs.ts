@@ -2,22 +2,40 @@ import gql from 'graphql-tag'
 
 export const typeDefs = gql`
   extend type Query {
-    listDocuments: [Document!]
+    listNotifications: [Notification!]
+    # listDocuments: [Document!]
     listLicenses: [License!]
     License(id: ID!): License
-    Document(id: ID!): Document
+    # Document(id: ID!): Document
+    Notification(id: ID!): Notification
   }
 
-  type Document {
-    id: Id
-    date: DateTime
-    subject: String
-    senderName: String
-    senderNatReg: String
-    opened: Boolean
-    fileType: String
-    url: String
-    content: String
+  # type Document {
+  #   id: ID!
+  #   date: DateTime!
+  #   subject: String!
+  #   senderName: String!
+  #   senderNatReg: String!
+  #   opened: Boolean!
+  #   fileType: String!
+  #   url: String!
+  #   content: String
+  # }
+
+  type NotificationAction {
+    id: ID!
+    text: String!
+    link: String!
+  }
+
+  type Notification {
+    id: ID!
+    serviceProvider: String!
+    date: DateTime!
+    title: String!
+    message: String
+    actions: [NotificationAction!]!
+    link: String
   }
 
   enum LicenseType {
@@ -33,9 +51,9 @@ export const typeDefs = gql`
   }
 
   type License {
-    id: String
-    type: LicenseType
-    serviceProvider: String
-    title: String
+    id: ID!
+    type: LicenseType!
+    serviceProvider: String!
+    title: String!
   }
 `
