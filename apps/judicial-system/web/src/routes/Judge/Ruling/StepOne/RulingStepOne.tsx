@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
@@ -15,6 +9,7 @@ import {
   FormContentContainer,
   CaseFileList,
   Decision,
+  RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -40,8 +35,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -212,38 +205,10 @@ export const RulingStepOne: React.FC = () => {
                   Niðurstaða
                 </Text>
               </Box>
-              <Input
-                data-testid="ruling"
-                name="ruling"
-                label="Efni úrskurðar"
-                placeholder="Hver er niðurstaðan að mati dómara?"
-                defaultValue={workingCase.ruling}
-                rows={16}
-                errorMessage={rulingErrorMessage}
-                hasError={rulingErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'ruling',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    rulingErrorMessage,
-                    setRulingErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'ruling',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setRulingErrorMessage,
-                  )
-                }
-                textarea
-                required
+              <RulingInput
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                isRequired
               />
             </Box>
             {workingCase.decision !== CaseDecision.REJECTING && (
