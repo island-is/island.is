@@ -20,13 +20,13 @@ import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 @Controller('endorsement-list')
 @ApiOAuth2([])
 export class EndorsementListController {
-  constructor (
+  constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
   @BypassAuth()
   @Get()
-  async findLists (
+  async findLists(
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
@@ -37,7 +37,7 @@ export class EndorsementListController {
    * This exists so we can return all endorsements for user across all lists
    */
   @Get('/endorsements')
-  async findEndorsements (@CurrentUser() user: User): Promise<Endorsement[]> {
+  async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
@@ -45,7 +45,7 @@ export class EndorsementListController {
   }
 
   @Get(':listId')
-  async findOne (
+  async findOne(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     return await this.endorsementListService.findSingleList(listId)
@@ -53,14 +53,14 @@ export class EndorsementListController {
 
   // TODO: Add is owner check here
   @Put(':listId/close')
-  async close (
+  async close(
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
   ): Promise<EndorsementList> {
     return await this.endorsementListService.close(listId)
   }
 
   @Post()
-  async create (
+  async create(
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {

@@ -32,12 +32,7 @@ export class EndorsementController {
     @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-<<<<<<< HEAD:apps/services/endorsements/api/src/app/modules/endorsement/endorsement.controller.ts
-    // TODO: Add auth here
     return await this.endorsementService.findSingleUserEndorsement({
-=======
-    return await this.endorsementService.findSingleEndorsementByNationalId({
->>>>>>> b3c871424... Added first draft of authentication:apps/endorsement-system/src/app/modules/endorsement/endorsement.controller.ts
       listId,
       nationalId: user.nationalId,
     })
