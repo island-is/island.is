@@ -1,15 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext } from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Link,
-  NavigationItem,
-  Text,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -34,12 +25,10 @@ import {
   SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
-import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { NEWS_TAGS } from '@island.is/web/screens/Organization/NewsList'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -54,11 +43,8 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
-  const { globalNamespace } = useContext(GlobalContext)
 
   const n = useNamespace(namespace)
-  const gn = useNamespace(globalNamespace)
-  const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -80,16 +66,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
-      breadcrumbItems={[
-        {
-          title: 'Ísland.is',
-          href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-      ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
@@ -106,21 +82,23 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         <SidebarCard key={card.id} sidebarCard={card} />
       ))}
     >
-      <Section
-        paddingTop={[8, 8, 6]}
-        paddingBottom={[8, 8, 6]}
-        background="purple100"
-        aria-labelledby="latestNewsTitle"
-      >
-        <LatestNewsSection
-          label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
-          labelId="latestNewsTitle"
-          items={news}
-          linkType="organizationnews"
-          overview="organizationnewsoverview"
-          parameters={[organizationPage.slug]}
-        />
-      </Section>
+      {!!news.length && (
+        <Section
+          paddingTop={[8, 8, 6]}
+          paddingBottom={[8, 8, 6]}
+          background="purple100"
+          aria-labelledby="latestNewsTitle"
+        >
+          <LatestNewsSection
+            label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
+            labelId="latestNewsTitle"
+            items={news}
+            linkType="organizationnews"
+            overview="organizationnewsoverview"
+            parameters={[organizationPage.slug]}
+          />
+        </Section>
+      )}
     </OrganizationWrapper>
   )
 }
@@ -143,7 +121,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tag: SYSLUMENN_NEWS_TAG_ID,
+          tag: NEWS_TAGS[query.slug as string] ?? '',
         },
       },
     }),
@@ -180,7 +158,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const lightTheme = lightThemes.includes(getOrganizationPage.theme)
 
   return {
-    news,
+    news: NEWS_TAGS[query.slug as string] ? news : [],
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,

@@ -1,4 +1,5 @@
 export * from './application'
+export * from './childSupport'
 export * from './confirmation'
 export * from './contactInfo'
 export * from './contract'
