@@ -29,15 +29,20 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'informationAboutInstitutionMultiField',
-          title: 'Upplýsingar um stofnun',
+          title:
+            informationAboutInstitution.general.infoInstitutionMultiFieldTitle,
           description:
-            'Upplýsingar um þá A-Hluta stofnun sem sækir um fjármögnun á verkefni til hagræðingar.',
+            informationAboutInstitution.general
+              .infoInstitutionMultiFieldDescription,
           children: [
             buildTextField({
               id: 'informationAboutInstitutionTextField',
-              title: 'Nafn á ráðuneyti eða stofnun',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldTitle,
               description:
-                'Hvaða ráðuneyti eða stofnun sækir sækir um fjármögnun?',
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldDescription,
               backgroundColor: 'blue',
               width: 'full',
               required: true,
