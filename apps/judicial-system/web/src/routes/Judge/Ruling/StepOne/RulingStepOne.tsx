@@ -4,7 +4,6 @@ import {
   AccordionItem,
   Box,
   Input,
-  RadioButton,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -43,7 +42,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
