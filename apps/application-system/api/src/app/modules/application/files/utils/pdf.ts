@@ -13,10 +13,6 @@ import {
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
-const formatDays = (date: string): string => {
-  return date.replace('dagur', 'daginn')
-}
-
 export async function generateResidenceChangePdf(
   application: CRCApplication,
 ): Promise<Buffer> {
@@ -30,7 +26,7 @@ export async function generateResidenceChangePdf(
   const applicant = nationalRegistry.data
   const nationalRegistryLookupDate = format(
     parseISO(nationalRegistry.date),
-    'EEEE d. MMMM y',
+    'd. MMMM y',
     { locale: is },
   )
   const nationalRegistryLookupTime = format(
@@ -296,11 +292,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Undirritaður málshefjandi, ${
-      applicant.fullName
-    }, heimilaði fyrirspurn og uppflettingu í forsjárgögnum hjá Þjóðskrá Íslands þann ${formatDays(
-      nationalRegistryLookupDate,
-    )} kl. ${nationalRegistryLookupTime}.`,
+    `Undirritaður málshefjandi, ${applicant.fullName}, heimilaði fyrirspurn og uppflettingu í forsjárgögnum hjá Þjóðskrá Íslands þann ${nationalRegistryLookupDate} kl. ${nationalRegistryLookupTime}.`,
   )
 
   doc.moveDown()
