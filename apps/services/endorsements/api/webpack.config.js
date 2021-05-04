@@ -33,10 +33,9 @@ module.exports = (config) => {
     }),
   ]
 
-  const basePath = 'apps/endorsement-system/src'
   config.entry = {
     ...config.entry,
-    buildOpenApi: './apps/endorsement-system/src/buildOpenApi.ts',
+    buildOpenApi: './apps/services/endorsements/api/src/buildOpenApi.ts',
   }
   config.output.filename = '[name].js'
   return {
