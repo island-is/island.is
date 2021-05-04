@@ -17,6 +17,7 @@ import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -85,13 +86,10 @@ export const Card = ({
       display="flex"
       flexGrow={1}
       flexDirection={shouldStack ? 'columnReverse' : 'row'}
-      alignItems={shouldStack ? 'center' : 'flexStart'}
+      alignItems="stretch"
       justifyContent="flexEnd"
     >
-      <Box
-        display="inlineFlex"
-        style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}
-      >
+      <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
         <Stack space={1}>
           {!!subTitle && (
             <Text
@@ -142,13 +140,13 @@ export const Card = ({
       </Box>
       {hasImage && (
         <Box
-          display="inlineFlex"
           position="relative"
           style={{
             width: shouldStack ? '100%' : '30%',
-            height: shouldStack ? 125 : 150,
+            ...(shouldStack && { height: 146 }),
           }}
           marginBottom={shouldStack ? 1 : 0}
+          marginLeft={shouldStack ? 0 : 1}
         >
           <BackgroundImage
             positionX={shouldStack ? undefined : 'right'}

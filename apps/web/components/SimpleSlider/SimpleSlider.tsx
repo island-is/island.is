@@ -2,12 +2,13 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useLayoutEffect,
   TouchEventHandler,
   FC,
   ReactNode,
 } from 'react'
 import cn from 'classnames'
-import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
+import { useWindowSize, useMountedState } from 'react-use'
 import { Box, Button, Hidden, Inline, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SimpleSlider.treat'
@@ -47,7 +48,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   const start = useRef(0)
   const touchDirection = useRef(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const innerContainerRef = useRef<HTMLDivElement | null>(null)
+  const [ready, setReady] = useState<boolean>(false)
   const [position, setPosition] = useState<number>(0)
   const [slideState, setSlideState] = useState<SlideState>({
     slideCount,
@@ -62,7 +63,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
   const { width } = useWindowSize()
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const current = Object.keys(slideState.breakpoints).filter(
       (x) => parseInt(x, 10) <= width,
     )
@@ -100,6 +101,12 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     })
   }
 
+  useEffect(() => {
+    if (slideState.slideWidth > 0) {
+      setReady(true)
+    }
+  }, [slideState.slideWidth])
+
   const traverse = (direction: 'prev' | 'next') => {
     let current: number
 
@@ -115,6 +122,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         if (current < 0) {
           return false
         }
+        break
       default:
         break
     }
@@ -204,33 +212,32 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
           </Inline>
         </Hidden>
       </Box>
-      <Box
-        ref={innerContainerRef}
-        className={styles.innerContainer}
-        style={{
-          transform: `translate3d(${position}px, 0, 0)`,
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {items.map((item, index) => {
-          return (
-            <Box
-              key={index}
-              className={styles.slide}
-              style={{
-                width: `${slideState.slideWidth}px`,
-                ...(index !== numberOfSlides - 1 && {
+      {!!ready && (
+        <Box
+          className={styles.innerContainer}
+          style={{
+            transform: `translate3d(${position}px, 0, 0)`,
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {items.map((item, index) => {
+            return (
+              <Box
+                key={index}
+                className={styles.slide}
+                style={{
+                  width: `${slideState.slideWidth}px`,
                   paddingRight: `${slideState.gutterWidth}px`,
-                }),
-              }}
-            >
-              {item}
-            </Box>
-          )
-        })}
-      </Box>
+                }}
+              >
+                {item}
+              </Box>
+            )
+          })}
+        </Box>
+      )}
     </Box>
   )
 }
