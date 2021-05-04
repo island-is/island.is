@@ -12,7 +12,6 @@
  */
 
 export * from './Card/Card'
-export * from './CardsSlider/CardsSlider'
 export * from './Categories/Categories'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'
@@ -65,5 +64,6 @@ export * from './InstitutionPanel/InstitutionPanel'
 export * from './InstitutionsPanel/InstitutionsPanel'
 export * from './Organization/'
 export * from './ApiCatalogueFilter/ApiCatalogueFilter'
+export * from './SimpleSlider/SimpleSlider'
 export * from './Image'
 export * from './IcelandicNamesSearcher/IcelandicNamesSearcher'

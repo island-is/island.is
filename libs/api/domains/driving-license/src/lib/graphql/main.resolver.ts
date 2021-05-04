@@ -9,7 +9,7 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -20,7 +20,7 @@ import { DrivingLicense } from './drivingLicense.model'
 import { DrivingLicenseType } from './drivingLicenseType.model'
 import { PenaltyPointStatus } from './penaltyPointStatus.model'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}

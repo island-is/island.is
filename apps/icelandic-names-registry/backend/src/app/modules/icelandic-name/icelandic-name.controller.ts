@@ -20,7 +20,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
@@ -82,7 +82,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOkResponse()
@@ -102,7 +102,7 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Post()
   @ApiBearerAuth()
   @HttpCode(201)
@@ -119,7 +119,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.createName(body)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Delete(':id')
   @ApiBearerAuth()
   @ApiOkResponse()

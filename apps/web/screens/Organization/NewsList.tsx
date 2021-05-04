@@ -133,11 +133,6 @@ const NewsList: Screen<NewsListProps> = ({
       typename: 'homepage',
     },
     {
-      title: n('organizations', 'Stofnanir'),
-      href: linkResolver('organizations').href,
-      typename: 'organizations',
-    },
-    {
       title: organizationPage.title,
       href: linkResolver('organizationpage', [organizationPage.slug]).href,
       typename: 'organizationpage',
