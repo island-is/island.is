@@ -376,7 +376,7 @@ const Search: Screen<CategoryProps> = ({
                 placeholder={n('sidebarHeader', 'Flokkar')}
                 defaultValue={defaultSelectedCategory}
                 options={categorySelectOptions}
-                name="content-overview"
+                name="results-by-category"
                 isSearchable={false}
                 onChange={({ value }: Option) => {
                   onSelectSidebarTag('category', value as string)
