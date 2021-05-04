@@ -233,8 +233,8 @@ export type RegulationRedirect = {
 }
 
 export enum RegulationViewTypes {
-  Current = 'current',
-  Diff = 'diff',
-  Original = 'original',
-  Date = 'd',
+  current = 'current',
+  diff = 'diff',
+  original = 'original',
+  d = 'd',
 }
