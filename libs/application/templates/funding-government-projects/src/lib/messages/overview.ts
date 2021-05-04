@@ -10,7 +10,7 @@ export const overview = {
     pageDescription: {
       id: `section.overview.pageDescription`,
       defaultMessage:
-        'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá SÍ ef umsóknin er skýr og hnitmiðuð. ',
+        'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins ef umsóknin er skýr og hnitmiðuð. ',
       description: 'Overview page description',
     },
   }),
