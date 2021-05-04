@@ -92,8 +92,8 @@ export const useRegulationLinkResolver = () => {
     //   return linkType === 'regulation'
     // },
 
-    linkToRegulationSearch: (
-      filters: Partial<Record<RegulationSearchKeys, string>>,
+    linkToRegulationSearch: <Keys extends RegulationSearchKeys>(
+      filters: Record<Keys, string>,
     ) =>
       utils.linkResolver('regulationshome').href +
       '?' +
