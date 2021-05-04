@@ -19,6 +19,7 @@ import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,
+  RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 
@@ -53,7 +54,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
 
 // ---------------------------------------------------------------------------
 
-const viewTypes = {
+const viewTypeParams = {
   /*+ renders the current regulation text - This is the deafult view type. */
   current: 1,
   /** renders the original regulation text - same as /d/%{original.publicationDate} */
@@ -72,7 +73,7 @@ const viewTypes = {
    */
   on: 1,
 }
-export type ViewType = keyof typeof viewTypes
+type ViewTypeParam = keyof typeof viewTypeParams
 
 const reRegQueryNameFlex = /^\d{1,4}-\d{4}$/
 
@@ -89,9 +90,9 @@ const assertRegQueryName = (slug: string): RegQueryName => {
   throw new CustomNextError(404)
 }
 
-const assertViewType = (viewType: string): ViewType => {
-  if (!viewType || viewType in viewTypes) {
-    return (viewType || 'current') as ViewType
+const assertViewType = (viewType: string): ViewTypeParam => {
+  if (!viewType || viewType in viewTypeParams) {
+    return (viewType || 'current') as ViewTypeParam
   }
   throw new CustomNextError(404)
 }
@@ -108,7 +109,7 @@ const smellsLikeISODate = (maybeISODate: string): boolean =>
 
 const assertDate = (
   maybeISODate: string,
-  viewType?: ViewType,
+  viewType?: RegulationViewTypes,
 ): ISODate | undefined => {
   if (viewType === undefined || viewType === 'd') {
     if (smellsLikeISODate(maybeISODate)) {
@@ -153,7 +154,12 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   const name = assertRegQueryName(p.name)
-  const viewType = assertViewType(p.viewType)
+  const viewTypeParam = assertViewType(p.viewType)
+  // FIXME: This assertion is technically unsafe but will do until we either stop using
+  // an enum, or refactor it into a standalone, shared regulations-types library
+  const viewType = (viewTypeParam === 'on'
+    ? 'd'
+    : viewTypeParam) as RegulationViewTypes
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
   const earlierDate = isCustomDiff
@@ -172,7 +178,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType: viewType === 'on' ? 'd' : viewType,
+            viewType,
             name,
             date,
             isCustomDiff,
@@ -204,7 +210,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   // TODO: Consider adding the same validation + redirect behavior
   // for `earlierDate`s
 
-  const urlDate = viewType === 'on' ? date : undefined
+  const urlDate = viewTypeParam === 'on' ? date : undefined
 
   return {
     regulation,
