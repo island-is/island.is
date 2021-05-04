@@ -36,15 +36,6 @@ interface SlideState {
   breakpoints: Breakpoints
 }
 
-interface SliderOptions {
-  next?: () => void
-  prev?: () => void
-}
-
-export interface SliderElement extends HTMLDivElement {
-  simpleSlider?: SliderOptions
-}
-
 export const SimpleSlider: FC<SimpleSliderProps> = ({
   items,
   slideCount = 1,
@@ -164,82 +155,81 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   const atEnd = slideState.current === items.length - 1
 
   return (
-    <Box className={styles.wrapper}>
+    <Box
+      ref={containerRef}
+      className={cn(styles.container)}
+      style={{
+        marginRight: `-${slideState.gutterWidth}px`,
+      }}
+    >
+      {!!title && (
+        <Box paddingBottom={4}>
+          <Text variant="h3">{title}</Text>
+        </Box>
+      )}
+      <Box className={styles.nav}>
+        <Hidden above="sm">
+          <Inline space={2}>
+            {items.map((x, index) => {
+              return (
+                <button
+                  key={index}
+                  className={cn(styles.dot, {
+                    [styles.dotActive]: index === slideState.current,
+                  })}
+                  onClick={() => goTo(index)}
+                />
+              )
+            })}
+          </Inline>
+        </Hidden>
+        <Hidden below="md">
+          <Inline space={2}>
+            <Button
+              circle
+              colorScheme="light"
+              disabled={atStart}
+              icon="arrowBack"
+              aria-label="previousSlides"
+              onClick={() => traverse('prev')}
+            />
+            <Button
+              circle
+              colorScheme="light"
+              disabled={atEnd}
+              icon="arrowForward"
+              aria-label="nextSlides"
+              onClick={() => traverse('next')}
+            />
+          </Inline>
+        </Hidden>
+      </Box>
       <Box
-        ref={containerRef}
-        className={cn(styles.container)}
+        ref={innerContainerRef}
+        className={styles.innerContainer}
         style={{
-          marginRight: `-${slideState.gutterWidth}px`,
+          transform: `translate3d(${position}px, 0, 0)`,
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {!!title && (
-          <Box paddingBottom={4}>
-            <Text variant="h3">{title}</Text>
-          </Box>
-        )}
-        <Box className={styles.nav}>
-          <Hidden above="sm">
-            <Inline space={2}>
-              {items.map((x, index) => {
-                return (
-                  <button
-                    key={index}
-                    className={cn(styles.dot, {
-                      [styles.dotActive]: index === slideState.current,
-                    })}
-                    onClick={() => goTo(index)}
-                  />
-                )
-              })}
-            </Inline>
-          </Hidden>
-          <Hidden below="md">
-            <Inline space={2}>
-              <Button
-                circle
-                colorScheme="light"
-                disabled={atStart}
-                icon="arrowBack"
-                aria-label="previousSlides"
-                onClick={() => traverse('prev')}
-              />
-              <Button
-                circle
-                colorScheme="light"
-                disabled={atEnd}
-                icon="arrowForward"
-                aria-label="nextSlides"
-                onClick={() => traverse('next')}
-              />
-            </Inline>
-          </Hidden>
-        </Box>
-        <Box
-          ref={innerContainerRef}
-          className={styles.innerContainer}
-          style={{
-            transform: `translate3d(${position}px, 0, 0)`,
-          }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {items.map((item, index) => {
-            return (
-              <Box
-                className={styles.slide}
-                style={{
-                  width: `${slideState.slideWidth}px`,
-                  ...(index !== numberOfSlides - 1 && {
-                    paddingRight: `${slideState.gutterWidth}px`,
-                  }),
-                }}
-              >
-                {item}
-              </Box>
-            )
-          })}
-        </Box>
+        {items.map((item, index) => {
+          return (
+            <Box
+              key={index}
+              className={styles.slide}
+              style={{
+                width: `${slideState.slideWidth}px`,
+                ...(index !== numberOfSlides - 1 && {
+                  paddingRight: `${slideState.gutterWidth}px`,
+                }),
+              }}
+            >
+              {item}
+            </Box>
+          )
+        })}
       </Box>
     </Box>
   )

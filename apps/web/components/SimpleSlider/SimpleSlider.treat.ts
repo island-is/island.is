@@ -1,14 +1,9 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const wrapper = style({
-  display: 'inline-block',
-  position: 'relative',
-  width: '100%',
-})
-
 export const container = style({
   display: 'inline-block',
+  position: 'relative',
   width: '100%',
 })
 
