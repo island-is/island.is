@@ -24,6 +24,17 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'definitionOfApplicant',
+      title: section.definitionOfApplicant,
+      children: [
+        buildCustomField({
+          id: 'definitionOfApplicantField',
+          title: definitionOfApplicant.general.pageTitle,
+          component: 'DefinitionOfApplicant',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'informationAboutInstitution',
       title: section.informationAboutInstitution,
       children: [
@@ -54,17 +65,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
               component: 'ContactRepeater',
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'definitionOfApplicant',
-      title: section.definitionOfApplicant,
-      children: [
-        buildCustomField({
-          id: 'definitionOfApplicantField',
-          title: definitionOfApplicant.general.pageTitle,
-          component: 'DefinitionOfApplicant',
         }),
       ],
     }),
