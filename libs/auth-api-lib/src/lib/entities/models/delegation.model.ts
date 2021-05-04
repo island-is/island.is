@@ -78,6 +78,4 @@ export class Delegation extends Model<Delegation> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
-
-  name!: string
 }
