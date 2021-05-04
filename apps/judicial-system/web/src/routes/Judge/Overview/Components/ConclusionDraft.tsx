@@ -1,7 +1,10 @@
 import React from 'react'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
-import { Decision } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  Decision,
+  RulingInput,
+} from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {
   workingCase: Case
@@ -18,6 +21,14 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Decision workingCase={workingCase} setWorkingCase={setWorkingCase} />
       </Box>
+      <Box marginBottom={3}>
+        <Text variant="h3">Drög að niðurstöðu</Text>
+      </Box>
+      <RulingInput
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isRequired={false}
+      />
     </>
   )
 }
