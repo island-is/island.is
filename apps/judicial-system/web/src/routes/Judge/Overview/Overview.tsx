@@ -545,7 +545,12 @@ export const JudgeOverview: React.FC = () => {
           {isDraftingConclusion && (
             <Modal
               title="Skrifa drög að niðurstöðu"
-              text={<ConclusionDraft />}
+              text={
+                <ConclusionDraft
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
+              }
               primaryButtonText="Yello"
             />
           )}
