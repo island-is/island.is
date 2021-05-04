@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const section = defineMessages({
   definitionOfApplicant: {
     id: `affgp.application:section.definitionOfApplicant`,
-    defaultMessage: 'Yfirlit',
+    defaultMessage: 'Skilgreining',
     description: 'Definition of applicant section title',
   },
   informationAboutInstitution: {
