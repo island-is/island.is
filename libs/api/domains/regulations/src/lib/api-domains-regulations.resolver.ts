@@ -32,10 +32,10 @@ export class RegulationsResolver {
   ): Promise<Regulation | RegulationRedirect | null> {
     return this.regulationsService.getRegulation(
       input.viewType,
-      input.name as RegQueryName,
-      input.date as ISODate | undefined,
+      input.name,
+      input.date,
       input.isCustomDiff,
-      input.earlierDate as ISODate | 'original' | undefined,
+      input.earlierDate,
     )
   }
 
