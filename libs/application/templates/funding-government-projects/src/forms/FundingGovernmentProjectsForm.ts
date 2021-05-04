@@ -5,6 +5,8 @@ import {
   FormModes,
   buildDescriptionField,
   buildCustomField,
+  buildTextField,
+  buildMultiField,
 } from '@island.is/application/core'
 import {
   section,
@@ -22,6 +24,35 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'informationAboutInstitution',
+      title: section.informationAboutInstitution,
+      children: [
+        buildMultiField({
+          id: 'informationAboutInstitutionMultiField',
+          title: 'Upplýsingar um stofnun',
+          description:
+            'Upplýsingar um þá A-Hluta stofnun sem sækir um fjármögnun á verkefni til hagræðingar.',
+          children: [
+            buildTextField({
+              id: 'informationAboutInstitutionTextField',
+              title: 'Nafn á ráðuneyti eða stofnun',
+              description:
+                'Hvaða ráðuneyti eða stofnun sækir sækir um fjármögnun?',
+              backgroundColor: 'blue',
+              width: 'full',
+              required: true,
+            }),
+            buildCustomField({
+              id: 'contactRepeaterCustomField',
+              title: informationAboutInstitution.general.pageTitle,
+              description: informationAboutInstitution.general.pageTitle,
+              component: 'ContactRepeater',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'definitionOfApplicant',
       title: section.definitionOfApplicant,
       children: [
@@ -29,17 +60,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
           id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
           component: 'DefinitionOfApplicant',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'informationAboutInstitution',
-      title: section.informationAboutInstitution,
-      children: [
-        buildDescriptionField({
-          id: 'placeholderId2',
-          title: informationAboutInstitution.general.pageTitle,
-          description: 'Umsókn',
         }),
       ],
     }),
