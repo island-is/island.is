@@ -6977,6 +6977,57 @@
           }
         }
       }
+    },
+    "services-auth-public-api": {
+      "root": "apps/services/auth-public-api",
+      "sourceRoot": "apps/services/auth-public-api/src",
+      "projectType": "application",
+      "prefix": "services-auth-public-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/auth-public-api",
+            "main": "apps/services/auth-public-api/src/main.ts",
+            "tsConfig": "apps/services/auth-public-api/tsconfig.app.json",
+            "assets": ["apps/services/auth-public-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/auth-public-api/src/environments/environment.ts",
+                  "with": "apps/services/auth-public-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-auth-public-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/auth-public-api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/auth-public-api"],
+          "options": {
+            "jestConfig": "apps/services/auth-public-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
