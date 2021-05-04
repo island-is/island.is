@@ -553,7 +553,7 @@ export const JudgeOverview: React.FC = () => {
                     setWorkingCase={setWorkingCase}
                   />
                 }
-                primaryButtonText="Vista drög og loka glugga"
+                primaryButtonText="Loka glugga"
                 handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
               />
             )}
