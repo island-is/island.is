@@ -46,6 +46,7 @@ export async function generateResidenceChangePdf(
     applicant.children,
     selectedChildren,
   )
+  const otherParent = childrenAppliedFor[0].otherParent
   const childResidenceInfo = childrenResidenceInfo(applicant, answers)
   const currentParent = childResidenceInfo.current
   const futureParent = childResidenceInfo.future
@@ -295,7 +296,11 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Undirritaður/uð, ${applicant.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+    `Undirritaður málshefjandi, ${
+      applicant.fullName
+    }, heimilaði fyrirspurn og uppflettingu í forsjárgögnum hjá Þjóðskrá Íslands þann ${formatDays(
+      nationalRegistryLookupDate,
+    )} kl. ${nationalRegistryLookupTime}.`,
   )
 
   doc.moveDown()
@@ -304,9 +309,38 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Fyrirspurn og uppfletting í gögnum Þjóðskrár fór fram ${formatDays(
-      nationalRegistryLookupDate,
-    )} kl. ${nationalRegistryLookupTime}.`,
+    `Niðurstaða uppflettingar var að ${currentParent.parentName} (${currentParent.nationalId}) og ${futureParent.parentName} (${futureParent.nationalId}) eru með sameiginlega forsjá með eftirfarandi börnum:`,
+  )
+
+  doc.moveDown()
+
+  childrenAppliedFor.map((c, i) =>
+    addToDoc(
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.SMALL_FONT_SIZE,
+      i === childrenAppliedFor.length - 1
+        ? PdfConstants.LARGE_LINE_GAP
+        : PdfConstants.NO_LINE_GAP,
+      `- ${c.fullName} (${formatSsn(c.nationalId)})`,
+    ),
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.SMALL_FONT_SIZE,
+    PdfConstants.SMALL_LINE_GAP,
+    `Lögheimilisforeldri þegar samningur er gerður er ${currentParent.parentName}`,
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.SMALL_FONT_SIZE,
+    PdfConstants.SMALL_LINE_GAP,
+    'Báðir foreldrar staðfesta með undirritun sinni að ofangreindar upplýsingar eru réttar.',
   )
 
   doc.end()
