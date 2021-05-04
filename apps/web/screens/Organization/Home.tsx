@@ -25,7 +25,6 @@ import {
   SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
@@ -49,7 +48,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
 
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -71,16 +69,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
-      breadcrumbItems={[
-        {
-          title: 'Ísland.is',
-          href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-      ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
