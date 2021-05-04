@@ -126,7 +126,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole (
+  mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {

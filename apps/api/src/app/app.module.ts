@@ -151,7 +151,7 @@ const autoSchemaFile = environment.production
     }),
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl,
-    })
+    }),
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),

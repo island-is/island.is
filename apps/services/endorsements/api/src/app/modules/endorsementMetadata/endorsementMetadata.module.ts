@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common'
 import { EndorsementMetadataService } from './endorsementMetadata.service'
-<<<<<<< HEAD:apps/services/endorsements/api/src/app/modules/endorsementMetadata/endorsementMetadata.module.ts
-import { NationalRegistryService } from './providers/nationalRegistry.service'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry'
-=======
 import { NationalRegistryUserService } from './providers/nationalRegistryUser.service'
-import { NationalRegistryApi } from '@island.is/clients/national-registry'
->>>>>>> c5994a27d... feat(endorsement-system): Endorsement unique within list tag validation (#3588):apps/endorsement-system/src/app/modules/endorsementMetadata/endorsementMetadata.module.ts
 import { environment } from '../../../environments/environment'
 import { NationalRegistryApiMock } from './providers/mock/nationalRegistryApiMock'
 import { SequelizeModule } from '@nestjs/sequelize'
