@@ -17,9 +17,9 @@ import {
   ScopesGuard,
   User,
   CurrentUser,
+  IdsAuthGuard,
 } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('permissions')
 @Controller('permissions')
 export class PermissionsController {
@@ -29,6 +29,7 @@ export class PermissionsController {
   ) {}
 
   /** Gets permitted scopes  */
+  @UseGuards(IdsUserGuard, ScopesGuard)
   @Scopes('@identityserver.api/authentication')
   @Get('permitted-scopes')
   @ApiOkResponse({ isArray: true })
@@ -52,6 +53,7 @@ export class PermissionsController {
     return []
   }
 
+  @UseGuards(IdsAuthGuard, ScopesGuard)
   @Scopes('@identityserver.api/authentication')
   @Get('access-controlled-scopes')
   @ApiOkResponse({ type: [ApiScope] })
