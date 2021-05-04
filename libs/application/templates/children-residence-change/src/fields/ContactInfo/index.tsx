@@ -10,10 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'
-import {
-  childrenResidenceInfo,
-  getSelectedChildrenFromExternalData,
-} from '../../lib/utils'
+import { getSelectedChildrenFromExternalData } from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText, InfoBanner } from '../components'
 

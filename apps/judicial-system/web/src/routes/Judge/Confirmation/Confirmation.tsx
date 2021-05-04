@@ -236,7 +236,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -246,9 +246,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={
-        signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
-      }
+      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
         router.push(Constants.FEEDBACK_FORM_ROUTE)
       }}

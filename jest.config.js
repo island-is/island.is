@@ -117,6 +117,7 @@ module.exports = {
     '<rootDir>/libs/localization',
     '<rootDir>/libs/logging',
     '<rootDir>/libs/message-queue',
+    '<rootDir>/libs/nest/audit',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
     '<rootDir>/libs/service-portal/applications',
@@ -151,5 +152,6 @@ module.exports = {
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
+    '<rootDir>/libs/application/templates/public-debt-payment-plan',
   ],
 }
