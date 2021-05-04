@@ -145,13 +145,14 @@ const assertEarlierDate = (
 // ---------------------------------------------------------------------------
 
 RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const p = getParams(query, [
-    'name',
-    'viewType',
-    'date',
-    'diff',
-    'earlierDate',
-  ])
+  const params = query.params as Partial<ReadonlyArray<string>>
+  const p = {
+    name: params[0] || '',
+    viewType: params[1] || '',
+    date: params[2] || '',
+    diff: params[3] || '',
+    earlierDate: params[4] || '',
+  }
 
   const name = assertRegQueryName(p.name)
   const viewTypeParam = assertViewType(p.viewType)

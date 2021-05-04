@@ -104,8 +104,8 @@ export const useRegulationLinkResolver = () => {
 // ---------------------------------------------------------------------------
 
 /** Returns the first query parameter value as string, falling back to '' */
-const getParamStr = (query: ParsedUrlQuery, idx: number): string => {
-  const val = query.params[idx]
+const getParamStr = (query: ParsedUrlQuery, key: string): string => {
+  const val = query[key]
   return val == null ? '' : typeof val === 'string' ? val : val[0]
 }
 
@@ -114,8 +114,8 @@ export const getParams = <K extends string>(
   query: ParsedUrlQuery,
   keys: Array<K>,
 ): Record<K, string> =>
-  keys.reduce((obj, key, idx) => {
-    obj[key] = getParamStr(query, idx)
+  keys.reduce((obj, key) => {
+    obj[key] = getParamStr(query, key)
     return obj
   }, {} as Record<K, string>)
 
