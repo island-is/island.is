@@ -37,7 +37,7 @@ export const applicationOverviewTemplate = (
 
   const projectName = getValueViaPath(application.answers, 'project.name')
 
-  const projectBackground = getValueViaPath(
+  const projectDescription = getValueViaPath(
     application.answers,
     'project.description',
   )
@@ -103,7 +103,7 @@ export const applicationOverviewTemplate = (
   </p>
   <p>
     <b>${messages.project.backgroundLabel.defaultMessage}</b> </br>
-    ${projectBackground}
+    ${projectDescription}
   </p>
 
   `)
