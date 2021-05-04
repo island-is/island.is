@@ -60,8 +60,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   )
 
   const answers = (application as any).answers as PartyLetter
-  const partyLetter = answers.party.letter
-  const partyName = answers.party.name
+  const partyLetter = answers.partyLetter
+  const partyName = answers.partyName
 
   const { data: userData } = useQuery(GET_FULLNAME)
 
@@ -81,7 +81,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
     const success = await createEndorsement({
       variables: {
         input: {
-          listId: application.answers.endorsementListId,
+          listId: (application.externalData?.createEndorsementList.data as any)
+            .id,
         },
       },
     })

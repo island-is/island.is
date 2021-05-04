@@ -6,17 +6,14 @@ import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import gql from 'graphql-tag'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { Endorsement } from '../../types'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { PartyLetter } from '../../lib/dataSchema'
 
 const GET_ENDORSEMENT_LIST = gql`
-  query endorsementSystemUserEndorsements {
-    endorsementSystemUserEndorsements {
+  query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
+    endorsementSystemGetEndorsements(input: $input) {
       id
       endorser
-      endorsementListId
       meta {
         fullName
         address
@@ -26,47 +23,28 @@ const GET_ENDORSEMENT_LIST = gql`
     }
   }
 `
-const CREATE_ENDORSEMENT_LIST = gql`
-  mutation endorsementSystemCreateEndorsementList(
-    $input: CreateEndorsementListDto!
-  ) {
-    endorsementSystemCreateEndorsementList(input: $input) {
-      id
-      title
-      description
-      closedDate
-      endorsementMeta
-      tags
-      owner
-    }
-  }
-`
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyLetter
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
+  const { formatMessage } = useLocale()
 
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[]>()
   const [showWarning, setShowWarning] = useState(false)
 
-  const [createEndorsementList, { loading: creatingLoad }] = useMutation(
-    CREATE_ENDORSEMENT_LIST,
-  )
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-
   const [getEndorsementList, { loading, error }] = useLazyQuery(
     GET_ENDORSEMENT_LIST,
     {
       pollInterval: 2000,
-      onCompleted: async ({ endorsementSystemUserEndorsements }) => {
-        if (!loading && endorsementSystemUserEndorsements) {
+      onCompleted: async ({ endorsementSystemGetEndorsements }) => {
+        if (!loading && endorsementSystemGetEndorsements) {
           const hasEndorsements =
-            !error && !loading && endorsementSystemUserEndorsements?.length
-              ? endorsementSystemUserEndorsements.length > 0
+            !error && !loading && endorsementSystemGetEndorsements?.length
+              ? endorsementSystemGetEndorsements.length > 0
               : false
           const mapToEndorsementList: Endorsement[] = hasEndorsements
-            ? endorsementSystemUserEndorsements.map((x: any) => ({
+            ? endorsementSystemGetEndorsements.map((x: any) => ({
                 date: x.created,
                 name: x.meta.fullName,
                 nationalId: x.endorser,
@@ -81,52 +59,21 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     },
   )
 
-  const onCreateEndorsementList = async () => {
-    const createEndorsement = await createEndorsementList({
+  useEffect(() => {
+    getEndorsementList({
       variables: {
         input: {
-          title: answers.party.name,
-          description: answers.party.letter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: ['partyLetterNordausturkjordaemi2021'],
-          validationRules: [],
+          listId: endorsementListId,
         },
       },
     })
-    if (!creatingLoad && createEndorsement.data) {
-      const endorsementId =
-        createEndorsement.data?.endorsementSystemCreateEndorsementList?.id ??
-        undefined
-      await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: {
-              endorsementListId: endorsementId,
-              ...application.answers,
-            },
-          },
-          locale,
-        },
-      }).then((response) => {
-        application.answers = response.data?.updateApplication?.answers
-        getEndorsementList()
-      })
-    }
-  }
-
-  useEffect(() => {
-    if (application.answers.endorsementListId === undefined) {
-      onCreateEndorsementList()
-    } else {
-      getEndorsementList()
-    }
-  })
+  }, [])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
+    { endorsementCount: endorsements?.length ?? 0 },
   )
 
   return (
@@ -138,9 +85,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         linkUrl={window.location.href}
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text variant="h3" marginBottom={2} marginTop={5}>{`${
-        endorsements && endorsements.length
-      } ${namesCountString}`}</Text>
+      <Text variant="h3" marginBottom={2} marginTop={5}>
+        {`${namesCountString}`}
+      </Text>
       <Box marginTop={2}>
         <Box
           display="flex"

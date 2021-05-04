@@ -3,7 +3,7 @@ import { defineMessages, MessageDescriptor } from 'react-intl'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const m: MessageDir = {
-  // Messages shared accross party letter application
+  // Messages shared across party letter application
   externalDataSection: defineMessages({
     title: {
       id: 'ple.application:terms.title',
@@ -48,7 +48,7 @@ export const m: MessageDir = {
       description: 'External data island.is subtitle',
     },
     agree: {
-      id: 'ple.application:island.subtitle',
+      id: 'ple.application:island.agree',
       defaultMessage: 'Lorem ipsum dolar sit amet, consectetur adipiscing elit',
       description: 'External data island.is subtitle',
     },
@@ -73,12 +73,12 @@ export const m: MessageDir = {
     },
     nameCount: {
       id: 'ple.application:endorsement.list.name.count',
-      defaultMessage: 'nafn á lista (300)',
+      defaultMessage: '{endorsementCount} nafn á lista af 300',
       description: 'X name on list',
     },
     namesCount: {
       id: 'ple.application:endorsement.list.names.count',
-      defaultMessage: 'nöfn á lista (300)',
+      defaultMessage: '{endorsementCount} nöfn á lista af 300',
       description: 'X names on list',
     },
     invalidEndorsements: {
