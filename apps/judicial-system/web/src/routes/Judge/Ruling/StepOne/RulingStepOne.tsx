@@ -15,6 +15,7 @@ import {
   CaseNumbers,
   FormContentContainer,
   CaseFileList,
+  Decision,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -201,78 +202,10 @@ export const RulingStepOne: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={5}>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-accepting"
-                      label={`Krafa um ${
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann'
-                      } samþykkt`}
-                      checked={workingCase.decision === CaseDecision.ACCEPTING}
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.ACCEPTING,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  </Box>
-                  <Box
-                    marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}
-                  >
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-rejecting"
-                      label={`Kröfu um ${
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann'
-                      } hafnað`}
-                      checked={workingCase.decision === CaseDecision.REJECTING}
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.REJECTING,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  </Box>
-                  {workingCase.type === CaseType.CUSTODY && (
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-accepting-alternative-travel-ban"
-                      label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
-                      checked={
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      }
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  )}
-                </BlueBox>
+                <Decision
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
