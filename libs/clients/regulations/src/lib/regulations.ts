@@ -91,8 +91,8 @@ export class RegulationsService extends RESTDataSource {
   async getRegulationsSearch(
     q?: string,
     rn?: string,
-    year?: string,
-    yearTo?: string,
+    year?: number,
+    yearTo?: number,
     ch?: string,
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(

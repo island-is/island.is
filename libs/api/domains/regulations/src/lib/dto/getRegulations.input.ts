@@ -1,15 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator'
+import { IsIn, IsNumber, IsOptional, Min } from 'class-validator'
 
 @InputType()
 export class GetRegulationsInput {
-  @Field()
-  @IsString()
+  @Field(() => String)
+  @IsIn(['newest'])
   type!: 'newest'
 
   @Field({ nullable: true })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @Min(1)
   page?: number
 }

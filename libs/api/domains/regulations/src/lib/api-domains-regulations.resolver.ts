@@ -5,14 +5,11 @@ import {
   RegulationsService,
   RegulationSearchResults,
   Regulation,
-  ISODate,
   RegulationMinistryList,
   RegulationYears,
   RegulationLawChapter,
   RegulationLawChapterTree,
   RegulationRedirect,
-  RegName,
-  RegQueryName,
   RegulationListItem,
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
