@@ -8,14 +8,14 @@ import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { UserProfileService } from './userProfile.service'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}

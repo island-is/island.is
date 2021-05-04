@@ -4,6 +4,7 @@ import {
   Form,
   FormModes,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import {
   section,
@@ -21,13 +22,13 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'definitionOfApplicants',
+      id: 'definitionOfApplicant',
       title: section.definitionOfApplicant,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId1',
+        buildCustomField({
+          id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
-          description: 'Umsókn',
+          component: 'DefinitionOfApplicant',
         }),
       ],
     }),

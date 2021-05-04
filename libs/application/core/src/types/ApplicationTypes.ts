@@ -14,6 +14,7 @@ export enum ApplicationTypes {
   PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
+  PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
 }
 
 export const ApplicationConfigurations = {
@@ -76,5 +77,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
     slug: 'fjarmognun-rikisverkefni',
     translation: 'affgp.application',
+  },
+  [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
+    slug: 'greidsludreifing-skulda',
+    translation: 'pdpp.application',
   },
 }
