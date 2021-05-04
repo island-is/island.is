@@ -1002,7 +1002,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/endorsement-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+            "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
