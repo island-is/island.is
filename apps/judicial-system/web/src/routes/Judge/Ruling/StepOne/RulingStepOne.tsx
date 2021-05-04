@@ -45,8 +45,6 @@ import DateTime from '@island.is/judicial-system-web/src/shared-components/DateT
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
-
   const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState(true)
   const [isolationToIsValid, setIsolationToIsValid] = useState(true)
 
