@@ -22,10 +22,10 @@ import {
   GrantTypeService,
   GrantTypeDTO,
 } from '@island.is/auth-api-lib'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('backend/grants')
 export class GrantTypeController {

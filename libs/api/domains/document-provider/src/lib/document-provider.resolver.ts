@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -32,7 +32,7 @@ import {
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
@@ -42,22 +42,27 @@ export class DocumentProviderResolver {
   async getProviderOrganisations(
     @CurrentUser() user: User,
   ): Promise<Organisation[]> {
-    return this.documentProviderService.getOrganisations(user.authorization)
+    return this.documentProviderService.getOrganisations(user)
   }
 
   @UseGuards(AdminGuard)
   @Query(() => Organisation)
   async getProviderOrganisation(
     @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<Organisation> {
-    return this.documentProviderService.getOrganisation(nationalId)
+    return this.documentProviderService.getOrganisation(nationalId, user)
   }
 
   @Query(() => Boolean)
   async organisationExists(
     @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<boolean> {
-    return await this.documentProviderService.organisationExists(nationalId)
+    return await this.documentProviderService.organisationExists(
+      nationalId,
+      user,
+    )
   }
 
   @UseGuards(AdminGuard)
@@ -71,11 +76,7 @@ export class DocumentProviderResolver {
       `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
     )
 
-    return this.documentProviderService.updateOrganisation(
-      id,
-      input,
-      user.authorization,
-    )
+    return this.documentProviderService.updateOrganisation(id, input, user)
   }
 
   @UseGuards(AdminGuard)
@@ -90,7 +91,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createAdministrativeContact(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -110,7 +111,7 @@ export class DocumentProviderResolver {
       organisationId,
       administrativeContactId,
       contact,
-      user.authorization,
+      user,
     )
   }
 
@@ -126,7 +127,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createTechnicalContact(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -146,7 +147,7 @@ export class DocumentProviderResolver {
       organisationId,
       technicalContactId,
       contact,
-      user.authorization,
+      user,
     )
   }
 
@@ -162,7 +163,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createHelpdesk(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -182,7 +183,7 @@ export class DocumentProviderResolver {
       organisationId,
       helpdeskId,
       helpdesk,
-      user.authorization,
+      user,
     )
   }
 
@@ -198,7 +199,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProviderOnTest(
       input.nationalId,
       input.clientName,
-      user.authorization,
+      user,
     )
   }
 
@@ -246,7 +247,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProvider(
       input.nationalId,
       input.clientName,
-      user.authorization,
+      user,
     )
   }
 
@@ -263,7 +264,7 @@ export class DocumentProviderResolver {
       input.endpoint,
       input.providerId,
       input.xroad || false,
-      user.authorization,
+      user,
     )
   }
 
