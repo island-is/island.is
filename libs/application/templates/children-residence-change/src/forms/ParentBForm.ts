@@ -24,7 +24,7 @@ export const ParentBForm: Form = buildForm({
       title: m.parentBIntro.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'parentBIntro',
+          id: 'acceptContract',
           title: m.parentBIntro.general.pageTitle,
           component: 'ParentBIntro',
         }),

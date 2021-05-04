@@ -4,8 +4,9 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { parentBIntro } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText, TransferOverview } from '../components'
+import { RadioController } from '@island.is/shared/form-fields'
 
-const ParentBIntro = ({ application }: CRCFieldBaseProps) => {
+const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
   const { externalData } = application
   const { formatMessage } = useIntl()
   const applicant = externalData.nationalRegistry.data
@@ -40,6 +41,23 @@ const ParentBIntro = ({ application }: CRCFieldBaseProps) => {
         >
           {formatMessage(parentBIntro.interview.button)}
         </Button>
+        <Box marginTop={4}>
+          <RadioController
+            id={field.id}
+            largeButtons
+            options={[
+              {
+                value: 'accept',
+                label: formatMessage(parentBIntro.contract.accept),
+              },
+              {
+                value: 'reject',
+                label: formatMessage(parentBIntro.contract.reject),
+              },
+            ]}
+            error={errors?.acceptContract}
+          />
+        </Box>
       </Box>
     </>
   )
