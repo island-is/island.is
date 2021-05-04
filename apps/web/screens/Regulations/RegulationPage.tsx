@@ -74,12 +74,14 @@ const viewTypes = {
 }
 export type ViewType = keyof typeof viewTypes
 
+const reRegQueryNameFlex = /^\d{1,4}-\d{4}$/
+
 /** Throws if the slug doesn't roughly look like a valid regulation number
  *
  * Returns a fully zero-padded number.
  */
-const assertName = (slug: string): RegQueryName => {
-  if (/\d{1,4}-\d{4}/.test(slug)) {
+const assertRegQueryName = (slug: string): RegQueryName => {
+  if (reRegQueryNameFlex.test(slug)) {
     return (slug.length === 9
       ? slug
       : ('000' + slug).substr(-9)) as RegQueryName
@@ -150,7 +152,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     'earlierDate',
   ])
 
-  const name = assertName(p.name)
+  const name = assertRegQueryName(p.name)
   const viewType = assertViewType(p.viewType)
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
