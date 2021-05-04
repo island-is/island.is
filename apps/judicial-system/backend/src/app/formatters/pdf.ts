@@ -93,7 +93,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       `Verjandi sakbornings: ${
         existingCase.defenderName
           ? existingCase.defenderName
-          : 'Hefur ekki verið skráður.'
+          : 'Hefur ekki verið skráður'
       }`,
     )
     .text(' ')
@@ -172,7 +172,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
         existingCase.type,
         existingCase.requestedCustodyRestrictions,
         existingCase.requestedOtherRestrictions,
-      )}.`,
+      )}`,
       {
         lineGap: 6,
         paragraphGap: 0,
