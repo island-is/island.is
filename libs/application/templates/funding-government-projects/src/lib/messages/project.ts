@@ -50,5 +50,10 @@ export const project = {
         'Hver er heildarkostnaður verkefnisins sem þarfnast fjármögnunar?',
       description: 'Project Cost Placeholder',
     },
+    projectYears: {
+      id: `affgp.application:section.project.projectYears`,
+      defaultMessage: 'Fjöldi ára sem koma til endurgreiðslu á kostnaði',
+      description: 'Project Years',
+    },
   }),
 }

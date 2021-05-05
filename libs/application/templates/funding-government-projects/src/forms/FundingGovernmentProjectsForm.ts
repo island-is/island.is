@@ -82,6 +82,11 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
               placeholder: project.labels.projectCostPlaceholder,
               required: true,
             }),
+            buildCustomField({
+              id: 'project.refundableYears',
+              title: project.labels.projectYears,
+              component: 'YearSlider',
+            }),
           ],
         }),
       ],
