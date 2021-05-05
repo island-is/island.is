@@ -104,6 +104,7 @@ const remainingCreateCaseData = {
   accusedGender: CaseGender.OTHER,
   defenderName: 'Defender Name',
   defenderEmail: 'Defender Email',
+  defenderPhoneNumber: '555-5555',
   sendRequestToDefender: true,
   court: 'Court',
 }
@@ -292,6 +293,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
   expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
   expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
+  expect(caseOne.defenderPhoneNumber || null).toBe(
+    caseTwo.defenderPhoneNumber || null,
+  )
   expect(caseOne.sendRequestToDefender || null).toBe(
     caseTwo.sendRequestToDefender || null,
   )

@@ -48,6 +48,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
 
   @Allow()

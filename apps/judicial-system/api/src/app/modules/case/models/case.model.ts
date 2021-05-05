@@ -55,6 +55,9 @@ export class Case implements TCase {
   readonly defenderEmail?: string
 
   @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Field({ nullable: true })
   sendRequestToDefender?: boolean
 
   @Field({ nullable: true })

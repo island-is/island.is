@@ -4,12 +4,18 @@ import fetch from 'isomorphic-fetch'
 import { DynamicModule } from '@nestjs/common'
 
 import {
-  Configuration,
   AuthenticateApi,
+  Configuration,
+  CreateCaseApi,
   CreateCustodyCaseApi,
+  CreateDocumentApi,
   CreateThingbokApi,
-  RequestContext,
+  GetCaseSubtypesApi,
   FetchParams,
+  OpenApiApi,
+  RequestContext,
+  SearchBankruptcyHistoryApi,
+  UploadStreamApi,
 } from '../../gen/fetch'
 
 function injectAgentMiddleware(agent: Agent) {
@@ -54,8 +60,14 @@ export class CourtClientModule {
 
     const exportedApis = [
       AuthenticateApi,
+      CreateCaseApi,
       CreateCustodyCaseApi,
+      CreateDocumentApi,
       CreateThingbokApi,
+      GetCaseSubtypesApi,
+      OpenApiApi,
+      SearchBankruptcyHistoryApi,
+      UploadStreamApi,
     ]
 
     return {

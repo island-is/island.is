@@ -60,8 +60,8 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 <Button
                   icon="arrowForward"
                   iconType="filled"
-                  type="button"
                   variant="text"
+                  as="span"
                 >
                   {n('seeMore')}
                 </Button>
