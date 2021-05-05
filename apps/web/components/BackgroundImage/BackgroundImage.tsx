@@ -1,33 +1,43 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
+import { useIntersection } from 'react-use'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { useMountedState } from 'react-use'
+
 import * as styles from './BackgroundImage.treat'
 
-export type BackgroundImageProps = {
+type BaseProps = {
   image: { url: string; title: string }
   ratio?: string
   width?: number
   height?: number
-  background?: typeof theme.color[Colors]
+  background?: Colors
   boxProps?: BoxProps
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
-  useThumbnail?: boolean
+  intersectionOptions?: IntersectionObserverInit
 }
 
+type UseThumbnailProps = {
+  useThumbnail?: boolean
+  thumbnailColor?: never
+}
+
+type ThumbnailColorProps = {
+  useThumbnail?: never
+  thumbnailColor?: Colors
+}
+
+type ExtraProps = UseThumbnailProps | ThumbnailColorProps
+
 const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
-  const isMounted = useMountedState()
   const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (shouldLoad) {
       const img = new window.Image(100)
       img.onload = img.onerror = () => {
-        if (isMounted) {
-          setLoaded(true)
-        }
+        setLoaded(true)
       }
       img.src = url
     }
@@ -41,20 +51,27 @@ export const BackgroundImage = ({
   ratio = '',
   width = 1000,
   height,
-  background = theme.color.dark100,
+  background = 'transparent',
   backgroundSize = 'cover',
   positionX,
+  thumbnailColor = 'dark100',
   useThumbnail,
+  intersectionOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0,
+  },
   boxProps = {
     alignItems: 'center',
     width: 'full',
     display: 'inlineFlex',
     overflow: 'hidden',
-    borderRadius: 'large',
   },
-}: BackgroundImageProps) => {
+}: BaseProps & ExtraProps) => {
+  const intersectionRef = useRef(null)
+  const intersection = useIntersection(intersectionRef, intersectionOptions)
   const [shouldLoad, setShouldLoad] = useState<boolean>(false)
-  const src = `${image.url}?w=${width}`
+  const src = `${image.url}?w=${width}&q=80`
   const backgroundImageRef = useRef<HTMLDivElement | null>(null)
   const thumbnail = image.url + '?w=50'
   const alt = image.title ?? ''
@@ -66,19 +83,10 @@ export const BackgroundImage = ({
     : {}
 
   useLayoutEffect(() => {
-    if (backgroundImageRef?.current && 'IntersectionObserver' in window) {
-      const lazyBackgroundObserver = new IntersectionObserver((entries) => {
-        const entry = entries[0]
-
-        if (entry.isIntersecting) {
-          setShouldLoad(true)
-          lazyBackgroundObserver.unobserve(entry.target)
-        }
-      })
-
-      lazyBackgroundObserver.observe(backgroundImageRef.current)
+    if (!shouldLoad && intersection?.isIntersecting) {
+      setShouldLoad(true)
     }
-  }, [])
+  }, [intersection])
 
   const imageLoaded = useImageLoader(src, shouldLoad)
 
@@ -123,7 +131,7 @@ export const BackgroundImage = ({
   }
 
   return (
-    <Box {...boxProps}>
+    <Box {...boxProps} ref={intersectionRef}>
       <div className={styles.container} style={{ paddingTop, background }}>
         <div
           className={cn(styles.thumbnail, styles.bgImage, {
@@ -132,7 +140,7 @@ export const BackgroundImage = ({
           style={{
             ...(useThumbnail
               ? { backgroundImage: `url(${thumbnail})` }
-              : { backgroundColor: theme.color.dark100 }),
+              : { backgroundColor: theme.color[thumbnailColor] }),
             backgroundSize,
             backgroundPosition,
             height,
@@ -145,7 +153,7 @@ export const BackgroundImage = ({
             [styles.imageShow]: imageLoaded,
           })}
           style={{
-            backgroundImage: `url(${src})`,
+            ...(shouldLoad && { backgroundImage: `url(${src})` }),
             backgroundSize,
             backgroundPosition,
             height,
