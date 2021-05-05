@@ -92,7 +92,6 @@ const judgeUpdateRule = {
     'defenderName',
     'defenderEmail',
     'defenderPhoneNumber',
-    'setCourtCaseNumberManually',
     'courtCaseNumber',
     'courtDate',
     'courtRoom',
