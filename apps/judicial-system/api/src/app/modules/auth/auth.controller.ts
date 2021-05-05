@@ -125,7 +125,7 @@ export class AuthController {
 
     // Local development
     if (environment.auth.allowAuthBypass && nationalId) {
-      this.logger.debug(`Logging in as ${nationalId} in development mode`)
+      this.logger.debug(`Logging in using development mode`)
 
       return this.redirectAuthenticatedUser(
         {
