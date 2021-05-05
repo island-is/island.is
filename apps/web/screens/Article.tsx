@@ -263,13 +263,11 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
       {article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      {article.relatedArticles.length > 0 && (
-        <RelatedContent
-          title={n('relatedMaterial')}
-          articles={article.relatedArticles}
-          otherContent={article.relatedContent}
-        />
-      )}
+      <RelatedContent
+        title={n('relatedMaterial')}
+        articles={article.relatedArticles}
+        otherContent={article.relatedContent}
+      />
     </Stack>
   )
 }
