@@ -2,13 +2,22 @@ import React, { useState } from 'react'
 import { Box, Text, Input } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Case, CaseType } from '@island.is/judicial-system/types'
-import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  BlueBox,
+  DateTime,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
+  setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import {
+  custodyProvisions,
+  travelBanProvisions,
+} from '@island.is/judicial-system-web/src/utils/laws'
 
 interface Props {
   workingCase: Case
@@ -120,6 +129,35 @@ const StepThreeForm: React.FC<Props> = (props) => {
           textarea
           rows={7}
         />
+      </Box>
+      <Box component="section" marginBottom={5}>
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3">
+            Lagaákvæði sem krafan er byggð á{' '}
+            <Text as="span" color={'red600'} fontWeight="semiBold">
+              *
+            </Text>
+          </Text>
+        </Box>
+        <BlueBox>
+          <CheckboxList
+            checkboxes={
+              workingCase.type === CaseType.CUSTODY
+                ? custodyProvisions
+                : travelBanProvisions
+            }
+            selected={workingCase.custodyProvisions}
+            onChange={(id) =>
+              setCheckboxAndSendToServer(
+                'custodyProvisions',
+                id,
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }
+          />
+        </BlueBox>
       </Box>
     </>
   )
