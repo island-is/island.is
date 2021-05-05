@@ -3,9 +3,10 @@ import {
   buildSection,
   Form,
   FormModes,
-  buildDescriptionField,
   buildCustomField,
+  buildTextField,
   buildMultiField,
+  buildFileUploadField,
   DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -18,6 +19,8 @@ import {
   submitted,
   informationAboutInstitution,
 } from '../lib/messages'
+
+const FILE_SIZE_LIMIT = 10000000
 
 export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
@@ -39,10 +42,37 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'informationAboutInstitution',
       title: section.informationAboutInstitution,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId2',
-          title: informationAboutInstitution.general.pageTitle,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'informationAboutInstitutionMultiField',
+          title:
+            informationAboutInstitution.general.infoInstitutionMultiFieldTitle,
+          description:
+            informationAboutInstitution.general
+              .infoInstitutionMultiFieldDescription,
+          children: [
+            buildCustomField({
+              id: 'projectInfoTitleField',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldDescription.defaultMessage,
+              component: 'FieldTitle',
+            }),
+            buildTextField({
+              id: 'organizationOrInstitutionName',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldTitle,
+              backgroundColor: 'blue',
+              width: 'full',
+              required: true,
+            }),
+            buildCustomField({
+              id: 'contacts',
+              title: informationAboutInstitution.general.pageTitle,
+              description: informationAboutInstitution.general.pageTitle,
+              component: 'ContactRepeater',
+            }),
+          ],
         }),
       ],
     }),
@@ -50,10 +80,65 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'project',
       title: section.project,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId3',
+        buildMultiField({
+          id: 'projectMultiField',
           title: project.general.pageTitle,
-          description: 'Umsókn',
+          description: project.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'projectInfoTitleField',
+              title: project.labels.infoFieldTitle,
+              component: 'FieldTitle',
+            }),
+            buildTextField({
+              id: 'project.title',
+              title: project.labels.title,
+              backgroundColor: 'blue',
+              placeholder: project.labels.titlePlaceholder,
+              required: true,
+            }),
+            buildTextField({
+              id: 'project.description',
+              title: project.labels.description,
+              backgroundColor: 'blue',
+              placeholder: project.labels.descriptionPlaceholder,
+              required: true,
+              variant: 'textarea',
+              rows: 4,
+            }),
+            buildTextField({
+              id: 'project.cost',
+              title: project.labels.cost,
+              backgroundColor: 'blue',
+              placeholder: project.labels.costPlaceholder,
+              required: true,
+            }),
+            buildCustomField({
+              id: 'project.refundableYears',
+              title: project.labels.years,
+              component: 'YearSlider',
+            }),
+            buildCustomField(
+              {
+                id: 'projectAttachmentsTitle',
+                title: project.labels.attachmentsTitle,
+                description: project.labels.attachmentsIntro,
+                component: 'FieldTitle',
+              },
+              {
+                required: true,
+              },
+            ),
+            buildFileUploadField({
+              id: 'project.attachments',
+              title: '',
+              introduction: '',
+              maxSize: FILE_SIZE_LIMIT,
+              uploadHeader: project.labels.attachmentsUploadHeader,
+              uploadDescription: project.labels.attachmentsUploadDescription,
+              uploadButtonLabel: project.labels.attachmentsUploadButtonLabel,
+            }),
+          ],
         }),
       ],
     }),
