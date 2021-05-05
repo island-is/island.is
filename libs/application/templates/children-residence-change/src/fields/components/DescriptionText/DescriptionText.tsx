@@ -9,12 +9,35 @@ import {
   Link,
   TextProps,
 } from '@island.is/island-ui/core'
+import * as styles from './DescriptionText.treat'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
   return (
     <Box marginBottom={3}>
       <BulletList space={2}>{children}</BulletList>
     </Box>
+  )
+}
+
+const TextComponent = ({ children, ...props }: { children: ReactNode }) => {
+  return (
+    <Box className={styles.paragraphContainer}>
+      <Text {...props}>{children}</Text>
+    </Box>
+  )
+}
+
+const LinkComponent = ({
+  children,
+  href,
+}: {
+  children: ReactNode
+  href: string
+}) => {
+  return (
+    <Link href={href} className={styles.link}>
+      {children}
+    </Link>
   )
 }
 
@@ -36,15 +59,6 @@ const textOverrideProps: TextProps = {
   marginBottom: 2,
 }
 
-const anchorOverride = {
-  component: Link,
-  props: {
-    color: 'blue600',
-    underline: 'normal',
-    underlineVisibility: 'always',
-  },
-}
-
 const DescriptionText = ({ text, format, textProps }: Props) => {
   const { formatMessage } = useIntl()
   const markdown = formatMessage(text, format)
@@ -58,18 +72,18 @@ const DescriptionText = ({ text, format, textProps }: Props) => {
         forceBlock: true,
         overrides: {
           p: {
-            component: Text,
+            component: TextComponent,
             props: { ...textOverrideProps, ...textProps },
           },
           span: {
-            component: Text,
+            component: TextComponent,
             props: { ...textOverrideProps, ...textProps },
           },
           h1: headingOverride,
           h2: headingOverride,
           h3: headingOverride,
           h4: headingOverride,
-          a: anchorOverride,
+          a: { component: LinkComponent },
           ul: {
             component: BulletListBox,
           },

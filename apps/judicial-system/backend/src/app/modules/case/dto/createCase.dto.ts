@@ -46,6 +46,11 @@ export class CreateCaseDto {
   readonly defenderEmail?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderPhoneNumber?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean

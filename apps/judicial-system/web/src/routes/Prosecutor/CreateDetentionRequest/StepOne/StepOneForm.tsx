@@ -60,6 +60,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setDefenderEmailErrorMessage,
   ] = useState<string>()
 
+  const [
+    defenderPhoneNumberErrorMessage,
+    setDefenderPhoneNumberErrorMessage,
+  ] = useState<string>()
+
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
@@ -85,6 +90,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
       validations: ['email-format'],
       errorMessage: defenderEmailErrorMessage,
       setErrorMessage: setDefenderEmailErrorMessage,
+    },
+    defenderPhoneNumber: {
+      validations: ['phonenumber'],
+      errorMessage: defenderPhoneNumberErrorMessage,
+      setErrorMessage: setDefenderPhoneNumberErrorMessage,
     },
     sendRequestToDefender: {},
   }
@@ -269,6 +279,24 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
               />
+            </Box>
+            <Box marginBottom={2}>
+              <InputMask
+                mask="999-9999"
+                maskPlaceholder={null}
+                onChange={(event) => setField(event.target)}
+                onBlur={(event) => validateAndSendToServer(event.target)}
+              >
+                <Input
+                  data-testid="defenderPhoneNumber"
+                  name="defenderPhoneNumber"
+                  label="Símanúmer verjanda"
+                  placeholder="Símanúmer"
+                  defaultValue={workingCase.defenderPhoneNumber}
+                  errorMessage={defenderPhoneNumberErrorMessage}
+                  hasError={defenderPhoneNumberErrorMessage !== undefined}
+                />
+              </InputMask>
             </Box>
             <Checkbox
               name={'sendRequestToDefender'}
