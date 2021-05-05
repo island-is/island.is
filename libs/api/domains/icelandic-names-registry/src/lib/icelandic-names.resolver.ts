@@ -11,6 +11,7 @@ import {
   CreateIcelandicNameInput,
   UpdateIcelandicNameInput,
   DeleteIcelandicNameByIdInput,
+  DeleteNameResponse,
 } from './dto/icelandic-name.input'
 
 const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
@@ -47,7 +48,7 @@ export class IcelandicNamesResolver {
   }
 
   @UseGuards(IdsUserGuard)
-  @Mutation(() => IcelandicName, { nullable: true })
+  @Mutation(() => IcelandicName)
   async updateIcelandicNameById(
     @Args('input', { type: () => UpdateIcelandicNameInput })
     input: UpdateIcelandicNameInput,
@@ -57,7 +58,7 @@ export class IcelandicNamesResolver {
   }
 
   @UseGuards(IdsUserGuard)
-  @Mutation(() => IcelandicName, { nullable: true })
+  @Mutation(() => IcelandicName)
   async createIcelandicName(
     @Args('input') input: CreateIcelandicNameInput,
     @CurrentUser() { authorization }: User,
@@ -66,12 +67,16 @@ export class IcelandicNamesResolver {
   }
 
   @UseGuards(IdsUserGuard)
-  @Mutation(() => IcelandicName, { nullable: true })
+  @Mutation(() => DeleteNameResponse)
   async deleteIcelandicNameById(
     @Args('input', { type: () => DeleteIcelandicNameByIdInput })
     input: DeleteIcelandicNameByIdInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<void> {
-    return this.backendAPI.deleteById(input.id, authorization ?? '')
+  ): Promise<DeleteNameResponse> {
+    await this.backendAPI.deleteById(input.id, authorization ?? '')
+
+    return {
+      success: true,
+    }
   }
 }

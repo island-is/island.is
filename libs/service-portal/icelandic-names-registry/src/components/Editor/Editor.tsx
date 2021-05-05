@@ -150,10 +150,14 @@ const Editor: FC = () => {
       }
 
       try {
-        await deleteName({ variables: { input: { id: body.id } } })
+        await deleteName({
+          variables: { input: { id: body.id } },
+        })
+        setIsConfirmationVisible(false)
         toast.success(formatMessage(m.notificationNameDeleted))
         doSearch()
       } catch (e) {
+        console.log('error:', e.message)
         toast.error(formatMessage(m.notificationError))
       }
     }
@@ -203,7 +207,7 @@ const Editor: FC = () => {
             {nothingFound ? (
               <Text variant="intro">{`${formatMessage(
                 m.searchNothingFound,
-              )}} „${searchQuery}“.`}</Text>
+              )} „${searchQuery}“.`}</Text>
             ) : (
               !!tableData.length && (
                 <TableList

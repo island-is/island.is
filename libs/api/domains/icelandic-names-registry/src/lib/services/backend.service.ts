@@ -56,8 +56,8 @@ class BackendAPI extends RESTDataSource {
     return this.post(`/`, body, { headers: { authorization } })
   }
 
-  deleteById(id: number, authorization: string): Promise<void> {
-    return this.delete(`/${id}`, { headers: { authorization } })
+  deleteById(id: number, authorization: string): Promise<number> {
+    return this.delete(`/${id}`, undefined, { headers: { authorization } })
   }
 }
 
