@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
 import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
+import { DelegationDTO } from '../entities/dto/delegation.dto'
+import { uuid } from 'uuidv4'
 
 @Injectable()
 export class DelegationsService {
@@ -91,6 +93,26 @@ export class DelegationsService {
           provider: DelegationProvider.Custom,
         },
     )
+  }
+
+  async create(delegation: DelegationDTO): Promise<Delegation | null> {
+    this.logger.debug('Creating a new delegation')
+    const id = uuid()
+    return await this.delegationModel.create({ id: id, ...delegation })
+  }
+
+  async update(
+    delegation: DelegationDTO,
+    id: string,
+  ): Promise<Delegation | null> {
+    this.logger.debug(`Updating a delegation with id ${id}`)
+    await this.delegationModel.update({ ...delegation }, { where: { id: id } })
+    return this.findByPk(id)
+  }
+
+  async findByPk(id: string): Promise<Delegation | null> {
+    this.logger.debug(`Finding a delegation with id ${id}`)
+    return await this.delegationModel.findByPk(id)
   }
 }
 
