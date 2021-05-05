@@ -62,7 +62,7 @@ const NavItemContent: FC<Props> = ({
 
 const NavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank">
+    <a href={props.path} target="_blank" rel="noreferrer noopener">
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
