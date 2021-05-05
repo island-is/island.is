@@ -115,10 +115,10 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'submitted',
       title: section.submitted,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId5',
+        buildCustomField({
+          id: 'submittedCustomField',
           title: submitted.general.pageTitle,
-          description: 'Umsókn',
+          component: 'Submitted',
         }),
       ],
     }),

@@ -113,6 +113,13 @@ export class Case extends Model<Case> {
   defenderEmail: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderPhoneNumber: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })

@@ -29,6 +29,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+    skip: !id,
   })
 
   const handleNextButtonClick = async (theCase: Case) => {
