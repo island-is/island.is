@@ -3,6 +3,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
+import { DelegationScopeModule } from './modules/delegation-scopes/delegation-scope.module'
 import { DelegationsModule } from './modules/delegations/delegations.module'
 
 @Module({
@@ -16,6 +17,7 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
       useClass: SequelizeConfigService,
     }),
     DelegationsModule,
+    DelegationScopeModule,
   ],
 })
 export class AppModule {}
