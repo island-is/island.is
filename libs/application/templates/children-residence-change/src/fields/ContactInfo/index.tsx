@@ -54,7 +54,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={[2, 2, 0]}>
+          <GridColumn span={['1/1', '1/1', '2/3']} paddingBottom={[2, 2, 0]}>
             <InputController
               id={emailId}
               name={emailId}
@@ -62,13 +62,15 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               type="email"
               label={formatMessage(contactInfo.inputs.emailLabel)}
               error={emailError}
-              defaultValue={answers?.parentA?.email || userProfile?.data?.email}
+              defaultValue={
+                answers?.parentA?.email || userProfile?.data?.email || ''
+              }
               onChange={() => {
                 clearErrors(emailId)
               }}
             />
           </GridColumn>
-          <GridColumn span={['1/1', '1/1', '1/2']}>
+          <GridColumn span={['1/1', '1/1', '1/3']}>
             <InputController
               id={phoneNumberId}
               name={phoneNumberId}
@@ -82,7 +84,8 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               }}
               defaultValue={
                 answers?.parentA?.phoneNumber ||
-                userProfile?.data?.mobilePhoneNumber
+                userProfile?.data?.mobilePhoneNumber ||
+                ''
               }
             />
           </GridColumn>
@@ -100,7 +103,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
       </Box>
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={[2, 2, 0]}>
+          <GridColumn span={['1/1', '1/1', '2/3']} paddingBottom={[2, 2, 0]}>
             <InputController
               id={counterPartyEmail}
               name={counterPartyEmail}
@@ -114,7 +117,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               }}
             />
           </GridColumn>
-          <GridColumn span={['1/1', '1/1', '1/2']}>
+          <GridColumn span={['1/1', '1/1', '1/3']}>
             <InputController
               id={counterPartyPhoneNumber}
               name={counterPartyPhoneNumber}
