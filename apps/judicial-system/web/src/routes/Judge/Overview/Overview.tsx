@@ -68,7 +68,13 @@ export const JudgeOverview: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
+  const {
+    updateCase,
+    createCustodyCourtCase,
+    creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
+  } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -126,8 +132,9 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     const tryToShowFeature = (theCase: Case) => {
       setShowCreateCustodyCourtCase(
-        theCase.type === CaseType.CUSTODY &&
-          features.includes(Feature.CREATE_CUSTODY_COURT_CASE),
+        features.includes(Feature.CREATE_COURT_CASE) ||
+          (theCase.type === CaseType.CUSTODY &&
+            features.includes(Feature.CREATE_CUSTODY_COURT_CASE)),
       )
     }
 
@@ -183,14 +190,26 @@ export const JudgeOverview: React.FC = () => {
                         <div className={styles.createCourtCaseButton}>
                           <Button
                             size="small"
-                            onClick={() =>
-                              createCourtCase(
-                                workingCase,
-                                setWorkingCase,
-                                setCourtCaseNumberErrorMessage,
-                              )
+                            onClick={() => {
+                              if (
+                                features.includes(Feature.CREATE_COURT_CASE)
+                              ) {
+                                createCourtCase(
+                                  workingCase,
+                                  setWorkingCase,
+                                  setCourtCaseNumberErrorMessage,
+                                )
+                              } else {
+                                createCustodyCourtCase(
+                                  workingCase,
+                                  setWorkingCase,
+                                  setCourtCaseNumberErrorMessage,
+                                )
+                              }
+                            }}
+                            loading={
+                              creatingCourtCase || creatingCustodyCourtCase
                             }
-                            loading={creatingCustodyCourtCase}
                             disabled={!!workingCase.courtCaseNumber}
                             fluid
                           >

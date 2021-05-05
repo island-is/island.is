@@ -62,6 +62,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/document-provider-onboarding',
     '<rootDir>/libs/application/templates/driving-lessons',
     '<rootDir>/libs/application/templates/driving-license',
+    '<rootDir>/libs/application/templates/funding-government-projects',
     '<rootDir>/libs/application/templates/health-insurance',
     '<rootDir>/libs/application/templates/meta-application',
     '<rootDir>/libs/application/templates/parental-leave',
@@ -114,6 +115,7 @@ module.exports = {
     '<rootDir>/libs/localization',
     '<rootDir>/libs/logging',
     '<rootDir>/libs/message-queue',
+    '<rootDir>/libs/nest/audit',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
     '<rootDir>/libs/service-portal/applications',
@@ -148,5 +150,6 @@ module.exports = {
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
+    '<rootDir>/libs/application/templates/public-debt-payment-plan',
   ],
 }

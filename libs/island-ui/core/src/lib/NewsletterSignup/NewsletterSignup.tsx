@@ -70,7 +70,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           marginLeft={[0, 0, 8]}
         >
           <Box>
-            <Button onClick={onSubmit} variant="text">
+            <Button as="span" onClick={onSubmit} variant="text">
               {buttonText}
             </Button>
           </Box>

@@ -14,6 +14,13 @@ export const contract = {
         'Hér er yfirlit yfir samning um breytt lögheimili. __Þú og {otherParent}__ þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
       description: 'Contract page description',
     },
+    parentBDescription: {
+      id:
+        'crc.application:section.contract.overview.parentBDescription#markdown',
+      defaultMessage:
+        'Hér er yfirlit yfir samning um breytt lögheimili og meðlag. __{otherParent}__ hefur nú þegar undrritað samningin og næst þarft þú að undirrita áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
+      description: 'Contract page description for parent B',
+    },
   }),
   labels: defineMessages({
     childName: {
