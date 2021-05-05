@@ -98,13 +98,13 @@ describe('getRegulation', () => {
     const watName: RegQueryName = expectedResult.SERVER_ERROR
 
     await expect(
-      regulationsService.getRegulation(RegulationViewTypes.Original, emptyName),
+      regulationsService.getRegulation(RegulationViewTypes.original, emptyName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation(RegulationViewTypes.Current, badName),
+      regulationsService.getRegulation(RegulationViewTypes.current, badName),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulation(RegulationViewTypes.Original, watName),
+      regulationsService.getRegulation(RegulationViewTypes.original, watName),
     ).rejects.toThrow()
   })
 })
