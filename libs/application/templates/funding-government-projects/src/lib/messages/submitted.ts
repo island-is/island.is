@@ -26,6 +26,6 @@ export const submitted = {
       defaultMessage:
         'Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma {tel} eða á netfangið',
       description: 'submitted descriptionBulletThree',
-    }
+    },
   }),
 }
