@@ -7,6 +7,7 @@ import {
   buildMultiField,
   buildCustomField,
   buildTextField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import {
   section,
@@ -17,6 +18,8 @@ import {
   submitted,
   informationAboutInstitution,
 } from '../lib/messages'
+
+const FILE_SIZE_LIMIT = 10000000
 
 export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
@@ -56,36 +59,56 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'projectInfoTitleField',
-              title: project.labels.projectInfoFieldTitle,
+              title: project.labels.infoFieldTitle,
               component: 'FieldTitle',
             }),
             buildTextField({
               id: 'project.title',
-              title: project.labels.projectTitle,
+              title: project.labels.title,
               backgroundColor: 'blue',
-              placeholder: project.labels.projectTitlePlaceholder,
+              placeholder: project.labels.titlePlaceholder,
               required: true,
             }),
             buildTextField({
               id: 'project.description',
-              title: project.labels.projectDescription,
+              title: project.labels.description,
               backgroundColor: 'blue',
-              placeholder: project.labels.projectDescriptionPlaceholder,
+              placeholder: project.labels.descriptionPlaceholder,
               required: true,
               variant: 'textarea',
               rows: 4,
             }),
             buildTextField({
               id: 'project.cost',
-              title: project.labels.projectCost,
+              title: project.labels.cost,
               backgroundColor: 'blue',
-              placeholder: project.labels.projectCostPlaceholder,
+              placeholder: project.labels.costPlaceholder,
               required: true,
             }),
             buildCustomField({
               id: 'project.refundableYears',
-              title: project.labels.projectYears,
+              title: project.labels.years,
               component: 'YearSlider',
+            }),
+            buildCustomField(
+              {
+                id: 'projectAttachmentsTitle',
+                title: project.labels.attachmentsTitle,
+                description: project.labels.attachmentsIntro,
+                component: 'FieldTitle',
+              },
+              {
+                required: true,
+              },
+            ),
+            buildFileUploadField({
+              id: 'project.attachments',
+              title: '',
+              introduction: '',
+              maxSize: FILE_SIZE_LIMIT,
+              uploadHeader: project.labels.attachmentsUploadHeader,
+              uploadDescription: project.labels.attachmentsUploadDescription,
+              uploadButtonLabel: project.labels.attachmentsUploadButtonLabel,
             }),
           ],
         }),
