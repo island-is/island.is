@@ -49,4 +49,26 @@ export class DelegationsController {
   ): Promise<Delegation | null> {
     return await this.delegationsService.update(delegation, id)
   }
+
+  @Get('custom/findone/:id')
+  @ApiOkResponse({ type: Delegation })
+  async findByPk(@Param('id') id: string): Promise<Delegation | null> {
+    return await this.delegationsService.findByPk(id)
+  }
+
+  @Get('custom/to')
+  @ApiOkResponse({ type: [Delegation] })
+  async findAllCustomTo(
+    @CurrentUser() user: User,
+  ): Promise<Delegation[] | null> {
+    return await this.delegationsService.findAllCustomTo(user.nationalId)
+  }
+
+  @Get('custom/from')
+  @ApiOkResponse({ type: [Delegation] })
+  async findAllCustomFrom(
+    @CurrentUser() user: User,
+  ): Promise<Delegation[] | null> {
+    return await this.delegationsService.findAllCustomFrom(user.nationalId)
+  }
 }

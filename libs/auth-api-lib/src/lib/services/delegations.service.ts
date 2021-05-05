@@ -114,6 +114,20 @@ export class DelegationsService {
     this.logger.debug(`Finding a delegation with id ${id}`)
     return await this.delegationModel.findByPk(id)
   }
+
+  async findAllCustomTo(nationalId: string): Promise<Delegation[] | null> {
+    this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
+    return await this.delegationModel.findAll({
+      where: { toNationalId: nationalId },
+    })
+  }
+
+  async findAllCustomFrom(nationalId: string): Promise<Delegation[] | null> {
+    this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
+    return await this.delegationModel.findAll({
+      where: { fromNationalId: nationalId },
+    })
+  }
 }
 
 export interface IDelegation {
