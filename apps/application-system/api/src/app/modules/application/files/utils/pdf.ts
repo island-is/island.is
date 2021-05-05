@@ -301,7 +301,15 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Niðurstaða uppflettingar var að ${currentParent.parentName} (${currentParent.nationalId}) og ${futureParent.parentName} (${futureParent.nationalId}) eru með sameiginlega forsjá með þeim börnum sem erindið varðar. Lögheimilisforeldri á tíma uppflettingar er ${currentParent.parentName}.`,
+    `Niðurstaða uppflettingar var að ${
+      currentParent.parentName
+    } (kt. ${formatSsn(currentParent.nationalId)}) og ${
+      futureParent.parentName
+    } (kt. ${formatSsn(
+      futureParent.nationalId,
+    )}) eru með sameiginlega forsjá með þeim börnum sem erindið varðar. Lögheimilisforeldri á tíma uppflettingar er ${
+      currentParent.parentName
+    }.`,
   )
 
   doc.moveDown()
