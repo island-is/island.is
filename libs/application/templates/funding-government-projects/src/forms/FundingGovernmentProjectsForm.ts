@@ -49,7 +49,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
               .infoInstitutionMultiFieldDescription,
           children: [
             buildTextField({
-              id: 'informationAboutInstitutionTextField',
+              id: 'organizationOrInstitutionName',
               title:
                 informationAboutInstitution.general
                   .infoInstitutionTextFieldTitle,
@@ -61,7 +61,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
               required: true,
             }),
             buildCustomField({
-              id: 'contactRepeaterCustomField',
+              id: 'contacts',
               title: informationAboutInstitution.general.pageTitle,
               description: informationAboutInstitution.general.pageTitle,
               component: 'ContactRepeater',

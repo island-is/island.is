@@ -56,6 +56,7 @@ export const ContactRepeaterItem: FC<Props> = ({
         <InputController
           id={nameField}
           name={nameField}
+          required={true}
           label={formatText(
             informationAboutInstitution.labels.contactName,
             application,
@@ -67,7 +68,8 @@ export const ContactRepeaterItem: FC<Props> = ({
         <InputController
           id={phoneNumberField}
           name={phoneNumberField}
-          format="+354 ### #####"
+          required={true}
+          format="+354 ### ####"
           label={formatText(
             informationAboutInstitution.labels.contactPhoneNumber,
             application,
@@ -79,6 +81,7 @@ export const ContactRepeaterItem: FC<Props> = ({
         <InputController
           id={emailField}
           name={emailField}
+          required={true}
           label={formatText(
             informationAboutInstitution.labels.contactEmail,
             application,
