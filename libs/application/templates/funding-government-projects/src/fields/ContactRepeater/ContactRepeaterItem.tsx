@@ -1,7 +1,6 @@
 import {
   Application,
   formatText,
-  FormValue,
   getErrorViaPath,
   RecordObject,
 } from '@island.is/application/core'
