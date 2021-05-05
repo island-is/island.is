@@ -1,9 +1,13 @@
-import React from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Box, Text, Input } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Case, CaseType } from '@island.is/judicial-system/types'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  newSetAndSendDateToServer,
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface Props {
@@ -20,6 +24,10 @@ const StepThreeForm: React.FC<Props> = (props) => {
     setWorkingCase,
     setRequestedCustodyEndDateIsValid,
   } = props
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
+    '',
+  )
+
   const { updateCase } = useCase()
 
   return (
@@ -71,6 +79,46 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )
           }}
           required
+        />
+      </Box>
+      <Box component="section" marginBottom={7}>
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3">
+            Lagaákvæði sem brot varða við
+          </Text>
+        </Box>
+        <Input
+          data-testid="lawsBroken"
+          name="lawsBroken"
+          label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+          placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+          defaultValue={workingCase?.lawsBroken}
+          errorMessage={lawsBrokenErrorMessage}
+          hasError={lawsBrokenErrorMessage !== ''}
+          onChange={(event) =>
+            removeTabsValidateAndSet(
+              'lawsBroken',
+              event,
+              ['empty'],
+              workingCase,
+              setWorkingCase,
+              lawsBrokenErrorMessage,
+              setLawsBrokenErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSendToServer(
+              'lawsBroken',
+              event.target.value,
+              ['empty'],
+              workingCase,
+              updateCase,
+              setLawsBrokenErrorMessage,
+            )
+          }
+          required
+          textarea
+          rows={7}
         />
       </Box>
     </>
