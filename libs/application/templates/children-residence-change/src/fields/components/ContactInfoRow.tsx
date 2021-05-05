@@ -5,11 +5,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'
 
-const emailId = 'parentB.email'
-const phoneNumberId = 'parentB.phoneNumber'
-
-export const contactInfoParentBIds = [emailId, phoneNumberId]
-
 interface InputField {
   id: string
   error?: string
