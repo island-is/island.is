@@ -37,8 +37,9 @@ export const root = style({
 })
 
 export const image = style({
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
+  display: 'inline-block',
+  width: '100%',
+  position: 'relative',
   paddingBottom: '55%',
 })
 
