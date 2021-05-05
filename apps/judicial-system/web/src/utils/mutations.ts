@@ -34,6 +34,7 @@ export const CreateCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
       court
       arrestDate
@@ -104,6 +105,14 @@ export const CreateCustodyCourtCaseMutation = gql`
   }
 `
 
+export const CreateCourtCaseMutation = gql`
+  mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
+    createCourtCase(input: $input) {
+      courtCaseNumber
+    }
+  }
+`
+
 export const CasesQuery = gql`
   query CasesQuery {
     cases {
@@ -142,6 +151,7 @@ export const ExtendCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
       court
       arrestDate

@@ -7,6 +7,7 @@ import {
   buildMultiField,
   buildTextField,
   buildSubmitField,
+  buildSubSection,
   DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
@@ -56,13 +57,30 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'approveTermsParentB',
+      id: 'termsParentB',
       title: m.section.effect,
       children: [
-        buildCustomField({
+        buildSubSection({
           id: 'approveTermsParentB',
-          title: m.terms.general.pageTitle,
-          component: 'Terms',
+          title: m.terms.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveTermsParentB',
+              title: m.terms.general.pageTitle,
+              component: 'Terms',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'approveChildSupportTermsParentB',
+          title: m.childSupport.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveChildSupportTermsParentB',
+              title: m.childSupport.general.pageTitle,
+              component: 'ChildSupport',
+            }),
+          ],
         }),
       ],
     }),

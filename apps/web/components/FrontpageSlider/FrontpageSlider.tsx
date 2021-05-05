@@ -43,7 +43,7 @@ export interface TabBulletProps {
 
 const TabBullet = ({ selected }: TabBulletProps) => {
   return (
-    <div
+    <span
       className={cn(styles.tabBullet, {
         [styles.tabBulletSelected]: selected,
       })}
@@ -274,6 +274,7 @@ export const FrontpageSlider = ({
                                   variant="text"
                                   icon="arrowForward"
                                   aria-labelledby={tabTitleId}
+                                  as="span"
                                 >
                                   {gn('seeMore')}
                                 </Button>

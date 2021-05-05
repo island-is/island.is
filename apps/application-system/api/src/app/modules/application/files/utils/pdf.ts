@@ -13,10 +13,6 @@ import {
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
-const formatDays = (date: string): string => {
-  return date.replace('dagur', 'daginn')
-}
-
 export async function generateResidenceChangePdf(
   application: CRCApplication,
 ): Promise<Buffer> {
@@ -30,7 +26,7 @@ export async function generateResidenceChangePdf(
   const applicant = nationalRegistry.data
   const nationalRegistryLookupDate = format(
     parseISO(nationalRegistry.date),
-    'EEEE d. MMMM y',
+    'd. MMMM y',
     { locale: is },
   )
   const nationalRegistryLookupTime = format(
@@ -46,6 +42,7 @@ export async function generateResidenceChangePdf(
     applicant.children,
     selectedChildren,
   )
+  const otherParent = childrenAppliedFor[0].otherParent
   const childResidenceInfo = childrenResidenceInfo(applicant, answers)
   const currentParent = childResidenceInfo.current
   const futureParent = childResidenceInfo.future
@@ -295,7 +292,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Undirritaður/uð, ${applicant.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+    `Undirritaður málshefjandi, ${applicant.fullName}, heimilaði fyrirspurn og uppflettingu í forsjárgögnum hjá Þjóðskrá Íslands þann ${nationalRegistryLookupDate} kl. ${nationalRegistryLookupTime}.`,
   )
 
   doc.moveDown()
@@ -304,9 +301,16 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Fyrirspurn og uppfletting í gögnum Þjóðskrár fór fram ${formatDays(
-      nationalRegistryLookupDate,
-    )} kl. ${nationalRegistryLookupTime}.`,
+    `Niðurstaða uppflettingar var að ${currentParent.parentName} (${currentParent.nationalId}) og ${futureParent.parentName} (${futureParent.nationalId}) eru með sameiginlega forsjá með þeim börnum sem erindið varðar. Lögheimilisforeldri á tíma uppflettingar er ${currentParent.parentName}.`,
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.SMALL_FONT_SIZE,
+    PdfConstants.SMALL_LINE_GAP,
+    'Báðir foreldrar staðfesta með undirritun sinni að ofangreindar upplýsingar eru réttar.',
   )
 
   doc.end()

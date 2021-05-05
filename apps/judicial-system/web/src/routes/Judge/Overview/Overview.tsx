@@ -51,6 +51,8 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/shared-compon
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import ConclusionDraft from './Components/ConclusionDraft'
+import { AnimatePresence } from 'framer-motion'
 
 export const JudgeOverview: React.FC = () => {
   const [
@@ -59,6 +61,7 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
@@ -68,7 +71,13 @@ export const JudgeOverview: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
+  const {
+    updateCase,
+    createCustodyCourtCase,
+    creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
+  } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -126,8 +135,9 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     const tryToShowFeature = (theCase: Case) => {
       setShowCreateCustodyCourtCase(
-        theCase.type === CaseType.CUSTODY &&
-          features.includes(Feature.CREATE_CUSTODY_COURT_CASE),
+        features.includes(Feature.CREATE_COURT_CASE) ||
+          (theCase.type === CaseType.CUSTODY &&
+            features.includes(Feature.CREATE_CUSTODY_COURT_CASE)),
       )
     }
 
@@ -183,14 +193,26 @@ export const JudgeOverview: React.FC = () => {
                         <div className={styles.createCourtCaseButton}>
                           <Button
                             size="small"
-                            onClick={() =>
-                              createCourtCase(
-                                workingCase,
-                                setWorkingCase,
-                                setCourtCaseNumberErrorMessage,
-                              )
+                            onClick={() => {
+                              if (
+                                features.includes(Feature.CREATE_COURT_CASE)
+                              ) {
+                                createCourtCase(
+                                  workingCase,
+                                  setWorkingCase,
+                                  setCourtCaseNumberErrorMessage,
+                                )
+                              } else {
+                                createCustodyCourtCase(
+                                  workingCase,
+                                  setWorkingCase,
+                                  setCourtCaseNumberErrorMessage,
+                                )
+                              }
+                            }}
+                            loading={
+                              creatingCourtCase || creatingCustodyCourtCase
                             }
-                            loading={creatingCustodyCourtCase}
                             disabled={!!workingCase.courtCaseNumber}
                             fluid
                           >
@@ -337,6 +359,7 @@ export const JudgeOverview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
@@ -501,11 +524,21 @@ export const JudgeOverview: React.FC = () => {
                   />
                 </div>
               )}
-              <PdfButton
-                caseId={workingCase.id}
-                title="Opna PDF kröfu"
-                pdfType="request"
-              />
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title="Opna PDF kröfu"
+                  pdfType="request"
+                />
+              </Box>
+              <Button
+                variant="ghost"
+                icon="pencil"
+                size="small"
+                onClick={() => setIsDraftingConclusion(true)}
+              >
+                Skrifa drög að niðurstöðu
+              </Button>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
@@ -530,6 +563,21 @@ export const JudgeOverview: React.FC = () => {
               primaryButtonText="Loka glugga"
             />
           )}
+          <AnimatePresence>
+            {isDraftingConclusion && (
+              <Modal
+                title="Skrifa drög að niðurstöðu"
+                text={
+                  <ConclusionDraft
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                }
+                primaryButtonText="Loka glugga"
+                handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
+              />
+            )}
+          </AnimatePresence>
         </>
       ) : null}
     </PageLayout>

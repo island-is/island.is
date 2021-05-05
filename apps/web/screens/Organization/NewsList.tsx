@@ -2,7 +2,6 @@
 import React from 'react'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
 import { Screen } from '../../types'
 import {
   Select as NativeSelect,
@@ -45,9 +44,12 @@ import {
 import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 
 const PERPAGE = 10
+
+export const NEWS_TAGS = {
+  syslumenn: '4NSgagYZi1GJphg8gCylq6',
+}
 
 interface NewsListProps {
   organizationPage: Query['getOrganizationPage']
@@ -129,11 +131,6 @@ const NewsList: Screen<NewsListProps> = ({
       title: 'Ísland.is',
       href: linkResolver('homepage').href,
       typename: 'homepage',
-    },
-    {
-      title: n('organizations', 'Stofnanir'),
-      href: linkResolver('organizations').href,
-      typename: 'organizations',
     },
     {
       title: organizationPage.title,
@@ -335,7 +332,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = (query.tag as string) ?? SYSLUMENN_NEWS_TAG_ID
+  const tag = (query.tag as string) ?? NEWS_TAGS[query.slug as string]
 
   const [
     {
@@ -355,7 +352,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -402,7 +399,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
-    newsList,
+    newsList: NEWS_TAGS[query.slug as string] ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,

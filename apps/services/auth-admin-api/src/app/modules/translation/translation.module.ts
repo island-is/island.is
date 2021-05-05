@@ -5,7 +5,6 @@ import {
   Language,
   TranslationService,
   AccessService,
-  AdminAccess,
   ApiScopeUserAccess,
   ApiScopeUser,
 } from '@island.is/auth-api-lib'
@@ -16,7 +15,6 @@ import { TranslationController } from './translation.controller'
     SequelizeModule.forFeature([
       Translation,
       Language,
-      AdminAccess,
       ApiScopeUserAccess,
       ApiScopeUser,
     ]),

@@ -53,7 +53,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
             y2="38.8728"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#0161FD" />
+            <stop offset="0" stopColor="#0161FD" />
             <stop offset="0.2457" stopColor="#3F46D2" />
             <stop offset="0.5079" stopColor="#812EA4" />
             <stop offset="0.7726" stopColor="#C21578" />

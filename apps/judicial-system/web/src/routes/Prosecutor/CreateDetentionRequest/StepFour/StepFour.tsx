@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, Feature, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, Feature } from '@island.is/judicial-system/types'
 import {
   constructProsecutorDemands,
   isNextDisabled,
@@ -13,11 +13,8 @@ import {
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -29,6 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -43,6 +41,7 @@ export const StepFour: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const { updateCase } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -76,23 +75,6 @@ export const StepFour: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, setIsStepIllegal])
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
 
   return (
     <PageLayout
