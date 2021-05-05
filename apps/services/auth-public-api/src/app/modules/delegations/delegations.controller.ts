@@ -1,4 +1,9 @@
-import { DelegationsService, IDelegation } from '@island.is/auth-api-lib'
+import {
+  DelegationsService,
+  IDelegation,
+  DelegationDTO,
+  Delegation,
+} from '@island.is/auth-api-lib'
 import {
   IdsUserGuard,
   Scopes,
@@ -6,10 +11,18 @@ import {
   User,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller('delegations')
 export class DelegationsController {
@@ -20,5 +33,20 @@ export class DelegationsController {
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
     return await this.delegationsService.findAllTo(user.nationalId)
+  }
+
+  @Post()
+  @ApiCreatedResponse({ type: Delegation })
+  async create(@Body() delegation: DelegationDTO): Promise<Delegation | null> {
+    return await this.delegationsService.create(delegation)
+  }
+
+  @Put(':id')
+  @ApiCreatedResponse({ type: Delegation })
+  async update(
+    @Body() delegation: DelegationDTO,
+    @Param('id') id: string,
+  ): Promise<Delegation | null> {
+    return await this.delegationsService.update(delegation, id)
   }
 }
