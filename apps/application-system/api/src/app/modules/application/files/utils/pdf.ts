@@ -301,29 +301,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.SMALL_FONT_SIZE,
     PdfConstants.SMALL_LINE_GAP,
-    `Niðurstaða uppflettingar var að ${currentParent.parentName} (${currentParent.nationalId}) og ${futureParent.parentName} (${futureParent.nationalId}) eru með sameiginlega forsjá með eftirfarandi börnum:`,
-  )
-
-  doc.moveDown()
-
-  childrenAppliedFor.map((c, i) =>
-    addToDoc(
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.SMALL_FONT_SIZE,
-      i === childrenAppliedFor.length - 1
-        ? PdfConstants.LARGE_LINE_GAP
-        : PdfConstants.NO_LINE_GAP,
-      `- ${c.fullName} (${formatSsn(c.nationalId)})`,
-    ),
-  )
-
-  doc.moveDown()
-
-  addToDoc(
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.SMALL_FONT_SIZE,
-    PdfConstants.SMALL_LINE_GAP,
-    `Lögheimilisforeldri þegar samningur er gerður er ${currentParent.parentName}`,
+    `Niðurstaða uppflettingar var að ${currentParent.parentName} (${currentParent.nationalId}) og ${futureParent.parentName} (${futureParent.nationalId}) eru með sameiginlega forsjá með þeim börnum sem erindið varðar. Lögheimilisforeldri á tíma uppflettingar er ${currentParent.parentName}.`,
   )
 
   doc.moveDown()
