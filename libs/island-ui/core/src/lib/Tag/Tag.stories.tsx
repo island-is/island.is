@@ -18,7 +18,7 @@ export const Basic = () => (
       <Inline space={1}>
         <Tag>Ferðagjöf</Tag>
         <Tag variant="darkerBlue">Gifting</Tag>
-        <Tag variant="darkerMint">Fæðingarorlof</Tag>
+        <Tag variant="blueberry">Fæðingarorlof</Tag>
         <Tag variant="mint">Skilnaður</Tag>
         <Tag variant="purple">Færnimat</Tag>
         <Tag variant="red">Færnimat</Tag>
@@ -40,7 +40,7 @@ export const outlined = () => (
         <Tag variant="darkerBlue" outlined>
           Gifting
         </Tag>
-        <Tag variant="darkerMint" outlined>
+        <Tag variant="blueberry" outlined>
           Fæðingarorlof
         </Tag>
         <Tag variant="mint" outlined>
@@ -58,7 +58,7 @@ export const outlined = () => (
         <Tag variant="rose" outlined>
           Færnimat
         </Tag>
-        <Tag variant="darkerMint" outlined attention>
+        <Tag variant="blueberry" outlined attention>
           Mikilvægt
         </Tag>
       </Inline>

@@ -16,7 +16,7 @@ export const mapCaseStateToTagVariant = (
         text: `${isJudge ? 'Ný krafa' : 'Krafa send'}`,
       }
     case CaseState.RECEIVED:
-      return { color: 'darkerMint', text: 'Krafa móttekin' }
+      return { color: 'blueberry', text: 'Krafa móttekin' }
     case CaseState.ACCEPTED:
       if (isCustodyEndDateInThePast) {
         return {
