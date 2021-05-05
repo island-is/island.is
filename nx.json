@@ -261,6 +261,12 @@
     "content-search-toolkit": {
       "tags": []
     },
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
+      "tags": []
+    },
     "contentful-translation-extension": {
       "tags": []
     },

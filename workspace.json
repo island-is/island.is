@@ -2862,6 +2862,14 @@
         }
       }
     },
+    "contentful-mideind-extension": {
+      "root": "libs/contentful-extensions/mideind-translation",
+      "projectType": "library"
+    },
+    "contentful-parent-slug-extension": {
+      "root": "libs/contentful-extensions/parent-slug",
+      "project": "library"
+    },
     "contentful-translation-extension": {
       "root": "libs/contentful-extensions/translation",
       "sourceRoot": "libs/contentful-extensions/translation/src",
