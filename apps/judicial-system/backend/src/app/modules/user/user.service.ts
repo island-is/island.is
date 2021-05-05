@@ -47,7 +47,7 @@ export class UserService {
   }
 
   async findByNationalId(nationalId: string): Promise<User> {
-    this.logger.debug(`Getting user with national id ${nationalId}`)
+    this.logger.debug('Getting a user by national id')
 
     // First check if the user is an admin
     try {
@@ -76,9 +76,7 @@ export class UserService {
   }
 
   create(userToCreate: CreateUserDto): Promise<User> {
-    this.logger.debug(
-      `Creating a new user with national id ${userToCreate.nationalId}`,
-    )
+    this.logger.debug('Creating a new user')
 
     return this.userModel.create(userToCreate)
   }
