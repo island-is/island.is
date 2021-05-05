@@ -70,10 +70,6 @@ const Auction: Screen<AuctionProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-        {
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },

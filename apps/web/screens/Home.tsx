@@ -77,11 +77,22 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           {page.featured.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
-              <Link key={title} {...cardUrl} skipTab>
-                <Tag variant="darkerBlue" attention={attention}>
-                  {title}
-                </Tag>
-              </Link>
+              <Tag
+                key={title}
+                {...(cardUrl.href.startsWith('/')
+                  ? {
+                      CustomLink: ({ children, ...props }) => (
+                        <Link key={title} {...props} {...cardUrl}>
+                          {children}
+                        </Link>
+                      ),
+                    }
+                  : { href: cardUrl.href })}
+                variant="darkerBlue"
+                attention={attention}
+              >
+                {title}
+              </Tag>
             ) : (
               <Tag key={title} variant="darkerBlue" attention={attention}>
                 {title}

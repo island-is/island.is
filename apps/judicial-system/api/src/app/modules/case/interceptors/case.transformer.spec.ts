@@ -104,7 +104,7 @@ describe('transformCase', () => {
     it('should set appealable to true when the accused postponed and the appeal window is open', () => {
       // Arrange
       const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setDate(rulingDate.getDate() - 7)
       rulingDate.setSeconds(rulingDate.getSeconds() + 1)
       const theCase = {
         accusedAppealDecision: CaseAppealDecision.POSTPONE,
@@ -121,7 +121,7 @@ describe('transformCase', () => {
     it('should set appealable to true when the prosecutor postponed and the appeal window is open', () => {
       // Arrange
       const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setDate(rulingDate.getDate() - 7)
       rulingDate.setSeconds(rulingDate.getSeconds() + 1)
       const theCase = {
         prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
@@ -138,7 +138,7 @@ describe('transformCase', () => {
     it('should set appealable to false when either party postponed and the appeal window has closed', () => {
       // Arrange
       const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setDate(rulingDate.getDate() - 7)
       const theCase = {
         accusedAppealDecision: CaseAppealDecision.POSTPONE,
         prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
