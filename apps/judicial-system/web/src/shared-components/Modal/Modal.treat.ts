@@ -19,6 +19,8 @@ export const modalContainer = style({
   padding: `${theme.spacing[8]}px ${theme.spacing[8]}px ${theme.spacing[6]}px ${theme.spacing[8]}px`,
   background: theme.color.white,
   maxWidth: '40vw',
+  maxHeight: '90vh',
+  overflowY: 'scroll',
   borderRadius: theme.border.radius.standard,
 })
 

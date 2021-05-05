@@ -51,6 +51,8 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/shared-compon
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import ConclusionDraft from './Components/ConclusionDraft'
+import { AnimatePresence } from 'framer-motion'
 
 export const JudgeOverview: React.FC = () => {
   const [
@@ -59,6 +61,7 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
@@ -521,11 +524,21 @@ export const JudgeOverview: React.FC = () => {
                   />
                 </div>
               )}
-              <PdfButton
-                caseId={workingCase.id}
-                title="Opna PDF kröfu"
-                pdfType="request"
-              />
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title="Opna PDF kröfu"
+                  pdfType="request"
+                />
+              </Box>
+              <Button
+                variant="ghost"
+                icon="pencil"
+                size="small"
+                onClick={() => setIsDraftingConclusion(true)}
+              >
+                Skrifa drög að niðurstöðu
+              </Button>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
@@ -550,6 +563,21 @@ export const JudgeOverview: React.FC = () => {
               primaryButtonText="Loka glugga"
             />
           )}
+          <AnimatePresence>
+            {isDraftingConclusion && (
+              <Modal
+                title="Skrifa drög að niðurstöðu"
+                text={
+                  <ConclusionDraft
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                }
+                primaryButtonText="Loka glugga"
+                handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
+              />
+            )}
+          </AnimatePresence>
         </>
       ) : null}
     </PageLayout>

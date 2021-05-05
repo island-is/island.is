@@ -22,4 +22,6 @@ export { default as FormContentContainer } from './FormContentContainer/FormCont
 export { default as FeatureProvider } from './FeatureProvider/FeatureProvider'
 export { default as CaseFile } from './CaseFile/CaseFile'
 export { default as CaseFileList } from './CaseFileList/CaseFileList'
+export { default as Decision } from './Decision/Decision'
+export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SkipToContent } from './SkipToContent/SkipToContent'
