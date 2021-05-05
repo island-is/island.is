@@ -4,7 +4,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../../coverage/libs/contentful-translation-extension',
+  coverageDirectory: '../../../coverage/libs/contentful-mideind-extension',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
-  displayName: 'contentful-translation-extension',
+  displayName: 'contentful-mideind-extension',
 }

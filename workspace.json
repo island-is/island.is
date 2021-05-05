@@ -2864,11 +2864,35 @@
     },
     "contentful-mideind-extension": {
       "root": "libs/contentful-extensions/mideind-translation",
-      "projectType": "library"
+      "sourceRoot": "libs/contentful-extensions/mideind-translation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/mideind-translation/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-mideind-extension"]
+        }
+      }
     },
     "contentful-parent-slug-extension": {
       "root": "libs/contentful-extensions/parent-slug",
-      "project": "library"
+      "sourceRoot": "libs/contentful-extensions/parent-slug/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/parent-slug/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-parent-slug-extension"]
+        }
+      }
     },
     "contentful-translation-extension": {
       "root": "libs/contentful-extensions/translation",
