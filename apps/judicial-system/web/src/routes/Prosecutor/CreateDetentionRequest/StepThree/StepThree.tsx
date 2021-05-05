@@ -20,9 +20,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
-  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
   custodyProvisions,
@@ -33,8 +31,8 @@ import {
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import StepThreeForm from './StepThreeForm'
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -87,57 +85,13 @@ export const StepThree: React.FC = () => {
       {workingCase ? (
         <>
           <FormContentContainer>
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                Dómkröfur og lagagrundvöllur
-              </Text>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Dómkröfur
-                </Text>
-                {workingCase.parentCase && (
-                  <Box marginTop={1}>
-                    <Text>
-                      Fyrri gæsla var/er til{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        {formatDate(
-                          workingCase.parentCase.custodyEndDate,
-                          'PPPPp',
-                        )?.replace('dagur,', 'dagsins')}
-                      </Text>
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-              <DateTime
-                name="reqCustodyEndDate"
-                datepickerLabel={`${
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'Gæsluvarðhald'
-                    : 'Farbann'
-                } til`}
-                minDate={new Date()}
-                selectedDate={
-                  workingCase.requestedCustodyEndDate
-                    ? new Date(workingCase.requestedCustodyEndDate)
-                    : undefined
-                }
-                onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
-                    'requestedCustodyEndDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    setRequestedCustodyEndDateIsValid,
-                    updateCase,
-                  )
-                }}
-                required
-              />
-            </Box>
+            <StepThreeForm
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              setRequestedCustodyEndDateIsValid={
+                setRequestedCustodyEndDateIsValid
+              }
+            />
             <Box component="section" marginBottom={7}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
