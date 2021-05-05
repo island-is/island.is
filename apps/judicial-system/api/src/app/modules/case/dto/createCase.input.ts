@@ -11,7 +11,7 @@ import {
 @InputType()
 export class CreateCaseInput implements CreateCase {
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   readonly type!: CaseType
 
   @Allow()

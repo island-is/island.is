@@ -116,7 +116,7 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, setWorkingCase, data, updateCase])
 
   /**
-   * Prefills the ruling of extention cases with the parent case ruling
+   * Prefills the ruling of extension cases with the parent case ruling
    * if this case descition is ACCEPTING.
    */
   useEffect(() => {
