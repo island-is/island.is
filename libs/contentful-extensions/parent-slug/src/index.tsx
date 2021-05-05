@@ -39,6 +39,7 @@ interface ParentEntry {
   fields: {
     url?: { [locale: string]: string }
     slug: { [locale: string]: string }
+    title: { [locale: string]: string }
   }
 }
 
