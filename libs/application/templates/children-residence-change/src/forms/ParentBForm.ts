@@ -101,7 +101,7 @@ export const ParentBForm: Form = buildForm({
               component: 'Overview',
             }),
             buildSubmitField({
-              id: 'assign',
+              id: 'submit',
               title: '',
               actions: [
                 {
@@ -132,22 +132,39 @@ export const ParentBForm: Form = buildForm({
       id: 'rejectContract',
       title: m.rejectContract.general.sectionTitle,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'rejectContract',
           title: m.rejectContract.general.pageTitle,
-          component: 'RejectContract',
+          children: [
+            buildCustomField({
+              id: 'rejectContract',
+              title: m.rejectContract.general.pageTitle,
+              component: 'RejectContract',
+            }),
+            buildSubmitField({
+              id: 'reject',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: m.rejectContract.general.rejectButton,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
       condition: (answers) => answers.acceptContract === 'reject',
       id: 'contractRejected',
-      title: m.contractRejected.general.sectionTitle,
+      title: m.contractRejected.general.sectionTitle.confirmed,
       children: [
         buildCustomField({
           id: 'contractRejected',
           title: m.contractRejected.general.pageTitle,
-          component: 'ContractRejected',
+          component: 'ParentBContractRejected',
         }),
       ],
     }),

@@ -18,6 +18,11 @@ export const rejectContract = {
         'Þú hefur ákveðið að hafna drögum að samningi um breytt lögheimili sem __{otherParentName}__ hefur undirritað. Ef þú heldur áfram mun __{otherParentName}__ fá tilkynningu í tölvupósti um að samningnum hafi verið hafnað.',
       description: 'Reject contract subtitle',
     },
+    rejectButton: {
+      id: 'crc.application:section.rejectContract.general.rejectButton',
+      defaultMessage: 'Hafna samningi.',
+      description: 'Reject contract button',
+    },
   }),
   conciliation: defineMessages({
     title: {

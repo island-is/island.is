@@ -21,7 +21,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
-import * as style from './Overview.treat'
+import * as style from '../Shared.treat'
 
 const Overview = ({
   application,
@@ -141,7 +141,7 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   return (
-    <Box className={style.container}>
+    <Box className={style.descriptionTextTopContainer}>
       <SignatureModal
         controlCode={controlCode}
         onClose={() =>

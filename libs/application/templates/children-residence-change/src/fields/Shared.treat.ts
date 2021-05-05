@@ -1,5 +1,5 @@
 import { style } from 'treat'
 
-export const container = style({
+export const descriptionTextTopContainer = style({
   marginTop: '-24px',
 })

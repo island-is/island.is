@@ -1,24 +1,24 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
-import { Box, Text } from '@island.is/island-ui/core'
 import { contractRejected } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
+import { ContractRejectedContainer, DescriptionText } from '../components'
+import { getSelectedChildrenFromExternalData } from '../..'
 
-const ContractRejected = ({}: CRCFieldBaseProps) => {
-  const { formatMessage } = useIntl()
+const ContractRejected = ({ application }: CRCFieldBaseProps) => {
+  const { answers } = application
+  const selectedChildren = getSelectedChildrenFromExternalData(
+    application.externalData.nationalRegistry.data.children,
+    answers.selectedChildren,
+  )
+
+  const otherParentName = selectedChildren[0].otherParent.fullName
   return (
-    <>
-      <Box marginTop={3}>
-        <DescriptionText
-          text={contractRejected.general.description}
-        ></DescriptionText>
-      </Box>
-      <Text marginTop={3} variant="h3">
-        {formatMessage(contractRejected.nextSteps.title)}
-      </Text>
-      <DescriptionText text={contractRejected.nextSteps.description} />
-    </>
+    <ContractRejectedContainer>
+      <DescriptionText
+        text={contractRejected.general.description.applicant}
+        format={{ otherParentName: otherParentName }}
+      />
+    </ContractRejectedContainer>
   )
 }
 

@@ -4,6 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { rejectContract } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
+import * as style from '../Shared.treat'
 
 const RejectContract = ({ application }: CRCFieldBaseProps) => {
   const { externalData } = application
@@ -11,7 +12,7 @@ const RejectContract = ({ application }: CRCFieldBaseProps) => {
   const applicant = externalData.nationalRegistry.data
   return (
     <>
-      <Box marginTop={3}>
+      <Box className={style.descriptionTextTopContainer}>
         <DescriptionText
           text={rejectContract.general.description}
           format={{ otherParentName: applicant.fullName }}
@@ -20,7 +21,9 @@ const RejectContract = ({ application }: CRCFieldBaseProps) => {
       <Text marginTop={3} variant="h3">
         {formatMessage(rejectContract.conciliation.title)}
       </Text>
-      <DescriptionText text={rejectContract.conciliation.description} />
+      <Box marginTop={2}>
+        <DescriptionText text={rejectContract.conciliation.description} />
+      </Box>
     </>
   )
 }
