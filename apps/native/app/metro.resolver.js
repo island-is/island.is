@@ -38,7 +38,6 @@ function resolveRequest(_context, realModuleName, platform, moduleName) {
   const matcher = getMatcher()
   const match = matcher(realModuleName)
   if (match) {
-    console.log(realModuleName);
     return {
       type: 'sourceFile',
       filePath: match,
@@ -68,7 +67,9 @@ function resolveRequest(_context, realModuleName, platform, moduleName) {
         }
       })
     } catch (err) {
-      console.error('noop', attemptedFilePath);
+      if (DEBUG) {
+        console.error('noop', attemptedFilePath);
+      }
     }
 
     throw new Error(`Cannot resolve ${chalk.bold(moduleName)}`)

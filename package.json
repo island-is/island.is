@@ -205,7 +205,7 @@
     "react-intl": "5.13.1",
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.12.1",
-    "react-native": "0.64.0",
+    "react-native": "0.64.1",
     "react-number-format": "4.4.1",
     "react-popper": "2.2.3",
     "react-remove-scroll": "2.4.0",

@@ -81,6 +81,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
   })
+  const docRes = useQuery<ListDocumentsResponse>(GET_DOCUMENT_QUERY, {
+    client,
+  })
   const Document = res.data?.listDocuments?.find(d => d.id === props.docId);
   const [visible, setVisible] = useState(false);
 
