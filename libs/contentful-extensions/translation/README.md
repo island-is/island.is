@@ -1,6 +1,6 @@
 # Contentful Translation Extension
 
-This is the Contentful extension responsible of translations for namespaces for your application. It works in pair with the [localization](../localization/README.md) library.
+This is the Contentful extension responsible of translations for namespaces for your application. It works in pair with the [localization](../../localization/README.md) library.
 
 ![](https://user-images.githubusercontent.com/937328/105497145-626c4c80-5cb6-11eb-8df8-1b8f19076768.png)
 

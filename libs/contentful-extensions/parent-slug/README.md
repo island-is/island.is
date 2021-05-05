@@ -1,17 +1,17 @@
-# Based on create Contentful app
+# Contentful parent-slug extension
 
-https://www.contentful.com/developers/docs/extensibility/app-framework/create-contentful-app/
+This is the Contentful extension that makes sure that parent-slug relationships are preserved through content changes.
 
-# Deployment
+## Deployment
 
-This is a Contentful extension. It is hosted by Contentful as long as its compilation remains under 512 KB. After that point the extension will have to be hosted in a similar fashion to the `contentful-translation-extension` found in the monorepo.
+This extension is hosted by Contentful as long as its compilation remains under 512 KB. After that point the extension will have to be hosted in a similar fashion to the [translation](../translation/README.md) extension.
 
-## Configure and environment variables
+### Configuration and environment variables
 
 You will need to configure your environment variables for Contentful.
-This can easily be done with `npm run login` and then `npm run configure`. Make sure you select the correct space and environment.
+This can be done with `yarn run login` and then `yarn run configure`. Make sure you select the correct space and environment.
 You will need to have login access to Contentful to do this.
 
-## Deployment to Contentful
+### Deployment to Contentful
 
-After having run `npm run configure` you can deploy the extension with `npm run deploy`.
+After having run `yarn run configure` you can deploy the extension with `yarn run deploy`. This will publish a new version on Contentful. Make sure the extension name matches the expected name in the affected content models.
