@@ -11,6 +11,7 @@ import {
   HealthInsuranceService,
   InstitutionCollaborationService,
   ChildrenResidenceChangeService,
+  LoginServiceService,
   FundingGovernmentProjectsService,
 } from './templates'
 
@@ -39,6 +40,7 @@ export class TemplateAPIService {
     private readonly healthInsuranceService: HealthInsuranceService,
     private readonly institutionApplicationService: InstitutionCollaborationService,
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
+    private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
   ) {}
 
@@ -50,6 +52,7 @@ export class TemplateAPIService {
       | HealthInsuranceService
       | InstitutionCollaborationService
       | ChildrenResidenceChangeService
+      | LoginServiceService
       | FundingGovernmentProjectsService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -112,6 +115,8 @@ export class TemplateAPIService {
           this.childrenResidenceChangeService,
           action,
         )
+      case ApplicationTypes.LOGIN_SERVICE:
+        return this.tryRunningActionOnService(this.loginServiceService, action)
       case ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS:
         return this.tryRunningActionOnService(
           this.fundingGovernmentProjectsService,
