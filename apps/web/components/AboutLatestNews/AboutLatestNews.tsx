@@ -125,6 +125,7 @@ const BigNewsItem = ({
       <Text variant="intro">{news.intro}</Text>
       <Link {...link}>
         <Button
+          as="span"
           icon="arrowForward"
           iconType="filled"
           type="button"
