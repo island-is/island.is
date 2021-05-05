@@ -72,7 +72,6 @@ export const HearingArrangements: React.FC = () => {
 
   const { updateCase } = useCase()
 
-  const { updateCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
