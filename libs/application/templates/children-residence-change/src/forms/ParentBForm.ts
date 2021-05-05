@@ -31,6 +31,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === 'accept',
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
@@ -57,6 +58,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === 'accept',
       id: 'termsParentB',
       title: m.section.effect,
       children: [
@@ -85,6 +87,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === 'accept',
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [
@@ -113,6 +116,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === 'accept',
       id: 'submitted',
       title: m.section.received,
       children: [
@@ -120,6 +124,30 @@ export const ParentBForm: Form = buildForm({
           id: 'parentBConfirmation',
           title: m.parentBConfirmation.general.pageTitle,
           component: 'ParentBConfirmation',
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.acceptContract === 'reject',
+      id: 'rejectContract',
+      title: m.rejectContract.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'rejectContract',
+          title: m.rejectContract.general.pageTitle,
+          component: 'RejectContract',
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.acceptContract === 'reject',
+      id: 'contractRejected',
+      title: m.contractRejected.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'contractRejected',
+          title: m.contractRejected.general.pageTitle,
+          component: 'ContractRejected',
         }),
       ],
     }),
