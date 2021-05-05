@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { DeleteFileResponse, PresignedPost, SignedUrl } from './models'
+import { PresignedPost, SignedUrl } from './models'
 
 @Injectable()
 export class AwsS3Service {
