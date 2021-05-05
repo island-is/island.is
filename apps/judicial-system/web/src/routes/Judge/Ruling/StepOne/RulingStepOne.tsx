@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Input,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
@@ -15,6 +8,8 @@ import {
   CaseNumbers,
   FormContentContainer,
   CaseFileList,
+  Decision,
+  RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -36,9 +31,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
-  setAndSendToServer,
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -50,8 +42,6 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
-
   const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState(true)
   const [isolationToIsValid, setIsolationToIsValid] = useState(true)
 
@@ -184,78 +174,10 @@ export const RulingStepOne: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={5}>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-accepting"
-                      label={`Krafa um ${
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann'
-                      } samþykkt`}
-                      checked={workingCase.decision === CaseDecision.ACCEPTING}
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.ACCEPTING,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  </Box>
-                  <Box
-                    marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}
-                  >
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-rejecting"
-                      label={`Kröfu um ${
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann'
-                      } hafnað`}
-                      checked={workingCase.decision === CaseDecision.REJECTING}
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.REJECTING,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  </Box>
-                  {workingCase.type === CaseType.CUSTODY && (
-                    <RadioButton
-                      name="case-decision"
-                      id="case-decision-accepting-alternative-travel-ban"
-                      label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
-                      checked={
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      }
-                      onChange={() => {
-                        setAndSendToServer(
-                          'decision',
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                          workingCase,
-                          setWorkingCase,
-                          updateCase,
-                        )
-                      }}
-                      large
-                      filled
-                    />
-                  )}
-                </BlueBox>
+                <Decision
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
@@ -264,38 +186,10 @@ export const RulingStepOne: React.FC = () => {
                   Niðurstaða
                 </Text>
               </Box>
-              <Input
-                data-testid="ruling"
-                name="ruling"
-                label="Efni úrskurðar"
-                placeholder="Hver er niðurstaðan að mati dómara?"
-                defaultValue={workingCase.ruling}
-                rows={16}
-                errorMessage={rulingErrorMessage}
-                hasError={rulingErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'ruling',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    rulingErrorMessage,
-                    setRulingErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'ruling',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setRulingErrorMessage,
-                  )
-                }
-                textarea
-                required
+              <RulingInput
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                isRequired
               />
             </Box>
             {workingCase.decision !== CaseDecision.REJECTING && (
