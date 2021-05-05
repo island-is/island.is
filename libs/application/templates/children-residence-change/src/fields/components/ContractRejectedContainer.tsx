@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { contractRejected } from '../../lib/messages'
-import { DescriptionText } from '.'
+import DescriptionText from './DescriptionText'
 
 interface Props {
   children: React.ReactNode
