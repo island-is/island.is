@@ -16,6 +16,7 @@ type BaseProps = {
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
   intersectionOptions?: IntersectionObserverInit
+  quality?: number
 }
 
 type UseThumbnailProps = {
@@ -55,6 +56,7 @@ export const BackgroundImage = ({
   backgroundSize = 'cover',
   positionX,
   thumbnailColor = 'dark100',
+  quality = 80,
   useThumbnail,
   intersectionOptions = {
     root: null,
@@ -71,9 +73,10 @@ export const BackgroundImage = ({
   const intersectionRef = useRef(null)
   const intersection = useIntersection(intersectionRef, intersectionOptions)
   const [shouldLoad, setShouldLoad] = useState<boolean>(false)
-  const src = `${image.url}?w=${width}&q=80`
+  const q = quality >= 0 && quality <= 100 ? quality : 80
+  const src = `${image.url}?w=${width}&q=${q}`
   const backgroundImageRef = useRef<HTMLDivElement | null>(null)
-  const thumbnail = image.url + '?w=50'
+  const thumbnail = image.url + '?w=50&q=20'
   const alt = image.title ?? ''
   const imageProps = alt
     ? {
