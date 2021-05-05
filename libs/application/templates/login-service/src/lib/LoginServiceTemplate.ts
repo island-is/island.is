@@ -25,6 +25,12 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication',
+}
+
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<LoginServiceEvent>,
@@ -75,6 +81,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           description: application.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -93,8 +102,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // TODO: Handle this correctly
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

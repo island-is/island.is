@@ -565,6 +565,55 @@ const testCase9 = {
   defenderEmail: 'saul@goodman.com',
 }
 
+const testCase10 = {
+  id: 'test_id_10',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.TRAVEL_BAN,
+  state: CaseState.ACCEPTED,
+  policeCaseNumber: 'string',
+  accusedNationalId: 'string',
+  accusedName: 'Jon Harring',
+  accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
+  court: 'string',
+  arrestDate: null,
+  requestedCourtDate: null,
+  requestedCustodyEndDate: '2020-09-16',
+  lawsBroken: null,
+  custodyProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  witnessAccounts: 'string',
+  investigationProgress: 'string',
+  legalArguments: null,
+  comments: 'string',
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartTime: null,
+  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtAttendees: null,
+  policeDemands: null,
+  accusedPleaAnnouncement: null,
+  litigationPresentations: null,
+  ruling: null,
+  decision: CaseDecision.ACCEPTING,
+  custodyEndDate: '2020-09-24T19:50:08.033Z',
+  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+  accusedAppealDecision: null,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: null,
+  prosecutorAppealAnnouncement: null,
+  isCustodyEndDateInThePast: true,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
+}
+
 export const mockJudgeQuery = [
   {
     request: {
@@ -714,6 +763,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase9,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_10' } },
+    },
+    result: {
+      data: {
+        case: testCase10,
       },
     },
   },
