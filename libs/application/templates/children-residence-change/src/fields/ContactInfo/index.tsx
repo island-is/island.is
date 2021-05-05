@@ -48,13 +48,13 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           email={{
             id: emailId,
             error: emailError,
-            defaultValue: answers?.parentB?.email || userProfile?.data?.email,
+            defaultValue: answers?.parentA?.email || userProfile?.data?.email,
           }}
           phoneNumber={{
             id: phoneNumberId,
             error: phoneNumberError,
             defaultValue:
-              answers?.parentB?.phoneNumber ||
+              answers?.parentA?.phoneNumber ||
               userProfile?.data?.mobilePhoneNumber,
           }}
         />
