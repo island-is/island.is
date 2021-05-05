@@ -5,6 +5,7 @@ import { InstitutionCollaborationModule } from './institution-collaboration/inst
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
 import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
 import { LoginServiceModule } from './login-service/login-service.module'
+import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -14,6 +15,7 @@ export const modules = [
   HealthInsuranceModule,
   ChildrenResidenceChangeModule,
   LoginServiceModule,
+  FundingGovernmentProjectsModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -23,3 +25,4 @@ export { InstitutionCollaborationService } from './institution-collaboration/ins
 export { HealthInsuranceService } from './health-insurance/health-insurance.service'
 export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 export { LoginServiceService } from './login-service/login-service.service'
+export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'

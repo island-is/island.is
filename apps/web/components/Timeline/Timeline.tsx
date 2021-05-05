@@ -333,21 +333,22 @@ const EventBar = forwardRef(
     return (
       <button onClick={onClick} className={eventStyles.eventBar} ref={ref}>
         <Box
+          component="span"
           className={eventStyles.eventBarTitle}
           background="purple100"
           display="flex"
         >
-          <Box className={eventStyles.eventBarIcon}>
+          <Box component="span" className={eventStyles.eventBarIcon}>
             <Icon type="filled" icon="person" color="purple400" size="medium" />
           </Box>
-          <Box paddingLeft={2} paddingRight={3}>
-            <Text variant="h5" color="purple400">
+          <Box component="span" paddingLeft={2} paddingRight={3}>
+            <Text as="span" variant="h5" color="purple400">
               {event.title}
             </Text>
           </Box>
         </Box>
         {!!event.value && (
-          <div className={eventStyles.eventBarStats}>
+          <span className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
@@ -366,7 +367,7 @@ const EventBar = forwardRef(
                 </Fragment>
               ))}
             </span>
-          </div>
+          </span>
         )}
       </button>
     )

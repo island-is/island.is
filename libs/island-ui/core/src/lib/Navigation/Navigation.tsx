@@ -301,6 +301,7 @@ interface MobileButtonProps {
 const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   return (
     <Box
+      component="span"
       display="flex"
       justifyContent="spaceBetween"
       alignItems="center"
@@ -316,6 +317,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
       </Text>
 
       <Box
+        component="span"
         position="absolute"
         right={0}
         marginRight={2}

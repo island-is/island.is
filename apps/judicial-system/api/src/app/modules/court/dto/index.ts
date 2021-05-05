@@ -1,1 +1,2 @@
-export { CreateCustodyCourtCaseInput } from './createCourt.input'
+export { CreateCustodyCourtCaseInput } from './createCustodyCourtCase.input'
+export { CreateCourtCaseInput } from './createCourtCase.input'

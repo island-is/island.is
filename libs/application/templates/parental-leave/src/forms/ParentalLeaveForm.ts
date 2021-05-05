@@ -24,6 +24,7 @@ import {
   getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
+  createRange,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -40,6 +41,17 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
+
+const percentOptions = createRange<{ label: string; value: string }>(
+  10,
+  (i) => {
+    const ii = (i + 1) * 10
+    return {
+      label: `${ii}%`,
+      value: `${ii}`,
+    }
+  },
+)
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -350,7 +362,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
+                      .useAsMuchAsPossibleFromSpouse,
                   width: 'half',
                   largeButtons: true,
                   options: [
@@ -647,12 +659,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.ratio.label,
                   placeholder: parentalLeaveFormMessages.ratio.placeholder,
                   defaultValue: '100',
-                  options: [
-                    { label: '100%', value: '100' },
-                    { label: '75%', value: '75' },
-                    { label: '50%', value: '50' },
-                    { label: '25%', value: '25' },
-                  ],
+                  options: percentOptions,
                 }),
               ],
             }),
@@ -711,12 +718,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.ratio.label,
                       defaultValue: '100',
                       placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                      options: [
-                        { label: '100%', value: '100' },
-                        { label: '75%', value: '75' },
-                        { label: '50%', value: '50' },
-                        { label: '25%', value: '25' },
-                      ],
+                      options: percentOptions,
                     }),
                   ],
                 }),

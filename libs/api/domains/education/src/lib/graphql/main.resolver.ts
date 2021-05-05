@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -17,7 +17,7 @@ import {
 } from './license'
 import { ExamFamilyOverview, ExamResult } from './grade'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly educationService: EducationService) {}

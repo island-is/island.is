@@ -1,4 +1,8 @@
-import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  IdsAuthGuard,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
 import { Test } from '@nestjs/testing'
@@ -42,6 +46,8 @@ export const testServerActivateAuthGuards = async (
     imports: [InfraModule.forRoot(options.appModule)],
   })
     .overrideGuard(IdsAuthGuard)
+    .useValue({ canActivate: () => true })
+    .overrideGuard(IdsUserGuard)
     .useValue({ canActivate: () => true })
     .overrideGuard(ScopesGuard)
     .useValue({ canActivate: () => true })

@@ -45,7 +45,7 @@ describe('FileModule', () => {
         {
           provide: AwsS3Service,
           useClass: jest.fn(() => ({
-            createPresignedPost: jest.fn((key) =>
+            createPresignedPost: (key: string) =>
               Promise.resolve({
                 url:
                   'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
@@ -60,7 +60,6 @@ describe('FileModule', () => {
                   'X-Amz-Signature': 'Some Signature',
                 },
               }),
-            ),
             deleteObject: () => Promise.resolve(true),
             getSignedUrl: () => Promise.resolve({}),
             objectExists: () => Promise.resolve(true),

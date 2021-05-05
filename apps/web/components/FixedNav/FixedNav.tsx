@@ -53,7 +53,7 @@ export const FixedNav: FC = () => {
         >
           <Link {...linkResolver('homepage')}>
             <FocusableBox marginRight={2}>
-              <Logo iconOnly solid={true} />
+              <Logo id="fixed-nav-logo-icon" iconOnly solid={true} />
             </FocusableBox>
           </Link>
 

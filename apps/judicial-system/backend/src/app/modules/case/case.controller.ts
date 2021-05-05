@@ -65,6 +65,7 @@ const prosecutorUpdateRule = {
     'accusedGender',
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'sendRequestToDefender',
     'court',
     'arrestDate',
@@ -90,6 +91,7 @@ const judgeUpdateRule = {
   dtoFields: [
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'setCourtCaseNumberManually',
     'courtCaseNumber',
     'courtDate',
@@ -127,6 +129,7 @@ const registrarUpdateRule = {
   dtoFields: [
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'courtCaseNumber',
     'courtDate',
     'courtRoom',

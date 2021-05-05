@@ -120,7 +120,7 @@ export const Overview: React.FC = () => {
 
         if (notificationSent) {
           setModalText(
-            'Tilkynning hefur verið send á dómara og dómritara á vakt.',
+            'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
           )
         } else {
           // TODO: Handle error
@@ -232,6 +232,7 @@ export const Overview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
@@ -327,13 +328,14 @@ export const Overview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
-                {(workingCase.comments || workingCase.caseFilesComments) && (
+                {(Boolean(workingCase.comments) ||
+                  Boolean(workingCase.caseFilesComments)) && (
                   <AccordionItem
                     id="id_5"
                     label="Athugasemdir"
                     labelVariant="h3"
                   >
-                    {workingCase.comments && (
+                    {Boolean(workingCase.comments) && (
                       <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
                         <Box marginBottom={1}>
                           <Text variant="h4" as="h4">
@@ -348,7 +350,7 @@ export const Overview: React.FC = () => {
                       </Box>
                     )}
                     {features.includes(Feature.CASE_FILES) &&
-                      !!workingCase.caseFilesComments && (
+                      Boolean(workingCase.caseFilesComments) && (
                         <>
                           <Text variant="h4" as="h4">
                             Athugasemdir vegna rannsóknargagna
@@ -428,7 +430,7 @@ export const Overview: React.FC = () => {
               handleSecondaryButtonClick={() => {
                 router.push(Constants.REQUEST_LIST_ROUTE)
               }}
-              primaryButtonText="Gefa endurgjöf á gáttina"
+              primaryButtonText="Senda ábendingu"
               secondaryButtonText="Loka glugga"
             />
           )}

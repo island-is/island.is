@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import AdminTabNav from './../../components/Admin/nav/AdminTabNav'
 import { AdminTab } from './../../entities/common/AdminTab'
-import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
+import ApiScopeUsersList from '../../components/Admin/lists/ApiScopeUsersList'
 import IdpProvidersList from '../../components/Admin/lists/IdpProvidersList'
 import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
 import LanguageList from './../../components/Admin/lists/LanguageList'
@@ -16,7 +16,7 @@ const Index: React.FC = () => {
   const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab
-  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.AdminUsers)
+  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.ApiScopeUsers)
 
   useEffect(() => {
     async function resolveRoles() {
@@ -44,11 +44,11 @@ const Index: React.FC = () => {
         </ContentWrapper>
       )
     }
-    case AdminTab.AdminUsers: {
+    case AdminTab.ApiScopeUsers: {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )
@@ -130,7 +130,7 @@ const Index: React.FC = () => {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )
