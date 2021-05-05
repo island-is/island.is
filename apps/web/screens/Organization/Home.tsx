@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext } from 'react'
+import React from 'react'
 import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -25,10 +25,8 @@ import {
   SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { NEWS_TAGS } from '@island.is/web/screens/Organization/NewsList'
 
@@ -45,11 +43,8 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
-  const { globalNamespace } = useContext(GlobalContext)
 
   const n = useNamespace(namespace)
-  const gn = useNamespace(globalNamespace)
-  const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -71,16 +66,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
-      breadcrumbItems={[
-        {
-          title: 'Ísland.is',
-          href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-      ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,

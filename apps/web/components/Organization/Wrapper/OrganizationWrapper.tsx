@@ -210,18 +210,20 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
                   offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
                 >
-                  <Breadcrumbs
-                    items={breadcrumbItems ?? []}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
+                  {breadcrumbItems && (
+                    <Breadcrumbs
+                      items={breadcrumbItems ?? []}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  )}
                   {pageDescription && (
-                    <Box paddingTop={[2, 2, 5]}>
+                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="intro">{pageDescription}</Text>
                     </Box>
                   )}
