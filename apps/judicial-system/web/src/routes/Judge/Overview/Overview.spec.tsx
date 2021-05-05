@@ -31,9 +31,11 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 
@@ -56,15 +58,17 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 
     // Assert
-    expect(await screen.findByText('B - Einangrun.')).toBeInTheDocument()
-    expect(await screen.findByText('E - Fjölmiðlabann.')).toBeInTheDocument()
+    expect(await screen.findByText('B - Einangrun')).toBeInTheDocument()
+    expect(await screen.findByText('E - Fjölmiðlabann')).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
@@ -80,9 +84,11 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
-          <Overview />
-        </UserProvider>
+        <FeatureProvider>
+          <UserProvider>
+            <Overview />
+          </UserProvider>
+        </FeatureProvider>
       </MockedProvider>,
     )
 

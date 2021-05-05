@@ -84,9 +84,6 @@ const Overview = ({
     createResponse?.createPdfPresignedUrl?.url ||
     getResponse?.getPresignedUrl?.url
 
-  const parentKey =
-    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
-
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (!pdfUrl) {
@@ -149,21 +146,27 @@ const Overview = ({
         controlCode={controlCode}
         onClose={() =>
           dispatchFileSignature({
-            type: FileSignatureActionTypes.RESET,
+            type: FileSignatureActionTypes.CLOSE_MODAL,
           })
         }
         fileSignatureState={fileSignatureState}
       />
       <Box>
-        <DescriptionText
-          text={m.contract.general.description}
-          format={{
-            otherParent:
-              parentKey === Roles.ParentA
-                ? parentB.fullName
-                : applicant.fullName,
-          }}
-        />
+        {application.state === 'draft' ? (
+          <DescriptionText
+            text={m.contract.general.description}
+            format={{
+              otherParent: parentB.fullName,
+            }}
+          />
+        ) : (
+          <DescriptionText
+            text={m.contract.general.parentBDescription}
+            format={{
+              otherParent: applicant.fullName,
+            }}
+          />
+        )}
       </Box>
       <Box marginTop={4}>
         <ContractOverview application={application} />

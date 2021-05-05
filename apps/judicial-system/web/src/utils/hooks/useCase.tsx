@@ -34,7 +34,9 @@ interface CreateCourtCaseMutationResponse {
 }
 
 const useCase = () => {
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const [updateCaseMutation, { loading: isUpdatingCase }] = useMutation(
+    UpdateCaseMutation,
+  )
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
   )
@@ -211,6 +213,7 @@ const useCase = () => {
 
   return {
     updateCase,
+    isUpdatingCase,
     createCase,
     isCreatingCase,
     sendNotification,

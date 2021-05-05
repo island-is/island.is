@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
-    <header className={`${styles.header}`}>
+    <header className={styles.header}>
       <Link
         href={
           !user || !isAuthenticated
