@@ -28,7 +28,7 @@ const Header: React.FC = () => {
   >
 
   return (
-    <header className={`${styles.header}`}>
+    <header className={styles.header}>
       <Link
         href={
           !user || !isAuthenticated
