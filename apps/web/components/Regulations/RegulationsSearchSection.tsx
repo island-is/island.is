@@ -183,6 +183,7 @@ export const RegulationsSearchSection = (
 
   const doSearch = (key: RegulationSearchKeys, value: string) => {
     router.replace({
+      pathname: router.pathname,
       query: cleanQuery({
         ...props.searchFilters,
         [key]: value || undefined,
