@@ -69,6 +69,7 @@ export const ContactRepeaterItem: FC<Props> = ({
           id={phoneNumberField}
           name={phoneNumberField}
           required={true}
+          type={'tel'}
           format="+354 ### ####"
           label={formatText(
             informationAboutInstitution.labels.contactPhoneNumber,
@@ -81,6 +82,7 @@ export const ContactRepeaterItem: FC<Props> = ({
         <InputController
           id={emailField}
           name={emailField}
+          type={'email'}
           required={true}
           label={formatText(
             informationAboutInstitution.labels.contactEmail,

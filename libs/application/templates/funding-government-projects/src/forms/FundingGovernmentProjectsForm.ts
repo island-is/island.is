@@ -48,18 +48,13 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             informationAboutInstitution.general
               .infoInstitutionMultiFieldDescription,
           children: [
-            buildCustomField(
-              {
-                id: 'organizationOrInstitutionName.description',
-                component: 'FieldDescription',
-                title: '',
-              },
-              {
-                description:
-                  informationAboutInstitution.general
-                    .infoInstitutionTextFieldDescription.defaultMessage,
-              },
-            ),
+            buildCustomField({
+              id: 'projectInfoTitleField',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldDescription.defaultMessage,
+              component: 'FieldTitle',
+            }),
             buildTextField({
               id: 'organizationOrInstitutionName',
               title:
