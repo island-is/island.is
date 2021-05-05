@@ -1,6 +1,8 @@
 # Contentful parent-slug extension
 
-This is the Contentful extension that makes sure that parent-slug relationships are preserved through content changes.
+This is the Contentful extension that makes sure that parent-slug relationships are preserved through content changes. It recursively calls for slug updates on references that are using a parent-slug relationship.
+
+![image](https://user-images.githubusercontent.com/77672665/117132539-80a41700-ad92-11eb-9844-3316b3c86cc8.png)
 
 ## Deployment
 
