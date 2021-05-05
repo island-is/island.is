@@ -24,6 +24,7 @@ import {
   Icon,
   Input,
   ResponsiveSpace,
+  Link,
 } from '@island.is/island-ui/core'
 import { alphabet } from './data'
 
@@ -268,7 +269,10 @@ export const IcelandicNamesSearcher: FC = () => {
                   )}
                   {!isBusy &&
                     filteredNamesList.map(
-                      ({ icelandicName, status, type, verdict }, index) => {
+                      (
+                        { icelandicName, status, type, verdict, url },
+                        index,
+                      ) => {
                         return (
                           <T.Row key={index}>
                             <T.Data>
@@ -288,8 +292,8 @@ export const IcelandicNamesSearcher: FC = () => {
                               </Text>
                             </T.Data>
                             <T.Data>
-                              {!!verdict && (
-                                <Text>
+                              {!!verdict && url ? (
+                                <Link href={url} skipTab>
                                   <Button
                                     colorScheme={
                                       status === 'Haf'
@@ -300,9 +304,20 @@ export const IcelandicNamesSearcher: FC = () => {
                                     size="small"
                                     icon="open"
                                     iconType="outline"
+                                    as="span"
                                   >
                                     {verdict}
                                   </Button>
+                                </Link>
+                              ) : (
+                                <Text
+                                  variant="small"
+                                  fontWeight="semiBold"
+                                  color={
+                                    status === 'Haf' ? 'red600' : 'blue400'
+                                  }
+                                >
+                                  {verdict}
                                 </Text>
                               )}
                             </T.Data>
