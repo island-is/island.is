@@ -59,7 +59,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
             field={field}
             index={index}
             key={field.id}
-            handleRemoveComplainee={handleRemoveContact}
+            handleRemoveContact={handleRemoveContact}
             errors={errors}
           />
         )

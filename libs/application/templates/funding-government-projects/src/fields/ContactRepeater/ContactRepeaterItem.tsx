@@ -20,7 +20,7 @@ interface Props {
   field: Partial<ArrayField<ContactField, 'id'>>
   answers: FormValue
   index: number
-  handleRemoveComplainee: (index: number) => void
+  handleRemoveContact: (index: number) => void
   errors: RecordObject<unknown> | undefined
 }
 
@@ -29,7 +29,7 @@ export const ContactRepeaterItem: FC<Props> = ({
   application,
   field,
   index,
-  handleRemoveComplainee,
+  handleRemoveContact,
   errors,
 }) => {
   const fieldIndex = `${id}[${index}]`
@@ -48,7 +48,9 @@ export const ContactRepeaterItem: FC<Props> = ({
             size="small"
             circle
             icon="remove"
-            onClick={handleRemoveComplainee.bind(null, index)}
+            onClick={() => {
+              handleRemoveContact(index)
+            }}
           />
         </Box>
       )}
