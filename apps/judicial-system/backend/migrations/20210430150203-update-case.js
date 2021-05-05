@@ -7,7 +7,7 @@ module.exports = {
         'case',
         'defender_phone_number',
         {
-          type: Sequelize.TEXT,
+          type: Sequelize.STRING,
           allowNull: true,
         },
         { transaction: t },

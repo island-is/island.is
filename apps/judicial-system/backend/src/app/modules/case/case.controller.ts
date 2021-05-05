@@ -129,6 +129,7 @@ const registrarUpdateRule = {
   dtoFields: [
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'courtCaseNumber',
     'courtDate',
     'courtRoom',
