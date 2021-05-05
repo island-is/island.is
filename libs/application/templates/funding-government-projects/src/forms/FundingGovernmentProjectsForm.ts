@@ -3,10 +3,9 @@ import {
   buildSection,
   Form,
   FormModes,
-  buildDescriptionField,
-  buildMultiField,
   buildCustomField,
   buildTextField,
+  buildMultiField,
   buildFileUploadField,
   DefaultEvents,
   buildSubmitField,
@@ -43,10 +42,37 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'informationAboutInstitution',
       title: section.informationAboutInstitution,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId2',
-          title: informationAboutInstitution.general.pageTitle,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'informationAboutInstitutionMultiField',
+          title:
+            informationAboutInstitution.general.infoInstitutionMultiFieldTitle,
+          description:
+            informationAboutInstitution.general
+              .infoInstitutionMultiFieldDescription,
+          children: [
+            buildCustomField({
+              id: 'projectInfoTitleField',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldDescription.defaultMessage,
+              component: 'FieldTitle',
+            }),
+            buildTextField({
+              id: 'organizationOrInstitutionName',
+              title:
+                informationAboutInstitution.general
+                  .infoInstitutionTextFieldTitle,
+              backgroundColor: 'blue',
+              width: 'full',
+              required: true,
+            }),
+            buildCustomField({
+              id: 'contacts',
+              title: informationAboutInstitution.general.pageTitle,
+              description: informationAboutInstitution.general.pageTitle,
+              component: 'ContactRepeater',
+            }),
+          ],
         }),
       ],
     }),
