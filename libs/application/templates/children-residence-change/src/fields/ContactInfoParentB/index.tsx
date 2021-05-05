@@ -27,7 +27,7 @@ const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
   return (
     <>
       <Box marginTop={3}>
-        <DescriptionText text={contactInfo.general.description} />
+        <DescriptionText text={contactInfo.general.parentBDescription} />
       </Box>
       <GridContainer>
         <GridRow marginTop={5}>
