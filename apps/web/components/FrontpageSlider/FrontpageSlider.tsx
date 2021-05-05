@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useContext,
+  useLayoutEffect,
 } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -20,13 +21,12 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
-import { Document } from '@contentful/rich-text-types'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import LottieLoader from './LottiePlayer/LottieLoader'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+import LottieLoader from './LottiePlayer/LottieLoader'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
@@ -43,7 +43,7 @@ export interface TabBulletProps {
 
 const TabBullet = ({ selected }: TabBulletProps) => {
   return (
-    <div
+    <span
       className={cn(styles.tabBullet, {
         [styles.tabBulletSelected]: selected,
       })}
@@ -70,7 +70,10 @@ export const FrontpageSlider = ({
   })
 
   const { t } = useI18n()
+
   const { width } = useWindowSize()
+
+  const isMobile = width < theme.breakpoints.md
 
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
@@ -113,8 +116,8 @@ export const FrontpageSlider = ({
     }
   }
 
-  useEffect(() => {
-    if (!animationData.length) {
+  useLayoutEffect(() => {
+    if (!isMobile && !animationData.length) {
       const requests = slides.reduce((all, slide) => {
         if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
           all.push(
@@ -129,7 +132,7 @@ export const FrontpageSlider = ({
         setAnimationData(res)
       })
     }
-  }, [slides, animationData])
+  }, [isMobile, slides, animationData])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -274,6 +277,7 @@ export const FrontpageSlider = ({
                                   variant="text"
                                   icon="arrowForward"
                                   aria-labelledby={tabTitleId}
+                                  as="span"
                                 >
                                   {gn('seeMore')}
                                 </Button>
@@ -346,7 +350,7 @@ export const FrontpageSlider = ({
             height="full"
             justifyContent="center"
           >
-            {animationData.length > 0 && (
+            {!isMobile && animationData.length > 0 && (
               <LottieLoader
                 animationData={animationData}
                 selectedIndex={selectedIndex}

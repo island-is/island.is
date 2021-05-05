@@ -19,9 +19,15 @@ export const modalContainer = style({
   padding: `${theme.spacing[8]}px ${theme.spacing[8]}px ${theme.spacing[6]}px ${theme.spacing[8]}px`,
   background: theme.color.white,
   maxWidth: '40vw',
+  maxHeight: '90vh',
+  overflowY: 'scroll',
   borderRadius: theme.border.radius.standard,
 })
 
 export const closeButton = style({
   padding: theme.spacing[4],
+})
+
+export const breakSpaces = style({
+  whiteSpace: 'break-spaces',
 })

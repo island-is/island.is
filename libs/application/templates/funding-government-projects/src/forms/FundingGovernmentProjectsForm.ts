@@ -8,6 +8,8 @@ import {
   buildCustomField,
   buildTextField,
   buildFileUploadField,
+  DefaultEvents,
+  buildSubmitField,
 } from '@island.is/application/core'
 import {
   section,
@@ -27,13 +29,13 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'definitionOfApplicants',
+      id: 'definitionOfApplicant',
       title: section.definitionOfApplicant,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId1',
+        buildCustomField({
+          id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
-          description: 'Umsókn',
+          component: 'DefinitionOfApplicant',
         }),
       ],
     }),
@@ -118,10 +120,29 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'overview',
       title: section.overview,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId4',
+        buildMultiField({
+          id: 'overviewMultifield',
           title: overview.general.pageTitle,
-          description: 'Umsókn',
+          description: overview.general.pageTitle.description,
+          children: [
+            buildCustomField({
+              id: 'overviewCustomField',
+              title: overview.general.pageTitle,
+              description: overview.general.pageTitle.description,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'overview.submitField',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -129,10 +150,10 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
       id: 'submitted',
       title: section.submitted,
       children: [
-        buildDescriptionField({
-          id: 'placeholderId5',
+        buildCustomField({
+          id: 'submittedCustomField',
           title: submitted.general.pageTitle,
-          description: 'Umsókn',
+          component: 'Submitted',
         }),
       ],
     }),

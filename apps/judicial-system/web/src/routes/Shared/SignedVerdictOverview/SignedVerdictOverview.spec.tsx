@@ -86,7 +86,7 @@ describe('Signed Verdict Overview route', () => {
       ).not.toBeInTheDocument()
     })
 
-    test('should not show a button for extention', async () => {
+    test('should not show a button for extension', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
@@ -120,6 +120,7 @@ describe('Signed Verdict Overview route', () => {
   describe('Accepted case with active custody', () => {
     fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
     fetchMock.mock('/api/feature/CASE_FILES', true)
+    fetchMock.mock('/api/feature/CREATE_COURT_CASE', true)
 
     test('should have the correct title', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
@@ -193,7 +194,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should not show a button for extention because the user is a judge', async () => {
+    test('should not show a button for extension because the user is a judge', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -343,7 +344,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should not show a button for extention because the user is a judge', async () => {
+    test('should not show a button for extension because the user is a judge', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -443,7 +444,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should not show a button for extention because the user is a judge', async () => {
+    test('should not show a button for extension because the user is a judge', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -467,7 +468,7 @@ describe('Signed Verdict Overview route', () => {
       ).not.toBeInTheDocument()
     })
 
-    test('should not show an extention for why the case cannot be extended if the user is a prosecutor', async () => {
+    test('should not show an extension for why the case cannot be extended if the user is a prosecutor', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
@@ -543,7 +544,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should show a button for extention because the user is a prosecutor', async () => {
+    test('should show a button for extension because the user is a prosecutor', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
