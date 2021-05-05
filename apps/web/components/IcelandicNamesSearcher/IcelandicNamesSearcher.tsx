@@ -46,6 +46,7 @@ import * as styles from './IcelandicNamesSearcher.treat'
 type ToggledFiltersState = {
   males: boolean
   females: boolean
+  neutral: boolean
   middleNames: boolean
   approved: boolean
   denied: boolean
@@ -55,6 +56,7 @@ type ToggledFiltersState = {
 const initialToggledFiltersState: ToggledFiltersState = {
   males: false,
   females: false,
+  neutral: false,
   middleNames: false,
   approved: false,
   denied: false,
@@ -64,6 +66,7 @@ const initialToggledFiltersState: ToggledFiltersState = {
 type Action =
   | { type: 'toggleMales' }
   | { type: 'toggleFemales' }
+  | { type: 'toggleNeutral' }
   | { type: 'toggleMiddleNames' }
   | { type: 'toggleDenied' }
   | { type: 'toggleApproved' }
@@ -80,6 +83,8 @@ const toggledFiltersReducer = (
       return { ...state, males: !state.males }
     case 'toggleFemales':
       return { ...state, females: !state.females }
+    case 'toggleNeutral':
+      return { ...state, neutral: !state.neutral }
     case 'toggleMiddleNames':
       return { ...state, middleNames: !state.middleNames }
     case 'toggleDenied':
@@ -151,6 +156,7 @@ export const IcelandicNamesSearcher: FC = () => {
     pending: (x: NameType) => x.status === 'Óaf',
     females: (x: NameType) => ['ST', 'RST'].includes(x.type),
     males: (x: NameType) => ['DR', 'RDR'].includes(x.type),
+    neutral: (x: NameType) => ['KH', 'RKH'].includes(x.type),
     middleNames: (x: NameType) => x.type === 'MI',
   }
 
@@ -206,7 +212,7 @@ export const IcelandicNamesSearcher: FC = () => {
   const statusFilterSelected =
     filters.approved || filters.denied || filters.pending
   const typeFilterSelected =
-    filters.females || filters.males || filters.middleNames
+    filters.females || filters.males || filters.middleNames || filters.neutral
   const someFilterSelected = Object.keys(filters).filter((key) => filters[key])
     .length
 
@@ -397,6 +403,11 @@ export const IcelandicNamesSearcher: FC = () => {
                       onChange={() => dispatch({ type: 'toggleFemales' })}
                     />
                     <Checkbox
+                      label="Kynhlutlaus"
+                      checked={filters.neutral}
+                      onChange={() => dispatch({ type: 'toggleNeutral' })}
+                    />
+                    <Checkbox
                       label="Millinöfn (öll kyn)"
                       checked={filters.middleNames}
                       onChange={() => dispatch({ type: 'toggleMiddleNames' })}
@@ -466,9 +477,11 @@ const ResetButton: FC<ButtonProps> = ({ children, ...rest }) => {
 const NameTypeStrings = {
   ST: 'Stúlkur',
   DR: 'Drengir',
+  KH: 'Kynhlutlaust',
   MI: 'Millinafn',
   RST: 'Stúlkur (ritbr.)',
   RDR: 'Drengir (ritbr.)',
+  RKH: 'Kynhlutlaust (ritbr.)',
 }
 
 export default IcelandicNamesSearcher

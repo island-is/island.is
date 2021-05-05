@@ -1,5 +1,6 @@
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 
 import { BackendAPI } from './services'
 import { IcelandicName } from './models/icelandicName.model'
@@ -45,6 +46,7 @@ export class IcelandicNamesResolver {
     return this.backendAPI.getBySearch(input?.q)
   }
 
+  @UseGuards(IdsUserGuard)
   @Mutation(() => IcelandicName, { nullable: true })
   async updateIcelandicNameById(
     @Args('input', { type: () => UpdateIcelandicNameInput })
@@ -54,6 +56,7 @@ export class IcelandicNamesResolver {
     return this.backendAPI.updateById(input.id, input.body, authorization ?? '')
   }
 
+  @UseGuards(IdsUserGuard)
   @Mutation(() => IcelandicName, { nullable: true })
   async createIcelandicName(
     @Args('input') input: CreateIcelandicNameInput,
@@ -62,6 +65,7 @@ export class IcelandicNamesResolver {
     return this.backendAPI.create(input, authorization ?? '')
   }
 
+  @UseGuards(IdsUserGuard)
   @Mutation(() => IcelandicName, { nullable: true })
   async deleteIcelandicNameById(
     @Args('input', { type: () => DeleteIcelandicNameByIdInput })
