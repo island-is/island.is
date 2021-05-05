@@ -18,7 +18,6 @@ interface Props {
   id: string
   application: Application
   field: Partial<ArrayField<ContactField, 'id'>>
-  answers: FormValue
   index: number
   handleRemoveContact: (index: number) => void
   errors: RecordObject<unknown> | undefined

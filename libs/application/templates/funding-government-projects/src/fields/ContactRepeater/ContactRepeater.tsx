@@ -18,7 +18,6 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
   const { id } = field
   const { fields, append, remove } = useFieldArray<ContactField>({
     name: id,
@@ -55,7 +54,6 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
           <ContactRepeaterItem
             id={id}
             application={application}
-            answers={answers}
             field={field}
             index={index}
             key={field.id}
