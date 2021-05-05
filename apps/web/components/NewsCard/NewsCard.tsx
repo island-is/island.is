@@ -87,7 +87,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             <Inline space={2}>
               {tags.map(({ title }, index) => {
                 return (
-                  <Tag key={index} variant="blue" outlined>
+                  <Tag key={index} variant="blue" outlined disabled>
                     {title}
                   </Tag>
                 )
@@ -100,8 +100,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
           <Button
             icon="arrowForward"
             iconType="filled"
-            type="button"
             variant="text"
+            as="span"
           >
             {readMoreText}
           </Button>

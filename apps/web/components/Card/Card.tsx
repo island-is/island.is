@@ -1,7 +1,7 @@
-import React, { FC, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import Link, { LinkProps } from 'next/link'
+import { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
@@ -11,8 +11,6 @@ import {
   TagProps,
   FocusableBox,
   TagVariant,
-  GridColumn,
-  GridRow,
 } from '@island.is/island-ui/core'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { BackgroundImage } from '@island.is/web/components'
@@ -39,7 +37,6 @@ export interface CardProps {
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   link?: LinkResolverResponse
-  status?: string
 }
 
 export const Card = ({
@@ -49,13 +46,12 @@ export const Card = ({
   description,
   tags = [],
   link,
-  status,
 }: CardProps) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
-  const stackImage = width < 360
-  const isImage = image?.title.length > 0
+  const shouldStack = width < 360
+  const hasImage = image?.title.length > 0
 
   let borderColor = null
   let titleColor = null
@@ -84,82 +80,77 @@ export const Card = ({
   }
 
   const items = (
-    <Box ref={ref}>
-      <GridRow direction={stackImage ? 'columnReverse' : 'row'}>
-        <GridColumn key={1} span={isImage && !stackImage ? '8/12' : '12/12'}>
-          <Stack space={1}>
-            {!!subTitle && (
-              <Text
-                as="h4"
-                variant="small"
-                fontWeight="semiBold"
-                color={titleColor}
-              >
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box display="inlineFlex" flexGrow={1}>
-                    {subTitle}
-                  </Box>
-                </Box>
-              </Text>
-            )}
-            <Text as="h3" variant="h3" color={titleColor}>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  {title}
-                </Box>
+    <Box
+      ref={ref}
+      display="flex"
+      flexGrow={1}
+      flexDirection={shouldStack ? 'columnReverse' : 'row'}
+      alignItems="stretch"
+      justifyContent="flexEnd"
+    >
+      <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
+        <Stack space={1}>
+          {!!subTitle && (
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Box display="inlineFlex" flexGrow={1}>
+                <Text
+                  as="h4"
+                  variant="small"
+                  fontWeight="semiBold"
+                  color={titleColor}
+                >
+                  {subTitle}
+                </Text>
               </Box>
-            </Text>
-            {description && <Text>{description}</Text>}
-            {tags.length > 0 && (
-              <Box paddingTop={3} flexGrow={0} position="relative">
-                <Inline space={1}>
-                  {tags.map(
-                    ({ title, href, ...props }: CardTagsProps, index) => {
-                      const tagProps = {
-                        ...tagPropsDefaults,
-                        ...props.tagProps,
-                        variant: tagVariant,
-                      }
-
-                      return href ? (
-                        <Link key={index} {...link}>
-                          <Tag {...tagProps}>{title}</Tag>
-                        </Link>
-                      ) : (
-                        <Tag key={index} {...tagProps}>
-                          {title}
-                        </Tag>
-                      )
-                    },
-                  )}
-                </Inline>
-              </Box>
-            )}
-          </Stack>
-        </GridColumn>
-        {isImage && (
-          <GridColumn
-            key={2}
-            span={!stackImage ? '4/12' : '12/12'}
-            position="relative"
-          >
-            <Box
-              display="flex"
-              width="full"
-              justifyContent="center"
-              flexGrow={1}
-              style={{ height: stackImage ? 150 : 100 }}
-            >
-              <BackgroundImage
-                positionX={!stackImage ? 'right' : null}
-                background="transparent"
-                backgroundSize="contain"
-                image={image}
-              />
             </Box>
-          </GridColumn>
-        )}
-      </GridRow>
+          )}
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              <Text as="h3" variant="h3" color={titleColor}>
+                {title}
+              </Text>
+            </Box>
+          </Box>
+          {description && <Text>{description}</Text>}
+          {tags.length > 0 && (
+            <Box paddingTop={3} flexGrow={0} position="relative">
+              <Inline space={1}>
+                {tags.map(({ title, ...props }: CardTagsProps, index) => {
+                  const tagProps = {
+                    ...tagPropsDefaults,
+                    ...props.tagProps,
+                    variant: tagVariant,
+                  }
+
+                  return (
+                    <Tag key={index} {...tagProps} disabled>
+                      {title}
+                    </Tag>
+                  )
+                })}
+              </Inline>
+            </Box>
+          )}
+        </Stack>
+      </Box>
+      {hasImage && (
+        <Box
+          position="relative"
+          style={{
+            width: shouldStack ? '100%' : '30%',
+            ...(shouldStack && { height: 146 }),
+          }}
+          marginBottom={shouldStack ? 1 : 0}
+          marginLeft={shouldStack ? 0 : 1}
+        >
+          <BackgroundImage
+            positionX={shouldStack ? undefined : 'right'}
+            background="transparent"
+            backgroundSize="contain"
+            image={image}
+          />
+        </Box>
+      )}
     </Box>
   )
 
@@ -176,34 +167,12 @@ export const Card = ({
         borderColor={borderColor}
         borderWidth="standard"
       >
-        {status ? (
-          <span
-            className={cn(
-              styles.status,
-              styles.statusPosition,
-              styles.statusType[status],
-            )}
-          ></span>
-        ) : null}
         <Frame>{items}</Frame>
       </FocusableBox>
     )
   }
 
-  return (
-    <Frame>
-      {status ? (
-        <span
-          className={cn(
-            styles.status,
-            styles.statusPosition,
-            styles.statusType[status],
-          )}
-        ></span>
-      ) : null}
-      {items}
-    </Frame>
-  )
+  return <Frame>{items}</Frame>
 }
 
 export const Frame = ({ children }) => {
@@ -213,7 +182,6 @@ export const Frame = ({ children }) => {
       position="relative"
       borderRadius="large"
       overflow="hidden"
-      height="full"
       background="white"
       outline="none"
       padding={[2, 2, 4]}

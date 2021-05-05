@@ -120,7 +120,7 @@ export const Overview: React.FC = () => {
 
         if (notificationSent) {
           setModalText(
-            'Tilkynning hefur verið send á dómara og dómritara á vakt.',
+            'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
           )
         } else {
           // TODO: Handle error
@@ -430,7 +430,7 @@ export const Overview: React.FC = () => {
               handleSecondaryButtonClick={() => {
                 router.push(Constants.REQUEST_LIST_ROUTE)
               }}
-              primaryButtonText="Gefa endurgjöf á gáttina"
+              primaryButtonText="Senda ábendingu"
               secondaryButtonText="Loka glugga"
             />
           )}

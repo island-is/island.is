@@ -6,7 +6,6 @@ import {
   Claim,
   UserIdentitiesService,
   AccessService,
-  AdminAccess,
   ApiScopeUserAccess,
   ApiScopeUser,
 } from '@island.is/auth-api-lib'
@@ -16,7 +15,6 @@ import {
     SequelizeModule.forFeature([
       Claim,
       UserIdentity,
-      AdminAccess,
       ApiScopeUserAccess,
       ApiScopeUser,
     ]),

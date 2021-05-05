@@ -1,4 +1,5 @@
 export { default as ChangeInformation } from './ChangeInformation'
+export { default as ChildSupport } from './ChildSupport'
 export { default as Confirmation } from './Confirmation'
 export { default as ContactInfo } from './ContactInfo'
 export { default as Duration } from './Duration'

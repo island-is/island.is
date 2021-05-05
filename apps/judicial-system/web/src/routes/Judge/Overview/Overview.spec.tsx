@@ -16,6 +16,7 @@ import Overview from './Overview'
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
   fetchMock.mock('/api/feature/CASE_FILES', true)
+  fetchMock.mock('/api/feature/CREATE_COURT_CASE', true)
 
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
@@ -66,8 +67,8 @@ describe('/domari-krafa with an ID', () => {
     )
 
     // Assert
-    expect(await screen.findByText('B - Einangrun.')).toBeInTheDocument()
-    expect(await screen.findByText('E - Fjölmiðlabann.')).toBeInTheDocument()
+    expect(await screen.findByText('B - Einangrun')).toBeInTheDocument()
+    expect(await screen.findByText('E - Fjölmiðlabann')).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
