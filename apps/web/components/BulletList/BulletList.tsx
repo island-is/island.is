@@ -46,7 +46,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
             <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
               <Link href={bullet.url}>
-                <Button variant="text" icon="arrowForward">
+                <Button as="span" variant="text" icon="arrowForward">
                   {bullet.linkText}
                 </Button>
               </Link>
