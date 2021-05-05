@@ -299,6 +299,31 @@ describe('Validation', () => {
       expect(validation.isValid).toEqual(true)
     })
   })
+
+  describe('Validate phonenumber format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const phonenumber = '00292'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Dæmi: 555-5555')
+    })
+
+    test('should pass if in correct form', () => {
+      // Arrange
+      const phonenumber = '555-5555'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    })
+  })
 })
 
 describe('Step helper', () => {
