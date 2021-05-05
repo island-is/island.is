@@ -1,4 +1,4 @@
-# Contentful extension for Miðeind machine translations
+# Contentful Extension for Miðeind Machine Translations
 
 This is the Contentful extension responsible for automatic translations of articles from Icelandic to English.
 ![image](https://user-images.githubusercontent.com/77672665/117131050-6f5a0b00-ad90-11eb-8483-da5dbadd6929.png)
