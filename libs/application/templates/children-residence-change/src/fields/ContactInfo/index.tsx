@@ -54,7 +54,10 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
       </Text>
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['1/1', '1/1', '2/3']} paddingBottom={[2, 2, 0]}>
+          <GridColumn
+            span={['1/1', '1/2', '1/1', '2/3']}
+            paddingBottom={[2, 0, 2, 0]}
+          >
             <InputController
               id={emailId}
               name={emailId}
@@ -70,7 +73,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               }}
             />
           </GridColumn>
-          <GridColumn span={['1/1', '1/1', '1/3']}>
+          <GridColumn span={['1/1', '1/2', '1/1', '1/3']}>
             <InputController
               id={phoneNumberId}
               name={phoneNumberId}
@@ -103,7 +106,10 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
       </Box>
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['1/1', '1/1', '2/3']} paddingBottom={[2, 2, 0]}>
+          <GridColumn
+            span={['1/1', '1/2', '1/1', '2/3']}
+            paddingBottom={[2, 0, 2, 0]}
+          >
             <InputController
               id={counterPartyEmail}
               name={counterPartyEmail}
@@ -117,7 +123,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
               }}
             />
           </GridColumn>
-          <GridColumn span={['1/1', '1/1', '1/3']}>
+          <GridColumn span={['1/1', '1/2', '1/1', '1/3']}>
             <InputController
               id={counterPartyPhoneNumber}
               name={counterPartyPhoneNumber}
