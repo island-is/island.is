@@ -185,6 +185,13 @@ export const JudgeOverview: React.FC = () => {
                   Málsnúmer héraðsdóms
                 </Text>
               </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn
+                  málsnúmer sem er þegar til í Auði. Athugið að gögn verða
+                  sjálfkrafa vistuð á það málsnúmer sem slegið er inn.
+                </Text>
+              </Box>
               <BlueBox>
                 <div className={styles.createCourtCaseContainer}>
                   <Box display="flex">
