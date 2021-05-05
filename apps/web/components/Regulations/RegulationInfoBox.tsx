@@ -109,7 +109,10 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               window.print()
             }}
           >
-            {txt('printThisVersion', 'Prenta þessa útgáfu')}
+            {
+              // TODO: Incorporte this key into namespace once this part of the UI is final
+              txt('printThisVersion', 'Prenta þessa útgáfu')
+            }
           </Button>
         </Text>
 
@@ -123,7 +126,10 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               navigator.clipboard.writeText(document.location.href)
             }}
           >
-            {txt('copyLink', 'Afrita hlekk á reglugerð')}
+            {
+              // TODO: Incorporte this key into namespace once this part of the UI is final
+              txt('copyLink', 'Afrita hlekk á reglugerð')
+            }
           </Button>
           {showCopyCheckmark && ' ✔'}
         </Text>
