@@ -86,7 +86,7 @@ export class ApplicationService {
 
   /**
    * A function to pass to data providers / template api modules to be able to
-   * query applicaons of their respective type in order to infer some data to
+   * query applications of their respective type in order to infer some data to
    * use in an application
    *
    * @param templateTypeId The id of the template to restrict the query to
