@@ -91,6 +91,13 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
       <Text marginTop={5} variant="h4">
         {selectedChildren[0].otherParent.fullName}
       </Text>
+      <Box marginTop={2}>
+        <InfoBanner>
+          <Text variant="small">
+            {formatMessage(contactInfo.counterParty.info)}
+          </Text>
+        </InfoBanner>
+      </Box>
       <GridContainer>
         <GridRow marginTop={2}>
           <GridColumn span={['1/1', '1/1', '1/2']} paddingBottom={[2, 2, 0]}>
@@ -124,13 +131,6 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      <Box marginTop={3}>
-        <InfoBanner>
-          <Text variant="small">
-            {formatMessage(contactInfo.counterParty.info)}
-          </Text>
-        </InfoBanner>
-      </Box>
     </>
   )
 }
