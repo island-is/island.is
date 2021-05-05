@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import Link, { LinkProps } from 'next/link'
+import { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
@@ -17,7 +17,6 @@ import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.treat'
-import { theme } from '@island.is/island-ui/theme'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -92,43 +91,39 @@ export const Card = ({
       <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
         <Stack space={1}>
           {!!subTitle && (
-            <Text
-              as="h4"
-              variant="small"
-              fontWeight="semiBold"
-              color={titleColor}
-            >
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  {subTitle}
-                </Box>
-              </Box>
-            </Text>
-          )}
-          <Text as="h3" variant="h3" color={titleColor}>
             <Box display="flex" flexDirection="row" alignItems="center">
               <Box display="inlineFlex" flexGrow={1}>
-                {title}
+                <Text
+                  as="h4"
+                  variant="small"
+                  fontWeight="semiBold"
+                  color={titleColor}
+                >
+                  {subTitle}
+                </Text>
               </Box>
             </Box>
-          </Text>
+          )}
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              <Text as="h3" variant="h3" color={titleColor}>
+                {title}
+              </Text>
+            </Box>
+          </Box>
           {description && <Text>{description}</Text>}
           {tags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
-                {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
+                {tags.map(({ title, ...props }: CardTagsProps, index) => {
                   const tagProps = {
                     ...tagPropsDefaults,
                     ...props.tagProps,
                     variant: tagVariant,
                   }
 
-                  return href ? (
-                    <Link key={index} {...link}>
-                      <Tag {...tagProps}>{title}</Tag>
-                    </Link>
-                  ) : (
-                    <Tag key={index} {...tagProps}>
+                  return (
+                    <Tag key={index} {...tagProps} disabled>
                       {title}
                     </Tag>
                   )

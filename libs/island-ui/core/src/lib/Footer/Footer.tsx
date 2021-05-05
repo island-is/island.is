@@ -110,8 +110,8 @@ export const Footer = ({
                             icon={isInternalLink ? 'arrowForward' : undefined}
                             iconType={isInternalLink ? 'filled' : undefined}
                             size="default"
-                            type="button"
                             variant="text"
+                            as="span"
                           >
                             {title}
                           </Button>
@@ -219,9 +219,21 @@ export const Footer = ({
                   <Inline space={2}>
                     {tagLinks.map(({ title, href }, index) => {
                       return (
-                        <Link key={index} href={href} skipTab>
-                          <Tag variant="white">{title}</Tag>
-                        </Link>
+                        <Tag
+                          key={index}
+                          variant="white"
+                          {...(href && href.startsWith('/')
+                            ? {
+                                CustomLink: ({ children, ...props }) => (
+                                  <Link key={title} {...props} href={href}>
+                                    {children}
+                                  </Link>
+                                ),
+                              }
+                            : { href })}
+                        >
+                          {title}
+                        </Tag>
                       )
                     })}
                   </Inline>
@@ -301,7 +313,7 @@ const defaultTopLinksContact = [
   },
   {
     title: 'Sími: 426 5500',
-    href: 'tel: +3544265500',
+    href: 'tel:+3544265500',
   },
 ]
 

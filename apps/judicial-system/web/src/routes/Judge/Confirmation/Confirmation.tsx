@@ -47,13 +47,11 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -69,6 +67,7 @@ import {
 import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface SigningModalProps {
   workingCase: Case
@@ -276,6 +275,7 @@ export const Confirmation: React.FC = () => {
   ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
+  const { updateCase, isUpdatingCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -283,25 +283,6 @@ export const Confirmation: React.FC = () => {
   const { isValidTime: isValidCourtEndTime } = useDateTime({
     time: getTimeFromDate(workingCase?.courtEndTime),
   })
-
-  const [updateCaseMutation, { loading: isUpdating }] = useMutation(
-    UpdateCaseMutation,
-  )
-
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -607,7 +588,7 @@ export const Confirmation: React.FC = () => {
               <PdfButton
                 caseId={workingCase.id}
                 title="Opna PDF þingbók og úrskurð"
-                disabled={isUpdating}
+                disabled={isUpdatingCase}
                 pdfType="ruling"
               />
             </Box>
@@ -617,9 +598,9 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
+              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdatingCase}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdating}
+              nextIsLoading={isRequestingSignature || isUpdatingCase}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id
