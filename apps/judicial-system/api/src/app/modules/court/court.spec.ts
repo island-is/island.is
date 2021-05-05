@@ -21,7 +21,7 @@ function expectReceivalDate(receivalDate: string) {
   const date = new Date()
   const today = formatISO(date, { representation: 'date' })
   date.setDate(date.getDate() - 1)
-  const yesterday = formatISO(new Date(), { representation: 'date' })
+  const yesterday = formatISO(date, { representation: 'date' })
   expect(receivalDate === today || receivalDate === yesterday).toBe(true)
 }
 
