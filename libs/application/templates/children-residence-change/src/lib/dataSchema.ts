@@ -76,7 +76,7 @@ export const dataSchema = z.object({
       path: ['date'],
     }),
   acceptContract: z.enum(['accept', 'reject']).refine((v) => v, {
-    params: error.validation.durationType,
+    params: error.validation.acceptContract,
   }),
 })
 
