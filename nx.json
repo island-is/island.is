@@ -97,6 +97,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-finance": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
