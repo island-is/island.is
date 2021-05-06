@@ -89,7 +89,7 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
           </Box>
         )
       })}
-      <Text variant="h5" marginTop={3} marginBottom={3}>
+      <Text variant="h5" marginBottom={3}>
         {formatMessage(project.general.pageTitle)}
       </Text>
       <ValueLine title={project.labels.title} value={projectAnswer.title} />
@@ -98,10 +98,19 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
         title={project.labels.years}
         value={projectAnswer.refundableYears}
       />
-      <ValueLine
-        title={project.labels.attachments}
-        value={projectAnswer.attachments[0]?.name}
-      />
+      <Text variant="h5" marginBottom={1}>
+        {formatMessage(project.labels.attachments)}
+      </Text>
+      {projectAnswer.attachments.map((attachment) => {
+        return (
+          <>
+            <Text>{attachment.name}</Text>
+            <Box paddingY={3}>
+              <Divider />
+            </Box>
+          </>
+        )
+      })}
     </>
   )
 }
