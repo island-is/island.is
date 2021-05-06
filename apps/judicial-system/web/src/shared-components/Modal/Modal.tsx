@@ -60,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({
             </button>
           </Box>
         )}
-        <Box marginBottom={4}>
+        <Box marginBottom={3}>
           <Text variant="h1">{title}</Text>
         </Box>
         <Box marginBottom={6} className={styles.breakSpaces}>

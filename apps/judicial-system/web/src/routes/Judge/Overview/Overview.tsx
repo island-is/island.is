@@ -43,7 +43,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
@@ -51,6 +50,8 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/shared-compon
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import ConclusionDraft from './Components/ConclusionDraft'
+import { AnimatePresence } from 'framer-motion'
 
 export const JudgeOverview: React.FC = () => {
   const [
@@ -58,7 +59,8 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [modalVisible, setModalVisible] = useState<boolean>()
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
+  const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
   const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
     false,
   )
@@ -68,27 +70,19 @@ export const JudgeOverview: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCustodyCourtCase } = useCase()
+  const {
+    updateCase,
+    createCustodyCourtCase,
+    creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
+  } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const handleSetCaseNrManuallyClick = () => {
-    if (workingCase) {
-      setAndSendToServer(
-        'setCourtCaseNumberManually',
-        true,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
-      setModalVisible(true)
-      setCourtCaseNumberErrorMessage('')
-    }
-  }
 
   useEffect(() => {
     const transitionCase = async (theCase: Case) => {
@@ -126,8 +120,9 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     const tryToShowFeature = (theCase: Case) => {
       setShowCreateCustodyCourtCase(
-        theCase.type === CaseType.CUSTODY &&
-          features.includes(Feature.CREATE_CUSTODY_COURT_CASE),
+        features.includes(Feature.CREATE_COURT_CASE) ||
+          (theCase.type === CaseType.CUSTODY &&
+            features.includes(Feature.CREATE_CUSTODY_COURT_CASE)),
       )
     }
 
@@ -145,6 +140,26 @@ export const JudgeOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  const handleClick = (workingCase: Case) => {
+    if (features.includes(Feature.CREATE_COURT_CASE)) {
+      createCourtCase(
+        workingCase,
+        setWorkingCase,
+        setCourtCaseNumberErrorMessage,
+      )
+    } else {
+      createCustodyCourtCase(
+        workingCase,
+        setWorkingCase,
+        setCourtCaseNumberErrorMessage,
+      )
+    }
+
+    if (courtCaseNumberErrorMessage === '') {
+      setCreateCaseSuccess(true)
+    }
+  }
 
   return (
     <PageLayout
@@ -171,69 +186,58 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={6}>
               <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
+                <Text as="h2" variant="h3">
                   Málsnúmer héraðsdóms
+                </Text>
+              </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn
+                  málsnúmer sem er þegar til í Auði. Athugið að gögn verða
+                  sjálfkrafa vistuð á það málsnúmer sem slegið er inn.
                 </Text>
               </Box>
               <BlueBox>
                 <div className={styles.createCourtCaseContainer}>
                   <Box display="flex">
-                    {showCreateCustodyCourtCase &&
-                      !workingCase.setCourtCaseNumberManually && (
-                        <div className={styles.createCourtCaseButton}>
-                          <Button
-                            size="small"
-                            onClick={() =>
-                              createCourtCase(
-                                workingCase,
-                                setWorkingCase,
-                                setCourtCaseNumberErrorMessage,
-                              )
-                            }
-                            loading={creatingCustodyCourtCase}
-                            disabled={!!workingCase.courtCaseNumber}
-                            fluid
-                          >
-                            Stofna nýtt mál
-                          </Button>
-                        </div>
-                      )}
+                    {showCreateCustodyCourtCase && (
+                      <div className={styles.createCourtCaseButton}>
+                        <Button
+                          size="small"
+                          onClick={() => handleClick(workingCase)}
+                          loading={
+                            creatingCourtCase || creatingCustodyCourtCase
+                          }
+                          disabled={Boolean(workingCase.courtCaseNumber)}
+                          fluid
+                        >
+                          Stofna nýtt mál
+                        </Button>
+                      </div>
+                    )}
                     <div className={styles.createCourtCaseInput}>
                       <Input
                         data-testid="courtCaseNumber"
                         name="courtCaseNumber"
                         label="Mál nr."
-                        placeholder={
-                          !showCreateCustodyCourtCase ||
-                          workingCase.setCourtCaseNumberManually
-                            ? 'R-X/ÁÁÁÁ'
-                            : 'Málsnúmer birtist hér með því að smella á stofna mál'
-                        }
+                        placeholder="R-X/ÁÁÁÁ"
                         size="sm"
-                        backgroundColor={
-                          !showCreateCustodyCourtCase ||
-                          workingCase.setCourtCaseNumberManually
-                            ? 'white'
-                            : 'blue'
-                        }
+                        backgroundColor="white"
                         value={workingCase.courtCaseNumber || ''}
                         icon={
                           workingCase.courtCaseNumber &&
-                          showCreateCustodyCourtCase &&
-                          !workingCase.setCourtCaseNumberManually
+                          createCaseSuccess &&
+                          showCreateCustodyCourtCase
                             ? 'checkmark'
                             : undefined
-                        }
-                        disabled={
-                          showCreateCustodyCourtCase &&
-                          !workingCase.setCourtCaseNumberManually
                         }
                         errorMessage={courtCaseNumberErrorMessage}
                         hasError={
                           !creatingCustodyCourtCase &&
                           courtCaseNumberErrorMessage !== ''
                         }
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          setCreateCaseSuccess(false)
                           removeTabsValidateAndSet(
                             'courtCaseNumber',
                             event,
@@ -243,7 +247,7 @@ export const JudgeOverview: React.FC = () => {
                             courtCaseNumberErrorMessage,
                             setCourtCaseNumberErrorMessage,
                           )
-                        }
+                        }}
                         onBlur={(event) => {
                           validateAndSendToServer(
                             'courtCaseNumber',
@@ -256,29 +260,8 @@ export const JudgeOverview: React.FC = () => {
                         }}
                         required
                       />
-                      {showCreateCustodyCourtCase &&
-                        workingCase.setCourtCaseNumberManually && (
-                          <Box marginTop={1}>
-                            <Text variant="eyebrow" color="blue400">
-                              Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
-                              málsnúmer sem slegið er inn
-                            </Text>
-                          </Box>
-                        )}
                     </div>
                   </Box>
-                  {showCreateCustodyCourtCase &&
-                    !workingCase.setCourtCaseNumberManually && (
-                      <div className={styles.enterCaseNrManuallyButton}>
-                        <Button
-                          variant="text"
-                          type="button"
-                          onClick={handleSetCaseNrManuallyClick}
-                        >
-                          Slá inn málsnúmer sem þegar er til í Auði
-                        </Button>
-                      </div>
-                    )}
                 </div>
               </BlueBox>
             </Box>
@@ -337,13 +320,14 @@ export const JudgeOverview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
             <Box marginBottom={5}>
               <Box marginBottom={9}>
                 <Box marginBottom={2}>
-                  <Text variant="h3" as="h3">
+                  <Text variant="h3" as="h2">
                     Dómkröfur
                   </Text>
                 </Box>
@@ -352,7 +336,7 @@ export const JudgeOverview: React.FC = () => {
               <div className={styles.infoSection}>
                 <Box marginBottom={6} data-testid="lawsBroken">
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       Lagaákvæði sem brot varða við
                     </Text>
                   </Box>
@@ -364,7 +348,7 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
                 <Box data-testid="custodyProvisions">
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       Lagaákvæði sem krafan er byggð á
                     </Text>
                   </Box>
@@ -384,7 +368,7 @@ export const JudgeOverview: React.FC = () => {
                 data-testid="custodyRestrictions"
               >
                 <Box marginBottom={1}>
-                  <Text variant="h3" as="h3">
+                  <Text variant="h3" as="h2">
                     {`Takmarkanir og tilhögun ${
                       workingCase.type === CaseType.CUSTODY
                         ? 'gæslu'
@@ -409,7 +393,7 @@ export const JudgeOverview: React.FC = () => {
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>
-                    <Text variant="h3" as="h3">
+                    <Text variant="h3" as="h2">
                       Greinargerð um málsatvik og lagarök
                     </Text>
                   </Box>
@@ -446,7 +430,7 @@ export const JudgeOverview: React.FC = () => {
               {(workingCase.comments || workingCase.caseFilesComments) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={2}>
-                    <Text variant="h3" as="h3">
+                    <Text variant="h3" as="h2">
                       Athugasemdir
                     </Text>
                   </Box>
@@ -485,7 +469,7 @@ export const JudgeOverview: React.FC = () => {
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       {`Rannsóknargögn (${
                         workingCase.files ? workingCase.files.length : 0
                       })`}
@@ -501,11 +485,21 @@ export const JudgeOverview: React.FC = () => {
                   />
                 </div>
               )}
-              <PdfButton
-                caseId={workingCase.id}
-                title="Opna PDF kröfu"
-                pdfType="request"
-              />
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title="Opna PDF kröfu"
+                  pdfType="request"
+                />
+              </Box>
+              <Button
+                variant="ghost"
+                icon="pencil"
+                size="small"
+                onClick={() => setIsDraftingConclusion(true)}
+              >
+                Skrifa drög að niðurstöðu
+              </Button>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
@@ -520,16 +514,21 @@ export const JudgeOverview: React.FC = () => {
               ])}
             />
           </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title="Slá inn málsnúmer"
-              text="Athugið að gögn verða sjálfkrafa vistuð og uppfærð á það málsnúmer sem slegið er inn."
-              handlePrimaryButtonClick={() => {
-                setModalVisible(false)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
+          <AnimatePresence>
+            {isDraftingConclusion && (
+              <Modal
+                title="Skrifa drög að niðurstöðu"
+                text={
+                  <ConclusionDraft
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                }
+                primaryButtonText="Loka glugga"
+                handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
+              />
+            )}
+          </AnimatePresence>
         </>
       ) : null}
     </PageLayout>
