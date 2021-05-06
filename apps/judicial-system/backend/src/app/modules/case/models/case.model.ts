@@ -232,13 +232,6 @@ export class Case extends Model<Case> {
   prosecutor: User
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  setCourtCaseNumberManually: boolean
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
