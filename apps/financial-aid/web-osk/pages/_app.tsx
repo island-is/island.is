@@ -4,14 +4,19 @@ import { ApolloProvider } from '@apollo/client'
 import React from 'react'
 import { Header } from '../src/components'
 import { client } from '../graphql'
+import { FormProvider  } from '../src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+
+import '../src/styles.css'
+
 
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
-
+// WIP Provider FormProvider
     return (
       <ApolloProvider client={client}>
+        <FormProvider>
         <Header />
         <Component {...pageProps} />
         <style jsx global>{`
@@ -71,6 +76,7 @@ class FinancialAidApplication extends App<AppProps> {
                 format('woff');
           }
         `}</style>
+        </FormProvider>
       </ApolloProvider>
     )
   }
