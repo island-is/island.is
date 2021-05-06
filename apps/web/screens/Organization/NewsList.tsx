@@ -47,10 +47,6 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 const PERPAGE = 10
 
-export const NEWS_TAGS = {
-  syslumenn: '4NSgagYZi1GJphg8gCylq6',
-}
-
 interface NewsListProps {
   organizationPage: Query['getOrganizationPage']
   newsList: GetNewsQuery['getNews']['items']
@@ -327,12 +323,21 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = (query.tag as string) ?? NEWS_TAGS[query.slug as string]
-
+  const organizationPage = (
+    await Promise.resolve(
+      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+        query: GET_ORGANIZATION_PAGE_QUERY,
+        variables: {
+          input: {
+            slug: query.slug as string,
+            lang: locale as ContentLanguage,
+          },
+        },
+      }),
+    )
+  ).data.getOrganizationPage
+  const tag = organizationPage.newsTag ? organizationPage.newsTag.id : ''
   const [
-    {
-      data: { getOrganizationPage },
-    },
     {
       data: { getNewsDates: newsDatesList },
     },
@@ -343,15 +348,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
       query: GET_NEWS_DATES_QUERY,
       variables: {
@@ -390,11 +386,11 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+  const lightTheme = lightThemes.includes(organizationPage.theme)
 
   return {
-    organizationPage: getOrganizationPage,
-    newsList: NEWS_TAGS[query.slug as string] ? newsList : [],
+    organizationPage: organizationPage,
+    newsList: organizationPage.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,
