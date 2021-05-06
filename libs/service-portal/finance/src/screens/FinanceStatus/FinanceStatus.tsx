@@ -1,12 +1,25 @@
 import React from 'react'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 
 import { Box, Text, Columns, Column, Button, DropdownMenu, } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-function FinanceStatus(): JSX.Element {
-  useNamespaces('sp.finance-status')
+const GetFinanceStatusQuery = gql`
+  query GetFinanceStatusQuery {
+    getFinanceStatus
+  }
+`
 
+const FinanceStatus = () => {
+  useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+
+  const { data, loading } = useQuery<Query>(GetFinanceStatusQuery)
+  const financeStatusData = data?.getFinanceStatus || []
+
+  console.log({financeStatusData});
+
 
   return (
     <Box marginBottom={[6, 6, 10]}>

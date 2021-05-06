@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common'
+import { Base64 } from 'js-base64'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -26,13 +27,20 @@ export class FinanceService extends RESTDataSource {
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
+    request.headers.set(
+      'Authorization',
+      `Basic ${Base64.encode(
+        `${this.options.username}:${this.options.password}`,
+      )}`,
+    )
   }
 
   async getFinanceStatus(
     nationalId: string,
   ): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
-      `restv2/islandis/v1/customerStatusByOrganization?nationalID=${nationalId}`,
+      // `/customerStatusByOrganization?nationalID=${nationalId}`,
+      `/customerStatusByOrganization?nationalID=${process.env.FINANCE_TEST_USER}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
