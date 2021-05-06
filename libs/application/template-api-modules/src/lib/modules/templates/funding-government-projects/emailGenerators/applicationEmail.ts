@@ -44,8 +44,6 @@ export const generateApplicationEmail: ApplicationEmail = (
       )
     : []
 
-  console.log('MAIL ATTACHMENTS', mailAttachments)
-
   const overview = applicationOverviewTemplate(application)
   const body = dedent(`<h2>Yfirlit umsóknar</h2> ${overview}`)
 
