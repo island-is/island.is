@@ -51,11 +51,6 @@ export const informationAboutInstitution = {
       defaultMessage: 'Tengiliður',
       description: 'Contact',
     },
-    contacts: {
-      id: `affgp.application:section.informationAboutInstitution.contacts`,
-      defaultMessage: 'Tengiliðir',
-      description: 'Contacts',
-    },
     contactAddPerson: {
       id: `affgp.application:section.informationAboutInstitution.contactAddPerson`,
       defaultMessage: 'Bæta við tengilið',
