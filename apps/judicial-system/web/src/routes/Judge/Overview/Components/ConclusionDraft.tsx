@@ -17,7 +17,9 @@ const ConclusionDraft: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={2}>
         <Text>
-          {`Hér er hægt að skrifa drög að niðurstöðu í málinu. Endanlegur frágangur niðurstöðu og úrskurðar fer fram í þinghaldi\n\nAthugið að drögin vistast sjálfkrafa.`}
+          Hér er hægt að skrifa drög að niðurstöðu í málinu. Endanlegur
+          frágangur niðurstöðu og úrskurðar fer fram í þinghaldi. Athugið að
+          drögin vistast sjálfkrafa.
         </Text>
       </Box>
       <Box marginBottom={3}>
@@ -33,6 +35,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isRequired={false}
+        rows={12}
       />
     </>
   )

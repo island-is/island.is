@@ -11,6 +11,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
+import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
@@ -35,25 +36,11 @@ export const ParentBForm: Form = buildForm({
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
-        buildMultiField({
+        buildCustomField({
           id: 'contactInfo',
           title: m.contactInfo.general.pageTitle,
-          description: m.contactInfo.general.parentBDescription,
-          children: [
-            buildTextField({
-              id: 'parentB.email',
-              title: m.contactInfo.inputs.emailLabel,
-              variant: 'email',
-              backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'parentB.phoneNumber',
-              title: m.contactInfo.inputs.phoneNumberLabel,
-              variant: 'tel',
-              format: '###-####',
-              backgroundColor: 'blue',
-            }),
-          ],
+          childInputIds: contactInfoParentBIds,
+          component: 'ContactInfoParentB',
         }),
       ],
     }),
