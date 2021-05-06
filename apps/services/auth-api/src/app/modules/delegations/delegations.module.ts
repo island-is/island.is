@@ -4,6 +4,7 @@ import {
   DelegationsService,
   Delegation,
   DelegationScope,
+  DelegationScopeService,
 } from '@island.is/auth-api-lib'
 import { DelegationsController } from './delegations.controller'
 import { RskModule } from '@island.is/clients/rsk/v2'
@@ -15,6 +16,6 @@ import { RskConfig } from './rsk.config'
     RskModule.register(RskConfig.get()),
   ],
   controllers: [DelegationsController],
-  providers: [DelegationsService],
+  providers: [DelegationsService, DelegationScopeService],
 })
 export class DelegationsModule {}
