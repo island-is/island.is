@@ -118,7 +118,7 @@ const useCase = () => {
         // Catch all so we can set an eror message
       }
       setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+        'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
     }
   }
@@ -158,7 +158,7 @@ const useCase = () => {
       }
 
       setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+        'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
     }
   }
