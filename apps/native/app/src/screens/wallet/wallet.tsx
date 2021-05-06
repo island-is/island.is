@@ -1,4 +1,4 @@
-import { Card, ListItem } from '@island.is/island-ui-native'
+import { Card, ListItem, LicenceCard, Alert } from '@island.is/island-ui-native'
 import React from 'react'
 import { ScrollView, TouchableOpacity } from 'react-native'
 import { useQuery } from '@apollo/client'
@@ -10,7 +10,8 @@ import { useScreenOptions } from '../../contexts/theme-provider'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
-import { Logo } from '../../components/logo/logo'
+import isVerifiedLogo from '../../assets/icons/is-verified.png'
+import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
 import { ComponentRegistry } from '../../utils/navigation-registry'
 import { useIntl } from '../../utils/intl'
@@ -54,15 +55,14 @@ export const WalletScreen: NavigationFunctionComponent = () => {
     [theme],
   )
 
-
   const myLicenses = licenseItems.length
     ? [licenseItems[1], licenseItems[0], licenseItems[2], licenseItems[3]]
     : []
 
   return (
     <>
-      <ScrollView horizontal={false}>
-        <ScrollView
+      {/* <ScrollView horizontal={false}> */}
+        {/* <ScrollView
           horizontal
           snapToInterval={260 + 30}
           showsHorizontalScrollIndicator={false}
@@ -90,7 +90,13 @@ export const WalletScreen: NavigationFunctionComponent = () => {
               </TouchableOpacity>
             )
           })}
-        </ScrollView>
+        </ScrollView> */}
+
+        <Alert style={{ marginTop: 10 }} type="info" message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet." />
+        <ScrollView
+          testID={testIDs.SCREEN_HOME}
+          style={{ paddingHorizontal: 16, paddingTop: 24 }}
+        >
         {licenseItems.map(
           ({
             id,
@@ -103,11 +109,12 @@ export const WalletScreen: NavigationFunctionComponent = () => {
             serviceProvider: string
             type: LicenseType
           }) => (
-            <ListItem
+            <LicenceCard
               key={id}
-              title={serviceProvider}
-              subtitle={title}
-              icon={<Logo name={title} />}
+              title={title}
+              icon={isVerifiedLogo}
+              backgroundColor={mapLicenseColor(type)}
+              agencyLogo={agencyLogo}
               onPress={() =>
                 navigateTo(`/wallet/${id}`, {
                   backgroundColor: mapLicenseColor(type),
@@ -116,7 +123,8 @@ export const WalletScreen: NavigationFunctionComponent = () => {
             />
           ),
         )}
-      </ScrollView>
+        </ScrollView>
+      {/* </ScrollView> */}
       <BottomTabsIndicator index={2} total={3} />
     </>
   )
