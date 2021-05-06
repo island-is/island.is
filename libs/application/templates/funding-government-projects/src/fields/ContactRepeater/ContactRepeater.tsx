@@ -62,18 +62,22 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
           />
         )
       })}
-      <Text marginY={3}>
-        {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
-      </Text>
-      <Button
-        variant="ghost"
-        icon="add"
-        iconType="outline"
-        size="small"
-        onClick={handleAddContact}
-      >
-        {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
-      </Button>
+      {fields.length < 2 && (
+        <>
+          <Text marginY={3}>
+            {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
+          </Text>
+          <Button
+            variant="ghost"
+            icon="add"
+            iconType="outline"
+            size="small"
+            onClick={handleAddContact}
+          >
+            {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
+          </Button>
+        </>
+      )}
     </Box>
   )
 }
