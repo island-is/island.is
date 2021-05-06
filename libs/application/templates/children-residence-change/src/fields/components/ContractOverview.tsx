@@ -1,12 +1,12 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { CRCApplication } from '../../../types'
+import { CRCApplication } from '../../types'
 import { useIntl } from 'react-intl'
-import { childrenResidenceInfo, formatDate } from '../../..'
-import * as m from '../../../lib/messages'
-import DescriptionText from '../DescriptionText/DescriptionText'
-import TransferOverview from '../TransferOverview/TransferOverview'
-import { Roles } from '../../../lib/constants'
+import { childrenResidenceInfo, formatDate } from '../..'
+import * as m from '../../lib/messages'
+import DescriptionText from './DescriptionText'
+import TransferOverview from './TransferOverview'
+import { Roles } from '../../lib/constants'
 
 interface Props {
   application: CRCApplication
