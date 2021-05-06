@@ -4,41 +4,31 @@ import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  GetNewsQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_NEWS_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  LatestNewsSection,
   lightThemes,
   OrganizationSlice,
   OrganizationWrapper,
-  Section,
   SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
-import { QueryGetNewsArgs } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { NEWS_TAGS } from '@island.is/web/screens/Organization/NewsList'
 
 const { publicRuntimeConfig } = getConfig()
 
 interface HomeProps {
-  news: GetNewsQuery['getNews']['items']
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
+const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -76,29 +66,21 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           slice={slice}
           namespace={namespace}
           fullWidth={true}
+          organizationPageSlug={organizationPage.slug}
         />
       ))}
       sidebarContent={organizationPage.sidebarCards.map((card) => (
         <SidebarCard key={card.id} sidebarCard={card} />
       ))}
     >
-      {!!news.length && (
-        <Section
-          paddingTop={[8, 8, 6]}
-          paddingBottom={[8, 8, 6]}
-          background="purple100"
-          aria-labelledby="latestNewsTitle"
-        >
-          <LatestNewsSection
-            label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
-            labelId="latestNewsTitle"
-            items={news}
-            linkType="organizationnews"
-            overview="organizationnewsoverview"
-            parameters={[organizationPage.slug]}
-          />
-        </Section>
-      )}
+      {organizationPage.bottomSlices.map((slice) => (
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationPageSlug={organizationPage.slug}
+        />
+      ))}
     </OrganizationWrapper>
   )
 }
@@ -106,25 +88,10 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
-      data: {
-        getNews: { items: news },
-      },
-    },
-    {
       data: { getOrganizationPage },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
-      query: GET_NEWS_QUERY,
-      variables: {
-        input: {
-          size: 3,
-          lang: locale as ContentLanguage,
-          tag: NEWS_TAGS[query.slug as string] ?? '',
-        },
-      },
-    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -158,7 +125,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const lightTheme = lightThemes.includes(getOrganizationPage.theme)
 
   return {
-    news: NEWS_TAGS[query.slug as string] ? news : [],
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
