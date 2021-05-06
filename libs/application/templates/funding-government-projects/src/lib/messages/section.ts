@@ -8,7 +8,7 @@ export const section = defineMessages({
   },
   informationAboutInstitution: {
     id: `affgp.application:section.informationAboutInstitution`,
-    defaultMessage: 'Upplýsingar um stofnun',
+    defaultMessage: 'Upplýsingar',
     description: 'Definition of Information About Institution section title',
   },
   project: {
