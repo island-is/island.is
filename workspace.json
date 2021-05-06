@@ -6998,6 +6998,27 @@
           }
         }
       }
+    },
+    "clients-finance": {
+      "root": "libs/clients/finance",
+      "sourceRoot": "libs/clients/finance/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/finance/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/finance"],
+          "options": {
+            "jestConfig": "libs/clients/finance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
