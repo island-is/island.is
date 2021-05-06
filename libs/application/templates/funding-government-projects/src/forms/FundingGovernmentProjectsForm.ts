@@ -28,20 +28,14 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'definitionOfApplicant',
-      title: section.definitionOfApplicant,
+      id: 'informationAboutInstitution',
+      title: section.informationAboutInstitution,
       children: [
         buildCustomField({
           id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
           component: 'DefinitionOfApplicant',
         }),
-      ],
-    }),
-    buildSection({
-      id: 'informationAboutInstitution',
-      title: section.informationAboutInstitution,
-      children: [
         buildMultiField({
           id: 'informationAboutInstitutionMultiField',
           title:
