@@ -8,15 +8,15 @@ import {
   Configuration,
   CreateCaseApi,
   CreateCustodyCaseApi,
-  CreateDocumentApi,
-  CreateThingbokApi,
-  GetCaseSubtypesApi,
   FetchParams,
-  OpenApiApi,
   RequestContext,
-  SearchBankruptcyHistoryApi,
-  UploadStreamApi,
 } from '../../gen/fetch'
+import {
+  CourtClientService,
+  COURT_SERVICE_OPTIONS,
+} from './court-client.service'
+
+const apis = [AuthenticateApi, CreateCaseApi, CreateCustodyCaseApi]
 
 function injectAgentMiddleware(agent: Agent) {
   return async (context: RequestContext): Promise<FetchParams> => {
@@ -32,18 +32,18 @@ export interface CourtClientModuleOptions {
   clientCert: string
   clientKey: string
   clientCa: string
+  username: string
+  password: string
 }
 
 export class CourtClientModule {
   static register(options: CourtClientModuleOptions): DynamicModule {
-    const headers = {
-      'X-Road-Client': options.xRoadClient,
-    }
-
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
       basePath: options.xRoadPath,
-      headers,
+      headers: {
+        'X-Road-Client': options.xRoadClient,
+      },
       middleware: [
         {
           pre: injectAgentMiddleware(
@@ -57,26 +57,23 @@ export class CourtClientModule {
         },
       ],
     })
-
-    const exportedApis = [
-      AuthenticateApi,
-      CreateCaseApi,
-      CreateCustodyCaseApi,
-      CreateDocumentApi,
-      CreateThingbokApi,
-      GetCaseSubtypesApi,
-      OpenApiApi,
-      SearchBankruptcyHistoryApi,
-      UploadStreamApi,
-    ]
-
     return {
       module: CourtClientModule,
-      providers: exportedApis.map((Api) => ({
-        provide: Api,
-        useFactory: () => new Api(providerConfiguration),
-      })),
-      exports: exportedApis,
+      providers: [
+        ...apis.map((api) => ({
+          provide: api,
+          useFactory: () => new api(providerConfiguration),
+        })),
+        {
+          provide: COURT_SERVICE_OPTIONS,
+          useFactory: () => ({
+            username: options.username,
+            password: options.password,
+          }),
+        },
+        CourtClientService,
+      ],
+      exports: [CourtClientService],
     }
   }
 }
