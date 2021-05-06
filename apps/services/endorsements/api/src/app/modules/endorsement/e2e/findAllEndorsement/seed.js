@@ -1,0 +1,27 @@
+const {
+  getGenericEndorsementList,
+  getGenericEndorsement,
+} = require('../../../../utils/seedHelpers.js')
+
+const authNationalId = '0000000004'
+
+module.exports = {
+  authNationalId,
+  endorsementLists: [
+    {
+      ...getGenericEndorsementList(),
+      id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+      owner: authNationalId,
+    },
+  ],
+  endorsements: [
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+    },
+  ],
+}

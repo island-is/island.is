@@ -8,13 +8,16 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
+import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
 import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
+import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
+import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
@@ -24,9 +27,12 @@ export class EndorsementListController {
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
-  @BypassAuth()
   @Get()
-  async findLists(
+  @BypassAuth()
+  @Audit<FindEndorsementListByTagDto>({
+    resources: (apps) => 'apps',
+  })
+  async findByTag(
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
@@ -45,18 +51,30 @@ export class EndorsementListController {
   }
 
   @Get(':listId')
+  @ApiParam({ name: 'listId', type: 'string' })
   async findOne(
-    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.findSingleList(listId)
+    return endorsementList
   }
 
-  // TODO: Add is owner check here
   @Put(':listId/close')
+  @ApiParam({ name: 'listId', type: 'string' })
   async close(
-    @Param('listId', new ParseUUIDPipe({ version: '4' })) listId: string,
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+      IsEndorsementListOwnerValidationPipe,
+    )
+    endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.close(listId)
+    return await this.endorsementListService.close(endorsementList)
   }
 
   @Post()
@@ -64,7 +82,6 @@ export class EndorsementListController {
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    // TODO: Add auth here
     return await this.endorsementListService.create({
       ...endorsementList,
       owner: user.nationalId,

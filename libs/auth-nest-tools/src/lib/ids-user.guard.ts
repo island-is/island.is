@@ -23,6 +23,7 @@ export class IdsUserGuard extends AuthGuard('jwt') {
     context: ExecutionContext,
     status?: unknown,
   ) {
+    console.log('Isnide real guard')
     // Throws if there is an error or missing user.
     super.handleRequest(error, user, info, context, status)
 

@@ -3,6 +3,7 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
 export let app: INestApplication
 let sequelize: Sequelize

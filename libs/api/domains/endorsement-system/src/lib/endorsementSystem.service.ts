@@ -14,6 +14,7 @@ import {
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByUserRequest,
 } from '../../gen/fetch'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -32,43 +33,60 @@ const handleError = async (error: any) => {
 @Injectable()
 export class EndorsementSystemService {
   constructor(
-    private readonly endorsementApi: EndorsementApi,
-    private readonly endorsementListApi: EndorsementListApi,
+    private readonly _endorsementApi: EndorsementApi,
+    private readonly _endorsementListApi: EndorsementListApi,
   ) {}
+
+  endorsementApiWithAuth(auth: Auth) {
+    return this._endorsementApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  endorsementListApiWithAuth(auth: Auth) {
+    return this._endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   // Endorsement endpoints
   async endorsementControllerFindAll(
     input: EndorsementControllerFindAllRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementApi
+    return await this.endorsementApiWithAuth(auth)
       .endorsementControllerFindAll(input)
       .catch(handleError)
   }
 
   async endorsementControllerFindByUser(
     input: EndorsementControllerFindByUserRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementApi
+    return await this.endorsementApiWithAuth(auth)
       .endorsementControllerFindByUser(input)
       .catch(handleError)
   }
 
-  async endorsementControllerCreate(input: EndorsementControllerCreateRequest) {
-    return await this.endorsementApi
+  async endorsementControllerCreate(
+    input: EndorsementControllerCreateRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementApiWithAuth(auth)
       .endorsementControllerCreate(input)
       .catch(handleError)
   }
 
   async endorsementControllerBulkCreate(
     input: EndorsementControllerBulkCreateRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementApi
+    return await this.endorsementApiWithAuth(auth)
       .endorsementControllerBulkCreate(input)
       .catch(handleError)
   }
 
-  async endorsementControllerDelete(input: EndorsementControllerDeleteRequest) {
-    const result = await this.endorsementApi
+  async endorsementControllerDelete(
+    input: EndorsementControllerDeleteRequest,
+    auth: Auth,
+  ) {
+    const result = await this.endorsementApiWithAuth(auth)
       .endorsementControllerDelete(input)
       .catch(handleError)
     return Boolean(result)
@@ -77,38 +95,42 @@ export class EndorsementSystemService {
   // Endorsement list endpoints
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindListsRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindLists(input)
       .catch(handleError)
   }
 
-  async endorsementListControllerFindEndorsements() {
-    return await this.endorsementListApi
+  async endorsementListControllerFindEndorsements(auth: Auth) {
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements()
       .catch(handleError)
   }
 
   async endorsementListControllerFindOne(
     input: EndorsementListControllerFindOneRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindOne(input)
       .catch(handleError)
   }
 
   async endorsementListControllerClose(
     input: EndorsementListControllerCloseRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerClose(input)
       .catch(handleError)
   }
 
   async endorsementListControllerCreate(
     endorsementList: EndorsementListControllerCreateRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerCreate(endorsementList)
       .catch(handleError)
   }
