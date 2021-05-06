@@ -30,7 +30,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   } = props
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'organizationOrInstitutionName',
   )
 
   const subject = `Umsókn frá ${institutionName}`
@@ -43,6 +43,8 @@ export const generateApplicationEmail: ApplicationEmail = (
           } as NodemailAttachment),
       )
     : []
+
+  console.log('MAIL ATTACHMENTS', mailAttachments)
 
   const overview = applicationOverviewTemplate(application)
   const body = dedent(`<h2>Yfirlit umsóknar</h2> ${overview}`)
