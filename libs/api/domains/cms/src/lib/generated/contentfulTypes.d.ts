@@ -701,6 +701,9 @@ export interface IFeaturedArticlesFields {
 
   /** Application Label */
   applicationLabel: string
+
+  /** Organization */
+  organization?: IOrganization | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {

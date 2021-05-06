@@ -78,6 +78,7 @@ import { Auction } from './models/auction.model'
 import { GetAuctionInput } from './dto/getAuction.input'
 import { Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
+import { FeaturedArticles } from './models/featuredArticles.model'
 
 const { cacheTime } = environment
 
@@ -437,6 +438,21 @@ export class LatestNewsSliceResolver {
       input,
     )
     return newsList.items
+  }
+}
+
+@Resolver(() => FeaturedArticles)
+export class FeaturedArticlesResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [Article])
+  async articles(
+    @Parent() { articles: input }: FeaturedArticles,
+  ): Promise<Article[]> {
+    return await this.cmsElasticsearchService.getArticles(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 }
 
