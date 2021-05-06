@@ -10,6 +10,7 @@ import {
   DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
+import { Logo } from '../assets/Logo'
 import {
   section,
   application,
@@ -26,6 +27,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
   title: application.name,
   mode: FormModes.APPLYING,
+  logo: Logo,
   children: [
     buildSection({
       id: 'informationAboutInstitution',
