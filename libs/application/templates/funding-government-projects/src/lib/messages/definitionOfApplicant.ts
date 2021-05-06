@@ -4,7 +4,7 @@ export const definitionOfApplicant = {
   general: defineMessages({
     pageTitle: {
       id: `affgp.application:section.definitionOfApplicant.pageTitle`,
-      defaultMessage: 'Upplýsingar',
+      defaultMessage: 'Skilgreining',
       description: 'Definition of applicant section title',
     },
     bulletOne: {
