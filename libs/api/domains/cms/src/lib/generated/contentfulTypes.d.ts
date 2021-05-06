@@ -1893,7 +1893,15 @@ export interface IOrganizationPageFields {
       )[]
     | undefined
 
-  /** Menu Links */
+  /** Bottom slices */
+  bottomSlices?:
+    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
   menuLinks?: ILinkGroup[] | undefined
 
   /** Secondary Menu */
