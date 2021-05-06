@@ -16,6 +16,7 @@ import WebView from 'react-native-webview'
 import { authStore } from '../../stores/auth-store'
 import { useState } from 'react'
 import { useNavigationComponentDidAppear, useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
+import { View } from 'react-native'
 
 const Header = styled.View`
   margin-left: 16px;
@@ -81,10 +82,20 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
   })
-  const docRes = useQuery<ListDocumentsResponse>(GET_DOCUMENT_QUERY, {
+  const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
-  })
-  const Document = res.data?.listDocuments?.find(d => d.id === props.docId);
+    variables: {
+      input: {
+        id: props.docId,
+      }
+    }
+  });
+
+  const Document = {
+    ...docRes.data?.getDocument || {},
+    ...res.data?.listDocuments?.find(d => d.id === props.docId) || {},
+  };
+
   const [visible, setVisible] = useState(false);
 
   useNavigationComponentDidAppear(() => {
@@ -95,10 +106,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
     setVisible(false);
   })
 
-
-  if (!Document) {
+  if (!Document.id) {
     return null
   }
+
+  console.log({ Document });
 
   return (
     <>
@@ -117,9 +129,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
         </Row>
         <Message>{Document.subject}</Message>
       </Header>
+      <View style={{
+        flex: 1,
+        backgroundColor: '#F2F2F6'
+      }}>
       {visible && <WebView
         source={{
-          uri: Document.url,
+          uri: Document.url!,
           headers:{
             'content-type': 'application/x-www-form-urlencoded',
           },
@@ -127,11 +143,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
           method: 'POST'
         }}
       />}
-      {/* <PDFReader
-        source={{
-          base64: `data:application/pdf;base64,${res.data?.Document?.content!}`,
-        }}
-      /> */}
+      </View>
       <Bottom pointerEvents="box-none">
         <Button title="Vista eða Senda" onPress={() => {
           Share.share({ title: Document.subject, url: `data:application/pdf;base64,${Document?.content!}` }, {

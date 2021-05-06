@@ -28,12 +28,14 @@ export function BottomTabsIndicator({
       }}
     >
       <View
-        style={{
-          width: `${(1 / total) * 100}%`,
-          height: 1,
-          backgroundColor: theme.color.blue200,
-          marginLeft: `${(1 / total) * index * 100}%`,
-        }}
+        style={
+          {
+            width: `${(1 / total) * 100}%`,
+            height: 1,
+            backgroundColor: theme.color.blue200,
+            marginLeft: `${(1 / total) * index * 100}%`,
+          }
+        }
       />
     </View>
   )

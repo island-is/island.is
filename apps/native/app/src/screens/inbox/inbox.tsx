@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
-import { RefreshControl, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { RefreshControl } from 'react-native'
 import { ListItem } from '@island.is/island-ui-native'
 import { navigateTo } from '../../utils/deep-linking'
 import { useQuery } from '@apollo/client'
@@ -15,11 +15,16 @@ import {
 } from '../../graphql/queries/list-documents.query'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { ComponentRegistry } from '../../utils/navigation-registry'
-import { useIntl } from '../../utils/intl'
 import { useTranslatedTitle } from '../../utils/use-translated-title'
 import { FlatList } from 'react-native'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import { TouchableHighlight } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { SearchBar } from '../../components/search-bar/search-bar'
+
+interface IndexedDocument extends IDocument {
+  fulltext: string;
+}
 
 export const InboxScreen: NavigationFunctionComponent = () => {
   const theme = useTheme()
@@ -40,14 +45,8 @@ export const InboxScreen: NavigationFunctionComponent = () => {
   );
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
-  const inboxItems = res?.data?.listDocuments ?? []
-
-  const onRefresh = useCallback(() => {
-    setLoading(true)
-    Promise.all([
-      new Promise((r) => setTimeout(r, 1000)),
-    ]).then(() => setLoading(false))
-  }, [res]);
+  const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([]);
+  const [inboxItems, setInboxItems] = useState<IDocument[]>([]);
 
   const renderInboxItem = useCallback(({ item }: { item: IDocument }) => {
     return (
@@ -65,15 +64,74 @@ export const InboxScreen: NavigationFunctionComponent = () => {
     );
   }, []);
 
+  const [query, setQuery] = useState('');
+
+  const onSearch = () => {
+    const q = query.toLocaleLowerCase().trim()
+    if (q !== '') {
+      setInboxItems(indexedItems.filter(item => item.fulltext.includes(q)));
+    } else {
+      setInboxItems(indexedItems);
+    }
+  }
+
+  useEffect(() => {
+    const items = res?.data?.listDocuments ?? [];
+    const indexedItems = items.map(item => ({
+      ...item,
+      fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`
+    }));
+    setIndexedItems(indexedItems);
+    setInboxItems(indexedItems);
+  }, [res.data]);
+
+  // useEffect(() => {
+  //   const q = query.toLocaleLowerCase().trim()
+  //   if (q !== '') {
+  //     setInboxItems(indexedItems.filter(item => item.fulltext.includes(q)));
+  //   } else {
+  //     setInboxItems(indexedItems);
+  //   }
+  // }, [indexedItems, query])
+
+
+  console.log(indexedItems, inboxItems, res);
+
   return (
     <>
+      <SafeAreaView style={{ marginHorizontal: 16, marginVertical: 8 }}>
+        <SearchBar
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Finndu skjal"
+          onSearchPress={onSearch}
+          returnKeyType="search"
+          onSubmitEditing={onSearch}
+          onCancelPress={() => {
+            setQuery('');
+            setInboxItems(indexedItems);
+          }}
+        />
+      </SafeAreaView>
       <FlatList
         style={{ marginHorizontal: 0, flex: 1 }}
         data={inboxItems}
         keyExtractor={(item: any) => item.id}
         renderItem={renderInboxItem}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={loading} onRefresh={() => {
+            setLoading(true);
+            try {
+              res?.refetch?.()?.then(() => {
+                setLoading(false);
+              }).catch(err => {
+                setLoading(false);
+              })
+            } catch (err) {
+              // noop
+              setLoading(false);
+            }
+          }} />
         }
       />
       <BottomTabsIndicator index={0} total={3} />

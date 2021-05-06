@@ -25,8 +25,8 @@ export const is = {
   "onboarding.biometrics.type.fingerprint": "fingrafar",
   "onboarding.biometrics.type.iris": "augnskanna",
   // settings
-  "settings.screenTitle": "Stillingar",
-  "settings.tabs.preferences": "Virkni",
+  "settings.screenTitle": "Notandi",
+  "settings.tabs.preferences": "Stillingar",
   "settings.tabs.personalInfo": "Persónuupplýsingar",
   "settings.accessibilityLayout.groupTitle": "Útlit og aðgengi",
   "settings.accessibilityLayout.language": "Tungumál",
@@ -80,8 +80,8 @@ export const en: TranslatedMessages = {
   "onboarding.biometrics.type.fingerprint": "fingerprint",
   "onboarding.biometrics.type.iris": "iris scanner",
   // settings
-  "settings.screenTitle": "Settings",
-  "settings.tabs.preferences": "Preferences",
+  "settings.screenTitle": "User",
+  "settings.tabs.preferences": "Settings",
   "settings.tabs.personalInfo": "Personal info",
   "settings.accessibilityLayout.groupTitle": "Layout and accessibility",
   "settings.accessibilityLayout.language": "Language",

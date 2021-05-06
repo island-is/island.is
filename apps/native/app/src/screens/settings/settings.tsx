@@ -4,6 +4,7 @@ import {
   Switch,
   View,
   TouchableHighlight,
+  ActivityIndicator,
 } from 'react-native'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
@@ -77,11 +78,11 @@ function formatNationalId(str: string = '') {
 export const SettingsScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
   const intl = useIntl()
-  const [tab, setTab] = useState(0)
   const theme = useTheme()
   const { locale, setLocale, appearanceMode, setAppearanceMode } = usePreferencesStore()
 
   // switch states
+  const [tab, setTab] = useState(0)
   const [darkMode, setDarkMode] = useState(appearanceMode === 'dark');
   const [notificationsNewDocuments, setNotificationsNewDocuments] = useState(
     false,
@@ -106,16 +107,16 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
     })
   }
 
-  const onLocalePress = () => {
-    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US')
-  }
-
   useEffect(() => {
-    setAppearanceMode(darkMode ? 'dark' : 'light');
+    const updatedMode = darkMode ? 'dark' : 'light';
+    if (appearanceMode !== updatedMode) {
+      setAppearanceMode(updatedMode);
+    }
   }, [darkMode]);
 
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client });
   const natRegData = natRegRes?.data?.nationalRegistryUser || {};
+  const isLoading = natRegRes.loading;
 
   return (
     <View
@@ -124,112 +125,120 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
       }}
       testID={testIDs.SCREEN_USER}
     >
-      <TabBar
-        values={[
-          intl.formatMessage({ id: 'settings.tabs.preferences' }),
-          intl.formatMessage({ id: 'settings.tabs.personalInfo' })
-        ]}
-        onChange={(selectedIndex) => setTab(selectedIndex)}
-        selectedIndex={tab}
-      />
-      {tab === 0 ? (
-        <ScrollView style={{ flex: 1, paddingTop: 32 }}>
-          <TableViewGroup
-            header={intl.formatMessage({
-              id: 'settings.communication.groupTitle',
-            })}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.newDocumentsNotifications',
-              })}
-              accessory={
-                <Switch
-                  onValueChange={setNotificationsNewDocuments}
-                  value={notificationsNewDocuments}
-                />
-              }
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.appUpdatesNotifications',
-              })}
-              accessory={<Switch onValueChange={() => {}} value={false} />}
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.applicationsNotifications',
-              })}
-              accessory={<Switch onValueChange={() => {}} value={false} />}
-            />
-          </TableViewGroup>
-          <TableViewGroup
-            header={intl.formatMessage({
-              id: 'settings.accessibilityLayout.groupTitle',
-            })}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.darkMode',
-              })}
-              accessory={<Switch onValueChange={setDarkMode} value={darkMode} />}
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              bottom={<SegmentedControl
-                values={['Íslenska', 'English']}
-                selectedIndex={locale === 'is-IS' ? 0 : 1}
-                style={{ marginTop: 16 }}
-                onChange={(event) => {
-                  const { selectedSegmentIndex } = event.nativeEvent
-                  setLocale(selectedSegmentIndex === 0 ? 'is-IS' : 'en-US')
-                }}
-                activeFontStyle={{
-                  fontFamily: 'IBMPlexSans-SemiBold',
-                  color: theme.color.blue400
-                }}
-                fontStyle={{
-                  fontFamily: 'IBMPlexSans',
-                }}
-                backgroundColor={theme.color.blue100}
-              />}
-            />
-          </TableViewGroup>
-          <TableViewGroup header="Annað">
-            <TouchableHighlight
-              onPress={onTestPushNotificationPress}
-              underlayColor={theme.color.blue100}
-            >
-              <TableViewCell title="Prófa push notification" />
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={onLogoutPress}
-              underlayColor={theme.color.blue100}
-            >
-              <TableViewCell title="Útskrá" />
-            </TouchableHighlight>
-          </TableViewGroup>
-        </ScrollView>
+      {isLoading ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="small" />
+        </View>
       ) : (
-        <ScrollView style={{ flex: 1, flexDirection: 'column', paddingTop: 32-24 }}>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.displayName' })} value={natRegData.fullName} />
-          <InputRow>
-            <Input label={intl.formatMessage({ id: 'settings.natreg.nationalId' })} value={formatNationalId(String(natRegData.nationalId))} />
-            <Input label={intl.formatMessage({ id: 'settings.natreg.birthPlace' })} value={natRegData.birthPlace} />
-          </InputRow>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.legalResidence' })} value={natRegData.legalResidence} />
-          <InputRow>
-            <Input label={intl.formatMessage({ id: 'settings.natreg.gender' })} value={intl.formatMessage({ id: 'settings.natreg.genderValue' }, natRegData)} />
-            <Input label={intl.formatMessage({ id: 'settings.natreg.maritalStatus' })} value={intl.formatMessage({ id: 'settings.natreg.maritalStatusValue' }, natRegData)}/>
-          </InputRow>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.citizenship' })} value={authStore.userInfo?.nat!} />
-          <Input label={intl.formatMessage({ id: 'settings.natreg.religion' })} value={natRegData.religion} />
-        </ScrollView>
+      <>
+        <TabBar
+          values={[
+            intl.formatMessage({ id: 'settings.tabs.personalInfo' }),
+            intl.formatMessage({ id: 'settings.tabs.preferences' })
+          ]}
+          onChange={(selectedIndex) => setTab(selectedIndex)}
+          selectedIndex={tab}
+        />
+        {tab === 1 ? (
+          <ScrollView style={{ flex: 1, paddingTop: 32 }}>
+            <TableViewGroup
+              header={intl.formatMessage({
+                id: 'settings.communication.groupTitle',
+              })}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.communication.newDocumentsNotifications',
+                })}
+                accessory={
+                  <Switch
+                    onValueChange={setNotificationsNewDocuments}
+                    value={notificationsNewDocuments}
+                  />
+                }
+              />
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.communication.appUpdatesNotifications',
+                })}
+                accessory={<Switch onValueChange={() => {}} value={false} />}
+              />
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.communication.applicationsNotifications',
+                })}
+                accessory={<Switch onValueChange={() => {}} value={false} />}
+              />
+            </TableViewGroup>
+            <TableViewGroup
+              header={intl.formatMessage({
+                id: 'settings.accessibilityLayout.groupTitle',
+              })}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.accessibilityLayout.darkMode',
+                })}
+                accessory={<Switch onValueChange={setDarkMode} value={darkMode} />}
+              />
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.accessibilityLayout.language',
+                })}
+                bottom={<SegmentedControl
+                  values={['Íslenska', 'English']}
+                  selectedIndex={locale === 'is-IS' ? 0 : 1}
+                  style={{ marginTop: 16 }}
+                  onChange={(event) => {
+                    const { selectedSegmentIndex } = event.nativeEvent
+                    setLocale(selectedSegmentIndex === 0 ? 'is-IS' : 'en-US')
+                  }}
+                  activeFontStyle={{
+                    fontFamily: 'IBMPlexSans-SemiBold',
+                    color: theme.color.blue400
+                  }}
+                  fontStyle={{
+                    fontFamily: 'IBMPlexSans',
+                  }}
+                  backgroundColor={theme.color.blue100}
+                />}
+              />
+            </TableViewGroup>
+            <TableViewGroup header="Annað">
+              <TouchableHighlight
+                onPress={onTestPushNotificationPress}
+                underlayColor={theme.color.blue100}
+              >
+                <TableViewCell title="Prófa push notification" />
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={onLogoutPress}
+                underlayColor={theme.color.blue100}
+              >
+                <TableViewCell title="Útskrá" />
+              </TouchableHighlight>
+            </TableViewGroup>
+          </ScrollView>
+        ) : (
+          <ScrollView style={{ flex: 1, flexDirection: 'column', paddingTop: 32-24 }}>
+            <Input label={intl.formatMessage({ id: 'settings.natreg.displayName' })} value={natRegData.fullName} />
+            <InputRow>
+              <Input label={intl.formatMessage({ id: 'settings.natreg.nationalId' })} value={formatNationalId(String(natRegData.nationalId))} />
+              <Input label={intl.formatMessage({ id: 'settings.natreg.birthPlace' })} value={natRegData.birthPlace} />
+            </InputRow>
+            <Input label={intl.formatMessage({ id: 'settings.natreg.legalResidence' })} value={natRegData.legalResidence} />
+            <InputRow>
+              <Input label={intl.formatMessage({ id: 'settings.natreg.gender' })} value={intl.formatMessage({ id: 'settings.natreg.genderValue' }, natRegData)} />
+              <Input label={intl.formatMessage({ id: 'settings.natreg.maritalStatus' })} value={intl.formatMessage({ id: 'settings.natreg.maritalStatusValue' }, natRegData)}/>
+            </InputRow>
+            <Input label={intl.formatMessage({ id: 'settings.natreg.citizenship' })} value={authStore.userInfo?.nat!} />
+            <Input label={intl.formatMessage({ id: 'settings.natreg.religion' })} value={natRegData.religion} />
+          </ScrollView>
+        )}
+        </>
       )}
     </View>
-  )
+  );
 }
 
 SettingsScreen.options = {
@@ -239,7 +248,7 @@ SettingsScreen.options = {
         id: 'SETTINGS_NAV_TITLE',
         name: ComponentRegistry.NavigationBarTitle,
         passProps: {
-          title: 'Settings',
+          title: '',
         },
       },
       alignment: 'fill',
