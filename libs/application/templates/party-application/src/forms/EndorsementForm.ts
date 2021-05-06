@@ -12,6 +12,7 @@ import {
 import { m } from '../lib/messages'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { ExternalData } from '@island.is/application/core'
+import Logo from '../assets/Logo'
 
 const fullName = (externalData: ExternalData) => {
   const fullName = (externalData?.nationalRegistry?.data as {
@@ -24,6 +25,7 @@ export const EndorsementApplication: Form = buildForm({
   id: 'Endorse',
   title: m.collectEndorsements.applicationTitle,
   mode: FormModes.REVIEW,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',

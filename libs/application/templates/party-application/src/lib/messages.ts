@@ -369,4 +369,21 @@ export const m: MessageDir = {
       description: 'Approve terms and conditions',
     },
   }),
+  logo: defineMessages({
+    imgAlt: {
+      id: 'pa.application:logo.img.alt',
+      defaultMessage: 'Skjaldamerkið',
+      description: 'Alt for image',
+    },
+    service: {
+      id: 'pa.application:logo.service',
+      defaultMessage: 'Þjónustuaðili',
+      description: 'Service for',
+    },
+    organization: {
+      id: 'pa.application:logo.organization',
+      defaultMessage: 'Dómsmálaráðuneytið',
+      description: 'Name of organization',
+    },
+  }),
 }

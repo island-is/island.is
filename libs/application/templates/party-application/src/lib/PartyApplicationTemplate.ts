@@ -8,37 +8,34 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { m } from './messages'
+import { dataSchema } from './dataSchema'
+import { assign } from 'xstate'
 
-type ReferenceTemplateEvent =
+type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.EDIT }
 
 enum States {
   DRAFT = 'draft',
   COLLECT_SIGNATURES = 'collectSignatures',
+  DECLINED = 'declined',
+  IN_REVIEW = 'inReview',
   APPROVED = 'approved',
 }
 
 enum Roles {
   APPLICANT = 'applicant',
   SIGNATUREE = 'signaturee',
+  ASSIGNEE = 'assignee',
 }
-const dataSchema = z.object({
-  constituency: z
-    .string()
-    .refine((v) => v, m.validation.selectConstituency.defaultMessage as string),
-  approveDisclaimer: z.boolean().refine((v) => v, {
-    message: m.validation.approveTerms.defaultMessage as string,
-  }),
-})
 
 const PartyApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.PARTY_APPLICATION,
   name: 'Framboð',
@@ -48,32 +45,36 @@ const PartyApplicationTemplate: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'draft',
+          name: States.DRAFT,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConstituencyForm').then((module) =>
-                  Promise.resolve(module.ConstituencyForm),
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Hefja söfnun', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Hefja söfnun',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.SUBMIT]: {
             target: States.COLLECT_SIGNATURES,
           },
         },
       },
       [States.COLLECT_SIGNATURES]: {
         meta: {
-          name: 'In Review',
+          name: 'Safna meðmælum',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -84,29 +85,69 @@ const PartyApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.CollectEndorsementsForm),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
               ],
-              write: 'all',
-            },
-            {
-              id: Roles.SIGNATUREE,
-              formLoader: () =>
-                import('../forms/EndorsementForm').then((val) =>
-                  Promise.resolve(val.EndorsementApplication),
-                ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
-          APPROVE: {
-            target: States.APPROVED,
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.APPROVED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Approved',
+          name: 'In Review',
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
+              ],
+              write: 'all',
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ConstituencyForm').then((module) =>
+                  Promise.resolve(module.ConstituencyForm),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.APPROVED,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.COLLECT_SIGNATURES },
+        },
+      },
+      [States.APPROVED]: {
+        exit: 'clearAssignees',
+        meta: {
+          name: States.APPROVED,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -130,20 +171,50 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
       },
-    }, // urlið úr browsernum
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToSupremeCourt: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            assignees: ['3105913789'],
+          },
+        }
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
   },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
+    // TODO: Decide on how to store assignees for this application
+    console.clear()
+    console.log(application, nationalId)
+    if (application.assignees.includes('3105913789')) {
+      console.log('assignee')
+      return Roles.ASSIGNEE
+    }
     // TODO: Applicant can recommend his own list
-    if (application.applicant === nationalId) {
+    else if (application.applicant === nationalId) {
+      console.log('applicant')
       return Roles.APPLICANT
     } else if (application.state === States.COLLECT_SIGNATURES) {
       // TODO: Maybe display collection as closed in final state for signaturee
       // everyone can be signaturee if they are not the applicant
+      console.log('signaturee')
       return Roles.SIGNATUREE
     } else {
+      console.log('undefined')
       return undefined
     }
   },

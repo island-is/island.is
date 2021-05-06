@@ -11,10 +11,12 @@ import {
   buildDataProviderItem,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import Logo from '../assets/Logo'
 
 export const ConstituencyForm: Form = buildForm({
   id: 'Constitunecy',
   title: m.constituencySection.title,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
