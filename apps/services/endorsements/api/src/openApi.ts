@@ -14,7 +14,8 @@ export const openApi = new DocumentBuilder()
         authorizationUrl: environment.swagger.authUrl,
         tokenUrl: environment.swagger.tokenUrl,
         scopes: {
-          'openid profile': 'Sækir OpenId, Profile og claimið sem þarf',
+          'openid profile':
+            'Fetches OpenId, Profile and claim needed for authenticated calls',
         },
       },
     },
