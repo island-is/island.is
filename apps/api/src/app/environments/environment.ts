@@ -88,4 +88,9 @@ export default {
       process.env.REGULATIONS_API_URL ??
       'https://reglugerdir-api.herokuapp.com/api/v1',
   },
+  fjarmalDomain: {
+    url: process.env.FJARMAL_API ?? '',
+    username: process.env.FJARMAL_USER ?? '',
+    password: process.env.FJARMAL_PASS ?? '',
+  },
 }

@@ -1,1 +1,1 @@
-export * from './lib/api-domains-finance'
+export * from './lib/api-domains-finance.module'

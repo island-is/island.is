@@ -81,4 +81,9 @@ export default {
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL,
   },
+  fjarmalDomain: {
+    url: process.env.FJARMAL_API ?? '',
+    username: process.env.FJARMAL_USER ?? '',
+    password: process.env.FJARMAL_PASS ?? '',
+  },
 }

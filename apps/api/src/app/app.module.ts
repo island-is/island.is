@@ -24,6 +24,7 @@ import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { FinanceModule } from '@island.is/api/domains/finance'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -154,6 +155,11 @@ const autoSchemaFile = environment.production
     }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
+    }),
+    FinanceModule.register({
+      url: environment.fjarmalDomain.url,
+      username: environment.fjarmalDomain.username,
+      password: environment.fjarmalDomain.password,
     }),
   ],
 })
