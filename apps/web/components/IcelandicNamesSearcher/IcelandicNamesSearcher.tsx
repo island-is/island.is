@@ -7,6 +7,8 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { useWindowSize } from 'react-use'
+import { useLazyQuery } from '@apollo/client'
 import cn from 'classnames'
 import {
   Box,
@@ -28,7 +30,6 @@ import {
 } from '@island.is/island-ui/core'
 import { alphabet } from './data'
 
-import { useLazyQuery } from '@apollo/client'
 import {
   GetIcelandicNameBySearchQuery,
   GetIcelandicNameBySearchQueryVariables,
@@ -42,6 +43,7 @@ import {
 } from '@island.is/web/screens/queries/IcelandicNamesRegistry'
 
 import * as styles from './IcelandicNamesSearcher.treat'
+import { theme } from '@island.is/island-ui/theme'
 
 type ToggledFiltersState = {
   males: boolean
@@ -117,6 +119,7 @@ type NameType = Pick<
 const paddingTop = [3, 3, 3, 3, 0] as ResponsiveSpace
 
 export const IcelandicNamesSearcher: FC = () => {
+  const { width } = useWindowSize()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedLetter, setSelectedLetter] = useState<string>('')
   const [hasSearched, setHasSearched] = useState<boolean>(false)
@@ -216,243 +219,258 @@ export const IcelandicNamesSearcher: FC = () => {
   const someFilterSelected = Object.keys(filters).filter((key) => filters[key])
     .length
 
-  return (
-    <Box marginBottom={[3, 3, 3, 10, 20]} className={styles.container}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/5']}>
-            <Box marginY={3}>
-              <Input
-                backgroundColor="blue"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    if (searchQuery.length > 1) {
-                      doSearch()
-                    }
-                  }
-                }}
-                name="q"
-                ref={inputRef}
-                label={'Nafnaleit'}
-                placeholder={'Leita að nafni'}
-                size="sm"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                }}
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12', '2/5']}
-          >{` `}</GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/5']}>
-            <Box>
-              <T.Table>
-                <T.Head>
-                  <T.Row>
-                    <T.HeadData>Flokkur</T.HeadData>
-                    <T.HeadData>Nafn</T.HeadData>
-                    <T.HeadData>Úrskurður</T.HeadData>
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {isBusy && (
-                    <T.Row>
-                      <T.Data colSpan={3}>Augnablik...</T.Data>
-                    </T.Row>
-                  )}
-                  {hasSearched && !isBusy && !filteredNamesList.length && (
-                    <T.Row>
-                      <T.Data colSpan={3}>
-                        {!tableData.length
-                          ? 'Ekkert fannst'
-                          : 'Ekkert fannst með völdum síum'}
+  const shouldStack = width < theme.breakpoints.xl
+
+  const searchSection = (
+    <>
+      <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/5']}>
+        <Box marginY={3}>
+          <Input
+            backgroundColor="blue"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (searchQuery.length > 1) {
+                  doSearch()
+                }
+              }
+            }}
+            name="q"
+            ref={inputRef}
+            label={'Nafnaleit'}
+            placeholder={'Leita að nafni'}
+            size="sm"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+            }}
+          />
+        </Box>
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '12/12', '12/12', '2/5']}>
+        {` `}
+      </GridColumn>
+    </>
+  )
+
+  const tableSection = (
+    <GridColumn
+      span={['12/12', '12/12', '12/12', '12/12', '3/5']}
+      paddingTop={shouldStack ? 2 : 0}
+    >
+      <Box>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>Flokkur</T.HeadData>
+              <T.HeadData>Nafn</T.HeadData>
+              <T.HeadData>Úrskurður</T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {isBusy && (
+              <T.Row>
+                <T.Data colSpan={3}>Augnablik...</T.Data>
+              </T.Row>
+            )}
+            {!isBusy && !filteredNamesList.length && (
+              <T.Row>
+                <T.Data colSpan={3}>
+                  {!tableData.length
+                    ? 'Ekkert fannst'
+                    : 'Ekkert fannst með völdum síum'}
+                </T.Data>
+              </T.Row>
+            )}
+            {!isBusy &&
+              filteredNamesList.map(
+                ({ icelandicName, status, type, verdict, url }, index) => {
+                  return (
+                    <T.Row key={index}>
+                      <T.Data>
+                        <Text>
+                          {
+                            NameTypeStrings[
+                              type as keyof typeof NameTypeStrings
+                            ]
+                          }
+                        </Text>
+                      </T.Data>
+                      <T.Data>
+                        <Text as="span" fontWeight="semiBold">
+                          {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
+                            1,
+                          )}`}
+                        </Text>
+                      </T.Data>
+                      <T.Data>
+                        {!!verdict && url ? (
+                          <Link href={url} skipTab>
+                            <Button
+                              colorScheme={
+                                status === 'Haf' ? 'destructive' : 'default'
+                              }
+                              variant="text"
+                              size="small"
+                              icon="open"
+                              iconType="outline"
+                              as="span"
+                            >
+                              {verdict}
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Text
+                            variant="small"
+                            fontWeight="semiBold"
+                            color={status === 'Haf' ? 'red600' : 'blue400'}
+                          >
+                            {verdict}
+                          </Text>
+                        )}
                       </T.Data>
                     </T.Row>
-                  )}
-                  {!isBusy &&
-                    filteredNamesList.map(
-                      (
-                        { icelandicName, status, type, verdict, url },
-                        index,
-                      ) => {
-                        return (
-                          <T.Row key={index}>
-                            <T.Data>
-                              <Text>
-                                {
-                                  NameTypeStrings[
-                                    type as keyof typeof NameTypeStrings
-                                  ]
-                                }
-                              </Text>
-                            </T.Data>
-                            <T.Data>
-                              <Text as="span" fontWeight="semiBold">
-                                {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
-                                  1,
-                                )}`}
-                              </Text>
-                            </T.Data>
-                            <T.Data>
-                              {!!verdict && url ? (
-                                <Link href={url} skipTab>
-                                  <Button
-                                    colorScheme={
-                                      status === 'Haf'
-                                        ? 'destructive'
-                                        : 'default'
-                                    }
-                                    variant="text"
-                                    size="small"
-                                    icon="open"
-                                    iconType="outline"
-                                    as="span"
-                                  >
-                                    {verdict}
-                                  </Button>
-                                </Link>
-                              ) : (
-                                <Text
-                                  variant="small"
-                                  fontWeight="semiBold"
-                                  color={
-                                    status === 'Haf' ? 'red600' : 'blue400'
-                                  }
-                                >
-                                  {verdict}
-                                </Text>
-                              )}
-                            </T.Data>
-                          </T.Row>
-                        )
-                      },
-                    )}
-                </T.Body>
-              </T.Table>
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12', '2/5']}
-            paddingTop={paddingTop}
-          >
-            <Stack space={[1, 1, 2]}>
+                  )
+                },
+              )}
+          </T.Body>
+        </T.Table>
+      </Box>
+    </GridColumn>
+  )
+
+  const filterSection = (
+    <GridColumn
+      span={['12/12', '12/12', '12/12', '12/12', '2/5']}
+      paddingTop={shouldStack ? 0 : paddingTop}
+    >
+      <Stack space={[1, 1, 2]}>
+        {!shouldStack && (
+          <Box>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Box flexGrow={1}>
+                <Text variant="h3">Sía lista</Text>
+              </Box>
               <Box>
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box flexGrow={1}>
-                    <Text variant="h3">Sía lista</Text>
-                  </Box>
-                  <Box>
-                    <Icon
-                      icon="filter"
-                      type="filled"
-                      color="blue400"
-                      size="small"
-                    />
-                  </Box>
-                </Box>
-                <Box paddingY={1}>
-                  <Divider />
-                </Box>
+                <Icon
+                  icon="filter"
+                  type="filled"
+                  color="blue400"
+                  size="small"
+                />
               </Box>
-              <Box padding={2} borderRadius="large" border="standard">
-                <SidebarAccordion
-                  id="icelandic_names_alphabet"
-                  label="Upphafsstafur"
-                >
-                  <div className={styles.alphabetList}>
-                    {alphabet.map((letter, index) => {
-                      return (
-                        <button
-                          aria-label={letter}
-                          className={cn(styles.alphabetButton, {
-                            [styles.alphabetButtonSelected]:
-                              selectedLetter === letter,
-                          })}
-                          key={index}
-                          onClick={() => {
-                            setSelectedLetter(letter)
-                            doSearchByInitialLetter(letter)
-                          }}
-                        >
-                          {letter}
-                        </button>
-                      )
+            </Box>
+            <Box paddingY={1}>
+              <Divider />
+            </Box>
+          </Box>
+        )}
+        <Box padding={2} borderRadius="large" border="standard">
+          <SidebarAccordion id="icelandic_names_alphabet" label="Upphafsstafur">
+            <div className={styles.alphabetList}>
+              {alphabet.map((letter, index) => {
+                return (
+                  <button
+                    aria-label={letter}
+                    className={cn(styles.alphabetButton, {
+                      [styles.alphabetButtonSelected]:
+                        selectedLetter === letter,
                     })}
-                  </div>
-                </SidebarAccordion>
-                <Box paddingY={2}>
-                  <Divider />
-                </Box>
-                <SidebarAccordion
-                  id="icelandic_names_categories"
-                  label="Flokkur"
+                    key={index}
+                    onClick={() => {
+                      setSelectedLetter(letter)
+                      doSearchByInitialLetter(letter)
+                    }}
+                  >
+                    {letter}
+                  </button>
+                )
+              })}
+            </div>
+          </SidebarAccordion>
+          <Box paddingY={2}>
+            <Divider />
+          </Box>
+          <SidebarAccordion id="icelandic_names_categories" label="Flokkur">
+            <Stack space={[1, 1, 2]}>
+              <Checkbox
+                label="Drengir"
+                checked={filters.males}
+                onChange={() => dispatch({ type: 'toggleMales' })}
+              />
+              <Checkbox
+                label="Stúlkur"
+                checked={filters.females}
+                onChange={() => dispatch({ type: 'toggleFemales' })}
+              />
+              <Checkbox
+                label="Kynhlutlaus"
+                checked={filters.neutral}
+                onChange={() => dispatch({ type: 'toggleNeutral' })}
+              />
+              <Checkbox
+                label="Millinöfn (öll kyn)"
+                checked={filters.middleNames}
+                onChange={() => dispatch({ type: 'toggleMiddleNames' })}
+              />
+              {!!typeFilterSelected && (
+                <ResetButton
+                  onClick={() => dispatch({ type: 'clearCategories' })}
                 >
-                  <Stack space={[1, 1, 2]}>
-                    <Checkbox
-                      label="Drengir"
-                      checked={filters.males}
-                      onChange={() => dispatch({ type: 'toggleMales' })}
-                    />
-                    <Checkbox
-                      label="Stúlkur"
-                      checked={filters.females}
-                      onChange={() => dispatch({ type: 'toggleFemales' })}
-                    />
-                    <Checkbox
-                      label="Kynhlutlaus"
-                      checked={filters.neutral}
-                      onChange={() => dispatch({ type: 'toggleNeutral' })}
-                    />
-                    <Checkbox
-                      label="Millinöfn (öll kyn)"
-                      checked={filters.middleNames}
-                      onChange={() => dispatch({ type: 'toggleMiddleNames' })}
-                    />
-                    {!!typeFilterSelected && (
-                      <ResetButton
-                        onClick={() => dispatch({ type: 'clearCategories' })}
-                      >
-                        Hreinsa val
-                      </ResetButton>
-                    )}
-                  </Stack>
-                </SidebarAccordion>
-                <Box paddingY={2}>
-                  <Divider />
-                </Box>
-                <SidebarAccordion id="icelandic_names_statuses" label="Staða">
-                  <Stack space={[1, 1, 2]}>
-                    <Checkbox
-                      label="Samþykkt"
-                      checked={filters.approved}
-                      onChange={() => dispatch({ type: 'toggleApproved' })}
-                    />
-                    <Checkbox
-                      label="Hafnað"
-                      checked={filters.denied}
-                      onChange={() => dispatch({ type: 'toggleDenied' })}
-                    />
-                    {!!statusFilterSelected && (
-                      <ResetButton
-                        onClick={() => dispatch({ type: 'clearStatuses' })}
-                      >
-                        Hreinsa val
-                      </ResetButton>
-                    )}
-                  </Stack>
-                </SidebarAccordion>
-              </Box>
-              {!!someFilterSelected && (
-                <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
-                  Hreinsa síu
+                  Hreinsa val
                 </ResetButton>
               )}
             </Stack>
-          </GridColumn>
+          </SidebarAccordion>
+          <Box paddingY={2}>
+            <Divider />
+          </Box>
+          <SidebarAccordion id="icelandic_names_statuses" label="Staða">
+            <Stack space={[1, 1, 2]}>
+              <Checkbox
+                label="Samþykkt"
+                checked={filters.approved}
+                onChange={() => dispatch({ type: 'toggleApproved' })}
+              />
+              <Checkbox
+                label="Hafnað"
+                checked={filters.denied}
+                onChange={() => dispatch({ type: 'toggleDenied' })}
+              />
+              {!!statusFilterSelected && (
+                <ResetButton
+                  onClick={() => dispatch({ type: 'clearStatuses' })}
+                >
+                  Hreinsa val
+                </ResetButton>
+              )}
+            </Stack>
+          </SidebarAccordion>
+        </Box>
+        {!!someFilterSelected && (
+          <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
+            Hreinsa síu
+          </ResetButton>
+        )}
+      </Stack>
+    </GridColumn>
+  )
+
+  return (
+    <Box marginBottom={[3, 3, 3, 10, 20]} className={styles.container}>
+      <GridContainer>
+        <GridRow>{searchSection}</GridRow>
+        <GridRow>
+          {shouldStack ? (
+            <>
+              {filterSection}
+              {hasSearched && tableSection}
+            </>
+          ) : (
+            <>
+              {hasSearched && tableSection}
+              {filterSection}
+            </>
+          )}
         </GridRow>
       </GridContainer>
     </Box>
