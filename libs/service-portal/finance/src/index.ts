@@ -16,6 +16,14 @@ export const financeModule: ServicePortalModule = {
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
+      {
+        name: "Staða",
+        path: ServicePortalPath.FinanceStatus,
+        render: () =>
+          lazy(() =>
+            import('./screens/FinanceStatus'),
+          ),
+      },
     ]
 
     return routes

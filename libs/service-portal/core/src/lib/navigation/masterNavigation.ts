@@ -194,17 +194,26 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        path: ServicePortalPath.FinanceExternal,
-        external: true,
-        systemRoute: true,
+        path: ServicePortalPath.FinanceRoot,
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:financeStatus',
+              defaultMessage: 'Staða',
+            }),
+            path: ServicePortalPath.FinanceStatus,
+          },
+        ],
         icon: {
           type: 'outline',
           icon: 'cellular',
         },
+        heading: defineMessage({
+          id: 'service.portal:coming-soon',
+          defaultMessage: 'Væntanlegt',
+        }),
+        // external: true,
+        systemRoute: true,
       },
 
       // Fasteignir
