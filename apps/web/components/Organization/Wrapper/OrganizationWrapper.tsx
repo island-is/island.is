@@ -1,5 +1,9 @@
 import React, { ReactNode } from 'react'
-import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
+import {
+  Image,
+  LinkGroup,
+  OrganizationPage,
+} from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -8,8 +12,10 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Navigation,
   NavigationItem,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
@@ -87,6 +93,28 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
   }
 }
 
+const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
+  <Box
+    background="purple100"
+    borderRadius="large"
+    padding={[3, 3, 4]}
+    marginY={3}
+  >
+    <Stack space={[1, 1, 2]}>
+      <Text variant="eyebrow" as="h2">
+        {linkGroup.name}
+      </Text>
+      {linkGroup.childrenLinks.map((link) => (
+        <Link key={link.url} href={link.url} underline="normal">
+          <Text key={link.url} as="span">
+            {link.text}
+          </Text>
+        </Link>
+      ))}
+    </Stack>
+  </Box>
+)
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -147,22 +175,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
                 {organizationPage.secondaryMenu && (
-                  <Box marginTop={3}>
-                    <Navigation
-                      colorScheme="purple"
-                      baseId="secondarynav"
-                      activeItemTitle={pageTitle}
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  </Box>
+                  <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
                 )}
                 {sidebarContent}
               </SidebarContainer>
@@ -224,7 +237,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   )}
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                      <Text variant="intro">{pageDescription}</Text>
+                      <Text variant="default">{pageDescription}</Text>
                     </Box>
                   )}
                 </GridColumn>

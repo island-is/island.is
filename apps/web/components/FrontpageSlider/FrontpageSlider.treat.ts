@@ -62,6 +62,7 @@ export const textItemVisible = style({
 })
 
 export const tabBullet = style({
+  display: 'inline-block',
   width: 8,
   height: 8,
   backgroundColor: theme.color.red200,

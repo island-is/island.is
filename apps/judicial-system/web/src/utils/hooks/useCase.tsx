@@ -12,9 +12,9 @@ import {
 import {
   CreateCaseMutation,
   CreateCustodyCourtCaseMutation,
+  CreateCourtCaseMutation,
 } from '../mutations'
 import { parseString } from '../formatters'
-import { setAndSendToServer } from '../formHelper'
 
 type autofillProperties = Pick<
   Case,
@@ -27,17 +27,30 @@ interface CreateCustodyCourtCaseMutationResponse {
   }
 }
 
+interface CreateCourtCaseMutationResponse {
+  createCourtCase: {
+    courtCaseNumber: string
+  }
+}
+
 const useCase = () => {
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const [updateCaseMutation, { loading: isUpdatingCase }] = useMutation(
+    UpdateCaseMutation,
+  )
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
   )
+
   const [
     createCustodyCourtCaseMutation,
     { loading: creatingCustodyCourtCase },
   ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
     CreateCustodyCourtCaseMutation,
   )
+  const [
+    createCourtCaseMutation,
+    { loading: creatingCourtCase },
+  ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -58,6 +71,7 @@ const useCase = () => {
             accusedGender: theCase.accusedGender,
             defenderName: theCase.defenderName,
             defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
             sendRequestToDefender: theCase.sendRequestToDefender,
             court: 'Héraðsdómur Reykjavíkur',
           },
@@ -72,7 +86,7 @@ const useCase = () => {
     return undefined
   }
 
-  const createCourtCase = async (
+  const createCustodyCourtCase = async (
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
     setCourtCaseNumberErrorMessage: React.Dispatch<
@@ -91,13 +105,49 @@ const useCase = () => {
         })
 
         if (data && workingCase && !errors) {
-          setAndSendToServer(
-            'courtCaseNumber',
-            data.createCustodyCourtCase.courtCaseNumber,
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
+          setWorkingCase({
+            ...workingCase,
+            courtCaseNumber: data.createCustodyCourtCase.courtCaseNumber,
+          })
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
+      }
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
+      )
+    }
+  }
+
+  const createCourtCase = async (
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    setCourtCaseNumberErrorMessage: React.Dispatch<
+      React.SetStateAction<string>
+    >,
+  ): Promise<void> => {
+    if (creatingCourtCase === false) {
+      try {
+        const { data, errors } = await createCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              type: workingCase?.type,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+              isExtension: Boolean(workingCase?.parentCase?.id),
+            },
+          },
+        })
+
+        if (data && workingCase && !errors) {
+          setWorkingCase({
+            ...workingCase,
+            courtCaseNumber: data.createCourtCase.courtCaseNumber,
+          })
 
           setCourtCaseNumberErrorMessage('')
 
@@ -108,7 +158,7 @@ const useCase = () => {
       }
 
       setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+        'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
     }
   }
@@ -164,13 +214,16 @@ const useCase = () => {
 
   return {
     updateCase,
+    isUpdatingCase,
     createCase,
     isCreatingCase,
     sendNotification,
     isSendingNotification,
     autofill,
-    createCourtCase,
+    createCustodyCourtCase,
     creatingCustodyCourtCase,
+    createCourtCase,
+    creatingCourtCase,
   }
 }
 

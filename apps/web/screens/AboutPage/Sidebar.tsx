@@ -37,7 +37,12 @@ const Sidebar = ({ children }: SidebarProps) => {
   }, [onResize])
 
   return (
-    <div ref={containerRef} className={styles.container} role="scrollbar">
+    <div
+      ref={containerRef}
+      className={styles.container}
+      role="menu"
+      aria-orientation="vertical"
+    >
       <div style={divStyles}>
         <div className={styles.sticky}>
           <div className={styles.stickyInner}>

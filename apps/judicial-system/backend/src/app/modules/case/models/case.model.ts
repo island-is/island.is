@@ -113,6 +113,13 @@ export class Case extends Model<Case> {
   defenderEmail: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderPhoneNumber: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
@@ -223,13 +230,6 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'prosecutorId')
   @ApiProperty({ type: User })
   prosecutor: User
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  setCourtCaseNumberManually: boolean
 
   @Column({
     type: DataType.STRING,
