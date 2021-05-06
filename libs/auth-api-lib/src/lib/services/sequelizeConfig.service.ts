@@ -3,7 +3,7 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
-//@ts-ignore
+
 import * as databaseConfig from './../../../sequelize.config.js'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
