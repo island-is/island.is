@@ -1800,6 +1800,9 @@ export interface IOrganizationFields {
 
   /** Logo */
   logo?: Asset | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
