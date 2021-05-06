@@ -5,6 +5,7 @@ import { parentBIntro } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText, TransferOverview } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
+import { ApproveContract } from '../../lib/dataSchema'
 
 const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
   const { externalData } = application
@@ -47,11 +48,11 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
             largeButtons
             options={[
               {
-                value: 'accept',
+                value: ApproveContract.Yes,
                 label: formatMessage(parentBIntro.contract.accept),
               },
               {
-                value: 'reject',
+                value: ApproveContract.No,
                 label: formatMessage(parentBIntro.contract.reject),
               },
             ]}

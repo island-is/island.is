@@ -8,42 +8,29 @@ import {
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
 
-export const ParentBContractRejected: Form = buildForm({
-  id: 'ParentBContractRejected',
-  title: m.application.name,
-  logo: Logo,
-  mode: FormModes.APPLYING,
-  children: [
-    buildSection({
-      id: 'ParentBContractRejected',
-      title: m.contractRejected.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'ParentBContractRejected',
-          title: m.contractRejected.general.pageTitle,
-          component: 'ParentBContractRejected',
-        }),
-      ],
-    }),
-  ],
-})
+function rejectedForm(id: string): Form {
+  return buildForm({
+    id: id,
+    title: m.application.name,
+    logo: Logo,
+    mode: FormModes.APPLYING,
+    children: [
+      buildSection({
+        id: id,
+        title: m.contractRejected.general.sectionTitle,
+        children: [
+          buildCustomField({
+            id: id,
+            title: m.contractRejected.general.pageTitle,
+            component: id,
+          }),
+        ],
+      }),
+    ],
+  })
+}
 
-export const ContractRejected: Form = buildForm({
-  id: 'ContractRejected',
-  title: m.application.name,
-  logo: Logo,
-  mode: FormModes.APPLYING,
-  children: [
-    buildSection({
-      id: 'contractRejected',
-      title: m.contractRejected.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'contractRejected',
-          title: m.contractRejected.general.pageTitle,
-          component: 'ContractRejected',
-        }),
-      ],
-    }),
-  ],
-})
+export const ParentBContractRejected = () =>
+  rejectedForm('ParentBContractRejected')
+
+export const ContractRejected = () => rejectedForm('ContractRejected')

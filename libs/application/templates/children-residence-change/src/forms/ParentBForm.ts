@@ -5,13 +5,13 @@ import {
   FormModes,
   buildCustomField,
   buildMultiField,
-  buildTextField,
   buildSubmitField,
   buildSubSection,
   DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
+import { ApproveContract } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
@@ -32,7 +32,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'accept',
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
@@ -45,7 +45,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'accept',
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'termsParentB',
       title: m.section.effect,
       children: [
@@ -74,7 +74,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'accept',
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [
@@ -103,7 +103,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'accept',
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'submitted',
       title: m.section.received,
       children: [
@@ -115,7 +115,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'reject',
+      condition: (answers) => answers.acceptContract === ApproveContract.No,
       id: 'rejectContract',
       title: m.rejectContract.general.sectionTitle,
       children: [
@@ -144,7 +144,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === 'reject',
+      condition: (answers) => answers.acceptContract === ApproveContract.No,
       id: 'contractRejected',
       title: m.contractRejected.general.sectionTitle.confirmed,
       children: [
