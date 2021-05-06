@@ -64,28 +64,36 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        title
         logo {
           url
+        }
+        footerItems {
+          title
+          content {
+            ...HtmlFields
+          }
+          link {
+            text
+            url
+          }
         }
       }
       slices {
         ...AllSlices
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      newsTag {
+        id
+        title
       }
       featuredImage {
         url
         title
         width
         height
-      }
-      footerItems {
-        title
-        content {
-          ...HtmlFields
-        }
-        link {
-          text
-          url
-        }
       }
       sidebarCards {
         title

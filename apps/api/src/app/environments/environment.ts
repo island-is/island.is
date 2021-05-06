@@ -83,4 +83,9 @@ export default {
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
   },
+  regulationsDomain: {
+    url:
+      process.env.REGULATIONS_API_URL ??
+      'https://reglugerdir-api.herokuapp.com/api/v1',
+  },
 }

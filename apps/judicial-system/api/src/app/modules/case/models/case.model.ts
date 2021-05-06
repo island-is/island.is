@@ -109,9 +109,6 @@ export class Case implements TCase {
   readonly prosecutor?: User
 
   @Field({ nullable: true })
-  readonly setCourtCaseNumberManually?: boolean
-
-  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Field({ nullable: true })

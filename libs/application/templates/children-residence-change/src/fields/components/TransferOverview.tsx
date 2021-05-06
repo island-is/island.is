@@ -1,13 +1,13 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { CRCApplication } from '../../../types'
+import { CRCApplication } from '../../types'
 import { useIntl } from 'react-intl'
 import {
   childrenResidenceInfo,
   formatAddress,
   getSelectedChildrenFromExternalData,
-} from '../../..'
-import { contract } from '../../../lib/messages'
+} from '../..'
+import { contract } from '../../lib/messages'
 
 interface Props {
   application: CRCApplication
