@@ -59,6 +59,7 @@ export * from './lib/entities/dto/api-scope-user-access.dto'
 export * from './lib/entities/dto/api-scope-user-update.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/delegation-scope.dto'
+export * from './lib/entities/dto/delegation-scope-delete.dto'
 
 // Services
 export * from './lib/services/clients.service'
