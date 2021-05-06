@@ -187,7 +187,7 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={6}>
               <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
+                <Text as="h2" variant="h3">
                   Málsnúmer héraðsdóms
                 </Text>
               </Box>
@@ -237,7 +237,8 @@ export const JudgeOverview: React.FC = () => {
                           !creatingCustodyCourtCase &&
                           courtCaseNumberErrorMessage !== ''
                         }
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          setCreateCaseSuccess(false)
                           removeTabsValidateAndSet(
                             'courtCaseNumber',
                             event,
@@ -247,7 +248,7 @@ export const JudgeOverview: React.FC = () => {
                             courtCaseNumberErrorMessage,
                             setCourtCaseNumberErrorMessage,
                           )
-                        }
+                        }}
                         onBlur={(event) => {
                           validateAndSendToServer(
                             'courtCaseNumber',
@@ -327,7 +328,7 @@ export const JudgeOverview: React.FC = () => {
             <Box marginBottom={5}>
               <Box marginBottom={9}>
                 <Box marginBottom={2}>
-                  <Text variant="h3" as="h3">
+                  <Text variant="h3" as="h2">
                     Dómkröfur
                   </Text>
                 </Box>
@@ -336,7 +337,7 @@ export const JudgeOverview: React.FC = () => {
               <div className={styles.infoSection}>
                 <Box marginBottom={6} data-testid="lawsBroken">
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       Lagaákvæði sem brot varða við
                     </Text>
                   </Box>
@@ -348,7 +349,7 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
                 <Box data-testid="custodyProvisions">
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       Lagaákvæði sem krafan er byggð á
                     </Text>
                   </Box>
@@ -368,7 +369,7 @@ export const JudgeOverview: React.FC = () => {
                 data-testid="custodyRestrictions"
               >
                 <Box marginBottom={1}>
-                  <Text variant="h3" as="h3">
+                  <Text variant="h3" as="h2">
                     {`Takmarkanir og tilhögun ${
                       workingCase.type === CaseType.CUSTODY
                         ? 'gæslu'
@@ -393,7 +394,7 @@ export const JudgeOverview: React.FC = () => {
               {(workingCase.caseFacts || workingCase.legalArguments) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>
-                    <Text variant="h3" as="h3">
+                    <Text variant="h3" as="h2">
                       Greinargerð um málsatvik og lagarök
                     </Text>
                   </Box>
@@ -430,7 +431,7 @@ export const JudgeOverview: React.FC = () => {
               {(workingCase.comments || workingCase.caseFilesComments) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={2}>
-                    <Text variant="h3" as="h3">
+                    <Text variant="h3" as="h2">
                       Athugasemdir
                     </Text>
                   </Box>
@@ -469,7 +470,7 @@ export const JudgeOverview: React.FC = () => {
               {features.includes(Feature.CASE_FILES) && (
                 <div className={styles.infoSection}>
                   <Box marginBottom={1}>
-                    <Text as="h3" variant="h3">
+                    <Text as="h2" variant="h3">
                       {`Rannsóknargögn (${
                         workingCase.files ? workingCase.files.length : 0
                       })`}
