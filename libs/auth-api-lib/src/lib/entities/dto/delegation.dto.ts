@@ -6,7 +6,7 @@ import {
   IsNumber,
   IsDateString,
 } from 'class-validator'
-
+// For use with deleting Inserting and updating Delegation
 export class DelegationDTO {
   @IsString()
   @ApiProperty()
