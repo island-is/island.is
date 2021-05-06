@@ -9,11 +9,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
   imports: [
-    AuditModule.forRoot({
-      groupName: environment.audit.groupName,
-      serviceName: 'services-endorsements-api',
-      defaultNamespace: environment.audit.defaultNamespace,
-    }),
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

@@ -19,7 +19,6 @@ export const environment = {
   },
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
-    groupName: 'Endorsement system API',
     defaultNamespace: '@island.is/services-endorsements-api',
   },
 }

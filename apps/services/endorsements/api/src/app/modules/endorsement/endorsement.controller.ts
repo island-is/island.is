@@ -25,7 +25,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @ApiOAuth2([])
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
-  constructor (
+  constructor(
     private readonly endorsementService: EndorsementService,
     private readonly auditService: AuditService,
   ) {}
@@ -38,7 +38,7 @@ export class EndorsementController {
     meta: (endorsement) => ({ count: endorsement.length }),
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async findAll (
+  async findAll(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -58,7 +58,7 @@ export class EndorsementController {
     resources: (endorsement) => endorsement.id,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async findByUser (
+  async findByUser(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -80,7 +80,7 @@ export class EndorsementController {
     resources: (endorsement) => endorsement.id,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async create (
+  async create(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -103,7 +103,7 @@ export class EndorsementController {
     meta: (endorsement) => ({ count: endorsement.length }),
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async bulkCreate (
+  async bulkCreate(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -120,13 +120,9 @@ export class EndorsementController {
   }
 
   @Delete()
-  @Audit({
-    namespace: auditNamespace,
-    action: 'delete',
-  })
   @HttpCode(204)
   @ApiParam({ name: 'listId', type: 'string' })
-  async delete (
+  async delete(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
