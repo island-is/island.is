@@ -141,7 +141,7 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   return (
-    <Box className={style.descriptionTextTopContainer}>
+    <Box className={style.descriptionOffset}>
       <SignatureModal
         controlCode={controlCode}
         onClose={() =>

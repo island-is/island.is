@@ -12,7 +12,7 @@ const RejectContract = ({ application }: CRCFieldBaseProps) => {
   const applicant = externalData.nationalRegistry.data
   return (
     <>
-      <Box className={style.descriptionTextTopContainer}>
+      <Box className={style.descriptionOffset}>
         <DescriptionText
           text={rejectContract.general.description}
           format={{ otherParentName: applicant.fullName }}
