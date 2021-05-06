@@ -56,7 +56,7 @@ export class DelegationsController {
   @Scopes('@island.is/auth/delegations:write')
   @Delete(':id')
   @ApiCreatedResponse()
-  async delete(@Param('id') id: string): Promise<Delegation | null> {
+  async delete(@Param('id') id: string): Promise<number> {
     return await this.delegationsService.delete(id)
   }
 
