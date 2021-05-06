@@ -1,5 +1,10 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
-import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementSystemService } from './endorsementSystem.service'
@@ -9,7 +14,7 @@ import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('EndorsementSystemResolver')
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
@@ -18,46 +23,58 @@ export class EndorsementSystemResolver {
   @Query(() => Endorsement, { nullable: true })
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<Endorsement> {
     return await this.endorsementSystemService.endorsementControllerFindByUser(
       input,
+      user,
     )
   }
 
   @Query(() => [Endorsement], { nullable: true })
   async endorsementSystemGetEndorsements(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
     return await this.endorsementSystemService.endorsementControllerFindAll(
       input,
+      user,
     )
   }
 
   @Mutation(() => Endorsement)
   async endorsementSystemEndorseList(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<Endorsement> {
     return await this.endorsementSystemService.endorsementControllerCreate(
       input,
+      user,
     )
   }
 
   @Mutation(() => [Endorsement])
   async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
+    @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
-    return await this.endorsementSystemService.endorsementControllerBulkCreate({
-      listId,
-      bulkEndorsementDto: { nationalIds },
-    })
+    return await this.endorsementSystemService.endorsementControllerBulkCreate(
+      {
+        listId,
+        bulkEndorsementDto: { nationalIds },
+      },
+      user,
+    )
   }
 
   @Mutation(() => Boolean)
   async endorsementSystemUnendorseList(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<boolean> {
     return await this.endorsementSystemService.endorsementControllerDelete(
       input,
+      user,
     )
   }
 
@@ -65,41 +82,55 @@ export class EndorsementSystemResolver {
   @Query(() => [EndorsementList])
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: FindEndorsementListByTagDto,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList[]> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user,
     )
   }
 
   @Query(() => EndorsementList, { nullable: true })
   async endorsementSystemGetSingleEndorsementList(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerFindOne(
       input,
+      user,
     )
   }
 
   @Query(() => [Endorsement])
-  async endorsementSystemUserEndorsements(): Promise<Endorsement[]> {
-    return await this.endorsementSystemService.endorsementListControllerFindEndorsements()
+  async endorsementSystemUserEndorsements(
+    @CurrentUser() user: User,
+  ): Promise<Endorsement[]> {
+    return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
+      user,
+    )
   }
 
   @Mutation(() => EndorsementList)
   async endorsementSystemCloseEndorsementList(
     @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerClose(
       input,
+      user,
     )
   }
 
   @Mutation(() => EndorsementList)
   async endorsementSystemCreateEndorsementList(
     @Args('input') input: CreateEndorsementListDto,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerCreate({
-      endorsementListDto: input,
-    })
+    return await this.endorsementSystemService.endorsementListControllerCreate(
+      {
+        endorsementListDto: input,
+      },
+      user,
+    )
   }
 }
