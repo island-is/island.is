@@ -40,8 +40,6 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
   const answers = (application as any).answers as FundingGovernmentProjects
   const contactAnswer = answers.contacts
   const projectAnswer = answers.project
-  const hasMultipleContacts = contactAnswer.length > 1
-  console.log(answers)
   return (
     <>
       <ValueLine
