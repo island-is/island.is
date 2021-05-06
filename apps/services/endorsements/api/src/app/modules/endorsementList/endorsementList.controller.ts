@@ -8,7 +8,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { Audit } from '@island.is/nest/audit'
 import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
@@ -29,9 +28,6 @@ export class EndorsementListController {
 
   @Get()
   @BypassAuth()
-  @Audit<FindEndorsementListByTagDto>({
-    resources: (apps) => 'apps',
-  })
   async findByTag(
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {

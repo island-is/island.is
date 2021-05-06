@@ -10,8 +10,6 @@ module.exports = {
       '9c0b4106-4213-43be-a6b2-ff324f4ba0c4',
     ]
 
-    const mockAuthNationalId = '0101302989'
-
     const endorsementLists = [
       {
         id: endorsementIds[0],
@@ -35,7 +33,7 @@ module.exports = {
             },
           },
         ]),
-        owner: mockAuthNationalId,
+        owner: '1111111111',
         created: new Date(),
         modified: new Date(),
       },
@@ -55,7 +53,7 @@ module.exports = {
             },
           },
         ]),
-        owner: mockAuthNationalId,
+        owner: '1111111111',
         created: new Date(),
         modified: new Date(),
       },
@@ -87,7 +85,7 @@ module.exports = {
             },
           },
         ]),
-        owner: mockAuthNationalId,
+        owner: '1111111111',
         created: new Date(),
         modified: new Date(),
       },
@@ -133,7 +131,7 @@ module.exports = {
     }))
     endorsements.push({
       id: faker.random.uuid(),
-      endorser: mockAuthNationalId,
+      endorser: '1111111111',
       endorsement_list_id: endorsementIds[0],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
@@ -143,7 +141,7 @@ module.exports = {
     })
     endorsements.push({
       id: faker.random.uuid(),
-      endorser: mockAuthNationalId,
+      endorser: '1111111111',
       endorsement_list_id: endorsementIds[1],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
