@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
@@ -17,6 +18,9 @@ import { Endorsement } from '../endorsement/endorsement.model'
 import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
+import { environment } from '../../../environments/environment'
+
+const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
@@ -39,6 +43,12 @@ export class EndorsementListController {
    * This exists so we can return all endorsements for user across all lists
    */
   @Get('/endorsements')
+  @Audit<Endorsement[]>({
+    namespace: auditNamespace,
+    action: 'findEndorsements',
+    resources: (endorsement) => endorsement.map((e) => e.id),
+    meta: (endorsement) => ({ count: endorsement.length }),
+  })
   async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
@@ -47,6 +57,11 @@ export class EndorsementListController {
   }
 
   @Get(':listId')
+  @Audit<EndorsementList>({
+    namespace: auditNamespace,
+    action: 'findOne',
+    resources: (endorsementList) => endorsementList.id,
+  })
   @ApiParam({ name: 'listId', type: 'string' })
   async findOne(
     @Param(
@@ -60,6 +75,11 @@ export class EndorsementListController {
   }
 
   @Put(':listId/close')
+  @Audit<EndorsementList>({
+    namespace: auditNamespace,
+    action: 'close',
+    resources: (endorsementList) => endorsementList.id,
+  })
   @ApiParam({ name: 'listId', type: 'string' })
   async close(
     @Param(
@@ -74,6 +94,14 @@ export class EndorsementListController {
   }
 
   @Post()
+  @Audit<EndorsementList>({
+    namespace: auditNamespace,
+    action: 'create',
+    resources: (endorsementList) => endorsementList.id,
+    meta: (endorsementList) => ({
+      tags: endorsementList.tags,
+    }),
+  })
   async create(
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,

@@ -17,4 +17,9 @@ export const environment = {
     tokenUrl: '',
   },
   apiMock: false,
+  audit: {
+    groupName: process.env.AUDIT_GROUP_NAME, // used in cloudwatch
+    serviceName: 'services-endorsements-api', // used in cloudwatch
+    defaultNamespace: '@island.is/services-endorsements-api',
+  },
 }
