@@ -2,14 +2,9 @@ import {
   DelegationScopeService,
   DelegationScope,
   DelegationScopeDTO,
+  DelegationScopeDeleteDTO,
 } from '@island.is/auth-api-lib'
-import {
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  User,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   Body,
   Controller,
@@ -17,13 +12,11 @@ import {
   Get,
   Param,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { number } from 'yargs'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegation-scope')
 @Controller('delegations-scope')
 export class DelegationScopeController {
@@ -31,6 +24,7 @@ export class DelegationScopeController {
     private readonly delegationsScopeService: DelegationScopeService,
   ) {}
 
+  @Scopes('@island.is/auth/delegations:read')
   @Get(':delegationId')
   @ApiOkResponse({ isArray: true })
   async findAll(
@@ -39,6 +33,7 @@ export class DelegationScopeController {
     return await this.delegationsScopeService.findAll(delegationId)
   }
 
+  @Scopes('@island.is/auth/delegations:write')
   @Post()
   @ApiCreatedResponse({ type: DelegationScope })
   async create(
@@ -47,12 +42,15 @@ export class DelegationScopeController {
     return await this.delegationsScopeService.create(delegationScope)
   }
 
-  @Delete(':delegationId/:scopeName')
-  @ApiCreatedResponse({ type: number })
+  @Scopes('@island.is/auth/delegations:write')
+  @Delete()
+  @ApiCreatedResponse()
   async delete(
-    @Param('delegationId') delegationId: string,
-    @Param('scopeName') scopeName: string | null = null,
+    @Body() delegationScope: DelegationScopeDeleteDTO,
   ): Promise<number> {
-    return await this.delegationsScopeService.delete(delegationId, scopeName)
+    return await this.delegationsScopeService.delete(
+      delegationScope.delegationId,
+      delegationScope.scopeName,
+    )
   }
 }
