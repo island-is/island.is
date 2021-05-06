@@ -1696,6 +1696,28 @@
         }
       }
     },
+    "application-templates-joint-child-custody": {
+      "root": "libs/application/templates/joint-child-custody",
+      "sourceRoot": "libs/application/templates/joint-child-custody/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/joint-child-custody/tsconfig.lib.json",
+              "libs/application/templates/joint-child-custody/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/joint-child-custody/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-data-protection-complaint": {
       "root": "libs/application/templates/data-protection-complaint",
       "sourceRoot": "libs/application/templates/data-protection-complaint/src",

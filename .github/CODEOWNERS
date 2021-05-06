@@ -52,6 +52,7 @@
 /libs/application/templates/children-residence-change/                                        @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
+/libs/application/templates/joint-child-custody/                                              @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                                                        @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                        @island-is/kolibri-justice-league
