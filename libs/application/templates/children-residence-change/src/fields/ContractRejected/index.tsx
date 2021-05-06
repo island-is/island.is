@@ -5,9 +5,9 @@ import { ContractRejectedContainer, DescriptionText } from '../components'
 import { getSelectedChildrenFromExternalData } from '../..'
 
 const ContractRejected = ({ application }: CRCFieldBaseProps) => {
-  const { answers } = application
+  const { answers, externalData } = application
   const selectedChildren = getSelectedChildrenFromExternalData(
-    application.externalData.nationalRegistry.data.children,
+    externalData.nationalRegistry.data.children,
     answers.selectedChildren,
   )
 

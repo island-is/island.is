@@ -30,7 +30,6 @@ function rejectedForm(id: string): Form {
   })
 }
 
-export const ParentBContractRejected = () =>
-  rejectedForm('ParentBContractRejected')
+export const ParentBContractRejected = rejectedForm('ParentBContractRejected')
 
-export const ContractRejected = () => rejectedForm('ContractRejected')
+export const ContractRejected = rejectedForm('ContractRejected')
