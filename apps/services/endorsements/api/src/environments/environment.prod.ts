@@ -17,4 +17,8 @@ export const environment = {
     tokenUrl: '',
   },
   apiMock: false,
+  audit: {
+    groupName: process.env.AUDIT_GROUP_NAME,
+    defaultNamespace: '@island.is/services-endorsements-api',
+  },
 }

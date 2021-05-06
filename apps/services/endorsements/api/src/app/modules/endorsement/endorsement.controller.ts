@@ -1,4 +1,5 @@
 import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
@@ -10,6 +11,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
+import { environment } from '../../../environments/environment'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
@@ -17,15 +19,26 @@ import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
 
+const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
+
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
-  constructor(private readonly endorsementService: EndorsementService) {}
+  constructor (
+    private readonly endorsementService: EndorsementService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
+  @Audit<Endorsement[]>({
+    namespace: auditNamespace,
+    action: 'findAll',
+    resources: (endorsement) => endorsement.map((e) => e.id),
+    meta: (endorsement) => ({ count: endorsement.length }),
+  })
   @ApiParam({ name: 'listId', type: 'string' })
-  async findAll(
+  async findAll (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -39,8 +52,13 @@ export class EndorsementController {
   }
 
   @Get('/exists')
+  @Audit<Endorsement>({
+    namespace: auditNamespace,
+    action: 'findByUser',
+    resources: (endorsement) => endorsement.id,
+  })
   @ApiParam({ name: 'listId', type: 'string' })
-  async findByUser(
+  async findByUser (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -56,8 +74,13 @@ export class EndorsementController {
   }
 
   @Post()
+  @Audit<Endorsement>({
+    namespace: auditNamespace,
+    action: 'create',
+    resources: (endorsement) => endorsement.id,
+  })
   @ApiParam({ name: 'listId', type: 'string' })
-  async create(
+  async create (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -73,8 +96,14 @@ export class EndorsementController {
   }
 
   @Post('/bulk')
+  @Audit<Endorsement[]>({
+    namespace: auditNamespace,
+    action: 'bulkCreate',
+    resources: (endorsement) => endorsement.map((e) => e.id),
+    meta: (endorsement) => ({ count: endorsement.length }),
+  })
   @ApiParam({ name: 'listId', type: 'string' })
-  async bulkCreate(
+  async bulkCreate (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -91,9 +120,13 @@ export class EndorsementController {
   }
 
   @Delete()
+  @Audit({
+    namespace: auditNamespace,
+    action: 'delete',
+  })
   @HttpCode(204)
   @ApiParam({ name: 'listId', type: 'string' })
-  async delete(
+  async delete (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -102,6 +135,14 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<unknown> {
+    // we pass audit manually since we need a request parameter
+    this.auditService.audit({
+      user,
+      namespace: auditNamespace,
+      action: 'delete',
+      resources: endorsementList.id,
+    })
+
     await this.endorsementService.deleteFromListByNationalId({
       nationalId: user.nationalId,
       endorsementList,

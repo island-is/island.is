@@ -18,4 +18,8 @@ export const environment = {
     tokenUrl: 'https://identity-server.dev01.devland.is/connect/token',
   },
   apiMock: process.env.API_MOCKS === 'true',
+  audit: {
+    groupName: 'Endorsement system API',
+    defaultNamespace: '@island.is/services-endorsements-api',
+  },
 }

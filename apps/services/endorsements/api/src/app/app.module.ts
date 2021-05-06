@@ -1,4 +1,5 @@
 import { AuthModule, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { AuditModule } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments/environment'
@@ -8,6 +9,11 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
   imports: [
+    AuditModule.forRoot({
+      groupName: environment.audit.groupName,
+      serviceName: 'services-endorsements-api',
+      defaultNamespace: environment.audit.defaultNamespace,
+    }),
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
