@@ -99,15 +99,15 @@ module.exports = {
             },
           },
           {
-            type: 'uniqueWithinTags',
-            value: {
-              tags: ['partyLetter2021'],
-            },
-          },
-          {
             type: 'minAge',
             value: {
               age: 18,
+            },
+          },
+          {
+            type: 'uniqueWithinTags',
+            value: {
+              tags: ['partyLetter2021'],
             },
           },
         ]),
