@@ -79,12 +79,12 @@ target 'IslandApp' do
       end
     end
 
-    # system('chmod +rw Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h')
+    system('chmod +rw Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h')
 
-    # find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
-    # "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+    find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
+    "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
 
-    # find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
-    # "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+    find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
+    "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 end
