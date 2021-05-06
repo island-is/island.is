@@ -1155,6 +1155,12 @@ export interface ILandingPage extends Entry<ILandingPageFields> {
 export interface ILatestNewsSliceFields {
   /** Title */
   title?: string | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Read more text */
+  readMoreText?: string | undefined
 }
 
 /** Slice to show latest news entries */
