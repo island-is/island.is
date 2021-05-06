@@ -157,7 +157,6 @@ const Editor: FC = () => {
         toast.success(formatMessage(m.notificationNameDeleted))
         doSearch()
       } catch (e) {
-        console.log('error:', e.message)
         toast.error(formatMessage(m.notificationError))
       }
     }
