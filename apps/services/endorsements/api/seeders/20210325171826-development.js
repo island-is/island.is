@@ -16,7 +16,7 @@ module.exports = {
         title: faker.lorem.words(2),
         description: faker.lorem.paragraph(1),
         closed_date: null,
-        endorsement_meta: ['fullName', 'address'], // this field is used in tests to validate metadata injection
+        endorsement_meta: ['fullName', 'address'],
         tags: ['partyLetterSudurkjordaemi2021', 'partyLetter2021'],
         validation_rules: JSON.stringify([
           {
@@ -129,8 +129,6 @@ module.exports = {
       created: new Date(),
       modified: new Date(),
     }))
-
-    // we want to ensure at least one endorsement belongs to the first list
     endorsements.push({
       id: faker.random.uuid(),
       endorser: '0000000000',
@@ -141,8 +139,6 @@ module.exports = {
       created: new Date(),
       modified: new Date(),
     })
-
-    // this endorsements is deleted in tests
     endorsements.push({
       id: faker.random.uuid(),
       endorser: '0000000000',
@@ -153,23 +149,10 @@ module.exports = {
       created: new Date(),
       modified: new Date(),
     })
-
     endorsements.push({
       id: faker.random.uuid(),
       endorser: '0000000000',
       endorsement_list_id: endorsementIds[2],
-      meta: JSON.stringify({
-        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-      }),
-      created: new Date(),
-      modified: new Date(),
-    })
-
-    // this endorsement is used to test conflicts within tags in bulk endorsements
-    endorsements.push({
-      id: faker.random.uuid(),
-      endorser: '0101302209',
-      endorsement_list_id: endorsementIds[1],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
       }),

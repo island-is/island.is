@@ -7,5 +7,14 @@ export const environment = {
       host: process.env.SOFFIA_HOST_URL,
     },
   },
+  auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: '',
+    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
+  },
+  swagger: {
+    authUrl: '',
+    tokenUrl: '',
+  },
   apiMock: false,
 }

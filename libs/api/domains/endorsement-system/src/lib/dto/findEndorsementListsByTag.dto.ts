@@ -1,14 +1,14 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsEnum } from 'class-validator'
-import { EndorsementListControllerFindListsTagEnum } from '../../../gen/fetch/apis/EndorsementListApi'
+import { EndorsementListControllerFindByTagTagEnum } from '../../../gen/fetch/apis/EndorsementListApi'
 
-registerEnumType(EndorsementListControllerFindListsTagEnum, {
-  name: 'EndorsementListControllerFindListsTagEnum',
+registerEnumType(EndorsementListControllerFindByTagTagEnum, {
+  name: 'EndorsementListControllerFindByTagTagEnum',
 })
 
 @InputType()
 export class FindEndorsementListByTagDto {
-  @Field(() => EndorsementListControllerFindListsTagEnum)
-  @IsEnum(EndorsementListControllerFindListsTagEnum)
-  tag!: EndorsementListControllerFindListsTagEnum
+  @Field(() => EndorsementListControllerFindByTagTagEnum)
+  @IsEnum(EndorsementListControllerFindByTagTagEnum)
+  tag!: EndorsementListControllerFindByTagTagEnum
 }
