@@ -6,7 +6,7 @@ This library routes requests to the endorsement system app.
 
 This library uses types and api clients from the endorsement system generated via [openapi generator](https://openapi-generator.tech/).  
 To generate api clients and types first run:  
-`yarn nx run endorsement-system:schemas/build-openapi` (build fresh openapi schema in endorsement system app)  
+`yarn nx run services-endorsement-api:schemas/build-openapi` (build fresh openapi schema in endorsement system app)  
 Then run:  
 `yarn nx run api-domains-endorsement-system:schemas/openapi-generator` (creates clients and types inside this domain)
 
