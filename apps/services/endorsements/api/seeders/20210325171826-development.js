@@ -26,12 +26,6 @@ module.exports = {
               age: 18,
             },
           },
-          {
-            type: 'uniqueWithinTags',
-            value: {
-              tags: ['partyLetter2021'],
-            },
-          },
         ]),
         owner: '1111111111',
         created: new Date(),
@@ -105,6 +99,12 @@ module.exports = {
             },
           },
           {
+            type: 'uniqueWithinTags',
+            value: {
+              tags: ['partyLetter2021'],
+            },
+          },
+          {
             type: 'minAge',
             value: {
               age: 18,
@@ -131,7 +131,7 @@ module.exports = {
     }))
     endorsements.push({
       id: faker.random.uuid(),
-      endorser: '1111111111',
+      endorser: '0000000000',
       endorsement_list_id: endorsementIds[0],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
@@ -141,7 +141,7 @@ module.exports = {
     })
     endorsements.push({
       id: faker.random.uuid(),
-      endorser: '1111111111',
+      endorser: '0000000000',
       endorsement_list_id: endorsementIds[1],
       meta: JSON.stringify({
         fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),

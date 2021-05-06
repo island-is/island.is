@@ -1,7 +1,7 @@
 const {
   getGenericEndorsementList,
   getGenericEndorsement,
-} = require('../../../../utils/seedHelpers.js')
+} = require('../../../../../../test/seedHelpers')
 
 const authNationalId = '0000000010'
 module.exports = {

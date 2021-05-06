@@ -1,8 +1,8 @@
-import { setup } from '../../../../../../test/setup'
-import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import * as request from 'supertest'
+import { setup } from '../../../../../../test/setup'
+import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../endorsementList.model'
-import { errorExpectedStructure } from '../../../../utils/testHelpers'
 
 let app: INestApplication
 

@@ -1,6 +1,6 @@
 const {
   getGenericEndorsementList,
-} = require('../../../../utils/seedHelpers.js')
+} = require('../../../../../../test/seedHelpers')
 
 module.exports = {
   endorsementLists: [

@@ -1,8 +1,8 @@
-import { setup } from '../../../../../../test/setup'
-import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { authNationalId } from './seed'
+import * as request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { setup } from '../../../../../../test/setup'
+import { authNationalId } from './seed'
 let app: INestApplication
 
 beforeAll(async () => {

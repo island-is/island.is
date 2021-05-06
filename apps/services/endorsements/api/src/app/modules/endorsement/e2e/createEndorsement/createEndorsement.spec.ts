@@ -1,11 +1,11 @@
-import { setup } from '../../../../../../test/setup'
-import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import * as request from 'supertest'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { setup } from '../../../../../../test/setup'
 import {
   errorExpectedStructure,
   metaDataResponse,
-} from '../../../../utils/testHelpers'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+} from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
 let app: INestApplication
 
