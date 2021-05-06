@@ -28,8 +28,9 @@ import {
   ResponsiveSpace,
   Link,
 } from '@island.is/island-ui/core'
-import { alphabet } from './data'
+import { theme } from '@island.is/island-ui/theme'
 
+import { alphabet } from './data'
 import {
   GetIcelandicNameBySearchQuery,
   GetIcelandicNameBySearchQueryVariables,
@@ -43,7 +44,6 @@ import {
 } from '@island.is/web/screens/queries/IcelandicNamesRegistry'
 
 import * as styles from './IcelandicNamesSearcher.treat'
-import { theme } from '@island.is/island-ui/theme'
 
 type ToggledFiltersState = {
   males: boolean
@@ -118,7 +118,7 @@ type NameType = Pick<
 
 const paddingTop = [3, 3, 3, 3, 0] as ResponsiveSpace
 
-export const IcelandicNamesSearcher: FC = () => {
+export const IcelandicNamesSearcher = () => {
   const { width } = useWindowSize()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedLetter, setSelectedLetter] = useState<string>('')
@@ -257,84 +257,86 @@ export const IcelandicNamesSearcher: FC = () => {
       span={['12/12', '12/12', '12/12', '12/12', '3/5']}
       paddingTop={shouldStack ? 2 : 0}
     >
-      <Box>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>Flokkur</T.HeadData>
-              <T.HeadData>Nafn</T.HeadData>
-              <T.HeadData>Úrskurður</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {isBusy && (
+      {hasSearched && (
+        <Box>
+          <T.Table>
+            <T.Head>
               <T.Row>
-                <T.Data colSpan={3}>Augnablik...</T.Data>
+                <T.HeadData>Flokkur</T.HeadData>
+                <T.HeadData>Nafn</T.HeadData>
+                <T.HeadData>Úrskurður</T.HeadData>
               </T.Row>
-            )}
-            {!isBusy && !filteredNamesList.length && (
-              <T.Row>
-                <T.Data colSpan={3}>
-                  {!tableData.length
-                    ? 'Ekkert fannst'
-                    : 'Ekkert fannst með völdum síum'}
-                </T.Data>
-              </T.Row>
-            )}
-            {!isBusy &&
-              filteredNamesList.map(
-                ({ icelandicName, status, type, verdict, url }, index) => {
-                  return (
-                    <T.Row key={index}>
-                      <T.Data>
-                        <Text>
-                          {
-                            NameTypeStrings[
-                              type as keyof typeof NameTypeStrings
-                            ]
-                          }
-                        </Text>
-                      </T.Data>
-                      <T.Data>
-                        <Text as="span" fontWeight="semiBold">
-                          {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
-                            1,
-                          )}`}
-                        </Text>
-                      </T.Data>
-                      <T.Data>
-                        {!!verdict && url ? (
-                          <Link href={url} skipTab>
-                            <Button
-                              colorScheme={
-                                status === 'Haf' ? 'destructive' : 'default'
-                              }
-                              variant="text"
-                              size="small"
-                              icon="open"
-                              iconType="outline"
-                              as="span"
+            </T.Head>
+            <T.Body>
+              {isBusy && (
+                <T.Row>
+                  <T.Data colSpan={3}>Augnablik...</T.Data>
+                </T.Row>
+              )}
+              {!isBusy && !filteredNamesList.length && (
+                <T.Row>
+                  <T.Data colSpan={3}>
+                    {!tableData.length
+                      ? 'Ekkert fannst'
+                      : 'Ekkert fannst með völdum síum'}
+                  </T.Data>
+                </T.Row>
+              )}
+              {!isBusy &&
+                filteredNamesList.map(
+                  ({ icelandicName, status, type, verdict, url }, index) => {
+                    return (
+                      <T.Row key={index}>
+                        <T.Data>
+                          <Text>
+                            {
+                              NameTypeStrings[
+                                type as keyof typeof NameTypeStrings
+                              ]
+                            }
+                          </Text>
+                        </T.Data>
+                        <T.Data>
+                          <Text as="span" fontWeight="semiBold">
+                            {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
+                              1,
+                            )}`}
+                          </Text>
+                        </T.Data>
+                        <T.Data>
+                          {!!verdict && url ? (
+                            <Link href={url} skipTab>
+                              <Button
+                                colorScheme={
+                                  status === 'Haf' ? 'destructive' : 'default'
+                                }
+                                variant="text"
+                                size="small"
+                                icon="open"
+                                iconType="outline"
+                                as="span"
+                              >
+                                {verdict}
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Text
+                              variant="small"
+                              fontWeight="semiBold"
+                              color={status === 'Haf' ? 'red600' : 'blue400'}
                             >
                               {verdict}
-                            </Button>
-                          </Link>
-                        ) : (
-                          <Text
-                            variant="small"
-                            fontWeight="semiBold"
-                            color={status === 'Haf' ? 'red600' : 'blue400'}
-                          >
-                            {verdict}
-                          </Text>
-                        )}
-                      </T.Data>
-                    </T.Row>
-                  )
-                },
-              )}
-          </T.Body>
-        </T.Table>
-      </Box>
+                            </Text>
+                          )}
+                        </T.Data>
+                      </T.Row>
+                    )
+                  },
+                )}
+            </T.Body>
+          </T.Table>
+        </Box>
+      )}
     </GridColumn>
   )
 
@@ -463,11 +465,11 @@ export const IcelandicNamesSearcher: FC = () => {
           {shouldStack ? (
             <>
               {filterSection}
-              {hasSearched && tableSection}
+              {tableSection}
             </>
           ) : (
             <>
-              {hasSearched && tableSection}
+              {tableSection}
               {filterSection}
             </>
           )}
