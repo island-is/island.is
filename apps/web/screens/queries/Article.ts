@@ -32,6 +32,16 @@ export const GET_ARTICLE_QUERY = gql`
           width
           height
         }
+        footerItems {
+          title
+          content {
+            ...HtmlFields
+          }
+          link {
+            text
+            url
+          }
+        }
       }
       relatedOrganization {
         title
