@@ -65,7 +65,11 @@ const StepThreeForm: React.FC<Props> = (props) => {
             {workingCase.parentCase && (
               <Box marginTop={1}>
                 <Text>
-                  Fyrri gæsla var/er til{' '}
+                  {`${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'Fyrri gæsla'
+                      : 'Fyrra farbann'
+                  } var/er til `}
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
                       workingCase.parentCase.custodyEndDate,

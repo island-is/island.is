@@ -329,7 +329,11 @@ export const JudgeOverview: React.FC = () => {
                   { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                   {
                     title: workingCase.parentCase
-                      ? 'Fyrri gæsla'
+                      ? `${
+                          workingCase.type === CaseType.CUSTODY
+                            ? 'Fyrri gæsla'
+                            : 'Fyrra farbann'
+                        }`
                       : 'Tími handtöku',
                     value: workingCase.parentCase
                       ? `${capitalize(
