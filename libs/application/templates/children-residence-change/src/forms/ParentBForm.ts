@@ -5,13 +5,13 @@ import {
   FormModes,
   buildCustomField,
   buildMultiField,
-  buildTextField,
   buildSubmitField,
   buildSubSection,
   DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
+import { ApproveContract } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
@@ -25,13 +25,14 @@ export const ParentBForm: Form = buildForm({
       title: m.parentBIntro.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'parentBIntro',
+          id: 'acceptContract',
           title: m.parentBIntro.general.pageTitle,
           component: 'ParentBIntro',
         }),
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
@@ -44,6 +45,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'termsParentB',
       title: m.section.effect,
       children: [
@@ -72,6 +74,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [
@@ -85,7 +88,7 @@ export const ParentBForm: Form = buildForm({
               component: 'Overview',
             }),
             buildSubmitField({
-              id: 'assign',
+              id: 'submit',
               title: '',
               actions: [
                 {
@@ -100,6 +103,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'submitted',
       title: m.section.received,
       children: [
@@ -107,6 +111,47 @@ export const ParentBForm: Form = buildForm({
           id: 'parentBConfirmation',
           title: m.parentBConfirmation.general.pageTitle,
           component: 'ParentBConfirmation',
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.No,
+      id: 'rejectContract',
+      title: m.rejectContract.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'rejectContract',
+          title: m.rejectContract.general.pageTitle,
+          children: [
+            buildCustomField({
+              id: 'rejectContract',
+              title: m.rejectContract.general.pageTitle,
+              component: 'RejectContract',
+            }),
+            buildSubmitField({
+              id: 'reject',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: m.rejectContract.general.rejectButton,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.No,
+      id: 'contractRejected',
+      title: m.contractRejected.general.sectionTitle.confirmed,
+      children: [
+        buildCustomField({
+          id: 'contractRejected',
+          title: m.contractRejected.general.pageTitle,
+          component: 'ParentBContractRejected',
         }),
       ],
     }),
