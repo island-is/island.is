@@ -9,8 +9,6 @@ import { ApplicationIdentityServerScope } from '@island.is/application/core'
 import { environment } from './environments'
 import App from './app/App'
 
-
-
 Sentry.init({
   dsn: environment.sentry.dsn,
   integrations: [new Integrations.BrowserTracing()],

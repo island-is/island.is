@@ -38,9 +38,11 @@ export const configureMock = (user?: MockUser) => {
     expires_in: 9999,
     ...user,
   }
-  const empty = () => { /* intentionally empty */ }
+  const empty = () => {
+    /* intentionally empty */
+  }
 
-  userManager = {
+  userManager = ({
     getUser() {
       return Promise.resolve(userInfo as User)
     },
@@ -54,5 +56,5 @@ export const configureMock = (user?: MockUser) => {
       removeUserLoaded: empty,
       removeUserSignedOut: empty,
     },
-  } as unknown as UserManager
+  } as unknown) as UserManager
 }
