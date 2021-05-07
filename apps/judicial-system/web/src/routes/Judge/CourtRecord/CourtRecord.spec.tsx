@@ -32,11 +32,7 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_9',
-              courtStartTime: parseTime(formatISO(new Date()), '12:31'),
-            } as UpdateCase,
-            {
-              id: 'test_id_9',
-              courtEndTime: parseTime(formatISO(new Date()), '12:32'),
+              courtStartTime: '2020-09-16T12:31:00Z',
             } as UpdateCase,
             {
               id: 'test_id_9',

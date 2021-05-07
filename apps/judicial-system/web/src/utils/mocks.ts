@@ -545,7 +545,7 @@ const testCase9 = {
     title: 'saksóknari',
   },
   courtCaseNumber: null,
-  courtDate: null,
+  courtDate: '2020-09-16T19:51:28.000Z',
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
