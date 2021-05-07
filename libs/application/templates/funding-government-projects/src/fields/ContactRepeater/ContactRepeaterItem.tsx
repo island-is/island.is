@@ -70,7 +70,7 @@ export const ContactRepeaterItem: FC<Props> = ({
           name={phoneNumberField}
           required={true}
           type={'tel'}
-          format="+354 ### ####"
+          format="### ####"
           label={formatText(
             informationAboutInstitution.labels.contactPhoneNumber,
             application,
