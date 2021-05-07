@@ -74,8 +74,6 @@ export class DirectorateOfLabourResolver {
   async getParentalLeavePregnancyStatus(
     @CurrentUser() user: User,
   ): Promise<ParentalLeavePregnancyStatus | null> {
-    console.log('getting pregnancy status')
-    console.log(user.nationalId)
     return this.directorateOfLabourService.getParentalLeavePregnancyStatus(
       user.nationalId,
     )
