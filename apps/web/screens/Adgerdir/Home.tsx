@@ -17,7 +17,6 @@ import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   RichText,
   HeadWithSocialSharing,
-  ChatPanel,
   Header,
   Main,
 } from '@island.is/web/components'
