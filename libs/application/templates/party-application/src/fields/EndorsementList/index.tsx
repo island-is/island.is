@@ -6,7 +6,7 @@ import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const SIGNATURES = [
+export const SIGNATURES = [
   {
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',

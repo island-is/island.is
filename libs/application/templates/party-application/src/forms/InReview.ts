@@ -1,57 +1,61 @@
 import {
-    buildForm,
-    buildMultiField,
-    buildSection,
-    buildSubmitField,
-    buildDescriptionField,
-    Form,
-    FormModes,
-    buildCustomField,
-  } from '@island.is/application/core'
-  import { m } from '../lib/messages'
-  import Logo from '../assets/Logo'
+  buildForm,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
+  buildDescriptionField,
+  Form,
+  FormModes,
+  buildCustomField,
+} from '@island.is/application/core'
+import { m } from '../lib/messages'
+import Logo from '../assets/Logo'
 
-
-
-  export const InReview: Form = buildForm({
-    id: 'inReview',
-    title: 'Til skoðunar',
-    mode: FormModes.REVIEW,
-    logo: Logo,
-    children: [
-      buildSection({
-        id: 'review',
-        title: 'Yfirlit',
-        children: [
-          buildMultiField({
-            id: 'multi',
-            title: 'Yfirkjörstjórn',
-            description: 'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
-            children: [
-
-              buildCustomField({
-                id: 'collectEndorsements',
-                title: m.endorsementList.title,
-                component: 'SupremeCourtOverview',
-              }),
-              buildSubmitField({
-                id: 'submit',
-                title: 'Submit',
-                placement: 'footer',
-                actions: [
-                  { name: 'Hafna', type: 'reject', event: 'REJECT' },
-                  { name: 'Samþykkja lista', type: 'primary', event: 'APPROVE' },
-                ],
-              }),
-            ],
-          }),
-          buildDescriptionField({
-            id: 'final',
-            title: 'Takk',
-            description: 'Bæ description',
-          }),
-        ],
-      }),
-    ],
-  })
-  
+export const InReview: Form = buildForm({
+  id: 'inReview',
+  title: m.supremeCourt.steps,
+  mode: FormModes.REVIEW,
+  logo: Logo,
+  children: [
+    buildSection({
+      id: 'review',
+      title: m.supremeCourt.step1,
+      children: [
+        buildMultiField({
+          id: 'supremeMultiField',
+          title: m.supremeCourt.title,
+          description: m.supremeCourt.description,
+          children: [
+            buildCustomField({
+              id: 'supremeCourtOverview',
+              title: '',
+              component: 'SupremeCourtOverview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: 'Submit',
+              placement: 'footer',
+              actions: [
+                {
+                  name: m.supremeCourt.rejectButton,
+                  type: 'reject',
+                  event: 'REJECT',
+                },
+                {
+                  name: m.supremeCourt.approveButton,
+                  type: 'primary',
+                  event: 'APPROVE',
+                },
+              ],
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'endorsementsApproved',
+          title: m.supremeCourt.approvedTitle,
+          description: m.supremeCourt.approvedDescription,
+        }),
+      ],
+    }),
+  ],
+})

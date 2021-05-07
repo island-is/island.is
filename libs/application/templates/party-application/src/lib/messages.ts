@@ -386,4 +386,93 @@ export const m: MessageDir = {
       description: 'Name of organization',
     },
   }),
+  supremeCourt: defineMessages({
+    title: {
+      id: 'pa.application:supreme.court.title',
+      defaultMessage: 'Yfirkjörstjórn',
+      description: 'Supreme court review title',
+    },
+    description: {
+      id: 'pa.application:supreme.court.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+      description: 'Supreme court review description',
+    },
+    subtitle: {
+      id: 'pa.application:supreme.court.subtitle',
+      defaultMessage: 'Yfirlit yfir framboðslista',
+      description: 'Supreme court review subtitle',
+    },
+    steps: {
+      id: 'pa.application:supreme.court.steps',
+      defaultMessage: 'Til skoðunar',
+      description: 'Title for steps',
+    },
+    step1: {
+      id: 'pa.application:supreme.court.step.1',
+      defaultMessage: 'Yfirlit framboðs',
+      description: 'Step one',
+    },
+    partyNameLabel: {
+      id: 'pa.application:supreme.court.partyname.label',
+      defaultMessage: 'Nafn flokks',
+      description: 'Label for party name',
+    },
+    partyLetterLabel: {
+      id: 'pa.application:supreme.court.partyletter.label',
+      defaultMessage: 'Listabókstafur',
+      description: 'Label for party letter',
+    },
+    responsiblePersonLabel: {
+      id: 'pa.application:supreme.court.responsibleperson.label',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Label for responsible person',
+    },
+    typeOfEndorsementLabel: {
+      id: 'pa.application:supreme.court.endorsementtype.label',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Label for endorsement type',
+    },
+    numberOfEndorsementsLabel: {
+      id: 'pa.application:supreme.court.no.endorsements.label',
+      defaultMessage: 'Fjöldi meðmæla',
+      description: 'Label for number of endorsements',
+    },
+    constituencyLabel: {
+      id: 'pa.application:supreme.court.constituency.label',
+      defaultMessage: 'Kjördæmi',
+      description: 'Label for constituency',
+    },
+    commentsLabel: {
+      id: 'pa.application:supreme.court.comments.label',
+      defaultMessage: 'Athugasemdir',
+      description: 'Label for comments',
+    },
+    csvButton: {
+      id: 'pa.application:supreme.court.csv.button',
+      defaultMessage: 'Hlaða niður atkvæðum',
+      description: 'Download endorsements button',
+    },
+    rejectButton: {
+      id: 'pa.application:supreme.court.reject.button',
+      defaultMessage: 'Hafna',
+      description: 'Reject button',
+    },
+    approveButton: {
+      id: 'pa.application:supreme.court.approve.button',
+      defaultMessage: 'Samþykkja lista',
+      description: 'Approve button',
+    },
+    approvedTitle: {
+      id: 'pa.application:supreme.court.approved.title',
+      defaultMessage: 'Takk fyrir',
+      description: 'Title for approved screen',
+    },
+    approvedDescription: {
+      id: 'pa.application:supreme.court.approved.description',
+      defaultMessage:
+        'Meðmælendalisti hefur verið samþykktur af yfirkjörstjórn',
+      description: 'Description for approved screen',
+    },
+  }),
 }

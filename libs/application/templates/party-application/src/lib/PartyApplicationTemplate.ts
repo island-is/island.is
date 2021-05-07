@@ -52,8 +52,8 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((module) =>
-                  Promise.resolve(module.InReview),
+                import('../forms/ConstituencyForm').then((module) =>
+                  Promise.resolve(module.ConstituencyForm),
                 ),
               actions: [
                 {
@@ -103,10 +103,15 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
       },
       [States.IN_REVIEW]: {
+        //entry: 'assignToSupremeCourt',
+        //exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
+          /*onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignToSupremeCourt,
+          },*/
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -145,7 +150,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
       },
       [States.APPROVED]: {
-        exit: 'clearAssignees',
+        //exit: 'clearAssignees',
         meta: {
           name: States.APPROVED,
           progress: 1,
@@ -180,6 +185,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
+            // todo: get list of supreme court national ids
             assignees: ['3105913789'],
           },
         }
@@ -197,9 +203,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // TODO: Decide on how to store assignees for this application
-    console.clear()
-    console.log(application, nationalId)
+    // todo map to supreme court natioanl ids
     if (application.assignees.includes('3105913789')) {
       console.log('assignee')
       return Roles.ASSIGNEE
