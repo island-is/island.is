@@ -56,6 +56,8 @@ export class ParentalLeaveService {
       } else {
         throw new Error('Could not send application')
       }
+
+      return response
     } catch (e) {
       console.log('Failed to send application', e)
     }

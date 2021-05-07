@@ -307,6 +307,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+            shouldPersistToExternalData: true,
           },
           roles: [
             {
