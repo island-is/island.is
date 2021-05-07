@@ -16,7 +16,7 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/core'
 
-import { YES, API_MODULE_ACTIONS } from '../constants'
+import { YES, API_MODULE_ACTIONS, States } from '../constants'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
@@ -39,35 +39,6 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-}
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-
-  // Draft flow
-  DRAFT = 'draft',
-
-  OTHER_PARENT_APPROVAL = 'otherParentApproval',
-  OTHER_PARENT_ACTION = 'otherParentRequiresAction',
-
-  EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
-  EMPLOYER_APPROVAL = 'employerApproval',
-  EMPLOYER_ACTION = 'employerRequiresAction',
-
-  VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
-
-  APPROVED = 'approved',
-
-  // Edit Flow
-  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
-
-  EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
-  EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
-  EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
-
-  VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<

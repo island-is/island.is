@@ -8,6 +8,7 @@ import {
 
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
 import { getChildrenAndExistingApplications } from './Children-utils'
+import { States } from '../../constants'
 
 const pregnancyStatusQuery = `
   query ParentalLeavePregnancyStatusQuery {
@@ -29,14 +30,16 @@ export class Children extends BasicDataProvider {
       await customTemplateFindQuery({
         applicant: application.applicant,
       })
-    ).filter(({ state }) => state !== 'prerequisites')
+    ).filter(({ state }) => state !== States.PREREQUISITES)
 
     // Applications where this parent is other parent
     const applicationsWhereOtherParentHasApplied = (
       await customTemplateFindQuery({
         'answers.otherParentId': application.applicant,
       })
-    ).filter(({ state }) => state !== 'prerequisites' && state !== 'draft')
+    ).filter(
+      ({ state }) => state !== States.PREREQUISITES && state !== States.DRAFT,
+    )
 
     const pregnancyStatusQueryResponse = await this.useGraphqlGateway(
       pregnancyStatusQuery,
