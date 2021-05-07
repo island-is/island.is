@@ -54,7 +54,6 @@ export class DelegationsService {
                 toNationalId: toNationalId,
                 fromNationalId: p.kennitala,
                 fromName: p.nafn,
-                isFromCompany: true,
                 type: DelegationType.ProcurationHolder,
                 provider: DelegationProvider.CompanyRegistry,
               },
@@ -91,7 +90,6 @@ export class DelegationsService {
           toNationalId: d.toNationalId,
           fromNationalId: d.fromNationalId,
           fromName: d.fromDisplayName,
-          isFromCompany: d.isFromCompany,
           type: DelegationType.Custom,
           provider: DelegationProvider.Custom,
         },
@@ -192,7 +190,6 @@ export interface IDelegation {
   toNationalId: string
   fromNationalId: string
   fromName: string
-  isFromCompany: boolean
   type: DelegationType
   provider: DelegationProvider
 }
