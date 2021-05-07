@@ -24,6 +24,9 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
+  const fileName =
+    'Samningur um breytt lögheimili barna og meðlag' +
+    (caseNumber ? ` nr. ${caseNumber}` : '')
   const caseNumberString = caseNumber
     ? `\nErindið fékk málsnúmerið <strong>${caseNumber}</strong> hjá sýslumanni. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.\n`
     : ''
@@ -58,7 +61,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
       .join('')}</p>`,
     attachments: [
       {
-        filename: `${application.id}.pdf`,
+        filename: `${fileName}.pdf`,
         content: fileContent,
         encoding: 'binary',
       },
