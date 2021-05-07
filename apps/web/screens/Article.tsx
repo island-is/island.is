@@ -26,6 +26,7 @@ import {
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
+  OrganizationFooter,
   Sticky,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -40,6 +41,7 @@ import {
   AllSlicesFragment as Slice,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
+  Organization,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -263,13 +265,11 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
       {article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      {article.relatedArticles.length > 0 && (
-        <RelatedContent
-          title={n('relatedMaterial')}
-          articles={article.relatedArticles}
-          otherContent={article.relatedContent}
-        />
-      )}
+      <RelatedContent
+        title={n('relatedMaterial')}
+        articles={article.relatedArticles}
+        otherContent={article.relatedContent}
+      />
     </Stack>
   )
 }
@@ -563,6 +563,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
+      <OrganizationFooter
+        theme={article.organization[0]?.slug}
+        organization={article.organization[0] as Organization}
+      />
     </>
   )
 }

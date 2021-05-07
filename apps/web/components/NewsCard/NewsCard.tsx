@@ -8,6 +8,7 @@ import {
   Tag,
   Inline,
 } from '@island.is/island-ui/core'
+import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
 
@@ -57,12 +58,15 @@ const NewsCard: React.FC<NewsCardProps> = ({
       height="full"
       background="white"
     >
-      <div
-        className={styles.image}
-        role="img"
-        aria-label={image.title}
-        style={{ backgroundImage: `url(${image.url}?fm=webp&w=640&q=80)` }}
-      />
+      <div className={styles.image}>
+        <BackgroundImage
+          width={600}
+          image={{
+            url: image.url,
+            title: image.title,
+          }}
+        />
+      </div>
       <Box
         className={styles.content}
         display="flex"

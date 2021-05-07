@@ -8,7 +8,7 @@ interface Props {
   accusedName?: string
   accusedNationalId?: string
   accusedAddress?: string
-  defender?: { name: string; email?: string }
+  defender?: { name: string; email?: string; phoneNumber?: string }
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
@@ -31,6 +31,10 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
               <Text>
                 {`${props.defender.name}${
                   props.defender.email ? `, ${props.defender.email}` : ''
+                }${
+                  props.defender.phoneNumber
+                    ? `, s. ${props.defender.phoneNumber}`
+                    : ''
                 }`}
               </Text>
             </Box>

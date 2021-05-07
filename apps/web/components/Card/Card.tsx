@@ -144,8 +144,8 @@ export const Card = ({
           marginLeft={shouldStack ? 0 : 1}
         >
           <BackgroundImage
+            width={300}
             positionX={shouldStack ? undefined : 'right'}
-            background="transparent"
             backgroundSize="contain"
             image={image}
           />
