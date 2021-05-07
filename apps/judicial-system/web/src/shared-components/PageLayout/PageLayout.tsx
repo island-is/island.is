@@ -33,6 +33,7 @@ interface PageProps {
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
   showSidepanel?: boolean
+  caseId?: string
 }
 
 const PageLayout: React.FC<PageProps> = ({
@@ -46,6 +47,7 @@ const PageLayout: React.FC<PageProps> = ({
   parentCaseDecision,
   isCustodyEndDateInThePast,
   showSidepanel = true,
+  caseId,
 }) => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
@@ -81,7 +83,11 @@ const PageLayout: React.FC<PageProps> = ({
           : 'Krafa um farbann',
       children: features.includes(Feature.CASE_FILES)
         ? [
-            { type: 'SUB_SECTION', name: 'Sakborningur' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Sakborningur',
+              href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+            },
             { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
             {
               type: 'SUB_SECTION',
