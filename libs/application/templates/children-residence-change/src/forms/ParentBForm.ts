@@ -33,19 +33,6 @@ export const ParentBForm: Form = buildForm({
     }),
     buildSection({
       condition: (answers) => answers.acceptContract === ApproveContract.Yes,
-      id: 'contact',
-      title: m.contactInfo.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'contactInfo',
-          title: m.contactInfo.general.pageTitle,
-          childInputIds: contactInfoParentBIds,
-          component: 'ContactInfoParentB',
-        }),
-      ],
-    }),
-    buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
       id: 'termsParentB',
       title: m.section.effect,
       children: [
@@ -70,6 +57,19 @@ export const ParentBForm: Form = buildForm({
               component: 'ChildSupport',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
+      id: 'contact',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'contactInfo',
+          title: m.contactInfo.general.pageTitle,
+          childInputIds: contactInfoParentBIds,
+          component: 'ContactInfoParentB',
         }),
       ],
     }),
