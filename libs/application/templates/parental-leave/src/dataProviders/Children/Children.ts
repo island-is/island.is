@@ -11,8 +11,8 @@ import { getChildrenAndExistingApplications } from './Children-utils'
 import { States } from '../../constants'
 
 const pregnancyStatusQuery = `
-  query ParentalLeavePregnancyStatusQuery {
-    getParentalLeavePregnancyStatus {
+  query PregnancyStatusQuery {
+    getPregnancyStatus {
       hasActivePregnancy
       expectedDateOfBirth
     }
@@ -50,7 +50,7 @@ export class Children extends BasicDataProvider {
           return this.handleError(response.errors)
         }
 
-        return Promise.resolve(response.data.getParentalLeavePregnancyStatus)
+        return Promise.resolve(response.data.getPregnancyStatus)
       })
       .catch((error) => {
         return this.handleError(error)

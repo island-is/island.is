@@ -2,12 +2,14 @@ import {
   BasicDataProvider,
   DataProviderConfig,
   DataProviderResult,
+  FormatMessage,
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
+import { User } from '@island.is/auth-nest-tools'
 
 class NotImplemented extends BasicDataProvider {
   provide(): Promise<unknown> {
@@ -23,8 +25,9 @@ export function buildDataProviders(
     string,
     new (dataProviderConfig: DataProviderConfig) => BasicDataProvider
   >,
-  authorization: string,
+  user: User,
   locale: Locale,
+  formatMessage: FormatMessage,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
@@ -33,8 +36,9 @@ export function buildDataProviders(
       providers.push(
         new Provider({
           baseApiUrl: environment.baseApiUrl,
-          authorization,
+          user,
           locale,
+          formatMessage,
         }),
       )
     } else {

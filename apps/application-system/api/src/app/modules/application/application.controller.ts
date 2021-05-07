@@ -456,16 +456,20 @@ export class ApplicationController {
       user.nationalId,
     )
 
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
     const templateDataProviders = await getApplicationDataProviders(
       existingApplication.typeId,
     )
-
     const results = await callDataProviders(
       buildDataProviders(
         externalDataDto,
         templateDataProviders,
-        user.authorization,
+        user,
         locale,
+        intl.formatMessage,
       ),
       existingApplication as BaseApplication,
       this.applicationService.customTemplateFindQuery(

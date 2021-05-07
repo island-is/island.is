@@ -1,5 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
+import { logger } from '@island.is/logging'
+
 import {
   Configuration,
   ParentalLeaveApi,
@@ -16,6 +18,14 @@ export interface VMSTModuleConfig {
 
 export class VMSTModule {
   static register(config: VMSTModuleConfig): DynamicModule {
+    if (!config.apiKey) {
+      logger.error('VMSTModule VMST_API_KEY not provided.')
+    }
+
+    if (!config.xRoadClient) {
+      logger.error('VMSTModule XROAD_CLIENT_ID not provided.')
+    }
+
     const headers = {
       'api-key': config.apiKey,
       'X-Road-Client': config.xRoadClient,

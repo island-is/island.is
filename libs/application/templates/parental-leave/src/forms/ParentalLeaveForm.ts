@@ -12,6 +12,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  ExternalData,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -40,6 +41,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/PregnancyStatusAndRights'
 
 const percentOptions = createRange<{ label: string; value: string }>(
   10,
@@ -510,13 +512,26 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers) =>
-                (answers as {
-                  requestRights: {
-                    isRequestingRights: string
-                  }
-                })?.requestRights?.isRequestingRights === NO,
+              condition: (answers, externalData: ExternalData) => {
+                const data = externalData?.pregnancyStatusAndRights
+                  ?.data as PregnancyStatusAndRightsResults
 
+                if (
+                  !data.parentalLeavesEntitlements.transferableMonths ||
+                  data.parentalLeavesEntitlements.transferableMonths === 0 ||
+                  data.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
