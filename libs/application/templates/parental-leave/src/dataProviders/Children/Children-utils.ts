@@ -90,11 +90,10 @@ export const getChildrenAndExistingApplications = (
   const children: ChildInformation[] = []
 
   for (const child of childrenWhereOtherParent) {
-    const isAlreadyInList =
-      children.find(
-        (currentChild) =>
-          currentChild.expectedDateOfBirth === child.expectedDateOfBirth,
-      ) !== undefined
+    const isAlreadyInList = children.some(
+      (currentChild) =>
+        currentChild.expectedDateOfBirth === child.expectedDateOfBirth,
+    )
 
     if (!isAlreadyInList) {
       children.push(child)
@@ -102,7 +101,7 @@ export const getChildrenAndExistingApplications = (
   }
 
   if (pregnancyStatus?.hasActivePregnancy) {
-    const hasAlreadyAppliedForChild = existingApplications.find(
+    const hasAlreadyAppliedForChild = existingApplications.some(
       ({ expectedDateOfBirth }) =>
         expectedDateOfBirth === pregnancyStatus.expectedDateOfBirth,
     )
