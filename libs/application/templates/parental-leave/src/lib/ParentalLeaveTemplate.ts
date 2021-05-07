@@ -23,7 +23,6 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
-  isDev,
 } from './parentalLeaveTemplateUtils'
 import { getSelectedChild } from '../parentalLeaveUtils'
 
@@ -117,7 +116,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               cond: needsOtherParentApproval,
             },
             { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -170,7 +168,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
               cond: hasEmployer,
             },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -267,7 +264,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: [
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -403,7 +399,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
             },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
@@ -467,7 +462,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: [
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
