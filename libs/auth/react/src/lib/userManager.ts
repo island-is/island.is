@@ -18,7 +18,7 @@ export const getAuthSettings = (): AuthSettings => {
   return authSettings
 }
 
-export const configure = (settings?: AuthSettings) => {
+export const configure = (settings: AuthSettings) => {
   authSettings = mergeAuthSettings(settings)
   userManager = new UserManager(authSettings)
   return userManager

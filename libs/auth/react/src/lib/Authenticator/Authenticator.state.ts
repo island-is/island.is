@@ -1,11 +1,16 @@
 import { User } from 'oidc-client'
-import { Dispatch, ReducerAction } from 'react'
+import { Dispatch } from 'react'
 
-export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
+export type UserInfoState =
+  | 'passive'
+  | 'pending'
+  | 'fulfilled'
+  | 'failed'
+  | 'logging-out'
 
 export interface AuthReducerState {
-  userInfo?: User
-  userInfoState: AsyncActionState
+  userInfo: User | null
+  userInfoState: UserInfoState
   isAuthenticated: boolean
 }
 
@@ -13,7 +18,8 @@ export enum ActionType {
   SIGNIN_START = 'SIGNIN_START',
   SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
   SIGNIN_FAILURE = 'SIGNIN_FAILURE',
-  LOG_OUT = 'LOG_OUT',
+  LOGGING_OUT = 'LOGGING_OUT',
+  LOGGED_OUT = 'LOGGED_OUT',
   USER_LOADED = 'USER_LOADED',
 }
 
@@ -33,7 +39,7 @@ export const initialState: AuthReducerState = USER_MOCKED
       isAuthenticated: true,
     }
   : {
-      userInfo: undefined,
+      userInfo: null,
       userInfoState: 'passive',
       isAuthenticated: false,
     }
@@ -69,7 +75,12 @@ export const reducer = (
         ...state,
         userInfoState: 'failed',
       }
-    case ActionType.LOG_OUT:
+    case ActionType.LOGGING_OUT:
+      return {
+        ...state,
+        userInfoState: 'logging-out',
+      }
+    case ActionType.LOGGED_OUT:
       return {
         ...initialState,
       }

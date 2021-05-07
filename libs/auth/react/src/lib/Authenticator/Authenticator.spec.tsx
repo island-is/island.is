@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { screen, render, waitFor } from '@testing-library/react'
-import { User, UserManagerEvents } from 'oidc-client'
+import { UserManagerEvents } from 'oidc-client'
 
 import { Authenticator } from './Authenticator'
 import { getUserManager, getAuthSettings } from '../userManager'
@@ -46,8 +46,6 @@ type MinimalUserManager = {
 
 describe('Authenticator', () => {
   let userManager: MinimalUserManager
-  let userLoaded: UserManagerEvents.UserLoadedCallback
-  let userSignedOut: UserManagerEvents.UserSignedOutCallback
 
   const expectSignin = () =>
     waitFor(() => {
@@ -62,14 +60,10 @@ describe('Authenticator', () => {
   beforeEach(() => {
     userManager = {
       events: {
-        addUserLoaded(cb: UserManagerEvents.UserLoadedCallback) {
-          userLoaded = cb
-        },
-        addUserSignedOut(cb: UserManagerEvents.UserSignedOutCallback) {
-          userSignedOut = cb
-        },
-        removeUserLoaded: () => {},
-        removeUserSignedOut: () => {},
+        addUserLoaded: jest.fn(),
+        addUserSignedOut: jest.fn(),
+        removeUserLoaded: jest.fn(),
+        removeUserSignedOut: jest.fn(),
       },
       getUser: jest.fn(),
       signinRedirect: jest.fn(),
@@ -84,7 +78,7 @@ describe('Authenticator', () => {
 
   it('starts signin flow when no stored user', async () => {
     // Act
-    const { getByRole } = renderAuthenticator()
+    renderAuthenticator()
 
     // Assert
     await expectSignin()

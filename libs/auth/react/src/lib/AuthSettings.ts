@@ -38,10 +38,8 @@ export interface AuthSettings extends UserManagerSettings {
   userStorePrefix?: string
 }
 
-export const mergeAuthSettings = (settings: AuthSettings = {}) => {
+export const mergeAuthSettings = (settings: AuthSettings) => {
   const baseUrl = settings.baseUrl ?? window.location.origin
-  const basePath = settings.basePath ?? baseUrl
-  // TODO: Configure these as routes.
   const redirectPath = settings.redirectPath ?? '/auth/callback'
   const redirectPathSilent =
     settings.redirectPathSilent ?? '/auth/callback-silent'

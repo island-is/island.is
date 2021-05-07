@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react'
-import { UserManager } from 'oidc-client'
 
 import { AuthReducerState, initialState } from './Authenticator.state'
 
@@ -11,9 +10,15 @@ export interface AuthContextType extends AuthReducerState {
 
 export const AuthContext = createContext<AuthContextType>({
   ...initialState,
-  signIn() {},
-  signInSilent() {},
-  signOut() {},
+  signIn() {
+    // Intentionally empty
+  },
+  signInSilent() {
+    // Intentionally empty
+  },
+  signOut() {
+    // Intentionally empty
+  },
 })
 
 export const useAuth: () => AuthContextType = () => useContext(AuthContext)

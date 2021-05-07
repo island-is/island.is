@@ -1,10 +1,9 @@
 import { tinyMemoize } from './tinyMemoize'
-import result from '../../../../../api/schema/src/lib/schema'
 
 type ResolveFn = (value?: number | PromiseLike<number>) => void
 
 describe('tinyMemoize', () => {
-  let resolve: null | ResolveFn = null
+  let resolve: ResolveFn
   let slowFunction: jest.Mock
   let memoizedFunction: () => Promise<number>
 
@@ -26,7 +25,7 @@ describe('tinyMemoize', () => {
     // act
     const promise1 = memoizedFunction()
     const promise2 = memoizedFunction()
-    resolve!(value)
+    resolve(value)
     const results = await Promise.all([promise1, promise2])
 
     // assert
@@ -42,11 +41,11 @@ describe('tinyMemoize', () => {
 
     // act
     const promise1 = memoizedFunction()
-    resolve!(value1)
+    resolve(value1)
     const result1 = await promise1
 
     const promise2 = memoizedFunction()
-    resolve!(value2)
+    resolve(value2)
     const result2 = await promise2
 
     // assert

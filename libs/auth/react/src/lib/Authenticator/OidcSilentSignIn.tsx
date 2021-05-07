@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { getUserManager } from '../userManager'
 
 // Note: This route gets mounted as an iframe to silently log the user in

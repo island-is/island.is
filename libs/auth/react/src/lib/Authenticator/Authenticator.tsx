@@ -59,9 +59,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   const signOut = useCallback(
     async function signOut() {
       dispatch({
-        type: ActionType.LOG_OUT,
+        type: ActionType.LOGGING_OUT,
       })
       await userManager.signoutRedirect()
+      dispatch({
+        type: ActionType.LOGGED_OUT,
+      })
     },
     [userManager, dispatch],
   )
@@ -94,7 +97,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         await signInSilent()
       }
     },
-    [userManager, dispatch, signIn, signInSilent],
+    [userManager, dispatch, signIn, signInSilent, autoLogin],
   )
 
   useEffect(() => {
@@ -109,7 +112,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     // This is raised when the user is signed out of the IDP.
     const userSignedOut = () => {
       dispatch({
-        type: ActionType.LOG_OUT,
+        type: ActionType.LOGGED_OUT,
       })
       if (autoLogin) {
         signIn()
@@ -122,7 +125,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       userManager.events.removeUserLoaded(userLoaded)
       userManager.events.removeUserSignedOut(userSignedOut)
     }
-  }, [dispatch, userManager, signIn])
+  }, [dispatch, userManager, signIn, autoLogin])
 
   const context = useMemo(
     () => ({

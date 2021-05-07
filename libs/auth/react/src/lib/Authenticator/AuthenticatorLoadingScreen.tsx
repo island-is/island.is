@@ -1,8 +1,8 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
 import * as styles from './AuthenticatorLoadingScreen.treat'
 
-const AuthenticatorLoadingScreen: FC<{}> = () => {
+const AuthenticatorLoadingScreen = () => {
   return (
     <Box
       display="flex"
