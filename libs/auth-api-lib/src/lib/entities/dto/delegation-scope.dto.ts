@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
-// For use with deleting Delegation-Scope
+import { IsString } from 'class-validator'
+
 export class DelegationScopeDTO {
   @IsString()
   @ApiProperty()
