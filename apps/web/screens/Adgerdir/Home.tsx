@@ -253,7 +253,6 @@ const Home: Screen<HomeProps> = ({
             })}
           </Stack>
         </Box>
-        <ChatPanel endpoint="covid-island" />
       </Main>
     </>
   )

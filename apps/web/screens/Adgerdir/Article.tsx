@@ -172,7 +172,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
-      <ChatPanel endpoint="covid-island" />
     </>
   )
 }
