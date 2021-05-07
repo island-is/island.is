@@ -25,7 +25,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
   const caseNumberString = caseNumber
-    ? `Erindið fékk málsnúmerið <strong>${caseNumber}</strong> hjá sýslumanni. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.`
+    ? `\nErindið fékk málsnúmerið <strong>${caseNumber}</strong> hjá sýslumanni. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.\n`
     : ''
   const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
@@ -34,9 +34,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
         Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
 
         Staðfesting sýslumanns verður send í rafræn skjöl á Ísland.is.
-
         ${caseNumberString}
-
         Þú getur séð stöðu umsóknarinnar á mínum síðum á Ísland.is.
 
         <a href=${applicationLink} target="_blank">Fara á mínar síður</a>.
