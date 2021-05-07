@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { NavigationItem } from '@island.is/island-ui/core'
+import { Button, NavigationItem, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -15,6 +15,7 @@ import {
   lightThemes,
   OrganizationSlice,
   OrganizationWrapper,
+  SearchBox,
   SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -28,7 +29,9 @@ interface HomeProps {
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
+const WITH_SEARCH = ['syslumenn']
+
+const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -69,9 +72,27 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           organizationPageSlug={organizationPage.slug}
         />
       ))}
-      sidebarContent={organizationPage.sidebarCards.map((card) => (
-        <SidebarCard key={card.id} sidebarCard={card} />
-      ))}
+      sidebarContent={
+        <>
+          {organizationPage.sidebarCards.map((card) => (
+            <SidebarCard key={card.id} sidebarCard={card} />
+          ))}
+          {WITH_SEARCH.includes(organizationPage.slug) && (
+            <SearchBox
+              organization={organizationPage.slug}
+              placeholder={n('searchServices', 'Leitaðu að þjónustu')}
+              noResultsText={n(
+                'noServicesFound',
+                'Engar niðurstöður í þjónustu sýslumanna',
+              )}
+              searchAllText={n(
+                'searchAllServices',
+                'Leita í öllu efni Ísland.is',
+              )}
+            />
+          )}
+        </>
+      }
     >
       {organizationPage.bottomSlices.map((slice) => (
         <OrganizationSlice
