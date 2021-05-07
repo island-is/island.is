@@ -1,5 +1,3 @@
-import get from 'lodash/get'
-
 import {
   Application,
   buildAsyncSelectField,

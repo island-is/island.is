@@ -1,12 +1,16 @@
 import React, { FC, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { Box, Button, Link } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
@@ -42,7 +46,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   })
 
   const selectExistingApplication = (id: string) => {
-    history.push(`/faedingarorlof/${id}`)
+    history.push(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
   }
 
   return (
