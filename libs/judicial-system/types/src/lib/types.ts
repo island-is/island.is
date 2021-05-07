@@ -155,7 +155,6 @@ export interface Case {
   comments?: string
   caseFilesComments?: string
   prosecutor?: User
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
@@ -244,7 +243,6 @@ export interface UpdateCase {
   comments?: string
   caseFilesComments?: string
   prosecutorId?: string
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string

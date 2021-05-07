@@ -55,7 +55,6 @@ export const CreateCaseMutation = gql`
         name
         title
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
@@ -172,7 +171,6 @@ export const ExtendCaseMutation = gql`
         name
         title
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom

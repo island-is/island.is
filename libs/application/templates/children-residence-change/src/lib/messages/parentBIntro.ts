@@ -51,4 +51,16 @@ export const parentBIntro = {
       description: 'Button title for booking an interview',
     },
   }),
+  contract: defineMessages({
+    accept: {
+      id: 'crc.application:section.parentBIntro.contract.accept',
+      defaultMessage: 'Ég vil halda áfram í yfirlestur og undirritunarferli',
+      description: 'Text for radio button to accept contract',
+    },
+    reject: {
+      id: 'crc.application:section.parentBIntro.contract.reject',
+      defaultMessage: 'Ég hafna ofangreindri breytingu ',
+      description: 'Text for radio button to reject contract',
+    },
+  }),
 }
