@@ -152,9 +152,6 @@
     "application-templates-children-residence-change": {
       "tags": []
     },
-    "application-templates-joint-child-custody": {
-      "tags": []
-    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -174,6 +171,9 @@
       "tags": []
     },
     "application-templates-institution-collaboration": {
+      "tags": []
+    },
+    "application-templates-joint-child-custody": {
       "tags": []
     },
     "application-templates-login-service": {
