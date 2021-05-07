@@ -1,5 +1,5 @@
 import React from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { FooterItem, OrganizationPage } from '@island.is/web/graphql/schema'
 import {
   Box,
   GridColumn,
@@ -13,11 +13,15 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
-  organizationPage: OrganizationPage
+  title: string
+  logo?: string
+  footerItems: Array<FooterItem>
 }
 
 export const SyslumennFooter: React.FC<FooterProps> = ({
-  organizationPage,
+  title,
+  logo,
+  footerItems,
 }) => {
   return (
     <footer aria-labelledby="organizationFooterTitle">
@@ -33,23 +37,19 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
               borderColor="blueberry300"
               borderBottomWidth="standard"
             >
-              {!!organizationPage.organization.logo?.url && (
+              {!!logo && (
                 <Box marginRight={4}>
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    alt=""
-                    width="70"
-                  />
+                  <img src={logo} alt="" width="70" />
                 </Box>
               )}
               <div id="organizationFooterTitle">
                 <Text variant="h2" color="white">
-                  {organizationPage.title}
+                  {title}
                 </Text>
               </div>
             </Box>
             <GridRow>
-              {organizationPage.footerItems.map((item, index) => (
+              {footerItems.map((item, index) => (
                 <GridColumn
                   key={index}
                   span={['12/12', '6/12', '4/12', '1/5']}
