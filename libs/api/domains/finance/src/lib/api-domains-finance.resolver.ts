@@ -10,13 +10,15 @@ import {
 } from '@island.is/auth-nest-tools'
 import { FinanceService } from '@island.is/clients/finance'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FinanceResolver {
   constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
-  async getFinanceStatus(@CurrentUser() user: User) {
-    return this.FinanceService.getFinanceStatus(user.nationalId)
+  // async getFinanceStatus(@CurrentUser() user: User) {
+  async getFinanceStatus(nationalId: string) {
+    // return this.FinanceService.getFinanceStatus(user.nationalId)
+    return this.FinanceService.getFinanceStatus(nationalId)
   }
 }
