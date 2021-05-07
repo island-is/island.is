@@ -16,9 +16,22 @@ export class FinanceResolver {
   constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
-  // async getFinanceStatus(@CurrentUser() user: User) {
-  async getFinanceStatus(nationalId: string) {
+  async getFinanceStatus(/*@CurrentUser() user: User */ nationalID: string) {
     // return this.FinanceService.getFinanceStatus(user.nationalId)
-    return this.FinanceService.getFinanceStatus(nationalId)
+    return this.FinanceService.getFinanceStatus(nationalID)
+  }
+
+  @Query(() => graphqlTypeJson)
+  async getFinanceStatusDetails(
+    nationalID: string, // @CurrentUser() user: User,
+    OrgID: string,
+    chargeTypeID: string,
+  ) {
+    // return this.FinanceService.getFinanceStatusDetails(user.nationalId, OrgID, chargeTypeID)
+    return this.FinanceService.getFinanceStatusDetails(
+      nationalID,
+      OrgID,
+      chargeTypeID,
+    )
   }
 }

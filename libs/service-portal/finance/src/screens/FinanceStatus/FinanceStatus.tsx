@@ -2,8 +2,19 @@ import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 
-import { Box, Text, Columns, Column, Button, DropdownMenu, } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Columns,
+  Column,
+  Button,
+  DropdownMenu,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  FinanceStatusDataType,
+  FinanceStatusDetailsType,
+} from './FinanceStatusData.types'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -11,15 +22,35 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetFinanceStatusDetailsQuery = gql`
+  query GetFinanceStatusDetailsQuery {
+    getFinanceStatusDetails
+  }
+`
+
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const { data, loading } = useQuery<Query>(GetFinanceStatusQuery)
-  const financeStatusData = data?.getFinanceStatus || []
+  const statusQuery = useQuery<Query>(GetFinanceStatusQuery, {
+    variables: {
+      nationalID: '2704685439',
+    },
+  })
+  const financeStatusData: FinanceStatusDataType =
+    statusQuery.data?.getFinanceStatus || {}
+  console.log({ financeStatusData })
 
-  console.log({financeStatusData});
-
+  const detailsQuery = useQuery(GetFinanceStatusDetailsQuery, {
+    variables: {
+      nationalID: '2704685439',
+      OrgID: 'RIKI',
+      chargeTypeID: 'AX',
+    },
+  })
+  const financeStatusDetails: FinanceStatusDetailsType =
+    detailsQuery.data?.getFinanceStatusDetails || {}
+  console.log({ financeStatusDetails })
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -47,9 +78,9 @@ const FinanceStatus = () => {
               colorScheme="default"
               icon="documents" // Need to add Printer
               iconType="filled"
-              onBlur={function noRefCheck() { }}
-              onClick={function noRefCheck() { }}
-              onFocus={function noRefCheck() { }}
+              onBlur={function noRefCheck() {}}
+              onClick={function noRefCheck() {}}
+              onFocus={function noRefCheck() {}}
               preTextIconType="filled"
               size="default"
               type="button"
@@ -64,15 +95,16 @@ const FinanceStatus = () => {
               items={[
                 {
                   href: '#',
-                  title: 'Staða í lok árs ...'
-                },                {
-                  href: '#',
-                  title: 'Sækja sem PDF'
+                  title: 'Staða í lok árs ...',
                 },
                 {
-                  onClick: function noRefCheck() { },
-                  title: 'Sækja sem Excel'
-                }
+                  href: '#',
+                  title: 'Sækja sem PDF',
+                },
+                {
+                  onClick: function noRefCheck() {},
+                  title: 'Sækja sem Excel',
+                },
               ]}
               title="Meira"
             />
