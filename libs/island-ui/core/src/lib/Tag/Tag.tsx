@@ -10,7 +10,6 @@ export type TagVariant =
   | 'purple'
   | 'white'
   | 'red'
-  | 'mint'
   | 'rose'
   | 'blueberry'
 

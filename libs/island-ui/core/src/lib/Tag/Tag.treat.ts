@@ -74,10 +74,6 @@ export const outlined = style({
       borderColor: theme.color.red200,
       color: theme.color.red600,
     },
-    [`&${variants.mint}`]: {
-      borderColor: theme.color.mint200,
-      color: theme.color.mint400,
-    },
     [`&${variants.rose}`]: {
       borderColor: theme.color.roseTinted200,
       color: theme.color.roseTinted400,
