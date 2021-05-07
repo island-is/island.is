@@ -1,11 +1,22 @@
 import { getSlugFromType } from '@island.is/application/core'
+import { SendMailOptions } from 'nodemailer'
 
-import { AttachmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 
-export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator = (
+interface ApplicationSubmittedEmail {
+  (
+    props: EmailTemplateGeneratorProps,
+    fileContent: string,
+    recipientEmail: string,
+    caseNumber?: string,
+  ): SendMailOptions
+}
+
+export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   props,
   fileContent,
   recipientEmail,
+  caseNumber,
 ) => {
   const {
     application,
@@ -13,6 +24,9 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
+  const caseNumberString = caseNumber
+    ? `Erindið fékk málsnúmerið <strong>${caseNumber}</strong> hjá sýslumanni. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.`
+    : ''
   const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
         Í viðhengi er afrit af samningi, um breytt lögheimili barna, sem þú undirritaðir.
@@ -21,7 +35,9 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
 
         Staðfesting sýslumanns verður send í rafræn skjöl á Ísland.is.
 
-        Þú getur séð stöðu umsóknarinnar á mínum síðum á Ísland.is
+        ${caseNumberString}
+
+        Þú getur séð stöðu umsóknarinnar á mínum síðum á Ísland.is.
 
         <a href=${applicationLink} target="_blank">Fara á mínar síður</a>.
       `
