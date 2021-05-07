@@ -79,6 +79,7 @@ export const RulingStepTwo: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
