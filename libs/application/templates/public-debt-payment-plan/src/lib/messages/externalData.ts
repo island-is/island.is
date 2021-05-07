@@ -23,14 +23,35 @@ export const externalData = {
   }),
   labels: defineMessages({
     paymentPlanTitle: {
-      id: `${t}:application.externalData.paymentPlanTitle`,
+      id: `${t}:section.externalData.paymentPlanTitle`,
       defaultMessage: 'Upplýsingar frá skattinum',
       description: 'External data section payment plan title',
     },
     paymentPlanSubtitle: {
-      id: `${t}:application.externalData.paymentPlanSubtitle`,
+      id: `${t}:section.externalData.paymentPlanSubtitle`,
       defaultMessage: 'Upplýsingar um ráðstöfunartekjur. ',
       description: 'External data section payment plan subtitle',
+    },
+    nationalRegistryTitle: {
+      id: `${t}:section.externalData.nationRegistryTitle`,
+      defaultMessage: 'Grunnupplýsingar frá Þjóðskrá Íslands',
+      description: 'National Registry Title',
+    },
+    nationalRegistrySubTitle: {
+      id: `${t}:section.externalData.nationalRegistrySubTitle`,
+      defaultMessage: 'Nafn, kennitala og lögheimili.',
+      description: 'National Registry Subtitle',
+    },
+    userProfileTitle: {
+      id: `${t}:section.externalData.userProfileTitle`,
+      defaultMessage: 'Upplýsingar úr prófílgrunni á island.is',
+      description: 'User Profile Title',
+    },
+    userProfileSubTitle: {
+      id: `${t}:section.externalData.userProfileSubTitle`,
+      defaultMessage:
+        'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
+      description: 'User Profile Subtitle',
     },
   }),
 }
