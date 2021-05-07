@@ -11,6 +11,7 @@ import {
   mapOrganizationTheme,
   OrganizationTheme,
 } from './organizationTheme.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -34,6 +35,12 @@ export class OrganizationPage {
 
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
+
+  @Field(() => [SliceUnion])
+  bottomSlices!: Array<typeof SliceUnion | null>
+
+  @Field({ nullable: true })
+  newsTag!: GenericTag | null
 
   @Field(() => [LinkGroup])
   menuLinks!: Array<LinkGroup>
@@ -65,6 +72,8 @@ export const mapOrganizationPage = ({
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  bottomSlices: (fields.bottomSlices ?? []).map(safelyMapSliceUnion),
+  newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
     ? mapLinkGroup(fields.secondaryMenu)

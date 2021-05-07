@@ -80,7 +80,12 @@ export const slices = gql`
       image {
         ...ImageFields
       }
+      genericTags {
+        id
+        title
+      }
     }
+    readMoreText
   }
 
   fragment LinkCardFields on LinkCardSlice {
