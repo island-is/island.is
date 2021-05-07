@@ -126,13 +126,28 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
     >
       <TabBar
         values={[
-          intl.formatMessage({ id: 'settings.tabs.preferences' }),
-          intl.formatMessage({ id: 'settings.tabs.personalInfo' })
+          intl.formatMessage({ id: 'settings.tabs.personalInfo' }),
+          intl.formatMessage({ id: 'settings.tabs.preferences' })
         ]}
         onChange={(selectedIndex) => setTab(selectedIndex)}
         selectedIndex={tab}
       />
       {tab === 0 ? (
+        <ScrollView style={{ flex: 1, flexDirection: 'column', paddingTop: 32-24 }}>
+          <Input label={intl.formatMessage({ id: 'settings.natreg.displayName' })} value={natRegData.fullName} />
+          <InputRow>
+            <Input label={intl.formatMessage({ id: 'settings.natreg.nationalId' })} value={formatNationalId(String(natRegData.nationalId))} />
+            <Input label={intl.formatMessage({ id: 'settings.natreg.birthPlace' })} value={natRegData.birthPlace} />
+          </InputRow>
+          <Input label={intl.formatMessage({ id: 'settings.natreg.legalResidence' })} value={natRegData.legalResidence} />
+          <InputRow>
+            <Input label={intl.formatMessage({ id: 'settings.natreg.gender' })} value={intl.formatMessage({ id: 'settings.natreg.genderValue' }, natRegData)} />
+            <Input label={intl.formatMessage({ id: 'settings.natreg.maritalStatus' })} value={intl.formatMessage({ id: 'settings.natreg.maritalStatusValue' }, natRegData)}/>
+          </InputRow>
+          <Input label={intl.formatMessage({ id: 'settings.natreg.citizenship' })} value={authStore.userInfo?.nat!} />
+          <Input label={intl.formatMessage({ id: 'settings.natreg.religion' })} value={natRegData.religion} />
+        </ScrollView>
+      ) : (
         <ScrollView style={{ flex: 1, paddingTop: 32 }}>
           <TableViewGroup
             header={intl.formatMessage({
@@ -211,21 +226,6 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
               <TableViewCell title="Útskrá" />
             </TouchableHighlight>
           </TableViewGroup>
-        </ScrollView>
-      ) : (
-        <ScrollView style={{ flex: 1, flexDirection: 'column', paddingTop: 32-24 }}>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.displayName' })} value={natRegData.fullName} />
-          <InputRow>
-            <Input label={intl.formatMessage({ id: 'settings.natreg.nationalId' })} value={formatNationalId(String(natRegData.nationalId))} />
-            <Input label={intl.formatMessage({ id: 'settings.natreg.birthPlace' })} value={natRegData.birthPlace} />
-          </InputRow>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.legalResidence' })} value={natRegData.legalResidence} />
-          <InputRow>
-            <Input label={intl.formatMessage({ id: 'settings.natreg.gender' })} value={intl.formatMessage({ id: 'settings.natreg.genderValue' }, natRegData)} />
-            <Input label={intl.formatMessage({ id: 'settings.natreg.maritalStatus' })} value={intl.formatMessage({ id: 'settings.natreg.maritalStatusValue' }, natRegData)}/>
-          </InputRow>
-          <Input label={intl.formatMessage({ id: 'settings.natreg.citizenship' })} value={authStore.userInfo?.nat!} />
-          <Input label={intl.formatMessage({ id: 'settings.natreg.religion' })} value={natRegData.religion} />
         </ScrollView>
       )}
     </View>

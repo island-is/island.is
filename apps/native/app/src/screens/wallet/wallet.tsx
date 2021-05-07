@@ -1,6 +1,7 @@
 import { Card, ListItem, LicenceCard, Alert } from '@island.is/island-ui-native'
-import React from 'react'
-import { ScrollView, TouchableOpacity } from 'react-native'
+import React, { useRef } from 'react'
+import styled from 'styled-components/native';
+import { ScrollView, TouchableOpacity, Animated } from 'react-native'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -16,6 +17,9 @@ import { LicenseType } from '../../types/license-type'
 import { ComponentRegistry } from '../../utils/navigation-registry'
 import { useIntl } from '../../utils/intl'
 import { useTranslatedTitle } from '../../utils/use-translated-title'
+
+const Wrapper = styled(Animated.View)`
+`;
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -59,6 +63,8 @@ export const WalletScreen: NavigationFunctionComponent = () => {
     ? [licenseItems[1], licenseItems[0], licenseItems[2], licenseItems[3]]
     : []
 
+  const sharedAnimatedValue = useRef(new Animated.Value(0));
+
   return (
     <>
       {/* <ScrollView horizontal={false}> */}
@@ -91,11 +97,25 @@ export const WalletScreen: NavigationFunctionComponent = () => {
             )
           })}
         </ScrollView> */}
-
-        <Alert style={{ marginTop: 10 }} type="info" message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet." />
-        <ScrollView
+      <Wrapper
+        style={{
+          marginTop: 10,
+          transform: [{
+            translateY: sharedAnimatedValue.current,
+          }],
+        }}
+      >
+        <Alert
+          type="info"
+          message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
+          offsetY={sharedAnimatedValue}
+        />
+        <Animated.ScrollView
           testID={testIDs.SCREEN_HOME}
-          style={{ paddingHorizontal: 16, paddingTop: 24 }}
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 24,
+          }}
         >
         {licenseItems.map(
           ({
@@ -123,8 +143,8 @@ export const WalletScreen: NavigationFunctionComponent = () => {
             />
           ),
         )}
-        </ScrollView>
-      {/* </ScrollView> */}
+        </Animated.ScrollView>
+        </Wrapper>
       <BottomTabsIndicator index={2} total={3} />
     </>
   )

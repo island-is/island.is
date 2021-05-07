@@ -25,7 +25,7 @@ export const is = {
   "onboarding.biometrics.type.fingerprint": "fingrafar",
   "onboarding.biometrics.type.iris": "augnskanna",
   // settings
-  "settings.screenTitle": "Stillingar",
+  "settings.screenTitle": "Notandi",
   "settings.tabs.preferences": "Virkni",
   "settings.tabs.personalInfo": "Persónuupplýsingar",
   "settings.accessibilityLayout.groupTitle": "Útlit og aðgengi",
