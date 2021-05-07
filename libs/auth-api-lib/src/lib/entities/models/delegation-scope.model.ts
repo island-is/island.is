@@ -6,8 +6,10 @@ import {
   CreatedAt,
   UpdatedAt,
   PrimaryKey,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { Delegation } from './delegation.model'
 
 @Table({
   tableName: 'delegation_scope',
@@ -20,6 +22,7 @@ import { ApiProperty } from '@nestjs/swagger'
 })
 export class DelegationScope extends Model<DelegationScope> {
   @PrimaryKey
+  @ForeignKey(() => Delegation)
   @Column({
     type: DataType.STRING,
     primaryKey: true,
