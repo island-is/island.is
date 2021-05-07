@@ -174,7 +174,7 @@
     "jwt-decode": "2.2.0",
     "kennitala": "1.2.4",
     "libphonenumber-js": "1.7.53",
-    "lodash": "4.17.21",
+    "lodash": "4.17.20",
     "lottie-web": "5.7.5",
     "markdown-to-jsx": "7.1.1",
     "memoizee": "0.4.15",
@@ -395,7 +395,6 @@
     "elliptic": "6.5.4",
     "serialize-to-js": "3.1.1",
     "netmask": "2.0.1",
-    "ssri": "8.0.1",
-    "hosted-git-info": "3.0.8 "
+    "ssri": "8.0.1"
   }
 }
