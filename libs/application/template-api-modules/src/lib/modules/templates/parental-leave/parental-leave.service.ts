@@ -60,6 +60,7 @@ export class ParentalLeaveService {
       return response
     } catch (e) {
       console.log('Failed to send application', e)
+      throw e
     }
   }
 }
