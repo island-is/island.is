@@ -102,7 +102,7 @@ export class DelegationsService {
   ): Promise<Delegation | null> {
     this.logger.debug('Creating a new delegation')
     const id = uuid()
-    const response = await this.delegationModel.create({
+    await this.delegationModel.create({
       id: id,
       fromNationalId: nationalId,
       ...delegation,
@@ -110,7 +110,7 @@ export class DelegationsService {
     if (delegation.scopes) {
       this.delegationScopeService.createMany(id, delegation.scopes)
     }
-    return response
+    return this.findOne(nationalId, id)
   }
 
   async update(
@@ -164,24 +164,37 @@ export class DelegationsService {
   async deleteFrom(nationalId: string, id: string): Promise<number> {
     this.logger.debug(`Deleting Delegation for Id ${id}`)
 
+    const delegation = await this.delegationModel.findByPk(id)
+    if (!delegation || delegation?.fromNationalId !== nationalId) {
+      this.logger.debug('Delegation does is not assigned to user')
+      return 0
+    }
+
+    await this.delegationScopeService.delete(id)
+
     const response = this.delegationModel.destroy({
       where: { id: id, fromNationalId: nationalId },
     })
-    if (response) {
-      await this.delegationScopeService.delete(id)
-    }
+
     return response
   }
 
   async deleteTo(nationalId: string, id: string): Promise<number> {
     this.logger.debug(`Deleting Delegation for Id ${id}`)
 
+    const delegation = await this.delegationModel.findByPk(id)
+
+    if (!delegation || delegation?.toNationalId !== nationalId) {
+      this.logger.debug('Delegation does is not assigned to user')
+      return 0
+    }
+
+    await this.delegationScopeService.delete(id)
+
     const response = this.delegationModel.destroy({
       where: { id: id, toNationalId: nationalId },
     })
-    if (response) {
-      await this.delegationScopeService.delete(id)
-    }
+
     return response
   }
 }

@@ -22,6 +22,7 @@ export class DelegationDTO {
   validTo?: Date
 
   @IsOptional()
+  @ApiProperty()
   @IsArray()
   scopes?: string[]
 }
