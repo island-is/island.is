@@ -37,6 +37,7 @@ import {
   PdfTypes,
   ApplicationStatus,
   ApplicationIdentityServerScope,
+  CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import { Unwrap, Locale } from '@island.is/shared/types'
 import {
@@ -467,6 +468,9 @@ export class ApplicationController {
         locale,
       ),
       existingApplication as BaseApplication,
+      this.applicationService.customTemplateFindQuery(
+        existingApplication.typeId,
+      ) as CustomTemplateFindQuery,
     )
 
     const {
