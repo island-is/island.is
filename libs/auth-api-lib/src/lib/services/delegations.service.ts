@@ -81,7 +81,6 @@ export class DelegationsService {
           { toNationalId: toNationalId },
           { validFrom: { [Op.lt]: now } },
           { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-          { validCount: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: 0 }] } },
         ],
       },
     })
