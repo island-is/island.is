@@ -125,3 +125,8 @@
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
 /libs/auth-api-lib/                                                                           @island-is/fuglar
 /libs/auth-nest-tools/                                                                        @island-is/fuglar
+
+/libs/clients/regulations/                                                                    @island-is/hugsmidjan
+/libs/api/domains/regulations/                                                                @island-is/hugsmidjan
+/apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
+/apps/web/components/Regulations/                                                             @island-is/hugsmidjan

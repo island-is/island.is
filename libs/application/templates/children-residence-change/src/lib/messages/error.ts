@@ -50,5 +50,11 @@ export const error = {
       description:
         'Error message when neither email or phonenumber are filled in for counter party',
     },
+    acceptContract: {
+      id: 'crc.application:error.acceptContract',
+      defaultMessage: 'Velja þarf valmöguleika',
+      description:
+        'Error message when no option is selected for accepting contract',
+    },
   }),
 }

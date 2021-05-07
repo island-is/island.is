@@ -83,6 +83,9 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
+      "@island.is/api/domains/regulations": [
+        "libs/api/domains/regulations/src/index.ts"
+      ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
@@ -179,6 +182,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"
+      ],
+      "@island.is/clients/regulations": [
+        "libs/clients/regulations/src/index.ts"
       ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
