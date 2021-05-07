@@ -6074,7 +6074,7 @@
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
             "commands": [
               "nx run services-endorsements-api:build",
-              "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json dist/apps/services/endorsements/api/buildOpenApi.js"
+              "node dist/apps/services/endorsements/api/buildOpenApi.js"
             ],
             "parallel": false
           }
