@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 import {
   IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -16,7 +17,7 @@ import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}

@@ -14,7 +14,7 @@ import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV === 'asdf'
+const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 
 enum PensionFundType {
   required = 'L',
