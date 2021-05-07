@@ -1,4 +1,3 @@
-import get from 'lodash/get'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import {
@@ -150,7 +149,7 @@ export const getAvailableRights = (application: Application) => {
 }
 
 export const getOtherParentOptions = (application: Application) => {
-  const family = get(
+  const family = getValueViaPath(
     application.externalData,
     'family.data',
     [],
@@ -213,8 +212,8 @@ export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const selectedChildIndex = get(answers, 'selectedChild') as string
-  const selectedChild = get(
+  const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
+  const selectedChild = getValueViaPath(
     externalData,
     `children.data.children[${selectedChildIndex}]`,
     null,
@@ -226,7 +225,7 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { children, existingApplications } = get(
+  const { children, existingApplications } = getValueViaPath(
     externalData,
     'children.data',
     {

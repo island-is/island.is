@@ -88,11 +88,10 @@ export class ApplicationService {
    * A function to pass to data providers / template api modules to be able to
    * query applications of their respective type in order to infer some data to
    * use in an application
-   *
-   * @param templateTypeId The id of the template to restrict the query to
-   * @returns A promise to a list of applications matching the custom query conditions
    */
-  customTemplateFindQuery(templateTypeId: string) {
+  customTemplateFindQuery(
+    templateTypeId: string,
+  ): (whereQueryOptions: WhereOptions) => Promise<Application[]> {
     return (whereQueryOptions: WhereOptions) => {
       return this.applicationModel.findAll({
         where: {

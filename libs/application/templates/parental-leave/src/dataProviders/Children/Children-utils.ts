@@ -1,6 +1,4 @@
-import get from 'lodash/get'
-
-import { Application } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 
 import {
   ChildInformation,
@@ -12,10 +10,13 @@ import {
 const applicationToChildInformation = (
   application: Application,
 ): ChildInformation | null => {
-  const selectedChildIndex = get(application, 'answers.selectedChild')
-  const selectedChild = get(
-    application,
-    `externalData.children.data.children[${selectedChildIndex}]`,
+  const selectedChildIndex = getValueViaPath(
+    application.answers,
+    'selectedChild',
+  )
+  const selectedChild = getValueViaPath(
+    application.externalData,
+    `children.data.children[${selectedChildIndex}]`,
     null,
   ) as ChildInformation | null
 
