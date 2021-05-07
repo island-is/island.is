@@ -202,7 +202,11 @@ export const Overview: React.FC = () => {
                   { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                   {
                     title: workingCase.parentCase
-                      ? 'Fyrri gæsla'
+                      ? `${
+                          workingCase.type === CaseType.CUSTODY
+                            ? 'Fyrri gæsla'
+                            : 'Fyrra farbann'
+                        }`
                       : 'Tími handtöku',
                     value: workingCase.parentCase
                       ? `${capitalize(
@@ -232,6 +236,7 @@ export const Overview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>

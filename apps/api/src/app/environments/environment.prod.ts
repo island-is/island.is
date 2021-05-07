@@ -78,4 +78,7 @@ export default {
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
+  regulationsDomain: {
+    url: process.env.REGULATIONS_API_URL,
+  },
 }

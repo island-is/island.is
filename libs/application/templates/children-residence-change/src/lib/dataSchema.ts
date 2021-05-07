@@ -23,6 +23,11 @@ enum Duration {
   Temporary = 'temporary',
 }
 
+export enum ApproveContract {
+  Yes = 'yes',
+  No = 'no',
+}
+
 const parentContactInfo = z.object({
   email: z.string().refine((v) => isValidEmail(v), {
     params: error.validation.invalidEmail,
@@ -74,6 +79,11 @@ export const dataSchema = z.object({
     .refine((v) => (v.type === Duration.Temporary ? v.date : true), {
       params: error.validation.durationDate,
       path: ['date'],
+    }),
+  acceptContract: z
+    .enum([ApproveContract.Yes, ApproveContract.No])
+    .refine((v) => v, {
+      params: error.validation.acceptContract,
     }),
 })
 

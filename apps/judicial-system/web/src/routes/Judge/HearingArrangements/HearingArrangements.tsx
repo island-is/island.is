@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react'
+import InputMask from 'react-input-mask'
+
 import {
   AlertMessage,
   Box,
@@ -7,7 +10,6 @@ import {
   Option,
   Tooltip,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -24,7 +26,6 @@ import {
   Case,
   CaseState,
   NotificationType,
-  UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -32,7 +33,6 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
@@ -59,13 +59,17 @@ export const HearingArrangements: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
+  const [
+    defenderPhoneNumberErrorMessage,
+    setDefenderPhoneNumberErrorMessage,
+  ] = useState('')
+  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
 
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
-
   const { updateCase } = useCase()
+
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -147,6 +151,10 @@ export const HearingArrangements: React.FC = () => {
       {
         value: workingCase?.defenderEmail || '',
         validations: ['email-format'],
+      },
+      {
+        value: workingCase?.defenderPhoneNumber || '',
+        validations: ['phonenumber'],
       },
     ]
 
@@ -331,61 +339,99 @@ export const HearingArrangements: React.FC = () => {
                   Skipaður verjandi
                 </Text>
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="defenderName"
-                  label="Nafn verjanda"
-                  defaultValue={workingCase.defenderName}
-                  placeholder="Fullt nafn"
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <Input
+                    name="defenderName"
+                    label="Nafn verjanda"
+                    defaultValue={workingCase.defenderName}
+                    placeholder="Fullt nafn"
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'defenderName',
+                        event,
+                        [],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'defenderName',
+                        event.target.value,
+                        [],
+                        workingCase,
+                        updateCase,
+                      )
+                    }
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    name="defenderEmail"
+                    label="Netfang verjanda"
+                    defaultValue={workingCase.defenderEmail}
+                    placeholder="Netfang"
+                    errorMessage={defenderEmailErrorMessage}
+                    hasError={defenderEmailErrorMessage !== ''}
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'defenderEmail',
+                        event,
+                        ['email-format'],
+                        workingCase,
+                        setWorkingCase,
+                        defenderEmailErrorMessage,
+                        setDefenderEmailErrorMessage,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'defenderEmail',
+                        event.target.value,
+                        ['email-format'],
+                        workingCase,
+                        updateCase,
+                        setDefenderEmailErrorMessage,
+                      )
+                    }
+                  />
+                </Box>
+                <InputMask
+                  mask="999-9999"
+                  maskPlaceholder={null}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
-                      'defenderName',
+                      'defenderPhoneNumber',
                       event,
-                      [],
+                      ['phonenumber'],
                       workingCase,
                       setWorkingCase,
+                      defenderPhoneNumberErrorMessage,
+                      setDefenderPhoneNumberErrorMessage,
                     )
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
-                      'defenderName',
+                      'defenderPhoneNumber',
                       event.target.value,
-                      [],
+                      ['phonenumber'],
                       workingCase,
                       updateCase,
+                      setDefenderPhoneNumberErrorMessage,
                     )
                   }
-                />
-              </Box>
-              <Input
-                name="defenderEmail"
-                label="Netfang verjanda"
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailErrorMessage,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-              />
+                >
+                  <Input
+                    name="defenderPhoneNumber"
+                    label="Símanúmer verjanda"
+                    defaultValue={workingCase.defenderPhoneNumber}
+                    placeholder="Símanúmer"
+                    errorMessage={defenderPhoneNumberErrorMessage}
+                    hasError={defenderPhoneNumberErrorMessage !== ''}
+                  />
+                </InputMask>
+              </BlueBox>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
