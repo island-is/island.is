@@ -120,10 +120,10 @@ const HomeCircumstancesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        nextIsDisabled={form?.homeCircumstances === ''}
         onNextButtonClick={() => {
           //Temperary error state
           //Check if any radio is checked
+          // TODO: type á homeCircumstances, ekki nota seinsta value fyrir logic
           if (form?.homeCircumstances && navigation?.nextUrl) {
             if (form?.homeCircumstances !== options[options.length - 1].label) {
               //Validation

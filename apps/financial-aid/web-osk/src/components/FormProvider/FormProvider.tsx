@@ -11,7 +11,7 @@ export interface Form {
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles?: any
-  usePersonalTaxAllowance?: boolean
+  usePersonalTaxAllowance?: boolean // TODO: Personal tax credit
   bankNumber?: string
   ledger?: string
   accountNumber?: string
