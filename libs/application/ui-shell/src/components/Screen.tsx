@@ -243,8 +243,8 @@ const Screen: FC<ScreenProps> = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <GridColumn
-          span={['12/12', '12/12', '7/9', '7/9']}
-          offset={['0', '0', '1/9']}
+          span={['12/12', '12/12', '10/12', '7/9']}
+          offset={['0', '0', '1/12', '1/9']}
         >
           <Text variant="h2" marginBottom={1}>
             {formatText(screen.title, application, formatMessage)}
