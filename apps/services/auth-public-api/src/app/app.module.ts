@@ -17,7 +17,6 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
       useClass: SequelizeConfigService,
     }),
     DelegationsModule,
-    DelegationScopeModule,
   ],
 })
 export class AppModule {}
