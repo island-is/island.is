@@ -30,7 +30,7 @@ const JointChildCustodyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.JOINT_CHILD_CUSTODY,
   name: application.name,
-  readyForProduction: true,
+  readyForProduction: false,
   dataSchema: z.object({}),
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
