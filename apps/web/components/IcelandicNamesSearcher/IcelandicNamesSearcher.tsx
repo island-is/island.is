@@ -418,7 +418,7 @@ export const IcelandicNamesSearcher = () => {
                 <ResetButton
                   onClick={() => dispatch({ type: 'clearCategories' })}
                 >
-                  Hreinsa val
+                  Hreinsa síu
                 </ResetButton>
               )}
             </Stack>
@@ -442,7 +442,7 @@ export const IcelandicNamesSearcher = () => {
                 <ResetButton
                   onClick={() => dispatch({ type: 'clearStatuses' })}
                 >
-                  Hreinsa val
+                  Hreinsa síu
                 </ResetButton>
               )}
             </Stack>
@@ -450,7 +450,7 @@ export const IcelandicNamesSearcher = () => {
         </Box>
         {!!someFilterSelected && (
           <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
-            Hreinsa síu
+            Hreinsa allar síur
           </ResetButton>
         )}
       </Stack>

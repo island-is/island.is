@@ -17,7 +17,9 @@ interface Props {
 
 export const AppendedArticleComponents = ({ article }: Props) => {
   switch (article?.id) {
-    // Leit í mannanafnaskrá
+    /*+
+     * For the "Leit í mannanafnaskrá" article
+     */
     case '7MBtMazhYUNNJJIOJNnNI':
       return <IcelandicNamesSearcher />
     default:
