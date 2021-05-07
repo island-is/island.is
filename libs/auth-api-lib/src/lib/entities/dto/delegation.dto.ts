@@ -11,9 +11,6 @@ export class DelegationDTO {
   @IsString()
   @ApiProperty()
   fromDisplayName!: string
-  @IsBoolean()
-  @ApiProperty()
-  isFromCompany!: boolean
   @IsString()
   @ApiProperty()
   toNationalId!: string

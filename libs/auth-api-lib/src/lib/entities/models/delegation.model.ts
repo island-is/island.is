@@ -43,13 +43,6 @@ export class Delegation extends Model<Delegation> {
   fromDisplayName!: string
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isFromCompany!: boolean
-
-  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
