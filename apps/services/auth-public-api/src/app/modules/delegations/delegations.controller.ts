@@ -9,6 +9,7 @@ import {
   Scopes,
   ScopesGuard,
   User,
+  CurrentActor,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import {
@@ -32,39 +33,59 @@ export class DelegationsController {
   @Scopes('@island.is/auth/delegations:read')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
+  async findAllTo(@CurrentActor() user: User): Promise<IDelegation[]> {
     return await this.delegationsService.findAllTo(user.nationalId)
   }
 
   @Scopes('@island.is/auth/delegations:write')
   @Post()
   @ApiCreatedResponse({ type: Delegation })
-  async create(@Body() delegation: DelegationDTO): Promise<Delegation | null> {
-    return await this.delegationsService.create(delegation)
+  async create(
+    @CurrentUser() user: User,
+    @Body() delegation: DelegationDTO,
+  ): Promise<Delegation | null> {
+    return await this.delegationsService.create(user.nationalId, delegation)
   }
 
   @Scopes('@island.is/auth/delegations:write')
   @Put(':id')
   @ApiCreatedResponse({ type: Delegation })
   async update(
+    @CurrentUser() user: User,
     @Body() delegation: DelegationDTO,
     @Param('id') id: string,
   ): Promise<Delegation | null> {
-    return await this.delegationsService.update(delegation, id)
+    return await this.delegationsService.update(user.nationalId, delegation, id)
   }
 
   @Scopes('@island.is/auth/delegations:write')
-  @Delete(':id')
+  @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
-  async delete(@Param('id') id: string): Promise<number> {
-    return await this.delegationsService.delete(id)
+  async deleteFrom(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<number> {
+    return await this.delegationsService.deleteFrom(user.nationalId, id)
+  }
+
+  @Scopes('@island.is/auth/delegations:write')
+  @Delete('custom/delete/to/:id')
+  @ApiCreatedResponse()
+  async deleteTo(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<number> {
+    return await this.delegationsService.deleteTo(user.nationalId, id)
   }
 
   @Scopes('@island.is/auth/delegations:read')
   @Get('custom/findone/:id')
   @ApiOkResponse({ type: Delegation })
-  async findByPk(@Param('id') id: string): Promise<Delegation | null> {
-    return await this.delegationsService.findByPk(id)
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<Delegation | null> {
+    return await this.delegationsService.findOne(user.nationalId, id)
   }
 
   @Scopes('@island.is/auth/delegations:read')
