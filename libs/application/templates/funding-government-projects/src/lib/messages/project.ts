@@ -60,6 +60,11 @@ export const project = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Project Attachments Title',
     },
+    attachments: {
+      id: `affgp.application:section.project.attachments`,
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
     attachmentsIntro: {
       id: `affgp.application:section.project.attachmentsIntro`,
       defaultMessage:

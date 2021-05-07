@@ -8,9 +8,16 @@ import {
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
 
+export type CustomTemplateFindQuery = (where: {
+  [key: string]: string
+}) => Promise<Application[]>
+
 export interface DataProvider {
   readonly type: string
-  provide(application: Application): Promise<unknown>
+  provide(
+    application: Application,
+    customTemplateFindQuery: CustomTemplateFindQuery,
+  ): Promise<unknown>
   onProvideError(_: unknown): FailedDataProviderResult
   onProvideSuccess(_: unknown): SuccessfulDataProviderResult
 }
@@ -50,7 +57,10 @@ export abstract class BasicDataProvider implements DataProvider {
    * @param application: current application object which may or may not possess answers, and more information that
    * could be beneficial in the function body
    */
-  abstract async provide(application: Application): Promise<unknown>
+  abstract provide(
+    application: Application,
+    customTemplateFindQuery: CustomTemplateFindQuery,
+  ): Promise<unknown>
 
   protected async useGraphqlGateway<DataType = any>(
     query: string,

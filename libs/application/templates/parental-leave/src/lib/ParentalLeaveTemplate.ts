@@ -16,7 +16,7 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/core'
 
-import { YES, API_MODULE_ACTIONS } from '../constants'
+import { YES, API_MODULE_ACTIONS, States } from '../constants'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
@@ -25,6 +25,7 @@ import {
   needsOtherParentApproval,
   isDev,
 } from './parentalLeaveTemplateUtils'
+import { getSelectedChild } from '../parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -40,35 +41,6 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
-export enum States {
-  PREREQUISITES = 'prerequisites',
-
-  // Draft flow
-  DRAFT = 'draft',
-
-  OTHER_PARENT_APPROVAL = 'otherParentApproval',
-  OTHER_PARENT_ACTION = 'otherParentRequiresAction',
-
-  EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
-  EMPLOYER_APPROVAL = 'employerApproval',
-  EMPLOYER_ACTION = 'employerRequiresAction',
-
-  VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
-
-  APPROVED = 'approved',
-
-  // Edit Flow
-  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
-
-  EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
-  EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
-  EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
-
-  VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
-}
-
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -82,6 +54,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
+        exit: 'attemptToSavePrimaryParentAsOtherParent',
         meta: {
           name: States.PREREQUISITES,
           lifecycle: {
@@ -688,6 +661,32 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      attemptToSavePrimaryParentAsOtherParent: assign((context) => {
+        const { application } = context
+        const { answers, externalData } = application
+
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        if (!selectedChild) {
+          return context
+        }
+
+        if (selectedChild.parentalRelation === 'primary') {
+          return context
+        }
+
+        // Current parent is secondary parent, this will set otherParentId to the id of the primary parent
+        set(
+          answers,
+          'otherParentId',
+          selectedChild.primaryParentNationalRegistryId,
+        )
+
+        return {
+          ...context,
+          application,
+        }
+      }),
     },
   },
   mapUserToRole(
