@@ -15,11 +15,15 @@ import { getSelectedChildrenFromExternalData } from './utils'
 import { Roles, ApplicationStates } from './constants'
 import { application } from './messages'
 
-type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
+type Events =
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.REJECT }
 
 enum TemplateApiActions {
   submitApplication = 'submitApplication',
   sendNotificationToCounterParty = 'sendNotificationToCounterParty',
+  rejectApplication = 'rejectApplication',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -87,6 +91,11 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   name: 'Staðfesta',
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
               ],
               write: 'all',
             },
@@ -103,6 +112,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         on: {
           SUBMIT: {
             target: ApplicationStates.SUBMITTED,
+          },
+          REJECT: {
+            target: ApplicationStates.REJECTED,
           },
         },
       },
@@ -130,6 +142,33 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   '../forms/ParentBApplicationConfirmation'
                 ).then((module) =>
                   Promise.resolve(module.ParentBApplicationConfirmation),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.REJECTED]: {
+        meta: {
+          name: applicationName,
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TemplateApiActions.rejectApplication,
+          },
+          roles: [
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ContractRejected').then((module) =>
+                  Promise.resolve(module.ParentBContractRejected),
+                ),
+            },
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ContractRejected').then((module) =>
+                  Promise.resolve(module.ContractRejected),
                 ),
               read: 'all',
             },

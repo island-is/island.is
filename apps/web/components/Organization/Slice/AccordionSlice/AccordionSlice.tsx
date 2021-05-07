@@ -22,7 +22,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         paddingTop={[4, 4, 6]}
         paddingBottom={[4, 4, 6]}
       >
-        <Text variant="h3" as="h2" marginBottom={2}>
+        <Text variant="h2" as="h2" marginBottom={2}>
           {slice.title}
         </Text>
         {slice.accordionItems.map((item) => (

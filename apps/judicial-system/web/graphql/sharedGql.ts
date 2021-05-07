@@ -40,7 +40,6 @@ export const CaseQuery = gql`
           name
         }
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
