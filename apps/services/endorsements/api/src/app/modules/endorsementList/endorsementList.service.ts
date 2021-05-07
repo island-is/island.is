@@ -46,19 +46,9 @@ export class EndorsementListService {
     return this.endorsementModel.findAll({ where: { endorser: nationalId } })
   }
 
-  async close(listId: string): Promise<EndorsementList> {
-    this.logger.debug('Closing endorsement list', listId)
-    const [_, endorsementLists] = await this.endorsementListModel.update(
-      { closedDate: new Date() },
-      { where: { id: listId }, returning: true },
-    )
-
-    if (!endorsementLists[0]) {
-      this.logger.warn('Failed to close list', { listId })
-      throw new NotFoundException(['This endorsement list does not exist.'])
-    }
-
-    return endorsementLists[0]
+  async close(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.debug('Closing endorsement list', endorsementList.id)
+    return await endorsementList.update({ closedDate: new Date() })
   }
 
   async create(list: createInput) {
