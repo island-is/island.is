@@ -49,7 +49,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
         )}
       </SectionNumberColumn>
       {href && currentState !== 'active' ? (
-        <Link href={href} underline="small" underlineVisibility="always">
+        <Link href={href} underline="small" underlineVisibility="hover">
           {renderChildren()}
         </Link>
       ) : (
