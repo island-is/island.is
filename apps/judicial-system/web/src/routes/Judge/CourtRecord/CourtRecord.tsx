@@ -193,7 +193,7 @@ export const CourtRecord: React.FC = () => {
                         onChange={(evt) =>
                           validateAndSetTime(
                             'courtStartTime',
-                            new Date().toString(),
+                            workingCase.courtDate,
                             evt.target.value,
                             ['empty', 'time-format'],
                             workingCase,
@@ -205,7 +205,7 @@ export const CourtRecord: React.FC = () => {
                         onBlur={(evt) =>
                           validateAndSendTimeToServer(
                             'courtStartTime',
-                            new Date().toString(),
+                            workingCase.courtDate,
                             evt.target.value,
                             ['empty', 'time-format'],
                             workingCase,
