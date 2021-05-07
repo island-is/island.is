@@ -3,14 +3,11 @@ import {
   IsBoolean,
   IsString,
   IsOptional,
-  IsNumber,
+  IsArray,
   IsDateString,
 } from 'class-validator'
-// For use with deleting Inserting and updating Delegation
+
 export class DelegationDTO {
-  @IsString()
-  @ApiProperty()
-  fromNationalId!: string
   @IsString()
   @ApiProperty()
   fromDisplayName!: string
@@ -26,8 +23,8 @@ export class DelegationDTO {
   @IsDateString()
   @ApiProperty()
   validTo?: Date
+
   @IsOptional()
-  @IsNumber()
-  @ApiProperty()
-  validCount?: number
+  @IsArray()
+  scopes?: string[]
 }
