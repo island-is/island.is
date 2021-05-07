@@ -20,6 +20,14 @@ export class DelegationScopeService {
     return await this.delegationScopeModel.create({ ...delegationScope })
   }
 
+  async createMany(delegationId: string, scopes: string[]): Promise<any> {
+    const arr: DelegationScopeDTO[] = []
+    for (let i = 0; i < scopes.length; i++) {
+      arr.push({ delegationId: delegationId, scopeName: scopes[0] })
+    }
+    return this.delegationScopeModel.bulkCreate(arr)
+  }
+
   async findAll(
     delegationId: string,
     scopeName: string | null = null,

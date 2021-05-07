@@ -7,6 +7,7 @@ import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { DelegationDTO } from '../entities/dto/delegation.dto'
 import { uuid } from 'uuidv4'
 import { DelegationScopeService } from './delegation-scope.service'
+import { DelegationScope } from '@island.is/auth-api-lib'
 
 @Injectable()
 export class DelegationsService {
@@ -98,63 +99,93 @@ export class DelegationsService {
     )
   }
 
-  async create(delegation: DelegationDTO): Promise<Delegation | null> {
+  async create(
+    nationalId: string,
+    delegation: DelegationDTO,
+  ): Promise<Delegation | null> {
     this.logger.debug('Creating a new delegation')
     const id = uuid()
-    return await this.delegationModel.create({ id: id, ...delegation })
+    const response = await this.delegationModel.create({
+      id: id,
+      fromNationalId: nationalId,
+      ...delegation,
+    })
+    if (delegation.scopes) {
+      this.delegationScopeService.createMany(id, delegation.scopes)
+    }
+    return response
   }
 
   async update(
+    nationalId: string,
     delegation: DelegationDTO,
     id: string,
   ): Promise<Delegation | null> {
     this.logger.debug(`Updating a delegation with id ${id}`)
-    await this.delegationModel.update({ ...delegation }, { where: { id: id } })
-    return this.findByPk(id)
+    await this.delegationModel.update(
+      { ...delegation },
+      { where: { id: id, fromNationalId: nationalId } },
+    )
+    await this.delegationScopeService.delete(id)
+    if (delegation.scopes) {
+      await this.delegationScopeService.createMany(id, delegation.scopes)
+    }
+    return this.findOne(nationalId, id)
   }
 
-  async findByPk(id: string): Promise<Delegation | null> {
+  async findOne(nationalId: string, id: string): Promise<Delegation | null> {
     this.logger.debug(`Finding a delegation with id ${id}`)
-    return await this.delegationModel.findByPk(id)
+    return await this.delegationModel.findOne({
+      where: {
+        id: id,
+        fromNationalId: nationalId,
+      },
+      include: [DelegationScope],
+    })
   }
 
   async findAllCustomTo(nationalId: string): Promise<Delegation[] | null> {
-    const now = new Date()
-
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
     return await this.delegationModel.findAll({
       where: {
-        [Op.and]: [
-          { toNationalId: nationalId },
-          { validFrom: { [Op.lt]: now } },
-          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-          { validCount: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: 0 }] } },
-        ],
+        toNationalId: nationalId,
       },
+      include: [DelegationScope],
     })
   }
 
   async findAllCustomFrom(nationalId: string): Promise<Delegation[] | null> {
-    const now = new Date()
-
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
     return await this.delegationModel.findAll({
       where: {
-        [Op.and]: [
-          { fromNationalId: nationalId },
-          { validFrom: { [Op.lt]: now } },
-          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-          { validCount: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: 0 }] } },
-        ],
+        fromNationalId: nationalId,
       },
+      include: [DelegationScope],
     })
   }
 
-  async delete(id: string): Promise<number> {
+  async deleteFrom(nationalId: string, id: string): Promise<number> {
     this.logger.debug(`Deleting Delegation for Id ${id}`)
-    await this.delegationScopeService.delete(id)
 
-    return this.delegationModel.destroy({ where: { id: id } })
+    const response = this.delegationModel.destroy({
+      where: { id: id, fromNationalId: nationalId },
+    })
+    if (response) {
+      await this.delegationScopeService.delete(id)
+    }
+    return response
+  }
+
+  async deleteTo(nationalId: string, id: string): Promise<number> {
+    this.logger.debug(`Deleting Delegation for Id ${id}`)
+
+    const response = this.delegationModel.destroy({
+      where: { id: id, toNationalId: nationalId },
+    })
+    if (response) {
+      await this.delegationScopeService.delete(id)
+    }
+    return response
   }
 }
 
