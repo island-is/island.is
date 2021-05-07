@@ -12,8 +12,8 @@ const PartyLetterApplicationReview: FC<FieldBaseProps> = ({ application }) => {
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
-    'party.letter': formatMessage(m.overview.partyLetter),
-    'party.name': formatMessage(m.overview.partyName),
+    partyLetter: formatMessage(m.overview.partyLetter),
+    partyName: formatMessage(m.overview.partyName),
     endorsements: '',
     warnings: '',
     documents: '',
