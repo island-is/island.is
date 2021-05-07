@@ -21,8 +21,8 @@ import Logo from '../assets/Logo'
 
 export enum IDS {
   PartySSD = 'ssd',
-  PartyLetter = 'party.letter',
-  PartyName = 'party.name',
+  PartyLetter = 'partyLetter',
+  PartyName = 'partyName',
   Endorsements = 'endorsements',
   Warnings = 'warnings',
   Documents = 'documents',
