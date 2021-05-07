@@ -66,6 +66,7 @@ export function getValueViaPath(
 
     return result === undefined || result === obj ? defaultValue : result
   } catch (e) {
+    console.log('error in getViaPath', e)
     return undefined
   }
 }

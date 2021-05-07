@@ -72,7 +72,7 @@ export class CaseService {
         ],
       })
     } catch (error) {
-      this.logger.error(`Failed to send email to ${recipientEmail}`, error)
+      this.logger.error('Failed to send email', error)
     }
   }
 

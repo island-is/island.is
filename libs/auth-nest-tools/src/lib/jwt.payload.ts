@@ -1,5 +1,8 @@
 export interface JwtPayload {
-  natreg: string // TODO: Remove
-  nationalId: string
+  nationalId?: string
   scope: string[]
+  client_id: string
+  act?: {
+    nationalId: string
+  }
 }

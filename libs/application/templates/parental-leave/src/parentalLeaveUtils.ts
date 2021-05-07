@@ -225,14 +225,16 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { children, existingApplications } = getValueViaPath(
+  const children = getValueViaPath(
     externalData,
-    'children.data',
-    {
-      children: [],
-      existingApplications: [],
-    },
-  ) as ChildrenAndExistingApplications
+    'children.data.children',
+    [],
+  ) as ChildrenAndExistingApplications['children']
+  const existingApplications = getValueViaPath(
+    externalData,
+    'children.data.existingApplications',
+    [],
+  ) as ChildrenAndExistingApplications['existingApplications']
 
   return children.length > 0 || existingApplications.length > 0
 }

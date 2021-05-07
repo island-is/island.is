@@ -104,6 +104,7 @@ const remainingCreateCaseData = {
   accusedGender: CaseGender.OTHER,
   defenderName: 'Defender Name',
   defenderEmail: 'Defender Email',
+  defenderPhoneNumber: '555-5555',
   sendRequestToDefender: true,
   court: 'Court',
 }
@@ -134,7 +135,6 @@ function remainingProsecutorCaseData() {
 
 function remainingJudgeCaseData() {
   return {
-    setCourtCaseNumberManually: true,
     courtCaseNumber: 'Court Case Number',
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
@@ -292,6 +292,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
   expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
   expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
+  expect(caseOne.defenderPhoneNumber || null).toBe(
+    caseTwo.defenderPhoneNumber || null,
+  )
   expect(caseOne.sendRequestToDefender || null).toBe(
     caseTwo.sendRequestToDefender || null,
   )
@@ -322,9 +325,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
-  expect(caseOne.setCourtCaseNumberManually || null).toBe(
-    caseTwo.setCourtCaseNumberManually || null,
-  )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)

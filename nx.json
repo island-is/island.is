@@ -106,6 +106,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-regulations": {
+      "tags": []
+    },
     "api-domains-rsk": {
       "tags": []
     },
@@ -191,6 +194,9 @@
     "application-templates-passport": {
       "tags": []
     },
+    "application-templates-public-debt-payment-plan": {
+      "tags": []
+    },
     "application-templates-reference-template": {
       "tags": []
     },
@@ -229,6 +235,9 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-regulations": {
       "tags": []
     },
     "clients-rsk-v1": {
@@ -387,6 +396,9 @@
       "tags": []
     },
     "message-queue": {
+      "tags": []
+    },
+    "nest-audit": {
       "tags": []
     },
     "nova-sms": {

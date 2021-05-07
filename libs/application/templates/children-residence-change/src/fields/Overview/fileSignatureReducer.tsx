@@ -1,5 +1,7 @@
+import { MessageDescriptor } from '@formatjs/intl'
+import { signatureModal } from '../../lib/messages'
+
 export enum FileSignatureStatus {
-  INITIAL = 'INITIAL',
   REQUEST = 'REQUEST',
   UPLOAD = 'UPLOAD',
   SUCCESS = 'SUCCESS',
@@ -12,32 +14,76 @@ export type ErrorStatus =
   | FileSignatureStatus.REQUEST_ERROR
 
 export enum FileSignatureActionTypes {
-  RESET = 'RESET',
+  CLOSE_MODAL = 'CLOSE_MODAL',
   REQUEST = 'REQUEST',
   UPLOAD = 'UPLOAD',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
 }
 
+const modalContent: {
+  [key in Exclude<FileSignatureStatus, ErrorStatus>]: ModalContent
+} = {
+  [FileSignatureStatus.REQUEST]: {
+    title: signatureModal.general.title,
+  },
+  [FileSignatureStatus.UPLOAD]: {
+    title: signatureModal.general.title,
+    message: signatureModal.security.message,
+  },
+  [FileSignatureStatus.SUCCESS]: {
+    title: signatureModal.success.title,
+    message: signatureModal.success.message,
+  },
+}
+
+export const errorMessages: {
+  [key: number]: ModalContent
+} = {
+  400: {
+    title: signatureModal.userCancelledWarning.title,
+    message: signatureModal.userCancelledWarning.message,
+  },
+  404: {
+    title: signatureModal.noElectronicIdError.title,
+    message: signatureModal.noElectronicIdError.message,
+  },
+  408: {
+    title: signatureModal.timeOutWarning.title,
+    message: signatureModal.timeOutWarning.message,
+  },
+  500: {
+    title: signatureModal.defaultError.title,
+    message: signatureModal.defaultError.message,
+  },
+}
+
+export type ErrorTypes = keyof typeof errorMessages
+
 type Action =
   | { type: Exclude<FileSignatureActionTypes, FileSignatureActionTypes.ERROR> }
   | {
       type: FileSignatureActionTypes.ERROR
-      error: number
+      error: ErrorTypes
       status: ErrorStatus
     }
 
-export type ReducerState =
-  | { status: Exclude<FileSignatureStatus, ErrorStatus>; modalOpen: boolean }
-  | {
-      status: ErrorStatus
-      errorCode: number
-      modalOpen: boolean
-    }
+interface ModalContent {
+  title: MessageDescriptor
+  message?: MessageDescriptor
+}
 
+export interface ReducerState {
+  status: FileSignatureStatus
+  modalOpen: boolean
+  content: ModalContent
+}
 export const initialFileSignatureState: ReducerState = {
-  status: FileSignatureStatus.INITIAL,
+  status: FileSignatureStatus.REQUEST,
   modalOpen: false,
+  content: {
+    title: modalContent[FileSignatureStatus.REQUEST].title,
+  },
 }
 
 export const fileSignatureReducer = (
@@ -45,23 +91,46 @@ export const fileSignatureReducer = (
   action: Action,
 ): ReducerState => {
   switch (action.type) {
-    case FileSignatureActionTypes.RESET: {
-      return { ...state, status: FileSignatureStatus.INITIAL, modalOpen: false }
+    case FileSignatureActionTypes.CLOSE_MODAL: {
+      return {
+        ...state,
+        modalOpen: false,
+      }
     }
     case FileSignatureActionTypes.REQUEST: {
-      return { ...state, status: FileSignatureStatus.REQUEST, modalOpen: true }
+      return {
+        ...state,
+        ...initialFileSignatureState,
+        modalOpen: true,
+      }
     }
     case FileSignatureActionTypes.UPLOAD: {
-      return { ...state, status: FileSignatureStatus.UPLOAD }
+      const content = modalContent[action.type]
+      const { title, message } = content
+      return {
+        ...state,
+        status: FileSignatureStatus.UPLOAD,
+        content: { title, message },
+      }
     }
     case FileSignatureActionTypes.SUCCESS: {
-      return { ...state, status: FileSignatureStatus.SUCCESS, modalOpen: false }
+      const content = modalContent[action.type]
+      const { title, message } = content
+      return {
+        ...state,
+        status: FileSignatureStatus.SUCCESS,
+        content: { title, message },
+      }
     }
     case FileSignatureActionTypes.ERROR: {
+      const error = errorMessages[action.error] || errorMessages[500]
       return {
         ...state,
         status: action.status,
-        errorCode: action.error,
+        content: {
+          title: error.title,
+          message: error.message,
+        },
       }
     }
     default: {

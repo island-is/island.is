@@ -1,8 +1,9 @@
 import request from 'supertest'
-import { ExecutionContext, INestApplication } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import {
+  ApplicationIdentityServerScope,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
@@ -60,20 +61,16 @@ beforeAll(async () => {
         .useClass(MockContentfulRepository)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
-        .overrideGuard(IdsAuthGuard)
-        .useValue({
-          canActivate: (ctx: ExecutionContext) => {
-            const request = ctx.switchToHttp().getRequest()
-
-            request.user = {
-              nationalId,
-            }
-
-            return true
-          },
-        })
-        .overrideGuard(ScopesGuard)
-        .useValue(() => ({}))
+        .overrideGuard(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId,
+            scope: [
+              ApplicationIdentityServerScope.read,
+              ApplicationIdentityServerScope.write,
+            ],
+          }),
+        )
         .compile()
     },
   })
@@ -82,19 +79,6 @@ beforeAll(async () => {
 })
 
 describe('Application system API', () => {
-  let spy: jest.SpyInstance<
-    string | undefined,
-    [import('@nestjs/common').ExecutionContext]
-  >
-
-  beforeEach(() => {
-    spy = jest.fn()
-  })
-
-  afterAll(() => {
-    spy.mockRestore()
-  })
-
   it(`POST /application should register application`, async () => {
     // Act
     const response = await server
@@ -434,7 +418,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const getResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     expect(getResponse.body).toEqual([])
@@ -446,7 +430,7 @@ describe('Application system API', () => {
       .expect(200)
 
     const updatedGetResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     expect(updatedGetResponse.body).toEqual(
@@ -480,7 +464,7 @@ describe('Application system API', () => {
     })
 
     const getResponse = await server
-      .get('/users/1234561234/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     // Assert

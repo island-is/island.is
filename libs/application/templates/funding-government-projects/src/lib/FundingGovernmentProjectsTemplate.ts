@@ -25,6 +25,12 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication',
+}
+
 const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<FundingGovernmentProjectsEvent>,
@@ -42,8 +48,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
-          title: application.general.name,
-          description: application.general.description,
+          title: application.name,
+          description: application.description,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -71,20 +77,23 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
-          title: application.general.name,
-          description: application.general.description,
+          title: application.name,
+          description: application.description,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/FundingGovernmentProjectsFormInReview').then(
-                  (module) =>
-                    // TODO: Rename this once we start work on it
-                    Promise.resolve(
-                      module.FundingGovernmentProjectsFormInReview,
-                    ),
+                import(
+                  '../forms/FundingGovernmentProjectsFormSubmitted'
+                ).then((module) =>
+                  Promise.resolve(
+                    module.FundingGovernmentProjectsFormSubmitted,
+                  ),
                 ),
               write: 'all',
             },
@@ -97,8 +106,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // TODO: Handle this correctly
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

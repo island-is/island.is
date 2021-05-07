@@ -9,6 +9,7 @@ interface FeatureProvider {
 const availableFeatures = [
   Feature.CREATE_CUSTODY_COURT_CASE,
   Feature.CASE_FILES,
+  Feature.CREATE_COURT_CASE,
 ]
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })

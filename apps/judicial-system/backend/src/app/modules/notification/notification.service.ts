@@ -93,10 +93,8 @@ export class NotificationService {
           smsText,
         )
       } catch (error) {
-        this.logger.error(
-          `Failed to send sms to ${environment.notifications.courtMobileNumbers}`,
-          error,
-        )
+        this.logger.error('Failed to send sms to court mobile number', error)
+
         return {
           address: environment.notifications.courtMobileNumbers,
           success: false,
@@ -143,7 +141,8 @@ export class NotificationService {
         attachments: attachments,
       })
     } catch (error) {
-      this.logger.error(`Failed to send email to ${recipientEmail}`, error)
+      this.logger.error('Failed to send email', error)
+
       return {
         address: recipientEmail,
         success: false,

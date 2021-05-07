@@ -18,10 +18,10 @@ import {
 } from '@island.is/application/template-loader'
 import { IntlService } from '@island.is/api/domains/translations'
 import { Locale } from '@island.is/shared/types'
+import { getCurrentUser } from '@island.is/auth-nest-tools'
 
 import { Application } from '../application.model'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
 import { getCurrentLocale } from '../utils/currentLocale'
 
 @Injectable()

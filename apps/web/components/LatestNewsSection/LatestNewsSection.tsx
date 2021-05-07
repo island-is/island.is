@@ -28,6 +28,7 @@ interface LatestNewsProps {
   linkType?: LinkType
   overview?: LinkType
   parameters?: Array<string>
+  readMoreText?: string
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
@@ -37,6 +38,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   linkType = 'news',
   overview = 'newsoverview',
   parameters = [],
+  readMoreText = '',
 }) => {
   const newsItems = items.slice(0, 3)
   const { t } = useI18n()
@@ -60,10 +62,10 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 <Button
                   icon="arrowForward"
                   iconType="filled"
-                  type="button"
                   variant="text"
+                  as="span"
                 >
-                  {n('seeMore')}
+                  {readMoreText ?? n('seeMore')}
                 </Button>
               </Text>
             </Link>
