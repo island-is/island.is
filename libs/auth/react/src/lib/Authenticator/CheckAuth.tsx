@@ -19,5 +19,5 @@ export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
   }, [])
 
   const renderChildren = !autoLogin || userInfo
-  return renderChildren ? <>children</> : <AuthenticatorLoadingScreen />
+  return renderChildren ? <>{children}</> : <AuthenticatorLoadingScreen />
 }

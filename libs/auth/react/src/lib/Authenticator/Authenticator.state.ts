@@ -29,20 +29,11 @@ interface Action {
   payload?: any
 }
 
-const USER_MOCKED = process.env.API_MOCKS === 'true'
-export const initialState: AuthReducerState = USER_MOCKED
-  ? {
-      userInfo: ({
-        profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
-      } as unknown) as User,
-      userInfoState: 'fulfilled',
-      isAuthenticated: true,
-    }
-  : {
-      userInfo: null,
-      userInfoState: 'passive',
-      isAuthenticated: false,
-    }
+export const initialState: AuthReducerState = {
+  userInfo: null,
+  userInfoState: 'passive',
+  isAuthenticated: false,
+}
 
 export type AuthDispatch = Dispatch<Action>
 
