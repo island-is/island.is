@@ -1,110 +1,70 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
-import { messages } from '@island.is/application/templates/institution-collaboration'
+import { Application } from '@island.is/application/core'
+import {
+  messages,
+  FundingGovernmentProjectsAnswers,
+} from '@island.is/application/templates/funding-government-projects'
 import { dedent } from 'ts-dedent'
 
 export const applicationOverviewTemplate = (
   application: Application,
 ): string => {
-  const institutionName = getValueViaPath(
-    application.answers,
-    'applicant.institution',
-  )
-
-  const contactName = getValueViaPath(application.answers, 'contact.name')
-  const contactEmail = getValueViaPath(application.answers, 'contact.email')
-  const contactPhone = getValueViaPath(
-    application.answers,
-    'contact.phoneNumber',
-  )
-
-  const secondaryContactName = getValueViaPath(
-    application.answers,
-    'secondaryContact.name',
-  )
-  const secondaryContactEmail = getValueViaPath(
-    application.answers,
-    'secondaryContact.email',
-  )
-  const secondaryContactPhone = getValueViaPath(
-    application.answers,
-    'secondaryContact.phoneNumber',
-  )
-  const hasSecondaryContact = [
-    secondaryContactName,
-    secondaryContactEmail,
-    secondaryContactPhone,
-  ].some((x) => !!x)
-
-  const projectName = getValueViaPath(application.answers, 'project.name')
-
-  const projectDescription = getValueViaPath(
-    application.answers,
-    'project.description',
-  )
+  const answers = application.answers as FundingGovernmentProjectsAnswers
 
   return dedent(`
+    <h3>${messages.section.informationAboutInstitution.defaultMessage}</h3>
+    <p>
+      <b>${
+        messages.informationAboutInstitution.general
+          .infoInstitutionTextFieldTitle.defaultMessage
+      }</b> </br>
+      ${answers.organizationOrInstitutionName}
+    </p>
 
-  <h3>${messages.applicant.sectionLabel.defaultMessage}</h3>
-  <p>
-    <b>${messages.applicant.institutionLabel.defaultMessage}</b> </br>
-    ${institutionName}
-  </p>
-  <h3>${messages.applicant.contactSubtitle.defaultMessage}</h3>
-  <p>
-    <b>${messages.applicant.contactNameLabel.defaultMessage}</b> </br>
-    ${contactName}
-  </p>
-  <p>
-    <b>${messages.applicant.contactEmailLabel.defaultMessage}</b> </br>
-    ${contactEmail}
-  </p>
-  <p>
-    <b>${messages.applicant.contactPhoneLabel.defaultMessage}</b> </br>
-    ${contactPhone}
-  </p>
+    <h3>${
+      messages.informationAboutInstitution.labels.informationAboutContact
+        .defaultMessage
+    }</h3>
+    <p>
+      ${answers.contacts.map(
+        (contact) => `
+        <p>
+         <b>${messages.informationAboutInstitution.labels.contactName.defaultMessage}</b><br />
+         ${contact.name}<br /><br />
+         <b>${messages.informationAboutInstitution.labels.contactPhoneNumber.defaultMessage}</b><br />
+         ${contact.phoneNumber}<br /><br />
+         <b>${messages.informationAboutInstitution.labels.contactEmail.defaultMessage}</b><br />
+         ${contact.email}<br /><br />
+        </p>
+      `,
+      )}
+    </p>
 
-  ${
-    hasSecondaryContact
-      ? `<h3>${messages.applicant.secondaryContactSubtitle.defaultMessage}</h3> `
-      : ''
+    <h3>${messages.section.project.defaultMessage}</h3>
+    <p>
+      <b>${messages.project.labels.title.defaultMessage}</b> </br>
+      ${answers.project.title}
+    </p>
+    <p>
+      <b>${messages.project.labels.description.defaultMessage}</b> </br>
+      ${answers.project.description}
+    </p>
+    <p>
+      <b>${messages.project.labels.cost.defaultMessage}</b> </br>
+      ${answers.project.cost}
+    </p>
+    <p>
+      <b>${messages.project.labels.years.defaultMessage}</b> </br>
+      ${answers.project.refundableYears} ${
+    messages.shared.yearPlural.defaultMessage
   }
-
-  ${
-    secondaryContactName
-      ? `<p>
-  <b>${messages.applicant.contactNameLabel.defaultMessage}</b> </br>
-  ${secondaryContactName}
-  </p>`
-      : ''
-  }
-
-  ${
-    secondaryContactEmail
-      ? `<p>
-  <b>${messages.applicant.contactEmailLabel.defaultMessage}</b> </br>
-  ${secondaryContactEmail}
-  </p>`
-      : ''
-  }
-
-  ${
-    secondaryContactPhone
-      ? `<p>
-  <b>${messages.applicant.contactPhoneLabel.defaultMessage}</b> </br>
-  ${secondaryContactPhone}
-  </p>`
-      : ''
-  }
-
-  <h3>${messages.project.sectionTitle.defaultMessage}</h3>
-  <p>
-    <b>${messages.project.nameLabel.defaultMessage}</b> </br>
-    ${projectName}
-  </p>
-  <p>
-    <b>${messages.project.backgroundLabel.defaultMessage}</b> </br>
-    ${projectDescription}
-  </p>
-
+    </p>
+    <p>
+      <b>${messages.project.labels.attachmentsTitle.defaultMessage}</b> </br>
+      ${answers.project.attachments?.map(
+        (attachment, index) => `
+        ${attachment.name}
+      `,
+      )}
+    </p>
   `)
 }
