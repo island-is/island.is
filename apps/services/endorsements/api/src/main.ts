@@ -6,4 +6,6 @@ bootstrap({
   appModule: AppModule,
   name: 'services-endorsements-api',
   openApi,
+  port: 4246,
+  swaggerPath: '',
 })

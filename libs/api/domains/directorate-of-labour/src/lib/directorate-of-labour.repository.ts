@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
+import formatDate from 'date-fns/format'
 import { logger } from '@island.is/logging'
 import {
   UnionApi,
   Union,
   PensionApi,
   PensionFund,
+  PregnancyApi,
+  PregnancyStatus,
 } from '@island.is/clients/vmst'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
+import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
 const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 
@@ -19,7 +23,11 @@ enum PensionFundType {
 
 @Injectable()
 export class DirectorateOfLabourRepository {
-  constructor(private unionApi: UnionApi, private pensionApi: PensionApi) {
+  constructor(
+    private unionApi: UnionApi,
+    private pensionApi: PensionApi,
+    private pregnancyApi: PregnancyApi,
+  ) {
     logger.debug('Created Directorate of labour repository')
   }
 
@@ -139,5 +147,44 @@ export class DirectorateOfLabourRepository {
         },
       },
     ]
+  }
+
+  async getParentalLeavePregnancyStatus(
+    nationalId: string,
+  ): Promise<ParentalLeavePregnancyStatus | null> {
+    if (isRunningInDevelopment) {
+      return {
+        hasActivePregnancy: true,
+        expectedDateOfBirth: '2021-06-17',
+      }
+    }
+
+    const pregnancyStatus = await this.pregnancyApi.pregnancyGetPregnancyStatus(
+      {
+        nationalRegistryId: nationalId,
+      },
+    )
+
+    if (pregnancyStatus.hasError) {
+      throw new Error(
+        pregnancyStatus.errorMessage ?? 'Could not fetch pregnancy status',
+      )
+    }
+
+    if (
+      pregnancyStatus.hasActivePregnancy === undefined ||
+      pregnancyStatus.pregnancyDueDate === undefined ||
+      pregnancyStatus.pregnancyDueDate === null
+    ) {
+      return null
+    }
+
+    return {
+      hasActivePregnancy: pregnancyStatus.hasActivePregnancy,
+      expectedDateOfBirth: formatDate(
+        pregnancyStatus.pregnancyDueDate,
+        'yyyy-MM-dd',
+      ),
+    }
   }
 }

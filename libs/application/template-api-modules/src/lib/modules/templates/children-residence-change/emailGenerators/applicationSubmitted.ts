@@ -2,6 +2,7 @@ import { getSlugFromType } from '@island.is/application/core'
 import { SendMailOptions } from 'nodemailer'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
+import { DistrictCommissionerLogo } from './consts'
 
 interface ApplicationSubmittedEmail {
   (
@@ -32,6 +33,11 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     : ''
   const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
+        <img src=${DistrictCommissionerLogo} height="78" width="246" />
+
+
+        <h1>${subject}</h1>
+
         Í viðhengi er afrit af samningi, um breytt lögheimili barna, sem þú undirritaðir.
 
         Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
@@ -40,7 +46,8 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
         ${caseNumberString}
         Þú getur séð stöðu umsóknarinnar á mínum síðum á Ísland.is.
 
-        <a href=${applicationLink} target="_blank">Fara á mínar síður</a>.
+
+        <a href=${applicationLink} target="_blank">Opna umsókn</a>.
       `
 
   return {

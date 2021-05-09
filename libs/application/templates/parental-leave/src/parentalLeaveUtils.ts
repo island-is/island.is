@@ -1,7 +1,10 @@
-import get from 'lodash/get'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+
 import {
   Application,
   DataProviderResult,
+  ExternalData,
+  FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
@@ -12,11 +15,15 @@ import { parentalLeaveFormMessages } from './lib/messages'
 
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
+import {
+  ParentalLeave,
+  PregnancyStatus,
+  ChildInformation,
+  ChildrenAndExistingApplications,
+} from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -142,7 +149,7 @@ export const getAvailableRights = (application: Application) => {
 }
 
 export const getOtherParentOptions = (application: Application) => {
-  const family = get(
+  const family = getValueViaPath(
     application.externalData,
     'family.data',
     [],
@@ -199,4 +206,35 @@ export const createRange = <T>(
   return Array(length)
     .fill(1)
     .map((_, i) => output(i))
+}
+
+export const getSelectedChild = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
+  const selectedChild = getValueViaPath(
+    externalData,
+    `children.data.children[${selectedChildIndex}]`,
+    null,
+  ) as ChildInformation | null
+
+  return selectedChild
+}
+
+export const isEligibleForParentalLeave = (
+  externalData: ExternalData,
+): boolean => {
+  const children = getValueViaPath(
+    externalData,
+    'children.data.children',
+    [],
+  ) as ChildrenAndExistingApplications['children']
+  const existingApplications = getValueViaPath(
+    externalData,
+    'children.data.existingApplications',
+    [],
+  ) as ChildrenAndExistingApplications['existingApplications']
+
+  return children.length > 0 || existingApplications.length > 0
 }
