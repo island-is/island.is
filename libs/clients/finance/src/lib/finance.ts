@@ -2,9 +2,7 @@ import { Inject } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import {
-  FinanceStatus
-} from './finance.types'
+import { FinanceStatus, FinanceStatusDetails } from './finance.types'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
@@ -35,12 +33,25 @@ export class FinanceService extends RESTDataSource {
     )
   }
 
-  async getFinanceStatus(
-    nationalId: string,
-  ): Promise<FinanceStatus | null> {
+  async getFinanceStatus(nationalID: string): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
-      // `/customerStatusByOrganization?nationalID=${nationalId}`,
       `/customerStatusByOrganization?nationalID=${process.env.FINANCE_TEST_USER}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
+  async getFinanceStatusDetails(
+    nationalID: string,
+    OrgID: string,
+    chargeTypeID: string,
+  ): Promise<FinanceStatus | null> {
+    const response = await this.get<FinanceStatusDetails | null>(
+      `/customerStatusByOrganizationDetails?nationalID=${
+        process.env.FINANCE_TEST_USER
+      }&OrgID=${'RIKI'}&chargeTypeID=${'AX'}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

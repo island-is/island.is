@@ -1,9 +1,21 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-
-import { Box, Text, Columns, Column, Button, DropdownMenu, SkeletonLoader, } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Columns,
+  Column,
+  Button,
+  DropdownMenu,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  FinanceStatusDataType,
+  FinanceStatusDetailsType,
+  FinanceStatusOrganizationType,
+} from './FinanceStatusData.types'
 import ExpandableLine from '../../components/ExpandableLine/ExpandableLine'
 import GridLineHeader from '../../components/GridLineHeader/GridLineHeader'
 import * as styles from './FinanceStatus.treat'
@@ -14,15 +26,35 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetFinanceStatusDetailsQuery = gql`
+  query GetFinanceStatusDetailsQuery {
+    getFinanceStatusDetails
+  }
+`
+
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const { data, loading } = useQuery<Query>(GetFinanceStatusQuery)
-  const financeStatusData = data?.getFinanceStatus || []
+  const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery, {
+    variables: {
+      nationalID: '2704685439',
+    },
+  })
+  const financeStatusData: FinanceStatusDataType =
+    statusQuery.data?.getFinanceStatus || {}
+  console.log({ financeStatusData, loading })
 
-  console.log({financeStatusData});
-  console.log({loading});
+  const detailsQuery = useQuery(GetFinanceStatusDetailsQuery, {
+    variables: {
+      nationalID: '2704685439',
+      OrgID: 'RIKI',
+      chargeTypeID: 'AX',
+    },
+  })
+  const financeStatusDetails: FinanceStatusDetailsType =
+    detailsQuery.data?.getFinanceStatusDetails || {}
+  console.log({ financeStatusDetails })
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -50,9 +82,9 @@ const FinanceStatus = () => {
               colorScheme="default"
               icon="documents" // Need to add Printer
               iconType="filled"
-              onBlur={function noRefCheck() { }}
-              onClick={function noRefCheck() { }}
-              onFocus={function noRefCheck() { }}
+              onBlur={function noRefCheck() {}}
+              onClick={function noRefCheck() {}}
+              onFocus={function noRefCheck() {}}
               preTextIconType="filled"
               size="default"
               type="button"
@@ -68,34 +100,38 @@ const FinanceStatus = () => {
                 items={[
                   {
                     href: '#',
-                    title: 'Staða í lok árs ...'
-                  }, {
-                    href: '#',
-                    title: 'Sækja sem PDF'
+                    title: 'Staða í lok árs ...',
                   },
                   {
-                    onClick: function noRefCheck() { },
-                    title: 'Sækja sem Excel'
-                  }
+                    href: '#',
+                    title: 'Sækja sem PDF',
+                  },
+                  {
+                    onClick: function noRefCheck() {},
+                    title: 'Sækja sem Excel',
+                  },
                 ]}
                 title="Meira"
               />
             </Box>
           </Column>
         </Columns>
-        {
-          loading ? <span>loading...</span> : null
-        }
-        {
-          financeStatusData?.organizations?.length > 0 ? (
-            <Box marginTop={2}>
-              <GridLineHeader />
-              {
-                financeStatusData.organizations.map((org: object, i: number) => <ExpandableLine key={i} organization={org} />)
-              }
-            </Box>
-          ) : null
-        }
+        {/* {loading ? <span>loading...</span> : null} */}
+        {loading ? (
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={5} />
+          </Box>
+        ) : null}
+        {financeStatusData?.organizations?.length > 0 ? (
+          <Box marginTop={2}>
+            <GridLineHeader />
+            {financeStatusData.organizations.map(
+              (org: FinanceStatusOrganizationType, i: number) => (
+                <ExpandableLine key={i} organization={org} />
+              ),
+            )}
+          </Box>
+        ) : null}
       </Box>
     </Box>
   )
