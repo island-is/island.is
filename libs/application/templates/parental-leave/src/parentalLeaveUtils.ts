@@ -28,26 +28,13 @@ import { SchemaFormValues } from './lib/dataSchema'
 export function getExpectedDateOfBirth(
   application: Application,
 ): string | undefined {
-  const pregnancyStatusResult = application.externalData
-    .pregnancyStatus as DataProviderResult
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
-  if (pregnancyStatusResult.status === 'success') {
-    const pregnancyStatus = pregnancyStatusResult.data as PregnancyStatus
-    if (pregnancyStatus.pregnancyDueDate)
-      return pregnancyStatus.pregnancyDueDate
-  }
-  // applicant is not a mother giving birth
-  const parentalLeavesResult = application.externalData
-    .parentalLeaves as DataProviderResult
-
-  if (parentalLeavesResult.status === 'success') {
-    const parentalLeaves = parentalLeavesResult.data as ParentalLeave[]
-    if (parentalLeaves.length) {
-      if (parentalLeaves.length === 1) {
-        return parentalLeaves[0].expectedDateOfBirth
-      }
-      // here we have multiple parental leaves... must store the selected application id or something
-    }
+  if (selectedChild !== null) {
+    return selectedChild.expectedDateOfBirth
   }
 
   return undefined
