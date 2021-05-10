@@ -197,7 +197,7 @@ export const CourtRecord: React.FC = () => {
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
-                      'courtStartDate', // TODO: rename to courtStartDate
+                      'courtStartDate',
                       date,
                       valid,
                       workingCase,
@@ -451,7 +451,7 @@ export const CourtRecord: React.FC = () => {
               previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
-                !isValidCourtStartTime?.isValid ||
+                !courtRecordStartDateIsValid ||
                 !validate(workingCase.courtAttendees || '', 'empty').isValid ||
                 !validate(workingCase.policeDemands || '', 'empty').isValid ||
                 !validate(workingCase.litigationPresentations || '', 'empty')
