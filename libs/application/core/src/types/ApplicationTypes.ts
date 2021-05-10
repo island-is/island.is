@@ -15,7 +15,7 @@ export enum ApplicationTypes {
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
-  JOINT_CHILD_CUSTODY = 'JointChildCustody',
+  JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
 }
 
 export const ApplicationConfigurations = {
@@ -83,8 +83,8 @@ export const ApplicationConfigurations = {
     slug: 'greidsludreifing-skulda',
     translation: 'pdpp.application',
   },
-  [ApplicationTypes.JOINT_CHILD_CUSTODY]: {
-    slug: 'sameiginleg-forsja',
-    translation: 'jcc.application',
+  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
+    slug: 'forsja-barns',
+    translation: 'jca.application',
   },
 }
