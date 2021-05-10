@@ -82,7 +82,6 @@ export const NewsletterSignup: React.FC<Props> = ({
             placeholder={placeholder}
             label={label}
             type="email"
-            backgroundColor={variant === 'white' ? 'blue' : 'white'}
             hasError={state === 'error'}
             icon={state === 'success' ? 'checkmarkCircle' : undefined}
             onChange={onChange}
