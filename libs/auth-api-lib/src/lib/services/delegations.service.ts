@@ -59,7 +59,7 @@ export class DelegationsService {
       this.logger.error(
         `Error in findAllCompaniesTo. Status: ${error.status} (${
           error.statusText
-        })\n${JSON.stringify(error.headers._headers)}`,
+        })\n${JSON.stringify(error.headers)}`,
       )
     }
 
