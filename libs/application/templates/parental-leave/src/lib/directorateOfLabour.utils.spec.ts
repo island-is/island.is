@@ -104,7 +104,7 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
 
   it('should calculate 270 days to the start date Date(2021, 0, 1)', () => {
     const start = new Date(2021, 0, 1)
-    const end = new Date(2021, 9, 1)
+    const end = new Date(2021, 8, 31)
 
     expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(270)
   })

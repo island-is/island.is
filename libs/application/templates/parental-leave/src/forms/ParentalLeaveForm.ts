@@ -41,7 +41,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
-import { PregnancyStatusAndRightsResults } from '../dataProviders/PregnancyStatusAndRights'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
 
 const percentOptions = createRange<{ label: string; value: string }>(
   10,
@@ -513,14 +513,10 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
               condition: (answers, externalData: ExternalData) => {
-                const data = externalData?.pregnancyStatusAndRights
+                const data = externalData?.children
                   ?.data as PregnancyStatusAndRightsResults
 
-                if (
-                  !data.parentalLeavesEntitlements.transferableMonths ||
-                  data.parentalLeavesEntitlements.transferableMonths === 0 ||
-                  data.remainingDays === 0
-                ) {
+                if (!data.hasRights || data.remainingDays === 0) {
                   return false
                 }
 

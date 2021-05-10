@@ -362,22 +362,17 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
-    pregnancyStatusAndRightsTitle: {
-      id: 'pl.application:pregnancyStatusAndRights.title',
-      defaultMessage: 'Áætlaður fæðingardagur barns og réttindi',
-      description: 'Title for the data of birth and rights data provider',
-    },
-    pregnancyStatusAndRightsSubtitle: {
-      id: 'pl.application:pregnancyStatusAndRights.subtitle',
-      defaultMessage:
-        'Staðfesting á ætluðum fæðingardegi barns er sótt inn á Heilsuveru og fjölda mánaða í boði fyrir fæðingarorlof þitt',
-      description: 'Copy for the data provider for date of birth and rights',
-    },
     pregnancyStatusAndRightsError: {
       id: 'pl.application:pregnancyStatusAndRights.error',
       defaultMessage:
         'Ekki er hægt að ná fæðingardegi barnsins og ekki er hægt að reikna réttindin.',
       description: 'Error message for pregnancy status and rights providers',
+    },
+    childrenError: {
+      id: 'pl.application:children.error',
+      defaultMessage:
+        'Engin börn fundust. Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
+      description: `When no children is found. Can be because the primary parent didn't assign the secondary parent yet or if it's not part of the system yet.`,
     },
     childrenInformationTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
@@ -520,18 +515,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:selectChild.choose',
       defaultMessage: 'Velja',
       description: 'Choose',
-    },
-    notEligibleTitle: {
-      id: 'pl.application:selectChild.notEligibleTitle',
-      defaultMessage: 'Engin börn fundust',
-      description: 'Not children were found',
-    },
-    notEligibleDescription: {
-      id: 'pl.application:selectChild.notEligibleDescription',
-      defaultMessage:
-        'Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
-      description:
-        'No expected date of birth was found or an active application for parental leave.',
     },
   }),
 

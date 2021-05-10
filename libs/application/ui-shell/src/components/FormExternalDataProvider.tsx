@@ -24,7 +24,6 @@ import { useLocale } from '@island.is/localization'
 
 import { verifyExternalData } from '../utils'
 import Markdown from 'markdown-to-jsx'
-import { ClassSerializerInterceptor } from '@nestjs/common'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -172,35 +171,29 @@ const FormExternalDataProvider: FC<{
         render={({ value, onChange }) => {
           return (
             <>
-              <Box
-                background="blue100"
-                display="flex"
-                padding={4}
-                borderRadius="large"
-                marginTop={1}
-                key={`${id}`}
-              >
-                <Checkbox
-                  onChange={(e) => {
-                    const isChecked = e.target.checked
-                    clearErrors(id)
-                    setValue(id as string, isChecked)
-                    onChange(isChecked)
-                    activateBeforeSubmitCallback(isChecked)
-                  }}
-                  checked={value}
-                  hasError={error !== undefined}
-                  name={`${id}`}
-                  label={
-                    <Markdown>
-                      {checkboxLabel
-                        ? formatMessage(checkboxLabel)
-                        : formatMessage(coreMessages.externalDataAgreement)}
-                    </Markdown>
-                  }
-                  value={id}
-                />
-              </Box>
+              <Checkbox
+                large={true}
+                onChange={(e) => {
+                  const isChecked = e.target.checked
+                  clearErrors(id)
+                  setValue(id as string, isChecked)
+                  onChange(isChecked)
+                  activateBeforeSubmitCallback(isChecked)
+                }}
+                checked={value}
+                hasError={error !== undefined}
+                backgroundColor="blue"
+                name={`${id}`}
+                label={
+                  <Markdown>
+                    {checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)}
+                  </Markdown>
+                }
+                value={id}
+              />
+
               {error !== undefined && <InputError errorMessage={error} />}
             </>
           )

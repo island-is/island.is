@@ -9,9 +9,34 @@ import {
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
 import { getChildrenAndExistingApplications } from './Children-utils'
 import { States } from '../../constants'
+import {
+  ParentalLeave,
+  ParentalLeaveEntitlement,
+  PregnancyStatus,
+} from '../../types/schema'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
 
-const pregnancyStatusQuery = `
-  query PregnancyStatusQuery {
+export interface PregnancyStatusAndRightsResults {
+  childrenAndExistingApplications: ChildrenAndExistingApplications
+  remainingDays: number
+  hasRights: boolean
+  hasActivePregnancy: boolean
+}
+
+const parentalLeavesAndPregnancyStatus = `
+  query GetParentalLeavesAndPregnancyStatus {
+    getParentalLeaves {
+      applicant
+      expectedDateOfBirth
+      dateOfBirth
+      periods {
+        from
+        to
+        approved
+        paid
+      }
+    }
     getPregnancyStatus {
       hasActivePregnancy
       expectedDateOfBirth
@@ -19,11 +44,57 @@ const pregnancyStatusQuery = `
   }
 `
 
+const parentalLeavesEntitlements = `
+  query GetParentalLeavesEntitlements($input: GetParentalLeavesEntitlementsInput!) {
+    getParentalLeavesEntitlements(input: $input) {
+      independentMonths
+      transferableMonths
+    }
+  }
+`
+
 export class Children extends BasicDataProvider {
   type = 'Children'
-  async provide(
+
+  async queryParentalLeavesAndPregnancyStatus(): Promise<{
+    getParentalLeaves: ParentalLeave[] | null
+    getPregnancyStatus: PregnancyStatus | null
+  }> {
+    return await this.useGraphqlGateway(parentalLeavesAndPregnancyStatus)
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
+
+        return Promise.resolve(response.data)
+      })
+      .catch((error) => this.handleError(error))
+  }
+
+  async queryParentalLeavesEntitlements(
+    dateOfBirth: string | null | undefined,
+  ): Promise<ParentalLeaveEntitlement> {
+    return this.useGraphqlGateway(parentalLeavesEntitlements, {
+      input: { dateOfBirth },
+    })
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
+
+        return Promise.resolve(response.data.getParentalLeavesEntitlements)
+      })
+      .catch((error) => this.handleError(error))
+  }
+
+  async childrenAndExistingApplications(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
+    pregnancyStatus?: PregnancyStatus | null,
   ): Promise<ChildrenAndExistingApplications> {
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
@@ -41,26 +112,73 @@ export class Children extends BasicDataProvider {
       ({ state }) => state !== States.PREREQUISITES && state !== States.DRAFT,
     )
 
-    const pregnancyStatusQueryResponse = await this.useGraphqlGateway(
-      pregnancyStatusQuery,
-    )
-      .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors) {
-          return this.handleError(response.errors)
-        }
-
-        return Promise.resolve(response.data.getPregnancyStatus)
-      })
-      .catch((error) => {
-        return this.handleError(error)
-      })
-
     return getChildrenAndExistingApplications(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
-      pregnancyStatusQueryResponse,
+      pregnancyStatus,
     )
+  }
+
+  remainingDays(
+    dateOfBirth: string,
+    parentalLeaves: ParentalLeave[] | null,
+    rights: ParentalLeaveEntitlement,
+  ) {
+    return calculateRemainingNumberOfDays(dateOfBirth, parentalLeaves, rights)
+  }
+
+  async provide(
+    application: Application,
+    customTemplateFindQuery: CustomTemplateFindQuery,
+  ): Promise<PregnancyStatusAndRightsResults> {
+    const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus()
+    const dateOfBirth =
+      parentalLeavesAndPregnancyStatus.getPregnancyStatus?.expectedDateOfBirth
+
+    if (!dateOfBirth) {
+      return Promise.reject({
+        reason:
+          this.config.formatMessage?.(
+            parentalLeaveFormMessages.shared.pregnancyStatusAndRightsError,
+          ) ?? 'Failed',
+      })
+    }
+
+    const parentalLeavesEntitlements = await this.queryParentalLeavesEntitlements(
+      dateOfBirth,
+    )
+
+    const childrenAndExistingApplications = await this.childrenAndExistingApplications(
+      application,
+      customTemplateFindQuery,
+      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+    )
+    const remainingDays = this.remainingDays(
+      dateOfBirth,
+      parentalLeavesAndPregnancyStatus.getParentalLeaves,
+      parentalLeavesEntitlements,
+    )
+
+    if (
+      childrenAndExistingApplications.children.length <= 0 ||
+      childrenAndExistingApplications.existingApplications.length <= 0
+    ) {
+      return Promise.reject({
+        reason:
+          this.config.formatMessage?.(
+            parentalLeaveFormMessages.shared.childrenError,
+          ) ?? 'Failed',
+      })
+    }
+
+    return {
+      childrenAndExistingApplications,
+      remainingDays,
+      hasRights: parentalLeavesEntitlements?.independentMonths > 0,
+      hasActivePregnancy:
+        parentalLeavesAndPregnancyStatus.getPregnancyStatus
+          ?.hasActivePregnancy ?? false,
+    }
   }
 
   handleError(error: Error | unknown) {
@@ -76,11 +194,11 @@ export class Children extends BasicDataProvider {
     }
   }
 
-  onProvideError(): FailedDataProviderResult {
+  onProvideError(error: { reason: string }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},
-      reason: 'Failed',
+      reason: error.reason,
       status: 'failure',
     }
   }

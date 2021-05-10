@@ -23,7 +23,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 
   const { children, existingApplications } = get(
     application,
-    'externalData.children.data',
+    'externalData.children.children.data',
     [],
   ) as {
     children: { expectedDateOfBirth: string }[]
@@ -58,11 +58,13 @@ const ChildSelector: FC<FieldBaseProps> = ({
               parentalLeaveFormMessages.selectChild.title,
             )}
           />
+
           <Box marginY={3}>
             <RadioController
               id="selectedChild"
               disabled={false}
               name="selectedChild"
+              largeButtons={true}
               defaultValue={
                 getValueViaPath(
                   application.answers,
@@ -77,6 +79,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
           </Box>
         </>
       )}
+
       {existingApplications.length > 0 && (
         <>
           <FieldDescription
@@ -84,14 +87,17 @@ const ChildSelector: FC<FieldBaseProps> = ({
               parentalLeaveFormMessages.selectChild.activeApplications,
             )}
           />
+
           <Box marginY={3}>
-            {existingApplications.map(
+            {[{ applicationId: 'id', expectedDateOfBirth: '2020-02-10' }].map(
               ({ applicationId, expectedDateOfBirth }) => (
                 <Button
                   key={applicationId}
-                  icon="arrowForward"
                   onClick={() => selectExistingApplication(applicationId)}
-                  variant="text"
+                  icon="arrowForward"
+                  variant="primary"
+                  colorScheme="light"
+                  size="small"
                 >
                   {expectedDateOfBirth}
                 </Button>
