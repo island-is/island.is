@@ -1,6 +1,6 @@
 import React from 'react'
-import { View, ScrollView } from 'react-native'
-import { Badge, Heading, StatusCard, NotificationCard } from '@island.is/island-ui-native'
+import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { Badge, Heading, StatusCard, NotificationCard, Card } from '@island.is/island-ui-native'
 import logo from '../../assets/logo/logo-64w.png'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useQuery } from '@apollo/client'
@@ -18,6 +18,9 @@ import { useNotificationsStore } from '../../stores/notifications-store'
 import { navigateToNotification } from '../../utils/deep-linking';
 import { SafeAreaProvider, useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { uiStore } from '../../stores/ui-store'
+import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
+import { authStore } from '../../stores/auth-store'
+
 
 function BubbleSafeArea() {
   const insets = useSafeAreaInsets();
@@ -53,9 +56,47 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     <>
       <ScrollView
         testID={testIDs.SCREEN_HOME}
-        style={{ paddingHorizontal: 24 }}
       >
-        <View>
+        <View style={{ paddingHorizontal: 16 }}>
+          <Heading>Hæ {authStore.getState().userInfo?.name.split(' ').shift()}</Heading>
+        {/* {intl.formatMessage({ id: 'home.applicationsStatus' })} */}
+        </View>
+        <ScrollView
+          horizontal={true}
+          snapToInterval={283 + 16}
+          showsHorizontalScrollIndicator={false}
+          snapToAlignment={'start'}
+          contentInset={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 16,
+          }}
+          contentInsetAdjustmentBehavior="automatic"
+          decelerationRate={0}
+          style={{ marginBottom: 10 }}
+        >
+          <Card
+            key="card-1"
+            title="1"
+            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+            imgSrc={illustrationSrc}
+          />
+          <Card
+            key="card-2"
+            title="2"
+            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+            imgSrc={illustrationSrc}
+            backgroundColor="#F2F7FF"
+          />
+          <Card
+            key="card-3"
+            title="3"
+            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+            imgSrc={illustrationSrc}
+          />
+        </ScrollView>
+        <View style={{ paddingHorizontal: 16 }}>
           <Heading>{intl.formatMessage({ id: 'home.applicationsStatus' })}</Heading>
           <StatusCard
             title="Fæðingarorlof 4/6"
