@@ -6,7 +6,7 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildSubSection,
-  Comparators,
+  buildTextField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { DataProviderTypes } from '..'
@@ -58,7 +58,14 @@ export const JointCustodyAgreementForm: Form = buildForm({
         buildSubSection({
           id: 'anotherSection',
           title: 'title',
-          children: [],
+          children: [
+            buildTextField({
+              id: 'applicant.nationalId',
+              title: 'Kennitala',
+              format: '######-####',
+              backgroundColor: 'blue',
+            }),
+          ],
         }),
       ],
     }),

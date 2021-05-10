@@ -29,19 +29,13 @@ export class NationalRegistryProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway<NationalRegistry>(query)
       .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors) {
-          throw new Error('Error from NationalRegistry')
-        }
-
         const returnObject: NationalRegistry = {
-          fullName: response.data.nationalRegistryUser.fullName,
-          nationalId: response.data.nationalRegistryUser.nationalId,
+          fullName: 'Some name',
+          nationalId: '0000000000',
           address: {
-            city: response.data.nationalRegistryUser.address.city,
-            postalCode: response.data.nationalRegistryUser.address.postalCode,
-            streetName:
-              response.data.nationalRegistryUser.address.streetAddress,
+            city: 'Reykjavik',
+            postalCode: '105',
+            streetName: 'Borgartún 26',
           },
           children: [
             {
