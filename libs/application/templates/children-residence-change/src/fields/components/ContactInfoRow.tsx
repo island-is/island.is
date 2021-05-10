@@ -8,6 +8,7 @@ import { contactInfo } from '../../lib/messages'
 interface InputField {
   id: string
   error?: string
+  clearErrors?: string[]
   defaultValue?: string
 }
 
@@ -36,7 +37,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             error={email.error}
             defaultValue={email.defaultValue || ''}
             onChange={() => {
-              clearErrors(email.id)
+              clearErrors(email.clearErrors || email.id)
             }}
           />
         </GridColumn>
@@ -50,7 +51,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             error={phoneNumber.error}
             format="###-####"
             onChange={() => {
-              clearErrors(phoneNumber.id)
+              clearErrors(phoneNumber.clearErrors || phoneNumber.id)
             }}
             defaultValue={phoneNumber.defaultValue || ''}
           />

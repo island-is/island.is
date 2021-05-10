@@ -94,6 +94,9 @@
     "api-domains-education": {
       "tags": []
     },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -174,6 +177,9 @@
       "tags": []
     },
     "application-templates-institution-collaboration": {
+      "tags": []
+    },
+    "application-templates-joint-child-custody": {
       "tags": []
     },
     "application-templates-login-service": {

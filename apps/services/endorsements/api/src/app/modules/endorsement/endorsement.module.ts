@@ -6,6 +6,7 @@ import { EndorsementService } from './endorsement.service'
 import { EndorsementMetadataModule } from '../endorsementMetadata/endorsementMetadata.module'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementValidatorModule } from '../endorsementValidator/endorsementValidator.module'
+import { EndorsementListService } from '../endorsementList/endorsementList.service'
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { EndorsementValidatorModule } from '../endorsementValidator/endorsementV
     EndorsementValidatorModule,
   ],
   controllers: [EndorsementController],
-  providers: [EndorsementService],
+  providers: [EndorsementService, EndorsementListService],
 })
 export class EndorsementModule {}

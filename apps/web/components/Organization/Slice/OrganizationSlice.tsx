@@ -53,15 +53,21 @@ const StorySlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.StorySlice),
 )
 
+const LatestNewsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
   fullWidth?: boolean
+  organizationPageSlug?: string
 }
 
 const fullWidthSlices = ['TimelineSlice']
+const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace) => {
+const renderSlice = (slice, namespace, organizationPageSlug) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -87,6 +93,13 @@ const renderSlice = (slice, namespace) => {
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
       return <StorySlice slice={slice} />
+    case 'LatestNewsSlice':
+      return (
+        <LatestNewsSlice
+          slice={slice}
+          organizationPageSlug={organizationPageSlug}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -96,24 +109,29 @@ export const OrganizationSlice = ({
   slice,
   namespace,
   fullWidth = false,
-}: OrganizationSliceProps) => (
-  <GridContainer>
-    <GridRow>
-      <GridColumn
-        paddingTop={6}
-        span={
-          fullWidthSlices.includes(slice.__typename) || !fullWidth
-            ? '9/9'
-            : ['9/9', '9/9', '7/9']
-        }
-        offset={
-          fullWidthSlices.includes(slice.__typename) || !fullWidth
-            ? '0'
-            : ['0', '0', '1/9']
-        }
-      >
-        {renderSlice(slice, namespace)}
-      </GridColumn>
-    </GridRow>
-  </GridContainer>
-)
+  organizationPageSlug = '',
+}: OrganizationSliceProps) => {
+  return !slicesWithContainer.includes(slice.__typename) ? (
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          paddingTop={6}
+          span={
+            fullWidthSlices.includes(slice.__typename) || !fullWidth
+              ? '9/9'
+              : ['9/9', '9/9', '7/9']
+          }
+          offset={
+            fullWidthSlices.includes(slice.__typename) || !fullWidth
+              ? '0'
+              : ['0', '0', '1/9']
+          }
+        >
+          {renderSlice(slice, namespace, organizationPageSlug)}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  ) : (
+    renderSlice(slice, namespace, organizationPageSlug)
+  )
+}

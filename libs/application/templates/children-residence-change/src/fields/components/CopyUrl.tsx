@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
+import * as styles from './CopyUrl.treat'
 
 interface Props {
   title: string
@@ -36,7 +37,7 @@ const CopyUrl = ({ title, inputLabel, buttonLabel, successMessage }: Props) => {
       <Text variant="h4" marginBottom={2}>
         {title}
       </Text>
-      <Box display="flex" flexDirection={['column', 'row', 'row', 'row']}>
+      <Box display="flex" flexDirection={['column', 'row', 'column', 'row']}>
         <Box flexGrow={1}>
           <Input
             label={inputLabel}
@@ -48,10 +49,11 @@ const CopyUrl = ({ title, inputLabel, buttonLabel, successMessage }: Props) => {
           />
         </Box>
         <Box
+          className={styles.buttonWrapper}
           display="flex"
           flexShrink={0}
-          marginLeft={[0, 1, 1, 1]}
-          marginTop={[1, 0, 0, 0]}
+          marginLeft={[0, 1, 0, 1]}
+          marginTop={[2, 0, 2, 0]}
         >
           <Button
             ref={buttonRef}
