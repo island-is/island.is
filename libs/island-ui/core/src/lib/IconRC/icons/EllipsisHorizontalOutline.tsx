@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SvgProps as SVGRProps } from "../Icon";
+import * as React from 'react'
+import { SvgProps as SVGRProps } from '../Icon'
 
 const SvgEllipsisHorizontalOutline = ({
   title,
@@ -43,7 +43,7 @@ const SvgEllipsisHorizontalOutline = ({
         strokeWidth={32}
       />
     </svg>
-  );
-};
+  )
+}
 
-export default SvgEllipsisHorizontalOutline;
+export default SvgEllipsisHorizontalOutline

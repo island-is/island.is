@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SvgProps as SVGRProps } from "../Icon";
+import * as React from 'react'
+import { SvgProps as SVGRProps } from '../Icon'
 
 const SvgEllipsisHorizontal = ({
   title,
@@ -19,7 +19,7 @@ const SvgEllipsisHorizontal = ({
       <circle cx={416} cy={256} r={48} />
       <circle cx={96} cy={256} r={48} />
     </svg>
-  );
-};
+  )
+}
 
-export default SvgEllipsisHorizontal;
+export default SvgEllipsisHorizontal

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SvgProps as SVGRProps } from "../Icon";
+import * as React from 'react'
+import { SvgProps as SVGRProps } from '../Icon'
 
 const SvgPrintOutline = ({
   title,
@@ -43,7 +43,7 @@ const SvgPrintOutline = ({
       />
       <circle cx={392} cy={184} r={24} />
     </svg>
-  );
-};
+  )
+}
 
-export default SvgPrintOutline;
+export default SvgPrintOutline
