@@ -2,8 +2,11 @@ import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 
-import { Box, Text, Columns, Column, Button, DropdownMenu, } from '@island.is/island-ui/core'
+import { Box, Text, Columns, Column, Button, DropdownMenu, SkeletonLoader, } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import ExpandableLine from '../../components/ExpandableLine/ExpandableLine'
+import GridLineHeader from '../../components/GridLineHeader/GridLineHeader'
+import * as styles from './FinanceStatus.treat'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -19,7 +22,7 @@ const FinanceStatus = () => {
   const financeStatusData = data?.getFinanceStatus || []
 
   console.log({financeStatusData});
-
+  console.log({loading});
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -59,25 +62,40 @@ const FinanceStatus = () => {
             </Button>
           </Column>
           <Column width="content">
-            <DropdownMenu
-              icon="ellipsisVertical" // Need to add ellipsisHorizontal
-              items={[
-                {
-                  href: '#',
-                  title: 'Staða í lok árs ...'
-                },                {
-                  href: '#',
-                  title: 'Sækja sem PDF'
-                },
-                {
-                  onClick: function noRefCheck() { },
-                  title: 'Sækja sem Excel'
-                }
-              ]}
-              title="Meira"
-            />
+            <Box className={styles.buttonWrapper}>
+              <DropdownMenu
+                icon="ellipsisVertical" // Need to add ellipsisHorizontal
+                items={[
+                  {
+                    href: '#',
+                    title: 'Staða í lok árs ...'
+                  }, {
+                    href: '#',
+                    title: 'Sækja sem PDF'
+                  },
+                  {
+                    onClick: function noRefCheck() { },
+                    title: 'Sækja sem Excel'
+                  }
+                ]}
+                title="Meira"
+              />
+            </Box>
           </Column>
         </Columns>
+        {
+          loading ? <span>loading...</span> : null
+        }
+        {
+          financeStatusData?.organizations?.length > 0 ? (
+            <Box marginTop={2}>
+              <GridLineHeader />
+              {
+                financeStatusData.organizations.map((org: object, i: number) => <ExpandableLine key={i} organization={org} />)
+              }
+            </Box>
+          ) : null
+        }
       </Box>
     </Box>
   )
