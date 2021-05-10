@@ -22,7 +22,7 @@
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
 /libs/service-portal/endorsement                                                              @island-is/kosmos-kaos
-libs/application/template-api-modules/src/lib/modules/templates/party-letter                  @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-letter                 @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
