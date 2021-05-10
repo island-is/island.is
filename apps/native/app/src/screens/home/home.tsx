@@ -39,8 +39,9 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
         testID: testIDs.TABBAR_TAB_HOME,
         icon: theme.isDark
           ? require('../../assets/icons/tabbar-home-white.png')
-          : require('../../assets/icons/tabbar-home.png'),
-        selectedIcon: require('../../assets/icons/tabbar-home-selected.png'),
+          : require('../../assets/icons/tabbar-home-ios.png'),
+        selectedIcon: require('../../assets/icons/tabbar-home-selected-ios.png'),
+
       },
     }),
     [theme, intl],

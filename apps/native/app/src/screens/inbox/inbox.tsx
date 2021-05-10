@@ -23,6 +23,7 @@ import { TouchableHighlight } from 'react-native'
 
 export const InboxScreen: NavigationFunctionComponent = () => {
   const theme = useTheme()
+  const intl = useIntl()
   const [loading, setLoading] = useState(false)
 
   useTranslatedTitle('INBOX_NAV_TITLE', 'inbox.screenTitle');
@@ -34,9 +35,10 @@ export const InboxScreen: NavigationFunctionComponent = () => {
         icon: require('../../assets/icons/tabbar-inbox.png'),
         selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
         iconColor: theme.isDark ? theme.color.white : theme.color.dark400,
+        text: intl.formatMessage({ id: 'inbox.bottomTabText'}),
       },
     }),
-    [theme],
+    [theme, intl],
   );
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })

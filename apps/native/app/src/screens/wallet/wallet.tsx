@@ -54,6 +54,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
         icon: require('../../assets/icons/tabbar-wallet.png'),
         selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
         iconColor: theme.isDark ? theme.color.white : theme.color.dark400,
+        text: intl.formatMessage({ id: 'wallet.bottomTabText'}),
       },
     }),
     [theme],

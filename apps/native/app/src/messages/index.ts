@@ -49,6 +49,10 @@ export const is = {
   "home.screenTitle": "Yfirlit",
   "home.applicationsStatus": "Staða umsókna",
   "home.notifications": "Tilkynningar",
+  // inbox
+  "inbox.bottomTabText": "Skjöl",
+  // wallet
+  "wallet.bottomTabText": "Skírteini",
   // other
   "inbox.screenTitle": "Skjöl",
   "wallet.screenTitle": "Skírteini",
@@ -104,6 +108,10 @@ export const en: TranslatedMessages = {
   "home.screenTitle": "Overview",
   "home.applicationsStatus": "Applications status",
   "home.notifications": "Notifications",
+  // inbox
+  "inbox.bottomTabText": "Inbox",
+  // wallet
+  "wallet.bottomTabText": "Wallet",
   /// other
   "inbox.screenTitle": "Inbox",
   "wallet.screenTitle": "Wallet",
