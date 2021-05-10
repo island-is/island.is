@@ -23,12 +23,12 @@ enum Roles {
   ParentA = 'parentA',
 }
 
-const JointChildCustodyTemplate: ApplicationTemplate<
+const JointCustodyAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.JOINT_CHILD_CUSTODY,
+  type: ApplicationTypes.JOINT_CUSTODY_AGREEMENT,
   name: application.name,
   readyForProduction: false,
   dataSchema: z.object({}),
@@ -44,8 +44,8 @@ const JointChildCustodyTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/JointChildCustodyForm').then((module) =>
-                  Promise.resolve(module.JointChildCustodyForm),
+                import('../forms/JointCustodyAgreementForm').then((module) =>
+                  Promise.resolve(module.JointCustodyAgreementForm),
                 ),
               write: 'all',
             },
@@ -63,4 +63,4 @@ const JointChildCustodyTemplate: ApplicationTemplate<
   },
 }
 
-export default JointChildCustodyTemplate
+export default JointCustodyAgreementTemplate

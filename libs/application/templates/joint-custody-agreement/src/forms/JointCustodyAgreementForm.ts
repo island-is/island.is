@@ -7,13 +7,13 @@ import {
 } from '@island.is/application/core'
 import * as m from '../lib/messages'
 
-export const JointChildCustodyForm: Form = buildForm({
-  id: 'JointChildCustodyForm',
+export const JointCustodyAgreementForm: Form = buildForm({
+  id: 'JointCustodyAgreementForm',
   title: m.application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'jointChildCustody',
+      id: 'jointCustodyAgreementForm',
       title: 'Sameiginleg forsjá',
       children: [
         buildTextField({
