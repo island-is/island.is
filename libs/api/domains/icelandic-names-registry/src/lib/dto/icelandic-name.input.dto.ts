@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import {
   IsBoolean,
   IsNumber,
@@ -79,10 +79,4 @@ export class UpdateIcelandicNameInput {
   @Field(() => CreateIcelandicNameInput)
   @IsObject()
   body!: CreateIcelandicNameInput
-}
-
-@ObjectType()
-export class DeleteNameResponse {
-  @Field()
-  readonly success!: boolean
 }

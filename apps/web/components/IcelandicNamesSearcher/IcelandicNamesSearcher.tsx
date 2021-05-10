@@ -255,7 +255,7 @@ export const IcelandicNamesSearcher = () => {
   const tableSection = (
     <GridColumn
       span={['12/12', '12/12', '12/12', '12/12', '3/5']}
-      paddingTop={shouldStack ? 2 : 0}
+      paddingTop={[2, 2, 2, 2, 0]}
     >
       {hasSearched && (
         <Box>

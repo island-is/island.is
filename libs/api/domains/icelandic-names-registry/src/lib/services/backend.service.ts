@@ -8,7 +8,7 @@ import {
   IcelandicNamesRegistryOptions,
 } from '@island.is/icelandic-names-registry-types'
 
-import { CreateIcelandicNameInput } from '../dto/icelandic-name.input'
+import { CreateIcelandicNameInput } from '../dto/icelandic-name.input.dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {

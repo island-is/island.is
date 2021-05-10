@@ -1,12 +1,5 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import React, { useEffect, useRef, useState } from 'react'
+import { useMutation, gql } from '@apollo/client'
 import {
   Box,
   Input,
@@ -19,10 +12,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
+import EditForm from '../EditForm/EditForm'
+import TableList from '../TableList/TableList'
+import ConfirmModal from '../ConfirmModal/ConfirmModal'
 import { m } from '../../lib/messages'
 import {
-  GetIcelandicNameBySearchQuery,
-  GetIcelandicNameBySearchQueryVariables,
   UpdateIcelandicNameMutationMutation,
   UpdateIcelandicNameMutationMutationVariables,
   CreateIcelandicNameMutationMutation,
@@ -31,33 +25,29 @@ import {
   DeleteIcelandicNameMutationMutationVariables,
   CreateIcelandicNameInput,
   DeleteIcelandicNameByIdInput,
-} from '../../queries/schema'
+  GetIcelandicNameBySearchQuery,
+  GetIcelandicNameBySearchQueryVariables,
+} from '../../graphql/schema'
 import {
-  GET_ICELANDIC_NAME_BY_SEARCH,
   UPDATE_ICELANDIC_NAME_MUTATION,
   CREATE_ICELANDIC_NAME_MUTATION,
   DELETE_ICELANDIC_NAME_MUTATION,
-} from '../../queries'
-import EditForm from '../EditForm/EditForm'
-import TableList from '../TableList/TableList'
-import ConfirmModal from '../ConfirmModal/ConfirmModal'
-import { IcelandicNameInputs } from '../../types'
+} from '../../mutations'
+import { GET_ICELANDIC_NAME_BY_SEARCH } from '../../queries'
+import { IcelandicNameType } from '../../types'
 
 import * as styles from './Editor.treat'
 
-const Editor: FC = () => {
+const Editor = () => {
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [nothingFound, setNothingFound] = useState(false)
+  const [inputValue, setInputValue] = useState<string>('')
   const [isVisible, setIsVisible] = useState(false)
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
-  const [currentName, setCurrentName] = useState<IcelandicNameInputs | null>(
+  const [currentName, setCurrentName] = useState<IcelandicNameType | null>(null)
+  const [nameToDelete, setNameToDelete] = useState<IcelandicNameType | null>(
     null,
   )
-  const [nameToDelete, setNameToDelete] = useState<IcelandicNameInputs | null>(
-    null,
-  )
-  const [tableData, setTableData] = useState<IcelandicNameInputs[] | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [updateName] = useMutation<
@@ -68,37 +58,73 @@ const Editor: FC = () => {
   const [createName] = useMutation<
     CreateIcelandicNameMutationMutation,
     CreateIcelandicNameMutationMutationVariables
-  >(CREATE_ICELANDIC_NAME_MUTATION)
+  >(CREATE_ICELANDIC_NAME_MUTATION, {
+    update(cache, { data }) {
+      const newName = data?.createIcelandicName
+      const variables: GetIcelandicNameBySearchQueryVariables = {
+        input: { q: searchQuery },
+      }
+
+      const existingNames = cache.readQuery<
+        GetIcelandicNameBySearchQuery,
+        GetIcelandicNameBySearchQueryVariables
+      >({
+        variables,
+        query: GET_ICELANDIC_NAME_BY_SEARCH,
+      })
+
+      if (existingNames && newName) {
+        cache.writeQuery<
+          GetIcelandicNameBySearchQuery,
+          GetIcelandicNameBySearchQueryVariables
+        >({
+          variables,
+          query: GET_ICELANDIC_NAME_BY_SEARCH,
+          data: {
+            getIcelandicNameBySearch: [
+              ...existingNames?.getIcelandicNameBySearch,
+              newName,
+            ],
+          },
+        })
+      }
+    },
+  })
 
   const [deleteName] = useMutation<
     DeleteIcelandicNameMutationMutation,
     DeleteIcelandicNameMutationMutationVariables
-  >(DELETE_ICELANDIC_NAME_MUTATION)
-
-  const [search, { data, loading }] = useLazyQuery<
-    GetIcelandicNameBySearchQuery,
-    GetIcelandicNameBySearchQueryVariables
-  >(GET_ICELANDIC_NAME_BY_SEARCH, {
-    fetchPolicy: 'no-cache',
-  })
-
-  useLayoutEffect(() => {
-    if (data?.getIcelandicNameBySearch) {
-      if (data.getIcelandicNameBySearch.length === 0) {
-        setNothingFound(true)
+  >(DELETE_ICELANDIC_NAME_MUTATION, {
+    update(cache, { data }) {
+      const nameToDelete = data?.deleteIcelandicNameById
+      const variables: GetIcelandicNameBySearchQueryVariables = {
+        input: { q: searchQuery },
       }
 
-      const newTableData = data.getIcelandicNameBySearch.map((x) => {
-        return {
-          ...x,
-          icelandicName:
-            x.icelandicName.charAt(0).toUpperCase() + x.icelandicName.slice(1),
-        } as IcelandicNameInputs
+      const existingNames = cache.readQuery<
+        GetIcelandicNameBySearchQuery,
+        GetIcelandicNameBySearchQueryVariables
+      >({
+        variables,
+        query: GET_ICELANDIC_NAME_BY_SEARCH,
       })
 
-      setTableData(newTableData)
-    }
-  }, [data])
+      if (existingNames && nameToDelete) {
+        cache.writeQuery<
+          GetIcelandicNameBySearchQuery,
+          GetIcelandicNameBySearchQueryVariables
+        >({
+          variables,
+          query: GET_ICELANDIC_NAME_BY_SEARCH,
+          data: {
+            getIcelandicNameBySearch: existingNames?.getIcelandicNameBySearch.filter(
+              (x) => x.id !== nameToDelete.id,
+            ),
+          },
+        })
+      }
+    },
+  })
 
   useEffect(() => {
     if (nameToDelete?.id) {
@@ -112,7 +138,7 @@ const Editor: FC = () => {
     }
   }, [currentName])
 
-  const onSubmit = async (formState: IcelandicNameInputs) => {
+  const onSubmit = async (formState: IcelandicNameType) => {
     const { id, ...rest } = formState
 
     const body: CreateIcelandicNameInput = {
@@ -127,16 +153,16 @@ const Editor: FC = () => {
         })
         toast.success(formatMessage(m.notificationNameUpdated))
         setIsVisible(false)
-        doSearch()
       } catch (e) {
         toast.error(formatMessage(m.notificationError))
       }
     } else {
       try {
-        await createName({ variables: { input: body } })
+        await createName({
+          variables: { input: body },
+        })
         toast.success(formatMessage(m.notificationNameAdded))
         setIsVisible(false)
-        doSearch()
       } catch (e) {
         toast.error(formatMessage(m.notificationError))
       }
@@ -155,7 +181,6 @@ const Editor: FC = () => {
         })
         setIsConfirmationVisible(false)
         toast.success(formatMessage(m.notificationNameDeleted))
-        doSearch()
       } catch (e) {
         toast.error(formatMessage(m.notificationError))
       }
@@ -172,19 +197,14 @@ const Editor: FC = () => {
     setIsVisible(true)
   }
 
-  const doSearch = useCallback(() => {
-    search({ variables: { input: { q: searchQuery } } })
-    inputRef?.current?.focus()
-  }, [search, inputRef, searchQuery])
-
   return (
     <Box marginY={3}>
       <Stack space={3}>
         <Input
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              if (searchQuery.length > 1) {
-                doSearch()
+              if (inputValue.length > 1) {
+                setSearchQuery(inputValue)
               }
             }
           }}
@@ -194,30 +214,18 @@ const Editor: FC = () => {
           placeholder={formatMessage(m.searchForNameOrPartOfName)}
           size="md"
           onChange={(e) => {
-            setNothingFound(false)
-            setSearchQuery(e.target.value)
+            setInputValue(e.target.value)
           }}
         />
         <Button variant="ghost" icon="add" size="small" onClick={onAddNewName}>
           {formatMessage(m.addName)}
         </Button>
-        {tableData !== null && (
-          <>
-            {nothingFound ? (
-              <Text variant="intro">{`${formatMessage(
-                m.searchNothingFound,
-              )} „${searchQuery}“.`}</Text>
-            ) : (
-              !!tableData.length && (
-                <TableList
-                  names={tableData}
-                  loading={loading}
-                  setCurrentName={setCurrentName}
-                  setNameToDelete={setNameToDelete}
-                />
-              )
-            )}
-          </>
+        {searchQuery.length > 1 && (
+          <TableList
+            q={searchQuery}
+            setCurrentName={setCurrentName}
+            setNameToDelete={setNameToDelete}
+          />
         )}
       </Stack>
       <ToastContainer closeButton={true} useKeyframeStyles={false} />

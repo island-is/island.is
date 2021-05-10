@@ -11,8 +11,8 @@ import {
   CreateIcelandicNameInput,
   UpdateIcelandicNameInput,
   DeleteIcelandicNameByIdInput,
-  DeleteNameResponse,
-} from './dto/icelandic-name.input'
+} from './dto/icelandic-name.input.dto'
+import { DeleteNameResponse } from './dto/icelandic-name.response.dto'
 
 const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
 
@@ -76,7 +76,7 @@ export class IcelandicNamesResolver {
     await this.backendAPI.deleteById(input.id, authorization ?? '')
 
     return {
-      success: true,
+      id: input.id,
     }
   }
 }
