@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, InputError } from '@island.is/island-ui/core'
 import { contactInfo } from '../../lib/messages'
 import { getSelectedChildrenFromExternalData } from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
@@ -73,15 +73,23 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
         <ContactInfoRow
           email={{
             id: counterPartyEmail,
-            error: counterPartyError || counterPartyEmailError,
+            error: counterPartyError ? '' : counterPartyEmailError,
+            clearErrors: [counterPartyEmail, 'counterParty'],
             defaultValue: answers?.counterParty?.email,
           }}
           phoneNumber={{
             id: counterPartyPhoneNumber,
             error: counterPartyError ? '' : counterPartyPhoneError,
+            clearErrors: [counterPartyPhoneNumber, 'counterParty'],
             defaultValue: answers?.counterParty?.phoneNumber,
           }}
         />
+        {counterPartyError && (
+          <InputError
+            id={`${counterPartyEmail}-error`}
+            errorMessage={counterPartyError}
+          />
+        )}
       </Box>
     </>
   )

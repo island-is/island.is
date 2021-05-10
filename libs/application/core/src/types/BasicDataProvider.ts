@@ -15,6 +15,10 @@ export type CustomTemplateFindQuery = (where: {
   [key: string]: string
 }) => Promise<Application[]>
 
+export type CustomTemplateFindQuery = (where: {
+  [key: string]: string
+}) => Promise<Application[]>
+
 export interface DataProvider {
   readonly type: string
   provide(

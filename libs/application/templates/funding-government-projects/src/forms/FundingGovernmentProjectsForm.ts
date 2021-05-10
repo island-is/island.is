@@ -145,12 +145,12 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
         buildMultiField({
           id: 'overviewMultifield',
           title: overview.general.pageTitle,
-          description: overview.general.pageTitle.description,
+          description: overview.general.pageDescription,
           children: [
             buildCustomField({
               id: 'overviewCustomField',
               title: overview.general.pageTitle,
-              description: overview.general.pageTitle.description,
+              description: overview.general.pageDescription,
               component: 'Overview',
             }),
             buildSubmitField({
