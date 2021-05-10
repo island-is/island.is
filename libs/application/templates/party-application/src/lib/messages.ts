@@ -199,19 +199,18 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Listi hefur verið sendur',
+      defaultMessage: 'Meðmælendalista hefur verið skilað.',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
       defaultMessage:
-        'Meðmælendalisti hefur verið sendur yfirkjörstjórn til yfirferðar.',
+        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
-      defaultMessage:
-        'Þú munt fá skilaboð í pósthólf inni á mínum síðum Íslands.is með framhaldið.',
+      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum síðum.',
       description: 'Subtitle for approved card',
     },
   }),
