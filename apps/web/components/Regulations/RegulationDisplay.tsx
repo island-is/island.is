@@ -123,6 +123,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               legend={txt('appendixesTitle')}
               genericTitle={txt('appendixGenericTitle')}
               appendixes={regulation.appendixes}
+              diffing={!!regulation.showingDiff}
             />
 
             <CommentsBox

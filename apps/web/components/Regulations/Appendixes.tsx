@@ -2,7 +2,7 @@ import * as s from './RegulationDisplay.treat'
 
 import React, { memo } from 'react'
 import { HTMLText, PlainText, RegulationMaybeDiff } from './Regulations.types'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useDomid } from './regulationUtils'
 import { HTMLDump } from './HTMLDump'
 
@@ -27,10 +27,12 @@ export type AppendixesProps = {
   legend: string
   genericTitle: string
   appendixes: ReadonlyArray<RegulationMaybeDiff['appendixes'][0]>
+  diffing?: boolean
 }
 
 export const Appendixes = memo((props: AppendixesProps) => {
-  const { appendixes } = props
+  const { appendixes, diffing } = props
+
   const domid = useDomid()
 
   if (!appendixes.length) {
@@ -51,17 +53,15 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 id={id}
                 labelVariant="h3"
                 labelUse="h2"
-                label={title.asPlainText || ''}
-                visibleContent={
-                  title.asHtml && (
-                    // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode
-                    <Text variant="h3" as="h2">
-                      <HTMLDump
-                        component="span"
-                        className={s.bodyText}
-                        html={title.asHtml}
-                      />
-                    </Text>
+                label={
+                  diffing ? (
+                    <HTMLDump
+                      component="span"
+                      className={s.bodyText}
+                      html={appendix.title as HTMLText}
+                    />
+                  ) : (
+                    appendix.title
                   )
                 }
                 startExpanded={hasDiff(appendix.text)}
