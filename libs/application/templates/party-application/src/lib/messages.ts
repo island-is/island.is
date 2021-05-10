@@ -210,7 +210,8 @@ export const m: MessageDir = {
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
-      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
+      defaultMessage:
+        'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
@@ -220,7 +221,8 @@ export const m: MessageDir = {
     },
     bulletLink1: {
       id: 'pa.application:application.approved.card.bulletLink1',
-      defaultMessage: 'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
+      defaultMessage:
+        'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
       description: 'Link to Vefur dómsmálaráðuneytis',
     },
     bulletLink1Title: {
