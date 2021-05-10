@@ -5,10 +5,10 @@ import {
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
+import { User } from '@island.is/auth-nest-tools'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import { User } from '@island.is/auth-nest-tools'
 
 class NotImplemented extends BasicDataProvider {
   provide(): Promise<unknown> {

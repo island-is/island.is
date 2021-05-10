@@ -3,12 +3,11 @@ import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isSameDay from 'date-fns/isSameDay'
-
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   ParentalLeavePeriod,
-} from '../types/schema'
+} from '@island.is/api/domains/directorate-of-labour'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30

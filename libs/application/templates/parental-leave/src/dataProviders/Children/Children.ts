@@ -169,7 +169,9 @@ export class Children extends BasicDataProvider {
     return {
       childrenAndExistingApplications,
       remainingDays,
-      hasRights: parentalLeavesEntitlements?.independentMonths > 0,
+      hasRights:
+        parentalLeavesEntitlements?.independentMonths > 0 ||
+        parentalLeavesEntitlements.transferableMonths > 0,
       hasActivePregnancy:
         parentalLeavesAndPregnancyStatus.getPregnancyStatus
           ?.hasActivePregnancy ?? false,

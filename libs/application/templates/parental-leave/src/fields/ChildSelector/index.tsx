@@ -89,7 +89,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
           />
 
           <Box marginY={3}>
-            {[{ applicationId: 'id', expectedDateOfBirth: '2020-02-10' }].map(
+            {existingApplications.map(
               ({ applicationId, expectedDateOfBirth }) => (
                 <Button
                   key={applicationId}

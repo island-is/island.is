@@ -95,7 +95,7 @@ export const formatIsk = (value: number): string =>
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const children = getValueViaPath(
+  const provider = getValueViaPath(
     application.externalData,
     'children',
   ) as PregnancyStatusAndRightsResults
@@ -108,7 +108,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let days = children.remainingDays
+  let days = provider.remainingDays
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     const requestedDays = requestRights.requestDays
@@ -117,7 +117,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
   }
 
   if (
-    children.hasRights &&
+    provider.hasRights &&
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
