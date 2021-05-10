@@ -24,22 +24,22 @@ const PartyApplicationApproved: FC<FieldBaseProps> = () => {
         <BulletList type="ul">
           <Bullet>
             <Link
-              href='https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/'
+              href={formatMessage(m.applicationApproved.bulletLink1)}
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
-              Vefur dómsmálaráðuneytis
+              {formatMessage(m.applicationApproved.bulletLink1Title)}
             </Link>
           </Bullet>
           <Bullet>
             <Link
-              href='https://www.stjornarradid.is/verkefni/kosningar/'
+              href={formatMessage(m.applicationApproved.bulletLink2)}
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
-              kosning.is
+              {formatMessage(m.applicationApproved.bulletLink2Title)}
             </Link>
           </Bullet>
         </BulletList>
