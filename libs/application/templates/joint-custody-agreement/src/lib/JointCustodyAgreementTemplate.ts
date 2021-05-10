@@ -47,6 +47,13 @@ const JointCustodyAgreementTemplate: ApplicationTemplate<
                 import('../forms/JointCustodyAgreementForm').then((module) =>
                   Promise.resolve(module.JointCustodyAgreementForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
