@@ -112,30 +112,30 @@ export class ApplicationService {
   ) {
     const { id, ...populateExternalDataDto } = input
 
-    return this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerUpdateExternalData({
-      id,
-      populateExternalDataDto,
-    })
+    return this.applicationApiWithAuth(auth)
+      .applicationControllerUpdateExternalData({
+        id,
+        populateExternalDataDto,
+      })
+      .catch(handleError)
   }
 
   async submitApplication(input: SubmitApplicationInput, auth: Auth) {
     const { id, ...updateApplicationStateDto } = input
-    return this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerSubmitApplication({
-      id,
-      updateApplicationStateDto,
-    })
+    return this.applicationApiWithAuth(auth)
+      .applicationControllerSubmitApplication({
+        id,
+        updateApplicationStateDto,
+      })
+      .catch(handleError)
   }
 
   async assignApplication(input: AssignApplicationInput, auth: Auth) {
-    return this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerAssignApplication({
-      assignApplicationDto: input,
-    })
+    return this.applicationApiWithAuth(auth)
+      .applicationControllerAssignApplication({
+        assignApplicationDto: input,
+      })
+      .catch(handleError)
   }
 
   async createPdfPresignedUrl(input: CreatePdfInput, auth: Auth) {

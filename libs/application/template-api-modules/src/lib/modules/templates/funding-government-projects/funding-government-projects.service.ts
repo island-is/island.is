@@ -58,7 +58,7 @@ export class FundingGovernmentProjectsService {
   ): Promise<FundingAttachment[]> {
     const attachments = getValueViaPath(
       application.answers,
-      'attachments',
+      'project.attachments',
     ) as Array<{ key: string; name: string }>
     const hasattachments = attachments && attachments?.length > 0
     if (!hasattachments) {
