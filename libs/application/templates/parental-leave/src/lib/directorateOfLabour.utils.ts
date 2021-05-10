@@ -69,8 +69,13 @@ export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
 
   const differenceInFullMonths = differenceInMonths(end, start)
   const monthsApart = differenceInCalendarMonths(end, start)
+
+  const isOneMonthBetweenStartAndEnd =
+    daysSpentInStartMonth + daysSpentInEndMonth >= DAYS_IN_MONTH
+  const diff = differenceInFullMonths - (isOneMonthBetweenStartAndEnd ? 1 : 0)
+
   const extraDaysFromGoingOverFullMonths =
-    monthsApart < 2 ? 0 : differenceInFullMonths * DAYS_IN_MONTH
+    monthsApart < 2 ? 0 : diff * DAYS_IN_MONTH
 
   return (
     daysSpentInStartMonth +
