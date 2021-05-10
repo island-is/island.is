@@ -10,7 +10,7 @@ const PartyApplicationApproved: FC<FieldBaseProps> = () => {
 
   return (
     <Box>
-      <Box marginBottom={3}>
+      <Box>
         <Approved
           title={formatMessage(m.applicationApproved.approvedTitle)}
           subtitle={formatMessage(m.applicationApproved.approvedSubtitle)}
