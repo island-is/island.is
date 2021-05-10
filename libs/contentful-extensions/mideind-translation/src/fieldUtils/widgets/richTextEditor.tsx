@@ -80,8 +80,11 @@ function createValue(texts: string[], scaffold: any) {
   // Since this widget takes an array and we are already reverse
   // populating the node-tree in the richText content
   // we do not need to call reverse
-  reverseTraverse(texts, scaffold)
-  return scaffold
+
+  // The scaffold is a reference and as such we must deep-copy it
+  const scaffoldCopy = JSON.parse(JSON.stringify(scaffold))
+  reverseTraverse(texts, scaffoldCopy)
+  return scaffoldCopy
 }
 
 export default {

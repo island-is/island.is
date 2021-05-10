@@ -24,7 +24,7 @@ function isFieldOk(field: any) {
   return true
 }
 
-function extractField(field: any, eInterface: any) {
+function extractField(field: any, eInterface: any, locale = 'is-IS') {
   if (isFieldOk(field)) {
     const { widgetId } = eInterface.controls.filter(
       (a: any) => a['fieldId'] === field.id,
@@ -39,9 +39,10 @@ function extractField(field: any, eInterface: any) {
     if (ignore) {
       return
     } else {
-      var iceValue = field.getValue('is-IS')
-      if (iceValue) {
-        const texts = extractText(iceValue)
+      var fieldValue = field.getValue(locale)
+      console.log({fieldValue, locale})
+      if (fieldValue) {
+        const texts = extractText(fieldValue)
         return texts
       } else {
         return []

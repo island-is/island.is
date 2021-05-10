@@ -1,12 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Spinner } from '@contentful/forma-36-react-components'
 import { SidebarExtensionSDK } from '@contentful/app-sdk'
 import { useState } from 'react'
 import { extractField, populateField } from '../fieldUtils/index'
-import { translateTexts } from '../api'
+import { translateTexts, sendTexts } from '../api'
+import { signedCookies } from 'cookie-parser'
 
 interface SidebarProps {
   sdk: SidebarExtensionSDK
+}
+
+interface SysVersion {
+  id: string;
+  publishedCounter: number;
+  publishedVersion?: number;
+  version: number;
+  publishedAt: string
+}
+
+const hasPublishedDiff = (sys: SysVersion, publishedVersion: number): boolean  => {
+  return !!sys.publishedVersion && sys.publishedVersion != publishedVersion || sys.publishedCounter === 1
+}
+
+// Checks whether version numbers are published according to Contentful's 
+// version numbering system
+const isPublished = (sys: SysVersion): boolean => {
+  return !!sys.publishedVersion && sys.version === sys.publishedVersion + 1
 }
 
 const handleClick = async (sdk: any) => {
@@ -14,8 +33,8 @@ const handleClick = async (sdk: any) => {
   const keys = Object.keys(fields)
 
   // 1 - Gather
-  var texts: string[] = [] // Untranslated text collection
-  var lines: any[] = [] // Keeps track of the lines of texts per field
+  let texts: string[] = [] // Untranslated text collection
+  let lines: any[] = [] // Keeps track of the lines of texts per field
 
   for (const key of keys) {
     const field = fields[key]
@@ -50,8 +69,50 @@ const handleClick = async (sdk: any) => {
   }
 }
 
+
+
 const Sidebar = (props: SidebarProps) => {
   const [loading, setLoading] = useState(false)
+  const [publishedVersion, setPublishedVersion] = useState(props.sdk.entry.getSys().publishedVersion)
+
+  const handlePublished = async (ref: any) => {
+    if(isPublished(ref) && hasPublishedDiff(ref, publishedVersion)) {
+      const fields = props.sdk.entry.fields
+      const keys = Object.keys(fields)
+
+      let iceTexts: string[] = []
+      let enTexts: string[] = []
+
+
+      for (const key of keys) {
+        const field = fields[key]
+        const eInterface = props.sdk.editor.editorInterface
+        let iceExtractedTexts = extractField(field, eInterface) ?? []
+
+        iceTexts = [...iceTexts, ...iceExtractedTexts]
+      }
+
+      for (const key of keys) {
+        const field = fields[key]
+        const eInterface = props.sdk.editor.editorInterface
+        let enExtractedTexts = extractField(field, eInterface, 'en') ?? []
+
+        enTexts = [...enTexts, ...enExtractedTexts]
+ 
+      }
+
+      // Filter away empty texts
+      //iceTexts.filter(text => text.trim.length !== 0)
+      //enTexts.filter(text => text.trim.length !== 0)
+
+      sendTexts(iceTexts, enTexts)
+    }
+  }
+
+  useEffect(() => {
+    props.sdk.entry.onSysChanged(handlePublished)
+  }, [])
+
   return (
     <>
       <Button

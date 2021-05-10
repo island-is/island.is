@@ -1,4 +1,5 @@
 const base = 'https://stafraentisland.greynir.is/translate/'
+const base2 = 'http://localhost:2929/'
 
 const defaultParams = {
   sourceLanguageCode: 'is',
@@ -28,4 +29,22 @@ async function translateTexts(texts: string[]) {
   return translations
 }
 
-export { translateTexts }
+async function sendTexts(iceTexts: string[], enTexts: string[]) {
+  const body: any = {
+    ice: iceTexts,
+    en: enTexts
+  }
+
+  console.log(body)
+
+  //const response = await fetch(base2, {
+  //  method: 'POST',
+  //  mode: 'no-cors',
+  //  headers: {
+  //    'Content-Type': 'application/json'
+  //  },
+  //  body: JSON.stringify(body)
+  //})
+}
+
+export { translateTexts, sendTexts }
