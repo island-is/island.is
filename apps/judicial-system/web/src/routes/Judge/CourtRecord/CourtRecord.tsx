@@ -76,7 +76,7 @@ export const CourtRecord: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
   const { isValidTime: isValidCourtStartTime } = useDateTime({
-    time: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+    time: formatDate(workingCase?.courtStartDate, TIME_FORMAT),
   })
 
   useEffect(() => {
@@ -116,7 +116,7 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartTime', new Date().toString(), theCase)
+      autofill('courtStartDate', new Date().toString(), theCase)
 
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
@@ -191,13 +191,13 @@ export const CourtRecord: React.FC = () => {
                   timeLabel="Þinghald hófst (kk:mm)"
                   maxDate={new Date()}
                   selectedDate={
-                    workingCase.courtStartTime
-                      ? new Date(workingCase.courtStartTime)
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
                       : new Date()
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
-                      'courtStartTime', // TODO: rename to courtStartDate
+                      'courtStartDate', // TODO: rename to courtStartDate
                       date,
                       valid,
                       workingCase,

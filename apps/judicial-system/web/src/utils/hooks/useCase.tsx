@@ -21,7 +21,7 @@ type autofillProperties = Pick<
   | 'courtAttendees'
   | 'policeDemands'
   | 'litigationPresentations'
-  | 'courtStartTime'
+  | 'courtStartDate'
 >
 
 interface CreateCustodyCourtCaseMutationResponse {

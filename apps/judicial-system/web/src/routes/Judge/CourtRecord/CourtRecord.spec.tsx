@@ -32,7 +32,7 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_9',
-              courtStartTime: '2020-09-16T12:31:00Z',
+              courtStartDate: '2020-09-16T12:31:00Z',
             } as UpdateCase,
             {
               id: 'test_id_9',
