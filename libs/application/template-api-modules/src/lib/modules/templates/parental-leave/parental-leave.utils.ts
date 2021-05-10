@@ -9,6 +9,7 @@ import {
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import { getSelectedChild } from '@island.is/application/templates/parental-leave'
 
 import { apiConstants, formConstants } from './constants'
 
@@ -76,7 +77,11 @@ export const getEmployer = (
 })
 
 export const getOtherParentId = (application: Application): string => {
-  const otherParent = extractAnswer<string>(application.answers, 'otherParent')
+  const otherParent = extractAnswer<string>(
+    application.answers,
+    'otherParent',
+    null,
+  )
   const otherParentId = extractAnswer<string>(
     application.answers,
     'otherParentId',
@@ -189,22 +194,23 @@ export const transformApplicationToParentalLeaveDTO = (
     name: '',
   }
 
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
   return {
     applicationId: application.id,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
-    // TODO: secondary parent does not have access to this information
-    // Refactor to take that into account
-    expectedDateOfBirth: extractAnswer(
-      application.externalData,
-      'pregnancyStatus.data.pregnancyDueDate',
-    ),
+    expectedDateOfBirth: selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: extractAnswer(
-      application.externalData,
-      'pregnancyStatus.data.pregnancyDueDate',
-    ),
+    dateOfBirth: selectedChild.expectedDateOfBirth,
     email: extractAnswer(application.answers, 'applicant.email'),
     phoneNumber: extractAnswer(application.answers, 'applicant.phoneNumber'),
     paymentInfo: {

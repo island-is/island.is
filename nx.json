@@ -94,6 +94,9 @@
     "api-domains-education": {
       "tags": []
     },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -104,6 +107,9 @@
       "tags": []
     },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-regulations": {
       "tags": []
     },
     "api-domains-rsk": {
@@ -173,6 +179,9 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
+    "application-templates-joint-custody-agreement": {
+      "tags": []
+    },
     "application-templates-login-service": {
       "tags": []
     },
@@ -232,6 +241,9 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-regulations": {
       "tags": []
     },
     "clients-rsk-v1": {

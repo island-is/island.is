@@ -11,10 +11,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isRequired: boolean
+  rows?: number
 }
 
 const RulingInput: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isRequired } = props
+  const { workingCase, setWorkingCase, isRequired, rows } = props
   const { updateCase } = useCase()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
@@ -25,7 +26,7 @@ const RulingInput: React.FC<Props> = (props) => {
       label="Efni úrskurðar"
       placeholder="Hver er niðurstaðan að mati dómara?"
       defaultValue={workingCase.ruling}
-      rows={16}
+      rows={rows ?? 16}
       errorMessage={rulingErrorMessage}
       hasError={rulingErrorMessage !== ''}
       required={isRequired}

@@ -20,7 +20,7 @@ export const modalContainer = style({
   background: theme.color.white,
   maxWidth: '40vw',
   maxHeight: '90vh',
-  overflowY: 'scroll',
+  overflowY: 'auto',
   borderRadius: theme.border.radius.standard,
 })
 
