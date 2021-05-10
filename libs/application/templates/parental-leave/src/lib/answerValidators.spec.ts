@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 
@@ -32,7 +36,7 @@ describe('answerValidators', () => {
     id: '',
     modified: new Date(),
     state: '',
-    status: 'inprogress' as Application['status'],
+    status: ApplicationStatus.IN_PROGRESS,
     typeId: ApplicationTypes.EXAMPLE,
   }
 
