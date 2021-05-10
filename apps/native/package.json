@@ -21,6 +21,7 @@
     "expo-notifications": "0.9.0",
     "react-native-app-auth": "6.2.0",
     "react-native-code-push": "7.0.0",
+    "react-native-dialogs": "1.1.1",
     "react-native-keyboard-manager": "6.5.4-0",
     "react-native-keychain": "6.2.0",
     "react-native-localize": "2.0.2",

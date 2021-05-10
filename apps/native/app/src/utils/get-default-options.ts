@@ -24,6 +24,7 @@ export function getDefaultOptions(): Options {
       backButton: {
         color: theme.color.blue400,
       },
+      elevation: 0,
       title: {
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,

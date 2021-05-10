@@ -94,9 +94,6 @@ export const InboxScreen: NavigationFunctionComponent = () => {
   //   }
   // }, [indexedItems, query])
 
-
-  console.log(indexedItems, inboxItems, res);
-
   return (
     <>
       <SafeAreaView style={{ marginHorizontal: 16, marginVertical: 8 }}>

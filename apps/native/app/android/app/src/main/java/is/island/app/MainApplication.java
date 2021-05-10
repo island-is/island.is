@@ -3,20 +3,25 @@ package is.island.app;
 import is.island.app.generated.BasePackageList;
 
 // npm packages
+import com.rnappauth.RNAppAuthPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.microsoft.codepush.react.CodePush;
+import com.reactnativecommunity.cookies.CookieManagerPackage;
+import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
+import com.oblador.keychain.KeychainPackage;
+import com.zoontek.rnlocalize.RNLocalizePackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationPackage;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.oblador.keychain.KeychainPackage;
+import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.reactnativeultimateconfig.UltimateConfigPackage;
 import com.reactnativeultimateconfig.UltimateConfigModule;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+
+// unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
 import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
-import com.rnappauth.RNAppAuthPackage;
-import com.zoontek.rnlocalize.RNLocalizePackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 // android and react native
 import android.app.Application;
@@ -45,15 +50,17 @@ public class MainApplication extends NavigationApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
-          packages.add(new NavigationPackage(mReactNativeHost));
-          packages.add(new RNCWebViewPackage());
-          packages.add(new UltimateConfigPackage());
-          packages.add(new KeychainPackage());
-          packages.add(new RNAppAuthPackage());
-          packages.add(new RNLocalizePackage());
           packages.add(new AsyncStoragePackage());
+          packages.add(new CodePush(BuildConfig.CODEPUSH_DEPLOYMENT_KEY_ANDROID, MainApplication.this, BuildConfig.DEBUG));
+          packages.add(new CookieManagerPackage());
+          packages.add(new KeychainPackage());
+          packages.add(new NavigationPackage(mReactNativeHost));
+          packages.add(new ReactNativeDialogsPackage());
+          packages.add(new RNAppAuthPackage());
+          packages.add(new RNCWebViewPackage());
+          packages.add(new RNLocalizePackage());
+          packages.add(new SafeAreaContextPackage());
+          packages.add(new UltimateConfigPackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

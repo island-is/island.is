@@ -9,6 +9,7 @@ export function BottomTabsIndicator({
   index: number
   total: number
 }) {
+
   return (
     <View
       style={{

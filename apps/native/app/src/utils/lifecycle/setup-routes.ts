@@ -42,25 +42,14 @@ export function setupRoutes() {
           currentTabIndex: 2,
         },
       })
-      Navigation.showModal({
-        stack: {
-          children: [
-            {
-              component: {
-                name: ComponentRegistry.WalletPassScreen,
-                passProps: {
-                  id: passId,
-                },
-                options: {
-                  layout: {
-                    componentBackgroundColor: backgroundColor,
-                  },
-                },
-              },
-            },
-          ],
+      Navigation.push('WALLET_TAB', {
+        component: {
+          name: ComponentRegistry.WalletPassScreen,
+          passProps: {
+            id: passId,
+          },
         },
-      })
+      });
     },
   )
 

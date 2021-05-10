@@ -16,28 +16,37 @@ includeUnimodulesProjects([
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesSettingsGradle(settings)
 
-include ':react-native-async-storage'
-project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/async-storage/android')
-
 include ':app', ':react-native-code-push'
 project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-code-push/android/app')
-
-include ':react-native-navigation'
-project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
-
-include ':react-native-keychain'
-project(':react-native-keychain').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-keychain/android')
-
-include ':react-native-ultimate-config'
-project(':react-native-ultimate-config').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-ultimate-config/android')
 
 include ':react-native-app-auth'
 project(':react-native-app-auth').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-app-auth/android')
 
-include ':react-native-web-view'
-project(':react-native-web-view').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
+include ':react-native-async-storage'
+project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/async-storage/android')
+
+include ':react-native-cookies'
+project(':react-native-cookies').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/react-native-cookies/android')
+
+include ':react-native-dialogs'
+project(':react-native-dialogs').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-dialogs/android')
+
+include ':react-native-keychain'
+project(':react-native-keychain').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-keychain/android')
 
 include ':react-native-localize'
 project(':react-native-localize').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-localize/android')
+
+include ':react-native-navigation'
+project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
+
+include ':react-native-safe-area-context'
+project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-safe-area-context/android')
+
+include ':react-native-ultimate-config'
+project(':react-native-ultimate-config').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-ultimate-config/android')
+
+include ':react-native-web-view'
+project(':react-native-web-view').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
 
 include ':app'

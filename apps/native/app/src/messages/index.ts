@@ -40,9 +40,32 @@ export const is = {
   "settings.natreg.birthPlace": "Fæðingastaður",
   "settings.natreg.legalResidence": "Lögheimili",
   "settings.natreg.gender": "Kyn",
-  "settings.natreg.genderValue": "{gender, select, FEMALE {Kvenkyn} MALE {Karlkyn}}",
+  "settings.natreg.genderValue": `{
+    gender,
+    select,
+    FEMALE {Kona}
+    MALE {Karl}
+    TRANSGENDER {Kynsegin}
+    MALE_MINOR {Drengur}
+    FEMALE_MINOR {Stúlka}
+    TRANSGENDER_MINOR {Kynsegin}
+    UNKNOWN {Óupplýst}
+  }`,
   "settings.natreg.maritalStatus": "Hjúskaparstaða",
-  "settings.natreg.maritalStatusValue": "{maritalStatus, select, MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur}}} UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur}}}}",
+  "settings.natreg.maritalStatusValue": `{
+    maritalStatus,
+    select,
+    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur}}}
+    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill}}}
+    SEPARATED {{gender, select, FEMALE {Aðskilin} MALE {Aðskilinn}}}
+    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn}}}
+    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    UNKNOWN {Óupplýst}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+  }`,
   "settings.natreg.citizenship": "Ríkisfang",
   "settings.natreg.religion": "Trú- eða lífskoðunarfélag",
   // home
@@ -95,9 +118,32 @@ export const en: TranslatedMessages = {
   "settings.natreg.birthPlace": "Birthplace",
   "settings.natreg.legalResidence": "Legal domicile",
   "settings.natreg.gender": "Gender",
-  "settings.natreg.genderValue": "{gender, select, FEMALE {Female} MALE {Male}}",
+  "settings.natreg.genderValue": `{
+    gender,
+    select,
+    FEMALE {Female}
+    MALE {Male}
+    TRANSGENDER {Transgender}
+    MALE_MINOR {Boy}
+    FEMALE_MINOR {Girl}
+    TRANSGENDER_MINOR {Transgender}
+    UNKNOWN {Unknown}
+  }`,
   "settings.natreg.maritalStatus": "Marital status",
-  "settings.natreg.maritalStatusValue": "{maritalStatus, select, MARRIED {Married} UNMARRIED {Unmarried}}",
+  "settings.natreg.maritalStatusValue": `{
+    maritalStatus,
+    select,
+    MARRIED {Married}
+    UNMARRIED {Unmarried}
+    WIDOWED {Widowed}
+    SEPARATED {Separated}
+    DIVORCED {Divorced}
+    MARRIED_LIVING_SEPARATELY {Married}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Married}
+    UNKNOWN {Unknown}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+  }`,
   "settings.natreg.citizenship": "Citizenship",
   "settings.natreg.religion": "Religion",
   // Home

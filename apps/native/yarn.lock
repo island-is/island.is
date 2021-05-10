@@ -5673,6 +5673,11 @@ react-native-code-push@7.0.0:
     semver "^7.3.2"
     xcode "3.0.1"
 
+react-native-dialogs@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-dialogs/-/react-native-dialogs-1.1.1.tgz#db68fee6f6f654a2ae6fd45d5a75fc23118e4b96"
+  integrity sha512-JduVYRXvLTT4k4VfXuKt3HF2/fixsR1EDXkvNf8fJwxKZUs2kzs1E0EtgiAx4IgYMTOewLPVtzTVfiv0GWeHuA==
+
 react-native-keyboard-manager@6.5.4-0:
   version "6.5.4-0"
   resolved "https://registry.yarnpkg.com/react-native-keyboard-manager/-/react-native-keyboard-manager-6.5.4-0.tgz#966176c37ce1012feaf83e2aa2ddd121cab04153"

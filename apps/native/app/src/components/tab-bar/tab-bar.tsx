@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
-import { Animated, Dimensions } from 'react-native';
+import { Animated, View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 interface TabBarProps {
@@ -82,8 +81,10 @@ export function TabBar(props: TabBarProps) {
     <Host>
       <Tabs ref={tabsRef as any}>
         {values.map((item, i) => {
-          if (!indexes.current.has(i)) {
-            indexes.current.set(i, new Animated.Value(i));
+          let currentIdx = indexes.current.get(i);
+          if (!currentIdx) {
+            currentIdx = new Animated.Value(i);
+            indexes.current.set(i, currentIdx);
           }
           return (
           <Tab
@@ -95,7 +96,7 @@ export function TabBar(props: TabBarProps) {
           >
             <TabTitle
               style={{
-                color: Animated.subtract(animatedIndex.current, indexes.current.get(i)!).interpolate({ inputRange, outputRange: outputRange.current }),
+                color: Animated.subtract(animatedIndex.current ?? 1, currentIdx).interpolate({ inputRange, outputRange: outputRange.current }),
               }}
             >
               {item}
@@ -108,7 +109,7 @@ export function TabBar(props: TabBarProps) {
         <ActiveLine
           style={{
             width: `${(1 / values.length * 100).toFixed(2)}%`,
-            transform: [{ translateX: Animated.multiply(animatedIndexNative.current, tabWidth.current) }],
+            // transform: animatedIndexNative.current && tabWidth.current ? [{ translateX: Animated.multiply(animatedIndexNative.current, tabWidth.current) }] : undefined,
           }}
         />
       </Line>

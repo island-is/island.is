@@ -59,6 +59,8 @@ export const WalletScreen: NavigationFunctionComponent = () => {
     ? [licenseItems[1], licenseItems[0], licenseItems[2], licenseItems[3]]
     : []
 
+  // const offsetY = new Animated.Value(0);
+
   return (
     <>
       {/* <ScrollView horizontal={false}> */}
@@ -92,7 +94,12 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           })}
         </ScrollView> */}
 
-        <Alert style={{ marginTop: 10 }} type="info" message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet." />
+        <Alert
+          // offsetAnimatedValue={offsetY}
+          style={{ marginTop: 10 }}
+          type="info"
+          message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
+        />
         <ScrollView
           testID={testIDs.SCREEN_HOME}
           style={{ paddingHorizontal: 16, paddingTop: 24 }}

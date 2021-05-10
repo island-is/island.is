@@ -15,41 +15,44 @@ const Host = styled(Animated.View)`
   flex-direction: row;
 `;
 
-const Dot = styled(Animated.View)`
+const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+
   width: 16px;
   height: 16px;
+
   border-radius: 8px;
+
+  background-color: ${props => props.state === 'active' ? props.theme.color.blue400 : props.state === 'inactive' ? props.theme.color.blue100 : props.theme.color.red400};
+`;
+
+const DotGroup = styled.View`
+  position: relative;
+  width: 16px;
+  height: 16px;
   margin: 0px 8px;
 `;
 
-// convert hex values to rgb for Animated
-function hexToRGB(hex: string) {
-  const r = parseInt(`0x${hex[1]}${hex[2]}`, 16);
-  const g = parseInt(`0x${hex[3]}${hex[4]}`, 16);
-  const b = parseInt(`0x${hex[5]}${hex[6]}`, 16);
-  return `rgb(${r},${g},${b})`;
-}
-
 export function VisualizedPinCode({ code, invalid, minChars = 4, maxChars = 6 }: VisualizedPinCodeProps) {
-  const theme = useTheme();
   const charsCount = Math.max(minChars, Math.min(maxChars, code.length));
   const value = useRef(new Animated.Value(0));
   const animation = useRef<Animated.CompositeAnimation>();
   const colorAnimation = useRef<Animated.CompositeAnimation>();
-  const colors = useRef(
-    Array.from({ length: maxChars })
-      .map((n, i) => new Animated.Value(i < code.length ? 1 : 0))
-  );
 
-  const inputRange = [-1, 0, 1];
-  const outputRange = useRef([hexToRGB(theme.color.red400), hexToRGB(theme.color.blue100), hexToRGB(theme.color.blue400)]);
+  const opacityForError = useRef(new Animated.Value(0));
+  const colors = useRef(
+      Array.from({ length: maxChars })
+        .map((n, i) => new Animated.Value(i < code.length ? 1 : 0))
+    );
 
   const shake = useCallback(() => {
     if (animation.current) {
       animation.current.stop();
     }
 
-    colors.current.forEach((color, i) => color.setValue(-1));
+    Animated.spring(opacityForError.current, { toValue: 1, useNativeDriver: true }).start();
 
     value.current.setValue(0);
 
@@ -72,6 +75,9 @@ export function VisualizedPinCode({ code, invalid, minChars = 4, maxChars = 6 }:
   }, [invalid]);
 
   useEffect(() => {
+
+    Animated.spring(opacityForError.current, { toValue: 0, useNativeDriver: true }).start();
+
     colorAnimation.current = Animated.parallel(
       colors.current.map((color, i) => Animated.spring(color, { toValue: i < code.length ? 1 : 0, useNativeDriver: false }))
     );
@@ -82,7 +88,11 @@ export function VisualizedPinCode({ code, invalid, minChars = 4, maxChars = 6 }:
   return (
     <Host style={{ transform: [{ translateX: value.current }] }}>
       {Array.from({ length: charsCount }).map((n, i) => (
-        <Dot key={i} style={{ backgroundColor: colors.current[i].interpolate({ inputRange, outputRange: outputRange.current }) }} />
+        <DotGroup key={i}>
+          <Dot state="inactive" />
+          <Dot state="active" style={{ opacity: colors.current[i] }} />
+          <Dot state="error" style={{ opacity: opacityForError.current }} />
+        </DotGroup>
       ))}
     </Host>
   );

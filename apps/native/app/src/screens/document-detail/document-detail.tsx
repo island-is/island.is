@@ -10,7 +10,7 @@ import PDFReader from 'rn-pdf-reader-js'
 import styled from 'styled-components/native'
 import { FormattedDate } from 'react-intl'
 import { Button } from '@island.is/island-ui-native'
-import { Share } from 'react-native'
+import { Platform, Share } from 'react-native'
 import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
 import WebView from 'react-native-webview'
 import { authStore } from '../../stores/auth-store'
@@ -110,8 +110,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
     return null
   }
 
-  console.log({ Document });
-
   return (
     <>
       <Header>
@@ -133,16 +131,23 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
         flex: 1,
         backgroundColor: '#F2F2F6'
       }}>
-      {visible && <WebView
-        source={{
-          uri: Document.url!,
-          headers:{
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-          body: `documentId=${Document.id}&token=${authStore.getState().authorizeResult?.accessToken}`,
-          method: 'POST'
-        }}
-      />}
+      {visible && Platform.select({
+        android: <PDFReader
+          source={{
+            base64: `data:application/pdf;base64,${Document.content!}`,
+          }}
+        />,
+        ios: <WebView
+          source={{
+            uri: Document.url!,
+            headers:{
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+            body: `documentId=${Document.id}&token=${authStore.getState().authorizeResult?.accessToken}`,
+            method: 'POST'
+          }}
+        />
+      })}
       </View>
       <Bottom pointerEvents="box-none">
         <Button title="Vista eða Senda" onPress={() => {
