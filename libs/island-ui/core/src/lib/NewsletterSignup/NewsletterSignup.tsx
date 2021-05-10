@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
@@ -17,7 +17,7 @@ interface MessageProps {
 }
 
 const Message = ({ state, successMessage, errorMessage }: MessageProps) => (
-  <Typography
+  <Text
     variant="eyebrow"
     fontWeight="medium"
     color={
@@ -29,7 +29,7 @@ const Message = ({ state, successMessage, errorMessage }: MessageProps) => (
   >
     {(state === 'success' && successMessage) ||
       (state === 'error' && errorMessage)}
-  </Typography>
+  </Text>
 )
 
 interface Props {
@@ -67,12 +67,12 @@ export const NewsletterSignup: React.FC<Props> = ({
 }) => {
   return (
     <Box className={styles.variants[variant]}>
-      <Typography variant="h3" as="h3" color="blue400" paddingBottom={1}>
+      <Text variant="h3" as="h3" color="blue400" paddingBottom={1}>
         {heading}
-      </Typography>
-      <Typography variant="p" paddingBottom={3}>
+      </Text>
+      <Text variant="default" paddingBottom={3}>
         {text}
-      </Typography>
+      </Text>
       <Box display="flex" flexDirection={['column', 'column', 'row']}>
         <Box className={styles.inputWrap}>
           <Input
