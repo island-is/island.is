@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
@@ -9,7 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementMetaData } from '../endorsementMetadata/endorsementMetadata.service'
+import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 @Table({
   tableName: 'endorsement',
   indexes: [
@@ -47,11 +48,17 @@ export class Endorsement extends Model<Endorsement> {
     type: DataType.JSONB,
     allowNull: false,
   })
-  meta!: EndorsementMetaData
+  meta!: EndorsementMetadata
 
+  @ApiProperty({
+    type: String,
+  })
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty({
+    type: String,
+  })
   @UpdatedAt
   readonly modified!: Date
 }

@@ -357,6 +357,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
@@ -432,7 +433,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
                 workingCase.isCustodyEndDateInThePast ||
-                (workingCase.childCase && true)
+                Boolean(workingCase.childCase)
               }
               nextButtonText={`Framlengja ${
                 workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'

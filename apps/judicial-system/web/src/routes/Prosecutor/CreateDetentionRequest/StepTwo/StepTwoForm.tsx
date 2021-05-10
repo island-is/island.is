@@ -141,6 +141,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             </Box>
             <DateTime
               name="arrestDate"
+              maxDate={new Date()}
               selectedDate={
                 workingCase.arrestDate
                   ? new Date(workingCase.arrestDate)

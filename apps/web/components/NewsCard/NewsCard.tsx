@@ -8,6 +8,7 @@ import {
   Tag,
   Inline,
 } from '@island.is/island-ui/core'
+import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
 
@@ -57,12 +58,15 @@ const NewsCard: React.FC<NewsCardProps> = ({
       height="full"
       background="white"
     >
-      <div
-        className={styles.image}
-        role="img"
-        aria-label={image.title}
-        style={{ backgroundImage: `url(${image.url}?fm=webp&w=640&q=80)` }}
-      />
+      <div className={styles.image}>
+        <BackgroundImage
+          width={600}
+          image={{
+            url: image.url,
+            title: image.title,
+          }}
+        />
+      </div>
       <Box
         className={styles.content}
         display="flex"
@@ -87,7 +91,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             <Inline space={2}>
               {tags.map(({ title }, index) => {
                 return (
-                  <Tag key={index} variant="blue" outlined>
+                  <Tag key={index} variant="blue" outlined disabled>
                     {title}
                   </Tag>
                 )
@@ -100,8 +104,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
           <Button
             icon="arrowForward"
             iconType="filled"
-            type="button"
             variant="text"
+            as="span"
           >
             {readMoreText}
           </Button>

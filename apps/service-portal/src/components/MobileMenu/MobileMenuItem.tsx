@@ -43,7 +43,12 @@ const MobileMenuItemWrapper: FC<MobileMenuItem> = (props) => {
   return (
     <GridColumn span={['1/2', '1/4']}>
       {props.item.external ? (
-        <a href={props.item.path} target="_blank" className={styles.link}>
+        <a
+          href={props.item.path}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={styles.link}
+        >
           <MobileMenuItem {...props} />
         </a>
       ) : (

@@ -2,9 +2,7 @@ import {
   Application,
   buildAsyncSelectField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -24,6 +22,7 @@ import {
   getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
+  getSelectedChild,
   createRange,
 } from '../parentalLeaveUtils'
 import {
@@ -112,8 +111,13 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: () => {
-                // TODO this screen is only for the primary parent
+              condition: (answers, externalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (selectedChild !== null) {
+                  return selectedChild.parentalRelation === 'primary'
+                }
+
                 return true
               },
               children: [
@@ -362,7 +366,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
+                      .useAsMuchAsPossibleFromSpouse,
                   width: 'half',
                   largeButtons: true,
                   options: [

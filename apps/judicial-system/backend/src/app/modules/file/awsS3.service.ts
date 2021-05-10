@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { DeleteFileResponse, PresignedPost, SignedUrl } from './models'
+import { PresignedPost, SignedUrl } from './models'
 
 @Injectable()
 export class AwsS3Service {
@@ -79,10 +79,11 @@ export class AwsS3Service {
       .then(
         () => true,
         (err) => {
-          if (err.code === 'NotFound') {
-            return false
-          }
-          throw err
+          // The error is either 404 Not Found or 403 Forbidden.
+          // Normally, we would check if the error is 404 Not Found.
+          // However, to avoid granting the service ListBucket permissions,
+          // we also allow 403 Forbidden.
+          return false
         },
       )
   }

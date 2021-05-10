@@ -14,6 +14,7 @@ import {
   ColorSchemeContext,
   FocusableBox,
   ButtonTypes,
+  Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
@@ -52,10 +53,15 @@ export const Header: FC<HeaderProps> = ({
                 <Column width="content">
                   <FocusableBox href={english ? '/en' : '/'}>
                     <Hidden above="md">
-                      <Logo width={40} iconOnly solid={isWhite} />
+                      <Logo
+                        id="header-logo-icon"
+                        width={40}
+                        iconOnly
+                        solid={isWhite}
+                      />
                     </Hidden>
                     <Hidden below="lg">
-                      <Logo width={160} solid={isWhite} />
+                      <Logo id="header-logo" width={160} solid={isWhite} />
                     </Hidden>
                   </FocusableBox>
                 </Column>
@@ -82,19 +88,18 @@ export const Header: FC<HeaderProps> = ({
                       </Box>
                     )}
                     <Hidden below="lg">
-                      <FocusableBox
-                        href="//minarsidur.island.is/"
-                        marginLeft={marginLeft}
-                        borderRadius="large"
-                      >
-                        <Button
-                          colorScheme={buttonColorScheme}
-                          variant="utility"
-                          icon="person"
-                        >
-                          {t.login}
-                        </Button>
-                      </FocusableBox>
+                      <Box marginLeft={marginLeft}>
+                        <Link href="//minarsidur.island.is/" skipTab>
+                          <Button
+                            colorScheme={buttonColorScheme}
+                            variant="utility"
+                            icon="person"
+                            as="span"
+                          >
+                            {t.login}
+                          </Button>
+                        </Link>
+                      </Box>
                     </Hidden>
                     <Box
                       marginLeft={marginLeft}

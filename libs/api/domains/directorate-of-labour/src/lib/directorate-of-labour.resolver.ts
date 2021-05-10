@@ -1,9 +1,10 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-// import { UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 import {
-  // IdsAuthGuard,
-  // ScopesGuard,
+  IdsAuthGuard,
+  IdsUserGuard,
+  ScopesGuard,
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
@@ -14,8 +15,9 @@ import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
+import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
@@ -67,5 +69,14 @@ export class DirectorateOfLabourResolver {
   @Query(() => [PensionFund], { nullable: true })
   async getPrivatePensionFunds(): Promise<PensionFund[] | null> {
     return this.directorateOfLabourService.getPrivatePensionFunds()
+  }
+
+  @Query(() => ParentalLeavePregnancyStatus, { nullable: true })
+  async getParentalLeavePregnancyStatus(
+    @CurrentUser() user: User,
+  ): Promise<ParentalLeavePregnancyStatus | null> {
+    return this.directorateOfLabourService.getParentalLeavePregnancyStatus(
+      user.nationalId,
+    )
   }
 }

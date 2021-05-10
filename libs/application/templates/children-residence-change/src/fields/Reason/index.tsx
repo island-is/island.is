@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { reason } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'

@@ -23,6 +23,7 @@ import {
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennEmailFromPostalCode } from './utils'
+import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -134,20 +135,29 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           syslumennEmail,
         )
+        return undefined
       })
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentA.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentA.email,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentB.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentB.email,
     )
 
     return response
@@ -170,5 +180,12 @@ export class ChildrenResidenceChangeService {
         'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
+  }
+
+  async rejectApplication({ application }: props) {
+    await this.sharedTemplateAPIService.sendEmail(
+      applicationRejectedEmail,
+      (application as unknown) as Application,
+    )
   }
 }
