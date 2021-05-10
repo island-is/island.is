@@ -10,12 +10,16 @@ import {
   buildMultiField,
   ExternalData,
   buildTextField,
+  buildCheckboxField,
+  buildRadioField,
 } from '@island.is/application/core'
+import { Prerequisites } from '../dataProviders/tempAPITypes'
 import { PublicDebtPaymentPlan } from '../lib/dataSchema'
-import { section, application } from '../lib/messages'
+import { section, application, employer } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
 import { info } from '../lib/messages/info'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
+import { NO, YES } from '../shared/constants'
 
 export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
@@ -91,7 +95,6 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'blue',
               disabled: true,
               defaultValue: (application: PublicDebtPaymentPlan) => {
-                console.log(application.externalData)
                 return application.externalData?.nationalRegistry?.data
                   ?.fullName
               },
@@ -161,11 +164,44 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
+      condition: (_formValue, externalData) => {
+        const prerequisites = externalData.paymentPlanPrerequisites
+          .data as Prerequisites
+        return prerequisites.taxesOk
+      },
       children: [
-        buildDescriptionField({
-          id: 'mockDescriptionField3',
-          title: application.name,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'employerMultiField',
+          title: employer.general.pageTitle,
+          children: [
+            buildCustomField({
+              id: 'employerInfoDescription',
+              title: '',
+              component: 'EmployerInfoDescription',
+            }),
+            buildCustomField({
+              id: 'employerInfo',
+              title: '',
+              component: 'EmployerInfo',
+            }),
+            buildRadioField({
+              id: 'employer.isCorrectInfo',
+              title: '',
+              width: 'full',
+              largeButtons: true,
+              options: [
+                { label: employer.labels.employerIsCorrect, value: YES },
+                { label: employer.labels.employerIsNotCorrect, value: NO },
+              ],
+            }),
+            buildCustomField({
+              id: 'employerCustomId',
+              title: '',
+              component: 'EmployerIdField',
+              condition: (data) =>
+                (data as PublicDebtPaymentPlan).employer?.isCorrectInfo === NO,
+            }),
+          ],
         }),
       ],
     }),

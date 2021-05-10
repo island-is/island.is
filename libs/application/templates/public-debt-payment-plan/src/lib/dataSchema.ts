@@ -1,4 +1,6 @@
+import { isCompany } from 'kennitala'
 import * as z from 'zod'
+import { NO, YES } from '../shared/constants'
 
 export const PublicDebtPaymentPlanSchema = z.object({
   externalData: z.object({
@@ -53,6 +55,11 @@ export const PublicDebtPaymentPlanSchema = z.object({
       date: z.string(),
       status: z.enum(['success', 'failure']),
     }),
+  }),
+  // TODO: Applicant schema
+  employer: z.object({
+    isCorrectInfo: z.enum([YES, NO]),
+    correctedNationalId: z.string().optional(),
   }),
 })
 
