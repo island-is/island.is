@@ -1,0 +1,171 @@
+import { DEFAULT_FULL_SCHEMA, dump, safeLoad, safeLoadAll } from 'js-yaml'
+import { postgresIdentifier, serializeService } from './map-to-values'
+import { PostgresInfo, Service } from './types/input-types'
+import { UberChart } from './uber-chart'
+import { ValueFile, FeatureKubeJob } from './types/output-types'
+
+const MAX_LEVEL_DEPENDENCIES = 20
+
+const renderValueFile = (
+  uberChart: UberChart,
+  ...services: Service[]
+): ValueFile => {
+  // const enabledGrantNamespaces = services
+  //   .filter((s) => s.serviceDef.grantNamespacesEnabled[uberChart.env.type])
+  //   .map((s) => s.serviceDef.namespace)
+  //   .forEach(ns => services.filter(s => s.serviceDef.namespace === ns).forEach(s => s.grantNamespacesEnabled))
+  const helmServices: ValueFile = services.reduce((acc, s) => {
+    const values = serializeService(s, uberChart)
+    switch (values.type) {
+      case 'error':
+        throw new Error(values.errors.join('\n'))
+      case 'success':
+        const extras = values.serviceDef.extra
+        delete values.serviceDef.extra
+        return {
+          ...acc,
+          [s.serviceDef.name]: Object.assign({}, values.serviceDef, extras),
+        }
+    }
+  }, uberChart.env.global)
+  Object.values(helmServices)
+    .filter((s) => s.grantNamespacesEnabled)
+    .forEach(({ namespace, grantNamespaces }) =>
+      Object.values(helmServices)
+        .filter((s) => !s.grantNamespacesEnabled && s.namespace === namespace)
+        .forEach((s) => {
+          // Not cool but we need to change it after we've rendered all the services.
+          // Preferably we would want to keep netpols somewhere else - away from the
+          // application configuration.
+          s.grantNamespacesEnabled = true
+          s.grantNamespaces = grantNamespaces
+        }),
+    )
+  return helmServices
+}
+
+export const reformatYaml = (content: string): string => {
+  const obj = safeLoad(content, { json: true })
+  return dump(obj, {
+    sortKeys: true,
+    noRefs: true,
+    schema: DEFAULT_FULL_SCHEMA,
+  })
+}
+
+export const generateYamlForEnv = (
+  uberChart: UberChart,
+  ...services: Service[]
+): ValueFile => {
+  return renderValueFile(uberChart, ...services)
+}
+
+export const dumpYaml = (valueFile: ValueFile | FeatureKubeJob) =>
+  dump(valueFile, {
+    sortKeys: true,
+    noRefs: true,
+    schema: DEFAULT_FULL_SCHEMA,
+  })
+
+const findDependencies = (
+  uberChart: UberChart,
+  svc: Service,
+  level: number = 0,
+): Service[] => {
+  const deps = uberChart.deps[svc.serviceDef.name]
+  if (level > MAX_LEVEL_DEPENDENCIES)
+    throw new Error(
+      `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
+    )
+  if (deps) {
+    const serviceDependencies = Array.from(deps)
+    return serviceDependencies
+      .map((dependency) => findDependencies(uberChart, dependency, level + 1))
+      .flatMap((x) => x)
+      .concat(serviceDependencies)
+  } else {
+    return []
+  }
+}
+
+export const getDependantServices = (
+  uberChart: UberChart,
+  habitat: Service[],
+  ...services: Service[]
+): Service[] => {
+  renderValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
+  const dependantServices = services
+    .map((s) => findDependencies(uberChart, s))
+    .flatMap((x) => x)
+  return services
+    .concat(dependantServices)
+    .reduce(
+      (acc: Service[], cur: Service): Service[] =>
+        acc.indexOf(cur) === -1 ? acc.concat([cur]) : acc,
+      [],
+    )
+}
+
+export const generateYamlForFeature = (
+  uberChart: UberChart,
+  habitat: Service[],
+  ...services: Service[]
+) => {
+  const feature = uberChart.env.feature
+  if (typeof feature !== 'undefined') {
+    const featureSpecificServices = getDependantServices(
+      uberChart,
+      habitat,
+      ...services,
+    )
+    const namespace = `feature-${feature}`
+    featureSpecificServices.forEach((s) => {
+      s.serviceDef.namespace = namespace
+      s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
+    })
+    featureSpecificServices.forEach((s) => {
+      Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
+        if (!Array.isArray(ingress.host.dev)) {
+          ingress.host.dev = [ingress.host.dev]
+        }
+        ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
+      })
+    })
+    featureSpecificServices.forEach((s) => {
+      s.serviceDef.postgres = getPostgresInfoForFeature(
+        feature,
+        s.serviceDef.postgres,
+      )
+      if (s.serviceDef.initContainers) {
+        s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+          feature,
+          s.serviceDef.initContainers.postgres,
+        )
+      }
+    })
+    return renderValueFile(uberChart, ...featureSpecificServices)
+  } else {
+    throw new Error('Feature deployment with a feature name not defined')
+  }
+}
+
+export const getPostgresInfoForFeature = (
+  feature: string,
+  postgres?: PostgresInfo,
+): PostgresInfo | undefined => {
+  if (postgres) {
+    const postgresCopy = { ...postgres }
+    postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
+      '/k8s/',
+      `/k8s/feature-${feature}-`,
+    )
+    postgresCopy.name = `feature_${postgresIdentifier(feature)}_${
+      postgres.name
+    }`
+    postgresCopy.username = `feature_${postgresIdentifier(feature)}_${
+      postgres.username
+    }`
+    return postgresCopy
+  }
+  return postgres
+}
