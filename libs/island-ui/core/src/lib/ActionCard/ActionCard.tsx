@@ -16,7 +16,7 @@ type ActionCardProps = {
   heading?: string
   text?: string
   eyebrow?: string
-  backgroundColor?: 'white' | 'blue'
+  backgroundColor?: 'white' | 'blue'
   tag?: {
     label: string
     variant?: TagVariant
@@ -231,7 +231,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         flexDirection={['column', 'row']}
       >
         <Box>
-          <Text variant="eyebrow" color="purple400">{eyebrow}</Text>
+          <Text variant="eyebrow" color="purple400">
+            {eyebrow}
+          </Text>
           <Text variant="h3">{heading}</Text>
           <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
