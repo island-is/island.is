@@ -59,6 +59,17 @@ export const JointCustodyAgreementForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'selectChildInCustody',
+          title: m.selectChildren.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'selectedChildren',
+              title: m.selectChildren.general.pageTitle,
+              component: 'SelectChildren',
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'contact',
           title: m.contactInfo.general.sectionTitle,
           children: [

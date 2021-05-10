@@ -5,25 +5,25 @@ export const contactInfo = {
   general: defineMessages({
     sectionTitle: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.sectionTitle',
+        'jca.application:section.backgroundInformation.contactInfo.sectionTitle',
       defaultMessage: 'Tengiliða upplýsingar',
       description: 'Contact info section title',
     },
     pageTitle: {
-      id: 'crc.application:section.backgroundInformation.contactInfo.pageTitle',
+      id: 'jca.application:section.backgroundInformation.contactInfo.pageTitle',
       defaultMessage: 'Tengiliða upplýsingar',
       description: 'Contact info page title',
     },
     description: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.description#markdown',
+        'jca.application:section.backgroundInformation.contactInfo.description#markdown',
       defaultMessage:
         'Sláðu inn tengiliðaupplýsingar þínar og hins foreldrisins svo öll samskipti um umsóknina milli ykkar og sýslumanns gangi greiðlega fyrir sig.',
       description: 'Contact info page description',
     },
     parentBDescription: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.parentBDescription#markdown',
+        'jca.application:section.backgroundInformation.contactInfo.parentBDescription#markdown',
       defaultMessage:
         'Sláðu inn tengiliðaupplýsingar þínar svo öll samskipti um umsóknina milli ykkar foreldranna og sýslumanns gangi greiðlega fyrir sig.',
       description: 'Contact info page description',
@@ -32,13 +32,13 @@ export const contactInfo = {
   inputs: defineMessages({
     emailLabel: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.inputs.emailLabel',
+        'jca.application:section.backgroundInformation.contactInfo.inputs.emailLabel',
       defaultMessage: 'Netfang',
       description: 'Email label',
     },
     phoneNumberLabel: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.inputs.phoneNumberLabel',
+        'jca.application:section.backgroundInformation.contactInfo.inputs.phoneNumberLabel',
       defaultMessage: 'Símanúmer',
       description: 'Phone number label',
     },
@@ -46,7 +46,7 @@ export const contactInfo = {
   counterParty: defineMessages({
     info: {
       id:
-        'crc.application:section.backgroundInformation.contactInfo.counterParty.info',
+        'jca.application:section.backgroundInformation.contactInfo.counterParty.info',
       defaultMessage:
         'Hlekk á umsóknina verður deilt sjálfkrafa með hinu foreldrinu í SMS og/eða tölvupósti þegar þú hefur undirritað samninginn.',
       description: 'Counterparty information text',

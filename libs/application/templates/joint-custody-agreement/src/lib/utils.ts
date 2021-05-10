@@ -1,4 +1,11 @@
-import { Child, Person } from '../types'
+import { Child, Person, Address } from '../types'
+
+export const formatAddress = (address: Address) => {
+  if (!address) {
+    return null
+  }
+  return `${address.streetName}, ${address.postalCode} ${address.city}`
+}
 
 export const getSelectedChildrenFromExternalData = (
   children: Child[],
