@@ -34,17 +34,13 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
     return null
   }
 
-  const affectingRegulations = showingDiff
-    ? uniqBy(
-        regulation.history.filter(
-          ({ effect, date }) =>
-            effect === 'amend' &&
-            showingDiff.from < date &&
-            date <= showingDiff.to,
-        ),
-        'name',
-      )
-    : []
+  const affectingRegulations = uniqBy(
+    regulation.history.filter(
+      ({ effect, date }) =>
+        effect === 'amend' && showingDiff.from < date && date <= showingDiff.to,
+    ),
+    'name',
+  )
 
   if (affectingRegulations.length === 0) {
     return null
