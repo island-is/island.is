@@ -27,6 +27,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 import { CustomNextError } from '../../units/errors'
+import { useRouter } from 'next/router'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -40,8 +41,21 @@ const NewsItem: Screen<NewsItemProps> = ({
   organizationPage,
 }) => {
   useContentfulId(newsItem?.id)
+  const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
+
+  const overviewPath: string = Router.asPath.substring(
+    0,
+    Router.asPath.lastIndexOf('/'),
+  )
+  const currentNavItem = organizationPage.menuLinks.find(
+    ({ primaryLink }) => primaryLink.url === overviewPath,
+  )
+
+  const newsOverviewTitle: string = currentNavItem
+    ? currentNavItem.primaryLink.text
+    : n('newsTitle', 'Fréttir og tilkynningar')
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
@@ -55,7 +69,7 @@ const NewsItem: Screen<NewsItemProps> = ({
       typename: 'organizationpage',
     },
     {
-      title: n('newsTitle', 'Fréttir og tilkynningar'),
+      title: newsOverviewTitle,
       href: linkResolver('organizationnewsoverview', [organizationPage.slug])
         .href,
       typename: 'organizationnewsoverview',
@@ -66,7 +80,7 @@ const NewsItem: Screen<NewsItemProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      active: primaryLink.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
