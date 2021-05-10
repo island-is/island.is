@@ -26,6 +26,7 @@ import { client } from '../../graphql/client'
 import { Platform } from 'react-native'
 import { Animated } from 'react-native'
 import { Dimensions } from 'react-native'
+import { ComponentRegistry } from '../../utils/navigation-registry'
 
 const InputHost = styled.SafeAreaView`
   flex: 1;
@@ -187,7 +188,7 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
       <TabBar
         values={[
           intl.formatMessage({ id: 'settings.tabs.personalInfo' }),
-          intl.formatMessage({ id: 'settings.tabs.preferences' }),
+          intl.formatMessage({ id: 'settings.tabs.preferences' })
         ]}
         onChange={(selectedIndex) => setTab(selectedIndex)}
         selectedIndex={tab}
@@ -348,16 +349,6 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
 
 SettingsScreen.options = {
   topBar: {
-    title: {
-      text: 'Settings',
-      // component: {
-      //   id: 'SETTINGS_NAV_TITLE',
-      //   name: ComponentRegistry.NavigationBarTitle,
-      //   passProps: {
-      //     title: '',
-      //   },
-      // },
-      // alignment: 'fill',
-    },
+    visible: false,
   },
 }
