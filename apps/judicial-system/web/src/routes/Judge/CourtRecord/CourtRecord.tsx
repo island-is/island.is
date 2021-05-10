@@ -33,10 +33,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
   setAndSendToServer,
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -48,10 +46,6 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [
-    courtDocumentStartErrorMessage,
-    setCourtDocumentStartErrorMessage,
-  ] = useState('')
   const [
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,

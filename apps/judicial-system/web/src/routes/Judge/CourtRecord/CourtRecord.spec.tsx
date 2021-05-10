@@ -11,8 +11,6 @@ import {
   AccusedPleaDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import formatISO from 'date-fns/formatISO'
-import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import CourtRecord from './CourtRecord'
 
