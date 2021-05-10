@@ -173,10 +173,8 @@ global('.chapter__name', {
 })
 
 global(
-  `
-  ins.diffins,
-  ins.diffmod
-  `,
+  // 'ins.diffins, ins.diffmod',
+  'ins',
   {
     padding: `0 0.125em`,
     textDecorationColor: 'none',
@@ -185,10 +183,8 @@ global(
 )
 
 global(
-  `
-  del.diffdel,
-  del.diffmod
-  `,
+  // 'del.diffdel, del.diffmod',
+  'del',
   {
     padding: `0 0.125em`,
     textDecorationColor: 'rgba(0, 0, 0, 0.5)',

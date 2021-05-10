@@ -24,6 +24,7 @@ import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
+import { MinistryTransfer } from './MinistryTansfer'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -97,13 +98,22 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
           />
           <AffectingRegulations regulation={regulation} texts={texts} />
 
+          <MinistryTransfer regulation={regulation} texts={texts} />
+
           <div className={waterMarkClass}>
             <Text marginTop={[2, 3, 4, 5]} marginBottom={1}>
               <strong>{name}</strong>
             </Text>
             <Text as="h1" variant="h3" marginBottom={[2, 4]}>
-              {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
-              {regulation.title}
+              {regulation.showingDiff ? (
+                <HTMLDump
+                  component="span"
+                  className={s.bodyText}
+                  html={regulation.title}
+                />
+              ) : (
+                regulation.title
+              )}
             </Text>
 
             <HTMLDump className={s.bodyText} html={regulation.text} />

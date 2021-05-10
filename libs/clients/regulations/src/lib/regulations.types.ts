@@ -102,7 +102,7 @@ export type RegulationListItem = {
   /** The title of the Regulation */
   title: string
   /** The ministry that the regulation is linked to */
-  ministry?: RegulationMinistry
+  ministry: RegulationMinistry
   /** Publication date of this regulation */
   publishedDate: ISODate
 }
@@ -162,7 +162,7 @@ export type Regulation = {
    */
   repealedDate?: ISODate | null
   /** The ministry this regulation is published by/linked to */
-  ministry?: RegulationMinistry
+  ministry: RegulationMinistry
   /** Law chapters that this regulation is linked to */
   lawChapters: ReadonlyArray<RegulationLawChapter>
   // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
@@ -210,6 +210,9 @@ export type RegulationDiff = Omit<
       title: HTMLText
     }
   >
+  /** The ministry the base version being compared against was published by/linked to */
+  prevMinistry: RegulationMinistry | null
+
   /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
   showingDiff: {
     /** The date of the base version being compared against */

@@ -34,20 +34,18 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
 
   return (
     <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
-      {ministry && (
-        <Text marginBottom={2}>
-          <strong>{txt('infoboxMinistry')}:</strong>
-          <ul>
-            <li>
-              <RegulationsSidebarLink
-                href={linkToRegulationSearch({ rn: ministry.slug })}
-              >
-                <span className={s.smallText}>{ministry.name}</span>
-              </RegulationsSidebarLink>
-            </li>
-          </ul>
-        </Text>
-      )}
+      <Text marginBottom={2}>
+        <strong>{txt('infoboxMinistry')}:</strong>
+        <ul>
+          <li>
+            <RegulationsSidebarLink
+              href={linkToRegulationSearch({ rn: ministry.slug })}
+            >
+              <span className={s.smallText}>{ministry.name}</span>
+            </RegulationsSidebarLink>
+          </li>
+        </ul>
+      </Text>
 
       {lawChapters.length > 0 && (
         <Text marginBottom={2}>

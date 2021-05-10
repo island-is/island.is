@@ -1,8 +1,23 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { ParsedUrlQuery } from 'querystring'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { ISODate, RegName, RegQueryName } from './Regulations.types'
+
+export const interpolateArray = (
+  text: string,
+  values: Record<string, ReactNode>,
+): Array<string | ReactNode> =>
+  text
+    .replace(/\$\{([a-z0-9_$]+)\}/gi, '|||$1|||')
+    .split('|||')
+    .map((segment, i) =>
+      i % 2 === 0
+        ? segment
+        : values[segment] != null
+        ? values[segment]
+        : '${' + segment + '}',
+    )
 
 export const interpolate = (
   text: string,
