@@ -1,21 +1,13 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   CourtDocuments,
   PageLayout,
-  TimeInputField,
   CaseNumbers,
   BlueBox,
   FormContentContainer,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -46,6 +38,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
   setAndSendToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
@@ -59,6 +52,10 @@ export const CourtRecord: React.FC = () => {
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
   ] = useState('')
+  const [
+    courtRecordStartDateIsValid,
+    setCourtRecordStartDateIsValid,
+  ] = useState(true)
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
   const [
@@ -118,6 +115,8 @@ export const CourtRecord: React.FC = () => {
 
     if (!workingCase && data?.case) {
       const theCase = data.case
+
+      autofill('courtStartTime', new Date().toString(), theCase)
 
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
@@ -186,51 +185,29 @@ export const CourtRecord: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={3}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn span="5/12">
-                      <TimeInputField
-                        onChange={(evt) =>
-                          validateAndSetTime(
-                            'courtStartTime',
-                            workingCase.courtDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            setWorkingCase,
-                            courtDocumentStartErrorMessage,
-                            setCourtDocumentStartErrorMessage,
-                          )
-                        }
-                        onBlur={(evt) =>
-                          validateAndSendTimeToServer(
-                            'courtStartTime',
-                            workingCase.courtDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            updateCase,
-                            setCourtDocumentStartErrorMessage,
-                          )
-                        }
-                      >
-                        <Input
-                          data-testid="courtStartTime"
-                          name="courtStartTime"
-                          label="Þinghald hófst (kk:mm)"
-                          placeholder="Veldu tíma"
-                          defaultValue={formatDate(
-                            workingCase.courtStartTime,
-                            TIME_FORMAT,
-                          )}
-                          errorMessage={courtDocumentStartErrorMessage}
-                          hasError={courtDocumentStartErrorMessage !== ''}
-                          required
-                        />
-                      </TimeInputField>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
+                <DateTime
+                  name="courtStartDate"
+                  datepickerLabel="Dagsetning þinghalds"
+                  timeLabel="Þinghald hófst (kk:mm)"
+                  maxDate={new Date()}
+                  selectedDate={
+                    workingCase.courtStartTime
+                      ? new Date(workingCase.courtStartTime)
+                      : new Date()
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    newSetAndSendDateToServer(
+                      'courtStartTime', // TODO: rename to courtStartDate
+                      date,
+                      valid,
+                      workingCase,
+                      setWorkingCase,
+                      setCourtRecordStartDateIsValid,
+                      updateCase,
+                    )
+                  }}
+                  required
+                />
               </Box>
               <Box marginBottom={3}>
                 <Input
