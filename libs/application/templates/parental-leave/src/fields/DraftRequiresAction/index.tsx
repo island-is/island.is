@@ -11,7 +11,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
+import { States as ApplicationStates } from '../../constants'
 import { MessageDescriptor } from '@formatjs/intl'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
 
