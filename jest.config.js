@@ -155,5 +155,6 @@ module.exports = {
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
     '<rootDir>/libs/service-portal/settings/access-control',
+    '<rootDir>/libs/auth/scopes',
   ],
 }

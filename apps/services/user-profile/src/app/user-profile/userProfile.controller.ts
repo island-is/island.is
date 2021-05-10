@@ -1,3 +1,5 @@
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -7,11 +9,13 @@ import {
   Param,
   Post,
   ConflictException,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
@@ -27,6 +31,7 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
@@ -35,6 +40,8 @@ export class UserProfileController {
     private verificationService: VerificationService,
   ) {}
 
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity("oauth2", [UserProfileScope.read])
   @Get('userProfile/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -43,13 +50,15 @@ export class UserProfileController {
     description: 'The nationalId of the application to update.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: UserProfile })
+  @ApiOkResponse({ type: UserProfile }) 
   async findOneByNationalId(
     @Param('nationalId', UserProfileByNationalIdPipe) profile: UserProfile,
   ): Promise<UserProfile> {
     return profile
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Post('userProfile/')
   @ApiCreatedResponse({ type: UserProfile })
   async create(
@@ -89,6 +98,8 @@ export class UserProfileController {
     return await this.userProfileService.create(userProfileDto)
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Put('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   @ApiParam({
@@ -144,6 +155,8 @@ export class UserProfileController {
     return updatedUserProfile
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Post('emailVerification/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -167,6 +180,8 @@ export class UserProfileController {
     )
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Post('confirmEmail/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -184,6 +199,8 @@ export class UserProfileController {
     return await this.verificationService.confirmEmail(confirmEmailDto, profile)
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Post('confirmSms/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -201,6 +218,8 @@ export class UserProfileController {
     return await this.verificationService.confirmSms(confirmSmsDto, nationalId)
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity("oauth2", [UserProfileScope.write])
   @Post('smsVerification/')
   async createSmsVerification(
     @Body() createSmsVerification: CreateSmsVerificationDto,

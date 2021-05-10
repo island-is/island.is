@@ -25,7 +25,7 @@ export default {
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is/user-profile',
+    audience: '@island.is',
     jwksUri:
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   }
