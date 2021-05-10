@@ -15,7 +15,12 @@ const PartyApplicationApproved: FC<FieldBaseProps> = () => {
           title={formatMessage(m.applicationApproved.approvedTitle)}
           subtitle={formatMessage(m.applicationApproved.approvedSubtitle)}
         />
-        <Text marginBottom={2} variant="h3">{formatMessage(m.applicationApproved.bulletListTitle)}</Text>
+        <Text
+          marginBottom={2}
+          variant="h3"
+        >
+          {formatMessage(m.applicationApproved.bulletListTitle)}
+        </Text>
         <BulletList type="ul">
           <Bullet>
             <Link
