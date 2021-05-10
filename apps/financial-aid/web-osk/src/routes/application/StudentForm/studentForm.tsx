@@ -5,11 +5,12 @@ import { FormContentContainer, FormFooter, FormLayout } from '../../../component
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './personalTaxAllowanceForm.treat'
+import * as styles from './studentForm.treat'
+
 import useFormNavigation from '../../../utils/formNavigation'
 import cn from 'classnames'
 
-const PersonalTaxAllowanceForm = () => {
+const StudentForm = () => {
 
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
@@ -19,12 +20,12 @@ const PersonalTaxAllowanceForm = () => {
 
   const options = [
     {
-      label: 'Já, nýta persónuafslátt',
-      checked: form?.usePersonalTaxAllowance === true
+      label: 'Já',
+      checked: form?.student === true
     },
     {
-      label: 'Nei, vil nota persónuafslátt í annað',
-      checked: form?.usePersonalTaxAllowance === false
+      label: 'Nei',
+      checked: form?.student === false
     }
   ]
 
@@ -32,13 +33,8 @@ const PersonalTaxAllowanceForm = () => {
     <FormLayout activeSection={navigation?.activeSectionNumber}>
       <FormContentContainer>
 
-        <Text as="h1" variant="h2"  marginBottom={2}>
-          Viltu nota persónuafslátt?
-        </Text>
-
-        <Text marginBottom={[3, 3, 4]}>
-          Lengflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn. 
-          Almennt má segja að „Já“ sé besti kostur nema þú vitir sérstaklega um annað sem þú vilt nýta hann í.
+        <Text as="h1" variant="h2"  marginBottom={[3,3, 4]}>
+          Ertu í námi?
         </Text>
 
         <div  className={styles.container}>
@@ -55,9 +51,9 @@ const PersonalTaxAllowanceForm = () => {
                   label={item.label}
                   value={index}
                   checked={item.checked}
-                  hasError={error && form?.usePersonalTaxAllowance === undefined}
+                  hasError={error && form?.student === undefined}
                   onChange={() => {
-                    updateForm({...form, usePersonalTaxAllowance: index === 1})
+                    updateForm({...form, student: index === 1})
                     if(error){
                       setError(false)
                     }
@@ -74,7 +70,7 @@ const PersonalTaxAllowanceForm = () => {
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.usePersonalTaxAllowance === undefined
+            [`showErrorMessage`]: error && form?.student === undefined
           })}
         >
 
@@ -94,7 +90,7 @@ const PersonalTaxAllowanceForm = () => {
         previousUrl={navigation?.prevUrl ?? '/'}  
         nextUrl={navigation?.nextUrl ?? '/'}
         onNextButtonClick={() => {
-          if(form?.usePersonalTaxAllowance !== undefined){
+          if(form?.student !== undefined){
             router.push(navigation?.nextUrl ?? '/')
           }
           else{
@@ -106,4 +102,4 @@ const PersonalTaxAllowanceForm = () => {
   )
 }
 
-export default PersonalTaxAllowanceForm
+export default StudentForm

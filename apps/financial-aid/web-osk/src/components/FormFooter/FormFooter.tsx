@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Icon, Text, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, GridColumn,ButtonProps, Divider } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './FormFooter.treat'
@@ -12,7 +12,7 @@ interface Props {
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
   nextButtonText?: string
-  nextButtonIcon?:string
+  nextButtonIcon?:ButtonProps['icon']
   onNextButtonClick?: () => void
   hideNextButton?: boolean
   infoBoxText?: string
@@ -22,30 +22,64 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   const router = useRouter()
 
   return (
+    <>
+
+    <Box className={styles.dividerContainer}/>
+
     <div className={styles.footerContainer}>
 
-      <GridColumn
+      {/* <GridColumn
         span={['9/9', '9/9', '7/9', '7/9']}
         offset={['0', '0', '1/9', '1/9']}
-      >
+      > */}
 
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart" >
+
         {!props.hidePreviousButton && (
-          <Button
-            colorScheme={props.previousIsDestructive ? "destructive" : "default"}
-            variant="ghost"
-            disabled={props.previousIsDisabled}
-            onClick={() => {
-              router.push(props.previousUrl || '')
-            }}
-          >
-            {props.previousIsDestructive ? 'Hætta við' : 'Til baka'}
-          </Button>
+          <>
+            <Box
+              className={styles.desktopPreviosButton}
+            >
+              <Button
+                colorScheme={props.previousIsDestructive ? "destructive" : "default"}
+                variant="ghost"
+                disabled={props.previousIsDisabled}
+                onClick={() => {
+                  router.push(props.previousUrl || '')
+                }}
+              >
+                {props.previousIsDestructive ? 'Hætta við' : 'Til baka'}
+              </Button>
+
+            </Box>
+
+            <Box
+              className={styles.mobilePreviosButton}
+            >
+              <Button
+                circle
+                colorScheme={props.previousIsDestructive ? "destructive" : "default"}
+                icon="arrowBack"
+                iconType="filled"
+                variant="ghost"
+                type="button"
+                size="large"
+                onClick={() => {
+                  router.push(props.previousUrl || '')
+                }}
+              />
+
+            </Box>
+
+          </>
         )}
+
+
         {!props.hideNextButton && (
           <Button
+            id="continueButton"
             data-testid="continueButton"
-            icon={'arrowForward'}
+            icon={props.nextButtonIcon ?  props.nextButtonIcon :'arrowForward'}
             disabled={props.nextIsDisabled}
             loading={props.nextIsLoading}
             onClick={() => {
@@ -75,10 +109,11 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           </div>
         )}
       </Box>
-
-      </GridColumn>
+{/* 
+      </GridColumn> */}
 
     </div>
+    </>
   )
 }
 

@@ -6,12 +6,21 @@ export const header = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   height: 112,
-  width: 23,
-  padding: `0 ${theme.spacing[6]}px`,
+  padding: `0 ${theme.spacing[3]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      padding: `0 ${theme.spacing[6]}px`,
+    },
+  },
 })
 
 export const headerTextWrapper = style({
   marginTop: '5px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderLeft: `2px solid ${theme.color.purple100}`,
+    },
+  },
 })
 
 export const headerDiviter = style({
@@ -23,5 +32,24 @@ export const headerDiviter = style({
 })
 
 export const islandIsApplicationLogoWrapper = style({
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'flex',
+    },
+  },
+})
+
+export const islandIsApplicationLogoIconWrapper = style({
   display: 'flex',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'none',
+    },
+  },
+})
+
+export const userProfileImage = style({
+  width: `${theme.spacing[3]}px`,
+  marginRight: `${theme.spacing[1]}px`,
 })

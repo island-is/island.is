@@ -8,9 +8,12 @@ import { useRouter } from 'next/router'
 import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
+import useFormNavigation from '../../../utils/formNavigation'
+
 const SummaryForm = () => {
 
   const { form, updateForm } = useContext(FormContext)
+  const navigation = useFormNavigation({currentId: 'summary'});
 
   const router = useRouter()
 
@@ -59,34 +62,34 @@ const SummaryForm = () => {
   ]
 
   return (
-    <FormLayout activeSection={8}>
+    <FormLayout activeSection={navigation?.activeSectionNumber}>
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Yfirlit umsóknar
         </Text>
-        <Text marginBottom={5}>
+        <Text marginBottom={[3, 3, 5]}>
           Við eigum enn eftir að klára gagnaöflun en samkvæmt því sem við vitum um 
           þig í dag getur þú miðað við:
         </Text>
       
         <Divider />
 
-          <Text as="h2" variant="h5" paddingTop={5}>
+          <Text as="h2" variant="h5" paddingTop={[4, 4, 5]}>
            Áætluð aðstoð
           </Text>
 
-          <Text  marginBottom={5}>
+          <Text  marginBottom={[4, 4, 5]}>
            <strong>UPPHÆÐ kr.</strong> til útgreiðslu 2. eða 3. maí 2021
           </Text>
 
-          <Text variant="small"  marginBottom={5}>
+          <Text variant="small"  marginBottom={[3, 3, 5]}>
             Athugaðu að þetta er áætluð upphæð sem getur breyst. Þú færð svar 
             frá okkur innan þriggja vinnudaga um niðurstöðu umsóknar þinnar.
           </Text>
 
         <ContentBlock>
 
-          <Box marginBottom={5}>
+          <Box marginBottom={[4, 4, 5]}>
 
             <AccordionCard 
               id="id_1" 
@@ -137,16 +140,17 @@ const SummaryForm = () => {
               <Box 
                 display="flex" 
                 justifyContent="spaceBetween" 
-                paddingY={5}
+                alignItems="flexStart"
+                paddingY={[4, 4, 5]}
                 className={cn({
                   [`${styles.marginBottom}`]: index === (overview.length - 1),
                 })}
               >
 
-                <div>
+                <Box marginRight={3}>
                   <Text fontWeight="semiBold">{item.label}</Text>
                   <Text>{item.info}</Text>
-                </div>
+                </Box>
 
                 <Button
                   icon="pencil"
@@ -167,7 +171,10 @@ const SummaryForm = () => {
 
       </FormContentContainer>
 
-      <FormFooter previousUrl="/umsokn/bankaupplysingar" nextButtonText="Senda inn umsókn"/>
+      <FormFooter 
+        previousUrl={navigation?.prevUrl ?? '/'}  
+        nextUrl={navigation?.nextUrl ?? '/'}
+      />
     </FormLayout>
   )
 }

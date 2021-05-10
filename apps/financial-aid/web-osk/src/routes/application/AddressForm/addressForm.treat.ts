@@ -3,26 +3,35 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const radioButtonContainer = style({
   marginBottom: theme.spacing[3],
-  backgroundColor: theme.color.blue100,
+})
+
+export const radiobuttonError = style({
+  backgroundColor: theme.color.red100,
 })
 
 export const inputContainer = style({
-  display: 'grid',
+  display: 'block',
   maxHeight: '0',
   overflow: 'hidden',
-  transition: 'max-height 300ms ease',
+  transition: 'max-height 150ms ease-in-out',
   gridTemplateColumns: 'repeat(6, 1fr)',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      display: 'grid',
       gridTemplateColumns: 'repeat(8, 1fr)',
     },
   },
 })
 
 export const inputAppear = style({
-  maxHeight: '300px',
+  maxHeight: '192px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      maxHeight: '80px',
+    },
+  },
 })
 
 export const homeAddress = style({
@@ -31,10 +40,6 @@ export const homeAddress = style({
 })
 
 export const zipCode = style({
-  gridColumn: 'span 4',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 2',
-    },
-  },
+  gridColumn: 'span 2',
+  marginBottom: theme.spacing[3],
 })

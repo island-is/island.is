@@ -11,22 +11,74 @@ const Header: React.FC = () => {
 
   return (
     <header className={`${styles.header}`}>
-      <Link href="#" data-testid="link-to-home">
-        <Box display="flex" alignItems="center" cursor="pointer">
-          <div className={styles.islandIsApplicationLogoWrapper}>
-            <Logo width={146} />
-          </div>
-          {router.pathname !== '/' && (
-            <>
-              {/* Text does not allow className prop so we need to do this on a separate span */}
-              <span className={styles.headerDiviter} />
-              <span className={styles.headerTextWrapper}>
-                <Text>Umsókn um fjárhagsaðstoð</Text>
-              </span>
-            </>
-          )}
+
+      <Box display="flex" height="full" alignItems="center">
+
+        <Link 
+          href="/" 
+          data-testid="link-to-home"
+        >
+          <Box 
+            display="flex" 
+            alignItems="center" 
+            cursor="pointer"
+            marginRight={[0, 0, 4]}
+          >
+
+            <div className={styles.islandIsApplicationLogoWrapper}>
+              <Logo width={146} />
+            </div>
+
+            <div className={styles.islandIsApplicationLogoIconWrapper}>
+              <Logo width={40} iconOnly />
+            </div>
+
+          </Box>
+
+        </Link>
+
+        <Box
+          display="flex" 
+          height="full" 
+          flexDirection="column"
+          justifyContent="center"
+          className={styles.headerTextWrapper}
+          paddingLeft={[2, 2, 4]}
+        >
+          <Text fontWeight="semiBold" variant="small">
+            Hafnarfjörður
+          </Text>
+
+          <Text>
+            Umsókn um fjárhagsaðstoð
+          </Text>
+              
         </Box>
-      </Link>
+
+      </Box>
+
+      <Button
+          icon="chevronDown"
+          iconType="filled"
+          onClick={() => {
+            console.log("hel")
+            // api.logOut()
+            // setUser && setUser(undefined)
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="utility"
+        >
+         
+          <img src="/placeholder.jpg" className={styles.userProfileImage}/>
+          
+          Nafn Nafndóttir
+        
+        </Button>
+
+
       {/* {isAuthenticated && (
         <Button
           variant="ghost"
@@ -42,6 +94,8 @@ const Header: React.FC = () => {
           {user?.name}
         </Button>
       )} */}
+
+
     </header>
   )
 }

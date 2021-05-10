@@ -7,7 +7,7 @@ export const container = style({
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       gridTemplateColumns: 'repeat(2, 1fr)',
     },
   },

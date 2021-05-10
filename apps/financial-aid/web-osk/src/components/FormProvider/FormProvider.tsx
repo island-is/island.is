@@ -1,29 +1,26 @@
-import { gql, useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState ,useReducer} from 'react'
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-import Cookies from 'js-cookie'
-
+import React, { createContext, useEffect, useState, useReducer } from 'react'
 
 export interface Form {
-  address?:number
+  address?: number // TODO: kill me
   customHomeAddress?: string
   customPostalCode?: number
   homeCircumstances?: string
   homeCircumstancesCustom?: string
+  student?: boolean
   employment?: string
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles?: any
-  usePersonalTaxAllowance?: boolean
+  usePersonalTaxAllowance?: boolean // TODO: Personal tax credit
   bankNumber?: string
   ledger?: string
   accountNumber?: string
   emailAddress?: string
   submitted: boolean
+  section?: Array<string>
 }
 
 export const initialState = { submitted: false, incomeFiles: [] }
-
 
 interface FormProvider {
   form?: Form
@@ -32,14 +29,10 @@ interface FormProvider {
 
 export const FormContext = createContext<FormProvider>({})
 
-
 const FormProvider: React.FC = ({ children }) => {
-  
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)
-
-  console.log(form)
 
   useEffect(() => {
     const storedFormJson = sessionStorage.getItem(storageKey)
@@ -48,7 +41,6 @@ const FormProvider: React.FC = ({ children }) => {
     }
     const storedState = JSON.parse(storedFormJson)
     updateForm(storedState)
-
   }, [])
 
   useEffect(() => {
@@ -60,7 +52,7 @@ const FormProvider: React.FC = ({ children }) => {
   }, [form])
 
   return (
-    <FormContext.Provider value={{  form, updateForm }}>
+    <FormContext.Provider value={{ form, updateForm }}>
       {children}
     </FormContext.Provider>
   )

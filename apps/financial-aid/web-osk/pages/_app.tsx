@@ -7,6 +7,9 @@ import { client } from '../graphql'
 import { FormProvider  } from '../src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
+import '../src/styles.css'
+
+
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props

@@ -2,15 +2,15 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const bankInformationContainer = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(8, 1fr)',
+  display: 'block',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
-  // '@media': {
-  //   [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-  //     gridTemplateColumns: 'repeat(8, 1fr)',
-  //   },
-  // },
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(8, 1fr)',
+    },
+  },
 })
 
 export const bankNumber = style({
@@ -19,14 +19,4 @@ export const bankNumber = style({
 
 export const accountNumber = style({
   gridColumn: 'span 4',
-  // '@media': {
-  //   [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-  //     gridColumn: 'span 4',
-  //   },
-  // },
 })
-
-// export const removeStepper = style({
-//   margin: '0',
-//   WebkitAppearance: 'none',
-// })

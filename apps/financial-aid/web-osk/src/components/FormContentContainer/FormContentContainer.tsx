@@ -7,13 +7,19 @@ interface Props {
 }
 
 const FormContentContainer: React.FC<Props> = (props) => {
-  return ( 
-    <GridColumn
-      span={['9/9', '9/9', '7/9', '7/9']}
-      offset={['0', '0', '1/9', '1/9']}
-    >
-      {props.children}
-    </GridColumn>
+  // return ( 
+  //   <GridColumn
+  //     span={['9/9', '9/9', '7/9', '7/9']}
+  //     offset={['0', '0', '1/9', '1/9']}
+  //   >
+  //     {props.children}
+  //   </GridColumn>
+  // )
+  
+  return (
+    <div className={styles.formContainer}>
+       {props.children}
+    </div>
   )
 }
 
