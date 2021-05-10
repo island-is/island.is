@@ -141,7 +141,7 @@ const FormExternalDataProvider: FC<{
         <Box display="flex" alignItems="center" justifyContent="flexStart">
           <Box marginRight={1}>
             <Icon
-              icon="download"
+              icon="fileTrayFull"
               size="medium"
               color="blue400"
               type="outline"
