@@ -28,29 +28,13 @@ import {
 export function getExpectedDateOfBirth(
   application: Application,
 ): string | undefined {
-  const pregnancyStatusAndRights =
-    application.externalData.pregnancyStatusAndRights
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
-  if (pregnancyStatusAndRights.status === 'success') {
-    const pregnancyStatus = (pregnancyStatusAndRights.data as {
-      pregnancyStatus: PregnancyStatus
-    }).pregnancyStatus
-
-    if (pregnancyStatus.expectedDateOfBirth) {
-      return pregnancyStatus.expectedDateOfBirth
-    }
-
-    const parentalLeaves = (pregnancyStatusAndRights.data as {
-      parentalLeaves: ParentalLeave[]
-    }).parentalLeaves
-
-    if (parentalLeaves.length) {
-      if (parentalLeaves.length === 1) {
-        return parentalLeaves[0].expectedDateOfBirth
-      }
-
-      // here we have multiple parental leaves... must store the selected application id or something
-    }
+  if (selectedChild !== null) {
+    return selectedChild.expectedDateOfBirth
   }
 
   return undefined

@@ -2019,6 +2019,28 @@
         }
       }
     },
+    "application-templates-joint-custody-agreement": {
+      "root": "libs/application/templates/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/joint-custody-agreement/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/joint-custody-agreement/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/joint-custody-agreement/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-login-service": {
       "root": "libs/application/templates/login-service",
       "sourceRoot": "libs/application/templates/login-service/src",
