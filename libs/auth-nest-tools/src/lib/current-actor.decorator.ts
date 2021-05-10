@@ -19,7 +19,16 @@ export const getCurrentActor = (context: ExecutionContext): User => {
     )
     throw new UnauthorizedException()
   }
-  return user.actor ?? user
+
+  return !user.actor
+    ? user
+    : {
+        ...user.actor,
+        client: user.client,
+        authorization: user.authorization,
+        ip: user.ip,
+        userAgent: user.userAgent,
+      }
 }
 
 export const CurrentActor = createParamDecorator(
