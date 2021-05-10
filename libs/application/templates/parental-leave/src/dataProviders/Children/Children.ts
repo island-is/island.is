@@ -4,6 +4,7 @@ import {
   FailedDataProviderResult,
   Application,
   CustomTemplateFindQuery,
+  StaticText,
 } from '@island.is/application/core'
 
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
@@ -137,10 +138,7 @@ export class Children extends BasicDataProvider {
 
     if (!dateOfBirth) {
       return Promise.reject({
-        reason:
-          this.config.formatMessage?.(
-            parentalLeaveFormMessages.shared.pregnancyStatusAndRightsError,
-          ) ?? 'Failed',
+        reason: parentalLeaveFormMessages.shared.pregnancyStatusAndRightsError,
       })
     }
 
@@ -164,10 +162,7 @@ export class Children extends BasicDataProvider {
       childrenAndExistingApplications.existingApplications.length <= 0
     ) {
       return Promise.reject({
-        reason:
-          this.config.formatMessage?.(
-            parentalLeaveFormMessages.shared.childrenError,
-          ) ?? 'Failed',
+        reason: parentalLeaveFormMessages.shared.childrenError,
       })
     }
 
@@ -194,7 +189,7 @@ export class Children extends BasicDataProvider {
     }
   }
 
-  onProvideError(error: { reason: string }): FailedDataProviderResult {
+  onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},

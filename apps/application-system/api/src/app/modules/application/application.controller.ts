@@ -464,17 +464,12 @@ export class ApplicationController {
       existingApplication.typeId,
     )
     const results = await callDataProviders(
-      buildDataProviders(
-        externalDataDto,
-        templateDataProviders,
-        user,
-        locale,
-        intl.formatMessage,
-      ),
+      buildDataProviders(externalDataDto, templateDataProviders, user, locale),
       existingApplication as BaseApplication,
       this.applicationService.customTemplateFindQuery(
         existingApplication.typeId,
       ) as CustomTemplateFindQuery,
+      intl.formatMessage,
     )
 
     const {

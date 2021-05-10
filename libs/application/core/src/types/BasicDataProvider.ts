@@ -8,7 +8,6 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import { FormatMessage } from './Form'
 import { coreErrorMessages } from '../lib/messages'
 
 export type CustomTemplateFindQuery = (where: {
@@ -29,7 +28,6 @@ export interface DataProviderConfig {
   user: User | undefined
   baseApiUrl: string
   locale: Locale
-  formatMessage: FormatMessage | undefined
 }
 
 export interface GraphqlGatewayResponse<DataType> extends Response {
@@ -48,7 +46,6 @@ export abstract class BasicDataProvider implements DataProvider {
       user: undefined,
       baseApiUrl: '',
       locale: 'is' as Locale,
-      formatMessage: undefined,
     },
   ) {
     this.config = config
@@ -86,9 +83,7 @@ export abstract class BasicDataProvider implements DataProvider {
   onProvideError(_: unknown): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason:
-        this.config.formatMessage?.(coreErrorMessages.errorDataProvider) ??
-        'Failed to get data',
+      reason: coreErrorMessages.errorDataProvider,
       status: 'failure',
     }
   }

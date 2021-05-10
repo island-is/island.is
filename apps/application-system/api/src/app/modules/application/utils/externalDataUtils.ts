@@ -2,7 +2,6 @@ import {
   BasicDataProvider,
   DataProviderConfig,
   DataProviderResult,
-  FormatMessage,
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
@@ -27,7 +26,6 @@ export function buildDataProviders(
   >,
   user: User,
   locale: Locale,
-  formatMessage: FormatMessage,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
@@ -38,7 +36,6 @@ export function buildDataProviders(
           baseApiUrl: environment.baseApiUrl,
           user,
           locale,
-          formatMessage,
         }),
       )
     } else {
