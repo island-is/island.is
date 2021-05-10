@@ -210,8 +210,13 @@ export const m: MessageDir = {
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
-      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum síðum.',
+      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
+    },
+    bulletListTitle: {
+      id: 'pa.application:application.approved.card.bulletListTitle',
+      defaultMessage: 'Vert að skoða',
+      description: 'Title for bullet point list',
     },
   }),
   collectEndorsements: defineMessages({

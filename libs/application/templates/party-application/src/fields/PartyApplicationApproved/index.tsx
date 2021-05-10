@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text, Bullet, BulletList, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
@@ -15,6 +15,29 @@ const PartyApplicationApproved: FC<FieldBaseProps> = () => {
           title={formatMessage(m.applicationApproved.approvedTitle)}
           subtitle={formatMessage(m.applicationApproved.approvedSubtitle)}
         />
+        <Text marginBottom={2} variant="h3">{formatMessage(m.applicationApproved.bulletListTitle)}</Text>
+        <BulletList type="ul">
+          <Bullet>
+            <Link
+              href='https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/'
+              color="blue400"
+              underline="small"
+              underlineVisibility="always"
+            >
+              Vefur dómsmálaráðuneytis
+            </Link>
+          </Bullet>
+          <Bullet>
+            <Link
+              href='https://www.stjornarradid.is/verkefni/kosningar/'
+              color="blue400"
+              underline="small"
+              underlineVisibility="always"
+            >
+              kosning.is
+            </Link>
+          </Bullet>
+        </BulletList>
       </Box>
       <Box
         display="flex"
