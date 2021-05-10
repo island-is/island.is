@@ -9,7 +9,7 @@ import {
   buildSubSection,
   DefaultEvents,
 } from '@island.is/application/core'
-import Logo from '../../assets/Logo'
+import Logo from '../../../assets/Logo'
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
 import { ApproveContract } from '../lib/dataSchema'
 import * as m from '../lib/messages'

@@ -9,7 +9,7 @@ import {
   buildTextField,
   buildCustomField,
 } from '@island.is/application/core'
-import Logo from '../../assets/Logo'
+import Logo from '../../../assets/Logo'
 import { DataProviderTypes } from '..'
 import * as m from '../lib/messages'
 

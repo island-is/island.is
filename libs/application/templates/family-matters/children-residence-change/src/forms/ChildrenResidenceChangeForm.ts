@@ -14,7 +14,7 @@ import {
   Comparators,
 } from '@island.is/application/core'
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
-import Logo from '../../assets/Logo'
+import Logo from '../../../assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'

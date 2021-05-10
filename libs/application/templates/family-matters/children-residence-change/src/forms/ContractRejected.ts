@@ -5,7 +5,7 @@ import {
   FormModes,
   buildCustomField,
 } from '@island.is/application/core'
-import Logo from '../../assets/Logo'
+import Logo from '../../../assets/Logo'
 import * as m from '../lib/messages'
 
 function rejectedForm(id: string): Form {
