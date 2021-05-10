@@ -36,6 +36,7 @@ interface Props {
   heading: string
   text: string
   id?: string
+  name?: string
   placeholder: string
   label: string
   buttonText: string
@@ -54,6 +55,7 @@ export const NewsletterSignup: React.FC<Props> = ({
   heading,
   text,
   id = 'newsletter',
+  name = 'newsletter',
   placeholder,
   label,
   buttonText,
@@ -77,7 +79,7 @@ export const NewsletterSignup: React.FC<Props> = ({
         <Box className={styles.inputWrap}>
           <Input
             id={id}
-            name={id}
+            name={name}
             value={value}
             placeholder={placeholder}
             label={label}
