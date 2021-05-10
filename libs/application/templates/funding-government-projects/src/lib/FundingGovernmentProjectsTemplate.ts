@@ -106,8 +106,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // TODO: Handle this correctly
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

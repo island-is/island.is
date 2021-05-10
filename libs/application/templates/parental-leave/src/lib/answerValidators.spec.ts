@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 
@@ -6,26 +10,33 @@ import { minPeriodDays, usageMaxMonths } from '../config'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
 
+const DEFAULT_DOB = '2021-01-15'
+
 describe('answerValidators', () => {
   const application: Application = {
-    answers: { someAnswer: 'awesome' },
+    answers: { someAnswer: 'awesome', selectedChild: '0' },
     assignees: [],
     applicant: '',
     attachments: {},
     created: new Date(),
     externalData: {
-      pregnancyStatus: {
+      children: {
         date: new Date(),
         status: 'success',
         data: {
-          hasActivePregnancy: true,
-          pregnancyDueDate: '2021-01-15',
+          children: [
+            {
+              expectedDateOfBirth: DEFAULT_DOB,
+              parentalRelation: 'primary',
+            },
+          ],
         },
       },
     },
     id: '',
     modified: new Date(),
     state: '',
+    status: ApplicationStatus.IN_PROGRESS,
     typeId: ApplicationTypes.EXAMPLE,
   }
 
@@ -34,12 +45,7 @@ describe('answerValidators', () => {
       ...application,
       externalData: {
         ...application.externalData,
-        parentalLeaves: {
-          date: new Date(),
-          reason: 'Sync failed',
-          status: 'failure',
-        },
-        pregnancyStatus: {
+        children: {
           date: new Date(),
           reason: 'Sync failed',
           status: 'failure',

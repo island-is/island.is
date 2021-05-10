@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
+import { logger } from '@island.is/logging'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -54,10 +55,13 @@ export class ParentalLeaveService {
           application,
         )
       } else {
-        throw new Error('Could not send application')
+        throw new Error(`Failed to send application: ${response.status}`)
       }
+
+      return response
     } catch (e) {
-      console.log('Failed to send application', e)
+      logger.error('Failed to send application', e)
+      throw e
     }
   }
 }
