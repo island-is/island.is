@@ -38,6 +38,7 @@ target 'IslandApp' do
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
   pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
+  pod 'react-native-passkit-wallet', path: '../../node_modules/react-native-passkit-wallet'
 
   # use_flipper!({ 'Flipper' => '0.87.0' })
   use_flipper!({

@@ -21,6 +21,7 @@ import { IDocument } from '../../graphql/fragments/document.fragment'
 import { TouchableHighlight } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SearchBar } from '../../components/search-bar/search-bar'
+import { useIntl } from 'react-intl'
 
 interface IndexedDocument extends IDocument {
   fulltext: string;

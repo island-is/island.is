@@ -27,6 +27,7 @@ import { Platform } from 'react-native'
 import { Animated } from 'react-native'
 import { Dimensions } from 'react-native'
 import { ComponentRegistry } from '../../utils/navigation-registry'
+import { Skeleton } from '../../components/skeleton/skeleton'
 
 const InputHost = styled.SafeAreaView`
   flex: 1;
@@ -43,8 +44,8 @@ const InputContent = styled.View`
 
 const InputLabel = styled.Text`
   font-family: 'IBMPlexSans';
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${(props) => props.theme.color.dark400};
   margin-bottom: 8px;
 `
@@ -86,49 +87,12 @@ function Input({
   value?: string
   loading?: boolean
 }) {
-  const ar = useRef<Animated.CompositeAnimation>()
-  const aw = useRef(Dimensions.get('window').width)
-  const av = useRef(new Animated.Value(0))
-
-  const offset = 64
-  const animate = () => {
-    ar.current = Animated.timing(av.current, {
-      duration: 1660,
-      toValue: aw.current + offset,
-      useNativeDriver: true,
-    })
-    ar.current.start(() => {
-      av.current.setValue(-(aw.current + offset))
-      animate()
-    })
-  }
-
-  useEffect(() => {
-    animate()
-    return () => {
-      if (ar.current) {
-        ar.current.stop()
-      }
-    }
-  }, [])
-
   return (
     <InputHost>
       <InputContent>
         <InputLabel>{label}</InputLabel>
         {loading ? (
-          <InputLoading
-            onLayout={(e) => {
-              aw.current = e.nativeEvent.layout.width
-            }}
-          >
-            <InputLoadingOverlay
-              style={{
-                opacity: 1,
-                transform: [{ translateX: av.current }, { rotate: '5deg' }],
-              }}
-            />
-          </InputLoading>
+          <Skeleton active />
         ) : (
           <InputValue>{value ?? ''}</InputValue>
         )}

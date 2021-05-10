@@ -2,14 +2,13 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { Image } from 'react-native';
 
-const Host = styled.TouchableOpacity<{ bg?: string }>`
+const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   padding: 12px 24px;
   border-radius: 16px;
-  background-color: ${props => props.bg ?? props.theme.color.blueberry100};
-  margin-bottom: 16px;
+  background-color: ${props => props.backgroundColor ?? props.theme.color.blueberry100};
 `
 
 const Content = styled.View`
@@ -49,12 +48,14 @@ interface LicenceCardProps {
   icon: any;
   agencyLogo: any;
   backgroundColor: string;
-  onPress(): () => void;
+  nativeID?: string;
 }
 
-export function LicenceCard({ title, icon, backgroundColor, agencyLogo, onPress }: LicenceCardProps) {
+export function LicenceCard({ title, icon, backgroundColor, agencyLogo, nativeID }: LicenceCardProps) {
+  console.log(title, backgroundColor);
+
   return (
-    <Host onPress={() => onPress()} bg={backgroundColor}>
+    <Host backgroundColor={backgroundColor} nativeID={nativeID}>
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail">
           {title}

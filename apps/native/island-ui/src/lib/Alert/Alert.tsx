@@ -84,26 +84,34 @@ interface AlertProps {
   title?: string,
   message?: string,
   style?: any;
-  offsetY?: any;
+  offsetY?: React.RefObject<Animated.Value>;
 }
 
-export function Alert({ title, message, type, offsetY, ...rest }: AlertProps) {
+const defaultOffsetY = {
+  current: new Animated.Value(0),
+};
+
+export function Alert({ title, message, type, offsetY = defaultOffsetY, ...rest }: AlertProps) {
   const alertRef = useRef<View>(null);
   const variant = variantStyles[type];
   const [isVisible, setIsVisible] = useState(true);
   const [height, setHeight] = useState(0);
 
   const animateOut = () => {
-    Animated.spring(offsetY.current, {
-      toValue: -height,
-      overshootClamping: true,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setIsVisible(false);
-        offsetY.current.setValue(1);
-      }
-    });
+    if (offsetY.current) {
+      Animated.spring(offsetY.current, {
+        toValue: -height,
+        overshootClamping: true,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          setIsVisible(false);
+          if (offsetY.current) {
+            offsetY.current.setValue(1);
+          }
+        }
+      });
+    }
   }
 
   return (
@@ -116,7 +124,7 @@ export function Alert({ title, message, type, offsetY, ...rest }: AlertProps) {
           borderColor={variant.borderColor}
           {...rest}
           style={{
-            opacity: offsetY.current.interpolate({
+            opacity: offsetY.current?.interpolate({
               inputRange: [-height, 0],
               outputRange: [0, 1],
             }),

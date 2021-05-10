@@ -36,7 +36,7 @@ export function setupRoutes() {
 
   addRoute(
     '/wallet/:passId',
-    ({ passId, backgroundColor = '#f5e4ec' }: any) => {
+    ({ passId, fromId, toId, item }: any) => {
       Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
         bottomTabs: {
           currentTabIndex: 2,
@@ -47,7 +47,21 @@ export function setupRoutes() {
           name: ComponentRegistry.WalletPassScreen,
           passProps: {
             id: passId,
+            item,
           },
+          options: {
+            animations: {
+              push: {
+                sharedElementTransitions: [
+                  {
+                    fromId,
+                    toId,
+                    interpolation: { type: 'spring' }
+                  },
+                ],
+              },
+            },
+          }
         },
       });
     },
