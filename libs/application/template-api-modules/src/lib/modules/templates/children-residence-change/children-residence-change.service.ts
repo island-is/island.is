@@ -135,20 +135,29 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           syslumennEmail,
         )
+        return undefined
       })
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentA.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentA.email,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentB.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentB.email,
     )
 
     return response

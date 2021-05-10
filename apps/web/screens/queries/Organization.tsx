@@ -82,6 +82,13 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      bottomSlices {
+        ...AllSlices
+      }
+      newsTag {
+        id
+        title
+      }
       featuredImage {
         url
         title

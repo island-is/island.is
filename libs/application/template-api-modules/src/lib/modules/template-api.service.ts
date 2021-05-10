@@ -13,6 +13,7 @@ import {
   ChildrenResidenceChangeService,
   LoginServiceService,
   FundingGovernmentProjectsService,
+  PartyLetterService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -42,6 +43,7 @@ export class TemplateAPIService {
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
+    private readonly partyLetterService: PartyLetterService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -53,7 +55,8 @@ export class TemplateAPIService {
       | InstitutionCollaborationService
       | ChildrenResidenceChangeService
       | LoginServiceService
-      | FundingGovernmentProjectsService,
+      | FundingGovernmentProjectsService
+      | PartyLetterService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -122,6 +125,8 @@ export class TemplateAPIService {
           this.fundingGovernmentProjectsService,
           action,
         )
+      case ApplicationTypes.PARTY_LETTER:
+        return this.tryRunningActionOnService(this.partyLetterService, action)
     }
 
     return {

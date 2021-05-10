@@ -1155,6 +1155,12 @@ export interface ILandingPage extends Entry<ILandingPageFields> {
 export interface ILatestNewsSliceFields {
   /** Title */
   title?: string | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Read more text */
+  readMoreText?: string | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1890,7 +1896,15 @@ export interface IOrganizationPageFields {
       )[]
     | undefined
 
-  /** Menu Links */
+  /** Bottom slices */
+  bottomSlices?:
+    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
   menuLinks?: ILinkGroup[] | undefined
 
   /** Secondary Menu */

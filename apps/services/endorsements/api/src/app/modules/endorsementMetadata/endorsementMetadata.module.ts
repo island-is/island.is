@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common'
 import { EndorsementMetadataService } from './endorsementMetadata.service'
-import { NationalRegistryService } from './providers/nationalRegistry.service'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry'
+import { NationalRegistryUserService } from './providers/nationalRegistryUser.service'
 import { environment } from '../../../environments/environment'
 import { NationalRegistryApiMock } from './providers/mock/nationalRegistryApiMock'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { Endorsement } from '../endorsement/endorsement.model'
+import { EndorsementSystemSignedListsService } from './providers/endorsementSystemSignedLists.service'
 
 @Module({
+  imports: [SequelizeModule.forFeature([Endorsement])],
   providers: [
-    NationalRegistryService,
+    NationalRegistryUserService,
+    EndorsementSystemSignedListsService,
     EndorsementMetadataService,
     {
       provide: NationalRegistryApi,
