@@ -7,10 +7,13 @@ import {
   buildExternalDataProvider,
   buildSubSection,
   buildTextField,
+  buildCustomField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { DataProviderTypes } from '..'
 import * as m from '../lib/messages'
+
+import { contactInfoIds } from '../fields/ContactInfo'
 
 export const JointCustodyAgreementForm: Form = buildForm({
   id: 'JointCustodyAgreementForm',
@@ -52,6 +55,18 @@ export const JointCustodyAgreementForm: Form = buildForm({
                   subTitle: '',
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'contact',
+          title: m.contactInfo.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'contactInfo',
+              title: m.contactInfo.general.pageTitle,
+              childInputIds: contactInfoIds,
+              component: 'ContactInfo',
             }),
           ],
         }),
