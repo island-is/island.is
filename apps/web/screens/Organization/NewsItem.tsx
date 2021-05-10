@@ -112,7 +112,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -121,7 +121,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_SINGLE_NEWS_ITEM_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: query.newsSlug as string,
           lang: locale as ContentLanguage,
         },
       },
