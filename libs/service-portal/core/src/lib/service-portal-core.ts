@@ -59,7 +59,6 @@ export type ServicePortalRoute = {
    * Describes the path or paths used to route to this component
    */
   path: ServicePortalPath | ServicePortalPath[]
-
   /**
    * The render value of this component
    */
