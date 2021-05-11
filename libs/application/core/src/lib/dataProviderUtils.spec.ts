@@ -32,13 +32,19 @@ const application: Application = {
   status: ApplicationStatus.IN_PROGRESS,
 }
 
+const mockTemplateFindQuery = async () => []
+
 describe('dataProviderUtils', () => {
   it('should return results in place', async () => {
     const dataProviders = [
       new ExampleProviderThatAlwaysSucceeds(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, application)
+    const result = await callDataProviders(
+      dataProviders,
+      application,
+      mockTemplateFindQuery,
+    )
     expect(result).toEqual([
       expect.objectContaining({
         data: true,
@@ -56,7 +62,11 @@ describe('dataProviderUtils', () => {
       new ExampleProviderThatAlwaysFails(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, application)
+    const result = await callDataProviders(
+      dataProviders,
+      application,
+      mockTemplateFindQuery,
+    )
     expect(result).toEqual([
       expect.objectContaining({
         data: true,

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import {
   Image,
   LinkGroup,
+  Organization,
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
@@ -68,10 +69,26 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   }
 }
 
-const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
-  switch (organizationPage.theme) {
+interface FooterProps {
+  theme: string
+  organization?: Organization
+}
+
+export const OrganizationFooter: React.FC<FooterProps> = ({
+  theme,
+  organization,
+}) => {
+  if (!organization) return null
+
+  switch (theme) {
     case 'syslumenn':
-      return <SyslumennFooter organizationPage={organizationPage} />
+      return (
+        <SyslumennFooter
+          title={organization.title}
+          logo={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
     default:
       return null
   }
@@ -264,7 +281,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </GridContainer>
         )}
       </Main>
-      {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
+      {!minimal && (
+        <OrganizationFooter
+          theme={organizationPage.theme}
+          organization={organizationPage.organization}
+        />
+      )}
       <OrganizationChatPanel slug={organizationPage?.slug} />
     </>
   )
