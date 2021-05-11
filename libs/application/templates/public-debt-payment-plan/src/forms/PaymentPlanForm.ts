@@ -8,14 +8,15 @@ import {
   buildExternalDataProvider,
   buildCustomField,
   buildMultiField,
-  ExternalData,
   buildTextField,
-  buildCheckboxField,
   buildRadioField,
   buildRepeater,
 } from '@island.is/application/core'
 import { Prerequisites } from '../dataProviders/tempAPITypes'
-import { PublicDebtPaymentPlan } from '../lib/dataSchema'
+import {
+  PaymentPlanExternalData,
+  PublicDebtPaymentPlan,
+} from '../lib/dataSchema'
 import { section, application, employer } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
 import { info } from '../lib/messages/info'
@@ -96,9 +97,9 @@ export const PaymentPlanForm: Form = buildForm({
               title: info.labels.name,
               backgroundColor: 'blue',
               disabled: true,
-              defaultValue: (application: PublicDebtPaymentPlan) => {
-                return application.externalData?.nationalRegistry?.data
-                  ?.fullName
+              defaultValue: (application: any) => {
+                return (application.externalData as PaymentPlanExternalData)
+                  ?.nationalRegistry?.data?.fullName
               },
             }),
             buildTextField({
@@ -108,8 +109,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               disabled: true,
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.nationalRegistry?.data?.nationalId,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.nationalRegistry?.data?.nationalId,
             }),
             buildTextField({
               id: 'applicant.address',
@@ -117,9 +119,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               disabled: true,
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.nationalRegistry?.data?.address
-                  ?.streetAddress,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.nationalRegistry?.data?.address?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -127,9 +129,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               disabled: true,
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.nationalRegistry?.data?.address
-                  ?.postalCode,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.nationalRegistry?.data?.address?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
@@ -137,8 +139,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               disabled: true,
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.nationalRegistry?.data?.address?.city,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.nationalRegistry?.data?.address?.city,
             }),
             buildTextField({
               id: 'applicant.email',
@@ -146,8 +149,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'email',
               backgroundColor: 'blue',
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.userProfile?.data?.email,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.userProfile?.data?.email,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
@@ -156,8 +160,9 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
-              defaultValue: (application: PublicDebtPaymentPlan) =>
-                application.externalData?.userProfile?.data?.mobilePhoneNumber,
+              defaultValue: (application: any) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.userProfile?.data?.mobilePhoneNumber,
             }),
           ],
         }),
@@ -167,9 +172,10 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'employer',
       title: section.employer,
       condition: (_formValue, externalData) => {
-        const prerequisites = externalData.paymentPlanPrerequisites
-          .data as Prerequisites
-        return prerequisites.taxesOk
+        const prerequisites = externalData.paymentPlanPrerequisites?.data as
+          | Prerequisites
+          | undefined
+        return prerequisites?.taxesOk || false
       },
       children: [
         buildMultiField({
@@ -204,6 +210,12 @@ export const PaymentPlanForm: Form = buildForm({
                 (data as PublicDebtPaymentPlan).employer?.isCorrectInfo === NO,
             }),
           ],
+        }),
+        buildCustomField({
+          id: 'disposableIncome',
+          title: employer.general.disposableIncomePageTitle,
+          description: employer.general.disposableIncomePageDescription,
+          component: 'DisposableIncome',
         }),
       ],
     }),

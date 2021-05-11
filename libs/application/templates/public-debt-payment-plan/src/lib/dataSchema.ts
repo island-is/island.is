@@ -1,61 +1,46 @@
-import { isCompany } from 'kennitala'
+import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
+import { Prerequisites } from '../dataProviders/tempAPITypes'
 import { NO, YES } from '../shared/constants'
 
+interface PrerequisitesResult extends SuccessfulDataProviderResult {
+  data: Prerequisites
+}
+
+interface UserProfileResult extends SuccessfulDataProviderResult {
+  data: {
+    email: string
+    mobilePhoneNumber: string
+  }
+}
+
+interface NatRegResult extends SuccessfulDataProviderResult {
+  data: {
+    nationalId: string
+    age: number
+    fullName: string
+    citizenship: {
+      code: string
+      name: string
+    }
+    legalResidence: string
+    address: {
+      code: string
+      postalCode: string
+      city: string
+      streetAddress: string
+      lastUpdated: string
+    }
+  }
+}
+
+export type PaymentPlanExternalData = {
+  paymentPlanPrerequisites?: PrerequisitesResult
+  nationalRegistry?: NatRegResult
+  userProfile?: UserProfileResult
+}
+
 export const PublicDebtPaymentPlanSchema = z.object({
-  externalData: z.object({
-    paymentPlanPrerequisites: z.object({
-      maxDebt: z.number(),
-      totalDebt: z.number(),
-      disposableIncome: z.number(),
-      alimony: z.number(),
-      minimumPayment: z.number(),
-      maxDebtOk: z.boolean(),
-      maxDebtText: z.string(),
-      taxesOk: z.boolean(),
-      taxesText: z.string(),
-      taxReturnsOk: z.boolean(),
-      taxReturnsText: z.string(),
-      vatOk: z.boolean(),
-      vatText: z.string(),
-      citOk: z.boolean(),
-      citText: z.string(),
-      accommodationTaxOk: z.boolean(),
-      accommodationTaxText: z.string(),
-      withholdingTaxOk: z.boolean(),
-      withholdingTaxText: z.string(),
-      wageReturnsOk: z.boolean(),
-      wageReturnsText: z.string(),
-    }),
-    nationalRegistry: z.object({
-      data: z.object({
-        address: z.object({
-          city: z.string(),
-          code: z.string(),
-          postalCode: z.string(),
-          streetAddress: z.string(),
-        }),
-        age: z.number(),
-        citizenship: z.object({
-          code: z.string(),
-          name: z.string(),
-        }),
-        fullName: z.string(),
-        legalResidence: z.string(),
-        nationalId: z.string(),
-      }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
-    }),
-    userProfile: z.object({
-      data: z.object({
-        email: z.string(),
-        mobilePhoneNumber: z.string(),
-      }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
-    }),
-  }),
   // TODO: Applicant schema
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),

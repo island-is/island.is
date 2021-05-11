@@ -35,12 +35,10 @@ const createPrerequisitesResponse = (): Prerequisites => {
 export class PaymentPlanPrerequisites extends BasicDataProvider {
   type = 'PaymentPlanPrerequisites'
   provide(): Promise<Prerequisites> {
-    console.log('provide')
     return Promise.resolve(createPrerequisitesResponse())
   }
 
   onProvideSuccess(prerequisites: Prerequisites): SuccessfulDataProviderResult {
-    console.log('provide success', prerequisites)
     return {
       date: new Date(),
       data: prerequisites,
@@ -49,7 +47,6 @@ export class PaymentPlanPrerequisites extends BasicDataProvider {
   }
 
   onProvideError(): FailedDataProviderResult {
-    console.log('provide error')
     return {
       date: new Date(),
       data: {},

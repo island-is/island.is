@@ -27,6 +27,7 @@ export const PaymentPlanList = ({
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handlePaymentClick = (id: string) => {
+    // TODO: This approach is not going to work
     const newAnswers = mergeAnswers(answers, {
       paymentPlanContext: {
         ...answers.paymentPlanContext,
@@ -34,10 +35,7 @@ export const PaymentPlanList = ({
       },
     })
     answerQuestions(newAnswers)
-
-    setTimeout(() => {
-      expandRepeater()
-    }, 100)
+    expandRepeater()
   }
 
   const errors = (error as any) as {
