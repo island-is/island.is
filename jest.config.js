@@ -134,7 +134,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/finance',
     '<rootDir>/libs/service-portal/graphql',
     '<rootDir>/libs/service-portal/health',
-    '<rootDir>/libs/service-portal/settings',
+    '<rootDir>/libs/service-portal/settings/personal-information',
     '<rootDir>/libs/shared/babel',
     '<rootDir>/libs/shared/connected',
     '<rootDir>/libs/shared/constants',
