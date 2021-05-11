@@ -39,6 +39,7 @@ export type RegulationPageTexts = Partial<
   Record<
     | 'goBack' // 'Til baka'
     | 'printThisVersion' // 'Prenta þessa útgáfu'
+    | 'copyPermaLink' // "Afrita hlekk á þessa útgáfu"
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'
     | 'hideDiff' // 'Fela breytingar'

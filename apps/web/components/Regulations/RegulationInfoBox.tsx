@@ -118,10 +118,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               window.print()
             }}
           >
-            {
-              // TODO: Incorporte this key into namespace once this part of the UI is final
-              txt('printThisVersion', 'Prenta þessa útgáfu')
-            }
+            {txt('printThisVersion')}
           </Button>
         </Text>
 
@@ -135,10 +132,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               navigator.clipboard.writeText(document.location.href)
             }}
           >
-            {
-              // TODO: Incorporte this key into namespace once this part of the UI is final
-              txt('copyLink', 'Afrita hlekk á reglugerð')
-            }
+            {txt('copyPermaLink')}
           </Button>{' '}
           {showCopyCheckmark && (
             <span className={s.copiedIndicator} aria-hidden="true">
