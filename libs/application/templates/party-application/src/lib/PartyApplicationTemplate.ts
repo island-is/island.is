@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { assign } from 'xstate'
+import { API_MODULE_ACTIONS } from '../constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -77,6 +78,9 @@ const PartyApplicationTemplate: ApplicationTemplate<
           name: 'Safna meðmælum',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

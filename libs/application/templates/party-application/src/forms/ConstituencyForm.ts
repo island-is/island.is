@@ -11,6 +11,7 @@ import {
   buildDataProviderItem,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { Constituencies } from '../types'
 import Logo from '../assets/Logo'
 
 export const ConstituencyForm: Form = buildForm({
@@ -30,18 +31,27 @@ export const ConstituencyForm: Form = buildForm({
           largeButtons: true,
           defaultValue: '',
           options: [
-            { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
-            { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
             {
-              value: 'Reykjavíkurkjördæmi norður',
-              label: 'Reykjavíkurkjördæmi norður',
+              value: Constituencies.NORTH_EAST,
+              label: Constituencies.NORTH_EAST,
             },
             {
-              value: 'Reykjavíkurkjördæmi suður',
-              label: 'Reykjavíkurkjördæmi suður',
+              value: Constituencies.NORTH_WEST,
+              label: Constituencies.NORTH_WEST,
             },
-            { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-            { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
+            {
+              value: Constituencies.RVK_NORTH,
+              label: Constituencies.RVK_NORTH,
+            },
+            {
+              value: Constituencies.RVK_SOUTH,
+              label: Constituencies.RVK_SOUTH,
+            },
+            { value: Constituencies.SOUTH, label: Constituencies.SOUTH },
+            {
+              value: Constituencies.SOUTH_WEST,
+              label: Constituencies.SOUTH_WEST,
+            },
           ],
         }),
       ],

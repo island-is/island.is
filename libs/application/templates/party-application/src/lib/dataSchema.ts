@@ -8,6 +8,6 @@ export const dataSchema = z.object({
   approveDisclaimer: z.boolean().refine((v) => v, {
     message: m.validation.approveTerms.defaultMessage as string,
   }),
-  supremeCourtContact: z.string().nonempty()
+  supremeCourtContact: z.string().nonempty(),
 })
 export type SchemaFormValues = z.infer<typeof dataSchema>
