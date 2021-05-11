@@ -111,7 +111,7 @@ const UserMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
                 <Text>{userProfile?.mobilePhoneNumber || ''}</Text>
               </Box>
               <Link
-                to={ServicePortalPath.UserProfileRoot}
+                to={ServicePortalPath.SettingsPersonalInformation}
                 onClick={onRouteChange}
               >
                 <Button variant="text" icon="arrowForward" size="small">

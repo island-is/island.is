@@ -172,12 +172,21 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.UserProfileRoot,
-        divider: true,
+        path: ServicePortalPath.SettingsRoot,
         icon: {
           type: 'outline',
           icon: 'settings',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:personalInformation',
+              defaultMessage: 'Persónuupplýsingar',
+            }),
+            systemRoute: true,
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+        ]
       },
     ],
   },
