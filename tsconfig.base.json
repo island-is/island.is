@@ -115,6 +115,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/children-residence-change": [
+        "libs/application/templates/family-matters/children-residence-change/src/index.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
       ],
@@ -127,8 +130,8 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
-      "@island.is/application/templates/family-matters/*": [
-        "libs/application/templates/family-matters/*"
+      "@island.is/application/templates/family-matters-core/*": [
+        "libs/application/templates/family-matters/core/src/*"
       ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
@@ -138,6 +141,9 @@
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
+      ],
+      "@island.is/application/templates/joint-custody-agreement": [
+        "libs/application/templates/family-matters/joint-custody-agreement/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"

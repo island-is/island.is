@@ -8,8 +8,8 @@ import {
   formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
-} from '@island.is/application/templates/family-matters/utils'
-import { CRCApplication } from '@island.is/application/templates/family-matters/children-residence-change'
+} from '@island.is/application/templates/family-matters-core/utils'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 

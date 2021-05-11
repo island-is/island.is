@@ -10,9 +10,9 @@ import {
   getSelectedChildrenFromExternalData,
   formatDate,
   childrenResidenceInfo,
-} from '@island.is/application/templates/family-matters/utils'
-import { Override } from '@island.is/application/templates/family-matters/types'
-import { CRCApplication } from '@island.is/application/templates/family-matters/children-residence-change'
+} from '@island.is/application/templates/family-matters-core/utils'
+import { Override } from '@island.is/application/templates/family-matters-core/types'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {

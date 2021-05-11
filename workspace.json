@@ -1737,7 +1737,7 @@
     },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
-      "sourceRoot": "libs/application/templates/family-matters/children-residence-change",
+      "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1746,19 +1746,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/family-matters/tsconfig.lib.json",
-              "libs/application/templates/family-matters/tsconfig.spec.json"
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.lib.json",
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/family-matters/**/*"
+              "!libs/application/templates/family-matters/children-residence-change/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1911,6 +1911,28 @@
         }
       }
     },
+    "application-templates-family-matters-core": {
+      "root": "libs/application/templates/family-matters",
+      "sourceRoot": "libs/application/templates/family-matters/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/family-matters/tsconfig.lib.json",
+              "libs/application/templates/family-matters/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/family-matters/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -2021,7 +2043,7 @@
     },
     "application-templates-joint-custody-agreement": {
       "root": "libs/application/templates/family-matters/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2030,19 +2052,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/family-matters/tsconfig.lib.json",
-              "libs/application/templates/family-matters/tsconfig.spec.json"
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/family-matters/**/*"
+              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
       }
