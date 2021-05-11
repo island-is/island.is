@@ -74,7 +74,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
           } else {
             const successMessage: string = n(
               'formSuccess',
-              'Skráning tókst. Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.'
+              'Skráning tókst. Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
             )
             setStatus({
               type: 'success',
