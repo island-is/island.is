@@ -166,6 +166,28 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Fjarmal
+      {
+        name: defineMessage({
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
+        }),
+        path: ServicePortalPath.FinanceRoot,
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:financeStatus',
+              defaultMessage: 'Staða',
+            }),
+            path: ServicePortalPath.FinanceStatus,
+          },
+        ],
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({
@@ -189,38 +211,38 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
     }),
     children: [
       // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        path: ServicePortalPath.FinanceRoot,
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:financeStatus',
-              defaultMessage: 'Staða',
-            }),
-            path: ServicePortalPath.FinanceStatus,
-          },
-        ],
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        // external: true,
-        systemRoute: true,
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:finance',
+      //     defaultMessage: 'Fjármál',
+      //   }),
+      //   path: ServicePortalPath.FinanceRoot,
+      //   children: [
+      //     {
+      //       name: defineMessage({
+      //         id: 'service.portal:financeStatus',
+      //         defaultMessage: 'Staða',
+      //       }),
+      //       path: ServicePortalPath.FinanceStatus,
+      //     },
+      //   ],
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'cellular',
+      //   },
+      //   // external: true,
+      //   systemRoute: true,
+      // },
 
       // Fasteignir
       {
         name: defineMessage({
           id: 'service.portal:real-estate',
           defaultMessage: 'Fasteignir',
+        }),
+        heading: defineMessage({
+          id: 'service.portal:coming-soon',
+          defaultMessage: 'Væntanlegt',
         }),
         path: ServicePortalPath.RealEstateExternal,
         external: true,
