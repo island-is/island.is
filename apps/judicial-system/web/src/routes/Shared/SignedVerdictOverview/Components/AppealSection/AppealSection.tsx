@@ -13,7 +13,10 @@ import {
 } from '@island.is/judicial-system/types'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import * as styles from './AppealSection.treat'
-import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  BlueBox,
+  DateTime,
+} from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {
   rulingDate: string
@@ -57,33 +60,35 @@ const AppealSection: React.FC<Props> = (props) => {
         <AnimatePresence>
           {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
             !accusedPostponedAppealDate && (
-              <>
-                <DateTime
-                  name="prosecutorAppealDate"
-                  maxDate={new Date()}
-                  selectedDate={
-                    prosecutorPostponedAppealDate
-                      ? new Date(prosecutorPostponedAppealDate)
-                      : undefined
-                  }
-                  onChange={() => console.log('here')}
-                  size="sm"
-                  blueBox={false}
-                />
-                <motion.div
-                  key="prosecutorAppealButton"
-                  className={styles.prosecutorAppealButton}
-                  initial={false}
-                  exit={{ y: 50, opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Button onClick={handleAccusedAppeal}>
-                    {`${capitalize(
-                      formatAccusedByGender(accusedGender),
-                    )} kærir úrskurðinn`}
-                  </Button>
-                </motion.div>
-              </>
+              <motion.div
+                key="prosecutorAppealButton"
+                className={styles.prosecutorAppealButton}
+                initial={false}
+                exit={{ y: 50, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <BlueBox>
+                  <div className={styles.test}>
+                    <DateTime
+                      name="accusedAppealDate"
+                      maxDate={new Date()}
+                      selectedDate={
+                        accusedPostponedAppealDate
+                          ? new Date(accusedPostponedAppealDate)
+                          : undefined
+                      }
+                      onChange={(date) => console.log(date)}
+                      size="sm"
+                      blueBox={false}
+                    />
+                    <Button onClick={handleAccusedAppeal}>
+                      {`${capitalize(
+                        formatAccusedByGender(accusedGender),
+                      )} kærir`}
+                    </Button>
+                  </div>
+                </BlueBox>
+              </motion.div>
             )}
         </AnimatePresence>
 
@@ -118,9 +123,25 @@ const AppealSection: React.FC<Props> = (props) => {
                 exit={{ y: 50, opacity: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <Button size="small" onClick={handleProsecutorAppeal}>
-                  Sækjandi kærir úrskurðinn
-                </Button>
+                <BlueBox>
+                  <div className={styles.test}>
+                    <DateTime
+                      name="prosecutorAppealDate"
+                      maxDate={new Date()}
+                      selectedDate={
+                        prosecutorPostponedAppealDate
+                          ? new Date(prosecutorPostponedAppealDate)
+                          : undefined
+                      }
+                      onChange={(date) => console.log(date)}
+                      size="sm"
+                      blueBox={false}
+                    />
+                    <Button size="small" onClick={handleProsecutorAppeal}>
+                      Sækjandi kærir
+                    </Button>
+                  </div>
+                </BlueBox>
               </motion.div>
             )}
         </AnimatePresence>

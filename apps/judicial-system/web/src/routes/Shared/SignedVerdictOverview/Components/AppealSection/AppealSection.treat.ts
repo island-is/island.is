@@ -6,7 +6,13 @@ export const prosecutorAppealButton = style({
 })
 
 export const buttonContainer = style({
-  height: 60,
-  overflow: 'hidden',
+  height: 112,
+  // overflow: 'hidden',
   marginBottom: theme.spacing[1],
+})
+
+export const test = style({
+  display: 'grid',
+  gridTemplateColumns: '2fr auto',
+  columnGap: theme.spacing[2],
 })

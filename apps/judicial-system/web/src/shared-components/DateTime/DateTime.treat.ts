@@ -3,6 +3,6 @@ import { style } from 'treat'
 
 export const dateTimeContainer = style({
   display: 'grid',
-  gridTemplateColumns: '1fr 256px',
+  gridTemplateColumns: '2fr minmax(170px, 1fr)',
   columnGap: theme.spacing[2],
 })
