@@ -186,7 +186,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             systemRoute: true,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
-        ]
+          {
+            name: defineMessage({
+              id: 'service.portal:accessControl',
+              defaultMessage: 'Aðgangsstýring',
+            }),
+            systemRoute: true,
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+        ],
       },
     ],
   },
