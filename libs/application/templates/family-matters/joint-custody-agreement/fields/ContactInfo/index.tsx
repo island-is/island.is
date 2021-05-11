@@ -5,10 +5,10 @@ import { getOtherParentInformation } from '@island.is/application/templates/fami
 import {
   DescriptionText,
   InfoBanner,
+  ContactInfoRow,
 } from '@island.is/application/templates/family-matters/components'
 import { contactInfo } from '../../lib/messages'
 import { JCAFieldBaseProps } from '../../types'
-import { ContactInfoRow } from '../components'
 
 const emailId = 'parentA.email'
 const phoneNumberId = 'parentA.phoneNumber'
@@ -51,11 +51,13 @@ const ContactInfo = ({ errors, application }: JCAFieldBaseProps) => {
         <ContactInfoRow
           email={{
             id: emailId,
+            label: formatMessage(contactInfo.inputs.emailLabel),
             error: emailError,
             defaultValue: answers?.parentA?.email || userProfile?.data?.email,
           }}
           phoneNumber={{
             id: phoneNumberId,
+            label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: phoneNumberError,
             defaultValue:
               answers?.parentA?.phoneNumber ||
@@ -77,12 +79,14 @@ const ContactInfo = ({ errors, application }: JCAFieldBaseProps) => {
         <ContactInfoRow
           email={{
             id: counterPartyEmail,
+            label: formatMessage(contactInfo.inputs.emailLabel),
             error: counterPartyError ? '' : counterPartyEmailError,
             clearErrors: [counterPartyEmail, 'counterParty'],
             defaultValue: answers?.counterParty?.email,
           }}
           phoneNumber={{
             id: counterPartyPhoneNumber,
+            label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: counterPartyError ? '' : counterPartyPhoneError,
             clearErrors: [counterPartyPhoneNumber, 'counterParty'],
             defaultValue: answers?.counterParty?.phoneNumber,

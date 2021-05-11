@@ -1,9 +1,12 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box } from '@island.is/island-ui/core'
-import { DescriptionText } from '@island.is/application/templates/family-matters/components'
+import {
+  DescriptionText,
+  ContactInfoRow,
+} from '@island.is/application/templates/family-matters/components'
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { ContactInfoRow } from '../components'
 
 const emailId = 'parentB.email'
 const phoneNumberId = 'parentB.phoneNumber'
@@ -11,6 +14,7 @@ const phoneNumberId = 'parentB.phoneNumber'
 export const contactInfoParentBIds = [emailId, phoneNumberId]
 
 const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
+  const { formatMessage } = useIntl()
   const { answers } = application
   const emailError = errors?.parentB?.email
   const phoneNumberError = errors?.parentB?.phoneNumber
@@ -24,11 +28,13 @@ const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
         <ContactInfoRow
           email={{
             id: emailId,
+            label: formatMessage(contactInfo.inputs.emailLabel),
             error: emailError,
             defaultValue: answers?.parentB?.email,
           }}
           phoneNumber={{
             id: phoneNumberId,
+            label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: phoneNumberError,
             defaultValue: answers?.parentB?.phoneNumber,
           }}

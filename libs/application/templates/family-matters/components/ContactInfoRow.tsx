@@ -1,12 +1,11 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import { contactInfo } from '../../lib/messages'
 
 interface InputField {
   id: string
+  label: string
   error?: string
   clearErrors?: string[]
   defaultValue?: string
@@ -18,7 +17,6 @@ interface Props {
 }
 
 const ContactInfoRow = ({ email, phoneNumber }: Props) => {
-  const { formatMessage } = useIntl()
   const { clearErrors } = useFormContext()
 
   return (
@@ -33,7 +31,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             name={email.id}
             backgroundColor="blue"
             type="email"
-            label={formatMessage(contactInfo.inputs.emailLabel)}
+            label={email.label}
             error={email.error}
             defaultValue={email.defaultValue || ''}
             onChange={() => {
@@ -47,7 +45,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             name={phoneNumber.id}
             backgroundColor="blue"
             type="tel"
-            label={formatMessage(contactInfo.inputs.phoneNumberLabel)}
+            label={phoneNumber.label}
             error={phoneNumber.error}
             format="###-####"
             onChange={() => {
