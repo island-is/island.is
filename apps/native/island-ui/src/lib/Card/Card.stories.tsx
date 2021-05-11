@@ -1,19 +1,50 @@
 import { storiesOf } from '@storybook/react-native'
 import { text, withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
-import { View } from 'react-native';
-import { Card } from './Card'
+import { ImageSourcePropType, View } from 'react-native';
+import { WelcomeCard } from './WelcomeCard'
+import { LicenceCard } from './LicenceCard';
+import illustrationSrc from '../../assets/card/digital-services-m2.png'
+import agencyLogo from '../../assets/card/agency-logo.png'
+import logo from '../../assets/card/logo-64w.png'
+import { NotificationCard } from './NotificationCard';
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>{children}</View>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 }}>{children}</View>
 )
 
-storiesOf('Card', module)
+storiesOf('Cards', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
-  .add('Deafult card', () => {
-    const title = text('Badge title', 'Ökuskírteini');
+  .add('Welcome card', () => {
+    const number = text('Number', '1');
+    const description = text('Description', 'Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna.');
     return (
-      <Card title={title} />
+      <WelcomeCard
+        number={number}
+        description={description}
+        imgSrc={illustrationSrc as ImageSourcePropType}
+      />
+    );
+  })
+  .add('Licence card', () => {
+    return (
+      <LicenceCard
+        title="Ökuskýrteini"
+        agencyLogo={agencyLogo as ImageSourcePropType}
+      />
+    );
+  })
+  .add('Notification card', () => {
+    return (
+      <NotificationCard
+        id="demo"
+        icon={logo as ImageSourcePropType}
+        date={new Date()}
+        title="Ökuskýrteini"
+        message="Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu"
+        unread={false}
+        onPress={() => console.log('test')}
+      />
     );
   })

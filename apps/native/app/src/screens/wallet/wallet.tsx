@@ -1,7 +1,6 @@
-import { Card, ListItem, LicenceCard, Alert } from '@island.is/island-ui-native'
+import { LicenceCard, Alert } from '@island.is/island-ui-native'
 import React, { useRef } from 'react'
-import styled from 'styled-components/native';
-import { ScrollView, TouchableOpacity, Animated } from 'react-native'
+import { Animated } from 'react-native'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -11,15 +10,11 @@ import { useScreenOptions } from '../../contexts/theme-provider'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
-import isVerifiedLogo from '../../assets/icons/is-verified.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
 import { ComponentRegistry } from '../../utils/navigation-registry'
 import { useIntl } from '../../utils/intl'
 import { useTranslatedTitle } from '../../utils/use-translated-title'
-
-const Wrapper = styled(Animated.View)`
-`;
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -68,39 +63,10 @@ export const WalletScreen: NavigationFunctionComponent = () => {
 
   return (
     <>
-      {/* <ScrollView horizontal={false}> */}
-        {/* <ScrollView
-          horizontal
-          snapToInterval={260 + 30}
-          showsHorizontalScrollIndicator={false}
-          snapToAlignment={'start'}
-          contentInset={{
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 30,
-          }}
-          contentInsetAdjustmentBehavior="automatic"
-          decelerationRate={0}
-          style={{ marginTop: 50, marginBottom: 10 }}
-        >
-          {myLicenses.map((license) => {
-            const backgroundColor = mapLicenseColor(license.type)
-            return (
-              <TouchableOpacity
-                key={license.id}
-                onPress={() =>
-                  navigateTo(`/wallet/${license.id}`, { backgroundColor })
-                }
-              >
-                <Card backgroundColor={backgroundColor} title={license.title} />
-              </TouchableOpacity>
-            )
-          })}
-        </ScrollView> */}
-      <Wrapper
+      <Animated.View
         style={{
           marginTop: 10,
+          marginBottom: 80,
           transform: [{
             translateY: sharedAnimatedValue.current,
           }],
@@ -111,41 +77,40 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
           offsetY={sharedAnimatedValue}
         />
-        <Animated.ScrollView
-          testID={testIDs.SCREEN_HOME}
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 24,
-          }}
-        >
-        {licenseItems.map(
-          ({
-            id,
-            title,
-            serviceProvider,
-            type,
-          }: {
-            id: string
-            title: string
-            serviceProvider: string
-            type: LicenseType
-          }) => (
-            <LicenceCard
-              key={id}
-              title={title}
-              icon={isVerifiedLogo}
-              backgroundColor={mapLicenseColor(type)}
-              agencyLogo={agencyLogo}
-              onPress={() =>
-                navigateTo(`/wallet/${id}`, {
-                  backgroundColor: mapLicenseColor(type),
-                })
-              }
-            />
-          ),
-        )}
+          <Animated.ScrollView
+            testID={testIDs.SCREEN_HOME}
+            style={{
+              paddingHorizontal: 16,
+              paddingTop: 24,
+            }}
+          >
+          {licenseItems.map(
+            ({
+              id,
+              title,
+              serviceProvider,
+              type,
+            }: {
+              id: string
+              title: string
+              serviceProvider: string
+              type: LicenseType
+            }) => (
+              <LicenceCard
+                key={id}
+                title={title}
+                backgroundColor={mapLicenseColor(type)}
+                agencyLogo={agencyLogo}
+                onPress={() =>
+                  navigateTo(`/wallet/${id}`, {
+                    backgroundColor: mapLicenseColor(type),
+                  })
+                }
+              />
+            ),
+          )}
         </Animated.ScrollView>
-        </Wrapper>
+      </Animated.View>
       <BottomTabsIndicator index={2} total={3} />
     </>
   )

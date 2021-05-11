@@ -15,7 +15,7 @@ async function toggleStorybook() {
   } else {
     Navigation.setRoot({ root: {
       component: {
-        name: ComponentRegistry.StorybookScreen
+        name: ComponentRegistry.DevtoolsStorybookScreen
       }
     }})
   }

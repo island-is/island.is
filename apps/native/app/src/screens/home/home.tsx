@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native'
-import { Badge, Heading, StatusCard, NotificationCard, Card } from '@island.is/island-ui-native'
+import { Badge, Heading, StatusCard, NotificationCard, WelcomeCard, Close } from '@island.is/island-ui-native'
 import logo from '../../assets/logo/logo-64w.png'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useQuery } from '@apollo/client'
@@ -52,50 +52,62 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const notificationsRes = useQuery<ListNotificationsResponse>(LIST_NOTIFICATIONS_QUERY, { client });
 
+  const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
+
   return (
     <>
       <ScrollView
         testID={testIDs.SCREEN_HOME}
       >
-        <View style={{ paddingHorizontal: 16 }}>
-          <Heading>Hæ {authStore.getState().userInfo?.name.split(' ').shift()}</Heading>
-        {/* {intl.formatMessage({ id: 'home.applicationsStatus' })} */}
-        </View>
-        <ScrollView
-          horizontal={true}
-          snapToInterval={283 + 16}
-          showsHorizontalScrollIndicator={false}
-          snapToAlignment={'start'}
-          contentInset={{
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 16,
-          }}
-          contentInsetAdjustmentBehavior="automatic"
-          decelerationRate={0}
-          style={{ marginBottom: 10 }}
-        >
-          <Card
-            key="card-1"
-            title="1"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-          />
-          <Card
-            key="card-2"
-            title="2"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-            backgroundColor="#F2F7FF"
-          />
-          <Card
-            key="card-3"
-            title="3"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-          />
-        </ScrollView>
+        {isWelcomeVisible &&
+        <>
+          < View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+            <Heading
+              button={
+                <TouchableOpacity onPress={() => setIsWelcomeVisible(false)}>
+                  <Close />
+                </TouchableOpacity>
+              }
+            >
+              {intl.formatMessage({ id: 'home.welcomeText' })} {authStore.getState().userInfo?.name.split(' ').shift()}
+            </Heading>
+          </View>
+          <ScrollView
+            horizontal={true}
+            snapToInterval={283 + 16}
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment={'start'}
+            contentInset={{
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 16,
+            }}
+            contentInsetAdjustmentBehavior="automatic"
+            decelerationRate={0}
+          >
+            <WelcomeCard
+              key="card-1"
+              number="1"
+              description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+              imgSrc={illustrationSrc}
+            />
+            <WelcomeCard
+              key="card-2"
+              number="2"
+              description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+              imgSrc={illustrationSrc}
+              backgroundColor="#F2F7FF"
+            />
+            <WelcomeCard
+              key="card-3"
+              number="3"
+              description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+              imgSrc={illustrationSrc}
+            />
+          </ScrollView>
+        </>
+        }
         <View style={{ paddingHorizontal: 16 }}>
           <Heading>{intl.formatMessage({ id: 'home.applicationsStatus' })}</Heading>
           <StatusCard

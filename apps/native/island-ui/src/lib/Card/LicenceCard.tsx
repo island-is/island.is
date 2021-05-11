@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { Image } from 'react-native';
+import { Image, ImageSourcePropType } from 'react-native';
+import isVerifiedLogo from '../../assets/card/is-verified.png'
 
 const Host = styled.TouchableOpacity<{ bg?: string }>`
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -40,29 +42,28 @@ const TimeStamp = styled.Text`
   font-size: 12px;
 `;
 
-const Img = styled.View`
+const ImgWrap = styled.View`
 `;
 
 
 interface LicenceCardProps {
   title: string;
-  icon: any;
-  agencyLogo: any;
-  backgroundColor: string;
-  onPress(): () => void;
+  agencyLogo: ImageSourcePropType;
+  backgroundColor?: string;
+  onPress?: () => void;
 }
 
-export function LicenceCard({ title, icon, backgroundColor, agencyLogo, onPress }: LicenceCardProps) {
+export function LicenceCard({ title, backgroundColor, agencyLogo, onPress }: LicenceCardProps) {
   return (
-    <Host onPress={() => onPress()} bg={backgroundColor}>
+    <Host onPress={onPress} bg={backgroundColor}>
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={icon} style={{ width: 13, height: 13, marginRight: 8 }} />
+          <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
-          Í gildi
+            Í gildi
           </Validation>
         </ValidationWrap>
 
@@ -70,9 +71,9 @@ export function LicenceCard({ title, icon, backgroundColor, agencyLogo, onPress 
           16:24 - 14.03.2021
         </TimeStamp>
       </Content>
-      <Img>
+      <ImgWrap>
         <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
-      </Img>
+      </ImgWrap>
     </Host>
   );
 }
