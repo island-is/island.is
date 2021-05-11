@@ -14,7 +14,11 @@ export class DocumentsClientModule {
   static register(config: DocumentClientConfig): DynamicModule {
     return {
       module: DocumentsClientModule,
-      imports: [HttpModule.register({})],
+      imports: [
+        HttpModule.register({
+          timeout: 30000,
+        }),
+      ],
       providers: [
         DocumentClient,
         {

@@ -42,6 +42,11 @@ export class DocumentController {
       authenticationType: 'HIGH',
     })
 
+    if (!rawDocumentDTO) {
+      res.end()
+      return
+    }
+
     const pdf = rawDocumentDTO.content ?? ''
 
     const stream = new ReadableStreamBuffer({
@@ -62,5 +67,6 @@ export class DocumentController {
 
     stream.pipe(res)
     stream.stop()
+    return
   }
 }
