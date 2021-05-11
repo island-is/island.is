@@ -4,8 +4,11 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-import { Person } from '@island.is/application/templates/joint-custody-agreement'
-import { NationalRegistry, DataProviderTypes } from '../types'
+import {
+  Person,
+  NationalRegistry,
+} from '@island.is/application/templates/family-matters'
+import { DataProviderTypes } from '../types'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry

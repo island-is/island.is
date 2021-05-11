@@ -23,10 +23,8 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
-import {
-  CRCApplication,
-  getSelectedChildrenFromExternalData,
-} from '@island.is/application/templates/children-residence-change'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 
 @Injectable()
 export class FileService {

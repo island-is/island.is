@@ -1,8 +1,8 @@
 import React from 'react'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters'
 import { contractRejected } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractRejectedContainer, DescriptionText } from '../components'
-import { getSelectedChildrenFromExternalData } from '../..'
 
 const ContractRejected = ({ application }: CRCFieldBaseProps) => {
   const { answers, externalData } = application

@@ -1,3 +1,4 @@
+import { assign } from 'xstate'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -8,10 +9,9 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
-import { getSelectedChildrenFromExternalData } from './utils'
 import { Roles, ApplicationStates } from './constants'
 import { application } from './messages'
 

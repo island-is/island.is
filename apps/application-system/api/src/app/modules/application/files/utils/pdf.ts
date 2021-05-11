@@ -8,8 +8,8 @@ import {
   formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
-  CRCApplication,
-} from '@island.is/application/templates/children-residence-change'
+} from '@island.is/application/templates/family-matters'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
@@ -43,7 +43,10 @@ export async function generateResidenceChangePdf(
     selectedChildren,
   )
   const otherParent = childrenAppliedFor[0].otherParent
-  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+  const childResidenceInfo = childrenResidenceInfo(
+    applicant,
+    answers.selectedChildren,
+  )
   const currentParent = childResidenceInfo.current
   const futureParent = childResidenceInfo.future
 

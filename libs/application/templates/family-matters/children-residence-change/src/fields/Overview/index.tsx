@@ -9,9 +9,9 @@ import {
   UPLOAD_SIGNED_FILE,
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
-import { getSelectedChildrenFromExternalData } from '../../lib/utils'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters'
 import * as m from '../../lib/messages'
-import { ApplicationStates, Roles } from '../../lib/constants'
+import { ApplicationStates } from '../../lib/constants'
 import { ContractOverview, DescriptionText } from '../components'
 import {
   fileSignatureReducer,

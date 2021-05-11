@@ -7,12 +7,12 @@ import {
   PersonType,
 } from '@island.is/api/domains/syslumenn'
 import {
-  CRCApplication,
   Override,
   getSelectedChildrenFromExternalData,
   formatDate,
   childrenResidenceInfo,
-} from '@island.is/application/templates/children-residence-change'
+} from '@island.is/application/templates/family-matters'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -62,7 +62,10 @@ export class ChildrenResidenceChangeService {
 
     const otherParent = selectedChildren[0].otherParent
 
-    const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+    const childResidenceInfo = childrenResidenceInfo(
+      applicant,
+      answers.selectedChildren,
+    )
     const currentAddress = childResidenceInfo.current.address
 
     if (!fileContent) {

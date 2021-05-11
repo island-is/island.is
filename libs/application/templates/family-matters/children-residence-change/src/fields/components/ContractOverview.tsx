@@ -2,7 +2,10 @@ import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { CRCApplication } from '../../types'
 import { useIntl } from 'react-intl'
-import { childrenResidenceInfo, formatDate } from '../..'
+import {
+  childrenResidenceInfo,
+  formatDate,
+} from '@island.is/application/templates/family-matters'
 import * as m from '../../lib/messages'
 import DescriptionText from './DescriptionText'
 import TransferOverview from './TransferOverview'
@@ -16,7 +19,10 @@ const ContractOverview = ({ application }: Props) => {
   const { formatMessage } = useIntl()
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
-  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+  const childResidenceInfo = childrenResidenceInfo(
+    applicant,
+    answers.selectedChildren,
+  )
   const parentKey =
     application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 

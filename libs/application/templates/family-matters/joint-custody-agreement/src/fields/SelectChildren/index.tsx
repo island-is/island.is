@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
+import {
+  formatAddress,
+  Child,
+  Address,
+} from '@island.is/application/templates/family-matters'
 import { selectChildren } from '../../lib/messages'
-import { formatAddress } from '../../lib/utils'
-import { JCAFieldBaseProps, Child, Address } from '../../types'
+import { JCAFieldBaseProps } from '../../types'
 import { DescriptionText, InfoBanner } from '../components'
 
 const allChildrenLiveWithBothParents = (

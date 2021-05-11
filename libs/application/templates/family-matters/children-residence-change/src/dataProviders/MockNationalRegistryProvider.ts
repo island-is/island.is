@@ -5,8 +5,11 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
-import { NationalRegistry, DataProviderTypes, CRCApplication } from '../types'
+import {
+  Person,
+  NationalRegistry,
+} from '@island.is/application/templates/family-matters'
+import { DataProviderTypes, CRCApplication } from '../types'
 
 export class MockNationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.MockNationalRegistry
@@ -47,9 +50,7 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(
-    result: PersonResidenceChange,
-  ): SuccessfulDataProviderResult {
+  onProvideSuccess(result: Person): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

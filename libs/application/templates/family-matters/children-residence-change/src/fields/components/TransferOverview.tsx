@@ -6,7 +6,7 @@ import {
   childrenResidenceInfo,
   formatAddress,
   getSelectedChildrenFromExternalData,
-} from '../..'
+} from '@island.is/application/templates/family-matters'
 import { contract } from '../../lib/messages'
 
 interface Props {
@@ -17,7 +17,10 @@ const TransferOverview = ({ application }: Props) => {
   const { formatMessage } = useIntl()
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
-  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+  const childResidenceInfo = childrenResidenceInfo(
+    applicant,
+    answers.selectedChildren,
+  )
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
     answers.selectedChildren,

@@ -1,8 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text, InputError } from '@island.is/island-ui/core'
+import { getOtherParentInformation } from '@island.is/application/templates/family-matters'
 import { contactInfo } from '../../lib/messages'
-import { getOtherParentInformation } from '../../lib/utils'
 import { JCAFieldBaseProps } from '../../types'
 import { ContactInfoRow, DescriptionText, InfoBanner } from '../components'
 

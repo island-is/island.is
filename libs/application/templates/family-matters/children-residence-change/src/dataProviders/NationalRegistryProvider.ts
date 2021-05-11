@@ -4,8 +4,11 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
-import { NationalRegistry, DataProviderTypes } from '../types'
+import {
+  Person,
+  NationalRegistry,
+} from '@island.is/application/templates/family-matters'
+import { DataProviderTypes } from '../types'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
@@ -88,9 +91,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(
-    result: PersonResidenceChange,
-  ): SuccessfulDataProviderResult {
+  onProvideSuccess(result: Person): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

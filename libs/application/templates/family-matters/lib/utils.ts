@@ -1,12 +1,6 @@
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
-import {
-  Address,
-  Answers,
-  Child,
-  NationalRegistry,
-  PersonResidenceChange,
-} from '../types'
+import { Address, Child, NationalRegistry, Person } from '../types'
 
 export const formatAddress = (address: Address) => {
   if (!address) {
@@ -32,7 +26,7 @@ const extractParentInfo = ({
   address,
   fullName,
   nationalId,
-}: NationalRegistry | PersonResidenceChange): ChildrenResidenceInfo => {
+}: NationalRegistry | Person): ChildrenResidenceInfo => {
   return {
     nationalId,
     address,
@@ -42,14 +36,14 @@ const extractParentInfo = ({
 
 export const childrenResidenceInfo = (
   applicant: NationalRegistry,
-  answers: Answers,
+  selectedChildren: string[],
 ): {
   current: ChildrenResidenceInfo
   future: ChildrenResidenceInfo
 } => {
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
-    answers.selectedChildren,
+    selectedChildren,
   )
   const parentB = children[0].otherParent
   const childrenLiveWithApplicant = children.some(
@@ -73,4 +67,15 @@ export const formatDate = (date: string) => {
   } catch {
     return date
   }
+}
+
+export const getOtherParentInformation = (
+  children: Child[],
+  selectedChildren: string[],
+): Person => {
+  const selected = getSelectedChildrenFromExternalData(
+    children,
+    selectedChildren,
+  )
+  return selected?.[0]?.otherParent
 }
