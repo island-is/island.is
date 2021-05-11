@@ -1,5 +1,7 @@
+import * as RSBStyles from './RegulationsSidebarBox.treat'
+import * as s from './RegulationInfoBox.treat'
+
 import React, { useState } from 'react'
-import * as s from './RegulationsSidebarBox.treat'
 import { Button, Hidden, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from './Regulations.types'
@@ -23,13 +25,22 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
 
-  const [showCopyCheckmark, setShowCopyCheckmark] = useState(false)
-  const showCopyCheck = () => {
-    setShowCopyCheckmark(true)
+  const [showCopyCheckmark, setShowCopyCheckmark] = useState<
+    NodeJS.Timeout | false
+  >(false)
 
-    setTimeout(() => {
-      setShowCopyCheckmark(false)
-    }, 750)
+  const showCopyCheck = () => {
+    setShowCopyCheckmark((showCopyCheckmark) => {
+      if (showCopyCheckmark) {
+        clearTimeout(showCopyCheckmark)
+        setShowCopyCheckmark(false)
+        return setTimeout(showCopyCheck, 100)
+      }
+
+      return setTimeout(() => {
+        setShowCopyCheckmark(false)
+      }, 2000)
+    })
   }
 
   return (
@@ -41,7 +52,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             <RegulationsSidebarLink
               href={linkToRegulationSearch({ rn: ministry.slug })}
             >
-              <span className={s.smallText}>{ministry.name}</span>
+              <span className={RSBStyles.smallText}>{ministry.name}</span>
             </RegulationsSidebarLink>
           </li>
         </ul>
@@ -56,7 +67,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
                 <RegulationsSidebarLink
                   href={linkToRegulationSearch({ ch: chapter.slug })}
                 >
-                  <span className={s.smallText}>{chapter.name}</span>
+                  <span className={RSBStyles.smallText}>{chapter.name}</span>
                 </RegulationsSidebarLink>
               </li>
             ))}
@@ -68,7 +79,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         <Text marginBottom={2}>
           <strong>{txt('infoboxEffectiveDate')}:</strong>
           <br />
-          <span className={s.smallText}>
+          <span className={RSBStyles.smallText}>
             {formatDate(regulation.effectiveDate)}
           </span>
         </Text>
@@ -78,7 +89,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         <Text marginBottom={3}>
           <strong>{txt('infoboxRepealed')}:</strong>
           <br />
-          <span className={s.smallText}>
+          <span className={RSBStyles.smallText}>
             {formatDate(regulation.repealedDate)}
           </span>
         </Text>
@@ -87,7 +98,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
           <Text marginBottom={3}>
             <strong>{txt('infoboxLastAmended')}:</strong>
             <br />
-            <span className={s.smallText}>
+            <span className={RSBStyles.smallText}>
               {formatDate(regulation.lastAmendDate)}
             </span>
           </Text>
@@ -128,8 +139,12 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               // TODO: Incorporte this key into namespace once this part of the UI is final
               txt('copyLink', 'Afrita hlekk á reglugerð')
             }
-          </Button>
-          {showCopyCheckmark && ' ✔'}
+          </Button>{' '}
+          {showCopyCheckmark && (
+            <span className={s.copiedIndicator} aria-hidden="true">
+              ✔
+            </span>
+          )}
         </Text>
       </Hidden>
     </RegulationsSidebarBox>
