@@ -105,21 +105,21 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'otherParent',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
+          condition: (answers, externalData) => {
+            const selectedChild = getSelectedChild(answers, externalData)
+
+            if (selectedChild !== null) {
+              return selectedChild.parentalRelation === 'primary'
+            }
+
+            return true
+          },
           children: [
             buildMultiField({
               id: 'otherParent',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
-
-                if (selectedChild !== null) {
-                  return selectedChild.parentalRelation === 'primary'
-                }
-
-                return true
-              },
               children: [
                 buildRadioField({
                   id: 'otherParent',
