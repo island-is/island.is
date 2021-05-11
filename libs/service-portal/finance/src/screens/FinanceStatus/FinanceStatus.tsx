@@ -1,5 +1,6 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
@@ -32,10 +33,11 @@ const GetFinanceStatusDetailsQuery = gql`
   }
 `
 
-const FinanceStatus = () => {
+const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
+  console.log('kennitala:: ', userInfo.profile.nationalId)
   const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery, {
     variables: {
       nationalID: '2704685439',
@@ -116,7 +118,6 @@ const FinanceStatus = () => {
             </Box>
           </Column>
         </Columns>
-        {/* {loading ? <span>loading...</span> : null} */}
         {loading ? (
           <Box padding={3}>
             <SkeletonLoader space={1} height={40} repeat={5} />
@@ -126,8 +127,8 @@ const FinanceStatus = () => {
           <Box marginTop={2}>
             <GridLineHeader />
             {financeStatusData.organizations.map(
-              (org: FinanceStatusOrganizationType, i: number) => (
-                <ExpandableLine key={i} organization={org} />
+              (org: FinanceStatusOrganizationType) => (
+                <ExpandableLine key={org.id} organization={org} />
               ),
             )}
           </Box>
