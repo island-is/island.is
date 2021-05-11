@@ -2,9 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { terms } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
 
 const Terms = ({ field, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field

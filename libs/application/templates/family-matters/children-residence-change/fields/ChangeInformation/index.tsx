@@ -6,9 +6,9 @@ import {
   formatAddress,
   childrenResidenceInfo,
 } from '@island.is/application/templates/family-matters/utils'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
 
 const ChangeInformation = ({
   field,

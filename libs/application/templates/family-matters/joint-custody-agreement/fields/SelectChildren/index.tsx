@@ -7,10 +7,12 @@ import {
   Address,
 } from '@island.is/application/templates/family-matters/types'
 import { formatAddress } from '@island.is/application/templates/family-matters/utils'
-import { DescriptionText } from '@island.is/application/templates/family-matters/components'
+import {
+  DescriptionText,
+  InfoBanner,
+} from '@island.is/application/templates/family-matters/components'
 import { selectChildren } from '../../lib/messages'
 import { JCAFieldBaseProps } from '../../types'
-import { InfoBanner } from '../components'
 
 const allChildrenLiveWithBothParents = (
   applicantAddress: Address,

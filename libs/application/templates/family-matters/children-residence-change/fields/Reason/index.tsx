@@ -2,9 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Input } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { reason } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
 
 const Reason = ({ application, field }: CRCFieldBaseProps) => {
   const { id } = field

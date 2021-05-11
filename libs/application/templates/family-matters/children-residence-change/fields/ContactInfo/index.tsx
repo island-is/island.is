@@ -2,9 +2,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text, InputError } from '@island.is/island-ui/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters/utils'
+import {
+  DescriptionText,
+  InfoBanner,
+} from '@island.is/application/templates/family-matters/components'
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { ContactInfoRow, DescriptionText, InfoBanner } from '../components'
+import { ContactInfoRow } from '../components'
 
 const emailId = 'parentA.email'
 const phoneNumberId = 'parentA.phoneNumber'

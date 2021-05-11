@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { rejectContract } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
 import * as style from '../Shared.treat'
 
 const RejectContract = ({ application }: CRCFieldBaseProps) => {

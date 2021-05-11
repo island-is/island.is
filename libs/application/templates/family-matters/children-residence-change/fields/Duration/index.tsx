@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
 import { useLocale } from '@island.is/localization'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { duration } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
 import { Box } from '@island.is/island-ui/core'
 import {
   DatePickerController,

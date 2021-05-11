@@ -6,8 +6,8 @@ import {
   childrenResidenceInfo,
   formatDate,
 } from '@island.is/application/templates/family-matters/utils'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import * as m from '../../lib/messages'
-import DescriptionText from './DescriptionText'
 import TransferOverview from './TransferOverview'
 import { Roles } from '../../lib/constants'
 

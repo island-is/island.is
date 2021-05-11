@@ -1,8 +1,8 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
+import { Text, Box } from '@island.is/island-ui/core'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { contractRejected } from '../../lib/messages'
-import DescriptionText from './DescriptionText'
 
 interface Props {
   children: React.ReactNode

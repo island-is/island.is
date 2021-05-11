@@ -1,8 +1,9 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { ContactInfoRow, DescriptionText } from '../components'
+import { ContactInfoRow } from '../components'
 
 const emailId = 'parentB.email'
 const phoneNumberId = 'parentB.phoneNumber'

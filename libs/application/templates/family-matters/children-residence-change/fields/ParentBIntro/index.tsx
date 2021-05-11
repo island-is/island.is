@@ -3,8 +3,9 @@ import { useIntl } from 'react-intl'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { parentBIntro } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText, TransferOverview } from '../components'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import { RadioController } from '@island.is/shared/form-fields'
+import { TransferOverview } from '../components'
 import { ApproveContract } from '../../lib/dataSchema'
 
 const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {

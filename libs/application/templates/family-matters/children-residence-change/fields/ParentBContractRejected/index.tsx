@@ -1,6 +1,7 @@
 import React from 'react'
 import { contractRejected } from '../../lib/messages'
-import { ContractRejectedContainer, DescriptionText } from '../components'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
+import { ContractRejectedContainer } from '../components'
 
 const ParentBContractRejected = () => {
   return (

@@ -7,9 +7,12 @@ import {
   Address,
 } from '@island.is/application/templates/family-matters/types'
 import { formatAddress } from '@island.is/application/templates/family-matters/utils'
+import {
+  DescriptionText,
+  InfoBanner,
+} from '@island.is/application/templates/family-matters/components'
 import { selectChildren } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText, InfoBanner } from '../components'
 
 const allChildrenLiveWithBothParents = (
   applicantAddress: Address,

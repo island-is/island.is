@@ -10,9 +10,10 @@ import {
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters/utils'
+import { DescriptionText } from '@island.is/application/templates/family-matters/components'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/constants'
-import { ContractOverview, DescriptionText } from '../components'
+import { ContractOverview } from '../components'
 import {
   fileSignatureReducer,
   initialFileSignatureState,

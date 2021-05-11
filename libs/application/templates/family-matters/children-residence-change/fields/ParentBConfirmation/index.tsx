@@ -1,12 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { parentBConfirmation } from '../../lib/messages'
 import {
   DescriptionText,
   BorderedAccordion,
-  ContractOverview,
-} from '../components'
+} from '@island.is/application/templates/family-matters/components'
+import { parentBConfirmation } from '../../lib/messages'
+import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
 const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {

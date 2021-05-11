@@ -1,13 +1,13 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { confirmation, copyUrl } from '../../lib/messages'
 import {
-  CopyUrl,
   DescriptionText,
   BorderedAccordion,
-  ContractOverview,
-} from '../components'
+  CopyUrl,
+} from '@island.is/application/templates/family-matters/components'
+import { confirmation, copyUrl } from '../../lib/messages'
+import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {

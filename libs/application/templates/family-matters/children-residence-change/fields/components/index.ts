@@ -1,8 +1,4 @@
 export { default as ContactInfoRow } from './ContactInfoRow'
-export { default as CopyUrl } from './CopyUrl'
-export { default as DescriptionText } from './DescriptionText'
-export { default as InfoBanner } from './InfoBanner'
 export { default as TransferOverview } from './TransferOverview'
-export { default as BorderedAccordion } from './BorderedAccordion'
 export { default as ContractOverview } from './ContractOverview'
 export { default as ContractRejectedContainer } from './ContractRejectedContainer'
