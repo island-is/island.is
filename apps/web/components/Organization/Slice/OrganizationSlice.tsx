@@ -61,6 +61,10 @@ const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
 
+const MailingListSignupSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -107,6 +111,8 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
           fullWidth={fullWidth}
         />
       )
+    case 'MailingListSignupSlice':
+      return <MailingListSignupSlice slice={slice} namespace={namespace} />
     default:
       return <RichText body={[slice]} />
   }
