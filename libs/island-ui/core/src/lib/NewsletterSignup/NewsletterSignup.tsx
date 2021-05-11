@@ -85,7 +85,7 @@ export const NewsletterSignup: React.FC<Props> = ({
             label={label}
             type="email"
             hasError={state === 'error'}
-            icon={state === 'success' ? 'checkmarkCircle' : undefined}
+            icon={state === 'success' ? 'checkmark' : undefined}
             onChange={onChange}
           />
           <Hidden above="sm">
