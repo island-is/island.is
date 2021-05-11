@@ -107,15 +107,15 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
       },
       [States.IN_REVIEW]: {
-        //entry: 'assignToSupremeCourt',
-        //exit: 'clearAssignees',
+        entry: 'assignToSupremeCourt',
+        exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
-          /*onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignToSupremeCourt,
-          },*/
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignSupremeCourt,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,

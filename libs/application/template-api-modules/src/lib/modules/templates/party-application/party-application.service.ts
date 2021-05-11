@@ -3,6 +3,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { Constituencies } from '@island.is/application/templates/party-application'
 
+import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
+
 enum EndorsementListTagsEnum {
   partyLetter2021,
   partyLetterNordausturkjordaemi2021,
@@ -38,6 +40,13 @@ export class PartyApplicationService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      generateAssignSupremeCourtApplicationEmail,
+      application,
+    )
+  }
 
   async createEndorsementList({
     application,
