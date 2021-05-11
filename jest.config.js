@@ -153,5 +153,6 @@ module.exports = {
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
+    '<rootDir>/libs/service-portal/settings/access-control',
   ],
 }
