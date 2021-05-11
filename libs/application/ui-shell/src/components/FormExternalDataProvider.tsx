@@ -31,19 +31,26 @@ const ProviderItem: FC<{
 }> = ({ dataProviderResult = {}, provider }) => {
   const { subTitle, title } = provider
   const { formatMessage } = useLocale()
+
   return (
     <Box marginBottom={3}>
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
+
       {subTitle && (
         <Text>
           <Markdown>{formatMessage(subTitle)}</Markdown>
         </Text>
       )}
+
       {provider.type && dataProviderResult?.status === 'failure' && (
         <InputError
-          errorMessage={dataProviderResult?.reason}
+          errorMessage={
+            typeof dataProviderResult?.reason === 'object'
+              ? formatMessage(dataProviderResult?.reason)
+              : dataProviderResult?.reason
+          }
           id={provider.id}
         />
       )}
