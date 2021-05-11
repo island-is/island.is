@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import * as styles from './AppealSection.treat'
+import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {
   rulingDate: string
@@ -56,19 +57,33 @@ const AppealSection: React.FC<Props> = (props) => {
         <AnimatePresence>
           {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
             !accusedPostponedAppealDate && (
-              <motion.div
-                key="prosecutorAppealButton"
-                className={styles.prosecutorAppealButton}
-                initial={false}
-                exit={{ y: 50, opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Button size="small" onClick={handleAccusedAppeal}>
-                  {`${capitalize(
-                    formatAccusedByGender(accusedGender),
-                  )} kærir úrskurðinn`}
-                </Button>
-              </motion.div>
+              <>
+                <DateTime
+                  name="prosecutorAppealDate"
+                  maxDate={new Date()}
+                  selectedDate={
+                    prosecutorPostponedAppealDate
+                      ? new Date(prosecutorPostponedAppealDate)
+                      : undefined
+                  }
+                  onChange={() => console.log('here')}
+                  size="sm"
+                  blueBox={false}
+                />
+                <motion.div
+                  key="prosecutorAppealButton"
+                  className={styles.prosecutorAppealButton}
+                  initial={false}
+                  exit={{ y: 50, opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <Button onClick={handleAccusedAppeal}>
+                    {`${capitalize(
+                      formatAccusedByGender(accusedGender),
+                    )} kærir úrskurðinn`}
+                  </Button>
+                </motion.div>
+              </>
             )}
         </AnimatePresence>
 

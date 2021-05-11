@@ -366,26 +366,24 @@ export const SignedVerdictOverview: React.FC = () => {
               workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR) && (
-                <GridColumn span="11/12">
-                  <Box marginBottom={7}>
-                    <AppealSection
-                      rulingDate={workingCase.rulingDate}
-                      accusedGender={workingCase.accusedGender}
-                      accusedAppealDecision={workingCase.accusedAppealDecision}
-                      prosecutorAppealDecision={
-                        workingCase.prosecutorAppealDecision
-                      }
-                      accusedPostponedAppealDate={
-                        workingCase.accusedPostponedAppealDate
-                      }
-                      prosecutorPostponedAppealDate={
-                        workingCase.prosecutorPostponedAppealDate
-                      }
-                      handleAccusedAppeal={handleAccusedAppeal}
-                      handleProsecutorAppeal={handleProsecutorAppeal}
-                    />
-                  </Box>
-                </GridColumn>
+                <Box marginBottom={7}>
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedAppealDecision={workingCase.accusedAppealDecision}
+                    prosecutorAppealDecision={
+                      workingCase.prosecutorAppealDecision
+                    }
+                    accusedPostponedAppealDate={
+                      workingCase.accusedPostponedAppealDate
+                    }
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    handleProsecutorAppeal={handleProsecutorAppeal}
+                  />
+                </Box>
               )}
             <Box marginBottom={5}>
               <Accordion>
