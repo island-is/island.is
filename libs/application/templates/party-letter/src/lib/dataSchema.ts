@@ -17,22 +17,20 @@ export const PartyLetterSchema = z.object({
   ssd: z.string().refine((p) => {
     return p.trim().length > 0
   }, m.validationMessages.ssd.defaultMessage as string),
-  party: z.object({
-    letter: z
-      .string()
-      .refine((p) => {
-        return p.trim().length === 1
-      }, m.validationMessages.partyLetterSingle.defaultMessage as string)
-      .refine((p) => {
-        return ACTIVE_PARTIES.filter((x) => p === x.letter).length === 0
-      }, m.validationMessages.partyLetterOccupied.defaultMessage as string),
-    name: z
-      .string()
-      .refine(
-        (p) => p.trim().length > 0,
-        m.validationMessages.partyName.defaultMessage as string,
-      ),
-  }),
+  partyLetter: z
+    .string()
+    .refine((p) => {
+      return p.trim().length === 1
+    }, m.validationMessages.partyLetterSingle.defaultMessage as string)
+    .refine((p) => {
+      return ACTIVE_PARTIES.filter((x) => p === x.letter).length === 0
+    }, m.validationMessages.partyLetterOccupied.defaultMessage as string),
+  partyName: z
+    .string()
+    .refine(
+      (p) => p.trim().length > 0,
+      m.validationMessages.partyName.defaultMessage as string,
+    ),
   includePapers: z.array(z.string()).optional(),
   email: z
     .string()
