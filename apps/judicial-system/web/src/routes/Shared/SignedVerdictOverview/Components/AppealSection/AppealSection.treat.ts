@@ -6,7 +6,8 @@ export const prosecutorAppealButton = style({
 })
 
 export const buttonContainer = style({
-  marginBottom: theme.spacing[2],
+  maxHeight: 112,
+  marginBottom: theme.spacing[3],
 })
 
 export const appealInnerWrapper = style({

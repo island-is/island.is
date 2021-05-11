@@ -193,6 +193,20 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleAccusedAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, {
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+    }
+  }
+
   const handleProsecutorAppeal = (date?: Date) => {
     if (workingCase && date) {
       setWorkingCase({
@@ -382,6 +396,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     }
                     handleAccusedAppeal={handleAccusedAppeal}
                     handleProsecutorAppeal={handleProsecutorAppeal}
+                    handleAccusedAppealDismissal={handleAccusedAppealDismissal}
                   />
                 </Box>
               )}

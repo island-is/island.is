@@ -25,6 +25,7 @@ interface Props {
   prosecutorAppealDecision?: CaseAppealDecision
   handleAccusedAppeal: (date?: Date) => void
   handleProsecutorAppeal: (date?: Date) => void
+  handleAccusedAppealDismissal?: () => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
 }
@@ -39,6 +40,7 @@ const AppealSection: React.FC<Props> = (props) => {
     prosecutorPostponedAppealDate,
     handleAccusedAppeal,
     handleProsecutorAppeal,
+    handleAccusedAppealDismissal,
   } = props
   const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
@@ -46,11 +48,6 @@ const AppealSection: React.FC<Props> = (props) => {
   const appealDateVariants = {
     visible: { y: 0, opacity: 1 },
     hidden: { y: 60, opacity: 0 },
-  }
-
-  const testDateVariants = {
-    visible: { height: 60 },
-    hidden: { height: 112 },
   }
 
   return (
@@ -63,15 +60,7 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <motion.div
-        className={styles.buttonContainer}
-        variants={testDateVariants}
-        animate={
-          accusedPostponedAppealDate
-            ? testDateVariants.visible
-            : testDateVariants.hidden
-        }
-      >
+      <div className={styles.buttonContainer}>
         <AnimatePresence>
           {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
             !accusedPostponedAppealDate && (
@@ -126,11 +115,11 @@ const AppealSection: React.FC<Props> = (props) => {
               accusedPostponedAppealDate,
               'PPPp',
             )}`}
-            onDismiss={() => console.log('gere')}
+            onDismiss={handleAccusedAppealDismissal}
             fluid
           />
         </motion.div>
-      </motion.div>
+      </div>
       <div className={styles.buttonContainer}>
         <AnimatePresence>
           {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
