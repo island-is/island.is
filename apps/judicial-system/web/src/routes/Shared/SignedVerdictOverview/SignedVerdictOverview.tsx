@@ -22,7 +22,7 @@ import {
   Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
@@ -179,30 +179,30 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleAccusedAppeal = () => {
-    if (workingCase) {
+  const handleAccusedAppeal = (date?: Date) => {
+    if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
-        accusedPostponedAppealDate: formatISO(new Date()),
+        accusedPostponedAppealDate: formatISO(date),
       })
 
       updateCase(
         workingCase.id,
-        parseString('accusedPostponedAppealDate', formatISO(new Date())),
+        parseString('accusedPostponedAppealDate', formatISO(date)),
       )
     }
   }
 
-  const handleProsecutorAppeal = () => {
-    if (workingCase) {
+  const handleProsecutorAppeal = (date?: Date) => {
+    if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
-        prosecutorPostponedAppealDate: formatISO(new Date()),
+        prosecutorPostponedAppealDate: formatISO(date),
       })
 
       updateCase(
         workingCase.id,
-        parseString('prosecutorPostponedAppealDate', formatISO(new Date())),
+        parseString('prosecutorPostponedAppealDate', formatISO(date)),
       )
     }
   }

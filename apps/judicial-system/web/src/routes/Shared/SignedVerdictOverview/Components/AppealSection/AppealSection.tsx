@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -23,8 +23,8 @@ interface Props {
   accusedGender: CaseGender
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  handleAccusedAppeal: () => void
-  handleProsecutorAppeal: () => void
+  handleAccusedAppeal: (date?: Date) => void
+  handleProsecutorAppeal: (date?: Date) => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
 }
@@ -40,10 +40,17 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppeal,
     handleProsecutorAppeal,
   } = props
+  const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
+  const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
 
   const appealDateVariants = {
     visible: { y: 0, opacity: 1 },
     hidden: { y: 60, opacity: 0 },
+  }
+
+  const testDateVariants = {
+    visible: { height: 60 },
+    hidden: { height: 112 },
   }
 
   return (
@@ -56,7 +63,15 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <div className={styles.buttonContainer}>
+      <motion.div
+        className={styles.buttonContainer}
+        variants={testDateVariants}
+        animate={
+          accusedPostponedAppealDate
+            ? testDateVariants.visible
+            : testDateVariants.hidden
+        }
+      >
         <AnimatePresence>
           {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
             !accusedPostponedAppealDate && (
@@ -68,7 +83,7 @@ const AppealSection: React.FC<Props> = (props) => {
                 transition={{ duration: 0.4 }}
               >
                 <BlueBox>
-                  <div className={styles.test}>
+                  <div className={styles.appealInnerWrapper}>
                     <DateTime
                       name="accusedAppealDate"
                       maxDate={new Date()}
@@ -77,11 +92,14 @@ const AppealSection: React.FC<Props> = (props) => {
                           ? new Date(accusedPostponedAppealDate)
                           : undefined
                       }
-                      onChange={(date) => console.log(date)}
+                      onChange={(date) => setAccusedAppealDate(date)}
                       size="sm"
                       blueBox={false}
                     />
-                    <Button onClick={handleAccusedAppeal}>
+                    <Button
+                      onClick={() => handleAccusedAppeal(accusedAppealDate)}
+                      disabled={!Boolean(accusedAppealDate)}
+                    >
                       {`${capitalize(
                         formatAccusedByGender(accusedGender),
                       )} kærir`}
@@ -108,10 +126,11 @@ const AppealSection: React.FC<Props> = (props) => {
               accusedPostponedAppealDate,
               'PPPp',
             )}`}
+            onDismiss={() => console.log('gere')}
             fluid
           />
         </motion.div>
-      </div>
+      </motion.div>
       <div className={styles.buttonContainer}>
         <AnimatePresence>
           {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
@@ -124,7 +143,7 @@ const AppealSection: React.FC<Props> = (props) => {
                 transition={{ duration: 0.4 }}
               >
                 <BlueBox>
-                  <div className={styles.test}>
+                  <div className={styles.appealInnerWrapper}>
                     <DateTime
                       name="prosecutorAppealDate"
                       maxDate={new Date()}
@@ -133,11 +152,16 @@ const AppealSection: React.FC<Props> = (props) => {
                           ? new Date(prosecutorPostponedAppealDate)
                           : undefined
                       }
-                      onChange={(date) => console.log(date)}
+                      onChange={(date) => setProsecutorAppealDate(date)}
                       size="sm"
                       blueBox={false}
                     />
-                    <Button size="small" onClick={handleProsecutorAppeal}>
+                    <Button
+                      onClick={() =>
+                        handleProsecutorAppeal(prosecutorAppealDate)
+                      }
+                      disabled={!Boolean(prosecutorAppealDate)}
+                    >
                       Sækjandi kærir
                     </Button>
                   </div>
