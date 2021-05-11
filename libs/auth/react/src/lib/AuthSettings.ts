@@ -44,6 +44,9 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
   const redirectPathSilent =
     settings.redirectPathSilent ?? '/auth/callback-silent'
 
+  // Many Open ID Connect features only work when on the same domain as the IDS (with first party cookies)
+  const onIdsDomain = /(is|dev)land.is$/.test(window.location.origin)
+
   return {
     baseUrl,
     redirectPath,
@@ -55,7 +58,7 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     response_type: 'code',
     revokeAccessTokenOnSignout: true,
     loadUserInfo: true,
-    monitorSession: true,
+    monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
       store: window.sessionStorage,
       prefix: settings.userStorePrefix,
