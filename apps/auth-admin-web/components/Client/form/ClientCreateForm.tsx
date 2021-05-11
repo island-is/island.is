@@ -23,7 +23,13 @@ interface FormOutput {
 }
 
 const ClientCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    setValue,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -164,34 +170,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
-      if (clientType === 'spa') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('spa'))
+      if (clientType === 'spa' || clientType === 'native') {
+        setValue('client.requireClientSecret', false)
+        setValue('client.requirePkce', true)
       }
 
-      if (clientType === 'native') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('native'))
+      if (clientType === 'web' || clientType === 'machine') {
+        setValue('client.requireClientSecret', true)
+        setValue('client.requirePkce', false)
       }
 
-      if (clientType === 'web') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('web'))
-      }
-
-      if (clientType === 'machine') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('machine'))
-      }
-
+      setClientTypeInfo(getClientTypeHTML(clientType))
       setClientTypeSelected(true)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
