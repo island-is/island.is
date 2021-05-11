@@ -129,6 +129,9 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
     [],
   ) as unknown[]
 
+  console.log('answers in reducer', answers)
+  console.log('repeater values', repeaterValues)
+
   // we add an empty object to the repeater array to ensure that new screens will be added
   const newAnswers = mergeAnswers(answers, {
     [repeater.id]: [...repeaterValues, {}],

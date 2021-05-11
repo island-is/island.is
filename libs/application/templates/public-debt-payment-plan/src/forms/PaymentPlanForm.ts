@@ -12,12 +12,14 @@ import {
   buildTextField,
   buildCheckboxField,
   buildRadioField,
+  buildRepeater,
 } from '@island.is/application/core'
 import { Prerequisites } from '../dataProviders/tempAPITypes'
 import { PublicDebtPaymentPlan } from '../lib/dataSchema'
 import { section, application, employer } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
 import { info } from '../lib/messages/info'
+import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 
@@ -206,13 +208,20 @@ export const PaymentPlanForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'paymentPlan',
+      id: 'paymentPlanSection',
       title: section.paymentPlan,
       children: [
-        buildDescriptionField({
-          id: 'mockDescriptionField4',
-          title: application.name,
-          description: 'Umsókn',
+        buildRepeater({
+          id: 'paymentPlans',
+          title: paymentPlan.general.pageTitle,
+          component: 'PaymentPlanList',
+          children: [
+            buildCustomField({
+              id: 'paymentPlan',
+              title: 'Payment Plan',
+              component: 'PaymentPlan',
+            }),
+          ],
         }),
       ],
     }),

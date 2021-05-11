@@ -256,6 +256,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
+                answerQuestions={answerQuestions}
                 onRemoveRepeaterItem={async (newRepeaterItems) => {
                   const newData = await updateApplication({
                     variables: {

@@ -61,6 +61,19 @@ export const PublicDebtPaymentPlanSchema = z.object({
     isCorrectInfo: z.enum([YES, NO]),
     correctedNationalId: z.string().optional(),
   }),
+  paymentPlanContext: z.object({
+    isFulfilled: z.boolean().refine((x) => x),
+    activePayment: z.string().optional(),
+  }),
+  paymentPlans: z.array(
+    z.object({
+      paymentPlan: z.object({
+        // id: z.string(),
+        // amount: z.string(),
+        monthsTest: z.string(),
+      }),
+    }),
+  ),
 })
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>
