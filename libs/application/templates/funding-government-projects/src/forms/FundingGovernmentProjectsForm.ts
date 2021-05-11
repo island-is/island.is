@@ -10,6 +10,7 @@ import {
   DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
+import { Logo } from '../assets/Logo'
 import {
   section,
   application,
@@ -26,22 +27,17 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
   title: application.name,
   mode: FormModes.APPLYING,
+  logo: Logo,
   children: [
     buildSection({
-      id: 'definitionOfApplicant',
-      title: section.definitionOfApplicant,
+      id: 'informationAboutInstitution',
+      title: section.informationAboutInstitution,
       children: [
         buildCustomField({
           id: 'definitionOfApplicantField',
           title: definitionOfApplicant.general.pageTitle,
           component: 'DefinitionOfApplicant',
         }),
-      ],
-    }),
-    buildSection({
-      id: 'informationAboutInstitution',
-      title: section.informationAboutInstitution,
-      children: [
         buildMultiField({
           id: 'informationAboutInstitutionMultiField',
           title:
@@ -149,12 +145,12 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
         buildMultiField({
           id: 'overviewMultifield',
           title: overview.general.pageTitle,
-          description: overview.general.pageTitle.description,
+          description: overview.general.pageDescription,
           children: [
             buildCustomField({
               id: 'overviewCustomField',
               title: overview.general.pageTitle,
-              description: overview.general.pageTitle.description,
+              description: overview.general.pageDescription,
               component: 'Overview',
             }),
             buildSubmitField({

@@ -6,6 +6,7 @@ import { HealthInsuranceModule } from './health-insurance/health-insurance.modul
 import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
 import { LoginServiceModule } from './login-service/login-service.module'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
+import { PartyLetterModule } from './party-letter/party-letter.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -16,6 +17,7 @@ export const modules = [
   ChildrenResidenceChangeModule,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
+  PartyLetterModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -26,3 +28,4 @@ export { HealthInsuranceService } from './health-insurance/health-insurance.serv
 export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 export { LoginServiceService } from './login-service/login-service.service'
 export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
+export { PartyLetterService } from './party-letter/party-letter.service'

@@ -4,6 +4,7 @@ import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
 import { getValueViaPath } from '@island.is/application/core'
 import { FundingAttachment, NodemailAttachment } from '../types'
+import { FundingGovernmentProjectsAnswers } from '@island.is/application/templates/funding-government-projects'
 
 interface ConfirmationEmail {
   (
@@ -27,17 +28,16 @@ export const generateConfirmationEmail: ConfirmationEmail = (
 
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'organizationOrInstitutionName',
   )
 
-  const contactEmail = getValueViaPath(application.answers, 'contact.email')
-  const contactName = getValueViaPath(application.answers, 'contact.name')
+  const answers = application.answers as FundingGovernmentProjectsAnswers
 
-  const secondaryContactEmail =
-    getValueViaPath(application.answers, 'secondaryContact.email') || ''
-
-  const secondaryContactName =
-    getValueViaPath(application.answers, 'secondaryContact.name') || ''
+  const contacts = answers.contacts.map((contact) => ({
+    name: contact.name,
+    address: contact.email,
+  }))
+  const [, ...additionalContacts] = contacts
 
   const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
   const overview = applicationOverviewTemplate(application)
@@ -67,16 +67,8 @@ export const generateConfirmationEmail: ConfirmationEmail = (
       name: applicationSenderName,
       address: applicationSenderEmail,
     },
-    to: [
-      {
-        name: contactName as string,
-        address: contactEmail as string,
-      },
-    ],
-    cc: {
-      name: secondaryContactName as string,
-      address: secondaryContactEmail as string,
-    },
+    to: contacts[0],
+    cc: additionalContacts || null,
     attachments: mailAttachments,
     subject,
     html: body,

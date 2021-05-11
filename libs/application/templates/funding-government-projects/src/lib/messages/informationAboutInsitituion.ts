@@ -46,6 +46,11 @@ export const informationAboutInstitution = {
       defaultMessage: 'Nafn á ráðuneyti eða stofnun',
       description: 'Information About Institution page title',
     },
+    contact: {
+      id: `affgp.application:section.informationAboutInstitution.contact`,
+      defaultMessage: 'Tengiliður',
+      description: 'Contact',
+    },
     contactAddPerson: {
       id: `affgp.application:section.informationAboutInstitution.contactAddPerson`,
       defaultMessage: 'Bæta við tengilið',
