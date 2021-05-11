@@ -5,9 +5,11 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
+  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -15,6 +17,7 @@ import {
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
+import { NO, YES } from '../constants'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
@@ -26,6 +29,65 @@ export const PrerequisitesForm: Form = buildForm({
       id: 'prerequisites',
       title: parentalLeaveFormMessages.shared.prerequisitesSection,
       children: [
+        buildSubSection({
+          id: 'mockData',
+          title: 'Gervigögn',
+          children: [
+            buildMultiField({
+              id: 'shouldMock',
+              title: 'Gervigögn',
+              children: [
+                buildRadioField({
+                  id: 'useMockData',
+                  title: 'Viltu nota gervigögn?',
+                  options: [
+                    {
+                      value: YES,
+                      label: 'Já',
+                    },
+                    {
+                      value: NO,
+                      label: 'Nei',
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'useMockedParentalRelation',
+                  title: 'Tengsl við barn:',
+                  condition: (answers) => answers.useMockData === YES,
+                  options: [
+                    {
+                      value: 'primary',
+                      label: 'Móðir',
+                    },
+                    {
+                      value: 'secondary',
+                      label: 'Hitt foreldri',
+                    },
+                  ],
+                }),
+                buildTextField({
+                  id: 'useMockedDateOfBirth',
+                  title: 'Áætlaður fæðingardagur:',
+                  condition: (answers) =>
+                    answers.useMockData === YES &&
+                    !!answers.useMockedParentalRelation,
+                  placeholder: 'YYYY-MM-DD',
+                  format: '####-##-##',
+                }),
+                buildTextField({
+                  id: 'useMockedPrimaryParentNationalRegistryId',
+                  title: 'Kennitala móður:',
+                  condition: (answers) =>
+                    answers.useMockData === YES &&
+                    answers.useMockedParentalRelation === 'secondary',
+                  placeholder: '1234567-7890',
+                  format: '######-####',
+                }),
+              ],
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'externalData',
           title: parentalLeaveFormMessages.shared.externalDataSubSection,

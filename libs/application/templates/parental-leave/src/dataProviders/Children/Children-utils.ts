@@ -74,6 +74,45 @@ export const applicationsToExistingChildApplication = (
   return result
 }
 
+export const getChildrenFromMockData = (
+  application: Application,
+): ChildrenAndExistingApplications => {
+  const parentalRelation = getValueViaPath(
+    application.answers,
+    'useMockedParentalRelation',
+  ) as ChildInformation['parentalRelation']
+  const dob = getValueViaPath(
+    application.answers,
+    'useMockedDateOfBirth',
+  ) as string
+  const primaryParentNationalRegistryId = getValueViaPath(
+    application.answers,
+    'useMockedPrimaryParentNationalRegistryId',
+  ) as string
+
+  const formattedDOB = `${dob.slice(0, 4)}-${dob.slice(4, 6)}-${dob.slice(
+    6,
+    8,
+  )}`
+
+  const child: ChildInformation =
+    parentalRelation === 'primary'
+      ? {
+          expectedDateOfBirth: formattedDOB,
+          parentalRelation: 'primary',
+        }
+      : {
+          expectedDateOfBirth: formattedDOB,
+          parentalRelation: 'secondary',
+          primaryParentNationalRegistryId,
+        }
+
+  return {
+    children: [child],
+    existingApplications: [],
+  }
+}
+
 export const getChildrenAndExistingApplications = (
   applicationsWhereApplicant: Application[],
   applicationsWhereOtherParent: Application[],

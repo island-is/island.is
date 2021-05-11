@@ -4,11 +4,15 @@ import {
   FailedDataProviderResult,
   Application,
   CustomTemplateFindQuery,
+  getValueViaPath,
 } from '@island.is/application/core'
 
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
-import { getChildrenAndExistingApplications } from './Children-utils'
-import { States } from '../../constants'
+import {
+  getChildrenAndExistingApplications,
+  getChildrenFromMockData,
+} from './Children-utils'
+import { NO, States, YES } from '../../constants'
 
 const pregnancyStatusQuery = `
   query ParentalLeavePregnancyStatusQuery {
@@ -25,6 +29,13 @@ export class Children extends BasicDataProvider {
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
   ): Promise<ChildrenAndExistingApplications> {
+    const useMockData =
+      getValueViaPath(application.answers, 'useMockData', NO) === YES
+
+    if (useMockData) {
+      return getChildrenFromMockData(application)
+    }
+
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
       await customTemplateFindQuery({
