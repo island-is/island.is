@@ -1,13 +1,11 @@
+import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
+
 import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  ServicePortalGlobalComponent,
 } from '@island.is/service-portal/core'
-import { USER_PROFILE } from '@island.is/service-portal/graphql'
-import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
-import * as Sentry from '@sentry/react'
 
 export const accessControlModule: ServicePortalModule = {
   name: 'Aðgangsstýring',
