@@ -18,7 +18,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
     import('@island.is/application/templates/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
-    import('@island.is/application/templates/children-residence-change'),
+    import(
+      '@island.is/application/templates/family-matters/children-residence-change'
+    ),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.PARTY_LETTER]: () =>
@@ -34,7 +36,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: () =>
     import('@island.is/application/templates/public-debt-payment-plan'),
   [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: () =>
-    import('@island.is/application/templates/joint-custody-agreement'),
+    import(
+      '@island.is/application/templates/family-matters/joint-custody-agreement'
+    ),
 }
 
 export default templates

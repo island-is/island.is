@@ -1737,7 +1737,7 @@
     },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
-      "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
+      "sourceRoot": "libs/application/templates/family-matters/children-residence-change",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1758,7 +1758,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2021,7 +2021,7 @@
     },
     "application-templates-joint-custody-agreement": {
       "root": "libs/application/templates/family-matters/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
+      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2042,7 +2042,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/**/*.{js,ts,tsx}'"
           }
         }
       }

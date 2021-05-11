@@ -7,12 +7,12 @@ import {
   PersonType,
 } from '@island.is/api/domains/syslumenn'
 import {
-  Override,
   getSelectedChildrenFromExternalData,
   formatDate,
   childrenResidenceInfo,
-} from '@island.is/application/templates/family-matters'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+} from '@island.is/application/templates/family-matters/utils'
+import { Override } from '@island.is/application/templates/family-matters/types'
+import { CRCApplication } from '@island.is/application/templates/family-matters/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
