@@ -55,6 +55,9 @@ export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
 
+  /** Type */
+  type: 'accordion' | 'CTA'
+
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
 }

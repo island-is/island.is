@@ -12,6 +12,9 @@ export class AccordionSlice {
   @Field()
   title?: string
 
+  @Field()
+  type!: string
+
   @Field(() => [OneColumnText], { nullable: true })
   accordionItems?: Array<OneColumnText>
 }
@@ -23,5 +26,6 @@ export const mapAccordionSlice = ({
   typename: 'AccordionSlice',
   id: sys.id,
   title: fields.title ?? '',
+  type: fields.type ?? '',
   accordionItems: (fields.accordionItems ?? []).map(mapOneColumnText),
 })
