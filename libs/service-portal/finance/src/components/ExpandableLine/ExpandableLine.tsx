@@ -20,41 +20,6 @@ interface Props {
   organization: FinanceStatusOrganizationType
 }
 
-const tableData = [
-  [
-    2202692289,
-    '2019/08',
-    '01.08.2019',
-    '30.08.2019',
-    '11.667 kr.',
-    '1.402 kr.',
-    '0 kr.',
-    '0 kr.',
-    '13.223 kr.',
-  ],
-  [
-    2202692289,
-    '2019/08',
-    '01.08.2019',
-    '30.08.2019',
-    '11.667 kr.',
-    '1.402 kr.',
-    '0 kr.',
-    '0 kr.',
-    '13.223 kr.',
-  ],
-  [
-    2202692289,
-    '2019/08',
-    '01.08.2019',
-    '30.08.2019',
-    '11.667 kr.',
-    '1.402 kr.',
-    '0 kr.',
-    '0 kr.',
-    '13.223 kr.',
-  ],
-]
 const ExpandableLine: FC<Props> = ({ organization }) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
@@ -66,6 +31,9 @@ const ExpandableLine: FC<Props> = ({ organization }) => {
       setClosed(false)
     }
   }, [])
+
+  const currencyKr = (kr: number) =>
+    typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
 
   return (
     <>
@@ -111,7 +79,7 @@ const ExpandableLine: FC<Props> = ({ organization }) => {
               overflow="hidden"
             >
               <Text variant="small">
-                {`${organization.statusTotals.toLocaleString('de-DE')} kr.`}
+                {currencyKr(organization.statusTotals)}
               </Text>
             </Box>
           </GridColumn>
@@ -150,58 +118,40 @@ const ExpandableLine: FC<Props> = ({ organization }) => {
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Gjaldgrunnur
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Ár og tímabil
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Gjalddagi
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Eindagi
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Höfuðstóll
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Vextir
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Kostnaður
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Greiðslur
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text fontWeight="semiBold" variant="small">
-                      Staða
-                    </Text>
-                  </T.HeadData>
+                  {[
+                    'Gjaldgrunnur',
+                    'Ár og tímabil',
+                    'Gjalddagi',
+                    'Eindagi',
+                    'Höfuðstóll',
+                    'Vextir',
+                    'Kostnaður',
+                    'Greiðslur',
+                    'Staða',
+                  ].map((item, i) => (
+                    <T.HeadData key={i} text={{ truncate: true }}>
+                      <Text fontWeight="semiBold" variant="small">
+                        {item}
+                      </Text>
+                    </T.HeadData>
+                  ))}
                 </T.Row>
               </T.Head>
               <T.Body>
-                {tableData.map((row, i) => (
-                  <T.Row key={i}>
-                    {row.map((item, ii) => (
-                      <T.Data key={ii}>
+                {organization.chargeTypes.map((row) => (
+                  <T.Row key={row.id}>
+                    {[
+                      '---',
+                      '---',
+                      '---',
+                      '---',
+                      currencyKr(row.principal),
+                      currencyKr(row.interest),
+                      currencyKr(row.cost),
+                      currencyKr(row.dueTotals),
+                      currencyKr(row.totals),
+                    ].map((item, i) => (
+                      <T.Data key={i} text={{ truncate: true }}>
                         <Text variant="small">{item}</Text>
                       </T.Data>
                     ))}
@@ -218,37 +168,46 @@ const ExpandableLine: FC<Props> = ({ organization }) => {
                 </Column>
               </Columns>
               <Box>
-                <Box display="inlineBlock" marginRight={2}>
-                  <Text variant="small" as="span">
-                    Heimasíða:
-                  </Text>{' '}
-                  <a href={`//${organization.homepage}`} target="_blank">
-                    <Text color="blue400" variant="small" as="span">
-                      {organization.homepage}
-                    </Text>
-                  </a>
-                </Box>
-                <Box display="inlineBlock" marginRight={2}>
-                  <Text variant="small" as="span">
-                    Netfang:
-                  </Text>{' '}
-                  <a href={`mailto:${organization['e-mail']}`} target="_blank">
-                    <Text color="blue400" variant="small" as="span">
-                      {organization['e-mail']}
-                    </Text>
-                  </a>
-                </Box>
-                {/* TODO: Format tel display and href */}
-                <Box display="inlineBlock">
-                  <Text variant="small" as="span">
-                    Sími:
-                  </Text>{' '}
-                  <a href={`tel:${organization.phone}`} target="_blank">
-                    <Text color="blue400" variant="small" as="span">
-                      {organization.phone}
-                    </Text>
-                  </a>
-                </Box>
+                {organization.homepage && (
+                  <Box display="inlineBlock" marginRight={2}>
+                    <Text variant="small" as="span">
+                      Heimasíða:
+                    </Text>{' '}
+                    <a href={`//${organization.homepage}`} target="_blank">
+                      <Text color="blue400" variant="small" as="span">
+                        {organization.homepage}
+                      </Text>
+                    </a>
+                  </Box>
+                )}
+                {organization['e-mail'] && (
+                  <Box display="inlineBlock" marginRight={2}>
+                    <Text variant="small" as="span">
+                      Netfang:
+                    </Text>{' '}
+                    <a
+                      href={`mailto:${organization['e-mail']}`}
+                      target="_blank"
+                    >
+                      <Text color="blue400" variant="small" as="span">
+                        {organization['e-mail']}
+                      </Text>
+                    </a>
+                  </Box>
+                )}
+                {/* TODO: Format tel display and href?? */}
+                {organization.phone && (
+                  <Box display="inlineBlock">
+                    <Text variant="small" as="span">
+                      Sími:
+                    </Text>{' '}
+                    <a href={`tel:${organization.phone}`} target="_blank">
+                      <Text color="blue400" variant="small" as="span">
+                        {organization.phone}
+                      </Text>
+                    </a>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Box>
