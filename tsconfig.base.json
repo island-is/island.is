@@ -130,6 +130,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/family-matters": [
+        "libs/application/templates/family-matters/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
