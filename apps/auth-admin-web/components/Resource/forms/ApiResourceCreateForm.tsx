@@ -140,7 +140,7 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: ValidationUtils.validateScope,
                     })}
                     id="name"
                     name="name"
