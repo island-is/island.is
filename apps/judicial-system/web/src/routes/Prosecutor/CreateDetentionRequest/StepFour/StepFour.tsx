@@ -89,6 +89,7 @@ export const StepFour: React.FC = () => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>

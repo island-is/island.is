@@ -212,8 +212,8 @@ export const SignedVerdictOverview: React.FC = () => {
       user?.role === UserRole.PROSECUTOR ||
       workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
       workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      !!workingCase?.accusedPostponedAppealDate ||
-      !!workingCase?.prosecutorPostponedAppealDate
+      Boolean(workingCase?.accusedPostponedAppealDate) ||
+      Boolean(workingCase?.prosecutorPostponedAppealDate)
     ) {
       return true
     } else {
