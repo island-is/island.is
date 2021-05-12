@@ -1,8 +1,11 @@
 import React from 'react'
 import cn from 'classnames'
+
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
+import { InputBackgroundColor } from '../Input/types'
+import { Box } from '../Box/Box'
 
 export interface RadioButtonProps {
   name?: string
@@ -17,6 +20,7 @@ export interface RadioButtonProps {
   errorMessage?: string
   filled?: boolean
   large?: boolean
+  backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
@@ -40,6 +44,7 @@ export const RadioButton = ({
   errorMessage,
   large,
   filled = false,
+  backgroundColor,
 }: RadioButtonProps) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -48,12 +53,14 @@ export const RadioButton = ({
         'aria-describedby': errorId,
       }
     : {}
+
   return (
-    <div
+    <Box
       className={cn(styles.container, {
         [styles.large]: large,
         [styles.filled]: filled,
       })}
+      background={backgroundColor === 'blue' ? 'blue100' : undefined}
     >
       <input
         className={styles.input}
@@ -116,6 +123,6 @@ export const RadioButton = ({
           </div>
         )}
       </label>
-    </div>
+    </Box>
   )
 }
