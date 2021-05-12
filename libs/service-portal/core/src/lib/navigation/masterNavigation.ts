@@ -203,6 +203,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             }),
             path: ServicePortalPath.FinanceStatus,
           },
+          {
+            name: defineMessage({
+              id: 'service.portal:financeTransactions',
+              defaultMessage: 'Færslur',
+            }),
+            path: ServicePortalPath.FinanceTransactions,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:financeSalary',
+              defaultMessage: 'Laungreiðendakröfur',
+            }),
+            path: ServicePortalPath.FinanceSalary,
+          },
         ],
         icon: {
           type: 'outline',
