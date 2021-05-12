@@ -343,9 +343,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 name="leadInvestigator"
                 label="Sláðu inn stjórnanda rannsóknar"
                 placeholder="Hver stýrir rannsókn málsins?"
-                defaultValue={workingCase.accusedName}
-                errorMessage={accusedNameErrorMessage}
-                hasError={accusedNameErrorMessage !== undefined}
+                defaultValue={workingCase.leadInvestigator}
+                errorMessage={leadInvestigatorErrorMessage}
+                hasError={leadInvestigatorErrorMessage !== undefined}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
                 required
