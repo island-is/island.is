@@ -1,5 +1,10 @@
 import React, { ReactNode } from 'react'
-import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
+import {
+  Image,
+  LinkGroup,
+  Organization,
+  OrganizationPage,
+} from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -8,8 +13,10 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Navigation,
   NavigationItem,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
@@ -62,10 +69,26 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   }
 }
 
-const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
-  switch (organizationPage.theme) {
+interface FooterProps {
+  theme: string
+  organization?: Organization
+}
+
+export const OrganizationFooter: React.FC<FooterProps> = ({
+  theme,
+  organization,
+}) => {
+  if (!organization) return null
+
+  switch (theme) {
     case 'syslumenn':
-      return <SyslumennFooter organizationPage={organizationPage} />
+      return (
+        <SyslumennFooter
+          title={organization.title}
+          logo={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
     default:
       return null
   }
@@ -86,6 +109,28 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
       return null
   }
 }
+
+const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
+  <Box
+    background="purple100"
+    borderRadius="large"
+    padding={[3, 3, 4]}
+    marginY={3}
+  >
+    <Stack space={[1, 1, 2]}>
+      <Text variant="eyebrow" as="h2">
+        {linkGroup.name}
+      </Text>
+      {linkGroup.childrenLinks.map((link) => (
+        <Link key={link.url} href={link.url} underline="normal">
+          <Text key={link.url} as="span">
+            {link.text}
+          </Text>
+        </Link>
+      ))}
+    </Stack>
+  </Box>
+)
 
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
@@ -147,22 +192,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
                 {organizationPage.secondaryMenu && (
-                  <Box marginTop={3}>
-                    <Navigation
-                      colorScheme="purple"
-                      baseId="secondarynav"
-                      activeItemTitle={pageTitle}
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  </Box>
+                  <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
                 )}
                 {sidebarContent}
               </SidebarContainer>
@@ -210,19 +240,21 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
                   offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
                 >
-                  <Breadcrumbs
-                    items={breadcrumbItems ?? []}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
+                  {breadcrumbItems && (
+                    <Breadcrumbs
+                      items={breadcrumbItems ?? []}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  )}
                   {pageDescription && (
-                    <Box paddingTop={[2, 2, 5]}>
-                      <Text variant="intro">{pageDescription}</Text>
+                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                      <Text variant="default">{pageDescription}</Text>
                     </Box>
                   )}
                 </GridColumn>
@@ -249,7 +281,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </GridContainer>
         )}
       </Main>
-      {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
+      {!minimal && (
+        <OrganizationFooter
+          theme={organizationPage.theme}
+          organization={organizationPage.organization}
+        />
+      )}
       <OrganizationChatPanel slug={organizationPage?.slug} />
     </>
   )

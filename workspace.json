@@ -970,6 +970,43 @@
         }
       }
     },
+    "api-domains-endorsement-system": {
+      "root": "libs/api/domains/endorsement-system",
+      "sourceRoot": "libs/api/domains/endorsement-system/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/endorsement-system/tsconfig.lib.json",
+              "libs/api/domains/endorsement-system/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/endorsement-system/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/endorsement-system/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/endorsement-system"]
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -1088,6 +1125,36 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/national-registry"]
+        }
+      }
+    },
+    "api-domains-regulations": {
+      "root": "libs/api/domains/regulations",
+      "sourceRoot": "libs/api/domains/regulations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/regulations/tsconfig.lib.json",
+              "libs/api/domains/regulations/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/regulations/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/regulations/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/regulations"]
         }
       }
     },
@@ -1844,6 +1911,43 @@
         }
       }
     },
+    "application-templates-funding-government-projects": {
+      "root": "libs/application/templates/funding-government-projects",
+      "sourceRoot": "libs/application/templates/funding-government-projects/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/funding-government-projects/tsconfig.lib.json",
+              "libs/application/templates/funding-government-projects/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/funding-government-projects/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/funding-government-projects"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/funding-government-projects/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
       "sourceRoot": "libs/application/templates/health-insurance/src",
@@ -1911,6 +2015,28 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
+          }
+        }
+      }
+    },
+    "application-templates-joint-custody-agreement": {
+      "root": "libs/application/templates/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/joint-custody-agreement/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/joint-custody-agreement/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/joint-custody-agreement/**/*"
+            ]
           }
         }
       }
@@ -2075,7 +2201,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-letter/src/lib/messages.ts'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/party-letter/src/lib/messages.ts'"
           }
         }
       }
@@ -2112,6 +2238,37 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-public-debt-payment-plan": {
+      "root": "libs/application/templates/public-debt-payment-plan",
+      "sourceRoot": "libs/application/templates/public-debt-payment-plan/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/public-debt-payment-plan/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/public-debt-payment-plan"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2536,6 +2693,33 @@
         }
       }
     },
+    "clients-regulations": {
+      "root": "libs/clients/regulations",
+      "sourceRoot": "libs/clients/regulations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/regulations/tsconfig.lib.json",
+              "libs/clients/regulations/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/regulations/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/regulations/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/regulations"]
+        }
+      }
+    },
     "clients-rsk-v1": {
       "root": "libs/clients/rsk/v1",
       "sourceRoot": "libs/clients/rsk/v1/src",
@@ -2930,99 +3114,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/email-service"]
-        }
-      }
-    },
-    "endorsement-system": {
-      "root": "apps/endorsement-system",
-      "sourceRoot": "apps/endorsement-system/src",
-      "projectType": "application",
-      "prefix": "endorsement-system",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/endorsement-system",
-            "main": "apps/endorsement-system/src/main.ts",
-            "tsConfig": "apps/endorsement-system/tsconfig.app.json",
-            "webpackConfig": "apps/endorsement-system/webpack.config.js"
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/endorsement-system/src/environments/environment.ts",
-                  "with": "apps/endorsement-system/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "endorsement-system:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/endorsement-system/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/endorsement-system"],
-          "options": {
-            "jestConfig": "apps/endorsement-system/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "dev-services": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/endorsement-system/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
-          }
-        },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:migrate",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed/undo": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:undo:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/endorsement-system"
-          }
         }
       }
     },
@@ -4633,6 +4724,27 @@
         }
       }
     },
+    "nest-audit": {
+      "root": "libs/nest/audit",
+      "sourceRoot": "libs/nest/audit/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/audit/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/audit"],
+          "options": {
+            "jestConfig": "libs/nest/audit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nova-sms": {
       "root": "libs/nova-sms",
       "sourceRoot": "libs/nova-sms/src",
@@ -5917,6 +6029,104 @@
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/services/documents"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "services-endorsements-api": {
+      "root": "apps/services/endorsements/api",
+      "sourceRoot": "apps/services/endorsements/api/src",
+      "projectType": "application",
+      "prefix": "services-endorsements-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/endorsements/api",
+            "main": "apps/services/endorsements/api/src/main.ts",
+            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
+            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/endorsements/api/src/environments/environment.ts",
+                  "with": "apps/services/endorsements/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-endorsements-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/endorsements/api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/endorsements/api"],
+          "options": {
+            "jestConfig": "apps/services/endorsements/api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
+            "commands": [
+              "nx run services-endorsements-api:build",
+              "node dist/apps/services/endorsements/api/buildOpenApi.js"
+            ],
+            "parallel": false
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo",
+            "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/endorsements/api"
           }
         },
         "docker-express": {}

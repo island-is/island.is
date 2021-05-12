@@ -70,7 +70,7 @@ describe('formatRequestedCustodyRestrictions', () => {
     )
 
     // Assert
-    expect(r).toEqual('B - Einangrun.\nD - Bréfskoðun, símabann.')
+    expect(r).toEqual('B - Einangrun\nD - Bréfskoðun, símabann')
   })
 
   test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', () => {
@@ -121,7 +121,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
     // Assert
     expect(r).toEqual(
-      'B - Einangrun.\nD - Bréfskoðun, símabann.\nThe accused should stay home.',
+      'B - Einangrun\nD - Bréfskoðun, símabann\nThe accused should stay home.',
     )
   })
 

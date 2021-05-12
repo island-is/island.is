@@ -13,6 +13,7 @@ import {
   Optional,
   Query,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -36,13 +37,14 @@ import {
   PdfTypes,
   ApplicationStatus,
   ApplicationIdentityServerScope,
+  CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import { Unwrap, Locale } from '@island.is/shared/types'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   Scopes,
-  CurrentRestUser,
+  CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
 import {
@@ -53,6 +55,7 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/api/domains/translations'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
@@ -92,8 +95,9 @@ import {
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
+import { Application } from './application.model'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -109,6 +113,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
+    private readonly auditService: AuditService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -118,9 +123,12 @@ export class ApplicationController {
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -157,19 +165,27 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto[]>({
+    resources: (apps) => apps.map((app) => app.id),
+  })
   async findAll(
-    @CurrentRestUser() user: User,
+    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
+    if (nationalId !== user.nationalId) {
+      throw new UnauthorizedException()
+    }
+
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
-      user.nationalId,
+      nationalId,
       typeId,
       status,
     )
 
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
-    const filteredApplications = []
+    const filteredApplications: Application[] = []
 
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
@@ -202,8 +218,10 @@ export class ApplicationController {
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async create(
-    @Body() application: CreateApplicationDto,
-    @CurrentRestUser() user: User,
+    @Body()
+    application: CreateApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
@@ -263,6 +281,12 @@ export class ApplicationController {
       getApplicationLifecycle(createdApplication as BaseApplication, template),
     )
 
+    this.auditService.audit({
+      user,
+      action: 'create',
+      resources: updatedApplication.id,
+      meta: { type: application.typeId },
+    })
     return updatedApplication
   }
 
@@ -270,9 +294,12 @@ export class ApplicationController {
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedAssignmentToken>(
       assignApplicationDto.token,
@@ -356,7 +383,7 @@ export class ApplicationController {
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() application: UpdateApplicationDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
@@ -392,6 +419,12 @@ export class ApplicationController {
       },
     )
 
+    this.auditService.audit({
+      user,
+      action: 'update',
+      resources: updatedApplication.id,
+      meta: { fields: Object.keys(newAnswers) },
+    })
     return updatedApplication
   }
 
@@ -409,7 +442,7 @@ export class ApplicationController {
   async updateExternalData(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() externalDataDto: PopulateExternalDataDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
@@ -423,13 +456,20 @@ export class ApplicationController {
       user.nationalId,
     )
 
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
     const templateDataProviders = await getApplicationDataProviders(
       existingApplication.typeId,
     )
-
     const results = await callDataProviders(
       buildDataProviders(externalDataDto, templateDataProviders, user, locale),
       existingApplication as BaseApplication,
+      this.applicationService.customTemplateFindQuery(
+        existingApplication.typeId,
+      ) as CustomTemplateFindQuery,
+      intl.formatMessage,
     )
 
     const {
@@ -446,6 +486,12 @@ export class ApplicationController {
       )
     }
 
+    this.auditService.audit({
+      user,
+      action: 'updateExternalData',
+      resources: updatedApplication.id,
+      meta: { providers: externalDataDto },
+    })
     return updatedApplication
   }
 
@@ -463,7 +509,7 @@ export class ApplicationController {
   async submitApplication(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
@@ -521,6 +567,16 @@ export class ApplicationController {
       updateApplicationStateDto.event,
       user.authorization,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'submitApplication',
+      resources: existingApplication.id,
+      meta: {
+        event: updateApplicationStateDto.event,
+        fields: Object.keys(permittedAnswers).length,
+      },
+    })
 
     if (hasError) {
       throw new BadRequestException(error)
@@ -724,7 +780,7 @@ export class ApplicationController {
   async addAttachment(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: AddAttachmentDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -748,6 +804,15 @@ export class ApplicationController {
       attachmentUrl: url,
     })
 
+    this.auditService.audit({
+      user,
+      action: 'addAttachment',
+      resources: updatedApplication.id,
+      meta: {
+        file: key,
+      },
+    })
+
     return updatedApplication
   }
 
@@ -765,7 +830,7 @@ export class ApplicationController {
   async deleteAttachment(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: DeleteAttachmentDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -779,6 +844,15 @@ export class ApplicationController {
         attachments: omit(existingApplication.attachments, key),
       },
     )
+
+    this.auditService.audit({
+      user,
+      action: 'deleteAttachment',
+      resources: updatedApplication.id,
+      meta: {
+        file: key,
+      },
+    })
 
     return updatedApplication
   }
@@ -796,7 +870,7 @@ export class ApplicationController {
   async createPdf(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: CreatePdfDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -806,6 +880,13 @@ export class ApplicationController {
       existingApplication,
       input.type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'createPdf',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
 
     return { url }
   }
@@ -824,7 +905,7 @@ export class ApplicationController {
   async requestFileSignature(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: RequestFileSignatureDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<RequestFileSignatureResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -837,6 +918,13 @@ export class ApplicationController {
       existingApplication,
       input.type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'requestFileSignature',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
 
     return { controlCode, documentToken }
   }
@@ -854,7 +942,7 @@ export class ApplicationController {
   async uploadSignedFile(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: UploadSignedFileDto,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<UploadSignedFileResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -866,6 +954,13 @@ export class ApplicationController {
       input.documentToken,
       input.type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'uploadSignedFile',
+      resources: existingApplication.id,
+      meta: { type: input.type },
+    })
 
     return {
       documentSigned: true,
@@ -885,7 +980,7 @@ export class ApplicationController {
   async getPresignedUrl(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('pdfType') type: PdfTypes,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
@@ -895,6 +990,13 @@ export class ApplicationController {
       existingApplication,
       type,
     )
+
+    this.auditService.audit({
+      user,
+      action: 'getPresignedUrl',
+      resources: existingApplication.id,
+      meta: { type },
+    })
 
     return { url }
   }

@@ -10,23 +10,26 @@ import { minPeriodDays, usageMaxMonths } from '../config'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
 
+const DEFAULT_DOB = '2021-01-15'
+
 describe('answerValidators', () => {
   const application: Application = {
-    answers: { someAnswer: 'awesome' },
+    answers: { someAnswer: 'awesome', selectedChild: '0' },
     assignees: [],
     applicant: '',
     attachments: {},
     created: new Date(),
     externalData: {
-      pregnancyStatusAndRights: {
+      children: {
         date: new Date(),
         status: 'success',
         data: {
-          pregnancyStatus: {
-            hasActivePregnancy: true,
-            pregnancyDueDate: '2021-01-15',
-          },
-          parentalLeaves: [],
+          children: [
+            {
+              expectedDateOfBirth: DEFAULT_DOB,
+              parentalRelation: 'primary',
+            },
+          ],
         },
       },
     },
@@ -42,7 +45,7 @@ describe('answerValidators', () => {
       ...application,
       externalData: {
         ...application.externalData,
-        pregnancyStatusAndRights: {
+        children: {
           date: new Date(),
           reason: 'Sync failed',
           status: 'failure',

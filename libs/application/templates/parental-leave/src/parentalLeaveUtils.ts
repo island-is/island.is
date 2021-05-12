@@ -1,6 +1,7 @@
-import get from 'lodash/get'
 import {
   Application,
+  ExternalData,
+  FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
@@ -17,35 +18,23 @@ import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
 import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from './dataProviders/PregnancyStatusAndRights'
+import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
+import {
+  ChildInformation,
+  ChildrenAndExistingApplications,
+} from './dataProviders/Children/types'
 
 export function getExpectedDateOfBirth(
   application: Application,
 ): string | undefined {
-  const pregnancyStatusAndRights =
-    application.externalData.pregnancyStatusAndRights
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
-  if (pregnancyStatusAndRights.status === 'success') {
-    const pregnancyStatus = (pregnancyStatusAndRights.data as {
-      pregnancyStatus: PregnancyStatus
-    }).pregnancyStatus
-
-    if (pregnancyStatus.pregnancyDueDate) {
-      return pregnancyStatus.pregnancyDueDate
-    }
-
-    const parentalLeaves = (pregnancyStatusAndRights.data as {
-      parentalLeaves: ParentalLeave[]
-    }).parentalLeaves
-
-    if (parentalLeaves.length) {
-      if (parentalLeaves.length === 1) {
-        return parentalLeaves[0].expectedDateOfBirth
-      }
-
-      // here we have multiple parental leaves... must store the selected application id or something
-    }
+  if (selectedChild !== null) {
+    return selectedChild.expectedDateOfBirth
   }
 
   return undefined
@@ -106,8 +95,10 @@ export const formatIsk = (value: number): string =>
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const pregnancyStatusAndRights = application.externalData
-    .pregnancyStatusAndRights.data as PregnancyStatusAndRightsResults
+  const provider = getValueViaPath(
+    application.externalData,
+    'children',
+  ) as PregnancyStatusAndRightsResults
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -117,7 +108,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let days = pregnancyStatusAndRights.remainingDays
+  let days = provider.remainingDays
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     const requestedDays = requestRights.requestDays
@@ -126,8 +117,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
   }
 
   if (
-    (pregnancyStatusAndRights.parentalLeavesEntitlements.independentMonths ??
-      0) > 0 &&
+    provider.hasRights &&
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
@@ -140,7 +130,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
 }
 
 export const getOtherParentOptions = (application: Application) => {
-  const family = get(
+  const family = getValueViaPath(
     application.externalData,
     'family.data',
     [],
@@ -188,4 +178,54 @@ export const getAllPeriodDates = (periods: Period[]) => {
   )
 
   return dates.map((d) => new Date(d))
+}
+
+export const createRange = <T>(
+  length: number,
+  output: (index: number) => T,
+): T[] => {
+  return Array(length)
+    .fill(1)
+    .map((_, i) => output(i))
+}
+
+export const getSelectedChild = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
+  const selectedChild = getValueViaPath(
+    externalData,
+    `children.data.children[${selectedChildIndex}]`,
+    null,
+  ) as ChildInformation | null
+
+  return selectedChild
+}
+
+export const isEligibleForParentalLeave = (
+  externalData: ExternalData,
+): boolean => {
+  const dataProvider = getValueViaPath(
+    externalData,
+    'children.data',
+  ) as PregnancyStatusAndRightsResults
+
+  const children = getValueViaPath(
+    externalData,
+    'childrenAndExistingApplications.children',
+    [],
+  ) as ChildrenAndExistingApplications['children']
+
+  const existingApplications = getValueViaPath(
+    externalData,
+    'children.data.existingApplications',
+    [],
+  ) as ChildrenAndExistingApplications['existingApplications']
+
+  return (
+    dataProvider?.hasActivePregnancy &&
+    (children.length > 0 || existingApplications.length > 0) &&
+    dataProvider?.remainingDays > 0
+  )
 }

@@ -372,14 +372,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Börnin þín',
       description: 'Your children',
     },
-    childrenInformationSubTitle: {
-      id: 'pl.application:childreninformation.subtitle',
+    childrenError: {
+      id: 'pl.application:children.error',
       defaultMessage:
-        'Upplýsingar um börn sem þú hefur forsjá fyrir eru sóttar til Þjóðskrár. Upplýsingar um áætlaðan fæðingardag barns eru sóttar úr sjúkraskrá.',
-      description:
-        'Information about children in your custody, source Þjóðskrá. Information on expected date of birth, source sjúkraskrá',
+        'Engin börn fundust. Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
+      description: `When no children is found. Can be because the primary parent didn't assign the secondary parent yet or if it's not part of the system yet.`,
     },
-    expectedDateOfBirthTitle: {
+    childrenInformationTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
       description: 'Expected birth date',
@@ -509,11 +508,44 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:selectChild.title',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
+      defaultMessage: 'Börn sem þú getur sótt um fyrir',
+      description: 'Children you can apply for',
+    },
+    activeApplications: {
+      id: 'pl.application:selectChild.activeApplications',
+      defaultMessage: 'Virkar umsóknir',
+      description: 'Active applications',
     },
     choose: {
       id: 'pl.application:selectChild.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
+    },
+  }),
+
+  notEligible: defineMessages({
+    subSection: {
+      id: 'pl.application:notEligible.subSection',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenTitle: {
+      id: 'pl.application:notEligible.screenTitle',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenDescription: {
+      id: 'pl.application:notEligible.screenDescription',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+      description: 'Children you can apply for parental leave',
+    },
+    title: {
+      id: 'pl.application:notEligible.title',
+      defaultMessage: 'Börn sem þú getur sótt um fyrir',
+      description: 'Children you can apply for',
+    },
+    choose: {
+      id: 'pl.application:notEligible.choose',
       defaultMessage: 'Velja',
       description: 'Choose',
     },
@@ -595,6 +627,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Makinn þinn fær tilkynningu og þarf að samþykkja þessa beiðni. Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
       description: 'Translation needed',
+    },
+    useAsMuchAsPossibleFromSpouse: {
+      id: 'pl.application:personal.allowance.useAsMuchAsPossibleFromSpouse',
+      defaultMessage: 'Viltu fullnýta persónuafslátt maka?',
+      description:
+        "We ask the user if they want to use as much of the spouse's personal allowance as they can.",
     },
     useAsMuchAsPossible: {
       id: 'pl.application:personal.allowance.useAsMuchAsPossible',

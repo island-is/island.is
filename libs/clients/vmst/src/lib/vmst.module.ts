@@ -1,6 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
+
 import { logger } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/utils/api'
 
 import {
   Configuration,
@@ -9,6 +11,9 @@ import {
   PregnancyApi,
   UnionApi,
 } from '../../gen/fetch'
+import { createWrappedFetchWithLogging } from './utils'
+
+const isRunningOnProduction = isRunningOnEnvironment('production')
 
 export interface VMSTModuleConfig {
   apiKey: string
@@ -32,7 +37,7 @@ export class VMSTModule {
     }
 
     const providerConfiguration = new Configuration({
-      fetchApi: fetch,
+      fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
       basePath: config.xRoadPath,
       headers,
     })

@@ -1,11 +1,10 @@
-import get from 'lodash/get'
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
@@ -15,6 +14,7 @@ import {
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
+import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
@@ -61,16 +61,6 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .childrenInformationSubTitle,
                 }),
-                buildDataProviderItem({
-                  id: 'pregnancyStatusAndRights',
-                  type: 'PregnancyStatusAndRights',
-                  title:
-                    parentalLeaveFormMessages.shared
-                      .pregnancyStatusAndRightsTitle,
-                  subTitle:
-                    parentalLeaveFormMessages.shared
-                      .pregnancyStatusAndRightsSubtitle,
-                }),
               ],
             }),
           ],
@@ -83,30 +73,13 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.title,
               description: parentalLeaveFormMessages.selectChild.description,
+              condition: (_, externalData) =>
+                isEligibleForParentalLeave(externalData),
               children: [
-                buildRadioField({
+                buildCustomField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.title,
-                  width: 'full',
-                  options: (application) => {
-                    const children = get(
-                      application.externalData,
-                      'children.data',
-                      [],
-                    ) as {
-                      id: string
-                      dateOfBirth: string
-                      expectedDateOfBirth: string
-                    }[]
-
-                    return children.map((child) => ({
-                      value: child.id,
-                      label: child.dateOfBirth
-                        ? child.dateOfBirth
-                        : child.expectedDateOfBirth,
-                    }))
-                  },
-                  largeButtons: true,
+                  title: parentalLeaveFormMessages.selectChild.subSection,
+                  component: 'ChildSelector',
                 }),
                 buildSubmitField({
                   id: 'toDraft',
@@ -116,18 +89,20 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: 'SUBMIT',
-                      name: 'Velja',
+                      name: parentalLeaveFormMessages.selectChild.choose,
                       type: 'primary',
                     },
                   ],
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'thankYou',
-              title: 'Nú getur þú byrjað umsóknina',
-              component: 'Conclusion',
-            }),
+            // TODO: Custom component with a lot more explanation of why you may not see any children
+            // buildDescriptionField({
+            //   id: 'notEligible',
+            //   title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
+            //   description:
+            //     parentalLeaveFormMessages.selectChild.notEligibleDescription,
+            // }),
           ],
         }),
       ],

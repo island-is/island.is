@@ -2,6 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
@@ -12,13 +13,13 @@ import { PensionFund } from '../models/pensionFund.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeave } from '../models/parentalLeaves.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
-import { ParentalLeave } from '../models/parentalLeaves.model'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}

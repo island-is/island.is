@@ -6,6 +6,7 @@ import {
 import { ExternalData } from '@island.is/application/core'
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
+import { User } from '@island.is/auth-nest-tools'
 
 import { environment } from '../../../../environments'
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'

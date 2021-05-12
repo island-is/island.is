@@ -92,6 +92,27 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
     expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(46)
   })
 
+  it('should calculate 90 days to the start date Date(2021, 5, 20)', () => {
+    const start = new Date(2021, 5, 20)
+    const end = new Date(2021, 8, 20)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(90)
+  })
+
+  it('should calculate 180 days to the start date Date(2021, 0, 15)', () => {
+    const start = new Date(2021, 0, 15)
+    const end = new Date(2021, 6, 15)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(180)
+  })
+
+  it('should calculate 270 days to the start date Date(2021, 0, 1)', () => {
+    const start = new Date(2021, 0, 1)
+    const end = new Date(2021, 8, 31)
+
+    expect(calculateNumberOfDaysForOnePeriod(start, end)).toBe(270)
+  })
+
   it('should calculate periods when start month has more days than end month', () => {
     const year = 2021
 

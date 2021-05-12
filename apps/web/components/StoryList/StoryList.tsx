@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Text, Stack, Link } from '@island.is/island-ui/core'
+import { Button, Text, Stack, Link, Box } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
@@ -36,22 +36,23 @@ export const StoryList = ({
         <Story key={i} variant={variant} {...story} />
       ))}
       {stories.length > 0 ? (
-        <div className={styles.margin}>
+        <Box className={styles.margin} display="inlineBlock">
           <Link
             href={{
               pathname: linkResolver('newsoverview').href,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
-            pureChildren
+            skipTab
           >
             <Button
+              as="span"
               variant="ghost"
               colorScheme={variant === 'light' ? 'negative' : 'default'}
             >
               {readMoreText}
             </Button>
           </Link>
-        </div>
+        </Box>
       ) : null}
     </Stack>
   )
@@ -90,6 +91,7 @@ const Story = ({
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
             <Button
+              as="span"
               variant="text"
               colorScheme={variant === 'light' ? 'negative' : 'default'}
               icon="arrowForward"

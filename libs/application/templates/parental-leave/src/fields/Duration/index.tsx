@@ -51,6 +51,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   )
   const [chosenDuration, setChosenDuration] = useState<number>(months)
   const [percent, setPercent] = useState<number>(100)
+  const months = getAvailableRightsInMonths(application)
 
   useEffect(() => {
     if (chosenDuration > months) {

@@ -68,6 +68,9 @@
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
       ],
+      "@island.is/api/domains/endorsement-system": [
+        "libs/api/domains/endorsement-system/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -82,6 +85,9 @@
       ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/regulations": [
+        "libs/api/domains/regulations/src/index.ts"
       ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
@@ -124,11 +130,17 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/funding-government-projects": [
+        "libs/application/templates/funding-government-projects/src/index.ts"
+      ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
+      ],
+      "@island.is/application/templates/joint-custody-agreement": [
+        "libs/application/templates/joint-custody-agreement/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
@@ -147,6 +159,9 @@
       ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
+      ],
+      "@island.is/application/templates/public-debt-payment-plan": [
+        "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
@@ -170,6 +185,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"
+      ],
+      "@island.is/clients/regulations": [
+        "libs/clients/regulations/src/index.ts"
       ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
@@ -241,6 +259,7 @@
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
+      "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/service-portal/applications": [

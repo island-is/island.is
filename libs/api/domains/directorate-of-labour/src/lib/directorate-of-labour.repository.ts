@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common'
+import formatDate from 'date-fns/format'
 import { logger } from '@island.is/logging'
 import {
   UnionApi,
   Union,
   PensionApi,
   PensionFund,
-  ParentalLeaveApi,
   PregnancyApi,
+  ParentalLeaveApi,
+  ParentalLeave,
 } from '@island.is/clients/vmst'
+import format from 'date-fns/format'
 
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
@@ -96,9 +99,9 @@ export class DirectorateOfLabourRepository {
   }
 
   async getParentalLeavesEntitlements(
-    dateOfBirth: string,
+    dateOfBirth: Date,
     nationalId: string,
-  ): Promise<ParentalLeaveEntitlement> {
+  ): Promise<ParentalLeaveEntitlement | null> {
     if (isRunningInDevelopment) {
       return {
         independentMonths: 6,
@@ -106,47 +109,48 @@ export class DirectorateOfLabourRepository {
       }
     }
 
-    return await this.parentalLeaveApi.parentalLeaveGetRights({
-      nationalRegistryId: nationalId,
-      dateOfBirth: new Date(dateOfBirth),
-    })
+    try {
+      const rights = await this.parentalLeaveApi.parentalLeaveGetRights({
+        nationalRegistryId: nationalId,
+        dateOfBirth,
+      })
+
+      if (!rights.independentMonths || !rights.transferableMonths) {
+        return null
+      }
+
+      return {
+        independentMonths: rights.independentMonths,
+        transferableMonths: rights.transferableMonths,
+      }
+    } catch (e) {
+      logger.error(
+        `Could not fetch parental leaves entitlements for ${nationalId}, ${dateOfBirth}`,
+        e,
+      )
+
+      return null
+    }
   }
 
-  async getParentalLeaves(nationalId: string) {
+  async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
     if (isRunningInDevelopment) {
-      return [
-        {
-          applicationId: '1234uuid1234',
-          applicant: nationalId,
-          otherParentId: '1234567789',
-          expectedDateOfBirth: '2021-01-12',
-          dateOfBirth: '2021-01-15',
-          email: 'mock@mock.is',
-          phoneNumber: '555-1234',
-          paymentInfo: {
-            bankAccount: '44426123456',
-            personalAllowance: 100,
-            personalAllowanceFromSpouse: 0,
-            union: { id: 'vr', name: 'VR' },
-            pensionFund: { id: 'freedom', name: 'Frjálsi' },
-            privatePensionFund: { id: 'private', name: 'Private' },
-            privatePensionFundRatio: 0,
-          },
-          periods: [],
-          employers: [
-            { nationalRegistryId: '6543212245', email: 'asdf@boss.is' },
-          ],
-          status: 'status',
-          rightsCode: 'code',
-        },
-      ]
+      return []
     }
 
-    const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-      nationalRegistryId: nationalId,
-    })
+    try {
+      const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves(
+        {
+          nationalRegistryId: nationalId,
+        },
+      )
 
-    return results.parentalLeaves ?? []
+      return results.parentalLeaves ?? []
+    } catch (e) {
+      logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
+
+      return null
+    }
   }
 
   async getParentalLeavesEstimatedPaymentPlan(
@@ -192,16 +196,48 @@ export class DirectorateOfLabourRepository {
     ]
   }
 
-  async getPregnancyStatus(nationalId: string): Promise<PregnancyStatus> {
+  async getPregnancyStatus(
+    nationalId: string,
+  ): Promise<PregnancyStatus | null> {
     if (isRunningInDevelopment) {
       return {
         hasActivePregnancy: true,
-        pregnancyDueDate: '2021-01-15',
+        expectedDateOfBirth: '2021-06-17',
       }
     }
 
-    return ((await this.pregnancyApi.pregnancyGetPregnancyStatus({
-      nationalRegistryId: nationalId,
-    })) as unknown) as PregnancyStatus
+    try {
+      const pregnancyStatus = await this.pregnancyApi.pregnancyGetPregnancyStatus(
+        {
+          nationalRegistryId: nationalId,
+        },
+      )
+
+      if (pregnancyStatus.hasError) {
+        throw new Error(
+          pregnancyStatus.errorMessage ?? 'Could not fetch pregnancy status',
+        )
+      }
+
+      if (
+        pregnancyStatus.hasActivePregnancy === undefined ||
+        pregnancyStatus.pregnancyDueDate === undefined ||
+        pregnancyStatus.pregnancyDueDate === null
+      ) {
+        return null
+      }
+
+      return {
+        hasActivePregnancy: pregnancyStatus.hasActivePregnancy,
+        expectedDateOfBirth: format(
+          pregnancyStatus.pregnancyDueDate,
+          'yyyy-MM-dd',
+        ),
+      }
+    } catch (e) {
+      logger.error(`Could not fetch pregnancy status for ${nationalId}`, e)
+
+      return null
+    }
   }
 }

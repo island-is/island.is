@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { States as ApplicationStates } from './ParentalLeaveTemplate'
+import { States as ApplicationStates } from '../constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -27,6 +27,7 @@ function buildApplication(data: {
     attachments: {},
     answers,
     state,
+    status: 'inprogress' as Application['status'],
     externalData,
     status: ApplicationStatus.IN_PROGRESS,
   }

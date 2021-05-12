@@ -3,12 +3,11 @@ import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isSameDay from 'date-fns/isSameDay'
-
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   ParentalLeavePeriod,
-} from '../types/schema'
+} from '@island.is/api/domains/directorate-of-labour'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30
@@ -105,7 +104,7 @@ export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
  */
 export const calculateRemainingNumberOfDays = (
   dateOfBirth: string | null,
-  applications: ParentalLeave[],
+  applications: ParentalLeave[] | null,
   rights: ParentalLeaveEntitlement,
 ) => {
   // Without date of birth or rights there is no days available
@@ -121,7 +120,7 @@ export const calculateRemainingNumberOfDays = (
     return 0
   }
 
-  const application = applications.find(
+  const application = (applications ?? []).find(
     (a) =>
       isSameDay(new Date(a.dateOfBirth), new Date(dateOfBirth)) ||
       isSameDay(new Date(a.expectedDateOfBirth), new Date(dateOfBirth)),
@@ -129,7 +128,7 @@ export const calculateRemainingNumberOfDays = (
 
   // No application found for the date of birth
   if (!application) {
-    return 0
+    return monthsToDays(rights.independentMonths)
   }
 
   const availableDays = monthsToDays(rights.independentMonths)

@@ -109,7 +109,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: 'DataProviderTypes.NationalRegistry',
+                  type: DataProviderTypes.NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
@@ -236,10 +236,27 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'approveTerms',
       title: m.section.effect,
       children: [
-        buildCustomField({
+        buildSubSection({
           id: 'approveTerms',
-          title: m.terms.general.pageTitle,
-          component: 'Terms',
+          title: m.terms.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveTerms',
+              title: m.terms.general.pageTitle,
+              component: 'Terms',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'approveChildSupportTerms',
+          title: m.childSupport.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveChildSupportTerms',
+              title: m.childSupport.general.pageTitle,
+              component: 'ChildSupport',
+            }),
+          ],
         }),
       ],
     }),
