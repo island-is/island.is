@@ -39,7 +39,7 @@ export const mapFeaturedArticles = ({
   articles: {
     lang:
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
-    size: 5,
+    size: fields.articleCount ?? 5,
     sort: SortField.POPULAR,
     organization: fields.organization?.fields.slug ?? '',
   },

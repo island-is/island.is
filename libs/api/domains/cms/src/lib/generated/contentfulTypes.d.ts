@@ -704,6 +704,9 @@ export interface IFeaturedArticlesFields {
 
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Article Count */
+  articleCount?: number | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
