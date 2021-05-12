@@ -310,49 +310,49 @@ export const StepOneForm: React.FC<Props> = (props) => {
               </InputMask>
             </Box>
             <Checkbox
-              name={'sendRequestToDefender'}
-              label={
-                'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma'
-              }
-              checked={workingCase.sendRequestToDefender}
+              name="sendRequestToDefender"
+              label="Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma"
               tooltip={`Ef hakað er hér þá fær verjandi ${
                 workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhaldskröfuna'
                   : 'farbannskröfuna'
               } senda þegar fyrirtökutíma hefur verið úthlutað`}
+              checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
               filled
             />
           </BlueBox>
         </Box>
-        <Box component="section" marginBottom={10}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="baseline"
-            marginBottom={2}
-          >
-            <Text as="h3" variant="h3">
-              Stjórnandi rannsóknar{' '}
-              <Tooltip text="Upplýsingar um stjórnanda rannsóknar birtast á vistunarseðli sem berst til gæslufangelsis." />
-            </Text>
+        {workingCase.type === CaseType.CUSTODY && (
+          <Box component="section" marginBottom={10}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="baseline"
+              marginBottom={2}
+            >
+              <Text as="h3" variant="h3">
+                Stjórnandi rannsóknar{' '}
+                <Tooltip text="Upplýsingar um stjórnanda rannsóknar birtast á vistunarseðli sem berst til gæslufangelsis." />
+              </Text>
+            </Box>
+            <Box marginBottom={2}>
+              <Input
+                data-testid="leadInvestigator"
+                name="leadInvestigator"
+                label="Sláðu inn stjórnanda rannsóknar"
+                placeholder="Hver stýrir rannsókn málsins?"
+                defaultValue={workingCase.accusedName}
+                errorMessage={accusedNameErrorMessage}
+                hasError={accusedNameErrorMessage !== undefined}
+                onChange={(event) => setField(event.target)}
+                onBlur={(event) => validateAndSendToServer(event.target)}
+                required
+              />
+            </Box>
           </Box>
-          <Box marginBottom={2}>
-            <Input
-              data-testid="leadInvestigator"
-              name="leadInvestigator"
-              label="Sláðu inn stjórnanda rannsóknar"
-              placeholder="Hver stýrir rannsókn málsins?"
-              defaultValue={workingCase.accusedName}
-              errorMessage={accusedNameErrorMessage}
-              hasError={accusedNameErrorMessage !== undefined}
-              onChange={(event) => setField(event.target)}
-              onBlur={(event) => validateAndSendToServer(event.target)}
-              required
-            />
-          </Box>
-        </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
