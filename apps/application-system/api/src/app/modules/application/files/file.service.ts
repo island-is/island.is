@@ -6,7 +6,6 @@ import {
   RequestTimeoutException,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { generateResidenceChangePdf } from './utils/pdf'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
 import {
@@ -25,6 +24,12 @@ import {
 } from '../application.configuration'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
+import { PdfFile } from './utils/types'
+import {
+  generateJointCustodyPdf,
+  generateResidenceChangePdf,
+} from './pdfGenerators/'
 
 @Injectable()
 export class FileService {
@@ -41,13 +46,12 @@ export class FileService {
   ): Promise<string | undefined> {
     this.validateApplicationType(application.typeId)
 
-    switch (pdfType) {
-      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        return await this.createChildrenResidencePdf(
-          application as CRCApplication,
-        )
-      }
-    }
+    const file = await this.createFile(application, pdfType)
+    const bucket = this.getBucketName()
+
+    await this.awsService.uploadFile(file.content, bucket, file.name)
+
+    return await this.awsService.getPresignedUrl(bucket, file.name)
   }
 
   async uploadSignedFile(
@@ -123,6 +127,24 @@ export class FileService {
           phoneNumber,
         )
       }
+      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
+        const { fullName, phoneNumber } = isParentA
+          ? {
+              fullName: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              fullName: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
+
+        return await this.handleChildrenResidenceChangeSignature(
+          pdfType,
+          id,
+          fullName,
+          phoneNumber,
+        )
+      }
     }
   }
 
@@ -136,18 +158,18 @@ export class FileService {
     return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
-  private async createChildrenResidencePdf(application: CRCApplication) {
-    const bucket = this.getBucketName()
-
-    const pdfBuffer = await generateResidenceChangePdf(application)
-
-    const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
-      application.id
-    }.pdf`
-
-    await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
-
-    return await this.awsService.getPresignedUrl(bucket, fileName)
+  private async createFile(
+    application: Application,
+    pdfType: PdfTypes,
+  ): Promise<PdfFile> {
+    switch (pdfType) {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
+        return await generateResidenceChangePdf(application as CRCApplication)
+      }
+      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
+        return generateJointCustodyPdf(application as CRCApplication)
+      }
+    }
   }
 
   private async handleChildrenResidenceChangeSignature(
