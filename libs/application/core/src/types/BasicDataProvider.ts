@@ -1,12 +1,14 @@
 import fetch from 'isomorphic-fetch'
 import { GraphQLError } from 'graphql'
 import { Locale } from '@island.is/shared/types'
+import { User } from '@island.is/auth-nest-tools'
 
 import { Application } from './Application'
 import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
+import { coreErrorMessages } from '../lib/messages'
 
 export type CustomTemplateFindQuery = (where: {
   [key: string]: string
@@ -23,11 +25,8 @@ export interface DataProvider {
 }
 
 export interface DataProviderConfig {
-  /** Authorization token **/
-  authorization: string
-  /** GraphQL api base url **/
+  user: User | undefined
   baseApiUrl: string
-  /** Front-end language selected */
   locale: Locale
 }
 
@@ -44,7 +43,7 @@ export abstract class BasicDataProvider implements DataProvider {
 
   constructor(
     config: DataProviderConfig = {
-      authorization: '',
+      user: undefined,
       baseApiUrl: '',
       locale: 'is' as Locale,
     },
@@ -64,16 +63,18 @@ export abstract class BasicDataProvider implements DataProvider {
 
   protected async useGraphqlGateway<DataType = any>(
     query: string,
+    variables?: Record<string, any>,
   ): Promise<GraphqlGatewayResponse<DataType>> {
     return fetch(`${this.config.baseApiUrl}/api/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        authorization: this.config.authorization,
+        authorization: this.config.user?.authorization ?? '',
       },
       body: JSON.stringify({
         query,
+        variables,
       }),
     })
   }
@@ -82,7 +83,7 @@ export abstract class BasicDataProvider implements DataProvider {
   onProvideError(_: unknown): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: 'error',
+      reason: coreErrorMessages.errorDataProvider,
       status: 'failure',
     }
   }
