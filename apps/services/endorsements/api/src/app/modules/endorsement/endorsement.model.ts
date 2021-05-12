@@ -43,7 +43,8 @@ export class Endorsement extends Model<Endorsement> {
   endorsementListId!: string
 
   @BelongsTo(() => EndorsementList, 'endorsementListId')
-  endorsementList!: EndorsementListOpen
+  endorsementList?: EndorsementListOpen
+
   @Column({
     type: DataType.JSONB,
     allowNull: false,
