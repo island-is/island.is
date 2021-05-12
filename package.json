@@ -91,6 +91,7 @@
     "@types/react-input-mask": "3.0.0",
     "@types/react-modal": "3.10.6",
     "@types/react-table": "7.0.24",
+    "@types/request": "2.48.5",
     "@types/stream-buffers": "3.0.3",
     "@xstate/react": "0.8.1",
     "amazon-s3-uri": "0.0.3",

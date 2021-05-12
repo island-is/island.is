@@ -4,14 +4,22 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   AuthenticateApi,
-  CreateCustodyCaseApi,
-  CreateCaseApi,
-  CreateCustodyCaseRequest,
   AuthenticateRequest,
+  CreateCaseApi,
   CreateCaseData,
+  CreateCustodyCaseApi,
+  CreateCustodyCaseRequest,
+  CreateDocumentApi,
+  CreateDocumentData,
 } from '../../gen/fetch'
 
+import { UploadStreamApi } from './uploadStreamApi'
+
 function stripResult(str: string): string {
+  if (str[0] !== '"') {
+    return str
+  }
+
   return str.slice(1, str.length - 1)
 }
 
@@ -21,6 +29,8 @@ type CreateCustodyCaseArgs = Omit<
 >
 
 type CreateCaseArgs = Omit<CreateCaseData, 'authenticationToken'>
+
+type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
 
 let authenticationToken: string
 
@@ -34,6 +44,8 @@ export class CourtClientService {
     private readonly authenticateApi: AuthenticateApi,
     private readonly createCustodyCaseApi: CreateCustodyCaseApi,
     private readonly createCaseApi: CreateCaseApi,
+    private readonly createDocumentApi: CreateDocumentApi,
+    private readonly uploadStreamApi: UploadStreamApi,
     @Inject(COURT_SERVICE_OPTIONS)
     private readonly options: CourtServiceOptions,
     @Inject(LOGGER_PROVIDER)
@@ -94,6 +106,29 @@ export class CourtClientService {
           authenticationToken,
         },
       }),
+    )
+  }
+
+  createDocument(args: CreateDocumentArgs): Promise<string> {
+    return this.wrappedRequest(() =>
+      this.createDocumentApi.createDocument({
+        createDocumentData: {
+          ...args,
+          authenticationToken,
+        },
+      }),
+    )
+  }
+
+  uploadStream(file: {
+    value: Buffer
+    options?: {
+      filename?: string
+      contentType?: string
+    }
+  }): Promise<string> {
+    return this.wrappedRequest(() =>
+      this.uploadStreamApi.uploadStream(authenticationToken, file),
     )
   }
 }

@@ -18,7 +18,7 @@ import {
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  generateRequestPdf,
+  getRequestPdfAsString,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
@@ -219,7 +219,7 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const pdf = await generateRequestPdf(existingCase)
+    const pdf = await getRequestPdfAsString(existingCase)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -324,7 +324,7 @@ export class NotificationService {
     let attachments = null
 
     if (existingCase.sendRequestToDefender) {
-      const pdf = await generateRequestPdf(existingCase)
+      const pdf = await getRequestPdfAsString(existingCase)
 
       attachments = [
         {

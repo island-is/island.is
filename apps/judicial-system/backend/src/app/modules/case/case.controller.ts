@@ -247,13 +247,13 @@ export class CaseController {
 
     // Make sure a valid users are assigned to the case's roles
     // TODO: move user role verification to an interceptor
-    if (caseToUpdate.prosecutorId) {
+    if (Boolean(caseToUpdate.prosecutorId)) {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
     }
-    if (caseToUpdate.judgeId) {
+    if (Boolean(caseToUpdate.judgeId)) {
       await this.validateJudge(caseToUpdate.judgeId)
     }
-    if (caseToUpdate.registrarId) {
+    if (Boolean(caseToUpdate.registrarId)) {
       await this.validateRegistrar(caseToUpdate.registrarId)
     }
 
@@ -265,6 +265,15 @@ export class CaseController {
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase

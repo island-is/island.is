@@ -8,15 +8,22 @@ import {
   Configuration,
   CreateCaseApi,
   CreateCustodyCaseApi,
+  CreateDocumentApi,
   FetchParams,
   RequestContext,
 } from '../../gen/fetch'
+import { UploadStreamApi } from './uploadStreamApi'
 import {
   CourtClientService,
   COURT_SERVICE_OPTIONS,
 } from './court-client.service'
 
-const apis = [AuthenticateApi, CreateCaseApi, CreateCustodyCaseApi]
+const genApis = [
+  AuthenticateApi,
+  CreateCaseApi,
+  CreateCustodyCaseApi,
+  CreateDocumentApi,
+]
 
 function injectAgentMiddleware(agent: Agent) {
   return async (context: RequestContext): Promise<FetchParams> => {
@@ -38,32 +45,31 @@ export interface CourtClientModuleOptions {
 
 export class CourtClientModule {
   static register(options: CourtClientModuleOptions): DynamicModule {
+    const agent = new https.Agent({
+      cert: options.clientCert,
+      key: options.clientKey,
+      ca: options.clientCa,
+      rejectUnauthorized: false,
+    })
+    const defaultHeaders = { 'X-Road-Client': options.xRoadClient }
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
       basePath: options.xRoadPath,
-      headers: {
-        'X-Road-Client': options.xRoadClient,
-      },
-      middleware: [
-        {
-          pre: injectAgentMiddleware(
-            new https.Agent({
-              cert: options.clientCert,
-              key: options.clientKey,
-              ca: options.clientCa,
-              rejectUnauthorized: false, // Must be false because we are using self signed certificates
-            }),
-          ),
-        },
-      ],
+      headers: defaultHeaders,
+      middleware: [{ pre: injectAgentMiddleware(agent) }],
     })
     return {
       module: CourtClientModule,
       providers: [
-        ...apis.map((api) => ({
+        ...genApis.map((api) => ({
           provide: api,
           useFactory: () => new api(providerConfiguration),
         })),
+        {
+          provide: UploadStreamApi,
+          useFactory: () =>
+            new UploadStreamApi(options.xRoadPath, defaultHeaders, agent),
+        },
         {
           provide: COURT_SERVICE_OPTIONS,
           useFactory: () => ({
