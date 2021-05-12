@@ -1,11 +1,13 @@
 import React, { FC, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+
 import { Header as UIHeader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useLocation } from 'react-router-dom'
 
 import { useAuthState } from '../context/AuthProvider'
 import useAuth from '../hooks/useAuth'
 import { fixSvgUrls } from '../utils'
+import { useInfoState } from '../context/InfoProvider'
 
 const Header: FC = () => {
   const [{ isAuthenticated, userInfo }] = useAuthState()
@@ -13,6 +15,7 @@ const Header: FC = () => {
   const { lang } = useLocale()
   const { changeLanguage } = useNamespaces()
   const location = useLocation()
+  const { applicationName, institutionName } = useInfoState()
 
   const handleSwitchLanguage = () => {
     changeLanguage(lang === 'is' ? 'en' : 'is')
@@ -27,6 +30,14 @@ const Header: FC = () => {
 
   return (
     <UIHeader
+      info={
+        applicationName && institutionName
+          ? {
+              title: institutionName,
+              description: applicationName,
+            }
+          : undefined
+      }
       authenticated={isAuthenticated}
       userName={userInfo?.profile?.name}
       language={(lang ?? 'is') === 'is' ? 'EN' : 'IS'}
