@@ -6,6 +6,7 @@ import {
   CustomTemplateFindQuery,
   getValueViaPath,
 } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { ChildInformation, ChildrenAndExistingApplications } from './types'
 import {
@@ -23,6 +24,8 @@ const pregnancyStatusQuery = `
   }
 `
 
+const isRunningOnProduction = isRunningOnEnvironment('production')
+
 export class Children extends BasicDataProvider {
   type = 'Children'
   async provide(
@@ -32,7 +35,7 @@ export class Children extends BasicDataProvider {
     const useMockData =
       getValueViaPath(application.answers, 'useMockData', NO) === YES
 
-    if (useMockData) {
+    if (useMockData && !isRunningOnProduction) {
       return getChildrenFromMockData(application)
     }
 
