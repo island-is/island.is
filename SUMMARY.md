@@ -185,6 +185,7 @@
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
   - [Utils Environment](libs/utils/environment/README.md)
+  - [Utils Shared](libs/utils/shared/README.md)
 
 ## Misc
 

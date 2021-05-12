@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 
-import { isRunningOnEnvironment } from '@island.is/utils/api'
+import { isRunningOnEnvironment } from '@island.is/utils/shared'
 import {
   Configuration,
   ParentalLeaveApi,
