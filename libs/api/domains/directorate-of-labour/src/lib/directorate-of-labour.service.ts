@@ -1,17 +1,22 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 import { ApolloError } from 'apollo-server-express'
 import { Union, PensionFund } from '@island.is/clients/vmst'
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
-import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
-// eslint-disable-next-line
+import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeave } from '../models/parentalLeaves.model'
+import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
+
 const handleError = (error: any) => {
   logger.error(error)
-  throw new ApolloError('Failed to resolve request', error.response.message)
+
+  throw new ApolloError(
+    'Failed to resolve request',
+    error?.message ?? error?.response?.message,
+  )
 }
 @Injectable()
 export class DirectorateOfLabourService {
@@ -38,11 +43,17 @@ export class DirectorateOfLabourService {
   }
 
   async getParentalLeavesEntitlements(
-    dateOfBirth: string,
+    dateOfBirth: Date,
     nationalId: string,
-  ): Promise<ParentalLeaveEntitlement[]> {
+  ): Promise<ParentalLeaveEntitlement | null> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEntitlements(dateOfBirth, nationalId)
+      .catch(handleError)
+  }
+
+  async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
+    return await this.directorateOfLabourRepository
+      .getParentalLeaves(nationalId)
       .catch(handleError)
   }
 
@@ -70,11 +81,11 @@ export class DirectorateOfLabourService {
       .catch(handleError)
   }
 
-  async getParentalLeavePregnancyStatus(
+  async getPregnancyStatus(
     nationalId: string,
-  ): Promise<ParentalLeavePregnancyStatus | null> {
+  ): Promise<PregnancyStatus | null> {
     return await this.directorateOfLabourRepository
-      .getParentalLeavePregnancyStatus(nationalId)
+      .getPregnancyStatus(nationalId)
       .catch(handleError)
   }
 }
