@@ -1,0 +1,63 @@
+import { ref, service, ServiceBuilder } from '../../../../libs/helm/dsl/dsl'
+
+const postgresInfo = {
+  passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
+  username: 'air_discount_scheme_backend',
+  name: 'air_discount_scheme_backend',
+}
+export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
+  service('air-discount-scheme-backend')
+    .image('air-discount-scheme-backend')
+    .namespace('air-discount-scheme')
+    .secrets({
+      ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
+      ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY',
+      NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',
+      NATIONAL_REGISTRY_PASSWORD:
+        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD',
+    })
+    .env({
+      SENTRY_DSN:
+        'https://d10d7fc22f18413d97e73fab76910f07@o406638.ingest.sentry.io/5399531',
+      ENVIRONMENT: {
+        dev: 'dev',
+        staging: 'staging',
+        prod: 'prod',
+      },
+      REDIS_URL_NODE_01: {
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+    })
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
+    })
+    .ingress({
+      primary: {
+        host: {
+          dev: ['loftbru', 'loftbru-cf'],
+          staging: ['loftbru', 'loftbru-cf'],
+          prod: 'loftbru',
+        },
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+        },
+        paths: ['/api/swagger', '/api/public'],
+      },
+    })
+    .readiness('/liveness')
+    .liveness('/liveness')
