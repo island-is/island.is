@@ -45,7 +45,7 @@ export class EndorsementListService {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-    const response = await this.endorsementModel.findAll({
+    return this.endorsementModel.findAll({
       where: { endorser: nationalId },
       include: [
         {
@@ -54,8 +54,6 @@ export class EndorsementListService {
         },
       ],
     })
-
-    return response
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
