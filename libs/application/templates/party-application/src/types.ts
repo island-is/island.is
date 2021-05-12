@@ -6,3 +6,16 @@ export enum Constituencies {
   SOUTH = 'Suðurkjördæmi',
   SOUTH_WEST = 'Suðvesturkjördæmi',
 }
+
+export interface Endorsement {
+  date: string
+  name: string
+  nationalId: string
+  address: {
+    city: string
+    postalCode: number
+    streetAddress: string
+  }
+  hasWarning?: boolean
+  id: string
+}

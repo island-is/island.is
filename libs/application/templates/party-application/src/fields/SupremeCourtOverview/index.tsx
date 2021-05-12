@@ -1,10 +1,27 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { SIGNATURES } from '../EndorsementList'
 import { useLocale } from '@island.is/localization'
+import gql from 'graphql-tag'
+import { useQuery } from '@apollo/client'
 import { CSVLink } from 'react-csv'
+import { Endorsement } from '../../types'
+
+const GET_ENDORSEMENT_LIST = gql`
+  query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
+    endorsementSystemGetEndorsements(input: $input) {
+      id
+      endorser
+      meta {
+        fullName
+        address
+      }
+      created
+      modified
+    }
+  }
+`
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -14,6 +31,29 @@ export interface Props extends FieldBaseProps {
 const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
+  const [endorsements, setEndorsements] = useState<Endorsement[]>()
+
+  const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {
+    onCompleted: async ({ endorsementSystemGetEndorsements }) => {
+      if (!loading && endorsementSystemGetEndorsements) {
+        const hasEndorsements =
+          !error && !loading && endorsementSystemGetEndorsements?.length
+            ? endorsementSystemGetEndorsements.length > 0
+            : false
+        const mapToEndorsementList: Endorsement[] = hasEndorsements
+          ? endorsementSystemGetEndorsements.map((x: any) => ({
+              date: x.created,
+              name: x.meta.fullName,
+              nationalId: x.endorser,
+              address: x.meta.address ? x.meta.address : '',
+              hasWarning: false,
+              id: x.id,
+            }))
+          : undefined
+        setEndorsements(mapToEndorsementList)
+      }
+    },
+  })
 
   return (
     <Box>
@@ -52,7 +92,10 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
-          <CSVLink data={SIGNATURES} filename="medmaelendur.csv">
+          <CSVLink
+            data={endorsements ?? 'Engum meðmælum hefur verið skilað'}
+            filename="medmaelendur.csv"
+          >
             <Button variant="text" icon="download" iconType="outline">
               {formatMessage(m.supremeCourt.csvButton)}
             </Button>
