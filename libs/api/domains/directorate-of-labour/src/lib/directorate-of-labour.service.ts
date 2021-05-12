@@ -6,6 +6,7 @@ import { Union, PensionFund } from '@island.is/clients/vmst'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
+import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -66,6 +67,14 @@ export class DirectorateOfLabourService {
   ): Promise<ParentalLeavePaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEstimatedPaymentPlan(dateOfBirth, period, nationalId)
+      .catch(handleError)
+  }
+
+  async getParentalLeavePregnancyStatus(
+    nationalId: string,
+  ): Promise<ParentalLeavePregnancyStatus | null> {
+    return await this.directorateOfLabourRepository
+      .getParentalLeavePregnancyStatus(nationalId)
       .catch(handleError)
   }
 }

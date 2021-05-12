@@ -12,7 +12,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { dateFormat } from '@island.is/shared/constants'
 
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
+import { States as ApplicationStates } from '../../constants'
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   employer: StateMapEntry
