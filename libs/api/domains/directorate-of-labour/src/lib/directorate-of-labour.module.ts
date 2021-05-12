@@ -11,7 +11,6 @@ const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
 const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
 const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
-
 const XROAD_VMST_MEMBER_CLASS = XRoadMemberClass.GovernmentInstitution
 
 @Module({})

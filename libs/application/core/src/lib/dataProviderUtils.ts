@@ -4,6 +4,7 @@ import {
   BasicDataProvider,
   CustomTemplateFindQuery,
 } from '../types/BasicDataProvider'
+import { FormatMessage } from '../types/Form'
 
 export interface FulfilledPromise<T> {
   status: 'fulfilled'
@@ -14,6 +15,7 @@ function callProvider(
   provider: BasicDataProvider,
   application: Application,
   customTemplateFindQuery: CustomTemplateFindQuery,
+  formatMessage: FormatMessage,
 ): Promise<DataProviderResult> {
   if (provider === null) {
     return Promise.resolve({
@@ -27,7 +29,17 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      return Promise.resolve(provider.onProvideError(error))
+      const reason =
+        typeof error.reason === 'object'
+          ? formatMessage(error.reason)
+          : error.reason
+
+      return Promise.resolve(
+        provider.onProvideError({
+          ...error,
+          reason,
+        }),
+      )
     },
   )
 }
@@ -36,10 +48,13 @@ export async function callDataProviders(
   dataProviders: BasicDataProvider[],
   application: Application,
   customTemplateFindQuery: CustomTemplateFindQuery,
+  formatMessage: FormatMessage,
 ): Promise<DataProviderResult[]> {
   // TODO what about options to pass to each data provider?
   const promises = dataProviders.map((p) =>
-    Promise.resolve(callProvider(p, application, customTemplateFindQuery)),
+    Promise.resolve(
+      callProvider(p, application, customTemplateFindQuery, formatMessage),
+    ),
   )
   return Promise.all(promises)
 }
