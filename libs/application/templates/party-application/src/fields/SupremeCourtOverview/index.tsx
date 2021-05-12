@@ -14,7 +14,7 @@ export interface Props extends FieldBaseProps {
 const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  console.log(answers)
+
   return (
     <Box>
       <Text variant="h3"> {formatMessage(m.supremeCourt.subtitle)}</Text>

@@ -98,6 +98,22 @@ const PartyApplicationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementApplication),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -154,7 +170,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
       },
       [States.APPROVED]: {
-        //exit: 'clearAssignees',
         meta: {
           name: States.APPROVED,
           progress: 1,
