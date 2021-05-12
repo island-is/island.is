@@ -18,7 +18,10 @@ import { parseString } from '../formatters'
 
 type autofillProperties = Pick<
   Case,
-  'courtAttendees' | 'policeDemands' | 'litigationPresentations'
+  | 'courtAttendees'
+  | 'policeDemands'
+  | 'litigationPresentations'
+  | 'courtStartDate'
 >
 
 interface CreateCustodyCourtCaseMutationResponse {
