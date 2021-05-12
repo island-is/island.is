@@ -158,7 +158,7 @@ export interface Case {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -246,7 +246,7 @@ export interface UpdateCase {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
