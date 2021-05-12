@@ -28,7 +28,6 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  Feature,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -46,7 +45,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -61,22 +59,12 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
-  const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
-    false,
-  )
 
   const router = useRouter()
   const id = router.query.id
 
-  const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
-  const {
-    updateCase,
-    createCustodyCourtCase,
-    creatingCustodyCourtCase,
-    createCourtCase,
-    creatingCourtCase,
-  } = useCase()
+  const { updateCase, createCourtCase, creatingCourtCase } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -118,20 +106,6 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
-    const tryToShowFeature = (theCase: Case) => {
-      setShowCreateCustodyCourtCase(
-        features.includes(Feature.CREATE_COURT_CASE) ||
-          (theCase.type === CaseType.CUSTODY &&
-            features.includes(Feature.CREATE_CUSTODY_COURT_CASE)),
-      )
-    }
-
-    if (workingCase) {
-      tryToShowFeature(workingCase)
-    }
-  }, [features, workingCase, setShowCreateCustodyCourtCase])
-
-  useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
@@ -142,19 +116,7 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, data])
 
   const handleClick = (workingCase: Case) => {
-    if (features.includes(Feature.CREATE_COURT_CASE)) {
-      createCourtCase(
-        workingCase,
-        setWorkingCase,
-        setCourtCaseNumberErrorMessage,
-      )
-    } else {
-      createCustodyCourtCase(
-        workingCase,
-        setWorkingCase,
-        setCourtCaseNumberErrorMessage,
-      )
-    }
+    createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberErrorMessage)
 
     if (courtCaseNumberErrorMessage === '') {
       setCreateCaseSuccess(true)
@@ -200,21 +162,17 @@ export const JudgeOverview: React.FC = () => {
               <BlueBox>
                 <div className={styles.createCourtCaseContainer}>
                   <Box display="flex">
-                    {showCreateCustodyCourtCase && (
-                      <div className={styles.createCourtCaseButton}>
-                        <Button
-                          size="small"
-                          onClick={() => handleClick(workingCase)}
-                          loading={
-                            creatingCourtCase || creatingCustodyCourtCase
-                          }
-                          disabled={Boolean(workingCase.courtCaseNumber)}
-                          fluid
-                        >
-                          Stofna nýtt mál
-                        </Button>
-                      </div>
-                    )}
+                    <div className={styles.createCourtCaseButton}>
+                      <Button
+                        size="small"
+                        onClick={() => handleClick(workingCase)}
+                        loading={creatingCourtCase}
+                        disabled={Boolean(workingCase.courtCaseNumber)}
+                        fluid
+                      >
+                        Stofna nýtt mál
+                      </Button>
+                    </div>
                     <div className={styles.createCourtCaseInput}>
                       <Input
                         data-testid="courtCaseNumber"
@@ -225,15 +183,13 @@ export const JudgeOverview: React.FC = () => {
                         backgroundColor="white"
                         value={workingCase.courtCaseNumber || ''}
                         icon={
-                          workingCase.courtCaseNumber &&
-                          createCaseSuccess &&
-                          showCreateCustodyCourtCase
+                          workingCase.courtCaseNumber && createCaseSuccess
                             ? 'checkmark'
                             : undefined
                         }
                         errorMessage={courtCaseNumberErrorMessage}
                         hasError={
-                          !creatingCustodyCourtCase &&
+                          !creatingCourtCase &&
                           courtCaseNumberErrorMessage !== ''
                         }
                         onChange={(event) => {
@@ -452,43 +408,40 @@ export const JudgeOverview: React.FC = () => {
                       </Text>
                     </Box>
                   )}
-                  {features.includes(Feature.CASE_FILES) &&
-                    workingCase.caseFilesComments && (
-                      <>
-                        <Box marginBottom={1}>
-                          <Text variant="h4" as="h3" color="blue400">
-                            Athugasemdir vegna rannsóknargagna
-                          </Text>
-                        </Box>
-                        <Text>
-                          <span className={styles.breakSpaces}>
-                            {workingCase.caseFilesComments}
-                          </span>
+                  {workingCase.caseFilesComments && (
+                    <>
+                      <Box marginBottom={1}>
+                        <Text variant="h4" as="h3" color="blue400">
+                          Athugasemdir vegna rannsóknargagna
                         </Text>
-                      </>
-                    )}
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.caseFilesComments}
+                        </span>
+                      </Text>
+                    </>
+                  )}
                 </div>
               )}
 
-              {features.includes(Feature.CASE_FILES) && (
-                <div className={styles.infoSection}>
-                  <Box marginBottom={1}>
-                    <Text as="h2" variant="h3">
-                      {`Rannsóknargögn (${
-                        workingCase.files ? workingCase.files.length : 0
-                      })`}
-                    </Text>
-                  </Box>
-                  <CaseFileList
-                    caseId={workingCase.id}
-                    files={workingCase.files || []}
-                    canOpenFiles={
-                      workingCase.judge !== null &&
-                      workingCase.judge?.id === user?.id
-                    }
-                  />
-                </div>
-              )}
+              <div className={styles.infoSection}>
+                <Box marginBottom={1}>
+                  <Text as="h2" variant="h3">
+                    {`Rannsóknargögn (${
+                      workingCase.files ? workingCase.files.length : 0
+                    })`}
+                  </Text>
+                </Box>
+                <CaseFileList
+                  caseId={workingCase.id}
+                  files={workingCase.files || []}
+                  canOpenFiles={
+                    workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id
+                  }
+                />
+              </div>
               <Box marginBottom={3}>
                 <PdfButton
                   caseId={workingCase.id}

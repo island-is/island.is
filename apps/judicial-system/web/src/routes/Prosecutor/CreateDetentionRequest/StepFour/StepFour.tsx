@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, Feature } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
   constructProsecutorDemands,
   isNextDisabled,
@@ -24,7 +24,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
@@ -36,7 +35,6 @@ export const StepFour: React.FC = () => {
     legalArgumentsErrorMessage,
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
-  const { features } = useContext(FeatureContext)
 
   const router = useRouter()
   const id = router.query.id
@@ -275,11 +273,7 @@ export const StepFour: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
-              nextUrl={
-                features.includes(Feature.CASE_FILES)
-                  ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
-                  : `${Constants.STEP_SIX_ROUTE}/${workingCase.id}`
-              }
+              nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
               nextIsDisabled={isStepIllegal}
             />
           </FormContentContainer>
