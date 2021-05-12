@@ -21,7 +21,7 @@ const filterNavigationTree = (
         (Array.isArray(route.path) &&
           item.path &&
           route.path.includes(item.path)),
-    ) !== undefined || item.systemRoute === true
+    ) !== undefined
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
