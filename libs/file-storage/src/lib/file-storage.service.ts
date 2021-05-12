@@ -47,19 +47,10 @@ export class FileStorageService {
     })
   }
 
-  public generateSignedUrl(url: string): Promise<string> {
-    const { bucket, key } = AmazonS3URI(url)
+  public generateSignedUrl(url: string, key: string): Promise<string> {
+    const { bucket } = AmazonS3URI(url)
     const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
-
-    return new Promise((resolve, reject) => {
-      this.s3.getSignedUrl('getObject', params, (err, signedUrl) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(signedUrl)
-        }
-      })
-    })
+    return this.s3.getSignedUrlPromise('getObject', params)
   }
 
   async copyObjectFromUploadBucket(
