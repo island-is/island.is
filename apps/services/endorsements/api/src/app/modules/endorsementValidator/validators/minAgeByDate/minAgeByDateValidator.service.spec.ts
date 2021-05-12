@@ -14,7 +14,7 @@ const getNestModule = async () => {
   )
 }
 
-describe('getCompaniesByNationalId', () => {
+describe('minAgeByDateValidator', () => {
   let minAgeByDateValidatorService: MinAgeByDateValidatorService
 
   beforeEach(async () => {

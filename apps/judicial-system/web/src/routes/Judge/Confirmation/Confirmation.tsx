@@ -247,7 +247,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
-        router.push(Constants.FEEDBACK_FORM_ROUTE)
+        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
@@ -359,7 +360,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
