@@ -25,7 +25,7 @@ import {
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
-import { PdfFile } from './utils/types'
+import { PdfFile, SigningOptions } from './utils/types'
 import {
   generateJointCustodyPdf,
   generateResidenceChangePdf,
@@ -98,54 +98,20 @@ export class FileService {
     pdfType: PdfTypes,
   ): Promise<SigningServiceResponse> {
     this.validateApplicationType(application.typeId)
-    const { answers, externalData, id, state } = application as CRCApplication
-    const { nationalRegistry } = externalData
-    const isParentA = state === 'draft'
-    const applicant = nationalRegistry?.data
-    const selectedChildren = getSelectedChildrenFromExternalData(
-      applicant.children,
-      answers.selectedChildren,
+
+    const signingOptions = await this.getSigningOptionsForApplication(
+      application,
+      pdfType,
     )
-    const parentB = selectedChildren[0].otherParent
 
-    switch (pdfType) {
-      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const { fullName, phoneNumber } = isParentA
-          ? {
-              fullName: applicant.fullName,
-              phoneNumber: answers.parentA.phoneNumber,
-            }
-          : {
-              fullName: parentB.fullName,
-              phoneNumber: answers.parentB.phoneNumber,
-            }
-
-        return await this.handleChildrenResidenceChangeSignature(
-          pdfType,
-          id,
-          fullName,
-          phoneNumber,
-        )
-      }
-      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        const { fullName, phoneNumber } = isParentA
-          ? {
-              fullName: applicant.fullName,
-              phoneNumber: answers.parentA.phoneNumber,
-            }
-          : {
-              fullName: parentB.fullName,
-              phoneNumber: answers.parentB.phoneNumber,
-            }
-
-        return await this.handleChildrenResidenceChangeSignature(
-          pdfType,
-          id,
-          fullName,
-          phoneNumber,
-        )
-      }
-    }
+    return await this.signingService.requestSignature(
+      signingOptions.phoneNumber,
+      signingOptions.title,
+      signingOptions.name,
+      'Ísland',
+      DokobitFileName[pdfType],
+      signingOptions.fileContent,
+    )
   }
 
   async getPresignedUrl(application: Application, pdfType: PdfTypes) {
@@ -172,30 +138,90 @@ export class FileService {
     }
   }
 
-  private async handleChildrenResidenceChangeSignature(
+  private async getSigningOptionsForApplication(
+    application: Application,
     pdfType: PdfTypes,
-    applicationId: string,
-    applicantName: string,
-    phoneNumber?: string,
-  ): Promise<SigningServiceResponse> {
+  ): Promise<SigningOptions> {
     const bucket = this.getBucketName()
-
-    const s3FileName = `${BucketTypePrefix[pdfType]}/${applicationId}.pdf`
+    const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const s3File = await this.awsService.getFile(bucket, s3FileName)
     const fileContent = s3File.Body?.toString('binary')
 
-    if (!fileContent || !phoneNumber) {
-      throw new NotFoundException(`Variables for document signing not found`)
+    const { phoneNumber, name, title } = this.getSigningOptionsFromApplication(
+      application,
+      pdfType,
+    )
+
+    if (!fileContent) {
+      throw new NotFoundException(`File content for document signing not found`)
     }
 
-    return await this.signingService.requestSignature(
+    return {
       phoneNumber,
-      'Lögheimilisbreyting barns',
-      applicantName,
-      'Ísland',
-      DokobitFileName[pdfType],
+      title,
+      name,
       fileContent,
-    )
+    }
+  }
+
+  private getSigningOptionsFromApplication = (
+    application: Application,
+    pdfType: PdfTypes,
+  ) => {
+    switch (pdfType) {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
+        const { answers, externalData, state } = application as CRCApplication
+        const { nationalRegistry } = externalData
+        const isParentA = state === 'draft'
+        const applicant = nationalRegistry?.data
+        const selectedChildren = getSelectedChildrenFromExternalData(
+          applicant.children,
+          answers.selectedChildren,
+        )
+        const parentB = selectedChildren[0].otherParent
+        const { name, phoneNumber } = isParentA
+          ? {
+              name: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              name: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
+
+        return {
+          phoneNumber,
+          title: 'Lögheimilisbreyting barns',
+          name,
+        }
+      }
+      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
+        const { answers, externalData, state } = application as JCAApplication
+        const { nationalRegistry } = externalData
+        const isParentA = state === 'draft'
+        const applicant = nationalRegistry?.data
+        const selectedChildren = getSelectedChildrenFromExternalData(
+          applicant.children,
+          answers.selectedChildren,
+        )
+        const parentB = selectedChildren[0].otherParent
+        const { name, phoneNumber } = isParentA
+          ? {
+              name: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              name: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
+
+        return {
+          phoneNumber,
+          title: 'Sameiginleg forsjá barns',
+          name,
+        }
+      }
+    }
   }
 
   private validateApplicationType(applicationType: string) {

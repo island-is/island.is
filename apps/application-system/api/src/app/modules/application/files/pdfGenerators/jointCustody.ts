@@ -22,6 +22,7 @@ import {
 import { PdfFile } from '../utils/types'
 import { PdfTypes } from '@island.is/application/core'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
+import { addLegalEffect } from './familyMatters'
 
 const TEMPORARY = 'temporary'
 

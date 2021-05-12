@@ -25,7 +25,7 @@ export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
 }
 
 export const DokobitFileName: KeyMapping<PdfTypes, string> = {
-  ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
+  ChildrenResidenceChange: 'Logheimilisbreyting-barns.pdf',
   JointCustodyAgreement: 'Sameiginleg-forsja.pdf',
 }
 

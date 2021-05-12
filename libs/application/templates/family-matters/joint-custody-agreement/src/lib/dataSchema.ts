@@ -57,6 +57,7 @@ export const dataSchema = z.object({
       params: error.validation.durationDate,
       path: ['date'],
     }),
+  parentB: parentContactInfo,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
