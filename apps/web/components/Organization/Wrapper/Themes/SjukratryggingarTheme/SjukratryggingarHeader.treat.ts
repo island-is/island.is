@@ -23,6 +23,7 @@ export const headerBg = style({
 export const headerContainer = style({
   paddingTop: 130,
   height: 385,
+  pointerEvents: 'none',
   ...themeUtils.responsiveStyle({
     lg: {
       background: `url('https://images.ctfassets.net/8k0h54kbe6bj/5anBvilgXGuY2ttEAMbzv2/6532c028aaa3c10fd9b5132ccb26c2ca/sjukra.svg')`,
