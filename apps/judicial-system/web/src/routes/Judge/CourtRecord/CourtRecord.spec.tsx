@@ -30,7 +30,7 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_9',
-              courtStartDate: '2020-09-16T12:31:00Z',
+              courtStartDate: '2020-09-16T19:51:28.000Z',
             } as UpdateCase,
             {
               id: 'test_id_9',
@@ -72,11 +72,6 @@ describe('/domari-krafa/thingbok', () => {
     )
 
     // Act
-    userEvent.type(
-      await screen.findByLabelText('Þinghald hófst (kk:mm) *'),
-      '12:31',
-    )
-
     expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
 
     expect(
@@ -122,6 +117,10 @@ describe('/domari-krafa/thingbok', () => {
           ...mockCaseQueries,
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
+            {
+              id: 'test_id_10',
+              courtStartDate: '2020-09-16T19:51:28.000Z',
+            } as UpdateCase,
             {
               id: 'test_id_10',
               courtAttendees:
