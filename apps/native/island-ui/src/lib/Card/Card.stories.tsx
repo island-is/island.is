@@ -4,10 +4,13 @@ import React from 'react'
 import { ImageSourcePropType, View } from 'react-native';
 import { WelcomeCard } from './WelcomeCard'
 import { LicenceCard } from './LicenceCard';
+import { NotificationCard } from './NotificationCard';
+import { StatusCard } from './StatusCard';
 import illustrationSrc from '../../assets/card/digital-services-m2.png'
 import agencyLogo from '../../assets/card/agency-logo.png'
 import logo from '../../assets/card/logo-64w.png'
-import { NotificationCard } from './NotificationCard';
+import timeOutlineIcon from '../../assets/card/time-outline.png';
+import { Badge } from '../Badge/Badge';
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 }}>{children}</View>
@@ -45,6 +48,19 @@ storiesOf('Cards', module)
         message="Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu"
         unread={false}
         onPress={() => console.log('test')}
+      />
+    );
+  })
+  .add('Status card', () => {
+    return (
+      <StatusCard
+        title="Fæðingarorlof 4/6"
+        icon={timeOutlineIcon}
+        date={new Date()}
+        description="Skipting orlofstíma"
+        badge={<Badge title="Vantar gögn" />}
+        progress={66}
+        actions={[{ text: 'Opna umsókn', onPress() {} }]}
       />
     );
   })

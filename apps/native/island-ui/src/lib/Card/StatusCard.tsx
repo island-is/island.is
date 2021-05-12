@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
 import { FormattedDate } from 'react-intl';
-import { Text } from 'react-native';
 import { ImageSourcePropType } from 'react-native';
 import { Image } from 'react-native';
 
 const Host = styled.View`
+  width: 100%;
   border-radius: ${theme.border.radius.large};
   border-width: 1px;
   border-color: ${props => props.theme.color.blue200};
@@ -36,18 +36,6 @@ const ActionText = styled.Text`
   text-align: center;
 `;
 
-// const ActionButton = styled.TouchableOpacity`
-//   padding: 16px;
-//   text-align: center;
-// `;
-// const ActionText = styled.Text`
-//   font-family: 'IBMPlexSans-SemiBold';
-//   font-size: 16px;
-//   line-height: 20px;
-//   color: ${theme.color.blue400};
-//   text-align: center;
-// `;
-
 const Title = styled.Text`
   margin-bottom: 8px;
   font-family: 'IBMPlexSans-SemiBold';
@@ -70,7 +58,6 @@ const Content = styled.View`
 const Date = styled.View`
   flex-direction: row;
   align-items: center;
-  /* height: 40px; */
 `;
 
 const DateText = styled.Text`
