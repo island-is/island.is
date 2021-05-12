@@ -17,12 +17,19 @@ export const financeModule: ServicePortalModule = {
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
       {
-        name: "Staða",
+        name: 'Staða',
         path: ServicePortalPath.FinanceStatus,
-        render: () =>
-          lazy(() =>
-            import('./screens/FinanceStatus'),
-          ),
+        render: () => lazy(() => import('./screens/FinanceStatus')),
+      },
+      {
+        name: 'Færslur',
+        path: ServicePortalPath.FinanceTransactions,
+        render: () => lazy(() => import('./screens/FinanceTransactions')),
+      },
+      {
+        name: 'Laungreiðendakröfur',
+        path: ServicePortalPath.FinanceSalary,
+        render: () => lazy(() => import('./screens/FinanceSalary')),
       },
     ]
 
