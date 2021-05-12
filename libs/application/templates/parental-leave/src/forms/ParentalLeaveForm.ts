@@ -2,9 +2,7 @@ import {
   Application,
   buildAsyncSelectField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -14,6 +12,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  ExternalData,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -24,6 +23,7 @@ import {
   getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
+  getSelectedChild,
   createRange,
 } from '../parentalLeaveUtils'
 import {
@@ -41,6 +41,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
 
 const percentOptions = createRange<{ label: string; value: string }>(
   10,
@@ -112,8 +113,13 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: () => {
-                // TODO this screen is only for the primary parent
+              condition: (answers, externalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (selectedChild !== null) {
+                  return selectedChild.parentalRelation === 'primary'
+                }
+
                 return true
               },
               children: [
@@ -506,13 +512,22 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers) =>
-                (answers as {
-                  requestRights: {
-                    isRequestingRights: string
-                  }
-                })?.requestRights?.isRequestingRights === NO,
+              condition: (answers, externalData: ExternalData) => {
+                const data = externalData?.children
+                  ?.data as PregnancyStatusAndRightsResults
 
+                if (!data.hasRights || data.remainingDays === 0) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
