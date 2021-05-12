@@ -7,6 +7,7 @@ import {
   Box,
   RadioButton,
   Checkbox,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -65,6 +66,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>()
 
+  const [
+    leadInvestigatorErrorMessage,
+    setLeadInvestigatorErrorMessage,
+  ] = useState<string>()
+
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
@@ -97,6 +103,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
       setErrorMessage: setDefenderPhoneNumberErrorMessage,
     },
     sendRequestToDefender: {},
+    leadInvestigator: {
+      validations: ['empty'],
+      errorMessage: leadInvestigatorErrorMessage,
+      setErrorMessage: setLeadInvestigatorErrorMessage,
+    },
   }
 
   const {
@@ -314,6 +325,33 @@ export const StepOneForm: React.FC<Props> = (props) => {
               filled
             />
           </BlueBox>
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="baseline"
+            marginBottom={2}
+          >
+            <Text as="h3" variant="h3">
+              Stjórnandi rannsóknar{' '}
+              <Tooltip text="Upplýsingar um stjórnanda rannsóknar birtast á vistunarseðli sem berst til gæslufangelsis." />
+            </Text>
+          </Box>
+          <Box marginBottom={2}>
+            <Input
+              data-testid="leadInvestigator"
+              name="leadInvestigator"
+              label="Sláðu inn stjórnanda rannsóknar"
+              placeholder="Hver stýrir rannsókn málsins?"
+              defaultValue={workingCase.accusedName}
+              errorMessage={accusedNameErrorMessage}
+              hasError={accusedNameErrorMessage !== undefined}
+              onChange={(event) => setField(event.target)}
+              onBlur={(event) => validateAndSendToServer(event.target)}
+              required
+            />
+          </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
