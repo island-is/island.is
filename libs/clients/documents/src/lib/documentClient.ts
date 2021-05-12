@@ -7,6 +7,7 @@ import {
   ListDocumentsResponse,
 } from './models'
 import { DocumentOauthConnection } from './document.connection'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -26,6 +27,8 @@ export class DocumentClient {
     private httpService: HttpService,
     @Inject(DOCUMENT_CLIENT_CONFIG)
     private clientConfig: DocumentClientConfig,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   private async rehydrateToken() {
@@ -43,7 +46,7 @@ export class DocumentClient {
     }
   }
 
-  private async getRequest<T>(requestRoute: string): Promise<T> {
+  private async getRequest<T>(requestRoute: string): Promise<T | null> {
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
@@ -51,29 +54,45 @@ export class DocumentClient {
       },
     }
 
-    const response: {
-      data: T
-    } = await this.httpService
-      .get(`${this.clientConfig.basePath}${requestRoute}`, config)
-      .toPromise()
+    try {
+      const response: {
+        data: T
+      } = await this.httpService
+        .get(`${this.clientConfig.basePath}${requestRoute}`, config)
+        .toPromise()
 
-    return response.data
+      return response.data
+    } catch (e) {
+      const errMsg = 'Failed to get from Postholf'
+      const error = e.toJSON()
+      const description = error.message
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      return null
+    }
   }
 
-  async getDocumentList(nationalId: string): Promise<ListDocumentsResponse> {
+  async getDocumentList(
+    nationalId: string,
+  ): Promise<ListDocumentsResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages`
     return await this.getRequest<ListDocumentsResponse>(requestRoute)
   }
 
   async customersDocument(
     requestParameters: CustomersDocumentRequest,
-  ): Promise<DocumentDTO> {
+  ): Promise<DocumentDTO | null> {
     const { kennitala, messageId, authenticationType } = requestParameters
     const requestRoute = `/api/mail/v1/customers/${kennitala}/messages/${messageId}?authenticationType=${authenticationType}`
     return await this.getRequest<DocumentDTO>(requestRoute)
   }
 
-  async customersCategories(nationalId: string): Promise<CategoriesResponse> {
+  async customersCategories(
+    nationalId: string,
+  ): Promise<CategoriesResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/categories`
     return await this.getRequest<CategoriesResponse>(requestRoute)
   }
