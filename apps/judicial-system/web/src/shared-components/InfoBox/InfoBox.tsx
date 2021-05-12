@@ -28,7 +28,7 @@ const InfoBox: React.FC<Props> = (props) => {
         </Box>
 
         <button onClick={props.onDismiss}>
-          <Icon icon="business" />
+          <Icon icon="trash" type="outline" color="blue400" />
         </button>
       </Box>
     </div>
