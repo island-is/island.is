@@ -9,7 +9,7 @@ import {
   childrenResidenceInfo,
 } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { BucketTypePrefix, PdfConstants } from '../utils/constants'
+import { PdfConstants } from '../utils/constants'
 import { DistrictCommissionerLogo } from '../utils/districtCommissionerLogo'
 import {
   addHeader,
@@ -20,15 +20,11 @@ import {
   newDocument,
   addLogo,
 } from '../utils/pdfUtils'
-import { PdfFile } from '../utils/types'
-import { PdfTypes } from '@island.is/application/core'
 import { addLegalEffect } from './familyMatters'
 
 const TEMPORARY = 'temporary'
 
-export async function generateResidenceChangePdf(
-  application: CRCApplication,
-): Promise<PdfFile> {
+export async function generateResidenceChangePdf(application: CRCApplication) {
   const {
     answers,
     externalData: { nationalRegistry },
@@ -166,15 +162,9 @@ export async function generateResidenceChangePdf(
   )
   doc.end()
 
-  const content = await new Promise<Buffer>(function (resolve) {
+  return await new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  const name = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
-    application.id
-  }.pdf`
-
-  return { content, name }
 }

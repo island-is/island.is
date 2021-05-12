@@ -8,7 +8,7 @@ import {
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
 } from '@island.is/application/templates/family-matters-core/utils'
-import { BucketTypePrefix, PdfConstants } from '../utils/constants'
+import { PdfConstants } from '../utils/constants'
 import { DistrictCommissionerLogo } from '../utils/districtCommissionerLogo'
 import {
   addHeader,
@@ -19,16 +19,12 @@ import {
   newDocument,
   addLogo,
 } from '../utils/pdfUtils'
-import { PdfFile } from '../utils/types'
-import { PdfTypes } from '@island.is/application/core'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
 import { addLegalEffect } from './familyMatters'
 
 const TEMPORARY = 'temporary'
 
-export async function generateJointCustodyPdf(
-  application: JCAApplication,
-): Promise<PdfFile> {
+export async function generateJointCustodyPdf(application: JCAApplication) {
   const {
     answers,
     externalData: { nationalRegistry },
@@ -135,15 +131,9 @@ export async function generateJointCustodyPdf(
 
   doc.end()
 
-  const content = await new Promise<Buffer>(function (resolve) {
+  return await new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  const name = `${BucketTypePrefix[PdfTypes.JOINT_CUSTODY_AGREEMENT]}/${
-    application.id
-  }.pdf`
-
-  return { content, name }
 }

@@ -25,11 +25,11 @@ import {
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
-import { PdfFile, SigningOptions } from './utils/types'
+import { SigningOptions } from './utils/types'
 import {
   generateJointCustodyPdf,
   generateResidenceChangePdf,
-} from './pdfGenerators/'
+} from './pdfGenerators'
 
 @Injectable()
 export class FileService {
@@ -40,18 +40,18 @@ export class FileService {
     private readonly awsService: AwsService,
   ) {}
 
-  async createPdf(
-    application: Application,
-    pdfType: PdfTypes,
-  ): Promise<string | undefined> {
+  async createPdf(application: Application, pdfType: PdfTypes) {
     this.validateApplicationType(application.typeId)
 
-    const file = await this.createFile(application, pdfType)
+    const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const bucket = this.getBucketName()
 
-    await this.awsService.uploadFile(file.content, bucket, file.name)
+    if ((await this.awsService.fileExists(bucket, fileName)) === false) {
+      const content = await this.createFile(application, pdfType)
+      await this.awsService.uploadFile(content, bucket, fileName)
+    }
 
-    return await this.awsService.getPresignedUrl(bucket, file.name)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   async uploadSignedFile(
@@ -93,10 +93,7 @@ export class FileService {
       })
   }
 
-  async requestFileSignature(
-    application: Application,
-    pdfType: PdfTypes,
-  ): Promise<SigningServiceResponse> {
+  async requestFileSignature(application: Application, pdfType: PdfTypes) {
     this.validateApplicationType(application.typeId)
 
     const signingOptions = await this.getSigningOptionsForApplication(
@@ -124,16 +121,13 @@ export class FileService {
     return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
-  private async createFile(
-    application: Application,
-    pdfType: PdfTypes,
-  ): Promise<PdfFile> {
+  private async createFile(application: Application, pdfType: PdfTypes) {
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
       case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        return generateJointCustodyPdf(application as JCAApplication)
+        return await generateJointCustodyPdf(application as JCAApplication)
       }
     }
   }
@@ -141,7 +135,7 @@ export class FileService {
   private async getSigningOptionsForApplication(
     application: Application,
     pdfType: PdfTypes,
-  ): Promise<SigningOptions> {
+  ) {
     const bucket = this.getBucketName()
     const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const s3File = await this.awsService.getFile(bucket, s3FileName)
