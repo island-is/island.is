@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, RadioButton, Input, Box } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
   FormFooter,
   FormLayout,
-} from '../../../components'
+  RadioButtonContainer,
+} from '@island.is/financial-aid-web/osk/src/components'
+
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import * as styles from './incomeForm.treat'
-import useFormNavigation from '../../../utils/formNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
 const IncomeForm = () => {
@@ -18,21 +20,25 @@ const IncomeForm = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  const navigation = useFormNavigation({ currentId: 'income' })
+  //TODO: má ekki any hvernig er syntax?
+  const navigation: any = useFormNavigation(router.pathname)
 
   const incomeOptions = [
     {
       label: 'Já, ég hef fengið tekjur',
-      checked: form?.hasIncome === true,
+      value: 0,
     },
     {
       label: 'Nei, engar tekjur',
-      checked: form?.hasIncome === false,
+      value: 1,
     },
   ]
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionNumber}>
+    <FormLayout
+      activeSection={navigation?.activeSectionIndex}
+      activeSubSection={navigation?.activeSubSectionIndex}
+    >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
@@ -44,28 +50,19 @@ const IncomeForm = () => {
         </Text>
 
         <div className={styles.container}>
-          {incomeOptions.map((item, i) => {
-            let index = i + 1
-            return (
-              <Box key={'incomeOptions-' + index} marginBottom={[2, 2, 3]}>
-                <RadioButton
-                  name={'incomeOptions-' + index}
-                  label={item.label}
-                  value={index}
-                  checked={item.checked}
-                  hasError={error && form?.hasIncome === undefined}
-                  onChange={() => {
-                    updateForm({ ...form, hasIncome: index === 1 }) // TODO: do somehting?
-                    if (error) {
-                      setError(false)
-                    }
-                  }}
-                  large
-                  filled
-                />
-              </Box>
-            )
-          })}
+          <RadioButtonContainer
+            options={incomeOptions}
+            error={error && !form?.hasIncome}
+            isChecked={(value: string | number | boolean) => {
+              return value === form?.hasIncome
+            }}
+            onChange={(value: string | number | boolean) => {
+              updateForm({ ...form, hasIncome: value })
+              if (error) {
+                setError(false)
+              }
+            }}
+          />
         </div>
 
         <div

@@ -1,7 +1,7 @@
-import React, { createContext, useEffect, useState, useReducer } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 
 export interface Form {
-  address?: number // TODO: kill me
+  customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
   homeCircumstances?: string
@@ -11,7 +11,7 @@ export interface Form {
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles?: any
-  usePersonalTaxAllowance?: boolean // TODO: Personal tax credit
+  usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
   accountNumber?: string
@@ -30,6 +30,14 @@ interface FormProvider {
 export const FormContext = createContext<FormProvider>({})
 
 const FormProvider: React.FC = ({ children }) => {
+  const getSessionStorageOrDefault = (key: any) => {
+    const stored = sessionStorage.getItem(key)
+    if (!stored) {
+      return initialState
+    }
+    return JSON.parse(stored)
+  }
+
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)
@@ -44,9 +52,6 @@ const FormProvider: React.FC = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (form === initialState) {
-      sessionStorage.removeItem(storageKey)
-    }
     // Watches the user state and writes it to local storage on change
     sessionStorage.setItem(storageKey, JSON.stringify(form))
   }, [form])

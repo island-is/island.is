@@ -9,52 +9,25 @@ import {
 
 import * as styles from './FormLayout.treat'
 
-import { LogoHfj } from '../../components'
+import { LogoHfj } from '@island.is/financial-aid-web/osk/src/components'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+
+import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 
 interface PageProps {
   children: ReactNode
   activeSection?: number
+  activeSubSection?: number
 }
 
-const FormLayout: React.FC<PageProps> = ({ children, activeSection }) => {
-  const sections = [
-    {
-      name: 'Gagnaöflun',
-      url: 'lol',
-    },
-    {
-      name: 'Heimili',
-      url: 'lol',
-    },
-    {
-      name: 'Búseta',
-      url: 'lol',
-    },
-    {
-      name: 'Staða',
-      url: 'lol',
-    },
-    {
-      name: 'Tekjur',
-      url: 'lol',
-    },
-    {
-      name: 'Persónuafsláttur',
-      url: 'lol',
-    },
-    {
-      name: 'Bankaupplýsingar',
-      url: 'lol',
-    },
-    {
-      name: 'Útreikningur',
-      url: 'lol',
-    },
-    {
-      name: 'Staðfesting',
-      url: 'lol',
-    },
-  ]
+const FormLayout: React.FC<PageProps> = ({
+  children,
+  activeSection,
+  activeSubSection,
+}) => {
+  const { form, updateForm } = useContext(FormContext)
+
+  const sections = useNavigationTree(form?.hasIncome)
 
   return children ? (
     <Box
@@ -76,7 +49,11 @@ const FormLayout: React.FC<PageProps> = ({ children, activeSection }) => {
 
           <Box className={styles.sidebarContent}>
             <Box paddingLeft={[0, 0, 0, 3]}>
-              <FormStepper sections={sections} activeSection={activeSection} />
+              <FormStepper
+                sections={sections}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
             </Box>
 
             <LogoHfj className={styles.logo} />

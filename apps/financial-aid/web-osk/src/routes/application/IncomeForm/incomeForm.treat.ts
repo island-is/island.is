@@ -12,24 +12,3 @@ export const container = style({
     },
   },
 })
-
-export const fileContainer = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(1, 1fr)',
-  alignItems: 'flex-start',
-  columnGap: theme.spacing[3],
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridTemplateColumns: 'repeat(8, 1fr)',
-    },
-  },
-})
-
-export const files = style({
-  gridColumn: '1/-1',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridColumn: '2/8',
-    },
-  },
-})
