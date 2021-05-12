@@ -14,7 +14,7 @@ type GetUserCompaniesResponse = {
 }
 
 export class CurrentUserCompaniesProvider extends BasicDataProvider {
-  type = 'PenaltyPointsProvider'
+  type = 'CurrentUserCompanies'
 
   async provide(): Promise<UserCompany[]> {
     const query = `

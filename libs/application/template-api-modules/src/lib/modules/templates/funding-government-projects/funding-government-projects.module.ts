@@ -6,10 +6,10 @@ import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentPr
 import { FundingGovernmentProjectsService } from './funding-government-projects.service'
 
 const applicationRecipientName =
-  process.env.INSTITUTION_APPLICATION_RECIPIENT_NAME ?? ''
+  process.env.FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME ?? ''
 
 const applicationRecipientEmail =
-  process.env.INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS ??
+  process.env.FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS ??
   'island@island.is'
 
 const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''

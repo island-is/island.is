@@ -85,7 +85,7 @@ export const FormShell: FC<{
               className={styles.shellContainer}
             >
               <Box
-                paddingTop={[3, 6, 8]}
+                paddingTop={[3, 6, 10]}
                 height="full"
                 borderRadius="large"
                 background="white"

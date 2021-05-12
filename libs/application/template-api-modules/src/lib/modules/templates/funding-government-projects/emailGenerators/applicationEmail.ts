@@ -30,7 +30,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   } = props
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'organizationOrInstitutionName',
   )
 
   const subject = `Umsókn frá ${institutionName}`

@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Button } from '../Button/Button'
+import { Link } from '../Link/Link'
+import { Text } from '../Text/Text'
 import * as styles from './ProfileCard.treat'
 
 /**
@@ -23,6 +25,17 @@ export interface ProfileCardProps {
    * 100% height
    */
   heightFull?: boolean
+  /**
+   * Size of description and link
+   */
+  size?: 'small' | 'default'
+  /**
+   * Link at the bottom of card
+   */
+  link?: {
+    url: string
+    text: string
+  }
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -30,6 +43,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   title,
   description,
   heightFull,
+  size = 'default',
+  link,
 }) => {
   const conditionalProps: { height?: 'full' } = {}
   if (heightFull) {
@@ -40,7 +55,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       borderRadius="large"
       overflow="hidden"
       background="white"
-      boxShadow="subtle"
+      borderWidth="standard"
+      borderColor="blue200"
       {...conditionalProps}
     >
       {image && (
@@ -51,11 +67,26 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       )}
       <Box padding={3}>
         {title && (
-          <Typography variant="h4" marginBottom={1}>
+          <Text variant="h4" marginBottom={1}>
             {title}
-          </Typography>
+          </Text>
         )}
-        {description && <Typography variant="p">{description}</Typography>}
+        {description && <Text variant={size}>{description}</Text>}
+        {link && (
+          <Box paddingTop={2}>
+            <Link href={link.url}>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                type="button"
+                variant="text"
+                size={size}
+              >
+                {link.text}
+              </Button>
+            </Link>
+          </Box>
+        )}
       </Box>
     </Box>
   )
