@@ -81,18 +81,35 @@ export const JointCustodyAgreementForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'arrangement',
+      title: m.section.arrangement,
+      children: [
         buildSubSection({
-          id: 'anotherSection',
-          title: 'title',
+          id: 'selectLegalResidence',
+          title: m.selectLegalResidence.general.sectionTitle,
           children: [
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: 'Kennitala',
-              format: '######-####',
-              backgroundColor: 'blue',
+            buildCustomField({
+              id: 'selectLegalResidence',
+              title: m.selectLegalResidence.general.pageTitle,
+              component: 'SelectLegalResidence',
             }),
           ],
         }),
+        // buildSubSection({
+        //   id: 'duration',
+        //   title: m.duration.general.sectionTitle,
+        //   children: [
+        //     buildCustomField({
+        //       id: 'selectDuration',
+        //       title: m.duration.general.pageTitle,
+        //       childInputIds: selectDurationInputs,
+        //       component: 'Duration',
+        //     }),
+        //   ],
+        // }),
       ],
     }),
   ],

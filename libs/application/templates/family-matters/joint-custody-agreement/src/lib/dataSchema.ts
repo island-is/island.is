@@ -28,6 +28,11 @@ export const dataSchema = z.object({
   selectedChildren: z
     .array(z.string())
     .refine((v) => v && v.length > 0, { params: error.validation.selectChild }),
+  selectedLegalResidence: z
+    .array(z.string())
+    .refine((v) => v && v.length === 1, {
+      params: error.validation.selectLegalResidence,
+    }),
   parentA: parentContactInfo,
   counterParty: z
     .object({
