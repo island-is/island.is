@@ -1,5 +1,4 @@
 /* eslint-disable no-useless-escape */
-/* eslint-disable  @typescript-eslint/no-implicit-any */
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
