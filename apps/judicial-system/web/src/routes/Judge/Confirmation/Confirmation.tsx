@@ -360,7 +360,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
