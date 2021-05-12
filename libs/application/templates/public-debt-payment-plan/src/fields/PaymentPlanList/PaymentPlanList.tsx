@@ -1,5 +1,5 @@
 import React from 'react'
-import { mergeAnswers, RepeaterProps } from '@island.is/application/core'
+import { RepeaterProps } from '@island.is/application/core'
 import { useMockPayments } from './mockPayments'
 import {
   AlertMessage,
@@ -13,28 +13,14 @@ import { useLocale } from '@island.is/localization'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
 import { useFormContext } from 'react-hook-form'
 import { isPaymentPlanFulfilledField } from '../../shared/constants'
-import { PublicDebtPaymentPlan } from '../../lib/dataSchema'
 
-export const PaymentPlanList = ({
-  error,
-  expandRepeater,
-  answerQuestions,
-  application,
-}: RepeaterProps) => {
+export const PaymentPlanList = ({ error, expandRepeater }: RepeaterProps) => {
   const { payments, loading } = useMockPayments()
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  const answers = application.answers as PublicDebtPaymentPlan
 
   const handlePaymentClick = (id: string) => {
-    // TODO: This approach is not going to work
-    const newAnswers = mergeAnswers(answers, {
-      paymentPlanContext: {
-        ...answers.paymentPlanContext,
-        activePayment: id,
-      },
-    })
-    answerQuestions(newAnswers)
+    // TODO: We need a new approach for this
     expandRepeater()
   }
 

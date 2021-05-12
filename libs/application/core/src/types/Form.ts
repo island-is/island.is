@@ -133,6 +133,5 @@ export type RepeaterProps = {
   expandRepeater: () => void
   error?: string
   repeater: Repeater
-  answerQuestions(answers: FormValue): void
   removeRepeaterItem: (index: number) => void
 }
