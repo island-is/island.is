@@ -2019,9 +2019,9 @@
         }
       }
     },
-    "application-templates-joint-child-custody": {
-      "root": "libs/application/templates/joint-child-custody",
-      "sourceRoot": "libs/application/templates/joint-child-custody/src",
+    "application-templates-joint-custody-agreement": {
+      "root": "libs/application/templates/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/joint-custody-agreement/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2030,12 +2030,12 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/joint-child-custody/tsconfig.lib.json",
-              "libs/application/templates/joint-child-custody/tsconfig.spec.json"
+              "libs/application/templates/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/joint-custody-agreement/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/joint-child-custody/**/*"
+              "!libs/application/templates/joint-custody-agreement/**/*"
             ]
           }
         }

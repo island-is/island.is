@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
+import { User } from '@island.is/auth-nest-tools'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
@@ -23,7 +24,7 @@ export function buildDataProviders(
     string,
     new (dataProviderConfig: DataProviderConfig) => BasicDataProvider
   >,
-  authorization: string,
+  user: User,
   locale: Locale,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
@@ -33,7 +34,7 @@ export function buildDataProviders(
       providers.push(
         new Provider({
           baseApiUrl: environment.baseApiUrl,
-          authorization,
+          user,
           locale,
         }),
       )
