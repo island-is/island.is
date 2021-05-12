@@ -22,6 +22,9 @@ const SelectLegalResidence = ({
     applicant.children,
     answers.selectedChildren,
   )
+
+  // TODO: Remove this horrible hack. See https://app.asana.com/0/1199733748699731/1200309924539215
+  const fakeDefault = answers.selectedLegalResidence || ''
   return (
     <>
       <Box marginTop={3}>
@@ -32,10 +35,10 @@ const SelectLegalResidence = ({
           {formatMessage(selectLegalResidence.inputs.label)}
         </Text>
         <RadioController
-          id={`${field.id}`}
+          id={field.id}
           largeButtons={true}
           error={error}
-          defaultValue={answers.selectedLegalResidence}
+          defaultValue={(fakeDefault as unknown) as string[]}
           options={[
             {
               value: applicant.nationalId,

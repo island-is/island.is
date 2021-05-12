@@ -9,7 +9,7 @@ import {
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { application } from './messages'
-import * as z from 'zod'
+import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -31,7 +31,7 @@ const JointCustodyAgreementTemplate: ApplicationTemplate<
   type: ApplicationTypes.JOINT_CUSTODY_AGREEMENT,
   name: application.name,
   readyForProduction: false,
-  dataSchema: z.object({}),
+  dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
     states: {

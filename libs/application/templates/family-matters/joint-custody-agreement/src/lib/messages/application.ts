@@ -21,4 +21,9 @@ export const section = defineMessages({
     defaultMessage: 'Fyrirkomulag',
     description: 'Arrangement',
   },
+  effect: {
+    id: 'crc.application:section.effect',
+    defaultMessage: 'Áhrif umsóknar',
+    description: 'Effect of Application',
+  },
 })

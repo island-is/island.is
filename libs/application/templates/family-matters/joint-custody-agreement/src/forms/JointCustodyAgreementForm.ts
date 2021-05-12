@@ -92,7 +92,7 @@ export const JointCustodyAgreementForm: Form = buildForm({
           title: m.selectLegalResidence.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'selectLegalResidence',
+              id: 'selectedLegalResidence',
               title: m.selectLegalResidence.general.pageTitle,
               component: 'SelectLegalResidence',
             }),
@@ -107,6 +107,34 @@ export const JointCustodyAgreementForm: Form = buildForm({
               title: m.duration.general.pageTitle,
               childInputIds: selectDurationInputs,
               component: 'Duration',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'approveTerms',
+      title: m.section.effect,
+      children: [
+        buildSubSection({
+          id: 'approveTerms',
+          title: m.terms.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveTerms',
+              title: m.terms.general.pageTitle,
+              component: 'Terms',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'approveChildSupportTerms',
+          title: m.childSupport.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'approveChildSupportTerms',
+              title: m.childSupport.general.pageTitle,
+              component: 'ChildSupport',
             }),
           ],
         }),

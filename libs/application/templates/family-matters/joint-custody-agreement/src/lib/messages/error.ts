@@ -45,5 +45,10 @@ export const error = {
       description:
         'Error message when durationType is temporary and no date is selected',
     },
+    approveTerms: {
+      id: 'crc.application:error.approveTerms',
+      defaultMessage: 'Samþykkja þarf alla skilmála',
+      description: 'Error message when terms are not approved',
+    },
   }),
 }
