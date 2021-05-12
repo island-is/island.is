@@ -33,5 +33,12 @@ module.exports = (config) => {
     }),
   ]
 
-  return config
+  config.entry = {
+    ...config.entry,
+    buildOpenApi: './apps/services/endorsements/api/src/buildOpenApi.ts',
+  }
+  config.output.filename = '[name].js'
+  return {
+    ...config,
+  }
 }

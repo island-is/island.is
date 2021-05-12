@@ -47,10 +47,6 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 const PERPAGE = 10
 
-export const NEWS_TAGS = {
-  syslumenn: '4NSgagYZi1GJphg8gCylq6',
-}
-
 interface NewsListProps {
   organizationPage: Query['getOrganizationPage']
   newsList: GetNewsQuery['getNews']['items']
@@ -205,109 +201,104 @@ const NewsList: Screen<NewsListProps> = ({
   )
 
   return (
-    <>
-      <OrganizationWrapper
-        pageTitle={n('newsTitle', 'Fréttir og tilkynningar')}
-        organizationPage={organizationPage}
-        breadcrumbItems={breadCrumbs}
-        sidebarContent={sidebar}
-        navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-        }}
-      >
-        <Stack space={[3, 3, 4]}>
-          <Text variant="h1" as="h1" marginBottom={2}>
-            {n('newsTitle', 'Fréttir og tilkynningar')}
-          </Text>
-          {selectedYear && (
-            <Hidden below="lg">
-              <Text variant="h2" as="h2">
-                {selectedYear}
-              </Text>
-            </Hidden>
-          )}
-          <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
+    <OrganizationWrapper
+      pageTitle={n('newsTitle', 'Fréttir og tilkynningar')}
+      organizationPage={organizationPage}
+      breadcrumbItems={breadCrumbs}
+      sidebarContent={sidebar}
+      navigationData={{
+        title: n('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+      }}
+    >
+      <Stack space={[3, 3, 4]}>
+        <Text variant="h1" as="h1" marginBottom={2}>
+          {n('newsTitle', 'Fréttir og tilkynningar')}
+        </Text>
+        {selectedYear && (
+          <Hidden below="lg">
+            <Text variant="h2" as="h2">
+              {selectedYear}
+            </Text>
+          </Hidden>
+        )}
+        <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
+          <Select
+            label={yearString}
+            placeholder={yearString}
+            isSearchable={false}
+            value={yearOptions.find(
+              (option) =>
+                option.value ===
+                (selectedYear ? selectedYear.toString() : allYearsString),
+            )}
+            options={yearOptions}
+            onChange={({ value }: Option) => {
+              Router.push(makeHref(value === allYearsString ? null : value))
+            }}
+            name="year"
+          />
+        </GridColumn>
+        {selectedYear && (
+          <GridColumn hiddenAbove="sm">
             <Select
-              label={yearString}
-              placeholder={yearString}
-              isSearchable={false}
-              value={yearOptions.find(
-                (option) =>
-                  option.value ===
-                  (selectedYear ? selectedYear.toString() : allYearsString),
-              )}
-              options={yearOptions}
-              onChange={({ value }: Option) => {
-                Router.push(makeHref(value === allYearsString ? null : value))
-              }}
-              name="year"
+              label={monthString}
+              placeholder={monthString}
+              value={monthOptions.find((o) => o.value === selectedMonth)}
+              options={monthOptions}
+              onChange={({ value }: Option) =>
+                Router.push(makeHref(selectedYear, value))
+              }
+              name="month"
             />
           </GridColumn>
-          {selectedYear && (
-            <GridColumn hiddenAbove="sm">
-              <Select
-                label={monthString}
-                placeholder={monthString}
-                value={monthOptions.find((o) => o.value === selectedMonth)}
-                options={monthOptions}
-                onChange={({ value }: Option) =>
-                  Router.push(makeHref(selectedYear, value))
-                }
-                name="month"
-              />
-            </GridColumn>
-          )}
-          {!newsList.length && (
-            <Text variant="h4">
-              {n(
-                'newsListEmptyMonth',
-                'Engar fréttir fundust í þessum mánuði.',
+        )}
+        {!newsList.length && (
+          <Text variant="h4">
+            {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
+          </Text>
+        )}
+        {newsList.map((newsItem, index) => (
+          <NewsCard
+            key={index}
+            title={newsItem.title}
+            introduction={newsItem.intro}
+            slug={newsItem.slug}
+            image={newsItem.image}
+            titleAs="h2"
+            href={
+              linkResolver('organizationnews', [
+                organizationPage.slug,
+                newsItem.slug,
+              ]).href
+            }
+            date={newsItem.date}
+            readMoreText={n('readMore', 'Lesa nánar')}
+            tags={newsItem.genericTags.map(({ title }) => ({ title }))}
+          />
+        ))}
+        {newsList.length > 0 && (
+          <Box paddingTop={[4, 4, 8]}>
+            <Pagination
+              totalPages={Math.ceil(total / PERPAGE)}
+              page={selectedPage}
+              renderLink={(page, className, children) => (
+                <Link
+                  href={{
+                    pathname: linkResolver('organizationnewsoverview', [
+                      organizationPage.slug,
+                    ]).href,
+                    query: { ...Router.query, page },
+                  }}
+                >
+                  <span className={className}>{children}</span>
+                </Link>
               )}
-            </Text>
-          )}
-          {newsList.map((newsItem, index) => (
-            <NewsCard
-              key={index}
-              title={newsItem.title}
-              introduction={newsItem.intro}
-              slug={newsItem.slug}
-              image={newsItem.image}
-              titleAs="h2"
-              href={
-                linkResolver('organizationnews', [
-                  organizationPage.slug,
-                  newsItem.slug,
-                ]).href
-              }
-              date={newsItem.date}
-              readMoreText={n('readMore', 'Lesa nánar')}
-              tags={newsItem.genericTags.map(({ title }) => ({ title }))}
             />
-          ))}
-          {newsList.length > 0 && (
-            <Box paddingTop={[4, 4, 8]}>
-              <Pagination
-                totalPages={Math.ceil(total / PERPAGE)}
-                page={selectedPage}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: linkResolver('organizationnewsoverview', [
-                        organizationPage.slug,
-                      ]).href,
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
-              />
-            </Box>
-          )}
-        </Stack>
-      </OrganizationWrapper>
-    </>
+          </Box>
+        )}
+      </Stack>
+    </OrganizationWrapper>
   )
 }
 
@@ -332,12 +323,21 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = (query.tag as string) ?? NEWS_TAGS[query.slug as string]
-
+  const organizationPage = (
+    await Promise.resolve(
+      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+        query: GET_ORGANIZATION_PAGE_QUERY,
+        variables: {
+          input: {
+            slug: query.slug as string,
+            lang: locale as ContentLanguage,
+          },
+        },
+      }),
+    )
+  ).data.getOrganizationPage
+  const tag = organizationPage.newsTag ? organizationPage.newsTag.id : ''
   const [
-    {
-      data: { getOrganizationPage },
-    },
     {
       data: { getNewsDates: newsDatesList },
     },
@@ -348,15 +348,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
       query: GET_NEWS_DATES_QUERY,
       variables: {
@@ -395,11 +386,11 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+  const lightTheme = lightThemes.includes(organizationPage.theme)
 
   return {
-    organizationPage: getOrganizationPage,
-    newsList: NEWS_TAGS[query.slug as string] ? newsList : [],
+    organizationPage: organizationPage,
+    newsList: organizationPage.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,

@@ -181,6 +181,7 @@ export const width = {
     {
       full: { width: '100%' },
       touchable: { width: theme.spacing[1] * theme.touchableSize },
+      half: { width: '50%' },
     },
     'width',
   ),

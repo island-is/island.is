@@ -60,3 +60,5 @@ export type ParentalLeave = {
   employers: Employer[]
   status: string // this should probably be an enum...
 }
+
+export * from './Children/types'
