@@ -100,7 +100,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   }
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationChatPanel = ({ slug }: { slug: string }) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
