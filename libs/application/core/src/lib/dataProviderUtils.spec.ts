@@ -2,6 +2,7 @@ import { callDataProviders } from './dataProviderUtils'
 import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import { Application, ApplicationStatus } from '../types/Application'
+
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 
@@ -33,6 +34,7 @@ const application: Application = {
 }
 
 const mockTemplateFindQuery = async () => []
+const mockFormatMessage = () => 'message'
 
 describe('dataProviderUtils', () => {
   it('should return results in place', async () => {
@@ -44,6 +46,7 @@ describe('dataProviderUtils', () => {
       dataProviders,
       application,
       mockTemplateFindQuery,
+      mockFormatMessage,
     )
     expect(result).toEqual([
       expect.objectContaining({
@@ -66,6 +69,7 @@ describe('dataProviderUtils', () => {
       dataProviders,
       application,
       mockTemplateFindQuery,
+      mockFormatMessage,
     )
     expect(result).toEqual([
       expect.objectContaining({
