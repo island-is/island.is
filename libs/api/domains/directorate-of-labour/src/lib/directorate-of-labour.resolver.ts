@@ -1,6 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { DirectorateOfLabourService } from './directorate-of-labour.service'
 import {
   IdsAuthGuard,
   IdsUserGuard,
@@ -8,29 +7,39 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Union } from './union.model'
-import { PensionFund } from './pensionFund.model'
+
+import { Union } from '../models/union.model'
+import { PensionFund } from '../models/pensionFund.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeave } from '../models/parentalLeaves.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
-import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
-import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
-import { ParentalLeavePregnancyStatus } from './parentalLeavePregnancyStatus.model'
+import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
 
-  @Query(() => [ParentalLeaveEntitlement], { nullable: true })
+  @Query(() => ParentalLeaveEntitlement, { nullable: true })
   async getParentalLeavesEntitlements(
     @Args('input') input: GetParentalLeavesEntitlementsInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeaveEntitlement[] | null> {
+  ): Promise<ParentalLeaveEntitlement | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
       input.dateOfBirth,
       user.nationalId,
     )
+  }
+
+  @Query(() => [ParentalLeave], { nullable: true })
+  async getParentalLeaves(
+    @CurrentUser() user: User,
+  ): Promise<ParentalLeave[] | null> {
+    return this.directorateOfLabourService.getParentalLeaves(user.nationalId)
   }
 
   @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
@@ -71,12 +80,10 @@ export class DirectorateOfLabourResolver {
     return this.directorateOfLabourService.getPrivatePensionFunds()
   }
 
-  @Query(() => ParentalLeavePregnancyStatus, { nullable: true })
-  async getParentalLeavePregnancyStatus(
+  @Query(() => PregnancyStatus, { nullable: true })
+  async getPregnancyStatus(
     @CurrentUser() user: User,
-  ): Promise<ParentalLeavePregnancyStatus | null> {
-    return this.directorateOfLabourService.getParentalLeavePregnancyStatus(
-      user.nationalId,
-    )
+  ): Promise<PregnancyStatus | null> {
+    return this.directorateOfLabourService.getPregnancyStatus(user.nationalId)
   }
 }

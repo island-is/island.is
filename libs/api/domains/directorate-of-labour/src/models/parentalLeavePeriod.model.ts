@@ -9,7 +9,7 @@ export class ParentalLeavePeriod {
   to!: string
 
   @Field(() => Float)
-  ratio!: number // Ratio of usage in period.
+  ratio!: number
 
   @Field(() => Boolean)
   approved!: boolean
