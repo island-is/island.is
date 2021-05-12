@@ -145,14 +145,14 @@ export const calculateDateWithNewPeriod = (start: Date, daysToUse: number) => {
   let endDate = start
 
   while (daysLeft > 0) {
-    const currentYear = endDate.getFullYear()
-    const currentMonthIndex = endDate.getMonth()
     const currentDayOfMonth = endDate.getDate()
-    const daysInMonth = getDaysInMonth(new Date(currentYear, currentMonthIndex))
-    const weight = daysInMonth / DAYS_IN_MONTH
-    const reverseWeight = DAYS_IN_MONTH / daysInMonth
+    const daysInMonth = getDaysInMonth(new Date(endDate))
+
+    const VMSTDayToRealDayMultiplier = daysInMonth / DAYS_IN_MONTH
+    const realDayToVMSTDayMultiplier = DAYS_IN_MONTH / daysInMonth
+
     const daysLeftOfMonth = daysInMonth - currentDayOfMonth + 1
-    const daysLeftOfMonthCost = daysLeftOfMonth * reverseWeight
+    const daysLeftOfMonthCost = daysLeftOfMonth * realDayToVMSTDayMultiplier
 
     if (daysLeftOfMonthCost < daysLeft) {
       const date = new Date(endDate.getTime() + daysLeftOfMonth * ONE_DAY)
@@ -168,14 +168,17 @@ export const calculateDateWithNewPeriod = (start: Date, daysToUse: number) => {
 
       daysLeft -= daysLeftOfMonthCost
     } else {
-      const realDaysLeftToSpend = daysLeft * weight
+      const realDaysLeftToSpend = daysLeft * VMSTDayToRealDayMultiplier
       const realDecimal = realDaysLeftToSpend - Math.floor(realDaysLeftToSpend)
+
+      // Revisit this
       const days =
         daysLeft === DAYS_IN_MONTH && daysInMonth === 28
           ? daysInMonth - 1
           : realDecimal > 0.49
           ? realDaysLeftToSpend + 1
           : realDaysLeftToSpend
+
       const date = new Date(endDate.getTime() + days * ONE_DAY)
 
       endDate = new Date(

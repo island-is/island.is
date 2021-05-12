@@ -362,15 +362,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
-    pregnancyStatusAndRightsTitle: {
-      id: 'pl.application:pregnancyStatusAndRights.title',
-      defaultMessage: 'Áætlaður fæðingardagur barns og réttindi',
-      description: 'Title for the data of birth and rights data provider',
-    },
-    childrenInformationTitle: {
-      id: 'pl.application:childreninformation.title',
-      defaultMessage: 'Börnin þín',
-      description: 'Your children',
+    pregnancyStatusAndRightsError: {
+      id: 'pl.application:pregnancyStatusAndRights.error',
+      defaultMessage:
+        'Ekki er hægt að ná fæðingardegi barnsins og ekki er hægt að reikna réttindin.',
+      description: 'Error message for pregnancy status and rights providers',
     },
     childrenError: {
       id: 'pl.application:children.error',
@@ -382,6 +378,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
       description: 'Expected birth date',
+    },
+    childrenInformationSubTitle: {
+      id: 'pl.application:pregnancyStatusAndRights.subtitle',
+      defaultMessage:
+        'Staðfesting á ætluðum fæðingardegi barns er sótt inn á Heilsuveru og fjölda mánaða í boði fyrir fæðingarorlof þitt',
+      description: 'Copy for the data provider for date of birth and rights',
     },
     pregnancyStatusAndRightsSubtitle: {
       id: 'pl.application:pregnancyStatusAndRights.subtitle',
