@@ -67,10 +67,11 @@ const AppealSection: React.FC<Props> = (props) => {
           {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
             !accusedPostponedAppealDate && (
               <motion.div
-                key="prosecutorAppealButton"
-                className={styles.prosecutorAppealButton}
+                key="accusedAppealDatepicker"
+                className={styles.accusedAppealDatepicker}
                 initial={false}
                 exit={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.4 }}
               >
                 <BlueBox>
@@ -101,84 +102,30 @@ const AppealSection: React.FC<Props> = (props) => {
             )}
         </AnimatePresence>
 
-        <motion.div
-          variants={appealDateVariants}
-          animate={
-            accusedPostponedAppealDate
-              ? appealDateVariants.visible
-              : appealDateVariants.hidden
-          }
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
-          <InfoBox
-            text={`${capitalize(
-              formatAccusedByGender(accusedGender),
-            )} hefur kært úrskurðinn ${formatDate(
-              accusedPostponedAppealDate,
-              'PPPp',
-            )}`}
-            onDismiss={handleAccusedAppealDismissal}
-            fluid
-          />
-        </motion.div>
-      </div>
-      <div className={styles.buttonContainer}>
         <AnimatePresence>
-          {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
-            !prosecutorPostponedAppealDate && (
+          {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+            accusedPostponedAppealDate && (
               <motion.div
-                key="prosecutorAppealButton"
-                className={styles.prosecutorAppealButton}
-                initial={false}
+                key="accusedAppealInfoBox"
+                //  variants={appealDateVariants}
+                initial={{ y: 50, opacity: 0 }}
                 exit={{ y: 50, opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
               >
-                <BlueBox>
-                  <div className={styles.appealInnerWrapper}>
-                    <DateTime
-                      name="prosecutorAppealDate"
-                      maxDate={new Date()}
-                      selectedDate={
-                        prosecutorPostponedAppealDate
-                          ? new Date(prosecutorPostponedAppealDate)
-                          : undefined
-                      }
-                      onChange={(date) => setProsecutorAppealDate(date)}
-                      size="sm"
-                      blueBox={false}
-                    />
-                    <Button
-                      onClick={() =>
-                        handleProsecutorAppeal(prosecutorAppealDate)
-                      }
-                      disabled={!Boolean(prosecutorAppealDate)}
-                    >
-                      Sækjandi kærir
-                    </Button>
-                  </div>
-                </BlueBox>
+                <InfoBox
+                  text={`${capitalize(
+                    formatAccusedByGender(accusedGender),
+                  )} hefur kært úrskurðinn ${formatDate(
+                    accusedPostponedAppealDate,
+                    'PPPp',
+                  )}`}
+                  onDismiss={handleAccusedAppealDismissal}
+                  fluid
+                />
               </motion.div>
             )}
         </AnimatePresence>
-
-        <motion.div
-          variants={appealDateVariants}
-          animate={
-            prosecutorPostponedAppealDate
-              ? appealDateVariants.visible
-              : appealDateVariants.hidden
-          }
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <InfoBox
-            text={`Sækjandi hefur kært úrskurðinn ${formatDate(
-              prosecutorPostponedAppealDate,
-              'PPPp',
-            )}`}
-            onDismiss={handleProsecutorAppealDismissal}
-            fluid
-          />
-        </motion.div>
       </div>
     </>
   )
