@@ -176,6 +176,7 @@ const testCase3 = {
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
   court: 'string',
+  leadInvestigator: 'ben10',
   arrestDate: null,
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-10-24T12:31:00Z',
