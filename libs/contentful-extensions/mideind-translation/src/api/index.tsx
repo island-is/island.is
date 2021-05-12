@@ -32,7 +32,7 @@ async function translateTexts(texts: string[]) {
 async function sendTexts(iceTexts: string[], enTexts: string[]) {
   const body: any = {
     ice: iceTexts,
-    en: enTexts
+    en: enTexts,
   }
 
   console.log(body)

@@ -11,18 +11,24 @@ interface SidebarProps {
 }
 
 interface SysVersion {
-  id: string;
-  publishedCounter: number;
-  publishedVersion?: number;
-  version: number;
+  id: string
+  publishedCounter: number
+  publishedVersion?: number
+  version: number
   publishedAt: string
 }
 
-const hasPublishedDiff = (sys: SysVersion, publishedVersion: number): boolean  => {
-  return !!sys.publishedVersion && sys.publishedVersion != publishedVersion || sys.publishedCounter === 1
+const hasPublishedDiff = (
+  sys: SysVersion,
+  publishedVersion: number,
+): boolean => {
+  return (
+    (!!sys.publishedVersion && sys.publishedVersion != publishedVersion) ||
+    sys.publishedCounter === 1
+  )
 }
 
-// Checks whether version numbers are published according to Contentful's 
+// Checks whether version numbers are published according to Contentful's
 // version numbering system
 const isPublished = (sys: SysVersion): boolean => {
   return !!sys.publishedVersion && sys.version === sys.publishedVersion + 1
@@ -69,20 +75,19 @@ const handleClick = async (sdk: any) => {
   }
 }
 
-
-
 const Sidebar = (props: SidebarProps) => {
   const [loading, setLoading] = useState(false)
-  const [publishedVersion, setPublishedVersion] = useState(props.sdk.entry.getSys().publishedVersion)
+  const [publishedVersion, setPublishedVersion] = useState(
+    props.sdk.entry.getSys().publishedVersion,
+  )
 
   const handlePublished = async (ref: any) => {
-    if(isPublished(ref) && hasPublishedDiff(ref, publishedVersion)) {
+    if (isPublished(ref) && hasPublishedDiff(ref, publishedVersion)) {
       const fields = props.sdk.entry.fields
       const keys = Object.keys(fields)
 
       let iceTexts: string[] = []
       let enTexts: string[] = []
-
 
       for (const key of keys) {
         const field = fields[key]
@@ -98,7 +103,6 @@ const Sidebar = (props: SidebarProps) => {
         let enExtractedTexts = extractField(field, eInterface, 'en') ?? []
 
         enTexts = [...enTexts, ...enExtractedTexts]
- 
       }
 
       // Filter away empty texts
