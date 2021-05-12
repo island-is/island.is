@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -245,10 +246,22 @@ export class NotificationService {
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    const recipients = await Promise.all([
+    const notificaion = await this.notificationModel.findOne({
+      where: {
+        caseId: existingCase.id,
+        type: NotificationType.READY_FOR_COURT,
+      },
+    })
+
+    const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(existingCase),
-      this.sendReadyForCourtSmsNotificationToCourt(existingCase),
-    ])
+    ]
+
+    if (!Boolean(notificaion)) {
+      promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
+    }
+
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       existingCase.id,

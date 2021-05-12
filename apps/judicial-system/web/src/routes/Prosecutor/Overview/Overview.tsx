@@ -93,11 +93,13 @@ export const Overview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
-      return false
+      return
     }
 
-    if (workingCase.state === CaseState.DRAFT) {
-      try {
+    try {
+      const isDraft = workingCase.state === CaseState.DRAFT
+
+      if (isDraft) {
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
@@ -108,29 +110,40 @@ export const Overview: React.FC = () => {
         const resCase = await transitionCase(workingCase.id, transitionRequest)
 
         if (!resCase) {
-          return false
+          // TDOO: Handle error
+          return
         }
 
         setWorkingCase({
           ...workingCase,
           state: resCase.state,
         })
+      }
 
-        const notificationSent = await sendNotification(workingCase.id)
+      const notificationSent = await sendNotification(workingCase.id)
 
+      if (isDraft) {
+        // An SMS should have been sent
         if (notificationSent) {
           setModalText(
             'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
           )
         } else {
-          // TODO: Handle error
+          setModalText(
+            'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+          )
         }
-      } catch (e) {
-        // TODO: Handle error
+      } else {
+        // No SMS
+        setModalText(
+          'Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        )
       }
-    }
 
-    setModalVisible(true)
+      setModalVisible(true)
+    } catch (e) {
+      // TODO: Handle error
+    }
   }
 
   useEffect(() => {
