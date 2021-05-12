@@ -37,7 +37,7 @@ export class DelegationsController {
     return await this.delegationsService.findAllTo(user.nationalId)
   }
 
-  @Scopes('@island.is/auth/delegations:write')
+  @Scopes('@island.is/auth-public/delegations:write')
   @Post()
   @ApiCreatedResponse({ type: Delegation })
   async create(
@@ -47,7 +47,7 @@ export class DelegationsController {
     return await this.delegationsService.create(user.nationalId, delegation)
   }
 
-  @Scopes('@island.is/auth/delegations:write')
+  @Scopes('@island.is/auth-public/delegations:write')
   @Put(':id')
   @ApiCreatedResponse({ type: Delegation })
   async update(
@@ -58,7 +58,7 @@ export class DelegationsController {
     return await this.delegationsService.update(user.nationalId, delegation, id)
   }
 
-  @Scopes('@island.is/auth/delegations:write')
+  @Scopes('@island.is/auth-public/delegations:write')
   @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
   async deleteFrom(
@@ -68,7 +68,7 @@ export class DelegationsController {
     return await this.delegationsService.deleteFrom(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth/delegations:write')
+  @Scopes('@island.is/auth-public/delegations:write')
   @Delete('custom/delete/to/:id')
   @ApiCreatedResponse()
   async deleteTo(
@@ -78,7 +78,7 @@ export class DelegationsController {
     return await this.delegationsService.deleteTo(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth/delegations:read')
+  @Scopes('@island.is/auth-public/delegations:read')
   @Get('custom/findone/:id')
   @ApiOkResponse({ type: Delegation })
   async findOne(
@@ -88,7 +88,7 @@ export class DelegationsController {
     return await this.delegationsService.findOne(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth/delegations:read')
+  @Scopes('@island.is/auth-public/delegations:read')
   @Get('custom/to')
   @ApiOkResponse({ type: [Delegation] })
   async findAllCustomTo(
@@ -97,7 +97,7 @@ export class DelegationsController {
     return await this.delegationsService.findAllCustomTo(user.nationalId)
   }
 
-  @Scopes('@island.is/auth/delegations:read')
+  @Scopes('@island.is/auth-public/delegations:read')
   @Get('custom/from')
   @ApiOkResponse({ type: [Delegation] })
   async findAllCustomFrom(
