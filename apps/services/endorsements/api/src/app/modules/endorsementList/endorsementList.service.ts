@@ -54,7 +54,7 @@ export class EndorsementListService {
         },
       ],
     })
-    console.log('response', response[0].endorsementList)
+
     return response
   }
 
