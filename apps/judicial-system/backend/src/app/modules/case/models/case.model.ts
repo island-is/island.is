@@ -128,6 +128,13 @@ export class Case extends Model<Case> {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  leadInvestigator: string
+
+  @Column({
+    type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()

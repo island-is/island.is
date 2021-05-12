@@ -140,6 +140,7 @@ export interface Case {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -219,6 +220,7 @@ export interface CreateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
 }
 
 export interface UpdateCase {
@@ -232,6 +234,7 @@ export interface UpdateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
