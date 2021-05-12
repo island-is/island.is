@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
-
+import { ImageSourcePropType } from 'react-native';
 
 const Host = styled.View<{ color: string }>`
   padding: 0 0 32px;
@@ -19,7 +19,7 @@ const Image = styled.Image`
   margin-bottom: -35px;
 `;
 
-const Title = styled.Text`
+const Number = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 20px;
   font-weight: 600;
@@ -51,21 +51,21 @@ const Description = styled.Text`
 `;
 
 interface CardProps {
-  title: string;
+  number: string;
   description?: string;
   backgroundColor?: string;
   imgSrc?: any;
   style?: any;
 }
 
-export function Card({ title, description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
+export function Card({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
   return (
     <Host color={backgroundColor} style={style}>
       <Image source={imgSrc} />
       <TextWrap>
-        <Title>
-          {title}
-        </Title>
+        <Number>
+          {number}
+        </Number>
       </TextWrap>
       <Description>
         {description}

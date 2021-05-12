@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { Image } from 'react-native';
+import { Image, ImageSourcePropType } from 'react-native';
+import isVerifiedLogo from '../../assets/card/is-verified.png'
 
 const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
@@ -37,21 +38,18 @@ const TimeStamp = styled.Text`
   font-size: 12px;
 `;
 
-const Img = styled.View`
+const ImgWrap = styled.View`
 `;
 
 
 interface LicenceCardProps {
   title: string;
-  icon: any;
-  agencyLogo: any;
+  agencyLogo: ImageSourcePropType;
   backgroundColor: string;
   nativeID?: string;
 }
 
-export function LicenceCard({ title, icon, backgroundColor, agencyLogo, nativeID }: LicenceCardProps) {
-  console.log(title, backgroundColor);
-
+export function LicenceCard({ title, backgroundColor, agencyLogo, nativeID }: LicenceCardProps) {
   return (
     <Host backgroundColor={backgroundColor} nativeID={nativeID}>
       <Content>
@@ -59,9 +57,9 @@ export function LicenceCard({ title, icon, backgroundColor, agencyLogo, nativeID
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={icon} style={{ width: 13, height: 13, marginRight: 8 }} />
+          <Image source={isVerifiedLogo} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
-          Í gildi
+            Í gildi
           </Validation>
         </ValidationWrap>
 
@@ -69,9 +67,9 @@ export function LicenceCard({ title, icon, backgroundColor, agencyLogo, nativeID
           16:24 - 14.03.2021
         </TimeStamp>
       </Content>
-      <Img>
+      <ImgWrap>
         <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
-      </Img>
+      </ImgWrap>
     </Host>
   );
 }

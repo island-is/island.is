@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native'
-import { Badge, Heading, StatusCard, NotificationCard, Card } from '@island.is/island-ui-native'
+import { Badge, Heading, StatusCard, NotificationCard, WelcomeCard, Close } from '@island.is/island-ui-native'
 import logo from '../../assets/logo/logo-64w.png'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useQuery } from '@apollo/client'
@@ -55,44 +55,50 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const notificationsRes = useQuery<ListNotificationsResponse>(LIST_NOTIFICATIONS_QUERY, { client });
 
+  const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
+
   return (
     <>
       <ScrollView
         testID={testIDs.SCREEN_HOME}
       >
-        <SafeAreaView style={{ marginHorizontal: 16 }}>
-          <Heading>Hæ {authStore.getState().userInfo?.name.split(' ').shift()}</Heading>
-        </SafeAreaView>
-        <ViewPager>
-          <Card
-            key="card-1"
-            title="1"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-          />
-          <Card
-            key="card-2"
-            title="2"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-            backgroundColor="#F2F7FF"
-          />
-          <Card
-            key="card-4"
-            title="4"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-          />
-          <Card
-            key="card-3"
-            title="3"
-            description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-            imgSrc={illustrationSrc}
-            backgroundColor="#F2F7FF"
-            // style={{ marginRight: 0 }}
-          />
-        </ViewPager>
-        <SafeAreaView style={{ marginHorizontal: 16 }}>
+        {isWelcomeVisible &&
+          <>
+            <SafeAreaView style={{ paddingHorizontal: 16, marginTop: 16 }}>
+              <Heading
+                button={
+                  <TouchableOpacity onPress={() => setIsWelcomeVisible(false)}>
+                    <Close />
+                  </TouchableOpacity>
+                }
+              >
+                {intl.formatMessage({ id: 'home.welcomeText' })} {authStore.getState().userInfo?.name.split(' ').shift()}
+              </Heading>
+            </SafeAreaView>
+            <ViewPager>
+              <WelcomeCard
+                key="card-1"
+                number="1"
+                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+                imgSrc={illustrationSrc}
+              />
+              <WelcomeCard
+                key="card-2"
+                number="2"
+                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+                imgSrc={illustrationSrc}
+                backgroundColor="#F2F7FF"
+              />
+              <WelcomeCard
+                key="card-3"
+                number="3"
+                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
+                imgSrc={illustrationSrc}
+              />
+            </ViewPager>
+          </>
+        }
+        <SafeAreaView style={{ paddingHorizontal: 16 }}>
           <Heading>{intl.formatMessage({ id: 'home.applicationsStatus' })}</Heading>
           <StatusCard
             title="Fæðingarorlof 4/6"

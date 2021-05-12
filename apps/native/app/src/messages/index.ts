@@ -72,6 +72,7 @@ export const is = {
   "home.screenTitle": "Yfirlit",
   "home.applicationsStatus": "Staða umsókna",
   "home.notifications": "Tilkynningar",
+  "home.welcomeText": "Hæ",
   // inbox
   "inbox.bottomTabText": "Skjöl",
   // wallet
@@ -154,6 +155,7 @@ export const en: TranslatedMessages = {
   "home.screenTitle": "Overview",
   "home.applicationsStatus": "Applications status",
   "home.notifications": "Notifications",
+  "home.welcomeText": "Hi",
   // inbox
   "inbox.bottomTabText": "Inbox",
   // wallet

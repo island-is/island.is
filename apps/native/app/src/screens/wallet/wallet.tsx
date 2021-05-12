@@ -11,7 +11,6 @@ import { useScreenOptions } from '../../contexts/theme-provider'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
-import isVerifiedLogo from '../../assets/icons/is-verified.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
 import { useIntl } from '../../utils/intl'
@@ -86,7 +85,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         <LicenceCard
           nativeID={`license-${item.id}_source`}
           title={item.title}
-          icon={isVerifiedLogo}
           backgroundColor={mapLicenseColor(item.type)}
           agencyLogo={agencyLogo}
         />
