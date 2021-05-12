@@ -167,7 +167,7 @@ export class FileService {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
       case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        return generateJointCustodyPdf(application as CRCApplication)
+        return generateJointCustodyPdf(application as JCAApplication)
       }
     }
   }

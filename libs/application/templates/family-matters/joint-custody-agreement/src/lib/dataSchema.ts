@@ -4,6 +4,11 @@ import * as z from 'zod'
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
 
+enum Duration {
+  Permanent = 'permanent',
+  Temporary = 'temporary',
+}
+
 const validateOptionalEmail = (value: string) => {
   return (value && isValidEmail(value)) || value === ''
 }
@@ -40,6 +45,17 @@ export const dataSchema = z.object({
     })
     .refine((v) => v.email || v.phoneNumber, {
       params: error.validation.counterParty,
+    }),
+  selectDuration: z
+    .object({
+      type: z.enum([Duration.Permanent, Duration.Temporary]).refine((v) => v, {
+        params: error.validation.durationType,
+      }),
+      date: z.string().optional(),
+    })
+    .refine((v) => (v.type === Duration.Temporary ? v.date : true), {
+      params: error.validation.durationDate,
+      path: ['date'],
     }),
 })
 
