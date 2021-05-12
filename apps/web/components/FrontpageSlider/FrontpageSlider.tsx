@@ -232,15 +232,17 @@ export const FrontpageSlider = ({
                               {subtitle}
                             </span>
                           </Text>
-                          <Text variant="h1" as="h1" id={tabTitleId}>
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              {deorphanize(title)}
-                            </span>
-                          </Text>
+                          {visible && (
+                            <Text variant="h1" as="h1" id={tabTitleId}>
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
+                              >
+                                {deorphanize(title)}
+                              </span>
+                            </Text>
+                          )}
 
                           {intro ? (
                             <Box marginBottom={4}>
