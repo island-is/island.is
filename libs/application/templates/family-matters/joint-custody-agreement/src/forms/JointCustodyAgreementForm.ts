@@ -6,7 +6,6 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildSubSection,
-  buildTextField,
   buildCustomField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -14,6 +13,7 @@ import { DataProviderTypes } from '../types'
 import * as m from '../lib/messages'
 
 import { contactInfoIds } from '../fields/ContactInfo'
+import { selectDurationInputs } from '../fields/Duration'
 
 export const JointCustodyAgreementForm: Form = buildForm({
   id: 'JointCustodyAgreementForm',
@@ -98,18 +98,18 @@ export const JointCustodyAgreementForm: Form = buildForm({
             }),
           ],
         }),
-        // buildSubSection({
-        //   id: 'duration',
-        //   title: m.duration.general.sectionTitle,
-        //   children: [
-        //     buildCustomField({
-        //       id: 'selectDuration',
-        //       title: m.duration.general.pageTitle,
-        //       childInputIds: selectDurationInputs,
-        //       component: 'Duration',
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          id: 'duration',
+          title: m.duration.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'selectDuration',
+              title: m.duration.general.pageTitle,
+              childInputIds: selectDurationInputs,
+              component: 'Duration',
+            }),
+          ],
+        }),
       ],
     }),
   ],
