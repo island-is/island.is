@@ -3,15 +3,13 @@ import styled from 'styled-components/native';
 import { Image, ImageSourcePropType } from 'react-native';
 import isVerifiedLogo from '../../assets/card/is-verified.png'
 
-const Host = styled.TouchableOpacity<{ bg?: string }>`
-  width: 100%;
+const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   padding: 12px 24px;
   border-radius: 16px;
-  background-color: ${props => props.bg ?? props.theme.color.blueberry100};
-  margin-bottom: 16px;
+  background-color: ${props => props.backgroundColor ?? props.theme.color.blueberry100};
 `
 
 const Content = styled.View`
@@ -19,15 +17,13 @@ const Content = styled.View`
 `;
 
 const Title = styled.Text`
-  font-family: 'IBM Plex Sans';
+  font-family: 'IBMPlexSans-SemiBold';
   margin-bottom: 8px;
   font-size: 16px;
-  font-weight: 600;
 `;
 
 const ValidationWrap = styled.View`
-  font-family: 'IBM Plex Sans';
-  font-weight: 600;
+  font-family: 'IBMPlexSans-SemiBold';
   display: flex;
   flex-flow: row;
 `;
@@ -49,19 +45,19 @@ const ImgWrap = styled.View`
 interface LicenceCardProps {
   title: string;
   agencyLogo: ImageSourcePropType;
-  backgroundColor?: string;
-  onPress?: () => void;
+  backgroundColor: string;
+  nativeID?: string;
 }
 
-export function LicenceCard({ title, backgroundColor, agencyLogo, onPress }: LicenceCardProps) {
+export function LicenceCard({ title, backgroundColor, agencyLogo, nativeID }: LicenceCardProps) {
   return (
-    <Host onPress={onPress} bg={backgroundColor}>
+    <Host backgroundColor={backgroundColor} nativeID={nativeID}>
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
+          <Image source={isVerifiedLogo} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
             Í gildi
           </Validation>

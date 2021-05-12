@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
-import { Animated, Dimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
+import { Animated, View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 interface TabBarProps {
@@ -9,10 +9,7 @@ interface TabBarProps {
   onChange(index: number): void;
 }
 
-const Host = styled.SafeAreaView`
-  margin-left: 16px;
-  margin-right: 16px;
-`;
+const Host = styled.SafeAreaView``;
 
 const Tabs = styled.View`
   flex-direction: row;
@@ -20,15 +17,15 @@ const Tabs = styled.View`
 
 const Tab = styled.TouchableOpacity`
   flex: 1;
-  padding: 15px;
+  padding: 20px 15px;
   align-items: center;
   justify-content: center;
 `;
 
 const TabTitle = styled(Animated.Text)`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const Line = styled.View`
@@ -51,25 +48,20 @@ function hexToRGB(hex: string) {
 }
 
 export function TabBar(props: TabBarProps) {
+  const win = useWindowDimensions();
+  const [width, setWidth] = useState(win.width);
+
   const { values, selectedIndex, onChange } = props;
   const theme = useTheme();
   const animatedIndexNative = useRef(new Animated.Value(selectedIndex));
   const animatedIndex = useRef(new Animated.Value(selectedIndex));
-  const tabsRef = useRef<View>(null);
-  const tabWidth = useRef(new Animated.Value(100));
   const indexes = useRef(new Map<number, Animated.Value>());
+  const tabWidth = width / props.values.length;
 
   const animateIndex = (toValue: number) => {
     Animated.spring(animatedIndexNative.current, { toValue, useNativeDriver: true, overshootClamping: true }).start();
-    Animated.spring(animatedIndex.current, { toValue, useNativeDriver: false }).start();
+    Animated.spring(animatedIndex.current, { toValue, useNativeDriver: false, overshootClamping: true }).start();
   }
-
-  useEffect(() => {
-    tabsRef.current?.measure((x, y, width) => {
-      const w = Math.round(width / values.length);
-      tabWidth.current.setValue(w);
-    });
-  }, [values]);
 
   useEffect(() => {
     animateIndex(selectedIndex);
@@ -79,11 +71,15 @@ export function TabBar(props: TabBarProps) {
   const outputRange = useRef([hexToRGB(theme.color.dark400), hexToRGB(theme.color.blue400), hexToRGB(theme.color.dark400)]);
 
   return (
-    <Host>
-      <Tabs ref={tabsRef as any}>
+    <Host onLayout={(e) => {
+      setWidth(e.nativeEvent.layout.width);
+    }}>
+      <Tabs>
         {values.map((item, i) => {
-          if (!indexes.current.has(i)) {
-            indexes.current.set(i, new Animated.Value(i));
+          let currentIdx = indexes.current.get(i);
+          if (!currentIdx) {
+            currentIdx = new Animated.Value(i);
+            indexes.current.set(i, currentIdx);
           }
           return (
           <Tab
@@ -95,7 +91,7 @@ export function TabBar(props: TabBarProps) {
           >
             <TabTitle
               style={{
-                color: Animated.subtract(animatedIndex.current, indexes.current.get(i)!).interpolate({ inputRange, outputRange: outputRange.current }),
+                color: Animated.subtract(animatedIndex.current ?? 1, currentIdx).interpolate({ inputRange, outputRange: outputRange.current }),
               }}
             >
               {item}
@@ -107,8 +103,13 @@ export function TabBar(props: TabBarProps) {
       <Line>
         <ActiveLine
           style={{
-            width: `${(1 / values.length * 100).toFixed(2)}%`,
-            transform: [{ translateX: Animated.multiply(animatedIndexNative.current, tabWidth.current) }],
+            width: tabWidth,
+            transform: [{
+              translateX: animatedIndexNative.current.interpolate({
+                inputRange: props.values.map((_, i) => i),
+                outputRange: props.values.map((_, i) => i * tabWidth),
+              })
+            }]
           }}
         />
       </Line>

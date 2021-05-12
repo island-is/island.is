@@ -24,6 +24,7 @@ export const ComponentRegistry = {
 
   // ui components
   NavigationBarTitle: `${prefix}.ui.NavigationBarTitle`,
+  NavigationBarButton:  `${prefix}.ui.NavigationBarButton`,
 }
 
 export const ButtonRegistry = {

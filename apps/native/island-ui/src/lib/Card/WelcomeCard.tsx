@@ -20,7 +20,7 @@ const Image = styled.Image`
 `;
 
 const Number = styled.Text`
-  font-family: 'IBM Plex Sans SemiBold';
+  font-family: 'IBMPlexSans-SemiBold';
   font-size: 20px;
   font-weight: 600;
   text-align: center;
@@ -40,7 +40,7 @@ const TextWrap = styled.View`
 `;
 
 const Description = styled.Text`
-  font-family: 'IBM Plex Sans';
+  font-family: 'IBMPlexSans';
   font-weight: 300;
   padding: 15px 27px 0;
   font-size: 16px;
@@ -50,16 +50,17 @@ const Description = styled.Text`
   text-align: center;
 `;
 
-interface WelcomeCardProps {
-  number?: string;
+interface CardProps {
+  number: string;
   description?: string;
   backgroundColor?: string;
-  imgSrc?: ImageSourcePropType;
+  imgSrc?: any;
+  style?: any;
 }
 
-export function WelcomeCard({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA' }: WelcomeCardProps) {
+export function Card({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
   return (
-    <Host color={backgroundColor}>
+    <Host color={backgroundColor} style={style}>
       <Image source={imgSrc} />
       <TextWrap>
         <Number>

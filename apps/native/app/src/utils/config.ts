@@ -23,7 +23,8 @@ export const config: Config = {
     // issuer: env.IDENTITYSERVER_ISSUER || 'https://identity-server.dev01.devland.is',
     issuer: 'https://innskra.island.is',
     clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
-    scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || ['openid', 'profile', 'api_resource.scope', 'offline_access'],
+    // scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || ['openid', 'profile', 'api_resource.scope', 'offline_access'],
+    scopes: ['openid', 'profile', 'api_resource.scope', 'offline_access', '@island.is/applications:read']
   },
   // apiEndpoint: env.API_ENDPOINT || 'https://beta.dev01.devland.is/api',
   apiEndpoint: 'https://island.is/api',
@@ -36,4 +37,3 @@ export const config: Config = {
   env,
 };
 
-console.log({ config });

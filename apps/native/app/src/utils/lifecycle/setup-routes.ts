@@ -36,31 +36,34 @@ export function setupRoutes() {
 
   addRoute(
     '/wallet/:passId',
-    ({ passId, backgroundColor = '#f5e4ec' }: any) => {
+    ({ passId, fromId, toId, item }: any) => {
       Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
         bottomTabs: {
           currentTabIndex: 2,
         },
       })
-      Navigation.showModal({
-        stack: {
-          children: [
-            {
-              component: {
-                name: ComponentRegistry.WalletPassScreen,
-                passProps: {
-                  id: passId,
-                },
-                options: {
-                  layout: {
-                    componentBackgroundColor: backgroundColor,
+      Navigation.push('WALLET_TAB', {
+        component: {
+          name: ComponentRegistry.WalletPassScreen,
+          passProps: {
+            id: passId,
+            item,
+          },
+          options: {
+            animations: {
+              push: {
+                sharedElementTransitions: [
+                  {
+                    fromId,
+                    toId,
+                    interpolation: { type: 'spring' }
                   },
-                },
+                ],
               },
             },
-          ],
+          }
         },
-      })
+      });
     },
   )
 

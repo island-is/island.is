@@ -39,7 +39,8 @@ const ActionText = styled.Text`
 const Title = styled.Text`
   margin-bottom: 8px;
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${theme.color.dark400};
 `;
 
@@ -62,8 +63,8 @@ const Date = styled.View`
 
 const DateText = styled.Text`
   font-family: 'IBMPlexSans-Light';
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${theme.color.dark400};
 `;
 

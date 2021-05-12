@@ -3,10 +3,12 @@ import {
   InMemoryCache,
   HttpLink,
   ApolloLink,
+  fromPromise
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
+
 import { config } from '../utils/config'
 import { authStore } from '../stores/auth-store'
 import { typeDefs } from './type-defs';
@@ -24,15 +26,41 @@ const httpLink = new HttpLink({
   credentials: 'omit'
 })
 
+const getNewToken = async () => {
+  await authStore.getState().refresh();
+  return authStore.getState().authorizeResult?.accessToken;
+}
+
 const retryLink = new RetryLink()
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
+const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
+  if (graphQLErrors) {
+    if (graphQLErrors?.[0]?.message === 'Unauthorized') {
+      return fromPromise(
+        getNewToken().catch((error) => {
+          return;
+        })
+      )
+        .filter((value) => Boolean(value))
+        .flatMap((accessToken) => {
+          const oldHeaders = operation.getContext().headers;
+          operation.setContext({
+            headers: {
+              ...oldHeaders,
+              authorization: `Bearer ${accessToken}`,
+            },
+          });
+          return forward(operation);
+        });
+    }
+
     graphQLErrors.map(({ message, locations, path }) =>
       console.log(
         `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
       ),
-    )
+    );
+  }
+
 
   if (networkError) {
     console.log(`[Network error]: ${networkError}`)

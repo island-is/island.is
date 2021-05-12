@@ -12,8 +12,9 @@ import { FormattedMessage, useIntl } from '../../utils/intl';
 
 const Illustration = styled.SafeAreaView`
   background-color: ${props => props.theme.color.blue100};
-  /* margin-bottom: 45px; */
   margin-top: -32px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Title = styled.Text`

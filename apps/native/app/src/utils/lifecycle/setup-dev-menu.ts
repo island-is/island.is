@@ -9,6 +9,11 @@ const devMenuOptions = {
   storybook: false,
 }
 
+function toggleLockScreen() {
+  const { dev__useLockScreen } = preferencesStore.getState();
+  preferencesStore.setState({ dev__useLockScreen: !dev__useLockScreen });
+}
+
 async function toggleStorybook() {
   if (devMenuOptions.storybook) {
     Navigation.setRoot({ root: await getAppRoot() });
@@ -42,8 +47,11 @@ export function setupDevMenu() {
   }
 
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
+    const { dev__useLockScreen } = preferencesStore.getState();
+
     const options = {
       STORYBOOK: devMenuOptions.storybook ? 'Disable Storybook' : 'Enable Storybook',
+      TOGGLE_LOCKSCREEN: dev__useLockScreen ? 'Disable lockscreen' : 'Enable Lockscreen',
       TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
       LOGOUT: 'Logout'
@@ -60,6 +68,8 @@ export function setupDevMenu() {
     }, (buttonIndex: number) => {
       const optionKey = objectKeys[buttonIndex];
       switch (optionKey) {
+        case 'TOGGLE_LOCKSCREEN':
+          return toggleLockScreen();
         case 'TOGGLE_LANGUAGE':
           return toggleLanguage();
         case 'STORYBOOK':

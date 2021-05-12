@@ -79,7 +79,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "apps/native/app/src/main.tsx",
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -207,13 +207,17 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation project(':react-native-navigation')
-    implementation project(':react-native-keychain')
-    implementation project(':react-native-ultimate-config')
     implementation project(':react-native-app-auth')
-    implementation project(':react-native-web-view')
-    implementation project(':react-native-localize')
     implementation project(':react-native-async-storage')
+    implementation project(':react-native-code-push')
+    implementation project(':react-native-cookies')
+    implementation project(':react-native-dialogs')
+    implementation project(':react-native-keychain')
+    implementation project(':react-native-localize')
+    implementation project(':react-native-navigation')
+    implementation project(':react-native-safe-area-context')
+    implementation project(':react-native-ultimate-config')
+    implementation project(':react-native-web-view')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],

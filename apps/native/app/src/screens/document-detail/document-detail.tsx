@@ -10,12 +10,15 @@ import PDFReader from 'rn-pdf-reader-js'
 import styled from 'styled-components/native'
 import { FormattedDate } from 'react-intl'
 import { Button } from '@island.is/island-ui-native'
-import { Share } from 'react-native'
+import { Platform, Share } from 'react-native'
 import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
 import WebView from 'react-native-webview'
 import { authStore } from '../../stores/auth-store'
 import { useState } from 'react'
 import { useNavigationComponentDidAppear, useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
+import { View } from 'react-native'
+import { theme } from '@island.is/island-ui/theme'
+import { createNavigationTitle } from '../../utils/create-navigation-title'
 
 const Header = styled.View`
   margin-left: 16px;
@@ -75,16 +78,28 @@ const Bottom = styled.View`
   align-items: center;
 `;
 
-export const DocumentDetailScreen: NavigationFunctionComponent = (
-  props: any,
-) => {
+const { title, useNavigationTitle } = createNavigationTitle('documentDetail.screenTitle');
+
+export const DocumentDetailScreen: NavigationFunctionComponent<{ docId: string }> = ({ componentId, docId }) => {
+  useNavigationTitle(componentId);
+
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
   })
-  const docRes = useQuery<ListDocumentsResponse>(GET_DOCUMENT_QUERY, {
+  const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
-  })
-  const Document = res.data?.listDocuments?.find(d => d.id === props.docId);
+    variables: {
+      input: {
+        id: docId,
+      }
+    }
+  });
+
+  const Document = {
+    ...docRes.data?.getDocument || {},
+    ...res.data?.listDocuments?.find(d => d.id === docId) || {},
+  };
+
   const [visible, setVisible] = useState(false);
 
   useNavigationComponentDidAppear(() => {
@@ -95,8 +110,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
     setVisible(false);
   })
 
-
-  if (!Document) {
+  if (!Document.id) {
     return null
   }
 
@@ -117,21 +131,28 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
         </Row>
         <Message>{Document.subject}</Message>
       </Header>
-      {visible && <WebView
-        source={{
-          uri: Document.url,
-          headers:{
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-          body: `documentId=${Document.id}&token=${authStore.getState().authorizeResult?.accessToken}`,
-          method: 'POST'
-        }}
-      />}
-      {/* <PDFReader
-        source={{
-          base64: `data:application/pdf;base64,${res.data?.Document?.content!}`,
-        }}
-      /> */}
+      <View style={{
+        flex: 1,
+        backgroundColor: '#F2F2F6'
+      }}>
+      {visible && Platform.select({
+        android: <PDFReader
+          source={{
+            base64: `data:application/pdf;base64,${Document.content!}`,
+          }}
+        />,
+        ios: <WebView
+          source={{
+            uri: Document.url!,
+            headers:{
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+            body: `documentId=${Document.id}&token=${authStore.getState().authorizeResult?.accessToken}`,
+            method: 'POST'
+          }}
+        />
+      })}
+      </View>
       <Bottom pointerEvents="box-none">
         <Button title="Vista eða Senda" onPress={() => {
           Share.share({ title: Document.subject, url: `data:application/pdf;base64,${Document?.content!}` }, {
@@ -146,8 +167,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
 DocumentDetailScreen.options = {
   topBar: {
     visible: true,
-    title: {
-      text: 'Rafrænt skjal',
+    title,
+    backButton: {
+      color: theme.color.dark400,
     },
     rightButtons: [],
   },

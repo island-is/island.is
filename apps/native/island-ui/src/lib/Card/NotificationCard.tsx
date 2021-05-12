@@ -45,9 +45,9 @@ const ActionText = styled.Text`
 
 const TitleText = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
-  line-height: 16px;
-  color: ${props => theme.color.dark400};
+  font-size: 13px;
+  line-height: 17px;
+  color: ${props => props.theme.color.dark400};
   flex: 1;
 `;
 
@@ -66,8 +66,8 @@ const Date = styled.View`
 
 const DateText = styled.Text<{ unread?: boolean }>`
   font-family: ${props => props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${props => props.theme.color.dark400};
 `;
 

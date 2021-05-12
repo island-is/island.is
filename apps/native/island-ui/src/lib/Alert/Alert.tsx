@@ -3,14 +3,15 @@ import styled from 'styled-components/native';
 import { theme, Colors } from '@island.is/island-ui/theme';
 import info from '../../assets/alert/info-alert.png';
 import close from '../../assets/alert/close.png';
-import { Image } from 'react-native';
-import { View, Animated } from 'react-native';
+import { View, Animated, SafeAreaView, Image } from 'react-native';
 
 const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Colors; }>`
-  display: flex;
-  flex-flow: row nowrap;
+  position: absolute;
+  left: 0;
+  right: 0;
   padding: 20px 18px;
   background-color: ${(props) => theme.color[props.backgroundColor]};
+  z-index: 10;
 `;
 
 const Icon = styled.View`
@@ -23,8 +24,6 @@ const Title = styled.Text`
   font-weight: ${theme.typography.semiBold};
   color: ${theme.color.dark400};
   line-height: 24px;
-  margin-bottom: 15px;
-
 `;
 
 const Description = styled.Text`
@@ -84,62 +83,84 @@ interface AlertProps {
   title?: string,
   message?: string,
   style?: any;
-  offsetY?: any;
+  onClose(): void;
+  onClosed(): void;
+  visible?: boolean;
 }
 
-export function Alert({ title, message, type, offsetY, ...rest }: AlertProps) {
+const defaultOffsetY = {
+  current: new Animated.Value(0),
+};
+
+export function Alert({ title, message, type, visible = true, onClose, onClosed, ...rest }: AlertProps) {
+
+  const offsetY = useRef(new Animated.Value(0));
   const alertRef = useRef<View>(null);
   const variant = variantStyles[type];
-  const [isVisible, setIsVisible] = useState(true);
   const [height, setHeight] = useState(0);
+  const [isVisible, setIsVisible] = useState(visible);
 
   const animateOut = () => {
-    Animated.spring(offsetY.current, {
-      toValue: -height,
-      overshootClamping: true,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setIsVisible(false);
-        offsetY.current.setValue(1);
-      }
-    });
+    if (offsetY.current) {
+      Animated.spring(offsetY.current, {
+        toValue: -height,
+        overshootClamping: true,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          setIsVisible(false);
+          onClosed();
+          if (offsetY.current) {
+            offsetY.current.setValue(1);
+          }
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (!visible) {
+      animateOut();
+    }
+  }, [visible]);
+
+  if (!isVisible) {
+    return null;
   }
 
   return (
     <>
-      {isVisible ?
-        <Host
-          ref={alertRef as any}
-          onLayout={(e) => setHeight(e.nativeEvent.layout.height)}
-          backgroundColor={variant.background}
-          borderColor={variant.borderColor}
-          {...rest}
-          style={{
-            opacity: offsetY.current.interpolate({
-              inputRange: [-height, 0],
-              outputRange: [0, 1],
-            }),
-            transform: [{
-              translateY: offsetY.current,
-            }],
-          }}
-        >
+      <Host
+        ref={alertRef as any}
+        onLayout={(e) => setHeight(e.nativeEvent.layout.height)}
+        backgroundColor={variant.background}
+        borderColor={variant.borderColor}
+        {...rest}
+        style={{
+          opacity: offsetY.current?.interpolate({
+            inputRange: [-height, 0],
+            outputRange: [0, 1],
+          }),
+          transform: [{
+            translateY: offsetY.current,
+          }],
+        }}
+      >
+        <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon>
             <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
           </Icon>
           <Content>
-            {title && <Title>{title}</Title>}
+            {title && <Title style={{ marginBottom: message ? 15 : 0 }}>{title}</Title>}
             {message && (
               <Description>{message}</Description>
             )}
           </Content>
-          <Close onPress={animateOut}>
+          <Close onPress={onClose}>
             <Image source={close} style={{ width: 12, height: 12 }} />
           </Close>
-        </Host> :
-        null
-      }
+        </SafeAreaView>
+      </Host>
     </>
   )
 }

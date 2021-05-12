@@ -119,7 +119,7 @@ export async function checkIsAuthenticated() {
     console.log('Unable to read from keystore: ', err);
   }
 
-  console.log(authStore.getState());
+  // console.log(authStore.getState().authorizeResult!.accessToken);
 
   // Attempt to fetch user info (validate the token is all good)
   try {

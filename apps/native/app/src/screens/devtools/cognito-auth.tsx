@@ -9,7 +9,6 @@ import { useNavigationComponentDidDisappear } from 'react-native-navigation-hook
 export const CognitoAuthScreen: NavigationFunctionComponent<{ url: string }> = (props) => {
   const ref = useRef<WebView>(null);
   const [url, setUrl] = useState(props.url);
-  console.log(ref);
 
   const onNavigationStateChange = (navigationState: WebViewNavigation) => {
     if (navigationState.url.indexOf('https://auth.shared.devland.is/dev/oauth2/sign_in') >= 0) {

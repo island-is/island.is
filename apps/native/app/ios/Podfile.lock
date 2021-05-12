@@ -315,6 +315,8 @@ PODS:
     - React-Core
   - react-native-cookies (1.1.1):
     - React
+  - react-native-passkit-wallet (0.1.4):
+    - React
   - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-segmented-control (2.3.0):
@@ -406,7 +408,7 @@ PODS:
     - React
   - RNLocalize (2.0.2):
     - React-Core
-  - RNReanimated (2.0.0):
+  - RNReanimated (2.1.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -500,6 +502,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../../../../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-app-auth (from `../../node_modules/react-native-app-auth`)
   - "react-native-cookies (from `../../node_modules/@react-native-community/react-native-cookies/ios`)"
+  - react-native-passkit-wallet (from `../../node_modules/react-native-passkit-wallet`)
   - react-native-safe-area-context (from `../../node_modules/react-native-safe-area-context`)
   - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
   - react-native-ultimate-config (from `../../node_modules/react-native-ultimate-config`)
@@ -601,6 +604,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-app-auth"
   react-native-cookies:
     :path: "../../node_modules/@react-native-community/react-native-cookies/ios"
+  react-native-passkit-wallet:
+    :path: "../../node_modules/react-native-passkit-wallet"
   react-native-safe-area-context:
     :path: "../../node_modules/react-native-safe-area-context"
   react-native-segmented-control:
@@ -676,7 +681,7 @@ SPEC CHECKSUMS:
   EXNotifications: 3a88b7b898fa842cae3c5a895a255fab554bc0c8
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 1d4fcc35d48f0cf39c436af5b555260e3848bf2c
+  FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
   Flipper: 1bd2db48dcc31e4b167b9a33ec1df01c2ded4893
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -703,6 +708,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 500a59626037be5b3b3d89c5151bc3baa9abf1a9
   react-native-app-auth: 65e59e33e956bd6d83599c22b8f9bea529a0ea5c
   react-native-cookies: 3a8a42a8703423669026731186b1765e40b81557
+  react-native-passkit-wallet: 51e3babdaeec4c10b5736786ebd1bfb470fcaa36
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-segmented-control: 83a05d42acd1234ad5e061d603c145973a61b5ee
   react-native-ultimate-config: 38859f2b2018e3de04afd6203300f47f4803d8f4
@@ -724,7 +730,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNLocalize: 43f6c30d8e19ad92282ae434d310fb463b31f419
-  RNReanimated: 64f6c5789f82818c07ba3c71864b73619cb23c76
+  RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
   UMConstantsInterface: 6825ea3832d26ed392ca6eff2df84edd69968fd0
@@ -736,6 +742,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1b4e27f6ccf80caf8381d0b04b1b6018e2db9516
+PODFILE CHECKSUM: 7dc461047a969624c76087008bd6a4faaa72dad3
 
 COCOAPODS: 1.10.1

@@ -8,6 +8,7 @@ export type Locale = 'en-US' | 'is-IS';
 export type AppearanceMode = 'light' | 'dark' | 'automatic';
 
 interface PreferencesStore extends State {
+  dev__useLockScreen: boolean;
   hasOnboardedPinCode: boolean;
   hasOnboardedBiometrics: boolean;
   hasOnboardedNotifications: boolean;
@@ -23,14 +24,21 @@ interface PreferencesStore extends State {
 
 const availableLocales: Locale[] = ['en-US', 'is-IS'];
 const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(availableLocales)?.languageTag;
-const defaultPreferences = {  appearanceMode: 'light',
+const defaultPreferences = {
+  appearanceMode: 'light',
   locale: bestAvailableLanguage || 'is-IS',
   useBiometrics: false,
+  dev__useLockScreen: true,
   hasOnboardedBiometrics: false,
   hasOnboardedPinCode: false,
   hasOnboardedNotifications: false,
   hasAcceptedNotifications: false,
 };
+
+let resolve: any = () => {};
+export const rehydrate = () => new Promise(r => {
+  resolve = r;
+});
 
 export const preferencesStore = create<PreferencesStore>(persist((set, get) => ({
   ...defaultPreferences as PreferencesStore,
@@ -52,6 +60,10 @@ export const preferencesStore = create<PreferencesStore>(persist((set, get) => (
 }), {
   name: "preferences03",
   getStorage: () => AsyncStorage,
+  onRehydrateStorage: () => {
+    console.log('prefs rehydrated');
+    resolve();
+  }
 }));
 
 export const usePreferencesStore = createUse(preferencesStore);

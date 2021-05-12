@@ -35,7 +35,9 @@ export async function getAppRoot(): Promise<Layout> {
     }
   }
 
-  if (config.disableLockScreen) {
+  const { dev__useLockScreen } = preferencesStore.getState();
+
+  if (dev__useLockScreen === false) {
     return getMainRoot()
   }
 
@@ -58,18 +60,45 @@ export function getMainRoot(): Layout {
     {
       id: ButtonRegistry.UserButton,
       testID: testIDs.TOPBAR_USER_BUTTON,
-      text: 'User',
-      icon: {
-        system: 'person.crop.circle',
+      // component: {
+      //   id: ButtonRegistry.UserButton,
+      //   name: ComponentRegistry.NavigationBarButton,
+      // },
+      icon: require('../../assets/icons/topbar-user.png'),
+      disableIconTint: true,
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 4,
+        width: 32,
+        height: 32,
       },
     },
     {
       id: ButtonRegistry.NotificationsButton,
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
-      text: 'Notifications',
-      icon: {
-        system: 'bell',
+      // component: {
+      //   id: ButtonRegistry.NotificationsButton,
+      //   name: ComponentRegistry.NavigationBarButton,
+      //   passProps: {
+      //     buttonType: 'notifications',
+      //   },
+      // },
+      icon: require('../../assets/icons/topbar-notifications.png'),
+      disableIconTint: true,
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 4,
+        width: 32,
+        height: 32,
       },
+      // text: 'Notifications',
+      // icon: require('../../assets/icons/topbar-notification.png'),
+      // disableIconTint: true,
+      // iconBackground: {
+      //   color: '#ffffff',
+      //   cornerRadius: 8,
+      // },
+
     },
   ];
 
