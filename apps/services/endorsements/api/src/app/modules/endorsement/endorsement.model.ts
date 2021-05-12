@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
+import { EndorsementListOpen } from './endorsementListOpen.model'
 @Table({
   tableName: 'endorsement',
   indexes: [
@@ -42,8 +43,7 @@ export class Endorsement extends Model<Endorsement> {
   endorsementListId!: string
 
   @BelongsTo(() => EndorsementList, 'endorsementListId')
-  endorsementList!: EndorsementList
-
+  endorsementList!: EndorsementListOpen
   @Column({
     type: DataType.JSONB,
     allowNull: false,
