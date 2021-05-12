@@ -26,6 +26,7 @@ interface Props {
   handleAccusedAppeal: (date?: Date) => void
   handleProsecutorAppeal: (date?: Date) => void
   handleAccusedAppealDismissal?: () => void
+  handleProsecutorAppealDismissal?: () => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
 }
@@ -41,6 +42,7 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppeal,
     handleProsecutorAppeal,
     handleAccusedAppealDismissal,
+    handleProsecutorAppealDismissal,
   } = props
   const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
@@ -173,6 +175,7 @@ const AppealSection: React.FC<Props> = (props) => {
               prosecutorPostponedAppealDate,
               'PPPp',
             )}`}
+            onDismiss={handleProsecutorAppealDismissal}
             fluid
           />
         </motion.div>

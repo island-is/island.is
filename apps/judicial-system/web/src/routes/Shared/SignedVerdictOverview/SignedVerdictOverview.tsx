@@ -195,21 +195,6 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleAccusedAppealDismissal = () => {
-    if (workingCase) {
-      setWorkingCase({
-        ...workingCase,
-        accusedPostponedAppealDate: undefined,
-      })
-
-      updateCase(
-        workingCase.id,
-
-        parseNull('accusedPostponedAppealDate'),
-      )
-    }
-  }
-
   const handleProsecutorAppeal = (date?: Date) => {
     if (workingCase && date) {
       setWorkingCase({
@@ -221,6 +206,28 @@ export const SignedVerdictOverview: React.FC = () => {
         workingCase.id,
         parseString('prosecutorPostponedAppealDate', formatISO(date)),
       )
+    }
+  }
+
+  const handleAccusedAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+    }
+  }
+
+  const handleProsecutorAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
     }
   }
 
@@ -400,6 +407,9 @@ export const SignedVerdictOverview: React.FC = () => {
                     handleAccusedAppeal={handleAccusedAppeal}
                     handleProsecutorAppeal={handleProsecutorAppeal}
                     handleAccusedAppealDismissal={handleAccusedAppealDismissal}
+                    handleProsecutorAppealDismissal={
+                      handleProsecutorAppealDismissal
+                    }
                   />
                 </Box>
               )}
