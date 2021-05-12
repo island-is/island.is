@@ -7,11 +7,10 @@ import { client } from '../../graphql/client'
 import isVerifiedLogo from '../../assets/icons/is-verified.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
-import { ComponentRegistry } from '../../utils/navigation-registry'
-import { useTranslatedTitle } from '../../utils/use-translated-title'
 import styled from 'styled-components/native'
 import { Skeleton } from '../../components/skeleton/skeleton'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet';
+import { createNavigationTitle } from '../../utils/create-navigation-title'
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -149,11 +148,15 @@ function Field({
   )
 }
 
+// Create title options and hook to sync translated title message
+const { title, useNavigationTitle } = createNavigationTitle('wallet.screenTitle');
+
 export const WalletPassScreen: NavigationFunctionComponent<{ id: string; item?: any }> = ({
   id,
   item,
+  componentId,
 }) => {
-  useTranslatedTitle('WALLET_PASS_NAV_TITLE', 'wallet.screenTitle')
+  useNavigationTitle(componentId)
 
   const res = useQuery(
     gql`
@@ -237,15 +240,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{ id: string; item?: 
 
 WalletPassScreen.options = {
   topBar: {
-    title: {
-      component: {
-        id: 'WALLET_PASS_NAV_TITLE',
-        name: ComponentRegistry.NavigationBarTitle,
-        passProps: {
-          title: 'Wallet Pass',
-        },
-      },
-      alignment: 'fill',
-    },
+    title,
+    rightButtons: [],
   },
 }

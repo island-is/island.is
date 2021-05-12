@@ -4,14 +4,20 @@ import {
   Switch,
   View,
   TouchableHighlight,
+  Platform,
+  Animated
 } from 'react-native'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
-import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useTheme } from 'styled-components/native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+import styled from 'styled-components/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useQuery } from '@apollo/client'
+import CodePush, { LocalPackage } from '../../../../node_modules/react-native-code-push';
+import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useAuthStore } from '../../stores/auth-store'
 import { testIDs } from '../../utils/test-ids'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
@@ -20,14 +26,11 @@ import { TableViewCell } from '../../components/tableview/tableview-cell'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useIntl } from '../../utils/intl'
 import { TabBar } from '../../components/tab-bar/tab-bar'
-import styled from 'styled-components/native'
-import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
-import { Platform } from 'react-native'
-import { Animated } from 'react-native'
-import { Dimensions } from 'react-native'
-import { ComponentRegistry } from '../../utils/navigation-registry'
 import { Skeleton } from '../../components/skeleton/skeleton'
+import { NavigationBarSheet } from '../../components/navigation-bar-sheet/navigation-bar-sheet'
+import { config } from '../../utils/config'
+
 
 const InputHost = styled.SafeAreaView`
   flex: 1;
@@ -101,11 +104,23 @@ function Input({
   )
 }
 
+const InfoMessage = styled.View`
+  background-color: ${props => props.theme.color.blue100};
+`;
+
+const InfoMessageText = styled.Text`
+  background-color: ${props => props.theme.color.blue100};
+  padding: 27px 0px;
+  font-family: 'IBMPlexSans';
+  font-size: 13px;
+  line-height: 17px;
+`;
+
 function formatNationalId(str: string = '') {
   return [str.substr(0, 6), str.substr(6, 4)].join('-')
 }
 
-export const SettingsScreen: NavigationFunctionComponent = () => {
+export const SettingsScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
   const theme = useTheme()
@@ -116,12 +131,17 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
     setAppearanceMode,
   } = usePreferencesStore()
 
+  const [loadingCP, setLoadingCP] = useState(false);
+  const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null);
+
   // switch states
   const [tab, setTab] = useState(0)
   const [darkMode, setDarkMode] = useState(appearanceMode === 'dark')
   const [notificationsNewDocuments, setNotificationsNewDocuments] = useState(
     false,
   )
+  const [appUpdatesNotifications, setAppUpdatesNotifications] = useState(false);
+  const [applicationsNotifications, setApplicationsNotifications] = useState(false);
 
   const onLogoutPress = async () => {
     await authStore.logout()
@@ -138,6 +158,15 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
     }
   }, [darkMode])
 
+  useEffect(() => {
+    setLoadingCP(true);
+    CodePush.getUpdateMetadata().then(p => {
+      setLoadingCP(false);
+      setLocalPackage(p);
+    });
+  }, []);
+
+
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client })
   const natRegData = natRegRes?.data?.nationalRegistryUser || {}
   const loadingNatReg = natRegRes.loading;
@@ -149,6 +178,11 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
       }}
       testID={testIDs.SCREEN_USER}
     >
+      <NavigationBarSheet
+        title={intl.formatMessage({ id: 'settings.screenTitle' })}
+        onClosePress={() => Navigation.dismissModal(componentId)}
+        style={{ marginHorizontal: 16 }}
+      />
       <TabBar
         values={[
           intl.formatMessage({ id: 'settings.tabs.personalInfo' }),
@@ -158,7 +192,12 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
         selectedIndex={tab}
       />
       {tab === 1 ? (
-        <ScrollView style={{ flex: 1, paddingTop: 32 }}>
+        <ScrollView style={{ flex: 1 }}>
+          <InfoMessage style={{ marginBottom: 32 }}>
+            <SafeAreaView style={{ marginHorizontal: 16 }}>
+              <InfoMessageText>Stillingar á virkni og útliti appsins</InfoMessageText>
+            </SafeAreaView>
+          </InfoMessage>
           <TableViewGroup
             header={intl.formatMessage({
               id: 'settings.communication.groupTitle',
@@ -172,6 +211,10 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
                 <Switch
                   onValueChange={setNotificationsNewDocuments}
                   value={notificationsNewDocuments}
+                  trackColor={{
+                    false: theme.color.dark200,
+                    true: theme.color.blue400
+                  }}
                 />
               }
             />
@@ -179,13 +222,26 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
               title={intl.formatMessage({
                 id: 'settings.communication.appUpdatesNotifications',
               })}
-              accessory={<Switch onValueChange={() => {}} value={false} />}
+              accessory={<Switch
+                onValueChange={setAppUpdatesNotifications}
+                value={appUpdatesNotifications}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400
+                }}
+                />}
             />
             <TableViewCell
               title={intl.formatMessage({
                 id: 'settings.communication.applicationsNotifications',
               })}
-              accessory={<Switch onValueChange={() => {}} value={false} />}
+              accessory={<Switch
+                onValueChange={setApplicationsNotifications}
+                value={applicationsNotifications}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400
+                }}/>}
             />
           </TableViewGroup>
           <TableViewGroup
@@ -198,7 +254,11 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
                 id: 'settings.accessibilityLayout.darkMode',
               })}
               accessory={
-                <Switch onValueChange={setDarkMode} value={darkMode} />
+                <Switch onValueChange={setDarkMode} value={darkMode}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400
+                }} />
               }
             />
             <TableViewCell
@@ -211,6 +271,7 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
                     values={['Íslenska', 'English']}
                     selectedIndex={locale === 'is-IS' ? 0 : 1}
                     style={{ marginTop: 16 }}
+                    appearance="light"
                     onChange={(event) => {
                       const { selectedSegmentIndex } = event.nativeEvent
                       setLocale(selectedSegmentIndex === 0 ? 'is-IS' : 'en-US')
@@ -228,19 +289,34 @@ export const SettingsScreen: NavigationFunctionComponent = () => {
               }
             />
           </TableViewGroup>
-          <TableViewGroup header="Annað">
+          <TableViewGroup header="About">
+            <TableViewCell
+              title="Version"
+              subtitle={`${config.constants.nativeAppVersion} build ${config.constants.nativeBuildVersion} ${config.constants.debugMode ? '(debug)' : ''}`}
+            />
+            <TableViewCell
+              title="Codepush"
+              subtitle={loadingCP ? 'Loading...' : !localPackage ? 'N/A: Using native bundle' : `${localPackage?.label}: ${localPackage.packageHash}`}
+            />
             <TouchableHighlight
               onPress={onLogoutPress}
               underlayColor={theme.color.blue100}
             >
-              <TableViewCell title="Útskrá" />
+              <TableViewCell title="Logout" subtitle="You will be signed out of the app." />
             </TouchableHighlight>
           </TableViewGroup>
         </ScrollView>
       ) : (
         <ScrollView
-          style={{ flex: 1, flexDirection: 'column', paddingTop: 32 - 24 }}
+          style={{ flex: 1 }}
         >
+          <InfoMessage>
+            <SafeAreaView style={{ marginHorizontal: 16 }}>
+              <InfoMessageText>
+                Þín skráning í Þjóðskrá Íslands
+              </InfoMessageText>
+            </SafeAreaView>
+          </InfoMessage>
           <Input
             loading={loadingNatReg}
             label={intl.formatMessage({ id: 'settings.natreg.displayName' })}

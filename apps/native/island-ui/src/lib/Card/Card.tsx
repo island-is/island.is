@@ -20,7 +20,7 @@ const Image = styled.Image`
 `;
 
 const Title = styled.Text`
-  font-family: 'IBM Plex Sans SemiBold';
+  font-family: 'IBMPlexSans-SemiBold';
   font-size: 20px;
   font-weight: 600;
   text-align: center;
@@ -40,7 +40,7 @@ const TextWrap = styled.View`
 `;
 
 const Description = styled.Text`
-  font-family: 'IBM Plex Sans';
+  font-family: 'IBMPlexSans';
   font-weight: 300;
   padding: 15px 27px 0;
   font-size: 16px;
@@ -52,14 +52,15 @@ const Description = styled.Text`
 
 interface CardProps {
   title: string;
-  backgroundColor?: string;
   description?: string;
+  backgroundColor?: string;
   imgSrc?: any;
+  style?: any;
 }
 
-export function Card({ title, description, imgSrc, backgroundColor = '#F8F5FA' }: CardProps) {
+export function Card({ title, description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
   return (
-    <Host color={backgroundColor}>
+    <Host color={backgroundColor} style={style}>
       <Image source={imgSrc} />
       <TextWrap>
         <Title>

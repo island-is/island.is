@@ -33,6 +33,8 @@ const Title = styled.Text`
 const Illustration = styled.SafeAreaView`
   background-color: ${(props) => props.theme.color.blue100};
   height: 330px;
+  align-items: center;
+  justify-content: center;
 `
 
 const BottomRow = styled.View`

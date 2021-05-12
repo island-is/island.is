@@ -1,11 +1,11 @@
 import { LicenceCard, Alert } from '@island.is/island-ui-native'
-import React, { useRef } from 'react'
-import styled from 'styled-components/native'
-import { Animated } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Animated, FlatList, TouchableOpacity } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components/native'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
-import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useTheme } from 'styled-components'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { navigateTo } from '../../utils/deep-linking'
@@ -14,13 +14,8 @@ import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import isVerifiedLogo from '../../assets/icons/is-verified.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
-import { ComponentRegistry } from '../../utils/navigation-registry'
 import { useIntl } from '../../utils/intl'
-import { useTranslatedTitle } from '../../utils/use-translated-title'
-import { TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-
-const Wrapper = styled(Animated.View)``
+import { createNavigationTitle } from '../../utils/create-navigation-title'
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -39,13 +34,15 @@ function mapLicenseColor(type: LicenseType) {
   return backgroundColor
 }
 
-export const WalletScreen: NavigationFunctionComponent = () => {
+const { useNavigationTitle, title } = createNavigationTitle('wallet.screenTitle');
+
+export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const theme = useTheme()
   const intl = useIntl()
   const res = useQuery(LIST_LICENSES_QUERY, { client })
   const licenseItems = res?.data?.listLicenses ?? []
 
-  useTranslatedTitle('WALLET_NAV_TITLE', 'wallet.screenTitle')
+  useNavigationTitle(componentId);
 
   useScreenOptions(
     () => ({
@@ -61,10 +58,12 @@ export const WalletScreen: NavigationFunctionComponent = () => {
     [theme],
   )
 
-  const sharedAnimatedValue = useRef(new Animated.Value(0))
+  const flRef = useRef<FlatList>();
+  const [alertVisible, setAlertVisible] = useState(true);
+  const [offset, setOffset] = useState(alertVisible);
 
   const renderLicenseItem = ({
-    item
+    item,
   }: {
     item: {
       id: string
@@ -84,39 +83,54 @@ export const WalletScreen: NavigationFunctionComponent = () => {
       }
     >
       <SafeAreaView>
-      <LicenceCard
-        nativeID={`license-${item.id}_source`}
-        title={item.title}
-        icon={isVerifiedLogo}
-        backgroundColor={mapLicenseColor(item.type)}
-        agencyLogo={agencyLogo}
-      />
+        <LicenceCard
+          nativeID={`license-${item.id}_source`}
+          title={item.title}
+          icon={isVerifiedLogo}
+          backgroundColor={mapLicenseColor(item.type)}
+          agencyLogo={agencyLogo}
+        />
       </SafeAreaView>
     </TouchableOpacity>
   )
 
   return (
     <>
-      <Alert
-        type="info"
-        message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
-        offsetY={sharedAnimatedValue}
-      />
-      <Animated.FlatList
-        testID={testIDs.SCREEN_HOME}
-        style={{
-          paddingHorizontal: 16,
-          paddingTop: 24,
-          transform: [
-            {
-              translateY: sharedAnimatedValue.current,
-            },
-          ],
-        }}
-        data={licenseItems}
-        keyExtractor={(item: any) => item.id}
-        renderItem={renderLicenseItem}
-      />
+        {offset && <Alert
+          visible={alertVisible}
+          type="info"
+          message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
+          onClose={() => {
+            setAlertVisible(false);
+            flRef.current?.scrollToOffset({
+              offset: 0,
+              animated: true,
+            });
+          }}
+          onClosed={() => {
+            setOffset(false);
+          }}
+        />}
+        <Animated.FlatList
+          ref={flRef as any}
+          testID={testIDs.SCREEN_HOME}
+          automaticallyAdjustContentInsets={false}
+          contentInsetAdjustmentBehavior="never"
+          contentInset={{
+            top: offset ? 70 : 0,
+          }}
+          contentOffset={{
+            x: 0,
+            y: offset ? -70 : 0,
+          }}
+          style={{
+            paddingTop: 16,
+            paddingHorizontal: 16,
+          }}
+          data={licenseItems}
+          keyExtractor={(item: any) => item.id}
+          renderItem={renderLicenseItem}
+        />
       <BottomTabsIndicator index={2} total={3} />
     </>
   )
@@ -124,15 +138,6 @@ export const WalletScreen: NavigationFunctionComponent = () => {
 
 WalletScreen.options = {
   topBar: {
-    title: {
-      component: {
-        id: 'WALLET_NAV_TITLE',
-        name: ComponentRegistry.NavigationBarTitle,
-        passProps: {
-          title: 'Wallet',
-        },
-      },
-      alignment: 'fill',
-    },
+    title
   },
 }

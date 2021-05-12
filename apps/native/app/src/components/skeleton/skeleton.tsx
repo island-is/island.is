@@ -10,7 +10,7 @@ interface SkeletonProps {
 const Host = styled.View`
   height: 20px;
   width: 100%;
-  background-color: ${(props) => props.theme.color.dark100};
+  background-color: ${(props) => props.theme.color.blue100};
   overflow: hidden;
 `
 
@@ -20,8 +20,8 @@ const Swoosh = styled(Animated.View)`
   left: 0px;
   height: 20px;
   width: 50%;
-  background-color: ${(props) => props.theme.color.dark100};
-  box-shadow: 0px 25px 25px ${(props) => props.theme.color.dark200};
+  background-color: ${(props) => props.theme.color.blue100};
+  box-shadow: 0px 25px 25px #d7e2f3;
 `
 
 export function Skeleton(props: SkeletonProps) {

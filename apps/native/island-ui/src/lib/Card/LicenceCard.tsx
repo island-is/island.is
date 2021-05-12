@@ -16,15 +16,13 @@ const Content = styled.View`
 `;
 
 const Title = styled.Text`
-  font-family: 'IBM Plex Sans';
+  font-family: 'IBMPlexSans-SemiBold';
   margin-bottom: 8px;
   font-size: 16px;
-  font-weight: 600;
 `;
 
 const ValidationWrap = styled.View`
-  font-family: 'IBM Plex Sans';
-  font-weight: 600;
+  font-family: 'IBMPlexSans-SemiBold';
   display: flex;
   flex-flow: row;
 `;

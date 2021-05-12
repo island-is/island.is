@@ -6,6 +6,8 @@ import { config } from '../config'
 import { evaluateUrl, navigateTo } from '../deep-linking'
 import { ButtonRegistry, ComponentRegistry } from '../navigation-registry'
 import { isOnboarded } from '../onboarding'
+import { uiStore } from '../../stores/ui-store'
+import { preferencesStore } from '../../stores/preferences-store'
 
 const LOCK_SCREEN_TIMEOUT = 5000
 
@@ -28,6 +30,10 @@ export function setupEventHandlers() {
     })
     .catch((err) => console.error('An error occurred in getInitialURL: ', err))
 
+  Navigation.events().registerBottomTabSelectedListener((e) => {
+    uiStore.setState(({ unselectedTab: e.unselectedTabIndex, selectedTab: e.selectedTabIndex }));
+  });
+
   AppState.addEventListener('change', (status: AppStateStatus) => {
     const {
       lockScreenComponentId,
@@ -35,7 +41,9 @@ export function setupEventHandlers() {
       userInfo,
     } = authStore.getState()
 
-    if (!userInfo || !isOnboarded()) {
+    const { dev__useLockScreen } = preferencesStore.getState();
+
+    if (!userInfo || !isOnboarded() || dev__useLockScreen === false) {
       return
     }
 

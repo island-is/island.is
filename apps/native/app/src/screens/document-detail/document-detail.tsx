@@ -17,6 +17,8 @@ import { authStore } from '../../stores/auth-store'
 import { useState } from 'react'
 import { useNavigationComponentDidAppear, useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
 import { View } from 'react-native'
+import { theme } from '@island.is/island-ui/theme'
+import { createNavigationTitle } from '../../utils/create-navigation-title'
 
 const Header = styled.View`
   margin-left: 16px;
@@ -76,9 +78,11 @@ const Bottom = styled.View`
   align-items: center;
 `;
 
-export const DocumentDetailScreen: NavigationFunctionComponent = (
-  props: any,
-) => {
+const { title, useNavigationTitle } = createNavigationTitle('documentDetail.screenTitle');
+
+export const DocumentDetailScreen: NavigationFunctionComponent<{ docId: string }> = ({ componentId, docId }) => {
+  useNavigationTitle(componentId);
+
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
   })
@@ -86,14 +90,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
     client,
     variables: {
       input: {
-        id: props.docId,
+        id: docId,
       }
     }
   });
 
   const Document = {
     ...docRes.data?.getDocument || {},
-    ...res.data?.listDocuments?.find(d => d.id === props.docId) || {},
+    ...res.data?.listDocuments?.find(d => d.id === docId) || {},
   };
 
   const [visible, setVisible] = useState(false);
@@ -163,8 +167,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent = (
 DocumentDetailScreen.options = {
   topBar: {
     visible: true,
-    title: {
-      text: 'Rafrænt skjal',
+    title,
+    backButton: {
+      color: theme.color.dark400,
     },
     rightButtons: [],
   },

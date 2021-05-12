@@ -1,15 +1,17 @@
 import React from 'react';
 import { useQuery } from "@apollo/client";
 import { Text, ActivityIndicator, Button, View } from "react-native";
-import { NavigationFunctionComponent } from "react-native-navigation";
+import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
 import { FormattedDate } from 'react-intl';
+import { useIntl } from '../../utils/intl';
 import styled from 'styled-components/native';
 import { scheduleNotificationAsync, setNotificationCategoryAsync } from 'expo-notifications';
 import logo from '../../assets/logo/logo-64w.png'
 import { client } from "../../graphql/client";
 import { GET_NOTIFICATION_QUERY, GetNotificationResponse } from "../../graphql/queries/get-notification.query";
-import { useTranslatedTitle } from '../../utils/use-translated-title';
-import { ComponentRegistry } from '../../utils/navigation-registry';
+import { createNavigationTitle } from '../../utils/create-navigation-title';
+import { NavigationBarSheet } from '../../components/navigation-bar-sheet/navigation-bar-sheet';
+import { ScrollView } from 'react-native';
 
 interface NotificationDetailScreenProps {
   id: string;
@@ -19,7 +21,7 @@ const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
   flex: 1;
-  margin-top: 16px;
+  /* margin-top: 16px; */
 `;
 
 const Logo = styled.Image`
@@ -46,16 +48,16 @@ const ServiceProvider = styled.View`
 
 const ServiceProviderText = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${props => props.theme.color.dark400};
   flex: 1;
 `;
 
 const DateText = styled.Text<{ unread?: boolean }>`
   font-family: ${props => props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: ${props => props.theme.color.dark400};
 `;
 
@@ -74,16 +76,17 @@ const Message = styled.Text`
   color: ${props => props.theme.color.dark400};
 `;
 
-export const NotificationDetailScreen: NavigationFunctionComponent<NotificationDetailScreenProps> = ({ id }) => {
+// Create title options and hook to sync translated title message
+const { title, useNavigationTitle } = createNavigationTitle('notificationDetail.screenTitle');
 
+export const NotificationDetailScreen: NavigationFunctionComponent<NotificationDetailScreenProps> = ({ componentId, id }) => {
+  const intl = useIntl();
   const notificationRes = useQuery<GetNotificationResponse>(GET_NOTIFICATION_QUERY, {
     client,
     variables: {
       id,
     }
   });
-
-  useTranslatedTitle('NOTIFICATIONDETAIL_NAV_TITLE', 'notificationDetail.screenTitle')
 
   if (notificationRes.loading) {
     return <ActivityIndicator />
@@ -125,6 +128,10 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
 
   return (
     <Host>
+      <NavigationBarSheet
+        title={intl.formatMessage({ id: 'notificationDetail.screenTitle' })}
+        onClosePress={() => Navigation.dismissModal(componentId)}
+      />
       <Header>
         <ServiceProvider>
           <Logo source={logo} />
@@ -136,9 +143,10 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
           <FormattedDate value={new Date(notification.date)} />
         </DateText>
       </Header>
-      <Title>{notification.title}</Title>
-      <Message>{notification.message}</Message>
-      <View style={{ flex: 1 }} />
+      <ScrollView style={{ flex: 1 }}>
+        <Title>{notification.title}</Title>
+        <Message>{notification.message}</Message>
+      </ScrollView>
       <Button title="Send push notification" onPress={onSendPushNotification} />
     </Host>
   );
@@ -146,21 +154,6 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
 
 NotificationDetailScreen.options = {
   topBar: {
-    title: {
-      component: {
-        id: 'NOTIFICATIONDETAIL_NAV_TITLE',
-        name: ComponentRegistry.NavigationBarTitle,
-        passProps: {
-          title: 'Notification',
-        }
-      },
-      alignment: 'center'
-    },
-    rightButtons: [{
-      id: 'close',
-      icon: {
-        system: 'xmark.circle.fill',
-      }
-    }]
+    visible: false,
   },
 }
