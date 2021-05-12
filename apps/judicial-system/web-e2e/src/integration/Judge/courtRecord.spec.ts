@@ -5,11 +5,11 @@ describe('/domur/thingbok/:id', () => {
   })
 
   it('should require a valid court start time', () => {
-    cy.getByTestid('courtStartTime').click().blur()
+    cy.getByTestid('courtStartDate').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtStartTime').type('122')
+    cy.getByTestid('courtStartDate').type('122')
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtStartTime').clear().type('1222')
+    cy.getByTestid('courtStartDate').clear().type('1222')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
@@ -34,7 +34,7 @@ describe('/domur/thingbok/:id', () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('courtStartTime').type('1222')
+    cy.getByTestid('courtStartDate').type('1222')
     cy.getByTestid('accusedPleaAnnouncement').type('lorem')
     cy.getByTestid('litigationPresentations').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')
