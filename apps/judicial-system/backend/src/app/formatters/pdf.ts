@@ -282,7 +282,7 @@ export async function getRulingPdfAsString(
     .lineGap(30)
     .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}.`,
+      `Þinghald hófst þann ${formatDate(existingCase.courtStartDate, 'PPPp')}.`,
       {
         lineGap: 6,
         paragraphGap: 0,
