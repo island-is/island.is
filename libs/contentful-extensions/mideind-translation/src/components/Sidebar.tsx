@@ -4,7 +4,6 @@ import { SidebarExtensionSDK } from '@contentful/app-sdk'
 import { useState } from 'react'
 import { extractField, populateField } from '../fieldUtils/index'
 import { translateTexts, sendTexts } from '../api'
-import { signedCookies } from 'cookie-parser'
 
 interface SidebarProps {
   sdk: SidebarExtensionSDK
@@ -104,10 +103,6 @@ const Sidebar = (props: SidebarProps) => {
 
         enTexts = [...enTexts, ...enExtractedTexts]
       }
-
-      // Filter away empty texts
-      //iceTexts.filter(text => text.trim.length !== 0)
-      //enTexts.filter(text => text.trim.length !== 0)
 
       sendTexts(iceTexts, enTexts)
     }
