@@ -6,15 +6,15 @@ import {
   CustomTemplateFindQuery,
   StaticText,
 } from '@island.is/application/core'
-
-import { ChildInformation, ChildrenAndExistingApplications } from './types'
-import { getChildrenAndExistingApplications } from './Children-utils'
-import { States } from '../../constants'
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   PregnancyStatus,
-} from '../../types/schema'
+} from '@island.is/api/domains/directorate-of-labour'
+
+import { ChildInformation, ChildrenAndExistingApplications } from './types'
+import { getChildrenAndExistingApplications } from './Children-utils'
+import { States } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
 
