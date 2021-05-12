@@ -109,6 +109,7 @@ export class ApplicationService {
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
     auth: Auth,
+    locale: Locale,
   ) {
     const { id, ...populateExternalDataDto } = input
 
@@ -116,6 +117,7 @@ export class ApplicationService {
       .applicationControllerUpdateExternalData({
         id,
         populateExternalDataDto,
+        locale,
       })
       .catch(handleError)
   }
