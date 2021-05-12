@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native'
 import { Badge, Heading, StatusCard, NotificationCard, WelcomeCard, Close } from '@island.is/island-ui-native'
 import logo from '../../assets/logo/logo-64w.png'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -20,7 +20,6 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
 import { authStore } from '../../stores/auth-store'
 import { ViewPager } from '../../components/view-pager/view-pager'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
-import { theme } from '@island.is/island-ui/theme'
 
 
 function BubbleSafeArea() {

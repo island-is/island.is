@@ -54,14 +54,14 @@ interface CardProps {
   number: string;
   description?: string;
   backgroundColor?: string;
-  imgSrc?: any;
+  imgSrc?: ImageSourcePropType;
   style?: any;
 }
 
-export function Card({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
+export function WelcomeCard({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
   return (
     <Host color={backgroundColor} style={style}>
-      <Image source={imgSrc} />
+      {imgSrc && <Image source={imgSrc} />}
       <TextWrap>
         <Number>
           {number}

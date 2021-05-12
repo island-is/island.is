@@ -7,7 +7,7 @@ PODS:
   - Base64 (1.1.2)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
-  - CodePush (7.0.0):
+  - CodePush (7.0.1):
     - Base64 (~> 1.1)
     - JWT (~> 3.0.0-beta.12)
     - React-Core
@@ -672,7 +672,7 @@ SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CodePush: 4e72e70067c1442ddfe25e3e53b23a6fa573f5c6
+  CodePush: 9bb93f52a44ee80b72739d89dead9c7e86c3bd3a
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: e3a06b6d81f94e526f029a57b2121d6cde044004
   EXConstants: 07a3effb73d2f73b61079703f810bbdd5364a1c5
@@ -681,7 +681,7 @@ SPEC CHECKSUMS:
   EXNotifications: 3a88b7b898fa842cae3c5a895a255fab554bc0c8
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
+  FBReactNativeSpec: 1d4fcc35d48f0cf39c436af5b555260e3848bf2c
   Flipper: 1bd2db48dcc31e4b167b9a33ec1df01c2ded4893
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c

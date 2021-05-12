@@ -45,11 +45,11 @@ const ImgWrap = styled.View`
 interface LicenceCardProps {
   title: string;
   agencyLogo: ImageSourcePropType;
-  backgroundColor: string;
+  backgroundColor?: string;
   nativeID?: string;
 }
 
-export function LicenceCard({ title, backgroundColor, agencyLogo, nativeID }: LicenceCardProps) {
+export function LicenceCard({ title, backgroundColor = '#F8F5FA', agencyLogo, nativeID }: LicenceCardProps) {
   return (
     <Host backgroundColor={backgroundColor} nativeID={nativeID}>
       <Content>
@@ -57,7 +57,7 @@ export function LicenceCard({ title, backgroundColor, agencyLogo, nativeID }: Li
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={isVerifiedLogo} style={{ width: 13, height: 13, marginRight: 8 }} />
+          <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
             Í gildi
           </Validation>
