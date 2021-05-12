@@ -7,7 +7,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -26,8 +25,10 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
+  getRequestPdfAsBuffer,
 } from '../../formatters'
 import { Case } from '../case'
+import { CourtService } from '../court'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 
@@ -41,6 +42,7 @@ export class NotificationService {
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
@@ -243,6 +245,20 @@ export class NotificationService {
     )
   }
 
+  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
+    const pdf = await getRequestPdfAsBuffer(existingCase)
+
+    try {
+      const streamId = await this.courtService.uploadStream(pdf)
+      await this.courtService.createDocument(
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request to court', error)
+    }
+  }
+
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -256,6 +272,12 @@ export class NotificationService {
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(existingCase),
     ]
+
+    // TODO: Find a better place for this
+    // No need to wait
+    if (Boolean(existingCase.courtCaseNumber)) {
+      this.uploadRequestPdfToCourt(existingCase)
+    }
 
     if (!Boolean(notificaion)) {
       promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))

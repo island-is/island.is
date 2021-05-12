@@ -24,10 +24,10 @@ import {
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
+import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { CourtService } from './court.service'
 
 @Injectable()
 export class CaseService {
@@ -331,7 +331,7 @@ export class CaseService {
 
     try {
       const streamId = await this.courtService.uploadStream(pdf)
-      const docId = await this.courtService.createDocument(
+      await this.courtService.createDocument(
         existingCase.courtCaseNumber,
         streamId,
       )
