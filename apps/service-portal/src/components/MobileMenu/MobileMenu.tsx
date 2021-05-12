@@ -10,13 +10,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useAuth } from '@island.is/auth/react'
 import React, { FC, useRef } from 'react'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.treat'
-import useAuth from '../../hooks/useAuth/useAuth'
 
 const MobileMenu: FC<{}> = () => {
   const ref = useRef(null)
@@ -24,10 +24,10 @@ const MobileMenu: FC<{}> = () => {
   const { lang, formatMessage } = useLocale()
   const navigation = useNavigation()
   const { changeLanguage } = useNamespaces()
-  const { signOutUser } = useAuth()
+  const { signOut } = useAuth()
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
-  const handleLogoutClick = () => signOutUser()
+  const handleLogoutClick = () => signOut()
 
   const handleLinkClick = () =>
     dispatch({
