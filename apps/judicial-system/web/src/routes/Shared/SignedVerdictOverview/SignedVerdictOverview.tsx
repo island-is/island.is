@@ -4,7 +4,6 @@ import {
   AccordionItem,
   Box,
   Button,
-  GridColumn,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -22,7 +21,7 @@ import {
   Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
-import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
@@ -42,7 +41,10 @@ import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mut
 import AppealSection from './Components/AppealSection/AppealSection'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseNull,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
@@ -200,10 +202,11 @@ export const SignedVerdictOverview: React.FC = () => {
         accusedPostponedAppealDate: undefined,
       })
 
-      updateCase(workingCase.id, {
-        ...workingCase,
-        accusedPostponedAppealDate: undefined,
-      })
+      updateCase(
+        workingCase.id,
+
+        parseNull('accusedPostponedAppealDate'),
+      )
     }
   }
 

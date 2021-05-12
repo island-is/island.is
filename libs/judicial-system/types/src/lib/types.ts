@@ -265,7 +265,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
+  accusedPostponedAppealDate?: string | null
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
