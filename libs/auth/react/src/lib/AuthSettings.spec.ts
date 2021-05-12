@@ -14,7 +14,7 @@ describe('mergeAuthSettings', () => {
         "baseUrl": "http://localhost",
         "client_id": "test-client",
         "loadUserInfo": true,
-        "monitorSession": true,
+        "monitorSession": false,
         "post_logout_redirect_uri": "http://localhost",
         "redirectPath": "/auth/callback",
         "redirectPathSilent": "/auth/callback-silent",
