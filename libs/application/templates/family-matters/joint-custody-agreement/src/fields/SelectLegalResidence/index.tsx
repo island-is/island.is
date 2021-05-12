@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
@@ -28,6 +28,9 @@ const SelectLegalResidence = ({
         <DescriptionText text={selectLegalResidence.general.description} />
       </Box>
       <Box marginTop={5}>
+        <Text variant="h4" marginBottom={2}>
+          {formatMessage(selectLegalResidence.inputs.label)}
+        </Text>
         <RadioController
           id={`${field.id}`}
           largeButtons={true}
@@ -36,15 +39,11 @@ const SelectLegalResidence = ({
           options={[
             {
               value: applicant.nationalId,
-              label: formatMessage(selectLegalResidence.inputs.label, {
-                parentName: applicant.fullName,
-              }),
+              label: applicant.fullName,
             },
             {
               value: otherParent.nationalId,
-              label: formatMessage(selectLegalResidence.inputs.label, {
-                parentName: otherParent.fullName,
-              }),
+              label: otherParent.fullName,
             },
           ]}
         />

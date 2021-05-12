@@ -26,7 +26,7 @@ export const selectLegalResidence = {
     label: {
       id:
         'jca.application:section.arrangement.selectLegalResidence.inputs.label',
-      defaultMessage: 'Lögheimilisforeldri verður {parentName}',
+      defaultMessage: 'Lögheimilisforeldri verður',
       description: 'Label for legal residence',
     },
   }),
