@@ -17,6 +17,7 @@ import {
   Post,
   ConflictException,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -68,6 +69,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
+    if (profile.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     return profile
   }
 
@@ -81,6 +86,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
+    if (userProfileDto.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     if (
       await this.userProfileService.findByNationalId(userProfileDto.nationalId)
     ) {
@@ -116,6 +125,7 @@ export class UserProfileController {
       user,
       action: 'create',
       resources: userProfileDto.nationalId,
+      meta: { fields: Object.keys(userProfileDto) },
     })
     return userProfile
   }
@@ -139,6 +149,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
+    if (profile.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     const { nationalId } = profile
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
@@ -208,6 +222,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<EmailVerification | null> {
+    if (profile.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     if (!profile.email) {
       return null
     }
@@ -237,6 +255,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<ConfirmationDtoResponse> {
+    if (profile.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     return await this.auditService.auditPromise(
       {
         user,
@@ -266,6 +288,10 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<ConfirmationDtoResponse> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     return this.auditService.auditPromise(
       {
         user,
@@ -283,8 +309,15 @@ export class UserProfileController {
     resources: (smsVerification) => smsVerification.nationalId,
   })
   async createSmsVerification(
-    @Body() createSmsVerification: CreateSmsVerificationDto,
+    @Body()
+    createSmsVerification: CreateSmsVerificationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<SmsVerification | null> {
+    if (createSmsVerification.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     return await this.verificationService.createSmsVerification(
       createSmsVerification,
     )
