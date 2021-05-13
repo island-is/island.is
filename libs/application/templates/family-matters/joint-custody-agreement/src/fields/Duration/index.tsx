@@ -1,14 +1,14 @@
 import React from 'react'
 import { Duration } from '@island.is/application/templates/family-matters-core/fields'
 import { duration } from '../../lib/messages'
-import { CRCFieldBaseProps } from '../../types'
+import { JCAFieldBaseProps } from '../../types'
 
 const typeInput = 'selectDuration.type'
 const dateInput = 'selectDuration.date'
 
 export const selectDurationInputs = [typeInput, dateInput]
 
-const CRCDuration = ({ application, errors }: CRCFieldBaseProps) => {
+const JCADuration = ({ application, errors }: JCAFieldBaseProps) => {
   const durationTypeError = errors?.selectDuration?.type
   const durationDateError = errors?.selectDuration?.date
 
@@ -22,4 +22,4 @@ const CRCDuration = ({ application, errors }: CRCFieldBaseProps) => {
   )
 }
 
-export default CRCDuration
+export default JCADuration

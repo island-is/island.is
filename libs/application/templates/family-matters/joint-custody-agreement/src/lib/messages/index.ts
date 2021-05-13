@@ -1,5 +1,7 @@
 export * from './application'
 export * from './contactInfo'
+export * from './duration'
 export * from './error'
 export * from './externalData'
 export * from './selectChildren'
+export * from './selectLegalResidence'

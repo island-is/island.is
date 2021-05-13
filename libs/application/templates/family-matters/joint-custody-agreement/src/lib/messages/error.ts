@@ -29,5 +29,21 @@ export const error = {
       description:
         'Error message when neither email or phonenumber are filled in for counter party',
     },
+    selectLegalResidence: {
+      id: 'jca.application:error.selectLegalResidence',
+      defaultMessage: 'Velja þarf lögheimilisforeldri',
+      description: 'Error message no legal residence is selected',
+    },
+    durationType: {
+      id: 'jca.application:error.durationType',
+      defaultMessage: 'Velja þarf valmöguleika',
+      description: 'Error message when durationType option is not selected',
+    },
+    durationDate: {
+      id: 'jca.application:error.durationDate',
+      defaultMessage: 'Velja þarf dagsetningu',
+      description:
+        'Error message when durationType is temporary and no date is selected',
+    },
   }),
 }

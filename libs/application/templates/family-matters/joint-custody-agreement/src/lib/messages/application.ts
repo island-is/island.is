@@ -16,4 +16,9 @@ export const section = defineMessages({
     defaultMessage: 'Grunnupplýsingar',
     description: 'Background information',
   },
+  arrangement: {
+    id: 'jca.application:section.arrangement',
+    defaultMessage: 'Fyrirkomulag',
+    description: 'Arrangement',
+  },
 })
