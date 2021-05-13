@@ -1,3 +1,4 @@
+import React, { FC } from 'react'
 import {
   Box,
   Button,
@@ -6,10 +7,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
-import * as styles from './Greeting.treat'
-import useAuth from '../../hooks/useAuth/useAuth'
+import { useAuth } from '@island.is/auth/react'
 import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
+
+import * as styles from './Greeting.treat'
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()

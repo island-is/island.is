@@ -22,7 +22,7 @@ export const section = defineMessages({
     description: 'Arrangement',
   },
   effect: {
-    id: 'crc.application:section.effect',
+    id: 'jca.application:section.effect',
     defaultMessage: 'Áhrif umsóknar',
     description: 'Effect of Application',
   },

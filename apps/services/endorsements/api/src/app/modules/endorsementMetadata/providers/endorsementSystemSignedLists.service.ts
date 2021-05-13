@@ -29,7 +29,7 @@ export class EndorsementSystemSignedListsService implements MetadataProvider {
     })
     const tags = endorsements.reduce(
       (uniqueTags: EndorsementTag[], endorsement) => {
-        return [...uniqueTags, ...endorsement.endorsementList.tags]
+        return [...uniqueTags, ...(endorsement.endorsementList?.tags ?? [])]
       },
       [],
     )
