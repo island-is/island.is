@@ -58,7 +58,7 @@ export const CreateCaseMutation = gql`
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
@@ -174,7 +174,7 @@ export const ExtendCaseMutation = gql`
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands

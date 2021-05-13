@@ -257,7 +257,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtStartTime: Date
+  courtStartDate: Date
 
   @Column({
     type: DataType.DATE,
