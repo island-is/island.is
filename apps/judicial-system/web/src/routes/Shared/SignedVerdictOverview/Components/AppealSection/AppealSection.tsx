@@ -63,18 +63,18 @@ const AppealSection: React.FC<Props> = (props) => {
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
       <div className={styles.buttonContainer}>
-        <AnimatePresence>
-          {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-            !accusedPostponedAppealDate && (
-              <motion.div
-                key="accusedAppealDatepicker"
-                className={styles.accusedAppealDatepicker}
-                initial={false}
-                exit={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-              >
-                <BlueBox>
+        <BlueBox height={112}>
+          <AnimatePresence exitBeforeEnter>
+            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+              !accusedPostponedAppealDate && (
+                <motion.div
+                  key="accusedAppealDatepicker"
+                  className={styles.accusedAppealDatepicker}
+                  initial={false}
+                  exit={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                >
                   <div className={styles.appealInnerWrapper}>
                     <DateTime
                       name="accusedAppealDate"
@@ -97,36 +97,36 @@ const AppealSection: React.FC<Props> = (props) => {
                       )} kærir`}
                     </Button>
                   </div>
-                </BlueBox>
-              </motion.div>
-            )}
-        </AnimatePresence>
+                </motion.div>
+              )}
+          </AnimatePresence>
 
-        <AnimatePresence>
-          {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-            accusedPostponedAppealDate && (
-              <motion.div
-                key="accusedAppealInfoBox"
-                //  variants={appealDateVariants}
-                initial={{ y: 50, opacity: 0 }}
-                exit={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-              >
-                <InfoBox
-                  text={`${capitalize(
-                    formatAccusedByGender(accusedGender),
-                  )} hefur kært úrskurðinn ${formatDate(
-                    accusedPostponedAppealDate,
-                    'PPPp',
-                  )}`}
-                  onDismiss={handleAccusedAppealDismissal}
-                  fluid
-                  light
-                />
-              </motion.div>
-            )}
-        </AnimatePresence>
+          <AnimatePresence exitBeforeEnter>
+            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+              accusedPostponedAppealDate && (
+                <motion.div
+                  key="accusedAppealInfoBox"
+                  //  variants={appealDateVariants}
+                  initial={{ y: 50, opacity: 0 }}
+                  exit={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
+                  <InfoBox
+                    text={`${capitalize(
+                      formatAccusedByGender(accusedGender),
+                    )} hefur kært úrskurðinn ${formatDate(
+                      accusedPostponedAppealDate,
+                      'PPPp',
+                    )}`}
+                    onDismiss={handleAccusedAppealDismissal}
+                    fluid
+                    light
+                  />
+                </motion.div>
+              )}
+          </AnimatePresence>
+        </BlueBox>
       </div>
     </>
   )

@@ -2,12 +2,12 @@ import { theme } from '@island.is/island-ui/theme'
 import { style } from 'treat'
 
 export const accusedAppealDatepicker = style({
-  marginBottom: theme.spacing[3],
+  // marginBottom: theme.spacing[3],
 })
 
 export const buttonContainer = style({
-  maxHeight: 112,
-  marginBottom: theme.spacing[3],
+  height: 112,
+  //marginBottom: theme.spacing[3],
 })
 
 export const appealInnerWrapper = style({
