@@ -128,6 +128,70 @@ const AppealSection: React.FC<Props> = (props) => {
           </AnimatePresence>
         </BlueBox>
       </div>
+
+      <div className={styles.buttonContainer}>
+        <BlueBox height={112}>
+          <AnimatePresence exitBeforeEnter>
+            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+              !prosecutorPostponedAppealDate && (
+                <motion.div
+                  key="prosecutorAppealDatepicker"
+                  className={styles.accusedAppealDatepicker}
+                  initial={false}
+                  exit={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className={styles.appealInnerWrapper}>
+                    <DateTime
+                      name="prosecutorAppealDate"
+                      maxDate={new Date()}
+                      selectedDate={
+                        prosecutorPostponedAppealDate
+                          ? new Date(prosecutorPostponedAppealDate)
+                          : undefined
+                      }
+                      onChange={(date) => setProsecutorAppealDate(date)}
+                      size="sm"
+                      blueBox={false}
+                    />
+                    <Button
+                      onClick={() =>
+                        handleProsecutorAppeal(prosecutorAppealDate)
+                      }
+                      disabled={!Boolean(prosecutorAppealDate)}
+                    >
+                      Sækjandi kærir
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+          </AnimatePresence>
+
+          <AnimatePresence exitBeforeEnter>
+            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+              prosecutorPostponedAppealDate && (
+                <motion.div
+                  key="prosecutorAppealInfoBox"
+                  initial={{ y: 50, opacity: 0 }}
+                  exit={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
+                  <InfoBox
+                    text={`Sækjandi hefur kært úrskurðinn ${formatDate(
+                      prosecutorPostponedAppealDate,
+                      'PPPp',
+                    )}`}
+                    onDismiss={handleProsecutorAppealDismissal}
+                    fluid
+                    light
+                  />
+                </motion.div>
+              )}
+          </AnimatePresence>
+        </BlueBox>
+      </div>
     </>
   )
 }
