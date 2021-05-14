@@ -7,6 +7,9 @@ import {
   buildExternalDataProvider,
   buildSubSection,
   buildCustomField,
+  buildMultiField,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { DataProviderTypes } from '../types'
@@ -135,6 +138,34 @@ export const JointCustodyAgreementForm: Form = buildForm({
               id: 'approveChildSupportTerms',
               title: m.childSupport.general.pageTitle,
               component: 'ChildSupport',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overview',
+      title: m.section.overview,
+      children: [
+        buildMultiField({
+          id: 'residenceChangeOverview',
+          title: m.contract.general.pageTitle,
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReview',
+              title: m.contract.general.pageTitle,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'assign',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: m.application.signature,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
