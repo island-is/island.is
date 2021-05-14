@@ -62,6 +62,23 @@ export const CollectEndorsementsForm: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'endorsementSectionSubmittion',
+      title: m.endorsementListSubmission.title,
+      children: [
+        buildMultiField({
+          id: 'endorsements',
+          title: m.endorsementListSubmission.title,
+          children: [
+            buildCustomField({
+              id: 'endorsements',
+              title: m.endorsementListSubmission.title,
+              component: 'EndorsementListSubmission',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'overviewSection',
       title: m.overviewSection.title,
       children: [

@@ -196,6 +196,18 @@ export const m: MessageDir = {
       description: 'Invalid signatures message',
     },
   }),
+  endorsementListSubmission: defineMessages({
+    title: {
+      id: 'pa.application:endorsementListSubmission.title',
+      defaultMessage: 'Veljið meðmæli til innsendingar',
+      description: 'Choose endorsements to be sent',
+    },
+    description: {
+      id: 'pa.application:endorsementListSubmission.description',
+      defaultMessage: 'Fjöldi meðmælenda skal vera margfeldi af þingsætatölu kjördæmisins og talnanna 30 að lágmarki og 40 að hámarki.',
+      description: 'Choose endorsements description',
+    },
+  }), 
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
