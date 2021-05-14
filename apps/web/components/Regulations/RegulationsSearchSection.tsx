@@ -197,6 +197,9 @@ export const RegulationsSearchSection = (
   }
 
   const [filterValue, setFilterValue] = useState(filters.q)
+  useEffect(() => {
+    setFilterValue(filters.q)
+  }, [filters.q])
   const textFilter = (q: string) => {
     setFilterValue(q)
   }
