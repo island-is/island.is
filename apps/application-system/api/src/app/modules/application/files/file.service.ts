@@ -22,10 +22,9 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
-import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
-import { SigningOptions } from './utils/types'
 import {
   generateJointCustodyPdf,
   generateResidenceChangePdf,
@@ -168,11 +167,10 @@ export class FileService {
         const { nationalRegistry } = externalData
         const isParentA = state === 'draft'
         const applicant = nationalRegistry?.data
-        const selectedChildren = getSelectedChildrenFromExternalData(
+        const parentB = getOtherParentInformation(
           applicant.children,
           answers.selectedChildren,
         )
-        const parentB = selectedChildren[0].otherParent
         const { name, phoneNumber } = isParentA
           ? {
               name: applicant.fullName,
@@ -194,11 +192,10 @@ export class FileService {
         const { nationalRegistry } = externalData
         const isParentA = state === 'draft'
         const applicant = nationalRegistry?.data
-        const selectedChildren = getSelectedChildrenFromExternalData(
+        const parentB = getOtherParentInformation(
           applicant.children,
           answers.selectedChildren,
         )
-        const parentB = selectedChildren[0].otherParent
         const { name, phoneNumber } = isParentA
           ? {
               name: applicant.fullName,
