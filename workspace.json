@@ -1912,8 +1912,8 @@
       }
     },
     "application-templates-family-matters-core": {
-      "root": "libs/application/templates/family-matters",
-      "sourceRoot": "libs/application/templates/family-matters/src",
+      "root": "libs/application/templates/family-matters/core",
+      "sourceRoot": "libs/application/templates/family-matters/core/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1922,12 +1922,12 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/family-matters/tsconfig.lib.json",
-              "libs/application/templates/family-matters/tsconfig.spec.json"
+              "libs/application/templates/family-matters/core/tsconfig.lib.json",
+              "libs/application/templates/family-matters/core/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/family-matters/**/*"
+              "!libs/application/templates/family-matters/core/**/*"
             ]
           }
         }

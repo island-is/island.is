@@ -12,6 +12,12 @@ const validateOptionalPhoneNumber = (value: string) => {
   return (value && value.length === 7) || value === ''
 }
 
+const validateTerms = (arrayLength: number) => {
+  return z.array(z.string()).refine((v) => v && v.length === arrayLength, {
+    params: error.validation.approveTerms,
+  })
+}
+
 enum Duration {
   Permanent = 'permanent',
   Temporary = 'temporary',
@@ -33,11 +39,9 @@ export const dataSchema = z.object({
   selectedChildren: z
     .array(z.string())
     .refine((v) => v && v.length > 0, { params: error.validation.selectChild }),
-  selectedLegalResidence: z
-    .array(z.string())
-    .refine((v) => v && v.length === 1, {
-      params: error.validation.selectLegalResidence,
-    }),
+  selectedLegalResidence: z.string().refine((v) => v, {
+    params: error.validation.selectLegalResidence,
+  }),
   parentA: parentContactInfo,
   counterParty: z
     .object({
@@ -62,6 +66,8 @@ export const dataSchema = z.object({
       params: error.validation.durationDate,
       path: ['date'],
     }),
+  approveTerms: validateTerms(2),
+  approveChildSupportTerms: validateTerms(1),
   parentB: parentContactInfo,
 })
 

@@ -2,10 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Terms } from '@island.is/application/templates/family-matters-core/fields'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
-import { terms } from '../../lib/messages'
-import { CRCFieldBaseProps } from '../../types'
+import { childSupport } from '../../lib/messages'
+import { JCAFieldBaseProps } from '../../types'
 
-const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
+const ChildSupport = ({ field, error }: JCAFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   return (
@@ -15,18 +15,14 @@ const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
       disabled={disabled}
       options={[
         {
-          value: 'effect',
-          label: formatMessage(terms.residenceChangeCheckbox.label),
-        },
-        {
-          value: 'childBenefit',
-          label: formatMessage(terms.familySupportCheckbox.label),
+          value: 'yes',
+          label: formatMessage(childSupport.childBenefitCheckbox.label),
         },
       ]}
     >
-      <DescriptionText text={terms.general.description} />
+      <DescriptionText text={childSupport.general.description} />
     </Terms>
   )
 }
 
-export default CRCTerms
+export default ChildSupport

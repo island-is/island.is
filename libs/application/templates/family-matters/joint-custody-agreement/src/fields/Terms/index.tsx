@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { Terms } from '@island.is/application/templates/family-matters-core/fields'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { terms } from '../../lib/messages'
-import { CRCFieldBaseProps } from '../../types'
+import { JCAFieldBaseProps } from '../../types'
 
-const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
+const JCATerms = ({ field, error }: JCAFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   return (
@@ -16,11 +16,11 @@ const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
       options={[
         {
           value: 'effect',
-          label: formatMessage(terms.residenceChangeCheckbox.label),
+          label: formatMessage(terms.jointCustodyCheckbox.label),
         },
         {
-          value: 'childBenefit',
-          label: formatMessage(terms.familySupportCheckbox.label),
+          value: 'legalResidence',
+          label: formatMessage(terms.legalResidenceCheckbox.label),
         },
       ]}
     >
@@ -29,4 +29,4 @@ const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
   )
 }
 
-export default CRCTerms
+export default JCATerms
