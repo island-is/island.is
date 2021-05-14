@@ -1,23 +1,15 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-import fetchMock from 'fetch-mock'
 
 import {
   mockCaseQueries,
   mockJudgeQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import {
-  FeatureProvider,
-  UserProvider,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
 
 describe('/domari-krafa with an ID', () => {
-  fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
-  fetchMock.mock('/api/feature/CASE_FILES', true)
-  fetchMock.mock('/api/feature/CREATE_COURT_CASE', true)
-
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
@@ -31,11 +23,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -58,11 +48,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -84,11 +72,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -109,11 +95,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -133,11 +117,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -157,11 +139,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <FeatureProvider>
-          <UserProvider>
-            <Overview />
-          </UserProvider>
-        </FeatureProvider>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
