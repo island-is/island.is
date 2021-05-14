@@ -3,8 +3,7 @@ import { useParams } from 'react-router-dom'
 import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
-
-import useAuth from '../hooks/useAuth'
+import { useAuth } from '@island.is/auth/react'
 
 export const Application = () => {
   const { slug, id } = useParams<{ slug: string; id: string }>()
