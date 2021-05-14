@@ -30,7 +30,7 @@ describe('uniqueWithinTagsValidator', () => {
       meta: {
         nationalId: '0101302989',
         signedTags: [
-          EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021,
+          EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021,
           EndorsementTag.PARTY_LETTER_2021,
         ],
       },
@@ -42,12 +42,14 @@ describe('uniqueWithinTagsValidator', () => {
   it('should return success when watched is missing in metadata', async () => {
     const input: UniqueWithinTagsInput = {
       value: {
-        tags: [EndorsementTag.PARTY_LETTER_REYKJAVIKURKJORDAEMI_NORDUR_2021],
+        tags: [
+          EndorsementTag.PARTY_APPLICATION_REYKJAVIKURKJORDAEMINORDUR_2021,
+        ],
       },
       meta: {
         nationalId: '0101302989',
         signedTags: [
-          EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021,
+          EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021,
           EndorsementTag.PARTY_LETTER_2021,
         ],
       },
