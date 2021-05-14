@@ -450,8 +450,12 @@ export const ComplaintForm: Form = buildForm({
               title: info.general.commissionsPageTitle,
               // TODO: We probably need a custom component for the description
               // so we can include the document link
-              description: info.general.commissionsPageDescription,
               children: [
+                buildCustomField({
+                  id: 'commissions.commissionDocument',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionDocument',
+                }),
                 buildFileUploadField({
                   id: 'commissions.documents',
                   title: '',
