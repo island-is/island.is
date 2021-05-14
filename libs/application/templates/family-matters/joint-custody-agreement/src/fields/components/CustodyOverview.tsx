@@ -36,6 +36,14 @@ const CustodyOverview = ({ application }: Props) => {
     applicant.children,
     answers.selectedChildren,
   )
+  const currentCustodyParent =
+    children[0].custodyParents?.[0] === applicant.nationalId
+      ? applicant
+      : otherParent
+  const residenceParent =
+    answers.selectedLegalResidence === applicant.nationalId
+      ? applicant
+      : otherParent
   return (
     <>
       <Box marginTop={4}>
@@ -75,7 +83,7 @@ const CustodyOverview = ({ application }: Props) => {
           {formatMessage(contract.arrangement.currentCustodyParent, {
             parentName: (
               <Text as="span" color="blue400" fontWeight="semiBold">
-                {applicant.fullName}
+                {currentCustodyParent.fullName}
               </Text>
             ),
           })}
@@ -93,7 +101,7 @@ const CustodyOverview = ({ application }: Props) => {
           {formatMessage(contract.arrangement.legalResidence, {
             parentName: (
               <Text as="span" color="blue400" fontWeight="semiBold">
-                {otherParent.fullName}
+                {residenceParent.fullName}
               </Text>
             ),
           })}
