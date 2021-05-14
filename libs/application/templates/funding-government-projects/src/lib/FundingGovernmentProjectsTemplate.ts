@@ -37,7 +37,8 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   FundingGovernmentProjectsEvent
 > = {
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
-  name: 'Umsókn um fjármögnun ríkisverkefnis',
+  name: application.name,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   ],
