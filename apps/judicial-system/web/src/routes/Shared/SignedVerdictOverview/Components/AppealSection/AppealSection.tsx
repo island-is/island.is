@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
@@ -17,6 +17,8 @@ import {
   BlueBox,
   DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
+import Accused from '../Accused/Accused'
+import AccusedInfo from '../Accused/AccusedInfo'
 
 interface Props {
   rulingDate: string
@@ -44,12 +46,22 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppealDismissal,
     handleProsecutorAppealDismissal,
   } = props
-  const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
+  const [accusedRemoved, setAccusedRemoved] = useState<boolean>()
+  const [accusedInfoRemoved, setAccusedInfoRemoved] = useState<boolean>()
 
-  const appealDateVariants = {
-    visible: { y: 0, opacity: 1 },
-    hidden: { y: 60, opacity: 0 },
+  const isPresent = useIsPresent()
+
+  const appealDateVariants1 = {
+    visible: { y: 0, opacity: 1, transition: { duration: 2, delay: 2 } },
+    hidden: { y: 20, opacity: 0, transition: { duration: 2 } },
+  }
+
+  const handleAccusedRemoved = () => {
+    setAccusedRemoved(true)
+  }
+  const handleAccusedInfoRemoved = () => {
+    setAccusedInfoRemoved(true)
   }
 
   return (
@@ -67,63 +79,23 @@ const AppealSection: React.FC<Props> = (props) => {
           <AnimatePresence exitBeforeEnter>
             {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
               !accusedPostponedAppealDate && (
-                <motion.div
-                  key="accusedAppealDatepicker"
-                  className={styles.accusedAppealDatepicker}
-                  initial={false}
-                  exit={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <div className={styles.appealInnerWrapper}>
-                    <DateTime
-                      name="accusedAppealDate"
-                      maxDate={new Date()}
-                      selectedDate={
-                        accusedPostponedAppealDate
-                          ? new Date(accusedPostponedAppealDate)
-                          : undefined
-                      }
-                      onChange={(date) => setAccusedAppealDate(date)}
-                      size="sm"
-                      blueBox={false}
-                    />
-                    <Button
-                      onClick={() => handleAccusedAppeal(accusedAppealDate)}
-                      disabled={!Boolean(accusedAppealDate)}
-                    >
-                      {`${capitalize(
-                        formatAccusedByGender(accusedGender),
-                      )} kærir`}
-                    </Button>
-                  </div>
-                </motion.div>
+                <Accused
+                  handleAccusedAppeal={handleAccusedAppeal}
+                  accusedGender={accusedGender}
+                  handleAccusedRemoved={handleAccusedRemoved}
+                />
               )}
           </AnimatePresence>
 
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence>
             {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
               accusedPostponedAppealDate && (
-                <motion.div
-                  key="accusedAppealInfoBox"
-                  //  variants={appealDateVariants}
-                  initial={{ y: 50, opacity: 0 }}
-                  exit={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
-                >
-                  <InfoBox
-                    text={`${capitalize(
-                      formatAccusedByGender(accusedGender),
-                    )} hefur kært úrskurðinn ${formatDate(
-                      accusedPostponedAppealDate,
-                      'PPPp',
-                    )}`}
-                    onDismiss={handleAccusedAppealDismissal}
-                    fluid
-                    light
-                  />
-                </motion.div>
+                <AccusedInfo
+                  accusedGender={accusedGender}
+                  handleAccusedAppealDismissal={handleAccusedAppealDismissal}
+                  accusedPostponedAppealDate={accusedPostponedAppealDate}
+                  handleAccusedInfoRemoved={handleAccusedInfoRemoved}
+                />
               )}
           </AnimatePresence>
         </BlueBox>

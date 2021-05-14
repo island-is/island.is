@@ -13,7 +13,7 @@ interface Props {
 
 const BlueBox: React.FC<Props> = (props) => {
   const { children, size = 'large', height } = props
-  console.log(height)
+
   return (
     <div
       className={cn(
