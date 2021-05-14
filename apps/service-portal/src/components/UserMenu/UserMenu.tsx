@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useStore } from '../../store/stateProvider'
 import {
   Box,
   Button,
@@ -14,7 +13,7 @@ import {
   Menu,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import useAuth from '../../hooks/useAuth/useAuth'
+import { useAuth } from '@island.is/auth/react'
 import * as styles from './UserMenu.treat'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
@@ -36,10 +35,9 @@ const UserMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
     'sp.messages',
     'global',
   ])
-  const [{ userInfo }] = useStore()
+  const { userInfo, signOut } = useAuth()
   const { data: userProfile } = useUserProfile()
-  const { signOutUser } = useAuth()
-  const handleLogoutClick = () => signOutUser()
+  const handleLogoutClick = () => signOut()
 
   const handleLanguageChange = (option: ValueType<Option>) =>
     changeLanguage((option as Option).value.toString() as Locale)

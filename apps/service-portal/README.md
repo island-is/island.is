@@ -16,9 +16,9 @@ The service portal is the user personal pages where it will be able to find all 
 
 ## Getting started
 
-Before running the service portal, you will need to setup the user-profile application. Follow [these steps](../services/user-profile/README.md#initial-setup) first.
+Before running the service portal, you will need to setup the user-profile service. Follow [these steps](../services/user-profile/README.md#initial-setup) first.
 
-You can then proceed and run the service portal:
+You can then proceed and start [the GraphQL API](../api/README.md#getting-started) and the service portal:
 
 ```bash
 yarn start service-portal
