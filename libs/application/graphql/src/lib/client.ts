@@ -7,13 +7,7 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { setContext } from '@apollo/client/link/context'
-
-let token = ''
-
-export const setClientAuthToken = (value: string) => {
-  token = value
-}
+import { authLink } from '@island.is/auth/react'
 
 const retryLink = new RetryLink()
 
@@ -29,13 +23,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
-
-const authLink = setContext(async (_, { headers }) => ({
-  headers: {
-    ...headers,
-    authorization: token ? `Bearer ${token}` : '',
-  },
-}))
 
 export const initializeClient = (baseApiUrl: string) => {
   const httpLink = new HttpLink({

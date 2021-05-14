@@ -74,6 +74,7 @@ module.exports = {
     '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',
+    '<rootDir>/libs/auth/react',
     '<rootDir>/libs/auth-api-lib',
     '<rootDir>/libs/auth-nest-tools',
     '<rootDir>/libs/cache',

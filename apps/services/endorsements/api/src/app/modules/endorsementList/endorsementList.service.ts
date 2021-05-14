@@ -42,8 +42,18 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementsByNationalId(nationalId: string) {
-    this.logger.debug(`Finding endorsements for single national id`)
-    return this.endorsementModel.findAll({ where: { endorser: nationalId } })
+    this.logger.debug(
+      `Finding endorsements for single national id ${nationalId}`,
+    )
+    return this.endorsementModel.findAll({
+      where: { endorser: nationalId },
+      include: [
+        {
+          model: EndorsementList,
+          attributes: ['id', 'title', 'description'],
+        },
+      ],
+    })
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {

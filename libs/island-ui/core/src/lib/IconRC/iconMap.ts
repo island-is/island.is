@@ -27,6 +27,7 @@ export type Icon =
   | 'documents'
   | 'download'
   | 'ellipse'
+  | 'ellipsisHorizontal'
   | 'ellipsisVertical'
   | 'fileTrayFull'
   | 'filter'
@@ -43,6 +44,7 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'print'
   | 'reader'
   | 'receipt'
   | 'removeCircle'
@@ -85,6 +87,7 @@ export default {
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
+    ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
@@ -101,6 +104,7 @@ export default {
     people: 'People',
     person: 'Person',
     playCircle: 'PlayCircle',
+    print: 'Print',
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
@@ -142,6 +146,7 @@ export default {
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
+    ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
@@ -158,6 +163,7 @@ export default {
     people: 'PeopleOutline',
     person: 'PersonOutline',
     playCircle: 'PlayCircleOutline',
+    print: 'PrintOutline',
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',
