@@ -17,7 +17,7 @@ module.exports = {
         description: faker.lorem.paragraph(1),
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
-        tags: ['partyLetterSudurkjordaemi2021', 'partyLetter2021'],
+        tags: ['partyApplicationSudurkjordaemi2021', 'partyLetter2021'],
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -36,7 +36,7 @@ module.exports = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
         closed_date: null,
-        tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
+        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
         endorsement_meta: ['fullName'],
         validation_rules: JSON.stringify([
           {
@@ -56,7 +56,7 @@ module.exports = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
         closed_date: new Date(),
-        tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
+        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
         endorsement_meta: ['fullName', 'address'],
         validation_rules: JSON.stringify([
           {
@@ -88,7 +88,7 @@ module.exports = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
         closed_date: null,
-        tags: ['partyLetterNordausturkjordaemi2021', 'partyLetter2021'],
+        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
         endorsement_meta: ['fullName', 'address'],
         validation_rules: JSON.stringify([
           {

@@ -23,6 +23,7 @@ import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
+  caseId?: string
   activeSection?: number
   isLoading: boolean
   notFound: boolean
@@ -37,6 +38,7 @@ interface PageProps {
 
 const PageLayout: React.FC<PageProps> = ({
   children,
+  caseId,
   activeSection,
   activeSubSection,
   isLoading,
@@ -81,19 +83,42 @@ const PageLayout: React.FC<PageProps> = ({
           : 'Krafa um farbann',
       children: features.includes(Feature.CASE_FILES)
         ? [
-            { type: 'SUB_SECTION', name: 'Sakborningur' },
-            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Sakborningur',
+              href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Óskir um fyrirtöku',
+              href:
+                activeSubSection && activeSubSection > 1
+                  ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: 'Dómkröfur og lagagrundvöllur',
+              href:
+                activeSubSection && activeSubSection > 2
+                  ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Greinargerð',
+              href:
+                activeSubSection && activeSubSection > 3
+                  ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Rannsóknargögn',
+              href:
+                activeSubSection && activeSubSection > 4
+                  ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
@@ -101,15 +126,34 @@ const PageLayout: React.FC<PageProps> = ({
             },
           ]
         : [
-            { type: 'SUB_SECTION', name: 'Sakborningur' },
-            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Sakborningur',
+              href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Óskir um fyrirtöku',
+              href:
+                activeSubSection && activeSubSection > 1
+                  ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: 'Dómkröfur og lagagrundvöllur',
+              href:
+                activeSubSection && activeSubSection > 2
+                  ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Greinargerð',
+              href:
+                activeSubSection && activeSubSection > 3
+                  ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
@@ -120,11 +164,43 @@ const PageLayout: React.FC<PageProps> = ({
     {
       name: 'Úrskurður Héraðsdóms',
       children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+          href: `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Fyrirtökutími',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Þingbók',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.COURT_RECORD_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurður',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.RULING_STEP_ONE_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurðarorð',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.RULING_STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
       ],
     },
@@ -135,19 +211,42 @@ const PageLayout: React.FC<PageProps> = ({
       name: 'Krafa um framlengingu',
       children: features.includes(Feature.CASE_FILES)
         ? [
-            { type: 'SUB_SECTION', name: 'Sakborningur' },
-            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Sakborningur',
+              href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Óskir um fyrirtöku',
+              href:
+                activeSubSection && activeSubSection > 1
+                  ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: 'Dómkröfur og lagagrundvöllur',
+              href:
+                activeSubSection && activeSubSection > 2
+                  ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Greinargerð',
+              href:
+                activeSubSection && activeSubSection > 3
+                  ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Rannsóknargögn',
+              href:
+                activeSubSection && activeSubSection > 4
+                  ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
@@ -155,15 +254,34 @@ const PageLayout: React.FC<PageProps> = ({
             },
           ]
         : [
-            { type: 'SUB_SECTION', name: 'Sakborningur' },
-            { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Sakborningur',
+              href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Óskir um fyrirtöku',
+              href:
+                activeSubSection && activeSubSection > 1
+                  ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: 'Dómkröfur og lagagrundvöllur',
+              href:
+                activeSubSection && activeSubSection > 2
+                  ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
               name: 'Greinargerð',
+              href:
+                activeSubSection && activeSubSection > 3
+                  ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+                  : undefined,
             },
             {
               type: 'SUB_SECTION',
@@ -174,11 +292,43 @@ const PageLayout: React.FC<PageProps> = ({
     {
       name: 'Úrskurður Héraðsdóms',
       children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+          href: `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Fyrirtökutími',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Þingbók',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.COURT_RECORD_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurður',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.RULING_STEP_ONE_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurðarorð',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.RULING_STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
       ],
     },

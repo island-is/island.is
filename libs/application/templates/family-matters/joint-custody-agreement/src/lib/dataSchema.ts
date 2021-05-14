@@ -17,6 +17,11 @@ const validateOptionalPhoneNumber = (value: string) => {
   return (value && value.length === 7) || value === ''
 }
 
+enum Duration {
+  Permanent = 'permanent',
+  Temporary = 'temporary',
+}
+
 const parentContactInfo = z.object({
   email: z.string().refine((v) => isValidEmail(v), {
     params: error.validation.invalidEmail,
@@ -33,6 +38,11 @@ export const dataSchema = z.object({
   selectedChildren: z
     .array(z.string())
     .refine((v) => v && v.length > 0, { params: error.validation.selectChild }),
+  selectedLegalResidence: z
+    .array(z.string())
+    .refine((v) => v && v.length === 1, {
+      params: error.validation.selectLegalResidence,
+    }),
   parentA: parentContactInfo,
   counterParty: z
     .object({
