@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - '**/infra/**'
-      - 'libs/helm/**'
       - 'infra/**'
   workflow_dispatch:
   create:

@@ -9,7 +9,6 @@ on:
     paths-ignore:
       - '**/*.md'
       - '**/infra/**'
-      - 'libs/helm/**'
       - 'infra/**'
     tags:
       - docker-build-*

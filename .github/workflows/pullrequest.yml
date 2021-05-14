@@ -4,7 +4,6 @@ on:
   pull_request:
     paths-ignore:
       - '**/infra/**'
-      - 'libs/helm/**'
       - 'infra/**'
   workflow_dispatch: {}
 
