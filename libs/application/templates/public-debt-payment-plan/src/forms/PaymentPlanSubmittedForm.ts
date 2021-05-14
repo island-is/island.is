@@ -14,7 +14,7 @@ export const PaymentPlanSubmittedForm: Form = buildForm({
   children: [
     buildSection({
       id: 'stepOne',
-      title: section.stepOne,
+      title: section.confirmation,
       children: [
         buildDescriptionField({
           id: 'confirmationCustomField',
