@@ -13,11 +13,11 @@ export class UpdateCaseInterceptor extends CaseInterceptor {
 
     // The server must determine the appeal timestamps
     // TODO: Rewrite so the client does not need to send a dummy timestamp
-    if (Boolean(input?.accusedPostponedAppealDate)) {
+    if (input?.accusedPostponedAppealDate) {
       input.accusedPostponedAppealDate = new Date().toISOString()
     }
 
-    if (Boolean(input?.prosecutorPostponedAppealDate)) {
+    if (input?.prosecutorPostponedAppealDate) {
       input.prosecutorPostponedAppealDate = new Date().toISOString()
     }
 

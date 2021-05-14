@@ -247,13 +247,13 @@ export class CaseController {
 
     // Make sure a valid users are assigned to the case's roles
     // TODO: move user role verification to an interceptor
-    if (Boolean(caseToUpdate.prosecutorId)) {
+    if (caseToUpdate.prosecutorId) {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
     }
-    if (Boolean(caseToUpdate.judgeId)) {
+    if (caseToUpdate.judgeId) {
       await this.validateJudge(caseToUpdate.judgeId)
     }
-    if (Boolean(caseToUpdate.registrarId)) {
+    if (caseToUpdate.registrarId) {
       await this.validateRegistrar(caseToUpdate.registrarId)
     }
 

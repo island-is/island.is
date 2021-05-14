@@ -275,11 +275,11 @@ export class NotificationService {
 
     // TODO: Find a better place for this
     // No need to wait
-    if (Boolean(existingCase.courtCaseNumber)) {
+    if (existingCase.courtCaseNumber) {
       this.uploadRequestPdfToCourt(existingCase)
     }
 
-    if (!Boolean(notificaion)) {
+    if (!notificaion) {
       promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
     }
 
