@@ -2,8 +2,10 @@ export enum NameType {
   ST = 'ST',
   DR = 'DR',
   MI = 'MI',
+  KH = 'KH',
   RST = 'RST',
   RDR = 'RDR',
+  RKH = 'RKH',
 }
 
 export enum StatusType {
