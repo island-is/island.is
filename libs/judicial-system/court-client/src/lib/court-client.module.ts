@@ -45,19 +45,24 @@ export interface CourtClientModuleOptions {
 
 export class CourtClientModule {
   static register(options: CourtClientModuleOptions): DynamicModule {
-    const agent = new https.Agent({
-      cert: options.clientCert,
-      key: options.clientKey,
-      ca: options.clientCa,
-      rejectUnauthorized: false,
-    })
+    // Some packages are not available in unit tests
+    const agent = https
+      ? new https.Agent({
+          cert: options.clientCert,
+          key: options.clientKey,
+          ca: options.clientCa,
+          rejectUnauthorized: false,
+        })
+      : undefined
+    const middleware = agent ? [{ pre: injectAgentMiddleware(agent) }] : []
     const defaultHeaders = { 'X-Road-Client': options.xRoadClient }
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
       basePath: options.xRoadPath,
       headers: defaultHeaders,
-      middleware: [{ pre: injectAgentMiddleware(agent) }],
+      middleware,
     })
+
     return {
       module: CourtClientModule,
       providers: [

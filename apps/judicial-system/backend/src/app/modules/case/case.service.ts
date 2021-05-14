@@ -293,7 +293,7 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    this.update(existingCase.id, {
+    await this.update(existingCase.id, {
       rulingDate: new Date(),
     } as UpdateCaseDto)
 

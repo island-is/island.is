@@ -27,7 +27,7 @@ export class UploadStreamApi {
   constructor(
     basePath: string,
     private readonly headers: { [key: string]: string },
-    private readonly agent: Agent,
+    private readonly agent: Agent | undefined,
   ) {
     this.url = `${basePath}/UploadStream`
   }
