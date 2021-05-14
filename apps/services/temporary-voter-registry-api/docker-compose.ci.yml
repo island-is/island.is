@@ -7,7 +7,7 @@ services:
       dockerfile: ../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: temporary_voter_registry
-        APP: reference-backend
+        APP: temporary-voter-registry
     networks:
       - local
     depends_on:

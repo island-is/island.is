@@ -1,4 +1,4 @@
-# Temporary voter registry
+# Temporary Voter Registry
 
 ## About
 
