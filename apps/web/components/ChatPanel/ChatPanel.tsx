@@ -48,11 +48,6 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ endpoint }) => {
         window.boost = window.boostInit(endpoints[endpoint].id, settings)
         window.boostEndpoint = endpoint
 
-        // to prevent us from opening chat where there is no space for it
-        if (width > theme.breakpoints.md) {
-          window.boost.chatPanel.show()
-        }
-
         const onConversationIdChanged = (e) => {
           window.sessionStorage.setItem(
             endpoints[endpoint].conversationKey,
