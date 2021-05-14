@@ -5,7 +5,6 @@ import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AuthenticateApi,
-  CreateCustodyCaseApi,
   CreateCaseApi,
 } from '@island.is/judicial-system/court-client'
 import { CaseType } from '@island.is/judicial-system/types'
@@ -22,7 +21,6 @@ function stripResult(str: string): string {
 export class CourtService {
   constructor(
     private readonly authenticateApi: AuthenticateApi,
-    private readonly createCustodyCaseApi: CreateCustodyCaseApi,
     private readonly createCaseApi: CreateCaseApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -63,18 +61,6 @@ export class CourtService {
 
       return this.wrappedRequest(request, true)
     }
-  }
-
-  async createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
-    const courtCaseNumber = await this.wrappedRequest(() =>
-      this.createCustodyCaseApi.createCustodyCase({
-        basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
-        authenticationToken,
-      }),
-    )
-
-    return stripResult(courtCaseNumber)
   }
 
   async createCourtCase(
