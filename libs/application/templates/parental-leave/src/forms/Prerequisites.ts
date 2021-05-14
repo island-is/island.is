@@ -78,7 +78,7 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'selectedChild',
-                  title: 'Veldu barn',
+                  title: parentalLeaveFormMessages.selectChild.subSection,
                   component: 'ChildSelector',
                 }),
                 buildSubmitField({
@@ -89,27 +89,20 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: 'SUBMIT',
-                      name: 'Velja',
+                      name: parentalLeaveFormMessages.selectChild.choose,
                       type: 'primary',
                     },
                   ],
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'thankYou',
-              title: 'Nú getur þú byrjað umsóknina',
-              component: 'Conclusion',
-              condition: (_, externalData) =>
-                isEligibleForParentalLeave(externalData),
-            }),
             // TODO: Custom component with a lot more explanation of why you may not see any children
-            buildDescriptionField({
-              id: 'notEligible',
-              title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
-              description:
-                parentalLeaveFormMessages.selectChild.notEligibleDescription,
-            }),
+            // buildDescriptionField({
+            //   id: 'notEligible',
+            //   title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
+            //   description:
+            //     parentalLeaveFormMessages.selectChild.notEligibleDescription,
+            // }),
           ],
         }),
       ],
