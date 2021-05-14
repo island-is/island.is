@@ -1,9 +1,8 @@
 module.exports = {
-  preset: '../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../coverage/libs/helm',
+  moduleFileExtensions: ['ts', 'tsx', 'js'],
+  coverageDirectory: '../coverage/infra',
   displayName: 'Config DSL',
 }
