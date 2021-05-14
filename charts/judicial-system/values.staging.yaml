@@ -16,11 +16,11 @@ judicial-system-api:
     AUDIT_TRAIL_REGION: eu-west-1
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     AUTH_AUDIENCE: judicial-system.staging01.devland.is
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: http://web-judicial-system-backend
     COURT_USERNAME: rvg
     HIDDEN_FEATURES: ''
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
-    XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    SAML_ENTRY_POINT: https://innskraning.island.is/?id=judicial-system.staging
+    XROAD_BASE_PATH_WITH_ENV: https://securityserver.staging01.devland.is/r1/IS-TEST
     XROAD_CLIENT_ID: IS-TEST/GOV/5804170510/Rettarvorslugatt-Client
     XROAD_COURT_API_PATH: /Domstolasyslan-Private/JusticePortal-v1
     XROAD_COURT_MEMBER_CODE: '4707171140'
@@ -62,7 +62,7 @@ judicial-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-api'
+      eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/judicial-system-api
     create: true
     name: judicial-system-api
 judicial-system-backend:
@@ -71,9 +71,9 @@ judicial-system-backend:
     DB_HOST: staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com
     DB_NAME: judicial_system
     DB_USER: judicial_system
-    DOKOBIT_URL: 'https://developers.dokobit.com'
+    DOKOBIT_URL: https://developers.dokobit.com
     EMAIL_REGION: eu-west-1
-    NOVA_URL: 'https://smsapi.devnova.is'
+    NOVA_URL: https://smsapi.devnova.is
     NOVA_USERNAME: IslandIs_User_Development
     S3_BUCKET: island-is-staging-upload-judicial-system
     S3_REGION: eu-west-1
@@ -93,7 +93,7 @@ judicial-system-backend:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
     env:
@@ -129,13 +129,13 @@ judicial-system-backend:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-backend'
+      eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/judicial-system-backend
     create: true
     name: judicial-system-backend
 judicial-system-web:
   enabled: true
   env:
-    API_URL: 'https://judicial-system.staging01.devland.is'
+    API_URL: https://judicial-system.staging01.devland.is
   grantNamespaces:
     - nginx-ingress-external
   grantNamespacesEnabled: true
@@ -170,7 +170,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_GROUP_NAME: k8s/judicial-system/audit-log
     AUDIT_TRAIL_REGION: eu-west-1
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: http://web-judicial-system-backend
   grantNamespaces:
     - nginx-ingress-internal
   grantNamespacesEnabled: true
@@ -204,7 +204,7 @@ judicial-system-xrd-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-xrd-api'
+      eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/judicial-system-xrd-api
     create: true
     name: judicial-system-xrd-api
 
