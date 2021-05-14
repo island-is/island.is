@@ -68,6 +68,7 @@ export const dataSchema = z.object({
     }),
   approveTerms: validateTerms(2),
   approveChildSupportTerms: validateTerms(1),
+  parentB: parentContactInfo,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
