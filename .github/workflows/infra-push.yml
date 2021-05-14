@@ -1,4 +1,4 @@
-name: Monorepo pipeline - build and deploy
+name: Monorepo pipeline - helm values check
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Gather charts
         id: gather_charts
-        run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps(os.listdir("charts/")))')"
+        run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps([os.path.splitext(f)[0] for f in os.listdir("infra/src/uber-charts/")]))')"
   test:
     runs-on: ubuntu-20.04
     needs: prepare

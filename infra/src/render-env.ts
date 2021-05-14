@@ -22,7 +22,7 @@ const charts: { [name in ChartName]: EnvironmentServices } = {
 const argv = yargs(process.argv.slice(2)).options({
   env: { choices: ['dev', 'staging', 'prod'] },
   chart: {
-    choices: ['islandis', 'judicial-system', 'air-discount-scheme', 'dss'],
+    choices: ['islandis', 'judicial-system', 'air-discount-scheme'],
   },
 })
 
