@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
 import { SigningModule, SigningService } from '@island.is/dokobit-signing'
 import { AwsService } from './aws.service'
-import * as pdf from './utils/pdf'
+import * as pdf from './pdfGenerators'
 import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
@@ -180,7 +180,7 @@ describe('FileService', () => {
       'Lögheimilisbreyting barns',
       parentA.fullName,
       'Ísland',
-      'Lögheimilisbreyting-barns.pdf',
+      'Logheimilisbreyting-barns.pdf',
       'body',
     )
 
