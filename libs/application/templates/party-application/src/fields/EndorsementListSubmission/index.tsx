@@ -13,14 +13,14 @@ const SIGNATURES = [
     name: 'Örvar Þór Sigurðsson',
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
   {
     date: '21.01.2021',
     name: 'Þórhildur Tyrfingsdóttir',
     nationalRegistry: '1991921335',
     address: 'Miðskógar 17',
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
   {
     date: '21.01.2021',
@@ -28,21 +28,21 @@ const SIGNATURES = [
     nationalRegistry: '1991921335',
     address: 'Skúr hjá mömmu',
     hasWarning: true,
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
   {
     date: '21.01.2021',
     name: 'Brian Johannesen',
     nationalRegistry: '1991921335',
     address: 'Reykjavík',
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
   {
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
   {
     date: '21.01.2021',
@@ -50,7 +50,7 @@ const SIGNATURES = [
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
     hasWarning: true,
-    selectedForSubmission: false
+    selectedForSubmission: false,
   },
 ]
 
@@ -59,7 +59,8 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [signatures, setSignatures] = useState(SIGNATURES)
   let [autoSelect, setAutoSelect] = useState(false)
   let [chooseManually, setChooseManually] = useState(false)
-  const maxEndorsements = constituencyMapper[application.answers.constituency as Constituencies].high
+  const maxEndorsements =
+    constituencyMapper[application.answers.constituency as Constituencies].high
   const autoSelectRadioLabel = 'Senda inn fyrstu ' + maxEndorsements
 
   return (
@@ -80,21 +81,23 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
               label={autoSelectRadioLabel}
               checked={!!autoSelect}
               onChange={() => {
-                setAutoSelect(autoSelect = true)
-                setChooseManually(chooseManually = false)
+                setAutoSelect((autoSelect = true))
+                setChooseManually((chooseManually = false))
                 signatures.map((s, i) => {
-                  if(i <= maxEndorsements) { s.selectedForSubmission = true }
+                  if (i <= maxEndorsements) {
+                    s.selectedForSubmission = true
+                  }
                 })
               }}
             />
             <Box marginLeft={5}>
               <RadioButton
                 id="chooseManually"
-                label='Valið af handahófi'
+                label="Valið af handahófi"
                 checked={!!chooseManually}
                 onChange={() => {
-                  setAutoSelect(autoSelect = false)
-                  setChooseManually(chooseManually = true)
+                  setAutoSelect((autoSelect = false))
+                  setChooseManually((chooseManually = true))
                   signatures.map((s) => {
                     s.selectedForSubmission = false
                   })

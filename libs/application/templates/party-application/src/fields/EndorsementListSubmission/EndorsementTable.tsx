@@ -9,7 +9,7 @@ export interface Signature {
   name: string
   nationalRegistry: string
   address: string
-  hasWarning?: boolean,
+  hasWarning?: boolean
   selectedForSubmission?: boolean
 }
 
@@ -22,7 +22,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
   const { formatMessage } = useLocale()
   const renderRow = (signature: Signature, index: number) => {
     const cell = Object.entries(signature)
-    const [selectEndorsement, setSelectEndorsement] = useState(signature.selectedForSubmission)
+    const [selectEndorsement, setSelectEndorsement] = useState(
+      signature.selectedForSubmission,
+    )
     return (
       <T.Row key={index}>
         {cell.map(([_key, value], i) => {
@@ -60,8 +62,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
               <T.Data
                 key={i}
                 box={{
-                background: signature.hasWarning ? 'yellow200' : 'white',
-              }}>
+                  background: signature.hasWarning ? 'yellow200' : 'white',
+                }}
+              >
                 <Checkbox
                   checked={signature.selectedForSubmission}
                   onChange={() => {

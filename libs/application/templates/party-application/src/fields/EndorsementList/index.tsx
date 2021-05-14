@@ -66,7 +66,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         linkUrl="www.island.is/listabókstafur/128877634/"
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text variant="h3" marginTop={8}>{`${SIGNATURES.length} ${namesCountString}`}</Text>
+      <Text
+        variant="h3"
+        marginTop={8}
+      >{`${SIGNATURES.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
           display="flex"
