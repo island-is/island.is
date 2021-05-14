@@ -8,6 +8,7 @@ module.exports = {
         'lead_investigator',
         {
           type: Sequelize.STRING,
+          allowNull: true,
         },
         { transaction: t },
       ),
