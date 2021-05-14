@@ -40,7 +40,7 @@ const parentContactInfo = z.object({
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
   approveExternalData: z.boolean().refine((v) => v, {
-    params: error.validation.approveChildrenResidenceChange,
+    params: error.validation.dataGathering,
   }),
   selectedChildren: z
     .array(z.string())

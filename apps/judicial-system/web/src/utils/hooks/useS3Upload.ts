@@ -21,7 +21,7 @@ export const useS3Upload = (workingCase?: Case) => {
     })
 
     setFiles(uploadCaseFiles || [])
-  }, [workingCase])
+  }, [workingCase?.files])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation] = useMutation(CreateFileMutation)
