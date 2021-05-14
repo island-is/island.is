@@ -22,7 +22,7 @@ import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../li
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 
-import { EnvironmentServices } from '../../../libs/helm/dsl/types/charts'
+import { EnvironmentServices } from '.././dsl/types/charts'
 
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({ documentsService })

@@ -1,4 +1,4 @@
-import { reformatYaml } from '../../libs/helm/dsl/serialize-to-yaml'
+import { reformatYaml } from './dsl/serialize-to-yaml'
 
 var readline = require('readline')
 var rl = readline.createInterface({

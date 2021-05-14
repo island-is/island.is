@@ -1,5 +1,5 @@
-import { ref, service, ServiceBuilder } from '../../../../libs/helm/dsl/dsl'
-import { MissingSetting } from '../../../../libs/helm/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',

@@ -3,7 +3,7 @@ import yargs from 'yargs'
 import yaml from 'js-yaml'
 import { createAppAuth } from '@octokit/auth-app'
 import { request } from '@octokit/request'
-import { ServiceHelm } from '../../libs/helm/dsl/types/output-types'
+import { ServiceHelm } from './dsl/types/output-types'
 const { hideBin } = require('yargs/helpers')
 
 if (

@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../../libs/helm/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',

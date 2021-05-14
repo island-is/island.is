@@ -3,7 +3,7 @@ import { serviceSetup as jsBackendSetup } from '../../../apps/judicial-system/ba
 import { serviceSetup as jsWebSetup } from '../../../apps/judicial-system/web/infra/judicial-system-web'
 import { serviceSetup as jsXrdApiSetup } from '../../../apps/judicial-system/xrd-api/infra/judicial-system-xrd-api'
 
-import { EnvironmentServices } from '../../../libs/helm/dsl/types/charts'
+import { EnvironmentServices } from '.././dsl/types/charts'
 
 const jsBack = jsBackendSetup()
 const jsApi = jsApiSetup({ backend: jsBack })

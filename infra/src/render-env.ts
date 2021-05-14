@@ -1,15 +1,12 @@
-import {
-  generateYamlForEnv,
-  dumpYaml,
-} from '../../libs/helm/dsl/serialize-to-yaml'
-import { OpsEnv } from '../../libs/helm/dsl/types/input-types'
-import { UberChart } from '../../libs/helm/dsl/uber-chart'
+import { generateYamlForEnv, dumpYaml } from './dsl/serialize-to-yaml'
+import { OpsEnv } from './dsl/types/input-types'
+import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
 import { Services as ISServices } from './uber-charts/islandis'
 import { Services as JSServices } from './uber-charts/judicial-system'
 import { Services as ADSServices } from './uber-charts/air-discount-scheme'
 import yargs = require('yargs/yargs')
-import { EnvironmentServices } from '../../libs/helm/dsl/types/charts'
+import { EnvironmentServices } from './dsl/types/charts'
 
 type ChartName = 'islandis' | 'judicial-system' | 'air-discount-scheme'
 

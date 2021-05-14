@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../libs/helm/dsl/dsl'
+import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'download-service'> =>
   service('download-service')

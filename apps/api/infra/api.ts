@@ -1,5 +1,5 @@
-import { ref, service, ServiceBuilder } from '../../../libs/helm/dsl/dsl'
-import { settings } from '../../../libs/helm/dsl/settings'
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>

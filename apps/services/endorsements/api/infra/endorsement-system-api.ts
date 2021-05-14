@@ -1,5 +1,5 @@
-import { service, ServiceBuilder } from '../../../../../libs/helm/dsl/dsl'
-import { settings } from '../../../../../libs/helm/dsl/settings'
+import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { settings } from '../../../../../infra/src/dsl/settings'
 
 const postgresInfo = {
   passwordSecret: '/k8s/endorsement-system-api/DB_PASSWORD',

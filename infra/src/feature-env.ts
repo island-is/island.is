@@ -1,14 +1,11 @@
 import yargs from 'yargs'
 import AWS from 'aws-sdk'
-import {
-  generateYamlForFeature,
-  dumpYaml,
-} from '../../libs/helm/dsl/serialize-to-yaml'
-import { generateJobsForFeature } from '../../libs/helm/dsl/feature-jobs'
-import { UberChart } from '../../libs/helm/dsl/uber-chart'
+import { generateYamlForFeature, dumpYaml } from './dsl/serialize-to-yaml'
+import { generateJobsForFeature } from './dsl/feature-jobs'
+import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
 import { Services, FeatureDeploymentServices } from './uber-charts/islandis'
-import { EnvironmentServices } from '../../libs/helm/dsl/types/charts'
+import { EnvironmentServices } from './dsl/types/charts'
 const { hideBin } = require('yargs/helpers')
 
 type ChartName = 'islandis'

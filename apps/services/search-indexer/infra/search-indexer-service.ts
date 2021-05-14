@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../../libs/helm/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',

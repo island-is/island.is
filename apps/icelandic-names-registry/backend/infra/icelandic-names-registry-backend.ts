@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../libs/helm/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const postgresInfo = {
   passwordSecret: '/k8s/icelandic-names-registry-backend/DB_PASSWORD',

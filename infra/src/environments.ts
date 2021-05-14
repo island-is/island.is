@@ -1,4 +1,4 @@
-import { EnvironmentConfigs } from '../../libs/helm/dsl/types/charts'
+import { EnvironmentConfigs } from './dsl/types/charts'
 
 export const Envs: EnvironmentConfigs = {
   dev: {

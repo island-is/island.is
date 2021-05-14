@@ -6,33 +6,33 @@ api:
     - node
   enabled: true
   env:
-    APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    APPLICATION_SYSTEM_API_URL: http://web-application-system-api.application-system.svc.cluster.local
     AUDIT_GROUP_NAME: k8s/island-is/audit-log
     CONTACT_US_EMAIL: island@island.is
     CONTENTFUL_HOST: cdn.contentful.com
-    DOCUMENT_PROVIDER_BASE_PATH: 'https://documentprovidermanagement-island-is.azurewebsites.net'
-    DOCUMENT_PROVIDER_BASE_PATH_TEST: 'https://test-documentprovidermanagement-island-is.azurewebsites.net'
-    DOCUMENT_PROVIDER_TOKEN_URL: 'https://identity-island-is.azurewebsites.net/connect/token'
-    DOCUMENT_PROVIDER_TOKEN_URL_TEST: 'https://test-identity-island-is.azurewebsites.net/connect/token'
-    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
-    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
+    DOCUMENT_PROVIDER_BASE_PATH: https://documentprovidermanagement-island-is.azurewebsites.net
+    DOCUMENT_PROVIDER_BASE_PATH_TEST: https://test-documentprovidermanagement-island-is.azurewebsites.net
+    DOCUMENT_PROVIDER_TOKEN_URL: https://identity-island-is.azurewebsites.net/connect/token
+    DOCUMENT_PROVIDER_TOKEN_URL_TEST: https://test-identity-island-is.azurewebsites.net/connect/token
+    DOWNLOAD_SERVICE_BASE_PATH: https://api.island.is
+    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/
     FILE_DOWNLOAD_BUCKET: island-is-prod-download-cache-api
     FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
-    HEALTH_INSURANCE_XROAD_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
+    HEALTH_INSURANCE_XROAD_WSDLURL: https://huld.sjukra.is/islandrg?wsdl
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: >-
       http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDENTITY_SERVER_JWKS_URI: 'https://innskra.island.is/.well-known/openid-configuration/jwks'
-    REGULATIONS_API_URL: 'https://reglugerdir-api.herokuapp.com/api/v1'
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
+    REGULATIONS_API_URL: https://reglugerdir-api.herokuapp.com/api/v1
     SEND_FROM_EMAIL: island@island.is
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
+    SERVICE_USER_PROFILE_URL: http://web-service-portal-api.service-portal.svc.cluster.local
     SOFFIA_HOST_URL: soffia.skra.is
-    SOFFIA_SOAP_URL: 'https://soffia.skra.is'
-    SYSLUMENN_HOST: 'https://api.syslumenn.is/dev'
+    SOFFIA_SOAP_URL: https://soffia.skra.is
+    SYSLUMENN_HOST: https://api.syslumenn.is/dev
     TELL_US_A_STORY_EMAIL: sogur@island.is
-    XROAD_BASE_PATH: 'http://securityserver.island.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_BASE_PATH: http://securityserver.island.is
+    XROAD_BASE_PATH_WITH_ENV: http://securityserver.island.is/r1/IS
     XROAD_CLIENT_ID: IS/GOV/5501692829/island-is-client
     XROAD_HEALTH_INSURANCE_ID: IS/GOV/4804080550/SJUKRA-Protected
     XROAD_MMS_GRADE_SERVICE_ID: IS/EDU/5708150320/MMS-Protected/grade-api-v1
@@ -96,7 +96,7 @@ api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/api'
+      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/api
     create: true
     name: api
 application-system-api:
@@ -104,31 +104,31 @@ application-system-api:
   env:
     APPLICATION_ATTACHMENT_BUCKET: island-is-prod-storage-application-system
     AUDIT_GROUP_NAME: k8s/island-is/audit-log
-    CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
+    CLIENT_LOCATION_ORIGIN: https://island.is/umsoknir
     CONTENTFUL_HOST: cdn.contentful.com
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
-    DOKOBIT_URL: 'https://ws.dokobit.com'
+    DOKOBIT_URL: https://ws.dokobit.com
     EMAIL_REGION: eu-west-1
     FILE_SERVICE_PRESIGN_BUCKET: island-is-prod-fs-presign-bucket
     FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
-    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
-    HEALTH_INSURANCE_XROAD_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDENTITY_SERVER_JWKS_URI: 'https://innskra.island.is/.well-known/openid-configuration/jwks'
+    GRAPHQL_API_URL: http://web-api.islandis.svc.cluster.local
+    HEALTH_INSURANCE_XROAD_WSDLURL: https://huld.sjukra.is/islandrg?wsdl
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     INSTITUTION_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
-    NOVA_URL: 'https://smsapi.nova.is'
+    NOVA_URL: https://smsapi.nova.is
     NOVA_USERNAME: IslandIs_User_Production
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
-    XROAD_BASE_PATH: 'http://securityserver.island.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
+    SYSLUMENN_HOST: https://api.syslumenn.is/api
+    XROAD_BASE_PATH: http://securityserver.island.is
+    XROAD_BASE_PATH_WITH_ENV: http://securityserver.island.is/r1/IS
     XROAD_CLIENT_ID: IS/GOV/5501692829/island-is-client
     XROAD_HEALTH_INSURANCE_ID: IS/GOV/4804080550/SJUKRA-Protected
     XROAD_VMST_API_PATH: /VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1
@@ -148,7 +148,7 @@ application-system-api:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
     env:
@@ -186,14 +186,14 @@ application-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/application-system-api'
+      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/application-system-api
     create: true
     name: application-system-api
 application-system-form:
   enabled: true
   env:
     BASEPATH: /umsoknir
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
   grantNamespaces:
     - nginx-ingress-external
     - islandis
@@ -261,8 +261,8 @@ download-service:
   enabled: true
   env:
     AUDIT_GROUP_NAME: k8s/island-is/audit-log
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDENTITY_SERVER_JWKS_URI: 'https://innskra.island.is/.well-known/openid-configuration/jwks'
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
   grantNamespaces:
     - islandis
     - nginx-ingress-external
@@ -312,8 +312,8 @@ icelandic-names-registry-backend:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: icelandic_names_registry_backend
     DB_USER: icelandic_names_registry_backend
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDENTITY_SERVER_JWKS_URI: 'https://innskra.island.is/.well-known/openid-configuration/jwks'
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
   grantNamespaces:
     - islandis
   grantNamespacesEnabled: true
@@ -329,13 +329,13 @@ icelandic-names-registry-backend:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
         name: migrations
       - args:
           - sequelize-cli
-          - 'db:seed:all'
+          - db:seed:all
         command:
           - npx
         name: seeds
@@ -390,12 +390,12 @@ island-ui-storybook:
 search-indexer-service:
   enabled: true
   env:
-    APPLICATION_URL: 'http://search-indexer-service'
+    APPLICATION_URL: http://search-indexer-service
     CONTENTFUL_ENVIRONMENT: master
     CONTENTFUL_HOST: cdn.contentful.com
     CONTENTFUL_SPACE: 8k0h54kbe6bj
     ELASTIC_INDEX: island-is
-    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -453,13 +453,13 @@ search-indexer-service:
             cpu: 100m
             memory: 256Mi
     env:
-      APPLICATION_URL: 'http://search-indexer-service'
+      APPLICATION_URL: http://search-indexer-service
       CONTENTFUL_ENVIRONMENT: master
       CONTENTFUL_HOST: cdn.contentful.com
       CONTENTFUL_SPACE: 8k0h54kbe6bj
       ELASTIC_DOMAIN: search
       ELASTIC_INDEX: island-is
-      ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+      ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
       S3_BUCKET: prod-es-custom-packages
     secrets:
       CONTENTFUL_ACCESS_TOKEN: /k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN
@@ -479,14 +479,14 @@ search-indexer-service:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/search-indexer'
+      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/search-indexer
     create: true
     name: search-indexer
 service-portal:
   enabled: true
   env:
     BASEPATH: /minarsidur
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
   grantNamespaces:
     - nginx-ingress-external
     - islandis
@@ -528,8 +528,8 @@ service-portal-api:
     DB_NAME: service_portal_api
     DB_USER: service_portal_api
     EMAIL_REGION: eu-west-1
-    NOVA_URL: 'https://smsapi.nova.is'
-    SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
+    NOVA_URL: https://smsapi.nova.is
+    SERVICE_PORTAL_BASE_URL: https://island.is/minarsidur
   grantNamespaces:
     - nginx-ingress-external
     - islandis
@@ -545,7 +545,7 @@ service-portal-api:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
     env:
@@ -576,7 +576,7 @@ service-portal-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-api'
+      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/service-portal-api
     create: true
     name: service-portal-api
 services-documents:
@@ -601,7 +601,7 @@ services-documents:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
     env:
@@ -624,7 +624,7 @@ services-documents:
 skilavottord-web:
   enabled: true
   env:
-    API_URL: 'http://web-skilavottord-ws'
+    API_URL: http://web-skilavottord-ws
   grantNamespaces:
     - nginx-ingress-external
   grantNamespacesEnabled: true
@@ -664,15 +664,15 @@ skilavottord-ws:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: skilavottord
     DB_USER: skilavottord
-    FJARSYSLA_REST_URL: 'https://tbrws.hysing.is/restv2/LeggjaASkilagjald'
+    FJARSYSLA_REST_URL: https://tbrws.hysing.is/restv2/LeggjaASkilagjald
     FJARSYSLA_REST_USER: fjs-samgong-r
-    SAMGONGUSTOFA_REST_AUTH_URL: 'https://api.samgongustofa.is/vehicle/registrations/authenticate'
-    SAMGONGUSTOFA_REST_DEREG_URL: 'https://api.samgongustofa.is/vehicle/registrations/deregistration'
+    SAMGONGUSTOFA_REST_AUTH_URL: https://api.samgongustofa.is/vehicle/registrations/authenticate
+    SAMGONGUSTOFA_REST_DEREG_URL: https://api.samgongustofa.is/vehicle/registrations/deregistration
     SAMGONGUSTOFA_REST_USER: ISLANDIS.AFSKRA
-    SAMGONGUSTOFA_SOAP_URL: 'https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS'
+    SAMGONGUSTOFA_SOAP_URL: https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS
     SAMGONGUSTOFA_SOAP_USER: StafraentIsland
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.prod&qaa=4'
-    SAML_ENTRY_POINT2: 'https://innskraning.island.is/?id=sv_company.prod&qaa=4'
+    SAML_ENTRY_POINT: https://innskraning.island.is/?id=sv_citizen.prod&qaa=4
+    SAML_ENTRY_POINT2: https://innskraning.island.is/?id=sv_company.prod&qaa=4
   grantNamespaces:
     - nginx-ingress-external
   grantNamespacesEnabled: true
@@ -698,7 +698,7 @@ skilavottord-ws:
     containers:
       - args:
           - sequelize-cli
-          - 'db:migrate'
+          - db:migrate
         command:
           - npx
     env:
@@ -726,12 +726,12 @@ skilavottord-ws:
 web:
   enabled: true
   env:
-    API_URL: 'http://web-api'
+    API_URL: http://web-api
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_REGULATIONS_PAGE: 'true'
     DISABLE_SYSLUMENN_PAGE: 'false'
-    SENTRY_DSN: 'https://b49176b379c349bf9d83a5671118fbd9@o406638.ingest.sentry.io/5405931'
+    SENTRY_DSN: https://b49176b379c349bf9d83a5671118fbd9@o406638.ingest.sentry.io/5405931
     TRACKING_DOMAIN: island.is
   grantNamespaces:
     - nginx-ingress-external
@@ -774,7 +774,7 @@ xroad-collector:
     - node
   enabled: true
   env:
-    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -802,7 +802,7 @@ xroad-collector:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/xroad-collector'
+      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/xroad-collector
     create: true
     name: xroad-collector
 
