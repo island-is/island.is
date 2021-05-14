@@ -16,7 +16,7 @@ const applicationToChildInformation = (
   )
   const selectedChild = getValueViaPath(
     application.externalData,
-    `children.data.children[${selectedChildIndex}]`,
+    `children.data.childrenAndExistingApplications.children[${selectedChildIndex}]`,
     null,
   ) as ChildInformation | null
 
@@ -116,7 +116,7 @@ export const getChildrenFromMockData = (
 export const getChildrenAndExistingApplications = (
   applicationsWhereApplicant: Application[],
   applicationsWhereOtherParent: Application[],
-  pregnancyStatus?: PregnancyStatus,
+  pregnancyStatus?: PregnancyStatus | null,
 ): ChildrenAndExistingApplications => {
   const existingApplications = applicationsToExistingChildApplication(
     applicationsWhereApplicant,
@@ -145,7 +145,7 @@ export const getChildrenAndExistingApplications = (
         expectedDateOfBirth === pregnancyStatus.expectedDateOfBirth,
     )
 
-    // TODO: revist this when we include twins in application
+    // TODO: revisit this when we include twins in application
     if (!hasAlreadyAppliedForChild) {
       children.push({
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
