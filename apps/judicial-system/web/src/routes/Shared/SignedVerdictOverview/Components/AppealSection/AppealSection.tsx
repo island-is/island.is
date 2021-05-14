@@ -122,6 +122,7 @@ const AppealSection: React.FC<Props> = (props) => {
                   )}`}
                   onDismiss={handleAccusedAppealDismissal}
                   fluid
+                  light
                 />
               </motion.div>
             )}

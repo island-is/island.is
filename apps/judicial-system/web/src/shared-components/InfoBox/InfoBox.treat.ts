@@ -12,3 +12,7 @@ export const infoBoxContainer = style({
 export const fluid = style({
   maxWidth: '100%',
 })
+
+export const light = style({
+  background: theme.color.white,
+})
