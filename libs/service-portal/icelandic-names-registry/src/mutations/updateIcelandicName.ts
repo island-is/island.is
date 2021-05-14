@@ -5,6 +5,12 @@ export const UPDATE_ICELANDIC_NAME_MUTATION = gql`
     updateIcelandicNameById(input: $input) {
       id
       icelandicName
+      type
+      status
+      description
+      url
+      verdict
+      visible
     }
   }
 `

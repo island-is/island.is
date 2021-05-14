@@ -5,6 +5,12 @@ export const CREATE_ICELANDIC_NAME_MUTATION = gql`
     createIcelandicName(input: $input) {
       id
       icelandicName
+      type
+      status
+      description
+      url
+      verdict
+      visible
     }
   }
 `

@@ -1,6 +1,5 @@
-import { IcelandicName } from '../queries/schema'
-
-export interface IcelandicNameInputs {
+export interface IcelandicNameType {
+  __typename?: 'IcelandicName'
   id?: number
   icelandicName: string
   type: string
@@ -10,8 +9,3 @@ export interface IcelandicNameInputs {
   url?: null | string
   visible: boolean
 }
-
-export type TIcelandicName = Pick<
-  IcelandicName,
-  'id' | 'icelandicName' | 'type' | 'status' | 'visible' | 'description' | 'url'
->
