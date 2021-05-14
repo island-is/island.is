@@ -3,8 +3,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
-import { environment } from './environments'
+import './auth'
 
+import { environment } from './environments'
 import App from './app/App'
 
 Sentry.init({

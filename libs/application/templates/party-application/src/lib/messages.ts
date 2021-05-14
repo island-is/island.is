@@ -211,20 +211,46 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Listi hefur verið sendur',
+      defaultMessage: 'Meðmælendalista hefur verið skilað.',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
       defaultMessage:
-        'Meðmælendalisti hefur verið sendur yfirkjörstjórn til yfirferðar.',
+        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
       defaultMessage:
-        'Þú munt fá skilaboð í pósthólf inni á mínum síðum Íslands.is með framhaldið.',
+        'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
+    },
+    bulletListTitle: {
+      id: 'pa.application:application.approved.card.bulletListTitle',
+      defaultMessage: 'Vert að skoða',
+      description: 'Title for bullet point list',
+    },
+    bulletLink1: {
+      id: 'pa.application:application.approved.card.bulletLink1',
+      defaultMessage:
+        'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
+      description: 'Link to Vefur dómsmálaráðuneytis',
+    },
+    bulletLink1Title: {
+      id: 'pa.application:application.approved.card.bulletLink1Title',
+      defaultMessage: 'Vefur dómsmálaráðuneytis',
+      description: 'Link title',
+    },
+    bulletLink2: {
+      id: 'pa.application:application.approved.card.bulletLink2',
+      defaultMessage: 'https://www.stjornarradid.is/verkefni/kosningar/',
+      description: 'Link to kosning.is',
+    },
+    bulletLink2Title: {
+      id: 'pa.application:application.approved.card.bulletLink2Title',
+      defaultMessage: 'kosning.is',
+      description: 'Link title',
     },
   }),
   collectEndorsements: defineMessages({
