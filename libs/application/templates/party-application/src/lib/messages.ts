@@ -483,8 +483,8 @@ export const m: MessageDir = {
     approvedDescription: {
       id: 'pa.application:supreme.court.approved.description',
       defaultMessage:
-        'Meðmælendalisti hefur verið samþykktur af yfirkjörstjórn',
-      description: 'Description for approved screen',
+        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      description: 'Text after supreme court has submitted',
     },
   }),
 }

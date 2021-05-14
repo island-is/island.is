@@ -64,13 +64,13 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>{formatMessage(m.endorsementTable.thDate)}</T.HeadData>
-          <T.HeadData>{formatMessage(m.endorsementTable.thName)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementList.thDate)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.endorsementList.thName)}</T.HeadData>
           <T.HeadData>
-            {formatMessage(m.endorsementTable.thNationalNumber)}
+            {formatMessage(m.endorsementList.thNationalNumber)}
           </T.HeadData>
           <T.HeadData box={{ textAlign: 'right' }}>
-            {formatMessage(m.endorsementTable.thAddress)}
+            {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
         </T.Row>
       </T.Head>

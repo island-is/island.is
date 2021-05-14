@@ -29,11 +29,18 @@ export interface Props extends FieldBaseProps {
 }
 
 const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const { formatMessage } = useLocale()
-  const { answers } = application
+  const { answers } = application // todo render correct answers
   const [endorsements, setEndorsements] = useState<Endorsement[]>()
 
   const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {
+    variables: {
+      input: {
+        listId: endorsementListId,
+      },
+    },
     onCompleted: async ({ endorsementSystemGetEndorsements }) => {
       if (!loading && endorsementSystemGetEndorsements) {
         const hasEndorsements =
@@ -105,7 +112,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.constituencyLabel)}
           </Text>
-          <Text>{'Suðurkjördæmi'}</Text>
+          <Text>{answers.constituency}</Text>
         </Box>
       </Box>
     </Box>
