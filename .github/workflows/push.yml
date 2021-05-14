@@ -8,6 +8,9 @@ on:
       - 'hotfix/**'
     paths-ignore:
       - '**/*.md'
+      - '**/infra/**'
+      - 'libs/helm/**'
+      - 'infra/**'
     tags:
       - docker-build-*
   workflow_dispatch:

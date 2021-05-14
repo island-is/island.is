@@ -9,7 +9,7 @@ case "$1" in
     "islandis" | "judicial-system")
         ENVS=("dev" "staging" "prod")
         for env in ${ENVS[@]}; do
-          ts-node $ROOT/src/render-env --chart="$1" --env=${env} | diff $ROOT/charts/$1/values.${env}.yaml -
+          ts-node $ROOT/src/render-env --chart="$1" --env=${env} | diff $ROOT/../charts/$1/values.${env}.yaml -
         done
         ;;
     *)

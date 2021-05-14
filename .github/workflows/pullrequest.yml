@@ -1,7 +1,11 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
+  pull_request:
+    paths-ignore:
+      - '**/infra/**'
+      - 'libs/helm/**'
+      - 'infra/**'
   workflow_dispatch: {}
 
 jobs:

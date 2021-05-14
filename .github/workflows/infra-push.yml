@@ -1,0 +1,70 @@
+name: Monorepo pipeline - build and deploy
+
+on:
+  push:
+    paths:
+      - '**/infra/**'
+      - 'libs/helm/**'
+      - 'infra/**'
+  workflow_dispatch:
+  create:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
+
+jobs:
+  prepare:
+    runs-on: ubuntu-20.04
+    outputs:
+      CHARTS: ${{ steps.gather_charts.outputs.CHARTS }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Gather charts
+        id: gather_charts
+        run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps(os.listdir("charts/")))')"
+  test:
+    runs-on: ubuntu-20.04
+    needs: prepare
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        chart: ${{ fromJson(needs.prepare.outputs.CHARTS) }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache for NodeJS dependencies
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: infra/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        working-directory: infra
+        run: yarn install --frozen-lock
+
+      - name: Run unit tests
+        run: ./infra/scripts/ci/test-unit.sh
+
+      - name: Check chart values are up-to-date
+        run: ./infra/scripts/ci/diff-chart-values.sh ${{matrix.chart}}
+
+  failure-notification:
+    runs-on: ubuntu-20.04
+    if: failure()
+    needs:
+      - prepare
+      - test
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          icon_emoji: ':broken_heart:'
+          fields: repo,message,commit,author,action,eventName,ref,workflow,took # selectable (default: repo,message)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
