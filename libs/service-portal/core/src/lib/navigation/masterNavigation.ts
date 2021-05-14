@@ -183,7 +183,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               id: 'service.portal:personalInformation',
               defaultMessage: 'Persónuupplýsingar',
             }),
-            systemRoute: true,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
           {
@@ -191,7 +190,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               id: 'service.portal:accessControl',
               defaultMessage: 'Aðgangsstýring',
             }),
-            systemRoute: true,
             path: ServicePortalPath.SettingsAccessControl,
           },
         ],
