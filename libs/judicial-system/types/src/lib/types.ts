@@ -1,7 +1,5 @@
 export enum Feature {
-  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
-  CASE_FILES = 'CASE_FILES',
-  CREATE_COURT_CASE = 'CREATE_COURT_CASE',
+  NONE = 'NONE',
 }
 
 export enum UserRole {
@@ -159,7 +157,7 @@ export interface Case {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -249,7 +247,7 @@ export interface UpdateCase {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -296,10 +294,6 @@ export interface SignatureConfirmationResponse {
   documentSigned: boolean
   code?: number
   message?: string
-}
-
-export interface CreateCustodyCourtCase {
-  policeCaseNumber: string
 }
 
 export interface CreateCourtCase {

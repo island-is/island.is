@@ -92,7 +92,7 @@ const courtFields = [
   'courtCaseNumber',
   'courtDate',
   'courtRoom',
-  'courtStartTime',
+  'courtStartDate',
   'courtEndTime',
   'courtAttendees',
   'policeDemands',

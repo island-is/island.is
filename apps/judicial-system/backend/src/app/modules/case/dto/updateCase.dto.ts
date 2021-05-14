@@ -156,7 +156,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly courtStartTime?: Date
+  readonly courtStartDate?: Date
 
   @IsOptional()
   @IsString()

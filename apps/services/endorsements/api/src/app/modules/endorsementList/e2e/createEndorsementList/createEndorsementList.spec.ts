@@ -23,7 +23,7 @@ describe('createEndorsementList', () => {
     const newEndorsementList = {
       title: 'Some title',
       description: 'Some description',
-      tags: [EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021],
+      tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
       validationRules: [
         {
@@ -46,7 +46,7 @@ describe('createEndorsementList', () => {
     const validEndorsementList = {
       title: 'Some title',
       description: 'Some description',
-      tags: [EndorsementTag.PARTY_LETTER_NORDAUSTURKJORDAEMI_2021],
+      tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
       validationRules: [],
     }
