@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { useAuth } from '@island.is/auth/react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { createClient } from '@island.is/feature-flags'
 
@@ -13,7 +14,8 @@ const featureFlagClient = createClient({
 })
 
 export const useModules = () => {
-  const [{ modules, userInfo }, dispatch] = useStore()
+  const { userInfo } = useAuth()
+  const [{ modules }, dispatch] = useStore()
 
   async function filterModulesBasedOnFeatureFlags() {
     const flagValues = await Promise.all(

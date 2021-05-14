@@ -3,7 +3,7 @@ import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { useEffect } from 'react'
-import useAuth from '../../hooks/useAuth/useAuth'
+import { useAuth } from '@island.is/auth/react'
 
 /**
  * If the user has set a preferred language in his user
