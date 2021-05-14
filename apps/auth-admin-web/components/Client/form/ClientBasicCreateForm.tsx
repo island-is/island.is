@@ -356,7 +356,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: true,
-                          validate: ValidationUtils.validateUrl,
+                          validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
