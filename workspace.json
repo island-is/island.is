@@ -1736,8 +1736,8 @@
       }
     },
     "application-templates-children-residence-change": {
-      "root": "libs/application/templates/children-residence-change",
-      "sourceRoot": "libs/application/templates/children-residence-change/src",
+      "root": "libs/application/templates/family-matters/children-residence-change",
+      "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1746,19 +1746,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/children-residence-change/tsconfig.lib.json",
-              "libs/application/templates/children-residence-change/tsconfig.spec.json"
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.lib.json",
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/children-residence-change/**/*"
+              "!libs/application/templates/family-matters/children-residence-change/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/children-residence-change/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1911,6 +1911,28 @@
         }
       }
     },
+    "application-templates-family-matters-core": {
+      "root": "libs/application/templates/family-matters/core",
+      "sourceRoot": "libs/application/templates/family-matters/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/family-matters/core/tsconfig.lib.json",
+              "libs/application/templates/family-matters/core/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/family-matters/core/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -2020,8 +2042,8 @@
       }
     },
     "application-templates-joint-custody-agreement": {
-      "root": "libs/application/templates/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/joint-custody-agreement/src",
+      "root": "libs/application/templates/family-matters/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2030,13 +2052,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/joint-custody-agreement/tsconfig.lib.json",
-              "libs/application/templates/joint-custody-agreement/tsconfig.spec.json"
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/joint-custody-agreement/**/*"
+              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
             ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2573,6 +2601,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/auth-nest-tools"]
+        }
+      }
+    },
+    "auth-react": {
+      "root": "libs/auth/react",
+      "sourceRoot": "libs/auth/react/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/react"],
+          "options": {
+            "jestConfig": "libs/auth/react/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

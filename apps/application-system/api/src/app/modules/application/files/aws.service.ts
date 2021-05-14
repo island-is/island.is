@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import * as AWS from 'aws-sdk'
+import { S3 } from 'aws-sdk'
 
 @Injectable()
 export class AwsService {
-  s3: AWS.S3
+  s3: S3
 
   constructor() {
-    this.s3 = new AWS.S3()
+    this.s3 = new S3()
   }
 
   async getFile(
@@ -47,5 +47,15 @@ export class AwsService {
     }
 
     return await this.s3.getSignedUrlPromise('getObject', presignedUrlParams)
+  }
+
+  async fileExists(bucket: string, fileName: string): Promise<boolean> {
+    return await this.s3
+      .headObject({ Bucket: bucket, Key: fileName })
+      .promise()
+      .then(
+        () => true,
+        () => false,
+      )
   }
 }

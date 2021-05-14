@@ -75,6 +75,14 @@ const NewsList: Screen<NewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
+  const currentNavItem = organizationPage.menuLinks.find(
+    ({ primaryLink }) => primaryLink.url === Router.asPath,
+  )
+
+  const newsTitle: string = currentNavItem
+    ? currentNavItem.primaryLink.text
+    : n('newsTitle', 'Fréttir og tilkynningar')
+
   const years = Object.keys(datesMap)
   const months = datesMap[selectedYear] ?? []
 
@@ -145,7 +153,7 @@ const NewsList: Screen<NewsListProps> = ({
       >
         <Stack space={3}>
           <Text variant="h4" as="h1" color="purple600">
-            {n('newsTitle', 'Fréttir og tilkynningar')}
+            {newsTitle}
           </Text>
           <Divider weight="purple200" />
           <NativeSelect
@@ -192,7 +200,7 @@ const NewsList: Screen<NewsListProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      active: primaryLink.url === Router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -202,7 +210,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('newsTitle', 'Fréttir og tilkynningar')}
+      pageTitle={newsTitle}
       organizationPage={organizationPage}
       breadcrumbItems={breadCrumbs}
       sidebarContent={sidebar}
@@ -213,7 +221,7 @@ const NewsList: Screen<NewsListProps> = ({
     >
       <Stack space={[3, 3, 4]}>
         <Text variant="h1" as="h1" marginBottom={2}>
-          {n('newsTitle', 'Fréttir og tilkynningar')}
+          {newsTitle}
         </Text>
         {selectedYear && (
           <Hidden below="lg">

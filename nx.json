@@ -170,6 +170,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-family-matters-core": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -226,6 +229,9 @@
       "tags": []
     },
     "auth-nest-tools": {
+      "tags": []
+    },
+    "auth-react": {
       "tags": []
     },
     "cache": {

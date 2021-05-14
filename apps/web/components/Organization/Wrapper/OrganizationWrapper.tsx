@@ -28,9 +28,11 @@ import {
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { SjukratryggingarHeader } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
+import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
 
 interface NavigationData {
   title: string
@@ -56,12 +58,16 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
+    case 'sjukratryggingar':
+      return <SjukratryggingarHeader organizationPage={organizationPage} />
+    case 'utlendingastofnun':
+      return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
     default:
