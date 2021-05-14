@@ -4,20 +4,7 @@ import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
 export const headerBg = style({
   height: 385,
   marginTop: -130,
-  backgroundBlendMode: 'saturation',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      background: `linear-gradient(263.52deg, #0C588D 0%, #2A8DD2 105.7%),
-        linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`,
-    },
-    lg: {
-      background: `linear-gradient(263.52deg, #0C588D 0%, #2A8DD2 105.7%),
-        linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`,
-      backgroundRepeat: 'no-repeat !important',
-      backgroundPosition: '25% 0% !important',
-      backgroundSize: '100%, 100% !important',
-    },
-  }),
+  background: '#F6F6FD',
 })
 
 export const headerContainer = style({
@@ -26,10 +13,9 @@ export const headerContainer = style({
   height: 385,
   ...themeUtils.responsiveStyle({
     lg: {
-      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/5anBvilgXGuY2ttEAMbzv2/6532c028aaa3c10fd9b5132ccb26c2ca/sjukra.svg')`,
+      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/5LpuUMoH5JrsmG0dn6ncNh/dd569ad88510a0d1a1590110f0c36899/image_65_shutterstock.png')`,
       backgroundRepeat: 'no-repeat !important',
-      backgroundPosition: '7% 5% !important',
-      backgroundSize: '52% !important',
+      backgroundPosition: '-48px 0 !important',
     },
   }),
 })
