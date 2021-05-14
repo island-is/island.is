@@ -36,6 +36,7 @@ let authenticationToken: string
 
 export const COURT_SERVICE_OPTIONS = 'export const COURT_SERVICE_OPTIONS'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CourtServiceOptions extends AuthenticateRequest {}
 
 @Injectable()

@@ -5,7 +5,7 @@ import FormData from 'form-data'
 class HttpError extends Error {
   constructor(
     public response: http.IncomingMessage,
-    public body: any,
+    public body: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     public statusCode?: number,
   ) {
     super('HTTP request failed')
