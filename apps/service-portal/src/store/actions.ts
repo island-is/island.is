@@ -1,4 +1,3 @@
-import { User } from 'oidc-client'
 import {
   ServicePortalRoute,
   ServicePortalModule,
@@ -9,10 +8,6 @@ export type MenuState = 'open' | 'closed'
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export enum ActionType {
-  SetUserPending = 'setUserPending',
-  SetUserLoggedOut = 'setUserLoggedOut',
-  SetUserFulfilled = 'setUserFulfilled',
-  SetUserLoggingOut = 'setUserLoggingOut',
   FetchSubjectListPending = 'fetchSubjectListPending',
   FetchSubjectListFulfilled = 'fetchSubjectListFulfilled',
   FetchSubjectListFailed = 'fetchSubjectListFailed',
@@ -24,9 +19,6 @@ export enum ActionType {
 }
 
 export type Action =
-  | { type: ActionType.SetUserPending }
-  | { type: ActionType.SetUserLoggedOut }
-  | { type: ActionType.SetUserFulfilled; payload: User }
   | { type: ActionType.FetchSubjectListPending }
   | { type: ActionType.FetchSubjectListFailed }
   | {
@@ -44,9 +36,6 @@ export type Action =
   | {
       type: ActionType.SetRoutesFulfilled
       payload: ServicePortalRoute[]
-    }
-  | {
-      type: ActionType.SetUserLoggingOut
     }
   | {
       type: ActionType.SetModulesList
