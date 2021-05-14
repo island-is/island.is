@@ -15,13 +15,13 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 
-import { IcelandicNameInputs } from '../../types'
+import { IcelandicNameType } from '../../types'
 import { NameStatusStrings, NameTypeStrings } from '../../constants'
 
 interface PropTypes {
   closeModal: () => void
-  onSubmit: (formState: IcelandicNameInputs) => Promise<void>
-  nameData?: IcelandicNameInputs
+  onSubmit: (formState: IcelandicNameType) => Promise<void>
+  nameData?: IcelandicNameType
 }
 
 export const nameTypeOptions = Object.keys(NameTypeStrings).map((x: string) => {
@@ -42,7 +42,7 @@ export const statusTypeOptions = Object.keys(NameStatusStrings).map(
 
 const spacing = 3
 
-const initialNameData: IcelandicNameInputs = {
+const initialNameData: IcelandicNameType = {
   icelandicName: '',
   type: '',
   status: '',
@@ -58,7 +58,7 @@ const EditForm: React.FC<PropTypes> = ({
   nameData = initialNameData,
 }) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false)
-  const hookFormData = useForm<IcelandicNameInputs>({
+  const hookFormData = useForm<IcelandicNameType>({
     mode: 'all',
     reValidateMode: 'onChange',
     defaultValues: nameData,
