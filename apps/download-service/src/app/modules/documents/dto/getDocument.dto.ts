@@ -8,5 +8,5 @@ export class GetDocumentDto {
 
   @IsJWT()
   @ApiProperty()
-  readonly token!: string
+  readonly __accessToken!: string
 }

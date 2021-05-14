@@ -36,8 +36,8 @@ describe('answerValidators', () => {
     id: '',
     modified: new Date(),
     state: '',
-    status: ApplicationStatus.IN_PROGRESS,
     typeId: ApplicationTypes.EXAMPLE,
+    status: ApplicationStatus.IN_PROGRESS,
   }
 
   it('should return error when DOB is undefined', () => {
