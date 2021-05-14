@@ -94,6 +94,9 @@
     "api-domains-education": {
       "tags": []
     },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -176,6 +179,9 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
+    "application-templates-joint-custody-agreement": {
+      "tags": []
+    },
     "application-templates-login-service": {
       "tags": []
     },
@@ -220,6 +226,9 @@
       "tags": []
     },
     "auth-nest-tools": {
+      "tags": []
+    },
+    "auth-react": {
       "tags": []
     },
     "cache": {

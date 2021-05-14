@@ -58,7 +58,7 @@ export class FundingGovernmentProjectsService {
   ): Promise<FundingAttachment[]> {
     const attachments = getValueViaPath(
       application.answers,
-      'attachments',
+      'project.attachments',
     ) as Array<{ key: string; name: string }>
     const hasattachments = attachments && attachments?.length > 0
     if (!hasattachments) {
@@ -70,7 +70,10 @@ export class FundingGovernmentProjectsService {
         const url = (application.attachments as {
           [key: string]: string
         })[key]
-        const signedUrl = await this.fileStorageService.generateSignedUrl(url)
+        const signedUrl = await this.fileStorageService.generateSignedUrl(
+          url,
+          key,
+        )
         return { name, url: signedUrl }
       }),
     )

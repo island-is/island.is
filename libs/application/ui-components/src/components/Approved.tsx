@@ -10,6 +10,8 @@ const Approved: FC<Props> = ({ title, subtitle }) => {
   return (
     <Box
       padding={2}
+      marginTop={4}
+      marginBottom={6}
       background="mint100"
       borderColor="mint200"
       border="standard"
@@ -17,7 +19,7 @@ const Approved: FC<Props> = ({ title, subtitle }) => {
     >
       <Box display="flex" alignItems="center">
         <Box marginRight={2}>
-          <Icon icon="checkmarkCircle" color="blue400" size="large" />
+          <Icon icon="checkmarkCircle" color="mint600" size="large" />
         </Box>
         <Text variant="h4">{title}</Text>
       </Box>

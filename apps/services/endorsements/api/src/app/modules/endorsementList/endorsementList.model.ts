@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -12,12 +13,13 @@ import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata
 import { ValidationRuleDto } from './dto/validationRule.dto'
 
 export enum EndorsementTag {
-  NORDAUSTURKJORDAEMI = 'nordausturkjordaemi',
-  NORDVESTURKJORDAEMI = 'nordvesturkjordaemi',
-  REYKJAVIKURKJORDAEMI_NORDUR = 'reykjavikurkjordaemiNordur',
-  REYKJAVIKURKJORDAEMI_SUDUR = 'reykjavikurkjordaemiSudur',
-  SUDURKJORDAEMI = 'sudurkjordaemi',
-  SUDVESTURKJORDAEMI = 'sudvesturkjordaemi',
+  PARTY_LETTER_2021 = 'partyLetter2021',
+  PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021 = 'partyApplicationNordausturkjordaemi2021',
+  PARTY_APPLICATION_NORDVESTURKJORDAEMI_2021 = 'partyApplicationNordvesturkjordaemi2021',
+  PARTY_APPLICATION_REYKJAVIKURKJORDAEMINORDUR_2021 = 'partyApplicationReykjavikurkjordaemiNordur2021',
+  PARTY_APPLICATION_REYKJAVIKURKJORDAEMISUDUR_2021 = 'partyApplicationReykjavikurkjordaemiSudur2021',
+  PARTY_APPLICATION_SUDURKJORDAEMI_2021 = 'partyApplicationSudurkjordaemi2021',
+  PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021 = 'partyApplicationSudvesturkjordaemi2021',
 }
 
 @Table({
@@ -37,11 +39,19 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   title!: string
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   @Column({
     type: DataType.TEXT,
   })
   description!: string | null
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   @Column({
     type: DataType.DATE,
   })
@@ -70,11 +80,17 @@ export class EndorsementList extends Model<EndorsementList> {
   owner!: string
 
   @HasMany(() => Endorsement)
-  readonly endorsements!: Endorsement[]
+  readonly endorsements?: Endorsement[]
 
+  @ApiProperty({
+    type: String,
+  })
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty({
+    type: String,
+  })
   @UpdatedAt
   readonly modified!: Date
 }

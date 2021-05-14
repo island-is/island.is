@@ -58,7 +58,7 @@ export const CreateCaseMutation = gql`
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
@@ -90,16 +90,6 @@ export const CreateCaseMutation = gql`
       parentCase {
         id
       }
-    }
-  }
-`
-
-export const CreateCustodyCourtCaseMutation = gql`
-  mutation CreateCustodyCourtCaseMutation(
-    $input: CreateCustodyCourtCaseInput!
-  ) {
-    createCustodyCourtCase(input: $input) {
-      courtCaseNumber
     }
   }
 `
@@ -174,7 +164,7 @@ export const ExtendCaseMutation = gql`
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
