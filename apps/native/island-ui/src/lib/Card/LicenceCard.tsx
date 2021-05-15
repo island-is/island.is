@@ -97,7 +97,7 @@ export function LicenceCard({ title, type, agencyLogo, nativeID, style }: Licenc
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={isVerifiedLogo} style={{ width: 13, height: 13, marginRight: 8 }} />
+          <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
             Í gildi
           </Validation>

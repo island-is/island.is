@@ -1,40 +1,30 @@
-import { useQuery } from '@apollo/client'
-import {
-  Badge,
-  Close,
-  Heading,
-  NotificationCard,
-  StatusCard,
-  WelcomeCard,
-} from '@island.is/island-ui-native'
-import React from 'react'
+import { useQuery } from '@apollo/client';
+import { Badge, Close, Heading, NotificationCard, StatusCard, WelcomeCard } from '@island.is/island-ui-native';
+import React from 'react';
 import {
   Platform,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-} from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useTheme } from 'styled-components/native'
-import timeOutlineIcon from '../../assets/icons/time-outline.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
-import logo from '../../assets/logo/logo-64w.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { ViewPager } from '../../components/view-pager/view-pager'
-import { useScreenOptions } from '../../contexts/theme-provider'
-import { client } from '../../graphql/client'
+  SafeAreaView, ScrollView, TouchableOpacity, useWindowDimensions
+} from 'react-native';
+import { NavigationFunctionComponent } from 'react-native-navigation';
+import { useTheme } from 'styled-components/native';
+import timeOutlineIcon from '../../assets/icons/time-outline.png';
+import illustrationSrc from '../../assets/illustrations/digital-services-m2.png';
+import logo from '../../assets/logo/logo-64w.png';
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
+import { ViewPager } from '../../components/view-pager/view-pager';
+import { useScreenOptions } from '../../contexts/theme-provider';
+import { client } from '../../graphql/client';
 import {
   ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY,
-} from '../../graphql/queries/list-notifications.query'
-import { authStore } from '../../stores/auth-store'
-import { useNotificationsStore } from '../../stores/notifications-store'
-import { usePreferencesStore } from '../../stores/preferences-store'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
-import { navigateToNotification } from '../../utils/deep-linking'
-import { useIntl } from '../../utils/intl'
-import { testIDs } from '../../utils/test-ids'
+  LIST_NOTIFICATIONS_QUERY
+} from '../../graphql/queries/list-notifications.query';
+import { authStore } from '../../stores/auth-store';
+import { useNotificationsStore } from '../../stores/notifications-store';
+import { usePreferencesStore } from '../../stores/preferences-store';
+import { createNavigationTitle } from '../../utils/create-navigation-title';
+import { navigateToNotification } from '../../utils/deep-linking';
+import { useIntl } from '../../utils/intl';
+import { testIDs } from '../../utils/test-ids';
 
 const { title, useNavigationTitle } = createNavigationTitle('home.screenTitle')
 
@@ -156,7 +146,6 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
             ))}
         </SafeAreaView>
       </ScrollView>
-      {/* <BubbleSafeArea /> */}
       <BottomTabsIndicator index={1} total={3} />
     </>
   )
