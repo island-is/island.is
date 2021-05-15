@@ -1,10 +1,9 @@
-import create, { State } from 'zustand/vanilla'
-import createUse from 'zustand'
-import { config } from './config'
-import { INotification } from '../graphql/fragments/notification.fragment'
-import { notificationsStore } from '../stores/notifications-store'
-import { openBrowser } from './rn-island'
 import { Navigation } from 'react-native-navigation'
+import createUse from 'zustand'
+import create, { State } from 'zustand/vanilla'
+import { notificationsStore } from '../stores/notifications-store'
+import { config } from './config'
+import { openBrowser } from './rn-island'
 
 export type RouteCallbackArgs =
   | boolean
@@ -168,12 +167,15 @@ export function navigateTo(url: string, extraProps: any = {}) {
  * @param notification Notification object, requires `id` and an optional `link`
  * @param componentId use specific componentId to open web browser in
  */
-export function navigateToNotification(notification: { id: string; link?: string }, componentId?: string) {
-  const { id, link } = notification;
+export function navigateToNotification(
+  notification: { id: string; link?: string },
+  componentId?: string,
+) {
+  const { id, link } = notification
   // mark notification as read
   if (id) {
-    notificationsStore.getState().setRead(id);
-    const didNavigate = navigateTo(link ?? `/notification/${id}`);
+    notificationsStore.getState().setRead(id)
+    const didNavigate = navigateTo(link ?? `/notification/${id}`)
     if (!didNavigate && link) {
       if (!componentId) {
         // Use home tab for browser
@@ -183,7 +185,7 @@ export function navigateToNotification(notification: { id: string; link?: string
           },
         })
       }
-      openBrowser(link, componentId ?? 'HOME_SCREEN');
+      openBrowser(link, componentId ?? 'HOME_SCREEN')
     }
   }
 }

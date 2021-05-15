@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from 'react'
-import { Dimensions, LayoutChangeEvent, Animated } from 'react-native'
+import { theme } from '@island.is/island-ui/theme'
+import React, { useEffect, useRef } from 'react'
+import { Animated, Dimensions, LayoutChangeEvent, Platform } from 'react-native'
 import styled from 'styled-components/native'
 
 interface SkeletonProps {
@@ -10,7 +11,11 @@ interface SkeletonProps {
 const Host = styled.View`
   height: 20px;
   width: 100%;
-  background-color: ${(props) => props.theme.color.blue100};
+  background-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade100
+      : props.theme.color.dark100};
+  opacity: 0.75;
   overflow: hidden;
 `
 
@@ -20,8 +25,15 @@ const Swoosh = styled(Animated.View)`
   left: 0px;
   height: 20px;
   width: 50%;
-  background-color: ${(props) => props.theme.color.blue100};
-  box-shadow: 0px 25px 25px #d7e2f3;
+  background-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade100
+      : props.theme.color.dark100};
+  box-shadow: 0px 25px 25px
+    ${(props) =>
+      props.theme.isDark
+        ? props.theme.shade.shade200
+        : props.theme.color.dark200};
 `
 
 export function Skeleton(props: SkeletonProps) {
@@ -44,7 +56,7 @@ export function Skeleton(props: SkeletonProps) {
   }
 
   const onLayout = (e: LayoutChangeEvent) => {
-    aw.current = e.nativeEvent.layout.width;
+    aw.current = e.nativeEvent.layout.width
   }
 
   useEffect(() => {
@@ -53,14 +65,20 @@ export function Skeleton(props: SkeletonProps) {
     } else if (ar.current) {
       ar.current.stop()
     }
-  }, [props.active]);
+  }, [props.active])
 
   return (
-    <Host
-      onLayout={onLayout}
-    >
+    <Host onLayout={onLayout}>
       <Swoosh
-        style={{ transform: [{ translateX: av.current }, { rotate: '5deg' }] }}
+        style={{
+          transform: [{ translateX: av.current }, { rotate: '5deg' }],
+          ...Platform.select({
+            android: {
+              elevation: 50,
+              shadowColor: theme.color.dark300,
+            },
+          }),
+        }}
       />
     </Host>
   )

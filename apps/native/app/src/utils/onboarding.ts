@@ -1,17 +1,23 @@
+import {
+  hasHardwareAsync,
+  isEnrolledAsync,
+  supportedAuthenticationTypesAsync,
+} from 'expo-local-authentication'
 import { Navigation } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
+import { ComponentRegistry } from './component-registry'
 import { getMainRoot } from './lifecycle/get-app-root'
-import { hasHardwareAsync, isEnrolledAsync, supportedAuthenticationTypesAsync } from 'expo-local-authentication';
-import { ComponentRegistry } from './navigation-registry'
 
 export function isOnboarded() {
   const {
     hasOnboardedNotifications,
     hasOnboardedBiometrics,
     hasOnboardedPinCode,
-  } = preferencesStore.getState();
+  } = preferencesStore.getState()
 
-  return hasOnboardedBiometrics && hasOnboardedNotifications && hasOnboardedPinCode;
+  return (
+    hasOnboardedBiometrics && hasOnboardedNotifications && hasOnboardedPinCode
+  )
 }
 
 export async function getOnboardingScreens() {
@@ -31,12 +37,12 @@ export async function getOnboardingScreens() {
 
   // show set pin code screen
   if (!hasOnboardedPinCode) {
-    return screens;
+    return screens
   }
 
-  const hasHardware = await hasHardwareAsync();
-  const isEnrolled = await isEnrolledAsync();
-  const supportedAuthenticationTypes = await supportedAuthenticationTypesAsync();
+  const hasHardware = await hasHardwareAsync()
+  const isEnrolled = await isEnrolledAsync()
+  const supportedAuthenticationTypes = await supportedAuthenticationTypesAsync()
 
   if (hasHardware) {
     // biometrics screen
@@ -47,14 +53,14 @@ export async function getOnboardingScreens() {
         passProps: {
           hasHardware,
           isEnrolled,
-          supportedAuthenticationTypes
-        }
+          supportedAuthenticationTypes,
+        },
       },
     })
 
     // show enable biometrics screen
     if (!hasOnboardedBiometrics) {
-      return screens;
+      return screens
     }
   }
 
@@ -67,10 +73,10 @@ export async function getOnboardingScreens() {
 
   // show notifications accept screen
   if (!hasOnboardedNotifications) {
-    return screens;
+    return screens
   }
 
-  return [];
+  return []
 }
 
 export async function nextOnboardingStep() {
@@ -82,10 +88,10 @@ export async function nextOnboardingStep() {
   }
 
   if (screens.length === 1) {
-    Navigation.push('LOGIN_SCREEN', screens[0]);
-    return;
+    Navigation.push('LOGIN_SCREEN', screens[0])
+    return
   }
 
-  const[currentScreen, nextScreen] = screens.slice(-2);
-  Navigation.push(currentScreen.component.id, nextScreen);
+  const [currentScreen, nextScreen] = screens.slice(-2)
+  Navigation.push(currentScreen.component.id, nextScreen)
 }

@@ -10,7 +10,13 @@ const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Color
   left: 0;
   right: 0;
   padding: 20px 18px;
-  background-color: ${(props) => theme.color[props.backgroundColor]};
+  background-color: ${(props) => {
+    const value = theme.color[props.backgroundColor];
+    if (props.theme.isDark && value === props.theme.color.blue100) {
+      return props.theme.color.dark400;
+    }
+    return value;
+  }};
   z-index: 10;
 `;
 
@@ -22,14 +28,14 @@ const Icon = styled.View`
 const Title = styled.Text`
   font-size: 16px;
   font-weight: ${theme.typography.semiBold};
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
   line-height: 24px;
 `;
 
 const Description = styled.Text`
-  font-size: 12px;
-  color: ${theme.color.dark400};
-  line-height: 16px;
+  font-size: 13px;
+  color: ${props => props.theme.shade.foreground};
+  line-height: 17px;
 `;
 
 const Content = styled.View`

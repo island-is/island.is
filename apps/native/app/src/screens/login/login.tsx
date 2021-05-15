@@ -1,40 +1,40 @@
-import { Button, Heading } from '@island.is/island-ui-native'
+import { Button } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
-  SafeAreaView,
   Image,
-  View,
-  Text,
-  TouchableOpacity,
   NativeEventEmitter,
   NativeModules,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { FormattedMessage, useIntl } from '../../utils/intl';
 import styled from 'styled-components/native'
-import { nextOnboardingStep } from '../../utils/onboarding'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
-import { testIDs } from '../../utils/test-ids'
 import { preferencesStore } from '../../stores/preferences-store'
-import { openBrowser } from '../../utils/rn-island';
+import { FormattedMessage, useIntl } from '../../utils/intl'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { openBrowser } from '../../utils/rn-island'
+import { testIDs } from '../../utils/test-ids'
 
 const Title = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 26px;
   line-height: 32px;
   text-align: center;
-  color: ${props => props.theme.color.dark400};
+  color: ${(props) => props.theme.color.dark400};
   margin-top: 32px;
-`;
+`
 
 const Illustration = styled.SafeAreaView`
   background-color: ${(props) => props.theme.color.blue100};
   height: 330px;
+  max-height: 35%;
   align-items: center;
-  justify-content: center;
 `
 
 const BottomRow = styled.View`
@@ -87,9 +87,12 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
       }
     } catch (err) {
       if (err.message.indexOf('Connection error') >= 0) {
-        Alert.alert('Villa kom upp', '\nInnskráningarþjónustan virðist liggja niðri í augnablikinu.\n\nVinsamlegast reynið aftur síðar.');
+        Alert.alert(
+          'Villa kom upp',
+          '\nInnskráningarþjónustan virðist liggja niðri í augnablikinu.\n\nVinsamlegast reynið aftur síðar.',
+        )
       } else {
-        console.warn(err);
+        console.warn(err)
       }
     }
   }
@@ -100,15 +103,23 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   }
 
   const onNeedHelpPress = () => {
-    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is';
-    openBrowser(helpDeskUrl, componentId);
+    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
+    openBrowser(helpDeskUrl, componentId)
   }
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_LOGIN}>
+    <View
+      style={{ flex: 1, backgroundColor: 'white' }}
+      testID={testIDs.SCREEN_LOGIN}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <View
-          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 32 }}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: 32,
+          }}
         >
           <Image
             source={logo}
@@ -150,7 +161,8 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
       <Illustration>
         <Image
           source={illustrationSrc}
-          style={{ marginTop: -16, marginLeft: 8 }}
+          style={{ marginTop: -20, marginBottom: -40, marginRight: -60 }}
+          resizeMode="contain"
         />
       </Illustration>
     </View>
@@ -161,5 +173,9 @@ LoginScreen.options = {
   popGesture: false,
   topBar: {
     visible: false,
+  },
+  layout: {
+    backgroundColor: 'white',
+    componentBackgroundColor: 'white',
   },
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image } from 'react-native'
+import { Image, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
@@ -37,6 +37,7 @@ const NumButtonTouchable = styled.TouchableHighlight`
 const NumButtonText = styled.Text<{ color: string }>`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 32px;
+  line-height: 38px;
   color: ${(props) => props.color};
 `
 

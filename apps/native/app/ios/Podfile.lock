@@ -7,7 +7,7 @@ PODS:
   - Base64 (1.1.2)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
-  - CodePush (7.0.0):
+  - CodePush (7.0.1):
     - Base64 (~> 1.1)
     - JWT (~> 3.0.0-beta.12)
     - React-Core
@@ -672,7 +672,7 @@ SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CodePush: 4e72e70067c1442ddfe25e3e53b23a6fa573f5c6
+  CodePush: 9bb93f52a44ee80b72739d89dead9c7e86c3bd3a
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: e3a06b6d81f94e526f029a57b2121d6cde044004
   EXConstants: 07a3effb73d2f73b61079703f810bbdd5364a1c5

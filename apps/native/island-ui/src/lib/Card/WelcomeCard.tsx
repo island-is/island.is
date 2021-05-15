@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
 import { ImageSourcePropType } from 'react-native';
 
@@ -45,23 +45,35 @@ const Description = styled.Text`
   padding: 15px 27px 0;
   font-size: 16px;
   line-height: 24px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 
   text-align: center;
+`;
+
+const Overlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
 `;
 
 interface CardProps {
   number: string;
   description?: string;
   backgroundColor?: string;
-  imgSrc?: any;
+  imgSrc?: ImageSourcePropType;
   style?: any;
 }
 
-export function Card({ number = '1', description, imgSrc, backgroundColor = '#F8F5FA', style }: CardProps) {
+export function WelcomeCard({ number = '1', description, imgSrc, backgroundColor, style }: CardProps) {
+  const theme = useTheme();
+  const color = backgroundColor ?? theme.color.purple100;
   return (
-    <Host color={backgroundColor} style={style}>
-      <Image source={imgSrc} />
+    <Host color={color} style={style}>
+      {imgSrc && <Image source={imgSrc} />}
+      {theme.isDark && <Overlay />}
       <TextWrap>
         <Number>
           {number}

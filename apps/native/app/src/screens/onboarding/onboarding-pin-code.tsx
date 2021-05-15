@@ -1,19 +1,19 @@
-import { SafeAreaView, View, Text, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { Image, SafeAreaView, View } from 'react-native'
+import Keychain from 'react-native-keychain'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
-import Keychain from 'react-native-keychain'
-import { testIDs } from '../../utils/test-ids'
 import logo from '../../assets/logo/logo-64w.png'
-import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
-import { ComponentRegistry } from '../../utils/navigation-registry'
+import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
 import { preferencesStore } from '../../stores/preferences-store'
-import { nextOnboardingStep } from '../../utils/onboarding'
+import { ComponentRegistry } from '../../utils/component-registry'
 import { FormattedMessage, useIntl } from '../../utils/intl'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled.View`
   flex: 1;
@@ -62,10 +62,10 @@ const CancelText = styled.Text`
 export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
   confirmPin?: string
 }> = ({ componentId, confirmPin }) => {
-  const intl = useIntl();
+  const intl = useIntl()
   const [code, setCode] = useState('')
   const [invalid, setInvalid] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('')
 
   const onPinInput = (char: string) => {
     setCode(
@@ -96,7 +96,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           })
         } else {
           setInvalid(true)
-          setErrorMessage(intl.formatMessage({ id: 'onboarding.pinCode.nonMatchingPinCodes' }));
+          setErrorMessage(
+            intl.formatMessage({
+              id: 'onboarding.pinCode.nonMatchingPinCodes',
+            }),
+          )
           setTimeout(() => {
             setInvalid(false)
             setCode('')
@@ -116,7 +120,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
         }, 110)
       }
     } else if (code.length >= 1) {
-      setErrorMessage('');
+      setErrorMessage('')
     }
   }, [code])
 
@@ -141,13 +145,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           <Title>
             {confirmPin ? (
               <FormattedMessage id="onboarding.pinCode.confirmPin" />
-            ):(
-            <FormattedMessage id="onboarding.pinCode.enterPin" />
+            ) : (
+              <FormattedMessage id="onboarding.pinCode.enterPin" />
             )}
           </Title>
-          <Subtitle>
-            {errorMessage}
-          </Subtitle>
+          <Subtitle>{errorMessage}</Subtitle>
         </View>
         <Center>
           <VisualizedPinCode

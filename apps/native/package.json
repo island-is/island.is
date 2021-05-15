@@ -23,7 +23,7 @@
     "react-native-code-push": "7.0.1",
     "react-native-dialogs": "1.1.1",
     "react-native-keyboard-manager": "6.5.4-0",
-    "react-native-keychain": "6.2.0",
+    "react-native-keychain": "7.0.0",
     "react-native-localize": "2.0.2",
     "react-native-navigation": "7.11.3",
     "react-native-navigation-hooks": "6.3.0",

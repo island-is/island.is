@@ -9,13 +9,13 @@ import { Image } from 'react-native';
 const Host = styled.View`
   border-radius: ${theme.border.radius.large};
   border-width: 1px;
-  border-color: ${props => props.theme.color.blue200};
+  border-color: ${props => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue200};
   margin-bottom: 16px;
 `;
 
 const ActionsContainer = styled.View`
   border-top-width: 1px;
-  border-top-color: ${props => props.theme.color.blue200};
+  border-top-color: ${props => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue200};
   flex-direction: row;
 `;
 
@@ -53,14 +53,14 @@ const Title = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 13px;
   line-height: 17px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Description = styled.Text`
   font-family: 'IBMPlexSans-Light';
   font-size: 16px;
   line-height: 24px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Content = styled.View`
@@ -78,7 +78,7 @@ const DateText = styled.Text`
   font-family: 'IBMPlexSans-Light';
   font-size: 13px;
   line-height: 17px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Row = styled.View`
@@ -90,7 +90,7 @@ const Row = styled.View`
 const Bar = styled.View`
   height: 12px;
   overflow: hidden;
-  background-color: ${theme.color.roseTinted200};
+  background-color: ${props => props.theme.isDark ? theme.color.roseTinted600 : theme.color.roseTinted200};
   border-radius: 6px;
   padding: 2px;
 

@@ -73,17 +73,17 @@
 		<string>IBMPlexSans-Medium.ttf</string>
 		<string>IBMPlexSans-MediumItalic.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
-  <key>UIBackgroundModes</key>
-  <array>
-    <string>fetch</string>
-    <string>remote-notification</string>
-  </array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>

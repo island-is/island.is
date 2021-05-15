@@ -2,10 +2,9 @@ import { theme } from '@island.is/island-ui/theme'
 import React, { useEffect, useRef } from 'react'
 import { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { Text } from 'react-native';
-import { Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { Animated, View } from 'react-native'
-import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from 'styled-components';
 import { uiStore } from '../../stores/ui-store'
 
 export function BottomTabsIndicator({
@@ -15,18 +14,21 @@ export function BottomTabsIndicator({
   index: number
   total: number
 }) {
+  const theme = useTheme();
   const win = useWindowDimensions();
   const [first, setFirst] = useState(true);
-  const [{ insets, selectedTab, unselectedTab }, set] = useState(uiStore.getState());
+  const [{ selectedTab, unselectedTab }, set] = useState(uiStore.getState());
+
+  const [width, setWidth] = useState(win.width);
 
   const p = 1.0;
   const h = (1.0 - p) / 2;
   const av = useRef(new Animated.Value(index)).current;
   const landscape = win.width > win.height;
-  const insetLeft = Math.max(insets.left, landscape ? 96 : 16);
-  const insetRight = Math.max(insets.right, landscape ? 96 : 16);
-  const frameWidth = (win.width - insetLeft - insetRight);
-  const width = frameWidth / total;
+  // const insetLeft = Math.max(insets.left, landscape ? 96 : 16);
+  // const insetRight = Math.max(insets.right, landscape ? 96 : 16);
+  // const frameWidth = (win.width);
+  const tabWidth = width / total;
 
   useEffect(() => {
     const cancel = uiStore.subscribe((state: any) => {
@@ -64,33 +66,40 @@ export function BottomTabsIndicator({
         left: 0,
         right: 0,
         height: 30,
-        backgroundColor: 'white',
-        shadowColor: 'rgba(0, 97, 255, 1)',
+        zIndex: 1000,
+        shadowColor: theme.color.blue400,
         shadowOffset: {
           width: 0,
           height: -26,
         },
         shadowOpacity: 0.08,
         shadowRadius: 30.0,
+        backgroundColor: theme.shade.background,
       }}
     >
-      <View style={{ marginLeft: insetLeft, marginRight: insetRight }}>
-        <Animated.View
-          style={
-            {
-              width: width * p,
-              height: 1,
-              backgroundColor: theme.color.blue400,
-              transform: [{
-                translateX: av.interpolate({
-                  inputRange: [0, 1, 2],
-                  outputRange: [0, (width * 4 * h) + (width * p), (width * 8 * h) + (width * p * 2)]
-                })
-              }]
+      <SafeAreaView>
+        <View
+          onLayout={e => {
+            setWidth(e.nativeEvent.layout.width);
+          }}
+        >
+          <Animated.View
+            style={
+              {
+                width: tabWidth * p,
+                height: 1,
+                backgroundColor: theme.color.blue400,
+                transform: [{
+                  translateX: av.interpolate({
+                    inputRange: [0, 1, 2],
+                    outputRange: [0, (tabWidth * 4 * h) + (tabWidth * p), (tabWidth * 8 * h) + (tabWidth * p * 2)]
+                  })
+                }]
+              }
             }
-          }
-        />
-      </View>
+          />
+        </View>
+      </SafeAreaView>
     </View>
   )
 }

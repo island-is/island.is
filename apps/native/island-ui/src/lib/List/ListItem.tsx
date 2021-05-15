@@ -8,7 +8,7 @@ const Host = styled.SafeAreaView`
   margin-right: 16px;
   flex-direction: row;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.color.blue100};
+  border-bottom-color: ${(props) => props.theme.isDark ? props.theme.shade.shade100 : props.theme.color.blue100};
 `
 
 const Icon = styled.View`
@@ -47,7 +47,7 @@ const TitleText = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 13px;
   line-height: 17px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   flex: 1;
 `
 
@@ -61,7 +61,7 @@ const DateText = styled.Text<{ unread?: boolean }>`
     props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
   font-size: 13px;
   line-height: 17px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
 `
 
 const Dot = styled.View`
@@ -76,7 +76,7 @@ const Message = styled.Text`
   font-family: 'IBMPlexSans-Light';
   font-size: 16px;
   line-height: 24px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   padding-bottom: 8px;
 `;
 
@@ -98,9 +98,9 @@ const Button = styled.TouchableHighlight`
 
 const ButtonText = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
-  line-height: 16px;
-  color: #fff;
+  font-size: 13px;
+  line-height: 17px;
+  color: ${(props) => props.theme.shade.foreground};
 `;
 
 interface ListItemAction {
@@ -122,7 +122,6 @@ export function ListItem({ title, subtitle, date, icon, actions, unread = false 
   return (
     <Host>
       {icon ? <Icon>
-        {/* <Logo source={icon} /> */}
         {icon}
       </Icon> : null}
       <Content>

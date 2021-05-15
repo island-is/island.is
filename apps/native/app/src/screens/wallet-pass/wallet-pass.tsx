@@ -1,40 +1,17 @@
-import React from 'react'
-import { LicenceCard } from '@island.is/island-ui-native'
-import { SafeAreaView, Text, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
 import { gql, useQuery } from '@apollo/client'
-import { client } from '../../graphql/client'
-import isVerifiedLogo from '../../assets/icons/is-verified.png'
-import agencyLogo from '../../assets/temp/agency-logo.png'
-import { LicenseType } from '../../types/license-type'
+import { LicenceCard } from '@island.is/island-ui-native'
+import React from 'react'
+import { Platform, SafeAreaView, View } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled from 'styled-components/native'
+import agencyLogo from '../../assets/temp/agency-logo.png'
 import { Skeleton } from '../../components/skeleton/skeleton'
-import PassKit, { AddPassButton } from 'react-native-passkit-wallet';
+import { client } from '../../graphql/client'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
 
-function mapLicenseColor(type: LicenseType) {
-  let backgroundColor = '#eeeeee'
-  if (type === LicenseType.DRIVERS_LICENSE) {
-    backgroundColor = '#f5e4ec'
-  }
-  if (type === LicenseType.IDENTIDY_CARD) {
-    backgroundColor = '#fff7e7'
-  }
-  if (type === LicenseType.PASSPORT) {
-    backgroundColor = '#ddefff'
-  }
-  if (type === LicenseType.WEAPON_LICENSE) {
-    backgroundColor = '#fffce0'
-  }
-  return backgroundColor
-}
-
 const FieldHost = styled.View<{ compact?: boolean }>`
-  ${props => props.compact ? '' : 'flex: 1;'}
-  border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.color.blue100};
-  /* margin-left: ${props => props.compact ? 8 : 16}px;
-  margin-right: ${props => props.compact ? 8 : 16}px; */
+  ${(props) => (props.compact ? '' : 'flex: 1;')}
 `
 
 const FieldContent = styled.View`
@@ -45,15 +22,15 @@ const FieldLabel = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 13px;
   line-height: 17px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   margin-bottom: 8px;
 `
 
-const FieldValue = styled.Text<{ size?: 'large' | 'small'}>`
+const FieldValue = styled.Text<{ size?: 'large' | 'small' }>`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: ${props => props.size === 'large' ? 20 : 16}px;
-  line-height: ${props => props.size === 'large' ? 26 : 20}px;
-  color: ${(props) => props.theme.color.dark400};
+  font-size: ${(props) => (props.size === 'large' ? 20 : 16)}px;
+  line-height: ${(props) => (props.size === 'large' ? 26 : 20)}px;
+  color: ${(props) => props.theme.shade.foreground};
 `
 
 const FieldRow = styled.View<{ alignLeft?: boolean }>`
@@ -65,59 +42,74 @@ const FieldRow = styled.View<{ alignLeft?: boolean }>`
 const FieldGroup = styled.View`
   margin-top: 24px;
   padding-bottom: 4px;
-  border-bottom-color: ${props => props.theme.color.blue200};
+  border-bottom-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade500
+      : props.theme.color.blue200};
   border-bottom-width: 1px;
-`;
+`
 
 interface FieldCardProps {
-  code?: string;
-  title: string;
-  children: React.ReactNode;
+  code?: string
+  title: string
+  children: React.ReactNode
 }
 
 const FieldCardHost = styled.View`
   border-width: 1px;
-  border-color: ${props => props.theme.color.blue200};
+  border-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade500
+      : props.theme.color.blue200};
   border-radius: 16px;
   margin-top: 8px;
   margin-bottom: 8px;
-`;
+`
 
 const FieldCardHeader = styled.View`
   flex-direction: row;
   border-bottom-width: 1px;
-  border-bottom-color: ${props => props.theme.color.blue200};
+  border-bottom-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade500
+      : props.theme.color.blue200};
   padding: 16px;
-`;
+`
 
 const FieldCardHeaderText = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 16px;
   line-height: 20px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   padding-right: 4px;
-`;
+`
 
 function FieldCard(props: FieldCardProps) {
   return (
     <FieldCardHost>
       <FieldCardHeader>
-        <FieldCardHeaderText style={{ fontFamily: 'IBMPlexSans-Bold' }}>{props.code}</FieldCardHeaderText>
+        <FieldCardHeaderText style={{ fontFamily: 'IBMPlexSans-Bold' }}>
+          {props.code}
+        </FieldCardHeaderText>
         <FieldCardHeaderText>{props.title}</FieldCardHeaderText>
       </FieldCardHeader>
       <View style={{ padding: 16, paddingBottom: 0 }}>{props.children}</View>
     </FieldCardHost>
-  );
+  )
 }
 
 const Information = styled.ScrollView`
   flex: 1;
-  background-color: ${props => props.theme.color.blue100};
+  background-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade100
+      : props.theme.color.blue100};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   margin-top: -70px;
   padding-top: 70px;
-`;
+  z-index: 10;
+`
 
 function Field({
   label,
@@ -131,8 +123,8 @@ function Field({
   value?: string
   loading?: boolean
   compact?: boolean
-  size?: 'large' | 'small';
-  style?: any,
+  size?: 'large' | 'small'
+  style?: any
 }) {
   return (
     <FieldHost compact={compact} style={style}>
@@ -149,13 +141,14 @@ function Field({
 }
 
 // Create title options and hook to sync translated title message
-const { title, useNavigationTitle } = createNavigationTitle('wallet.screenTitle');
+const { title, useNavigationTitle } = createNavigationTitle(
+  'wallet.screenTitle',
+)
 
-export const WalletPassScreen: NavigationFunctionComponent<{ id: string; item?: any }> = ({
-  id,
-  item,
-  componentId,
-}) => {
+export const WalletPassScreen: NavigationFunctionComponent<{
+  id: string
+  item?: any
+}> = ({ id, item, componentId }) => {
   useNavigationTitle(componentId)
 
   const res = useQuery(
@@ -175,33 +168,30 @@ export const WalletPassScreen: NavigationFunctionComponent<{ id: string; item?: 
         id,
       },
     },
-  );
+  )
 
-  const data = res.data?.License ?? item;
+  const data = res.data?.License ?? item
 
   return (
-    <>
-      <SafeAreaView
-        style={{
-          marginTop: 16,
-          marginHorizontal: 16,
-          zIndex: 10,
-        }}
-      >
-        <LicenceCard
-          nativeID={`license-${id}_destination`}
-          title={data?.title}
-          icon={isVerifiedLogo}
-          backgroundColor={mapLicenseColor(data?.type)}
-          agencyLogo={agencyLogo}
-        />
-      </SafeAreaView>
+    <View style={{ flex: 1 }}>
+      <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
           <FieldGroup>
             <FieldRow>
-              <Field compact size="large" label="2. Eiginnafn" value="Svanur" style={{ marginRight: 8 }} />
-              <Field compact size="large" label="1. Kenninafn" value="Örn Svanberg" />
+              <Field
+                compact
+                size="large"
+                label="2. Eiginnafn"
+                value="Svanur"
+                style={{ marginRight: 8 }}
+              />
+              <Field
+                compact
+                size="large"
+                label="1. Kenninafn"
+                value="Örn Svanberg"
+              />
             </FieldRow>
             <Field label="4d. Kennitala" value="010171-3389" />
           </FieldGroup>
@@ -228,13 +218,47 @@ export const WalletPassScreen: NavigationFunctionComponent<{ id: string; item?: 
             </FieldCard>
           </View>
         </SafeAreaView>
+        <View style={{ height: 60 }} />
       </Information>
-      <AddPassButton
-        style={{ position: 'absolute', bottom: 24, left: 32, right: 32, zIndex: 100, height: 52 }}
-        addPassButtonStyle={PassKit.AddPassButtonStyle.black}
-        onPress={() => { console.log('onPress') }}
-      />
-    </>
+      <SafeAreaView
+        style={{
+          marginTop: 16,
+          marginHorizontal: 16,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+        }}
+      >
+        <LicenceCard
+          nativeID={`license-${id}_destination`}
+          title={data?.title}
+          type={data?.type}
+          agencyLogo={agencyLogo}
+        />
+      </SafeAreaView>
+      {Platform.OS === 'ios' && (
+        <SafeAreaView
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            left: 0,
+            right: 0,
+            marginHorizontal: 16,
+            zIndex: 100,
+          }}
+        >
+          <AddPassButton
+            style={{ height: 52 }}
+            addPassButtonStyle={PassKit.AddPassButtonStyle.black}
+            onPress={() => {
+              console.log('onPress')
+            }}
+          />
+        </SafeAreaView>
+      )}
+    </View>
   )
 }
 

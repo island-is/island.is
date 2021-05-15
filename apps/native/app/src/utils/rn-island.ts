@@ -1,7 +1,14 @@
-import { Linking } from 'react-native';
-import { Platform, NativeModules } from 'react-native';
+import { Linking, NativeModules, Platform } from 'react-native'
 
-const { RNIsland } = NativeModules;
+const { RNIsland } = NativeModules
+
+export function overrideUserInterfaceStyle(
+  uiStyle: 'dark' | 'light' | 'automatic',
+) {
+  if (Platform.OS === 'ios') {
+    return RNIsland.overrideUserInterfaceStyle(uiStyle)
+  }
+}
 
 export function openBrowser(url: string, componentId?: string) {
   if (Platform.OS === 'ios' && componentId) {
@@ -10,7 +17,7 @@ export function openBrowser(url: string, componentId?: string) {
       preferredBarTintColor: undefined,
       preferredControlTintColor: undefined,
       dismissButtonStyle: 'done',
-    });
+    })
   }
 
   // Fallback to default openURL
@@ -18,7 +25,7 @@ export function openBrowser(url: string, componentId?: string) {
     if (canOpen) {
       return Linking.openURL(url)
         .then(() => null)
-        .catch(() => null);
+        .catch(() => null)
     }
-  });
+  })
 }

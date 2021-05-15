@@ -2,8 +2,7 @@ import { Layout, OptionsTopBarButton } from 'react-native-navigation'
 import { getThemeWithPreferences } from '../../contexts/theme-provider'
 import { checkIsAuthenticated } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
-import { config } from '../config'
-import { ButtonRegistry, ComponentRegistry } from '../navigation-registry'
+import { ButtonRegistry, ComponentRegistry } from '../component-registry'
 import { getOnboardingScreens } from '../onboarding'
 import { testIDs } from '../test-ids'
 
@@ -14,7 +13,7 @@ import { testIDs } from '../test-ids'
 export async function getAppRoot(): Promise<Layout> {
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
-  const onboardingScreens = await getOnboardingScreens();
+  const onboardingScreens = await getOnboardingScreens()
   const isOnboarding = isAuthenticated && onboardingScreens.length > 0
 
   // Show login screen if not authenticated
@@ -35,19 +34,7 @@ export async function getAppRoot(): Promise<Layout> {
     }
   }
 
-  const { dev__useLockScreen } = preferencesStore.getState();
-
-  if (dev__useLockScreen === false) {
-    return getMainRoot()
-  }
-
-  // Show app lock screen if authenticated
-  return {
-    component: {
-      name: ComponentRegistry.AppLockScreen,
-      passProps: { isRoot: true, status: 'active' },
-    },
-  }
+  return getMainRoot()
 }
 
 /**
@@ -60,10 +47,6 @@ export function getMainRoot(): Layout {
     {
       id: ButtonRegistry.UserButton,
       testID: testIDs.TOPBAR_USER_BUTTON,
-      // component: {
-      //   id: ButtonRegistry.UserButton,
-      //   name: ComponentRegistry.NavigationBarButton,
-      // },
       icon: require('../../assets/icons/topbar-user.png'),
       disableIconTint: true,
       iconBackground: {
@@ -76,13 +59,6 @@ export function getMainRoot(): Layout {
     {
       id: ButtonRegistry.NotificationsButton,
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
-      // component: {
-      //   id: ButtonRegistry.NotificationsButton,
-      //   name: ComponentRegistry.NavigationBarButton,
-      //   passProps: {
-      //     buttonType: 'notifications',
-      //   },
-      // },
       icon: require('../../assets/icons/topbar-notifications.png'),
       disableIconTint: true,
       iconBackground: {
@@ -91,16 +67,8 @@ export function getMainRoot(): Layout {
         width: 32,
         height: 32,
       },
-      // text: 'Notifications',
-      // icon: require('../../assets/icons/topbar-notification.png'),
-      // disableIconTint: true,
-      // iconBackground: {
-      //   color: '#ffffff',
-      //   cornerRadius: 8,
-      // },
-
     },
-  ];
+  ]
 
   return {
     bottomTabs: {

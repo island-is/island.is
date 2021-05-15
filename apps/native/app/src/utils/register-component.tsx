@@ -1,11 +1,11 @@
 import React from 'react'
-import { NavigationProvider } from 'react-native-navigation-hooks'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { ThemeProvider } from '../contexts/theme-provider'
+import { NavigationProvider } from 'react-native-navigation-hooks'
 import { I18nProvider } from '../contexts/i18n-provider'
+import { ThemeProvider } from '../contexts/theme-provider'
 
 export function registerComponent(
   name: string,

@@ -1,19 +1,17 @@
-import React, { useCallback, useEffect } from 'react';
-import styled, { useTheme } from "styled-components/native";
-import { Animated } from 'react-native';
-import { useRef } from 'react';
-import { useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react'
+import { Animated } from 'react-native'
+import styled from 'styled-components/native'
 
 interface VisualizedPinCodeProps {
-  code: string;
-  invalid: boolean;
-  minChars?: number;
-  maxChars?: number;
+  code: string
+  invalid: boolean
+  minChars?: number
+  maxChars?: number
 }
 
 const Host = styled(Animated.View)`
   flex-direction: row;
-`;
+`
 
 const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
   position: absolute;
@@ -25,65 +23,96 @@ const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
 
   border-radius: 8px;
 
-  background-color: ${props => props.state === 'active' ? props.theme.color.blue400 : props.state === 'inactive' ? props.theme.color.blue100 : props.theme.color.red400};
-`;
+  background-color: ${(props) =>
+    props.state === 'active'
+      ? props.theme.color.blue400
+      : props.state === 'inactive'
+      ? props.theme.color.blue100
+      : props.theme.color.red400};
+  z-index: ${(props) =>
+    props.state === 'inactive' ? 2 : props.state === 'active' ? 3 : 4};
+`
 
 const DotGroup = styled.View`
   position: relative;
   width: 16px;
   height: 16px;
   margin: 0px 8px;
-`;
+`
 
-export function VisualizedPinCode({ code, invalid, minChars = 4, maxChars = 6 }: VisualizedPinCodeProps) {
-  const charsCount = Math.max(minChars, Math.min(maxChars, code.length));
-  const value = useRef(new Animated.Value(0));
-  const animation = useRef<Animated.CompositeAnimation>();
-  const colorAnimation = useRef<Animated.CompositeAnimation>();
+const animateX = (value: Animated.Value, toValue: number, tension: number) =>
+  Animated.spring(value, {
+    toValue,
+    useNativeDriver: true,
+    overshootClamping: true,
+    tension,
+  })
 
-  const opacityForError = useRef(new Animated.Value(0));
+export function VisualizedPinCode({
+  code,
+  invalid,
+  minChars = 4,
+  maxChars = 6,
+}: VisualizedPinCodeProps) {
+  const charsCount = Math.max(minChars, Math.min(maxChars, code.length))
+  const value = useRef(new Animated.Value(0))
+  const animation = useRef<Animated.CompositeAnimation>()
+  const colorAnimation = useRef<Animated.CompositeAnimation>()
+
+  const opacityForError = useRef(new Animated.Value(0))
   const colors = useRef(
-      Array.from({ length: maxChars })
-        .map((n, i) => new Animated.Value(i < code.length ? 1 : 0))
-    );
+    Array.from({ length: maxChars }).map(
+      (n, i) => new Animated.Value(i < code.length ? 1 : 0),
+    ),
+  )
 
   const shake = useCallback(() => {
     if (animation.current) {
-      animation.current.stop();
+      animation.current.stop()
     }
 
-    Animated.spring(opacityForError.current, { toValue: 1, useNativeDriver: true }).start();
+    Animated.spring(opacityForError.current, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start()
 
-    value.current.setValue(0);
+    value.current.setValue(0)
 
     animation.current = Animated.sequence([
-      Animated.spring(value.current, { toValue: 10, useNativeDriver: true, overshootClamping: true, tension: 300 }),
-      Animated.spring(value.current, { toValue: -10, useNativeDriver: true, overshootClamping: true, tension: 250 }),
-      Animated.spring(value.current, { toValue: 10, useNativeDriver: true, overshootClamping: true, tension: 250 }),
-      Animated.spring(value.current, { toValue: -10, useNativeDriver: true, overshootClamping: true, tension: 250 }),
-      Animated.spring(value.current, { toValue: 0, useNativeDriver: true, overshootClamping: true, tension: 100 }),
-      Animated.delay(330)
-    ]);
+      animateX(value.current, 10, 350),
+      animateX(value.current, -10, 250),
+      animateX(value.current, 10, 250),
+      animateX(value.current, -10, 250),
+      animateX(value.current, 0, 100),
+      Animated.delay(330),
+    ])
 
-    animation.current.start();
-  }, []);
+    animation.current.start()
+  }, [])
 
   useEffect(() => {
     if (invalid) {
-      shake();
+      shake()
     }
-  }, [invalid]);
+  }, [invalid])
 
   useEffect(() => {
-
-    Animated.spring(opacityForError.current, { toValue: 0, useNativeDriver: true }).start();
+    Animated.spring(opacityForError.current, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start()
 
     colorAnimation.current = Animated.parallel(
-      colors.current.map((color, i) => Animated.spring(color, { toValue: i < code.length ? 1 : 0, useNativeDriver: false }))
-    );
+      colors.current.map((color, i) =>
+        Animated.spring(color, {
+          toValue: i < code.length ? 1 : 0,
+          useNativeDriver: true,
+        }),
+      ),
+    )
 
-    colorAnimation.current.start();
-  }, [code]);
+    colorAnimation.current.start()
+  }, [code])
 
   return (
     <Host style={{ transform: [{ translateX: value.current }] }}>
@@ -95,5 +124,5 @@ export function VisualizedPinCode({ code, invalid, minChars = 4, maxChars = 6 }:
         </DotGroup>
       ))}
     </Host>
-  );
+  )
 }

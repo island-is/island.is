@@ -11,7 +11,7 @@ const Host = styled.View`
 
 const Text = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
+  font-size: 13px;
   color: ${theme.color.roseTinted400};
 
 `;

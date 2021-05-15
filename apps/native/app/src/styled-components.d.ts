@@ -8,6 +8,7 @@ declare module 'styled-components' {
     shade: {
       background: string;
       foreground: string;
+      shade700: string;
       shade600: string;
       shade500: string;
       shade400: string;

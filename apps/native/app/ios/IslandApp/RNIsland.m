@@ -17,6 +17,20 @@
 
 RCT_EXPORT_MODULE()
 
+
+RCT_EXPORT_METHOD(overrideUserInterfaceStyle:(NSString *)uiStyle) {
+  UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+  if (@available(iOS 13.0, *)) {
+    if ([uiStyle isEqualToString:@"dark"]) {
+      window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+    } else if ([uiStyle isEqualToString:@"light"]) {
+      window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    } else if ([uiStyle isEqualToString:@"automatic"]) {
+      window.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
+    }
+  }
+}
+
 RCT_EXPORT_METHOD(openSafari:(NSString *)componentId options:(NSDictionary *)options) {
 
   NSString* url = [options valueForKey:@"url"];
