@@ -94,7 +94,13 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   }
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationChatPanel = ({
+  slugs,
+  pushUp = false,
+}: {
+  slugs: string[]
+  pushUp?: boolean
+}) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -102,12 +108,11 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
     return null
   }
 
-  switch (slug) {
-    case 'syslumenn':
-      return <ChatPanel endpoint="syslumenn" />
-    default:
-      return null
+  if (slugs.includes('syslumenn')) {
+    return <ChatPanel endpoint={'syslumenn'} pushUp={pushUp} />
   }
+
+  return null
 }
 
 const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
@@ -287,7 +292,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           organization={organizationPage.organization}
         />
       )}
-      <OrganizationChatPanel slug={organizationPage?.slug} />
+      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
   )
 }
