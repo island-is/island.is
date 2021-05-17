@@ -10,7 +10,7 @@ export const generateAssignSupremeCourtApplicationEmail: AssignmentEmailTemplate
     options: { email, locale },
   } = props
 
-  const supremeCourtEmail = 'sigga@kosmosogkaos.is'
+  const supremeCourtEmail = 'sigridur@kosmosogkaos.is'
   const applicant = '000000-0000'
 
   // TODO translate using locale

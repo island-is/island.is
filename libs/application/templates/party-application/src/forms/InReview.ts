@@ -7,6 +7,7 @@ import {
   Form,
   FormModes,
   buildCustomField,
+  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -30,6 +31,14 @@ export const InReview: Form = buildForm({
               id: 'supremeCourtOverview',
               title: '',
               component: 'SupremeCourtOverview',
+            }),
+            buildTextField({
+              id: 'reasonForReject',
+              title: 'Athugasemdir',
+              variant: 'textarea',
+              backgroundColor: 'blue',
+              rows: 6,
+              defaultValue: () => '',
             }),
             buildSubmitField({
               id: 'submit',

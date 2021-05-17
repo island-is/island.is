@@ -130,7 +130,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignSupremeCourt,
+            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
           },
           roles: [
             {

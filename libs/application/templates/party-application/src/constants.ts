@@ -1,4 +1,4 @@
 export enum API_MODULE_ACTIONS {
   CreateEndorsementList = 'createEndorsementList',
-  assignSupremeCourt = 'assignSupremeCourt',
+  AssignSupremeCourt = 'assignSupremeCourt',
 }

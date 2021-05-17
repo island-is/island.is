@@ -12,7 +12,7 @@ export interface Props extends FieldBaseProps {
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
+  const { answers, externalData } = application
   const { register } = useFormContext()
 
   return (
@@ -24,7 +24,13 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.responsiblePerson)}
         </Text>
-        <Text>{'Örvar Þór Sigurðsson'}</Text>
+        <Text>
+          {
+            (externalData.nationalRegistry?.data as {
+              fullName?: string
+            })?.fullName
+          }
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">{formatMessage(m.overviewSection.partyType)}</Text>
@@ -51,7 +57,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         </Inline>
         <Text>{'13'}</Text>
       </Box>
-      <Box marginBottom={3}>
+      <Box marginBottom={3} width="half">
         <Text variant="h5" marginBottom={2}>
           {formatMessage(m.overviewSection.emailLabel)}
         </Text>
@@ -61,6 +67,11 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}
+          defaultValue={
+            (externalData.userProfile?.data as {
+              email?: string
+            })?.email
+          }
         />
       </Box>
     </>

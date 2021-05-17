@@ -25,6 +25,10 @@ const GET_ENDORSEMENT_LIST = gql`
 `
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
+  const { answers } = application
+
+  console.log(answers, application)
+
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id

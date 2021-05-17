@@ -73,6 +73,18 @@ export const ConstituencyForm: Form = buildForm({
               title: '',
               subTitle: m.disclaimerSection.descriptionPt2,
             }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
       ],
