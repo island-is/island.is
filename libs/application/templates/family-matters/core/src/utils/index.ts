@@ -2,6 +2,10 @@ import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 import { Address, Child, NationalRegistry, Person } from '../types'
 
+export const formatSsn = (ssn: string) => {
+  return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
+}
+
 export const formatAddress = (address: Address) => {
   if (!address) {
     return null

@@ -103,7 +103,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         tel={tel}
         natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
-          <Link to={ServicePortalPath.UserProfileRoot}>
+          <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">
               {formatMessage({
                 id: 'service.portal:go-back',
@@ -137,7 +137,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       {status === 'success' && (
-        <Redirect to={ServicePortalPath.UserProfileRoot} />
+        <Redirect to={ServicePortalPath.SettingsPersonalInformation} />
       )}
     </>
   )

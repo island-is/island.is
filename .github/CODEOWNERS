@@ -52,6 +52,8 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/clients/vmst/                                                                           @island-is/aranja
 /libs/shared/form-fields/                                                                     @island-is/aranja
 
+/libs/service-portal/settings/access-control                                                  @island-is/vice-versa @island-is/aranja
+
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
@@ -76,7 +78,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/service-portal/finance/                                                                 @island-is/sendiradid
 /libs/service-portal/graphql/                                                                 @island-is/sendiradid
 /libs/service-portal/health/                                                                  @island-is/sendiradid
-/libs/service-portal/settings/                                                                @island-is/sendiradid
+/libs/service-portal/settings/personal-information                                            @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
