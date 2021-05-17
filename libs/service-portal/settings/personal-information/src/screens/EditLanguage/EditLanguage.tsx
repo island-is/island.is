@@ -108,7 +108,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
       <LanguageForm
         language={language}
         renderBackButton={() => (
-          <Link to={ServicePortalPath.UserProfileRoot}>
+          <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">
               {formatMessage({
                 id: 'service.portal:go-back',
@@ -146,7 +146,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       {status === 'success' && (
-        <Redirect to={ServicePortalPath.UserProfileRoot} />
+        <Redirect to={ServicePortalPath.SettingsPersonalInformation} />
       )}
     </>
   )
