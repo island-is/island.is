@@ -20,8 +20,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={5}>
         <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'service.portal:settings',
-            defaultMessage: 'Stillingar',
+            id: 'service.portal:personalInformation',
+            defaultMessage: 'Persónuupplýsingar',
           })}
         </Text>
       </Box>
@@ -60,7 +60,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             </Box>
           )}
           editLink={{
-            url: ServicePortalPath.UserProfileEditEmail,
+            url: ServicePortalPath.SettingsPersonalInformationEditEmail,
           }}
         />
         <UserInfoLine
@@ -96,7 +96,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           editColumnSpan={['1/1', '2/12']}
           valueColumnSpan={['1/1', '7/12']}
           editLink={{
-            url: ServicePortalPath.UserProfileEditPhoneNumber,
+            url: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
           }}
         />
         <UserInfoLine
@@ -117,7 +117,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           editColumnSpan={['1/1', '2/12']}
           valueColumnSpan={['1/1', '7/12']}
           editLink={{
-            url: ServicePortalPath.UserProfileEditLanguage,
+            url: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           }}
         />
       </Stack>

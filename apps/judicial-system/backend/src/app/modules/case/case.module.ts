@@ -6,6 +6,7 @@ import { EmailModule } from '@island.is/email-service'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
+import { CourtModule } from '../court'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
@@ -15,6 +16,7 @@ import { CaseService } from './case.service'
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
     UserModule,
+    CourtModule,
     SequelizeModule.forFeature([Case]),
   ],
   providers: [CaseService],

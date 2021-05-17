@@ -10,17 +10,17 @@ import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 import * as Sentry from '@sentry/react'
 
-export const settingsModule: ServicePortalModule = {
-  name: 'Stillingar',
+export const personalInformationModule: ServicePortalModule = {
+  name: 'Persónuupplýsingar',
   widgets: () => [],
   routes: () => {
     const routes: ServicePortalRoute[] = [
       {
         name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
+          id: 'service.portal:personalInformation',
+          defaultMessage: 'Persónuupplýsingar',
         }),
-        path: ServicePortalPath.UserProfileRoot,
+        path: ServicePortalPath.SettingsPersonalInformation,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
       {
@@ -28,7 +28,7 @@ export const settingsModule: ServicePortalModule = {
           id: 'sp.settings:edit-phone-number',
           defaultMessage: 'Breyta símanúmeri',
         }),
-        path: ServicePortalPath.UserProfileEditPhoneNumber,
+        path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
         render: () =>
           lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
       },
@@ -37,7 +37,7 @@ export const settingsModule: ServicePortalModule = {
           id: 'sp.settings:edit-email',
           defaultMessage: 'Breyta netfangi',
         }),
-        path: ServicePortalPath.UserProfileEditEmail,
+        path: ServicePortalPath.SettingsPersonalInformationEditEmail,
         render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
       },
       {
@@ -45,7 +45,7 @@ export const settingsModule: ServicePortalModule = {
           id: 'sp.settings:edit-language',
           defaultMessage: 'Breyta tungumáli',
         }),
-        path: ServicePortalPath.UserProfileEditLanguage,
+        path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
       {
@@ -61,7 +61,7 @@ export const settingsModule: ServicePortalModule = {
           id: 'sp.settings:email-confirmation',
           defaultMessage: 'Staðfesta netfang',
         }),
-        path: ServicePortalPath.UserProfileEmailConfirmation,
+        path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
         render: () =>
           lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
       },
