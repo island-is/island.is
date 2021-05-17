@@ -11,6 +11,7 @@ import agencyLogo from '../../assets/card/agency-logo.png'
 import logo from '../../assets/card/logo-64w.png'
 
 import { Badge } from '../Badge/Badge';
+import { LicenseType } from '../../../../app/src/types/license-type'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 }}>{children}</View>
@@ -19,7 +20,7 @@ const CenterView = ({ children }: any) => (
 storiesOf('Cards', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
-  .add('Welcome card', () => {
+  .add('Welcome Card', () => {
     const number = text('Number', '1');
     const description = text('Description', 'Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna.');
     return (
@@ -38,6 +39,7 @@ storiesOf('Cards', module)
         status="Í gildi"
         date="16:24 - 14.03.2022"
         agencyLogo={agencyLogo as ImageSourcePropType}
+        type={LicenseType.DRIVERS_LICENSE}
       />
     );
   })

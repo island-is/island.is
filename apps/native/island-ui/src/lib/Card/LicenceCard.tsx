@@ -75,7 +75,7 @@ interface LicenceCardProps {
   style?: any;
 }
 
-export function LicenceCard({ title, type, agencyLogo, nativeID, style, date }: LicenceCardProps) {
+export function LicenceCard({ title, type, agencyLogo, nativeID, style, date, status }: LicenceCardProps) {
   const theme = useTheme();
   let backgroundColor = theme.shade.shade400;
   switch (type) {

@@ -6,6 +6,8 @@ export const LIST_LICENSES_QUERY = gql`
       id
       title
       type
+      status
+      dateTime
       serviceProvider
     }
   }

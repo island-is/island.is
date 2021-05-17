@@ -27,6 +27,8 @@
     "configcat-js": "*",
     "intl": "*",
     "@formatjs/intl-datetimeformat": "*",
-    "jsonwebtoken": "*"
+    "jsonwebtoken": "*",
+    "dotenv": "*",
+    "js-base64": "*"
   }
 }

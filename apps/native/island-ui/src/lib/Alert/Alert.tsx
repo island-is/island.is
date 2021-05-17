@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { theme, Colors } from '@island.is/island-ui/theme';
 import info from '../../assets/alert/info-alert.png';
 import close from '../../assets/alert/close.png';
-import { View, Animated, SafeAreaView, Image } from 'react-native';
+import { View, Animated, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
 
 const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Colors; }>`
   position: absolute;
@@ -47,7 +47,7 @@ export type AlertType = 'error' | 'info' | 'success' | 'warning'
 type VariantStyle = {
   background: Colors
   borderColor: Colors
-  icon: any
+  icon: ImageSourcePropType
 }
 
 type VariantStyles = {
@@ -159,7 +159,7 @@ export function Alert({ title, message, type, hideIcon = false, visible = true, 
           )}
           {onClose &&
             <Close onPress={onClose}>
-              <Image source={close} style={{ width: 12, height: 12 }} />
+              <Image source={close as ImageSourcePropType} style={{ width: 12, height: 12 }} />
             </Close>
           }
         </SafeAreaView>
