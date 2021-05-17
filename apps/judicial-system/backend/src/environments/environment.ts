@@ -10,9 +10,9 @@ export default {
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
   email: {
-    fromEmail: 'gudjon@kolibri.is',
+    fromEmail: 'ben10@omnitrix.is',
     fromName: 'Guðjón Guðjónsson',
-    replyToEmail: 'gudjon@kolibri.is',
+    replyToEmail: 'ben10@omnitrix.is',
     replyToName: 'Guðjón Guðjónsson',
   },
   smsOptions: {
@@ -36,5 +36,18 @@ export default {
     bucket: 'island-is-dev-upload-judicial-system',
     timeToLivePost: '15',
     timeToLiveGet: '5',
+  },
+  xRoad: {
+    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV || '',
+    clientId: process.env.XROAD_CLIENT_ID || '',
+    clientCert: process.env.XROAD_CLIENT_CERT || '',
+    clientKey: process.env.XROAD_CLIENT_KEY || '',
+    clientCa: process.env.XROAD_CLIENT_PEM || '',
+  },
+  courtService: {
+    apiPath: process.env.XROAD_COURT_API_PATH || '',
+    memberCode: process.env.XROAD_COURT_MEMBER_CODE || '',
+    username: process.env.COURT_USERNAME || '',
+    password: process.env.COURT_PASSWORD || '',
   },
 }

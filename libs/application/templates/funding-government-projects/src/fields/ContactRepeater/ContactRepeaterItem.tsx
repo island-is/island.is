@@ -38,7 +38,7 @@ export const ContactRepeaterItem: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box position="relative" key={field.id} marginTop={3}>
+    <Box position="relative" key={field.id} marginTop={3} marginBottom={5}>
       {index > 0 && (
         <Box position="absolute" className={styles.removeFieldButton}>
           <Button

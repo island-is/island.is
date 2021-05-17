@@ -1,5 +1,6 @@
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 
 import { BackendAPI } from './services'
 import { IcelandicName } from './models/icelandicName.model'
@@ -10,7 +11,8 @@ import {
   CreateIcelandicNameInput,
   UpdateIcelandicNameInput,
   DeleteIcelandicNameByIdInput,
-} from './dto/icelandic-name.input'
+} from './dto/icelandic-name.input.dto'
+import { DeleteNameResponse } from './dto/icelandic-name.response.dto'
 
 const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
 
@@ -45,7 +47,8 @@ export class IcelandicNamesResolver {
     return this.backendAPI.getBySearch(input?.q)
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => IcelandicName)
   async updateIcelandicNameById(
     @Args('input', { type: () => UpdateIcelandicNameInput })
     input: UpdateIcelandicNameInput,
@@ -54,7 +57,8 @@ export class IcelandicNamesResolver {
     return this.backendAPI.updateById(input.id, input.body, authorization ?? '')
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => IcelandicName)
   async createIcelandicName(
     @Args('input') input: CreateIcelandicNameInput,
     @CurrentUser() { authorization }: User,
@@ -62,12 +66,17 @@ export class IcelandicNamesResolver {
     return this.backendAPI.create(input, authorization ?? '')
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => DeleteNameResponse)
   async deleteIcelandicNameById(
     @Args('input', { type: () => DeleteIcelandicNameByIdInput })
     input: DeleteIcelandicNameByIdInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<void> {
-    return this.backendAPI.deleteById(input.id, authorization ?? '')
+  ): Promise<DeleteNameResponse> {
+    await this.backendAPI.deleteById(input.id, authorization ?? '')
+
+    return {
+      id: input.id,
+    }
   }
 }
