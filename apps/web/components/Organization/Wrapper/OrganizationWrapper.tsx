@@ -33,6 +33,7 @@ import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
 import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 interface NavigationData {
   title: string
@@ -76,28 +77,27 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 }
 
 interface FooterProps {
-  theme: string
-  organization?: Organization
+  organizations: Array<Organization>
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
-  theme,
-  organization,
+  organizations,
 }) => {
+  const footerEnabled = ['syslumenn']
+
+  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
   if (!organization) return null
 
-  switch (theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
-      )
-    default:
-      return null
+  if (organization.slug === 'syslumenn') {
+    return (
+      <SyslumennFooter
+        title={organization.title}
+        logo={organization.logo?.url}
+        footerItems={organization.footerItems}
+      />
+    )
   }
+  return null
 }
 
 export const OrganizationChatPanel = ({
@@ -114,11 +114,13 @@ export const OrganizationChatPanel = ({
     return null
   }
 
-  if (slugs.includes('syslumenn')) {
-    return <ChatPanel endpoint={'syslumenn'} pushUp={pushUp} />
-  }
+  const chatEnabled = ['syslumenn']
 
-  return null
+  const slug = slugs.find((x) => chatEnabled.includes(x))
+
+  return !!slug ? (
+    <ChatPanel endpoint={slug as keyof typeof chatPanelEndpoints} pushUp={pushUp} />
+  ) : null
 }
 
 const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
@@ -293,10 +295,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && (
-        <OrganizationFooter
-          theme={organizationPage.theme}
-          organization={organizationPage.organization}
-        />
+        <OrganizationFooter organizations={[organizationPage.organization]} />
       )}
       <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
