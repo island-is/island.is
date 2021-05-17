@@ -59,4 +59,9 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly court?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly leadInvestigator?: string
 }

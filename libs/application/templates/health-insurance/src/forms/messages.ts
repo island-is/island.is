@@ -143,9 +143,9 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
+      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar/personuupplysingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
     description:
-      'Update your e-mail and phone number on <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">My Pages</a> if incorrect. Refresh this page once updated.',
+      'Update your e-mail and phone number on <a href="https://island.is/minarsidur/stillingar/personuupplysingar" target="_blank" style="color:#0061ff">My Pages</a> if incorrect. Refresh this page once updated.',
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
