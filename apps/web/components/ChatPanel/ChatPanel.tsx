@@ -75,8 +75,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   return (
     <div className={cn(styles.root, { [styles.hidden]: !showButton })}>
       <div
-        className={styles.message}
-        style={{ bottom: pushUp ? 80 : 0 }}
+        className={cn(styles.message, pushUp && styles.messagePushUp)}
         onClick={() => {
           window.boost.chatPanel.show()
         }}

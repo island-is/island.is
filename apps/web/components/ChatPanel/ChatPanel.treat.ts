@@ -46,6 +46,15 @@ export const message = style({
   transition: 'bottom 0.3s ease',
 })
 
+export const messagePushUp = style({
+  bottom: 80,
+  ...themeUtils.responsiveStyle({
+    md: {
+      bottom: 0,
+    },
+  }),
+})
+
 export const messageArrow = style({
   position: 'absolute',
   bottom: -10,
