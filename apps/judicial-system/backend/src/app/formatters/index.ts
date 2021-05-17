@@ -1,4 +1,9 @@
-export { writeFile, generateRequestPdf, generateRulingPdf } from './pdf'
+export {
+  writeFile,
+  getRequestPdfAsString,
+  getRequestPdfAsBuffer,
+  getRulingPdfAsString,
+} from './pdf'
 export {
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,

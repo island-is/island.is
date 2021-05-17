@@ -32,6 +32,7 @@ import { SjukratryggingarHeader } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
+import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
 
 interface NavigationData {
   title: string
@@ -57,7 +58,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
@@ -65,6 +66,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <SyslumennHeader organizationPage={organizationPage} />
     case 'sjukratryggingar':
       return <SjukratryggingarHeader organizationPage={organizationPage} />
+    case 'utlendingastofnun':
+      return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
     default:
@@ -97,7 +100,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   }
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationChatPanel = ({ slugs }: { slugs: string[] }) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -105,12 +108,11 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
     return null
   }
 
-  switch (slug) {
-    case 'syslumenn':
-      return <ChatPanel endpoint="syslumenn" />
-    default:
-      return null
+  if (slugs.includes('syslumenn')) {
+    return <ChatPanel endpoint={'syslumenn'} />
   }
+
+  return null
 }
 
 const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
@@ -290,7 +292,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           organization={organizationPage.organization}
         />
       )}
-      <OrganizationChatPanel slug={organizationPage?.slug} />
+      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
   )
 }

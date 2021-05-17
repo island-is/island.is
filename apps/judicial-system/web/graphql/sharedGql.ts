@@ -18,6 +18,7 @@ export const CaseQuery = gql`
       defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate

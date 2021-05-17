@@ -37,6 +37,7 @@ export const CreateCaseMutation = gql`
       defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -94,16 +95,6 @@ export const CreateCaseMutation = gql`
   }
 `
 
-export const CreateCustodyCourtCaseMutation = gql`
-  mutation CreateCustodyCourtCaseMutation(
-    $input: CreateCustodyCourtCaseInput!
-  ) {
-    createCustodyCourtCase(input: $input) {
-      courtCaseNumber
-    }
-  }
-`
-
 export const CreateCourtCaseMutation = gql`
   mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
     createCourtCase(input: $input) {
@@ -153,6 +144,7 @@ export const ExtendCaseMutation = gql`
       defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate

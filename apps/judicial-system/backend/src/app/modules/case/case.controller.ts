@@ -68,6 +68,7 @@ const prosecutorUpdateRule = {
     'defenderPhoneNumber',
     'sendRequestToDefender',
     'court',
+    'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
     'requestedCustodyEndDate',
@@ -265,6 +266,15 @@ export class CaseController {
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase
