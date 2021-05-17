@@ -48,13 +48,23 @@ export const info = {
       defaultMessage: 'Upplýsingar um umboð',
       description: 'Commissions page title',
     },
-    commissionsPageDescription: {
+    commissionsPageDescriptionOfDocumentTextOne: {
       id: 'dpac.application:section.info.commissionsPageDescriptions',
       defaultMessage: `Ef kvörtunin er sett fram fyrir hönd einhvers annars
       þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi
-      aðila og skila því inn sem fylgiskjali með kvörtuninni.<br/><br/>
-      Þú getur sótt umboðsskjal hér til útfyllingar.`,
-      description: 'Commissions page description',
+      aðila og skila því inn sem fylgiskjali með kvörtuninni.`,
+      description: 'Commissions page document description first paragraph',
+    },
+    commissionsPageDescriptionOfDocumentTextTwo: {
+      id: 'dpac.application:section.info.commissionsPageDescriptionLink',
+      defaultMessage: `Þú getur sótt umboðsskjal hér til útfyllingar.`,
+      description:
+        'Commissions page document description text second paragraph',
+    },
+    comissionPageButtonName: {
+      id: 'dpac.application:section.info.comissionPageButtonName',
+      defaultMessage: `Umboð.docx.`,
+      description: 'Button title for document provided for power of attorney',
     },
   }),
   labels: defineMessages({

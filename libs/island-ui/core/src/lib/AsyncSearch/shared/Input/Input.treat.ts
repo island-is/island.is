@@ -13,7 +13,7 @@ export const input = style({
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  padding: '16px 96px 16px 16px',
+  padding: 16,
   borderStyle: 'solid',
   outline: 0,
   transition: 'border-color 150ms ease',
@@ -54,20 +54,24 @@ export const colored = style({
 
 export const sizes = styleMap({
   medium: {
+    paddingRight: 36,
     height: 40,
     fontSize: 16,
     ...themeUtils.responsiveStyle({
       md: {
+        paddingRight: 52,
         height: 48,
         fontSize: 18,
       },
     }),
   },
   large: {
+    paddingRight: 72,
     height: 72,
     fontSize: 20,
     ...themeUtils.responsiveStyle({
       md: {
+        paddingRight: 96,
         height: 80,
         fontSize: 24,
       },

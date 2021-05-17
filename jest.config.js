@@ -74,6 +74,7 @@ module.exports = {
     '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',
+    '<rootDir>/libs/auth/react',
     '<rootDir>/libs/auth-api-lib',
     '<rootDir>/libs/auth-nest-tools',
     '<rootDir>/libs/cache',
@@ -133,7 +134,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/finance',
     '<rootDir>/libs/service-portal/graphql',
     '<rootDir>/libs/service-portal/health',
-    '<rootDir>/libs/service-portal/settings',
+    '<rootDir>/libs/service-portal/settings/personal-information',
     '<rootDir>/libs/shared/babel',
     '<rootDir>/libs/shared/connected',
     '<rootDir>/libs/shared/constants',
@@ -153,5 +154,6 @@ module.exports = {
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
+    '<rootDir>/libs/service-portal/settings/access-control',
   ],
 }
