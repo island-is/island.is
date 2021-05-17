@@ -104,7 +104,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
     },
     sendRequestToDefender: {},
     leadInvestigator: {
-      validations: ['empty'],
+      validations: workingCase.type === CaseType.CUSTODY ? ['empty'] : [],
       errorMessage: leadInvestigatorErrorMessage,
       setErrorMessage: setLeadInvestigatorErrorMessage,
     },

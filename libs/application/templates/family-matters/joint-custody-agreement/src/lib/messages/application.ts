@@ -7,6 +7,11 @@ export const application = defineMessage({
     defaultMessage: 'Samningur um sameiginlega forsjá',
     description: 'Name of the Joint custody agreement application',
   },
+  signature: {
+    id: 'jca.application:application.signature',
+    defaultMessage: 'Skrifa undir umsókn',
+    description: 'Button text for signing application',
+  },
 })
 
 // All sections in the application
@@ -25,5 +30,15 @@ export const section = defineMessages({
     id: 'jca.application:section.effect',
     defaultMessage: 'Áhrif umsóknar',
     description: 'Effect of Application',
+  },
+  overview: {
+    id: 'jca.application:section.overview',
+    defaultMessage: 'Yfirlit og undirritun',
+    description: 'Overview and Signing',
+  },
+  received: {
+    id: 'jca.application:section.received',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'Application Received',
   },
 })
