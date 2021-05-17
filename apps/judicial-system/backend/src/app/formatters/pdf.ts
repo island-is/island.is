@@ -39,7 +39,7 @@ function setPageNumbers(doc: PDFKit.PDFDocument) {
     // Set aside the margins and reset to ensure proper alignment
     const oldMargins = doc.page.margins
     doc.page.margins = { top: 0, bottom: 0, left: 0, right: 0 }
-    doc.text(`${i + 1}`, 0, doc.page.height - oldMargins.bottom / 2, {
+    doc.text(`${i + 1}`, 0, doc.page.height - (oldMargins.bottom * 2) / 3, {
       align: 'center',
     })
 
@@ -53,7 +53,7 @@ function constructRequestPdf(existingCase: Case) {
     size: 'A4',
     margins: {
       top: 40,
-      bottom: 80,
+      bottom: 60,
       left: 50,
       right: 50,
     },
@@ -277,7 +277,7 @@ export async function getRulingPdfAsString(
     size: 'A4',
     margins: {
       top: 40,
-      bottom: 80,
+      bottom: 60,
       left: 50,
       right: 50,
     },
