@@ -16,13 +16,9 @@ const BlueBox: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={cn(
-        styles.BlueBoxContainer,
-        { height: height },
-        {
-          [styles.small]: size === 'small',
-        },
-      )}
+      className={cn(styles.BlueBoxContainer, {
+        [styles.small]: size === 'small',
+      })}
       style={{ height: height }}
     >
       {children}

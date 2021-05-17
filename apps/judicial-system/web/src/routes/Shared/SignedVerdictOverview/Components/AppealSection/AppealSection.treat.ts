@@ -5,7 +5,7 @@ export const accusedAppealDatepicker = style({
   // marginBottom: theme.spacing[3],
 })
 
-export const buttonContainer = style({
+export const appealContainer = style({
   height: 112,
   marginBottom: theme.spacing[3],
 })

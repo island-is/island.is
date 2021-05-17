@@ -1,22 +1,13 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { AnimatePresence } from 'framer-motion'
+import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import * as styles from './AppealSection.treat'
-import {
-  BlueBox,
-  DateTime,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import Accused from '../Accused/Accused'
 import AccusedInfo from '../Accused/AccusedInfo'
 import Prosecutor from '../Prosecutor/Prosecutor'
@@ -48,20 +39,13 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppealDismissal,
     handleProsecutorAppealDismissal,
   } = props
-  const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
-  const [accusedRemoved, setAccusedRemoved] = useState<boolean>()
-  const [accusedInfoRemoved, setAccusedInfoRemoved] = useState<boolean>()
-
-  const isPresent = useIsPresent()
-
-  const appealDateVariants1 = {
-    visible: { y: 0, opacity: 1, transition: { duration: 2, delay: 2 } },
-    hidden: { y: 20, opacity: 0, transition: { duration: 2 } },
-  }
+  const [, setAccusedRemoved] = useState<boolean>()
+  const [, setAccusedInfoRemoved] = useState<boolean>()
 
   const handleAccusedRemoved = () => {
     setAccusedRemoved(true)
   }
+
   const handleAccusedInfoRemoved = () => {
     setAccusedInfoRemoved(true)
   }
@@ -76,9 +60,9 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <div className={styles.buttonContainer}>
+      <div className={styles.appealContainer}>
         <BlueBox height={112}>
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence>
             {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
               !accusedPostponedAppealDate && (
                 <Accused
@@ -103,16 +87,16 @@ const AppealSection: React.FC<Props> = (props) => {
         </BlueBox>
       </div>
 
-      <div className={styles.buttonContainer}>
+      <div className={styles.appealContainer}>
         <BlueBox height={112}>
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               !prosecutorPostponedAppealDate && (
                 <Prosecutor handleProsecutorAppeal={handleProsecutorAppeal} />
               )}
           </AnimatePresence>
 
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               prosecutorPostponedAppealDate && (
                 <ProsecutorInfo
