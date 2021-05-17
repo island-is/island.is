@@ -6,11 +6,7 @@ import { Test } from '@nestjs/testing'
 import { LoggingModule } from '@island.is/logging'
 import { CaseType, User } from '@island.is/judicial-system/types'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
-import {
-  AuthenticateApi,
-  CreateCaseApi,
-  CreateCustodyCaseApi,
-} from '@island.is/judicial-system/court-client'
+import { CourtClientService } from '@island.is/judicial-system/court-client'
 
 import { BackendAPI } from '../../../services'
 import { environment } from '../../../environments'
@@ -26,7 +22,6 @@ function expectReceivalDate(receivalDate: string) {
 }
 
 describe('CourtModule', () => {
-  const authenticationToken = uuid()
   const courtCaseNumber = uuid() // should be of the form 'R-1234/2021', but using random uuid for testing
   let receivalDate: string
   let createCase: jest.Mock
@@ -34,9 +29,9 @@ describe('CourtModule', () => {
 
   beforeEach(async () => {
     createCase = jest.fn((args) => {
-      receivalDate = args?.createCaseData?.receivalDate
+      receivalDate = args?.receivalDate
 
-      return Promise.resolve(`"${courtCaseNumber}"`)
+      return Promise.resolve(courtCaseNumber)
     })
 
     const courtModule = await Test.createTestingModule({
@@ -46,17 +41,7 @@ describe('CourtModule', () => {
       ],
       providers: [
         {
-          provide: AuthenticateApi,
-          useClass: jest.fn(() => ({
-            authenticate: () => Promise.resolve(`"${authenticationToken}"`),
-          })),
-        },
-        {
-          provide: CreateCustodyCaseApi,
-          useClass: jest.fn(() => ({})),
-        },
-        {
-          provide: CreateCaseApi,
+          provide: CourtClientService,
           useClass: jest.fn(() => ({
             createCase,
           })),
@@ -93,15 +78,12 @@ describe('CourtModule', () => {
 
       expect(createCase).toHaveBeenCalledTimes(1)
       expect(createCase).toHaveBeenCalledWith({
-        createCaseData: {
-          authenticationToken,
-          caseType: 'R - Rannsóknarmál',
-          subtype: 'Gæsluvarðhald',
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          status: 'Skráð',
-          receivalDate,
-        },
+        caseType: 'R - Rannsóknarmál',
+        subtype: 'Gæsluvarðhald',
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        status: 'Skráð',
+        receivalDate,
       })
       expectReceivalDate(receivalDate)
       expect(updateCase).toHaveBeenCalledTimes(1)
@@ -122,15 +104,12 @@ describe('CourtModule', () => {
 
       expect(createCase).toHaveBeenCalledTimes(1)
       expect(createCase).toHaveBeenCalledWith({
-        createCaseData: {
-          authenticationToken,
-          caseType: 'R - Rannsóknarmál',
-          subtype: 'Framlenging gæsluvarðhalds',
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          status: 'Skráð',
-          receivalDate,
-        },
+        caseType: 'R - Rannsóknarmál',
+        subtype: 'Framlenging gæsluvarðhalds',
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        status: 'Skráð',
+        receivalDate,
       })
       expectReceivalDate(receivalDate)
       expect(updateCase).toHaveBeenCalledTimes(1)
@@ -151,15 +130,12 @@ describe('CourtModule', () => {
 
       expect(createCase).toHaveBeenCalledTimes(1)
       expect(createCase).toHaveBeenCalledWith({
-        createCaseData: {
-          authenticationToken,
-          caseType: 'R - Rannsóknarmál',
-          subtype: 'Farbann',
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          status: 'Skráð',
-          receivalDate,
-        },
+        caseType: 'R - Rannsóknarmál',
+        subtype: 'Farbann',
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        status: 'Skráð',
+        receivalDate,
       })
       expectReceivalDate(receivalDate)
       expect(updateCase).toHaveBeenCalledTimes(1)
@@ -180,15 +156,12 @@ describe('CourtModule', () => {
 
       expect(createCase).toHaveBeenCalledTimes(1)
       expect(createCase).toHaveBeenCalledWith({
-        createCaseData: {
-          authenticationToken,
-          caseType: 'R - Rannsóknarmál',
-          subtype: 'Framlenging farbanns',
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          status: 'Skráð',
-          receivalDate,
-        },
+        caseType: 'R - Rannsóknarmál',
+        subtype: 'Framlenging farbanns',
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        status: 'Skráð',
+        receivalDate,
       })
       expectReceivalDate(receivalDate)
       expect(updateCase).toHaveBeenCalledTimes(1)

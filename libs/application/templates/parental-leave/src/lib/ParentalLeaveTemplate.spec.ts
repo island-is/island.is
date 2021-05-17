@@ -5,6 +5,7 @@ import {
   ExternalData,
   FormValue,
   DefaultEvents,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import { States as ApplicationStates } from '../constants'
@@ -15,10 +16,11 @@ function buildApplication(data: {
   state?: string
 }): Application {
   const { answers = {}, externalData = {}, state = 'draft' } = data
+
   return {
     id: '12345',
     assignees: [],
-    applicant: '123456-7890',
+    applicant: '1234567890',
     typeId: ApplicationTypes.PARENTAL_LEAVE,
     created: new Date(),
     modified: new Date(),
@@ -27,13 +29,14 @@ function buildApplication(data: {
     state,
     status: 'inprogress' as Application['status'],
     externalData,
+    status: ApplicationStatus.IN_PROGRESS,
   }
 }
 
 describe('Parental Leave Application Template', () => {
   describe('state transitions', () => {
     it('should transition from draft to other parent if applicant is asking for shared rights', () => {
-      const otherParentId = '098765-4321'
+      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -54,7 +57,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should transition from draft to employer approval if applicant is not asking for shared rights', () => {
-      const otherParentId = '098765-4321'
+      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -79,7 +82,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should assign the application to the employer when transitioning to employer approval from other parent approval', () => {
-      const otherParentId = '098765-4321'
+      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -118,7 +121,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should assign the application to the other parent approval and then to VMST when the applicant is self employed', () => {
-      const otherParentId = '098765-4321'
+      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {

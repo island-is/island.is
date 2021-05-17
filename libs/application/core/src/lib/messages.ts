@@ -142,4 +142,9 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ógilt gildi',
     description: 'Generic invalid value error message',
   },
+  errorDataProvider: {
+    id: 'application.system:core.error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
 })

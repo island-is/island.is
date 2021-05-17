@@ -72,6 +72,7 @@ export const RadioController: FC<Props> = ({
                 value={option.value}
                 disabled={disabled}
                 hasError={error !== undefined}
+                backgroundColor="blue"
               />
             </GridColumn>
           ))}
