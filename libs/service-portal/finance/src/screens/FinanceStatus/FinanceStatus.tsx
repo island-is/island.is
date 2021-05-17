@@ -1,5 +1,5 @@
 import React from 'react'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
@@ -17,6 +17,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
+  FinanceStatusDetailsType,
 } from './FinanceStatusData.types'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
@@ -28,6 +29,12 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetFinanceStatusDetailsQuery = gql`
+  query GetFinanceStatusDetailsQuery {
+    getFinanceStatusDetails
+  }
+`
+
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
@@ -35,12 +42,19 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   console.log('kennitala:: ', userInfo.profile.nationalId)
   const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery, {
     variables: {
-      nationalID: '2704685439',
+      nationalID: '2704685439', //userInfo.profile.nationalId
     },
   })
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
   console.log({ financeStatusData, loading })
+
+  const [getDetailsQuery, { ...detailsQuery }] = useLazyQuery(
+    GetFinanceStatusDetailsQuery,
+  )
+  const financeStatusDetails: FinanceStatusDetailsType =
+    detailsQuery.data?.getFinanceStatusDetails || {}
+  console.log({ financeStatusDetails })
 
   const currencyKr = (kr: number) =>
     typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
@@ -111,7 +125,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           ) : null}
           {financeStatusData?.organizations?.length > 0 ? (
             <Box marginTop={2}>
-              <T.Table style={{ tableLayout: 'fixed' }}>
+              <T.Table>
                 <ExpandHeader
                   data={['Gjaldflokkur / stofnun', 'Umsjónarmaður', 'Staða']}
                 />
@@ -121,16 +135,28 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       org.chargeTypes.map((chargeType) => (
                         <ExpandRow
                           key={chargeType.id}
+                          onExpandCallback={() =>
+                            getDetailsQuery({
+                              variables: {
+                                nationalID: '2704685439', //userInfo.profile.nationalId
+                                OrgID: org.id,
+                                chargeTypeID: chargeType.id,
+                              },
+                            })
+                          }
                           data={[
                             chargeType.name,
                             org.name,
                             currencyKr(chargeType.totals),
                           ]}
                         >
-                          <FinanceStatusDetailTable
-                            organization={org}
-                            chargeType={chargeType}
-                          />
+                          {financeStatusDetails?.chargeItemSubjects?.length >
+                          0 ? (
+                            <FinanceStatusDetailTable
+                              organization={org}
+                              financeStatusDetails={financeStatusDetails}
+                            />
+                          ) : null}
                         </ExpandRow>
                       )),
                   )}

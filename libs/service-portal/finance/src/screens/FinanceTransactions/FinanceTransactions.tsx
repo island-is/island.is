@@ -1,6 +1,6 @@
 import React from 'react'
 import { Table as T } from '@island.is/island-ui/core'
-
+import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
 import {
   Box,
   Text,
@@ -81,55 +81,18 @@ const FinanceTransactions = () => {
         </Box>
         <Box marginTop={2}>
           <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>
-                  <Text variant="eyebrow" fontWeight="semiBold">
-                    Dagsetning
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="eyebrow" fontWeight="semiBold">
-                    Tegund
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="eyebrow" fontWeight="semiBold">
-                    Skýring
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="eyebrow" fontWeight="semiBold">
-                    Upphæð
-                  </Text>
-                </T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
+            <ExpandHeader
+              data={['Dagsetning', 'Tegund', 'Skýring', 'Upphæð']}
+            />
             <T.Body>
-              <T.Row>
-                <T.Data>07.01.2019</T.Data>
-                <T.Data>Greiðslukvittun</T.Data>
-                <T.Data>Sýslumaðurinn á Vesturlandi</T.Data>
-                <T.Data>-</T.Data>
-                <T.Data box={{ textAlign: 'right' }}>
-                  <Button
-                    circle
-                    colorScheme="default"
-                    icon="arrowForward"
-                    iconType="filled"
-                    preTextIconType="filled"
-                    size="small"
-                    title="Go forward"
-                    type="button"
-                    inline
-                    variant="primary"
-                    onBlur={function noRefCheck() {}}
-                    onClick={function noRefCheck() {}}
-                    onFocus={function noRefCheck() {}}
-                  />
-                </T.Data>
-              </T.Row>
+              <ExpandRow
+                data={[
+                  '07.01.2019',
+                  'Greiðslukvittun',
+                  'Sýslumaðurinn á Vesturlandi',
+                  '-',
+                ]}
+              />
             </T.Body>
           </T.Table>
         </Box>
