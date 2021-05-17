@@ -342,7 +342,7 @@ describe('User profile API', () => {
         .expect(400)
 
       expect(response.body.message).toBe(
-        'Profile have no configured email address.',
+        'Profile does not have a configured email address.',
       )
     })
 
