@@ -13,13 +13,13 @@ const ExpandableLine: FC<Props> = ({ data }) => {
       <T.Head>
         <T.Row>
           {data.map((item, i) => (
-            <T.HeadData box={{ paddingLeft: 2, paddingRight: 2 }} key={i}>
+            <T.HeadData scope="col" key={i}>
               <Text variant="eyebrow" fontWeight="semiBold">
                 {item}
               </Text>
             </T.HeadData>
           ))}
-          <T.HeadData style={{ width: 75 }}></T.HeadData>
+          <T.HeadData></T.HeadData>
         </T.Row>
       </T.Head>
     </>

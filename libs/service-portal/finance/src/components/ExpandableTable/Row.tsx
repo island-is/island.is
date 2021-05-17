@@ -6,9 +6,10 @@ import * as styles from './ExpandableTable.treat'
 
 interface Props {
   data: Array<string | number>
+  onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({ data, children }) => {
+const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
@@ -20,6 +21,13 @@ const ExpandableLine: FC<Props> = ({ data, children }) => {
     }
   }, [])
 
+  function onExpandButton() {
+    if (onExpandCallback && !expanded) {
+      onExpandCallback()
+    }
+    toggleExpand(!expanded)
+  }
+
   const fullClose = closed && !expanded
   return (
     <>
@@ -30,8 +38,8 @@ const ExpandableLine: FC<Props> = ({ data, children }) => {
             box={{
               background: closed && !expanded ? 'transparent' : 'blue100',
               borderColor: closed && !expanded ? 'blue200' : 'blue100',
-              paddingLeft: 2,
-              paddingRight: 2,
+              // paddingLeft: 2,
+              // paddingRight: 2,
               position: 'relative',
             }}
           >
@@ -44,23 +52,23 @@ const ExpandableLine: FC<Props> = ({ data, children }) => {
             alignItems: 'flexEnd',
             background: closed && !expanded ? 'transparent' : 'blue100',
             borderColor: closed && !expanded ? 'blue200' : 'blue100',
-            paddingLeft: 2,
-            paddingRight: 2,
+            // paddingLeft: 2,
+            // paddingRight: 2,
           }}
         >
           <Box
             display="flex"
             alignItems="flexEnd"
             justifyContent="flexEnd"
-            width="full"
-            height="full"
+            // width="full"
+            // height="full"
           >
             <Button
               circle
               colorScheme="light"
               icon={expanded ? 'remove' : 'add'}
               iconType="filled"
-              onClick={() => toggleExpand(!expanded)}
+              onClick={onExpandButton}
               preTextIconType="filled"
               size="small"
               title="Sundurliðun"
@@ -70,28 +78,25 @@ const ExpandableLine: FC<Props> = ({ data, children }) => {
           </Box>
         </T.Data>
       </T.Row>
-
-      {!fullClose ? (
-        <T.Row>
-          <T.Data
-            style={{ padding: 0 }}
-            box={{ position: 'relative' }}
-            borderColor={closed && !expanded ? 'blue100' : 'blue200'}
-            colSpan={data.length + 1}
+      <T.Row>
+        <T.Data
+          style={{ padding: 0, width: '100%' }}
+          box={{ position: 'relative' }}
+          borderColor={closed && !expanded ? 'blue100' : 'blue200'}
+          colSpan={data.length + 1}
+        >
+          <AnimateHeight
+            onAnimationEnd={(props: { newHeight: number }) =>
+              handleAnimationEnd(props.newHeight)
+            }
+            duration={300}
+            height={children && expanded ? 'auto' : 0}
           >
-            <AnimateHeight
-              onAnimationEnd={(props: { newHeight: number }) =>
-                handleAnimationEnd(props.newHeight)
-              }
-              duration={300}
-              height={expanded ? 'auto' : 0}
-            >
-              <div className={styles.line} />
-              {children}
-            </AnimateHeight>
-          </T.Data>
-        </T.Row>
-      ) : null}
+            <div className={styles.line} />
+            {children}
+          </AnimateHeight>
+        </T.Data>
+      </T.Row>
     </>
   )
 }
