@@ -172,7 +172,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   headers: {
                     'content-type': 'application/x-www-form-urlencoded',
                   },
-                  body: `documentId=${Document.id}&token=${
+                  body: `documentId=${Document.id}&__accessToken=${
                     authStore.getState().authorizeResult?.accessToken
                   }`,
                   method: 'POST',
