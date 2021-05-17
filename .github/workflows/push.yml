@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
+      - 'ncc-self-hosted'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -25,7 +26,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     env:
       CREATE_PATTERNS: ^release/,^hotfix/
     outputs:
@@ -93,7 +94,7 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -115,14 +116,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Cleanup disk space
-        run: |
-          df -h
-          # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          df -h
 
       - name: Git refs
         id: git_refs
@@ -263,7 +256,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -331,7 +324,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -361,7 +354,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     if: always() && needs.retag-unaffected.result == 'success'
     needs:
       - retag-unaffected
@@ -399,7 +392,7 @@ jobs:
           BODY
 
   push-success:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     if: always()
     needs:
       - pre-checks
@@ -418,7 +411,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     if: failure() && needs.pre-checks.outputs.PRE_CHECK
     needs:
       - pre-checks
