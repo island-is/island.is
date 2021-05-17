@@ -18,6 +18,7 @@ import {
   ConflictException,
   UseGuards,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -33,7 +34,6 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { EmailVerification } from './emailVerification.model'
-import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
 import { SmsVerification } from './smsVerification.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
@@ -64,16 +64,25 @@ export class UserProfileController {
     resources: (profile) => profile.nationalId,
   })
   async findOneByNationalId(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
+    @Param('nationalId')
+    nationalId: string,
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
-    if (profile.nationalId != user.nationalId) {
+    if (nationalId != user.nationalId) {
       throw new ForbiddenException()
     }
 
-    return profile
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException(
+        `A user profile with nationalId ${nationalId} does not exist`,
+      )
+    }
+
+    return userProfile
   }
 
   @Scopes(UserProfileScope.write)
@@ -142,18 +151,16 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   async update(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
+    @Param('nationalId')
+    nationalId: string,
     @Body()
     userProfileToUpdate: UpdateUserProfileDto,
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
-    if (profile.nationalId != user.nationalId) {
-      throw new ForbiddenException()
-    }
-
-    const { nationalId } = profile
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
@@ -214,20 +221,19 @@ export class UserProfileController {
   })
   @ApiCreatedResponse({ type: EmailVerification })
   @Audit<EmailVerification>({
-    resources: (emailVerification) => emailVerification.nationalId,
+    resources: (emailVerification) => emailVerification?.nationalId ?? '',
   })
   async recreateVerification(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
+    @Param('nationalId')
+    nationalId: string,
     @CurrentUser()
     user: User,
-  ): Promise<EmailVerification | null> {
-    if (profile.nationalId != user.nationalId) {
-      throw new ForbiddenException()
-    }
-
+  ): Promise<EmailVerification> {
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
     if (!profile.email) {
-      return null
+      throw new BadRequestException('Profile have no configured email address.')
     }
 
     return await this.verificationService.createEmailVerification(
@@ -248,16 +254,16 @@ export class UserProfileController {
   })
   @ApiCreatedResponse({ type: ConfirmationDtoResponse })
   async confirmEmail(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
+    @Param('nationalId')
+    nationalId: string,
     @Body()
     confirmEmailDto: ConfirmEmailDto,
     @CurrentUser()
     user: User,
   ): Promise<ConfirmationDtoResponse> {
-    if (profile.nationalId != user.nationalId) {
-      throw new ForbiddenException()
-    }
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
 
     return await this.auditService.auditPromise(
       {
