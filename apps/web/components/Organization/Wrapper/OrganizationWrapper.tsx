@@ -118,8 +118,11 @@ export const OrganizationChatPanel = ({
 
   const slug = slugs.find((x) => chatEnabled.includes(x))
 
-  return !!slug ? (
-    <ChatPanel endpoint={slug as keyof typeof chatPanelEndpoints} pushUp={pushUp} />
+  return slug ? (
+    <ChatPanel
+      endpoint={slug as keyof typeof chatPanelEndpoints}
+      pushUp={pushUp}
+    />
   ) : null
 }
 
