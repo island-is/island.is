@@ -26,7 +26,9 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     env:
       CREATE_PATTERNS: ^release/,^hotfix/
     outputs:
@@ -94,7 +96,9 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -249,7 +253,9 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -310,7 +316,9 @@ jobs:
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -340,7 +348,9 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     if: always() && needs.retag-unaffected.result == 'success'
     needs:
       - retag-unaffected
@@ -378,7 +388,9 @@ jobs:
           BODY
 
   push-success:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     if: always()
     needs:
       - pre-checks
@@ -397,7 +409,9 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-20.04
+      - self-hosted
     if: failure() && needs.pre-checks.outputs.PRE_CHECK
     needs:
       - pre-checks
