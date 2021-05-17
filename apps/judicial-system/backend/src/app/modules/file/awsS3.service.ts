@@ -78,7 +78,7 @@ export class AwsS3Service {
       .promise()
       .then(
         () => true,
-        (err) => {
+        () => {
           // The error is either 404 Not Found or 403 Forbidden.
           // Normally, we would check if the error is 404 Not Found.
           // However, to avoid granting the service ListBucket permissions,

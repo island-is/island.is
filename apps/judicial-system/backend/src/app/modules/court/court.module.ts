@@ -4,7 +4,6 @@ import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
-import { CourtResolver } from './court.resolver'
 import { CourtService } from './court.service'
 
 @Module({
@@ -24,6 +23,7 @@ import { CourtService } from './court.service'
       password: environment.courtService.password,
     }),
   ],
-  providers: [CourtResolver, CourtService],
+  providers: [CourtService],
+  exports: [CourtService],
 })
 export class CourtModule {}
