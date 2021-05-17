@@ -126,6 +126,7 @@ describe('getChildrenAndExistingApplications', () => {
         ...children[0],
         parentalRelation: 'secondary',
         primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
+        transferredDays: 0,
       },
     ]
 
