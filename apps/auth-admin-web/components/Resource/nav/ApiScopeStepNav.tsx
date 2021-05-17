@@ -39,6 +39,20 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               {localization.navigations['apiScopeSteps'].items['claims'].text}
             </button>
           </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => handleStepChange(ApiScopeStep.ApiResource)}
+              className={
+                activeStep === ApiScopeStep.ApiResource ? 'active' : ''
+              }
+            >
+              {
+                localization.navigations['apiScopeSteps'].items['apiResource']
+                  .text
+              }
+            </button>
+          </li>
         </ul>
       </nav>
       <div className="api-scope__container__content">{children}</div>
