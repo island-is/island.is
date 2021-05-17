@@ -17,13 +17,34 @@ The `application` type describes an instance of a stored application. It include
 
 ## Data Providers
 
-Many applications need to store external data that cannot be manipulated, but should be stored within the application. This data is often fetched from external sources (via x-road or other services available to island.is) and is used for either prefilling fields in the form, or for validation and information uses.
+Many applications need to store external data that cannot be manipulated, but should be stored within the application. This data is often fetched from external sources (via x-road or other services available to island.is) and is used for either pre-filling fields in the form, or for validation and information uses.
 
 ## Application Template
 
 The `ApplicationTemplate` interface is the heart of the whole system. Each self-service application flow depends on having a template that extends this interface.
 Each application template has a unique `type`, a `dataSchema` for quick data validation, `answerValidators` for more customizable server side validation, and, most importantly,
 a `stateMachineConfig` to describe the overall flow for the application, and how users with different roles can interact with an application in its varying states.
+
+### Header information
+
+In order to show the information in the header (as shown bellow) regarding the institution handling the application and the application name, you need to pass an `institution` field to the template. It is accepting both a string and a "translatable" object.
+
+![Screenshot 2021-05-17 at 08 38 33](https://user-images.githubusercontent.com/937328/118459475-4ec47600-b6eb-11eb-8f02-40f0f23c1c49.png)
+
+```diff
+const ReferenceApplicationTemplate: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<ReferenceTemplateEvent>,
+  ReferenceTemplateEvent
+ > = {
+  type: ApplicationTypes.EXAMPLE,
+  name: m.name,
++ institution: m.institutionName,
+  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  dataSchema: ExampleSchema,
+```
+
+The application's name will be picked up from the `name` field from the same object above.
 
 ### Application Type
 
@@ -38,7 +59,7 @@ for that given question and what error message to show if it fails.
 
 ### Answer Validators
 
-Sometimes, we need to provide our application templates with more complicated validation than a Zod dataschema can offer. That is where answer validators come in.
+Sometimes, we need to provide our application templates with more complicated validation than a Zod `dataSchema` can offer. That is where answer validators come in.
 The answer validators are stored in a map, where the key is a path to the answer that needs to have this custom validation, and the value is a function which gets the
 current application and the new answer as parameters. The validators are only run on the server when the client tries to update an answer with a designated validator.
 
@@ -180,22 +201,6 @@ These are only used for cosmetic reasons. They group fields together so the `app
 ### External Data Providers
 
 Many applications rely on external data that should not be editable by any user or consumer of an api. The `externalData` of an application is only updated by the backend via custom-made `DataProviders`.
-
-## Running unit tests
-
-To execute the unit tests via [Jest](https://jestjs.io).
-
-```bash
-yarn nx test application-core
-```
-
-## Running lint
-
-To lint
-
-```bash
-yarn nx lint application-core
-```
 
 ## Code owners and maintainers
 
