@@ -25,6 +25,51 @@ The `ApplicationTemplate` interface is the heart of the whole system. Each self-
 Each application template has a unique `type`, a `dataSchema` for quick data validation, `answerValidators` for more customizable server side validation, and, most importantly,
 a `stateMachineConfig` to describe the overall flow for the application, and how users with different roles can interact with an application in its varying states.
 
+### Translations
+
+In order to define "translatable" messages on the API side, you will need to define the `translationNamespaces` field on the template. It accepts an array of namespaces, in case you are using messages from multiple namespaces, coming from Contentful.
+
+Once loading a namespace for the first time, it will the latest data from Contentful, and will cache the messages for 15 minutes.
+
+#### Configuration
+
+Add the following to your template object.
+
+```diff
+const ReferenceApplicationTemplate: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<ReferenceTemplateEvent>,
+  ReferenceTemplateEvent
+ > = {
+  type: ApplicationTypes.EXAMPLE,
+  name: m.name,
++ translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  dataSchema: ExampleSchema,
+```
+
+Example from [here](https://github.com/island-is/island.is/blob/main/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L84).
+
+#### States
+
+You can define a `title` and a `description` fields on each state of your state machine. These two fields will be used on the applications list on the service portal. It gives a better understanding for the user the current step of the process it is in.
+
+```diff
+[States.draft]: {
+  meta: {
+    name: 'Umsókn um ökunám',
++   title: m.draftTitle,
++   description: m.draftDescription,
+    progress: 0.25,
+    lifecycle: DefaultStateLifeCycle,
+    roles: [
+```
+
+![Screenshot 2021-05-17 at 08 56 51](https://user-images.githubusercontent.com/937328/118462077-d4e1bc00-b6ed-11eb-8d3f-eb3d3feb5ae2.png)
+
+{% hint style="info" %}
+At the moment, only the `description` field is used on application list. The `title` field is meant to be use in a later iteration of the application page's design.
+{% endhint %}
+
 ### Header information
 
 In order to show the information in the header (as shown bellow) regarding the institution handling the application and the application name, you need to pass an `institution` field to the template. It is accepting both a string and a "translatable" object.
@@ -45,6 +90,22 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 ```
 
 The application's name will be picked up from the `name` field from the same object above.
+
+#### DataSchema
+
+We are using zod to create the schema of the application. To pass a custom error message using a translation, we need to use the `params` field from the error message callback. You then can pass the "translatable" object from your message file.
+
+```typescript
+.refine((n) => n && !kennitala.isValid(n), {
+  params: m.dataSchemeNationalId,
+}),
+```
+
+Example from [here](https://github.com/island-is/island.is/blob/main/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L56).
+
+#### AnswerValidators
+
+Same pattern as other fields, you can pass a string or a "translatable" object from your messages file.
 
 ### Application Type
 
