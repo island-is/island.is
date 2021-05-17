@@ -87,6 +87,40 @@ export function formatPeriods(
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
+export const getTransferredDays = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => {
+  const requestRights = getValueViaPath(
+    application.answers,
+    'requestRights',
+  ) as SchemaFormValues['requestRights']
+  const giveRights = getValueViaPath(
+    application.answers,
+    'giveRights',
+  ) as SchemaFormValues['giveRights']
+
+  let days = 0
+
+  if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
+    const requestedDays = requestRights.requestDays
+
+    days = requestedDays
+  }
+
+  if (
+    selectedChild.hasRights &&
+    giveRights?.isGivingRights === YES &&
+    giveRights.giveDays
+  ) {
+    const givenDays = giveRights.giveDays
+
+    days = -givenDays
+  }
+
+  return days
+}
+
 /**
  * Returns the number of months available for the applicant.
  */
@@ -100,34 +134,10 @@ export const getAvailableRightsInMonths = (application: Application) => {
     throw new Error('Missing selected child')
   }
 
-  const requestRights = getValueViaPath(
-    application.answers,
-    'requestRights',
-  ) as SchemaFormValues['requestRights']
-  const giveRights = getValueViaPath(
-    application.answers,
-    'giveRights',
-  ) as SchemaFormValues['giveRights']
-
-  let days = selectedChild.remainingDays
-
-  if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    const requestedDays = requestRights.requestDays
-
-    days = days + requestedDays
-  }
-
-  if (
-    selectedChild.hasRights &&
-    giveRights?.isGivingRights === YES &&
-    giveRights.giveDays
-  ) {
-    const givenDays = giveRights.giveDays
-
-    days = days - givenDays
-  }
-
-  return daysToMonths(days)
+  return daysToMonths(
+    selectedChild.remainingDays +
+      getTransferredDays(application, selectedChild),
+  )
 }
 
 export const getOtherParentOptions = (application: Application) => {

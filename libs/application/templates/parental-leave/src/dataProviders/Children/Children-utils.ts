@@ -1,6 +1,7 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { DistributiveOmit } from '@island.is/shared/types'
-import { getSelectedChild } from '../../parentalLeaveUtils'
+import { SchemaFormValues } from '../../lib/dataSchema'
+import { getSelectedChild, getTransferredDays } from '../../parentalLeaveUtils'
 
 import {
   ChildInformation,
@@ -31,16 +32,24 @@ export const applicationsToChildInformation = (
 
     if (selectedChild !== null) {
       if (asOtherParent) {
+        // * -1 because we need to reverse the days over to this parent
+        // for example if other parent is requesting 45 days
+        // then this parent needs to lose 45 days
+        const transferredDays =
+          getTransferredDays(application, selectedChild) * -1
+
         if (selectedChild.parentalRelation === 'primary') {
           result.push({
             parentalRelation: 'secondary',
             expectedDateOfBirth: selectedChild.expectedDateOfBirth,
             primaryParentNationalRegistryId: application.applicant,
+            transferredDays,
           })
         } else {
           result.push({
             parentalRelation: 'primary',
             expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+            transferredDays,
           })
         }
       } else {

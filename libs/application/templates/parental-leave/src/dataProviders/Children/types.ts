@@ -1,19 +1,23 @@
 import { DistributiveOmit } from '@island.is/shared/types'
 
+interface BaseChildInformation {
+  expectedDateOfBirth: string
+  hasRights: boolean
+  remainingDays: number
+  // Will be a negative number if other parent requested to use your days
+  // Will be a positive number if other parent requested to transfer days to you
+  // Will be undefined if transferal was not requested
+  transferredDays?: number
+}
+
 export type ChildInformation =
-  | {
-      expectedDateOfBirth: string
+  | (BaseChildInformation & {
       parentalRelation: 'secondary'
       primaryParentNationalRegistryId: string
-      hasRights: boolean
-      remainingDays: number
-    }
-  | {
-      expectedDateOfBirth: string
+    })
+  | (BaseChildInformation & {
       parentalRelation: 'primary'
-      hasRights: boolean
-      remainingDays: number
-    }
+    })
 
 export interface ExistingChildApplication {
   expectedDateOfBirth: string

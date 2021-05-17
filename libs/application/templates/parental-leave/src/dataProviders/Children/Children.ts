@@ -26,6 +26,7 @@ import {
 } from '../../types/schema'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
+import { getSelectedChild } from '../../parentalLeaveUtils'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
@@ -126,9 +127,31 @@ export class Children extends BasicDataProvider {
       await customTemplateFindQuery({
         'answers.otherParentId': application.applicant,
       })
-    ).filter(
-      ({ state }) => state !== States.PREREQUISITES && state !== States.DRAFT,
-    )
+    ).filter((application) => {
+      const { state } = application
+      const isCompleted =
+        state !== States.PREREQUISITES && state !== States.DRAFT
+
+      if (!isCompleted) {
+        return false
+      }
+
+      const selectedChild = getSelectedChild(
+        application.answers,
+        application.externalData,
+      )
+      if (!selectedChild) {
+        return false
+      }
+
+      // We only use applications from primary parents to allow
+      // secondary parents to apply, not the other way around
+      if (selectedChild.parentalRelation !== 'primary') {
+        return false
+      }
+
+      return true
+    })
 
     return getChildrenAndExistingApplications(
       applicationsWhereApplicant,
@@ -167,11 +190,15 @@ export class Children extends BasicDataProvider {
         child.expectedDateOfBirth,
       )
 
-      const remainingDays = this.remainingDays(
-        child.expectedDateOfBirth,
-        parentalLeavesAndPregnancyStatus.getParentalLeaves,
-        parentalLeavesEntitlements,
-      )
+      const transferredDays =
+        child.transferredDays === undefined ? 0 : child.transferredDays
+
+      const remainingDays =
+        this.remainingDays(
+          child.expectedDateOfBirth,
+          parentalLeavesAndPregnancyStatus.getParentalLeaves,
+          parentalLeavesEntitlements,
+        ) + transferredDays
 
       childrenResult.push({
         ...child,
