@@ -202,6 +202,11 @@ export const m: MessageDir = {
       defaultMessage: 'Veljið meðmæli til innsendingar',
       description: 'Choose endorsements to be sent',
     },
+    shortTitle: {
+      id: 'pa.application:endorsementListSubmission.title',
+      defaultMessage: 'Innsending',
+      description: 'Choose endorsements to be sent',
+    },
     description: {
       id: 'pa.application:endorsementListSubmission.description',
       defaultMessage:
