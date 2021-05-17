@@ -100,7 +100,13 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   }
 }
 
-export const OrganizationChatPanel = ({ slugs }: { slugs: string[] }) => {
+export const OrganizationChatPanel = ({
+  slugs,
+  pushUp = false,
+}: {
+  slugs: string[]
+  pushUp?: boolean
+}) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -109,7 +115,7 @@ export const OrganizationChatPanel = ({ slugs }: { slugs: string[] }) => {
   }
 
   if (slugs.includes('syslumenn')) {
-    return <ChatPanel endpoint={'syslumenn'} />
+    return <ChatPanel endpoint={'syslumenn'} pushUp={pushUp} />
   }
 
   return null
