@@ -28,7 +28,6 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
     return (
       <T.Row key={index}>
         {cell.map(([_key, value], i) => {
-          console.log(_key, value)
           if (typeof value === 'string') {
             return (
               <T.Data
