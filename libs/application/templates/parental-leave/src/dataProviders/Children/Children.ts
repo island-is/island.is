@@ -108,13 +108,6 @@ export class Children extends BasicDataProvider {
     customTemplateFindQuery: CustomTemplateFindQuery,
     pregnancyStatus?: PregnancyStatus | null,
   ): Promise<ChildrenWithoutRightsAndExistingApplications> {
-    const useMockData =
-      getValueViaPath(application.answers, 'useMockData', NO) === YES
-
-    if (useMockData && !isRunningOnProduction) {
-      return getChildrenFromMockData(application)
-    }
-
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
       await customTemplateFindQuery({
@@ -172,6 +165,14 @@ export class Children extends BasicDataProvider {
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
   ): Promise<ChildrenAndExistingApplications> {
+    const useMockData =
+      getValueViaPath(application.answers, 'useMockData', NO) === YES
+    const shouldUseMockData = useMockData && !isRunningOnProduction
+
+    if (shouldUseMockData) {
+      return getChildrenFromMockData(application)
+    }
+
     const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus()
 
     const {
