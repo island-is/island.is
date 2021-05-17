@@ -165,6 +165,15 @@ export class ResourcesController {
     return apiResources
   }
 
+  /** Get's all Api resources and total count of rows */
+  @Scopes(Scope.root, Scope.full)
+  @Get('all-api-resources')
+  @ApiOkResponse({ type: [ApiResource] })
+  async findAllApiResources(): Promise<ApiResource[]> {
+    const apiResources = await this.resourcesService.findAllApiResources()
+    return apiResources
+  }
+
   /** Gets Identity Resources by Scope Names */
   @Scopes(Scope.root, Scope.full)
   @Get('identity-resources/scopenames')
@@ -565,6 +574,37 @@ export class ResourcesController {
 
     return await this.resourcesService.removeApiResourceAllowedScope(
       apiResourceName,
+      scopeName,
+    )
+  }
+
+  /** Get api Resource from Api Resource Scope by Scope Name */
+  @Scopes(Scope.root, Scope.full)
+  @Get('api-scope-resource/:scopeName')
+  async findApiResourceScopeByScopeName(
+    @Param('scopeName') scopeName: string,
+  ): Promise<ApiResourceScope | null> {
+    console.log(scopeName)
+    if (!scopeName) {
+      throw new BadRequestException('scopeName must be provided')
+    }
+
+    return await this.resourcesService.findApiResourceScopeByScopeName(
+      scopeName,
+    )
+  }
+
+  /** Removes api scope from Api Resource Scope */
+  @Scopes(Scope.root, Scope.full)
+  @Delete('api-scope-resource/:scopeName')
+  async removeApiScopeFromApiResourceScope(
+    @Param('scopeName') scopeName: string,
+  ): Promise<number | null> {
+    if (!scopeName) {
+      throw new BadRequestException('scopeName must be provided')
+    }
+
+    return await this.resourcesService.removeApiScopeFromApiResourceScope(
       scopeName,
     )
   }

@@ -194,6 +194,9 @@
         },
         "claims": {
           "text": "Claims"
+        },
+        "apiResource": {
+          "text": "Connect Api Resource"
         }
       }
     },
@@ -980,6 +983,39 @@
           "placeholder": "",
           "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
           "errorMessage": ""
+        }
+      }
+    },
+    {
+      "id": "ApiScopeResourceForm",
+      "title": "Select an Api Resource",
+      "help": "An Api Scope can be associated with an Api Resource",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "selectedItem": {
+          "title": "Info about this Api Resource",
+          "properties": {
+            "name": "Resource Name",
+            "description": "Description",
+            "displayName": "Display Name"
+          }
+        }
+      },
+      "fields": {
+        "apiResourceName": {
+          "label": "Resource Name",
+          "helpText": "Select an Api Resource",
+          "errorMessage": "Api Resource is required",
+          "selectAnItem": "Select an Api Resource"
         }
       }
     },
