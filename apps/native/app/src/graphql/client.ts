@@ -70,28 +70,29 @@ const errorLink = onError(
           redirectUrl &&
           redirectUrl.indexOf('cognito.shared.devland.is') >= 0
         ) {
-          if (!authStore.getState().isCogitoAuth) {
-            authStore.setState({ isCogitoAuth: true })
-            Navigation.showModal({
-              component: {
-                name: ComponentRegistry.DevtoolsCognitoAuthScreen,
-                passProps: { url: redirectUrl },
-              },
-            })
-          }
+          // const { isCogitoAuth, cognitoDismissCount } = authStore.getState();
+          authStore.setState({ cognitoAuthUrl: redirectUrl });
+          // if (!isCogitoAuth && cognitoDismissCount < 1) {
+          //   authStore.setState({ isCogitoAuth: true })
+          //   Navigation.showModal({
+          //     component: {
+          //       name: ComponentRegistry.DevtoolsCognitoAuthScreen,
+          //       passProps: { url: redirectUrl },
+          //     },
+          //   })
+          // }
         }
       }
     }
   },
 )
 
-const obj2cookie = (obj: any) =>
+const obj2cookie = (obj: any = {}) =>
   Object.entries(obj)
     .reduce((acc: string[], item) => {
       acc.push(item.join('='))
       return acc
     }, [])
-    .join('; ')
 
 const authLink = setContext(async (_, { headers }) => ({
   headers: {
@@ -99,7 +100,10 @@ const authLink = setContext(async (_, { headers }) => ({
     authorization: `Bearer ${
       authStore.getState().authorizeResult?.accessToken
     }`,
-    cookie: await CookieManager.get(config.apiEndpoint, true).then(obj2cookie),
+    cookie: [
+      ...await CookieManager.get(config.apiEndpoint, true).then(obj2cookie),
+      authStore.getState().cookies,
+    ].filter(x => String(x) !== '').join('; '),
   },
 }))
 

@@ -21,6 +21,7 @@ import {
 } from '../../graphql/queries/get-notification.query'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
 import { useIntl } from '../../utils/intl'
+import { testIDs } from '../../utils/test-ids'
 
 interface NotificationDetailScreenProps {
   id: string
@@ -163,7 +164,7 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
   }
 
   return (
-    <Host>
+    <Host testID={testIDs.SCREEN_NOTIFICATION_DETAIL}>
       <NavigationBarSheet
         title={intl.formatMessage({ id: 'notificationDetail.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}

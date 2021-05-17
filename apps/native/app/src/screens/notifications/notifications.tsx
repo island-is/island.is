@@ -25,6 +25,7 @@ import {
 } from '../../graphql/queries/list-notifications.query'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { navigateToNotification } from '../../utils/deep-linking'
+import { testIDs } from '../../utils/test-ids'
 
 export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -68,6 +69,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
       <TouchableHighlight
         underlayColor={theme.color.blue100}
         onPress={() => onNotificationPress(item)}
+        testID={testIDs.NOTIFICATION_CARD_BUTTON}
       >
         <NotificationCard
           key={item.id}
@@ -99,7 +101,10 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
-      <SafeAreaView style={{ marginHorizontal: 16, flex: 1 }}>
+      <SafeAreaView
+        style={{ marginHorizontal: 16, flex: 1 }}
+        testID={testIDs.SCREEN_NOTIFICATIONS}
+      >
         <FlatList
           style={{ flex: 1 }}
           data={notifications}

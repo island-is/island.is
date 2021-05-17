@@ -8,7 +8,7 @@
     "postinstall": "patch-package && cd app && yarn build:env .env",
     "pod:install": "cd app/ios && pod install",
     "detox:build": "detox build -C app-e2e/.detoxrc.json -o app-e2e/config.json",
-    "detox:test": "detox test -C app-e2e/.detoxrc.json -o app-e2e/config.json",
+    "detox:test": "detox test -C app-e2e/.detoxrc.json -o app-e2e/config.json -r",
     "detox:build:ios": "yarn detox:build -c ios",
     "detox:test:ios": "yarn detox:test -c ios"
   },

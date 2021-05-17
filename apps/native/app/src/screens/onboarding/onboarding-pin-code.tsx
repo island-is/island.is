@@ -125,7 +125,9 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
   }, [code])
 
   return (
-    <Host testID={testIDs.SCREEN_APP_LOCK}>
+    <Host
+      testID={confirmPin ? testIDs.SCREEN_ONBOARDING_CONFIRM_PIN : testIDs.SCREEN_ONBOARDING_ENTER_PIN}
+    >
       <SafeAreaView>
         <View
           style={{
@@ -172,7 +174,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             }}
           >
             {confirmPin && (
-              <CancelButton onPress={onCancelPress}>
+              <CancelButton onPress={onCancelPress} testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}>
                 <CancelText>
                   <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
                 </CancelText>

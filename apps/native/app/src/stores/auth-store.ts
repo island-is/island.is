@@ -27,6 +27,9 @@ interface AuthStore extends State {
   lockScreenActivatedAt: number | undefined
   lockScreenComponentId: string | undefined
   isCogitoAuth: boolean
+  cognitoDismissCount: number
+  cognitoAuthUrl?: string
+  cookies: string
   fetchUserInfo(): Promise<UserInfo>
   refresh(): Promise<boolean>
   login(): Promise<boolean>
@@ -46,6 +49,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
   isCogitoAuth: false,
+  cognitoDismissCount: 0,
+  cognitoAuthUrl: undefined,
+  cookies: '',
   async fetchUserInfo() {
     return fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
@@ -144,8 +150,6 @@ export async function checkIsAuthenticated() {
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
-
-  // console.log(authStore.getState().authorizeResult!.accessToken);
 
   // Attempt to fetch user info (validate the token is all good)
   try {

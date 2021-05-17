@@ -37,8 +37,14 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
       />
       <TabBar
         values={[
-          intl.formatMessage({ id: 'settings.tabs.personalInfo' }),
-          intl.formatMessage({ id: 'settings.tabs.preferences' }),
+          {
+            testID: testIDs.USER_TABBAR_TAB_PROFILE_INFO,
+            label: intl.formatMessage({ id: 'settings.tabs.personalInfo' })
+          },
+          {
+            testID: testIDs.USER_TABBAR_TAB_SETTINGS,
+            label: intl.formatMessage({ id: 'settings.tabs.preferences' })
+          },
         ]}
         onChange={(selectedIndex) => setTab(selectedIndex)}
         selectedIndex={tab}

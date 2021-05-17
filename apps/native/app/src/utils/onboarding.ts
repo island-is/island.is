@@ -3,6 +3,7 @@ import {
   isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
+import { Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
 import { ComponentRegistry } from './component-registry'
@@ -64,16 +65,19 @@ export async function getOnboardingScreens() {
     }
   }
 
-  screens.push({
-    component: {
-      name: ComponentRegistry.OnboardingNotificationsScreen,
-      id: 'ONBOARDING_NOTIFICATIONS_SCREEN',
-    },
-  })
+  // Android needs upfront Notifications permissions
+  if (Platform.OS !== 'android') {
+    screens.push({
+      component: {
+        name: ComponentRegistry.OnboardingNotificationsScreen,
+        id: 'ONBOARDING_NOTIFICATIONS_SCREEN',
+      },
+    })
 
-  // show notifications accept screen
-  if (!hasOnboardedNotifications) {
-    return screens
+    // show notifications accept screen
+    if (!hasOnboardedNotifications) {
+      return screens
+    }
   }
 
   return []

@@ -76,6 +76,7 @@ function NumButton({
       onPressOut={() => setPressed(false)}
       onPress={() => onPress && onPress(value)}
       accessibilityLabel={accessibilityLabel || value}
+      testID={testID}
     >
       {icon ? (
         <Image source={icon} style={{ tintColor }} />

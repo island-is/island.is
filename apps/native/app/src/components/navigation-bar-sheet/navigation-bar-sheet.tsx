@@ -2,6 +2,7 @@ import React from 'react'
 import { Platform, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
+import { testIDs } from '../../utils/test-ids'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -66,7 +67,7 @@ export function NavigationBarSheet({
       <SafeAreaView>
         <Header style={style}>
           <HeaderTitle>{title}</HeaderTitle>
-          <CloseButton onPress={onClosePress}>
+          <CloseButton onPress={onClosePress} testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}>
             <CloseIcon
               style={{
                 tintColor: theme.color.blue400,

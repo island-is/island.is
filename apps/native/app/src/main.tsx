@@ -38,9 +38,9 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    if (Platform.OS === 'ios') {
-      await showLockScreenOverlay({ enforceActivated: true })
-    }
+    // if (Platform.OS === 'ios') {
+    //   await showLockScreenOverlay({ enforceActivated: true })
+    // }
 
     // Set the app root
     Navigation.setRoot({
@@ -48,9 +48,9 @@ async function startApp() {
     })
 
     // Show lock screen overlay (android needs after setRoot)
-    if (Platform.OS === 'android') {
-      showLockScreenOverlay({ enforceActivated: true })
-    }
+    // if (Platform.OS === 'android') {
+    showLockScreenOverlay({ enforceActivated: true })
+    // }
   })
 }
 

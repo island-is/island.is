@@ -17,6 +17,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
+import { testIDs } from '../../utils/test-ids'
 
 export function TabSettings() {
   const authStore = useAuthStore()
@@ -271,7 +272,7 @@ export function TabSettings() {
           }
         />
         <TableViewCell title="Push Token" subtitle={pushToken} />
-        <PressableHighlight onPress={onLogoutPress}>
+        <PressableHighlight onPress={onLogoutPress} testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}>
           <TableViewCell
             title="Logout"
             subtitle="You will be signed out of the app."

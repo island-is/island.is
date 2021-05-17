@@ -15,6 +15,7 @@ import {
 } from '../../stores/preferences-store'
 import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 const Illustration = styled.SafeAreaView`
   background-color: ${(props) => props.theme.color.blue100};
@@ -106,7 +107,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_ONBOARDING_BIOMETRICS}>
       <Illustration>
         <Image
           source={image}
@@ -136,6 +137,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
         </Title>
         <ButtonContainer>
           <Button
+            testID={testIDs.ONBOARDING_BIOMETRICS_USE_BUTTON}
             title={intl.formatMessage(
               { id: 'onboarding.biometrics.useBiometricsButtonText' },
               { biometricType },
@@ -144,7 +146,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
             disabled={!isEnrolled}
           />
         </ButtonContainer>
-        <CancelButton onPress={onCancelPress}>
+        <CancelButton onPress={onCancelPress} testID={testIDs.ONBOARDING_BIOMETRICS_CANCEL_BUTTON}>
           <CancelText>
             <FormattedMessage id="onboarding.biometrics.skipButtonText" />
           </CancelText>

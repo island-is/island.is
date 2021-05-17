@@ -2,8 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+interface TabBarValue {
+  label: string;
+  testID?: string;
+}
+
 interface TabBarProps {
-  values: string[]
+  values: TabBarValue[]
   selectedIndex: number
   onChange(index: number): void
 }
@@ -110,11 +115,12 @@ export function TabBar(props: TabBarProps) {
               android_ripple={{
                 color: theme.color.blue200,
               }}
-              key={item + i}
+              key={item.label + i}
               onPress={() => {
                 onChange(i)
                 animateIndex(i)
               }}
+              testID={item.testID}
             >
               <TabTitle
                 style={{
@@ -124,7 +130,7 @@ export function TabBar(props: TabBarProps) {
                   ).interpolate({ inputRange, outputRange }),
                 }}
               >
-                {item}
+                {item.label}
               </TabTitle>
             </Tab>
           )

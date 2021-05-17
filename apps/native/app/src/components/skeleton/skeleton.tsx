@@ -5,16 +5,17 @@ import styled from 'styled-components/native'
 
 interface SkeletonProps {
   active?: boolean
+  error?: boolean
   height?: number
 }
 
-const Host = styled.View`
+const Host = styled.View<{ error?: boolean }>`
   height: 20px;
   width: 100%;
   background-color: ${(props) =>
     props.theme.isDark
-      ? props.theme.shade.shade100
-      : props.theme.color.dark100};
+      ? props.error ? props.theme.color.red600 : props.theme.shade.shade100
+      : props.error ? props.theme.color.red200 : props.theme.color.dark100};
   opacity: 0.75;
   overflow: hidden;
 `
@@ -64,14 +65,16 @@ export function Skeleton(props: SkeletonProps) {
       animate()
     } else if (ar.current) {
       ar.current.stop()
+      av.current.setValue(-(aw.current + offset))
     }
   }, [props.active])
 
   return (
-    <Host onLayout={onLayout}>
+    <Host onLayout={onLayout} error={props.error}>
       <Swoosh
         style={{
           transform: [{ translateX: av.current }, { rotate: '5deg' }],
+          opacity: props.error ? 0 : 1,
           ...Platform.select({
             android: {
               elevation: 50,

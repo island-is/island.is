@@ -10,7 +10,6 @@ export interface Config {
   }
   apiEndpoint: string
   bundleId: string
-  disableLockScreen: boolean
   env: typeof env
   constants: typeof Constants
 }
@@ -18,12 +17,9 @@ export interface Config {
 // Remove WebManifest, it throws a warning in React Native
 const { WebManifest, ...ConstantsRest } = Constants
 
-export const config: Config = {
+const defaults = {
   identityServer: {
-    // issuer: env.IDENTITYSERVER_ISSUER || 'https://identity-server.dev01.devland.is',
     issuer: 'https://innskra.island.is',
-    clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
-    // scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || ['openid', 'profile', 'api_resource.scope', 'offline_access'],
     scopes: [
       'openid',
       'profile',
@@ -31,15 +27,24 @@ export const config: Config = {
       'offline_access',
       '@island.is/applications:read',
     ],
+    clientId: '@island.is-app',
   },
-  // apiEndpoint: env.API_ENDPOINT || 'https://beta.dev01.devland.is/api',
   apiEndpoint: 'https://island.is/api',
+}
+
+export const config: Config = {
+  identityServer: {
+    clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
+    issuer: env.IDENTITYSERVER_ISSUER || defaults.identityServer.issuer,
+    scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || defaults.identityServer.scopes,
+  },
+  apiEndpoint: env.API_ENDPOINT || defaults.apiEndpoint,
   bundleId:
     Platform.select({
       ios: env.BUNDLE_ID_IOS,
       android: env.BUNDLE_ID_ANDROID,
     }) || 'is.island.app',
-  disableLockScreen: false,
   constants: ConstantsRest,
+  // ...defaults as any, // overwrite production
   env,
 }

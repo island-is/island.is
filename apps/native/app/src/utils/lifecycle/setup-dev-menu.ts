@@ -30,6 +30,15 @@ async function toggleStorybook() {
   devMenuOptions.storybook = !devMenuOptions.storybook
 }
 
+async function loginCognito() {
+  Navigation.showModal({
+    component: {
+      name: ComponentRegistry.DevtoolsCognitoAuthScreen,
+      passProps: { url: authStore.getState().cognitoAuthUrl! },
+    },
+  })
+}
+
 async function resetPreferences() {
   await preferencesStore.getState().reset()
 }
@@ -51,6 +60,7 @@ export function setupDevMenu() {
 
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
     const { dev__useLockScreen } = preferencesStore.getState()
+    const { cognitoAuthUrl } = authStore.getState();
 
     const options = {
       STORYBOOK: devMenuOptions.storybook
@@ -59,6 +69,9 @@ export function setupDevMenu() {
       TOGGLE_LOCKSCREEN: dev__useLockScreen
         ? 'Disable lockscreen'
         : 'Enable Lockscreen',
+      ...(cognitoAuthUrl ? {
+        LOGIN_COGNITO: 'Login with cognito',
+      } : {}),
       TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
       LOGOUT: 'Logout',
@@ -80,13 +93,15 @@ export function setupDevMenu() {
           return resetPreferences()
         case 'LOGOUT':
           return enforceLogout()
+        case 'LOGIN_COGNITO':
+          return loginCognito()
       }
     }
 
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
-          options: [...objectValues, 'Cancel'],
+          options: [...objectValues, 'Cancel'] as string[],
           cancelButtonIndex: objectKeys.length,
         },
         (buttonIndex: number) => {

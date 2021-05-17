@@ -5,6 +5,7 @@ import {
   Platform,
   SafeAreaView, ScrollView, TouchableOpacity, useWindowDimensions
 } from 'react-native';
+import CodePush from 'react-native-code-push';
 import { NavigationFunctionComponent } from 'react-native-navigation';
 import { useTheme } from 'styled-components/native';
 import timeOutlineIcon from '../../assets/icons/time-outline.png';
@@ -28,7 +29,7 @@ import { testIDs } from '../../utils/test-ids';
 
 const { title, useNavigationTitle } = createNavigationTitle('home.screenTitle')
 
-export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
+export const MainHomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   const { width, height } = useWindowDimensions()
   const notificationsStore = useNotificationsStore()
   const { dismissed, dismiss } = usePreferencesStore()
@@ -151,8 +152,15 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 }
 
-HomeScreen.options = {
+MainHomeScreen.options = {
   topBar: {
     title,
   },
 }
+
+export const HomeScreen = CodePush({
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  installMode: CodePush.InstallMode.ON_NEXT_RESUME
+})(MainHomeScreen);
+
+HomeScreen.options = MainHomeScreen.options;

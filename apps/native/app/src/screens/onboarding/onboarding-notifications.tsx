@@ -134,9 +134,10 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
               id: 'onboarding.notifications.allowNotificationsButtonText',
             })}
             onPress={onAllowPress}
+            testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
           />
         </ButtonContainer>
-        <CancelButton onPress={onSkipPress}>
+        <CancelButton onPress={onSkipPress} testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}>
           <CancelText>
             <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
           </CancelText>

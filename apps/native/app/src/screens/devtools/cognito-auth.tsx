@@ -15,25 +15,35 @@ export const CognitoAuthScreen: NavigationFunctionComponent<{ url: string }> = (
   const [url, setUrl] = useState(props.url)
 
   const onNavigationStateChange = (navigationState: WebViewNavigation) => {
+    console.log(navigationState.url)
     if (
       navigationState.url.indexOf(
         'https://auth.shared.devland.is/dev/oauth2/sign_in',
-      ) >= 0
+      ) === 0
     ) {
       setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in')
     }
 
     if (
-      navigationState.url ===
-      'https://auth.shared.devland.is/dev/oauth2/sign_in'
+      navigationState.url.indexOf(
+        'https://auth.shared.devland.is/dev/oauth2/callback',
+      ) === 0
     ) {
+      setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in')
+    }
+
+    if (navigationState.url === 'https://auth.shared.devland.is/') {
+      // Success
       Navigation.dismissModal(props.componentId)
       authStore.setState({ isCogitoAuth: false })
     }
   }
 
   useNavigationComponentDidDisappear(() => {
-    authStore.setState({ isCogitoAuth: false })
+    authStore.setState((prev) => ({
+      isCogitoAuth: false,
+      cognitoDismissCount: prev.cognitoDismissCount + 1,
+    }))
   })
 
   return (

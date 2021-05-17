@@ -49,16 +49,22 @@ function Input({
   label,
   value,
   loading,
+  error,
 }: {
   label: string
   value?: string
   loading?: boolean
+  error?: boolean
 }) {
   return (
     <InputHost>
       <InputContent>
         <InputLabel>{label}</InputLabel>
-        {loading ? <Skeleton active /> : <InputValue>{value ?? ''}</InputValue>}
+        {loading || error ? (
+          <Skeleton active={loading} error={error} />
+        ) : (
+          <InputValue>{value ?? ''}</InputValue>
+        )}
       </InputContent>
     </InputHost>
   )
@@ -74,7 +80,10 @@ export function TabPersonalInfo() {
   const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client })
   const natRegData = natRegRes?.data?.nationalRegistryUser || {}
+  const errorNatReg = !!natRegRes.error
   const loadingNatReg = natRegRes.loading
+
+  console.log({ errorNatReg, loadingNatReg });
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -86,36 +95,41 @@ export function TabPersonalInfo() {
       <View style={{ height: 8 }} />
       <Input
         loading={loadingNatReg}
+        error={errorNatReg}
         label={intl.formatMessage({ id: 'settings.natreg.displayName' })}
         value={natRegData?.fullName}
       />
       <InputRow>
         <Input
           loading={loadingNatReg}
+          error={errorNatReg}
           label={intl.formatMessage({ id: 'settings.natreg.nationalId' })}
           value={
-            !loadingNatReg
+            !loadingNatReg && !errorNatReg
               ? formatNationalId(String(natRegData.nationalId))
               : undefined
           }
         />
         <Input
           loading={loadingNatReg}
+          error={errorNatReg}
           label={intl.formatMessage({ id: 'settings.natreg.birthPlace' })}
           value={natRegData?.birthPlace}
         />
       </InputRow>
       <Input
         loading={loadingNatReg}
+        error={errorNatReg}
         label={intl.formatMessage({ id: 'settings.natreg.legalResidence' })}
         value={natRegData?.legalResidence}
       />
       <InputRow>
         <Input
           loading={loadingNatReg}
+          error={errorNatReg}
           label={intl.formatMessage({ id: 'settings.natreg.gender' })}
           value={
-            !loadingNatReg
+            !loadingNatReg && !errorNatReg
               ? intl.formatMessage(
                   { id: 'settings.natreg.genderValue' },
                   natRegData,
@@ -125,11 +139,12 @@ export function TabPersonalInfo() {
         />
         <Input
           loading={loadingNatReg}
+          error={errorNatReg}
           label={intl.formatMessage({
             id: 'settings.natreg.maritalStatus',
           })}
           value={
-            !loadingNatReg
+            !loadingNatReg && !errorNatReg
               ? intl.formatMessage(
                   { id: 'settings.natreg.maritalStatusValue' },
                   natRegData,
@@ -145,6 +160,7 @@ export function TabPersonalInfo() {
       />
       <Input
         loading={loadingNatReg}
+        error={errorNatReg}
         label={intl.formatMessage({ id: 'settings.natreg.religion' })}
         value={natRegData?.religion}
       />
