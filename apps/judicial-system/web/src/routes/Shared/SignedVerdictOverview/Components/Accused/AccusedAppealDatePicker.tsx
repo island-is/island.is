@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { motion, useIsPresent } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Button } from '@island.is/island-ui/core'
-
 import {
   capitalize,
   formatAccusedByGender,
@@ -13,15 +12,13 @@ import { CaseGender } from '@island.is/judicial-system/types'
 interface Props {
   handleAccusedAppeal: (date?: Date) => void
   accusedGender: CaseGender
-  handleAccusedRemoved: () => void
 }
 
-const Accused: React.FC<Props> = (props) => {
-  const { handleAccusedAppeal, accusedGender, handleAccusedRemoved } = props
-  const isPresent = useIsPresent()
+const AccusedAppealDatePicker: React.FC<Props> = (props) => {
+  const { handleAccusedAppeal, accusedGender } = props
   const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
 
-  const appealDateVariants = {
+  const animateInAndOut = {
     visible: {
       y: 0,
       opacity: 1,
@@ -39,8 +36,7 @@ const Accused: React.FC<Props> = (props) => {
   return (
     <motion.div
       key="accusedAppealDatepicker"
-      className={styles.accusedAppealDatepicker}
-      variants={appealDateVariants}
+      variants={animateInAndOut}
       initial={{ y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"
@@ -64,4 +60,4 @@ const Accused: React.FC<Props> = (props) => {
   )
 }
 
-export default Accused
+export default AccusedAppealDatePicker
