@@ -7,6 +7,8 @@ export const container = style({
   left: 0,
   right: 0,
   top: 0,
+  margin: 0,
+  padding: 0,
   height: STICKY_NAV_HEIGHT,
   zIndex: 1000,
   backgroundColor: theme.color.blue400,
@@ -15,6 +17,11 @@ export const container = style({
   visibility: 'hidden',
   transition:
     'opacity 150ms ease, transform 150ms ease, visibility 0ms linear 150ms',
+})
+
+export const gridContainer = style({
+  margin: 0,
+  padding: 0,
 })
 
 export const show = style({

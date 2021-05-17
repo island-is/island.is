@@ -27,6 +27,7 @@ import {
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
+  OrganizationChatPanel,
   Sticky,
   AppendedArticleComponents,
 } from '@island.is/web/components'
@@ -567,6 +568,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
+      <OrganizationChatPanel slugs={article.organization.map((x) => x.slug)} />
       <OrganizationFooter
         theme={article.organization[0]?.slug}
         organization={article.organization[0] as Organization}
