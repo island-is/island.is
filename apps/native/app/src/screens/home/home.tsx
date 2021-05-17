@@ -10,7 +10,6 @@ import { testIDs } from '../../utils/test-ids'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useIntl } from '../../utils/intl'
-import timeOutlineIcon from '../../assets/icons/time-outline.png';
 import { ListNotificationsResponse, LIST_NOTIFICATIONS_QUERY } from '../../graphql/queries/list-notifications.query'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { navigateToNotification } from '../../utils/deep-linking';
@@ -101,7 +100,6 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
           <Heading>{intl.formatMessage({ id: 'home.applicationsStatus' })}</Heading>
           <StatusCard
             title="Fæðingarorlof 4/6"
-            icon={timeOutlineIcon}
             date={new Date()}
             description="Skipting orlofstíma"
             badge={<Badge title="Vantar gögn" />}

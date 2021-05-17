@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
 import { FormattedDate } from 'react-intl';
-import { Text, Image } from 'react-native';
+import { Image } from 'react-native';
 import { ImageSourcePropType } from 'react-native';
 
 

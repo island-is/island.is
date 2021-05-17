@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react-native'
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { text, withKnobs, boolean, number } from '@storybook/addon-knobs';
 import React from 'react'
 import { ImageSourcePropType, View } from 'react-native';
 import { WelcomeCard } from './WelcomeCard'
@@ -9,7 +9,7 @@ import { StatusCard } from './StatusCard';
 import illustrationSrc from '../../assets/card/digital-services-m2.png'
 import agencyLogo from '../../assets/card/agency-logo.png'
 import logo from '../../assets/card/logo-64w.png'
-import timeOutlineIcon from '../../assets/card/time-outline.png';
+
 import { Badge } from '../Badge/Badge';
 
 const CenterView = ({ children }: any) => (
@@ -30,36 +30,50 @@ storiesOf('Cards', module)
       />
     );
   })
-  .add('Licence card', () => {
+  .add('Licence Card', () => {
+    const title = text('Licence Card Title', 'Ökuskýrteini');
     return (
       <LicenceCard
-        title="Ökuskýrteini"
+        title={title}
+        status="Í gildi"
+        date="16:24 - 14.03.2022"
         agencyLogo={agencyLogo as ImageSourcePropType}
       />
     );
   })
-  .add('Notification card', () => {
+  .add('Notification Card', () => {
+    const title = text('Notification Card Title', 'Ökuskýrteini');
+    const message = text('Notification Card Message', 'Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu');
     return (
       <NotificationCard
-        id="demo"
+        id="story-demo"
         icon={logo as ImageSourcePropType}
         date={new Date()}
-        title="Ökuskýrteini"
-        message="Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu"
-        unread={false}
+        title={title}
+        message={message}
+        unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
       />
     );
   })
-  .add('Status card', () => {
+  .add('Status Card', () => {
+    const title = text('Status Card Title', 'Fæðingarorlof 1/3');
+    const description = text('Status Card Description', 'Skipting orlofstíma');
+    const badgeTitle = text('Badge Status Card Title', 'Vantar gögn');
+    const options = {
+      range: true,
+      min: 0,
+      max: 100,
+      step: 20,
+    };
+    const progress = number('Status Card Progess', 66, options);
     return (
       <StatusCard
-        title="Fæðingarorlof 4/6"
-        icon={timeOutlineIcon as ImageSourcePropType}
+        title={title}
         date={new Date()}
-        description="Skipting orlofstíma"
-        badge={<Badge title="Vantar gögn" />}
-        progress={66}
+        description={description}
+        badge={<Badge title={badgeTitle} />}
+        progress={progress}
         actions={[{ text: 'Opna umsókn', onPress() {} }]}
       />
     );

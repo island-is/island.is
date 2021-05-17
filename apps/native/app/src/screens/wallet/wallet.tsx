@@ -15,6 +15,7 @@ import agencyLogo from '../../assets/temp/agency-logo.png'
 import { LicenseType } from '../../types/license-type'
 import { useIntl } from '../../utils/intl'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
+import { time } from 'console'
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
@@ -68,6 +69,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       id: string
       title: string
       serviceProvider: string
+      date: string
+      status: string
       type: LicenseType
     }
   }) => (
@@ -85,6 +88,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         <LicenceCard
           nativeID={`license-${item.id}_source`}
           title={item.title}
+          date={item.date}
+          status={item.status}
           backgroundColor={mapLicenseColor(item.type)}
           agencyLogo={agencyLogo}
         />

@@ -19,13 +19,6 @@ const Icon = styled.View`
   justify-content: center;
 `;
 
-const Title = styled.Text`
-  font-size: 16px;
-  font-weight: ${theme.typography.semiBold};
-  color: ${theme.color.dark400};
-  line-height: 24px;
-`;
-
 const Description = styled.Text`
   font-size: 12px;
   color: ${theme.color.dark400};
@@ -83,16 +76,17 @@ interface AlertProps {
   title?: string,
   message?: string,
   style?: any;
-  onClose(): void;
-  onClosed(): void;
+  onClose?(): void;
+  onClosed?(): void;
   visible?: boolean;
+  hideIcon?: boolean;
 }
 
 const defaultOffsetY = {
   current: new Animated.Value(0),
 };
 
-export function Alert({ title, message, type, visible = true, onClose, onClosed, ...rest }: AlertProps) {
+export function Alert({ title, message, type, hideIcon = false, visible = true, onClose, onClosed, ...rest }: AlertProps) {
 
   const offsetY = useRef(new Animated.Value(0));
   const alertRef = useRef<View>(null);
@@ -109,7 +103,7 @@ export function Alert({ title, message, type, visible = true, onClose, onClosed,
       }).start(({ finished }) => {
         if (finished) {
           setIsVisible(false);
-          onClosed();
+          onClosed && onClosed();
           if (offsetY.current) {
             offsetY.current.setValue(1);
           }
@@ -147,18 +141,21 @@ export function Alert({ title, message, type, visible = true, onClose, onClosed,
         }}
       >
         <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Icon>
-            <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
-          </Icon>
-          <Content>
-            {title && <Title style={{ marginBottom: message ? 15 : 0 }}>{title}</Title>}
-            {message && (
-              <Description>{message}</Description>
-            )}
-          </Content>
-          <Close onPress={onClose}>
-            <Image source={close} style={{ width: 12, height: 12 }} />
-          </Close>
+         {!hideIcon &&
+            <Icon>
+              <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
+            </Icon>
+          }
+          {message && (
+            <Content>
+                <Description>{message}</Description>
+            </Content>
+          )}
+          {onClose &&
+            <Close onPress={onClose}>
+              <Image source={close} style={{ width: 12, height: 12 }} />
+            </Close>
+          }
         </SafeAreaView>
       </Host>
     </>

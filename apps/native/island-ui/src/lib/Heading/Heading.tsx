@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 const Host = styled.View`
   display: flex;
   flex: 1;
+  width: 100%;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -21,14 +22,12 @@ const Text = styled.Text`
   margin-right: auto;
 `;
 
-
 interface HeadingProps {
   children: React.ReactNode;
   button?: React.ReactNode;
-  isCenterAligned?: boolean;
 }
 
-export function Heading({ children, button, isCenterAligned }: HeadingProps) {
+export function Heading({ children, button }: HeadingProps) {
   return (
     <Host>
       <Text>

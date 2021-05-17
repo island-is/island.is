@@ -5,6 +5,7 @@ import isVerifiedLogo from '../../assets/card/is-verified.png'
 
 const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
+  width: 100%;
   flex-flow: row nowrap;
   justify-content: space-between;
   padding: 12px 24px;
@@ -44,12 +45,14 @@ const ImgWrap = styled.View`
 
 interface LicenceCardProps {
   title: string;
+  status?: string;
+  date?: string;
   agencyLogo: ImageSourcePropType;
   backgroundColor?: string;
   nativeID?: string;
 }
 
-export function LicenceCard({ title, backgroundColor = '#F8F5FA', agencyLogo, nativeID }: LicenceCardProps) {
+export function LicenceCard({ title, status, date, backgroundColor = '#F8F5FA', agencyLogo, nativeID }: LicenceCardProps) {
   return (
     <Host backgroundColor={backgroundColor} nativeID={nativeID}>
       <Content>
@@ -59,12 +62,11 @@ export function LicenceCard({ title, backgroundColor = '#F8F5FA', agencyLogo, na
         <ValidationWrap>
           <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
-            Í gildi
+            {status}
           </Validation>
         </ValidationWrap>
-
         <TimeStamp>
-          16:24 - 14.03.2021
+          {date}
         </TimeStamp>
       </Content>
       <ImgWrap>
