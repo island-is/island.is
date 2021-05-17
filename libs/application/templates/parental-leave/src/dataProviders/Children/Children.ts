@@ -209,8 +209,6 @@ export class Children extends BasicDataProvider {
       })
     }
 
-    )
-
     if (children.length <= 0 && existingApplications.length <= 0) {
       return Promise.reject({
         reason: parentalLeaveFormMessages.shared.childrenError,
