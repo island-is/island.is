@@ -237,6 +237,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
                     data-testid="deleteCase"
                     component="button"
                     aria-label="Viltu afturkalla kröfu?"
+                    aria-role="button"
                     className={styles.deleteButton}
                     onClick={(evt) => {
                       evt.stopPropagation()
