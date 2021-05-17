@@ -25,6 +25,9 @@ jest.mock('pdfkit', function () {
     text() {
       return this
     }
+    bufferedPageRange() {
+      return this
+    }
     end() {
       return this
     }
