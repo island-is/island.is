@@ -3,8 +3,8 @@ import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 interface TabBarValue {
-  label: string;
-  testID?: string;
+  label: string
+  testID?: string
 }
 
 interface TabBarProps {
@@ -30,6 +30,7 @@ const TabTitle = styled(Animated.Text)`
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 14px;
   line-height: 19px;
+  color: ${(props) => props.theme.shade.foreground};
 `
 
 const Line = styled.View`
@@ -59,41 +60,31 @@ export function TabBar(props: TabBarProps) {
   const [width, setWidth] = useState(win.width)
   const { values, selectedIndex, onChange } = props
   const theme = useTheme()
-  const animatedIndexNative = useRef(new Animated.Value(selectedIndex))
+  // const animatedIndexNative = useRef(new Animated.Value(selectedIndex))
   const animatedIndex = useRef(new Animated.Value(selectedIndex))
   const indexes = useRef(new Map<number, Animated.Value>())
   const tabWidth = width / props.values.length
+  const animRef = useRef<Animated.CompositeAnimation>();
 
   const animateIndex = (toValue: number) => {
-    Animated.spring(animatedIndexNative.current, {
+    animRef.current = Animated.spring(animatedIndex.current, {
       toValue,
       useNativeDriver: true,
-      overshootClamping: true,
-    }).start()
-    Animated.spring(animatedIndex.current, {
-      toValue,
-      useNativeDriver: false,
-      overshootClamping: true,
-    }).start()
+    });
+    animRef.current.start()
   }
-
-  const [outputRange, setOutputRange] = useState([
-    hexToRGB(theme.shade.foreground),
-    hexToRGB(theme.color.blue400),
-    hexToRGB(theme.shade.foreground),
-  ])
-
-  useEffect(() => {
-    setOutputRange([
-      hexToRGB(theme.shade.foreground),
-      hexToRGB(theme.color.blue400),
-      hexToRGB(theme.shade.foreground),
-    ])
-  }, [theme])
 
   useEffect(() => {
     animateIndex(selectedIndex)
   }, [selectedIndex])
+
+  useEffect(() => {
+    return () => {
+      if (animRef.current) {
+        animRef.current.stop();
+      }
+    }
+  }, []);
 
   const inputRange = [-1, 0, 1]
 
@@ -124,10 +115,25 @@ export function TabBar(props: TabBarProps) {
             >
               <TabTitle
                 style={{
-                  color: Animated.subtract(
+                  opacity: Animated.subtract(
                     animatedIndex.current ?? 1,
                     currentIdx,
-                  ).interpolate({ inputRange, outputRange }),
+                  ).interpolate({ inputRange, outputRange: [1, 0, 1] }),
+                }}
+              >
+                {item.label}
+              </TabTitle>
+              <TabTitle
+                style={{
+                  color: theme.color.blue400,
+                  position: 'absolute',
+                  opacity: Animated.subtract(
+                    animatedIndex.current ?? 1,
+                    currentIdx,
+                  ).interpolate({
+                    inputRange,
+                    outputRange: [0, 1, 0],
+                  }),
                 }}
               >
                 {item.label}
@@ -142,7 +148,7 @@ export function TabBar(props: TabBarProps) {
             width: tabWidth,
             transform: [
               {
-                translateX: animatedIndexNative.current.interpolate({
+                translateX: animatedIndex.current.interpolate({
                   inputRange: props.values.map((_, i) => i),
                   outputRange: props.values.map((_, i) => i * tabWidth),
                 }),

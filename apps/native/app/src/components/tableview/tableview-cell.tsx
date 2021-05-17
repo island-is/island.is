@@ -102,7 +102,7 @@ export function TableViewCell(props: TableViewCellProps) {
     border = true,
     disabled = false,
     bottom,
-    style,
+    style = {},
   } = props
   return (
     <SafeAreaView style={{ marginHorizontal: 16, ...style }}>

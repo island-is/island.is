@@ -32,7 +32,7 @@ interface OrganizationsStore extends State {
 
 function processItems(items: Omit<Organization, 'query'>[]) {
   return items.map((item) => ({
-    ...item,
+    ...(item || {}),
     query: item.title.toLocaleLowerCase(),
   }))
 }

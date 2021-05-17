@@ -1,35 +1,48 @@
-import { useQuery } from '@apollo/client';
-import { Badge, Close, Heading, NotificationCard, StatusCard, WelcomeCard } from '@island.is/island-ui-native';
-import React from 'react';
+import { useQuery } from '@apollo/client'
 import {
-  Platform,
-  SafeAreaView, ScrollView, TouchableOpacity, useWindowDimensions
-} from 'react-native';
-import CodePush from 'react-native-code-push';
-import { NavigationFunctionComponent } from 'react-native-navigation';
-import { useTheme } from 'styled-components/native';
-import timeOutlineIcon from '../../assets/icons/time-outline.png';
-import illustrationSrc from '../../assets/illustrations/digital-services-m2.png';
-import logo from '../../assets/logo/logo-64w.png';
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import { ViewPager } from '../../components/view-pager/view-pager';
-import { useScreenOptions } from '../../contexts/theme-provider';
-import { client } from '../../graphql/client';
+  Badge,
+  Close,
+  Heading,
+  NotificationCard,
+  StatusCard,
+  WelcomeCard,
+} from '@island.is/island-ui-native'
+import React from 'react'
+import {
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native'
+import CodePush from 'react-native-code-push'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useTheme } from 'styled-components/native'
+import timeOutlineIcon from '../../assets/icons/time-outline.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
+import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
+import logo from '../../assets/logo/logo-64w.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { ViewPager } from '../../components/view-pager/view-pager'
+import { useScreenOptions } from '../../contexts/theme-provider'
+import { client } from '../../graphql/client'
 import {
   ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY
-} from '../../graphql/queries/list-notifications.query';
-import { authStore } from '../../stores/auth-store';
-import { useNotificationsStore } from '../../stores/notifications-store';
-import { usePreferencesStore } from '../../stores/preferences-store';
-import { createNavigationTitle } from '../../utils/create-navigation-title';
-import { navigateToNotification } from '../../utils/deep-linking';
-import { useIntl } from '../../utils/intl';
-import { testIDs } from '../../utils/test-ids';
+  LIST_NOTIFICATIONS_QUERY,
+} from '../../graphql/queries/list-notifications.query'
+import { authStore } from '../../stores/auth-store'
+import { useNotificationsStore } from '../../stores/notifications-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
+import { createNavigationTitle } from '../../utils/create-navigation-title'
+import { navigateToNotification } from '../../utils/deep-linking'
+import { useIntl } from '../../utils/intl'
+import { openBrowser } from '../../utils/rn-island'
+import { testIDs } from '../../utils/test-ids'
 
 const { title, useNavigationTitle } = createNavigationTitle('home.screenTitle')
 
-export const MainHomeScreen: NavigationFunctionComponent = ({ componentId }) => {
+export const MainHomeScreen: NavigationFunctionComponent = ({
+  componentId,
+}) => {
   const { width, height } = useWindowDimensions()
   const notificationsStore = useNotificationsStore()
   const { dismissed, dismiss } = usePreferencesStore()
@@ -43,15 +56,12 @@ export const MainHomeScreen: NavigationFunctionComponent = ({ componentId }) => 
       bottomTab: {
         testID: testIDs.TABBAR_TAB_HOME,
         iconInsets: {
-          top: 4,
+          top: 14,
           bottom: -4,
         },
         iconWidth: 42,
         iconHeight: 42,
-        icon:
-          width < height && Platform.OS === 'ios' && !Platform.isPad
-            ? require('../../assets/icons/tabbar-home-ios.png')
-            : require('../../assets/icons/tabbar-home.png'),
+        icon: require('../../assets/icons/tabbar-home.png'),
         disableIconTint: false,
         disableSelectedIconTint: true,
         selectedIconColor: null as any,
@@ -88,20 +98,22 @@ export const MainHomeScreen: NavigationFunctionComponent = ({ componentId }) => 
                 key="card-1"
                 number="1"
                 description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={illustrationSrc}
+                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
+                backgroundColor={theme.isDark ? '#2A1240' : theme.color.purple100}
               />
               <WelcomeCard
                 key="card-2"
                 number="2"
                 description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={illustrationSrc}
-                backgroundColor="#F2F7FF"
+                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
+                backgroundColor={theme.isDark ? '#1C1D53' : theme.color.blue100}
               />
               <WelcomeCard
                 key="card-3"
                 number="3"
                 description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={illustrationSrc}
+                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
+                backgroundColor={theme.isDark ? '#3E002E' : theme.color.red100}
               />
             </ViewPager>
           </SafeAreaView>
@@ -117,7 +129,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({ componentId }) => 
             description="Skipting orlofstíma"
             badge={<Badge title="Vantar gögn" />}
             progress={66}
-            actions={[{ text: 'Opna umsókn', onPress() {} }]}
+            actions={[{ text: 'Opna umsókn', onPress() {
+              openBrowser('https://island.is/minarsidur', componentId)
+            } }]}
           />
           <Heading>{intl.formatMessage({ id: 'home.notifications' })}</Heading>
           {notificationsRes.data?.listNotifications
@@ -160,7 +174,7 @@ MainHomeScreen.options = {
 
 export const HomeScreen = CodePush({
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  installMode: CodePush.InstallMode.ON_NEXT_RESUME
-})(MainHomeScreen);
+  installMode: CodePush.InstallMode.ON_NEXT_RESUME,
+})(MainHomeScreen)
 
-HomeScreen.options = MainHomeScreen.options;
+HomeScreen.options = MainHomeScreen.options

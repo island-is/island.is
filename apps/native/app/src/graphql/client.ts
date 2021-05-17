@@ -9,9 +9,7 @@ import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import CookieManager from '@react-native-community/react-native-cookies'
-import { Navigation } from 'react-native-navigation'
 import { authStore } from '../stores/auth-store'
-import { ComponentRegistry } from '../utils/component-registry'
 import { config } from '../utils/config'
 import { typeDefs } from './type-defs'
 import { typePolicies } from './type-policies'
@@ -70,17 +68,7 @@ const errorLink = onError(
           redirectUrl &&
           redirectUrl.indexOf('cognito.shared.devland.is') >= 0
         ) {
-          // const { isCogitoAuth, cognitoDismissCount } = authStore.getState();
-          authStore.setState({ cognitoAuthUrl: redirectUrl });
-          // if (!isCogitoAuth && cognitoDismissCount < 1) {
-          //   authStore.setState({ isCogitoAuth: true })
-          //   Navigation.showModal({
-          //     component: {
-          //       name: ComponentRegistry.DevtoolsCognitoAuthScreen,
-          //       passProps: { url: redirectUrl },
-          //     },
-          //   })
-          // }
+          authStore.setState({ cognitoAuthUrl: redirectUrl })
         }
       }
     }
@@ -88,11 +76,10 @@ const errorLink = onError(
 )
 
 const obj2cookie = (obj: any = {}) =>
-  Object.entries(obj)
-    .reduce((acc: string[], item) => {
-      acc.push(item.join('='))
-      return acc
-    }, [])
+  Object.entries(obj).reduce((acc: string[], item) => {
+    acc.push(item.join('='))
+    return acc
+  }, [])
 
 const authLink = setContext(async (_, { headers }) => ({
   headers: {
@@ -101,9 +88,11 @@ const authLink = setContext(async (_, { headers }) => ({
       authStore.getState().authorizeResult?.accessToken
     }`,
     cookie: [
-      ...await CookieManager.get(config.apiEndpoint, true).then(obj2cookie),
+      ...(await CookieManager.get(config.apiEndpoint, true).then(obj2cookie)),
       authStore.getState().cookies,
-    ].filter(x => String(x) !== '').join('; '),
+    ]
+      .filter((x) => String(x) !== '')
+      .join('; '),
   },
 }))
 

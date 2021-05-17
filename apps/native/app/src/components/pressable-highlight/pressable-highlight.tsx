@@ -21,8 +21,8 @@ export function PressableHighlight({
   const color =
     highlightColor ??
     Platform.select({
-      android: theme.isDark ? '#080817' : theme.color.blue200,
-      ios: theme.isDark ? '#080817' : theme.color.blue100,
+      android: theme.isDark ? '#001333' : theme.color.blue200,
+      ios: theme.isDark ? '#001333' : theme.color.blue100,
     })
 
   if (Platform.OS === 'ios') {

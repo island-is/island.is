@@ -136,7 +136,7 @@ export function setupRoutes() {
     authStore.setState({ cookies: decodedCookie });
   });
 
-  addRoute('/e2e/applock', () => {
+  addRoute('/e2e/disable-applock', () => {
     preferencesStore.setState({ dev__useLockScreen: false });
   });
 }

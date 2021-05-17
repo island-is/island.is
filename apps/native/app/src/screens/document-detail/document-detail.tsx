@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client'
-import { Button } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { FormattedDate } from 'react-intl'
 import { Platform, Share, View } from 'react-native'
@@ -7,7 +6,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
+  useNavigationComponentDidDisappear
 } from 'react-native-navigation-hooks/dist'
 import WebView from 'react-native-webview'
 import PDFReader from 'rn-pdf-reader-js'
@@ -15,11 +14,11 @@ import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
-  GET_DOCUMENT_QUERY,
+  GET_DOCUMENT_QUERY
 } from '../../graphql/queries/get-document.query'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { authStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
@@ -93,6 +92,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
+    // fetchPolicy: 'network-only',
   })
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,

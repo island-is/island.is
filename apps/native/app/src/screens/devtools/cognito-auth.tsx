@@ -15,7 +15,6 @@ export const CognitoAuthScreen: NavigationFunctionComponent<{ url: string }> = (
   const [url, setUrl] = useState(props.url)
 
   const onNavigationStateChange = (navigationState: WebViewNavigation) => {
-    console.log(navigationState.url)
     if (
       navigationState.url.indexOf(
         'https://auth.shared.devland.is/dev/oauth2/sign_in',

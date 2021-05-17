@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Dimensions } from 'react-native'
 import { Image, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -24,13 +25,13 @@ interface NumButtonProps {
   onPressOut?(value: string): void
 }
 
-const NumButtonTouchable = styled.TouchableHighlight`
-  width: 64px;
-  height: 64px;
-  border-radius: 32px;
+const NumButtonTouchable = styled.TouchableHighlight<{ width: number }>`
+  width: 72px;
+  height: 72px;
+  border-radius: ${72/2}px;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.theme.color.blue100};
+  background-color: ${(props) => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue100};
   margin: 16px;
 `
 
@@ -42,8 +43,8 @@ const NumButtonText = styled.Text<{ color: string }>`
 `
 
 const Gap = styled.View`
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   margin: 16px;
 `
 
@@ -56,6 +57,7 @@ function NumButton({
   accessibilityLabel,
   testID,
 }: NumButtonProps) {
+  const { width } = Dimensions.get('window');
   const theme = useTheme()
   const [pressed, setPressed] = useState(false)
   useEffect(() => {
@@ -67,7 +69,9 @@ function NumButton({
     }
   }, [pressed])
 
-  const tintColor = pressed ? theme.color.white : theme.color.blue400
+  const tintColor = pressed
+    ? theme.color.white
+    : theme.isDark ? theme.shade.foreground : theme.color.blue400
 
   return (
     <NumButtonTouchable
@@ -77,6 +81,7 @@ function NumButton({
       onPress={() => onPress && onPress(value)}
       accessibilityLabel={accessibilityLabel || value}
       testID={testID}
+      width={width}
     >
       {icon ? (
         <Image source={icon} style={{ tintColor }} />

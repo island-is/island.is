@@ -31,7 +31,7 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_USER}>
       <NavigationBarSheet
-        title={intl.formatMessage({ id: 'settings.screenTitle' })}
+        title={intl.formatMessage({ id: 'user.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
       />
@@ -39,11 +39,11 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
         values={[
           {
             testID: testIDs.USER_TABBAR_TAB_PROFILE_INFO,
-            label: intl.formatMessage({ id: 'settings.tabs.personalInfo' })
+            label: intl.formatMessage({ id: 'user.tabs.personalInfo' })
           },
           {
             testID: testIDs.USER_TABBAR_TAB_SETTINGS,
-            label: intl.formatMessage({ id: 'settings.tabs.preferences' })
+            label: intl.formatMessage({ id: 'user.tabs.preferences' })
           },
         ]}
         onChange={(selectedIndex) => setTab(selectedIndex)}

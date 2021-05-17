@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { Navigation, OptionsTopBarTitle } from 'react-native-navigation'
-import { en, is, TranslatedMessage } from '../messages/index'
+import { en } from '../messages/en';
+import { is } from '../messages/is';
+import { TranslatedMessage } from '../messages/index'
 import { preferencesStore } from '../stores/preferences-store'
 
 interface CreateNavigationFn {

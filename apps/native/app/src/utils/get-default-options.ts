@@ -1,5 +1,5 @@
 import { Options } from 'react-native-navigation'
-import { getThemeWithPreferences } from '../contexts/theme-provider'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { preferencesStore } from '../stores/preferences-store'
 
 export function getDefaultOptions(

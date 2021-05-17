@@ -13,7 +13,7 @@ const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Color
   background-color: ${(props) => {
     const value = theme.color[props.backgroundColor];
     if (props.theme.isDark && value === props.theme.color.blue100) {
-      return props.theme.color.dark400;
+      return '#001333';
     }
     return value;
   }};

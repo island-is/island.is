@@ -29,13 +29,13 @@ const Host = styled(Animated.View)`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.shade.background};
 `
 
 const Title = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 20px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   margin-bottom: 8px;
 `
 
@@ -43,7 +43,7 @@ const Subtitle = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 14px;
   height: 20px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
 `
 
 const Center = styled.View`
@@ -120,7 +120,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   useEffect(() => {
     setInvalidCode(false)
     if (code.length === MAX_PIN_CHARS) {
-      if (attempts === MAX_ATTEMPTS - 1) {
+      if (attempts === MAX_ATTEMPTS) {
         // maximum attempts reached
         authStore
           .getState()
@@ -217,6 +217,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
     </Host>
   )
 }
+
 AppLockScreen.options = {
   layout: {
     backgroundColor: 'transparent',

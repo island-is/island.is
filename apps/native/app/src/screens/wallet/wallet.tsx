@@ -40,7 +40,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       bottomTab: {
         testID: testIDs.TABBAR_TAB_WALLET,
         iconInsets: {
-          bottom: 1,
+          bottom: -4,
         },
         selectedIconColor: theme.color.blue400,
         icon: require('../../assets/icons/tabbar-wallet.png'),

@@ -1,18 +1,13 @@
-import dotenv from 'dotenv';
-
-dotenv.config({
-  path: '../app/.env',
-});
-
-const { env } = process;
+const scopes =
+  'openid profile api_resource.scope offline_access @island.is/applications:read'
 
 export const config = {
   identityServer: {
-    clientId: env.IDENTITYSERVER_CLIENT_ID,
-    issuer: env.IDENTITYSERVER_ISSUER,
-    scopes: env.IDENTITYSERVER_SCOPES?.split(' '),
+    clientId: '@island.is-app',
+    issuer: 'https://identity-server.dev01.devland.is',
+    scopes: scopes?.split(' '),
   },
-  apiEndpoint: env.API_ENDPOINT,
-  bundleId: env!.BUNDLE_ID_IOS,
+  apiEndpoint: 'https://beta.dev01.devland.is/api',
+  bundleId: 'is.island.app-dev',
   phoneNumber: '010-7789',
-};
+}

@@ -7,7 +7,7 @@ import { Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
 import { ComponentRegistry } from './component-registry'
-import { getMainRoot } from './lifecycle/get-app-root'
+import { getMainRoot } from './get-main-root'
 
 export function isOnboarded() {
   const {

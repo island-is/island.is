@@ -27,7 +27,7 @@ const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
     props.state === 'active'
       ? props.theme.color.blue400
       : props.state === 'inactive'
-      ? props.theme.color.blue100
+      ? props.theme.isDark ? props.theme.shade.shade400 : props.theme.color.blue100
       : props.theme.color.red400};
   z-index: ${(props) =>
     props.state === 'inactive' ? 2 : props.state === 'active' ? 3 : 4};

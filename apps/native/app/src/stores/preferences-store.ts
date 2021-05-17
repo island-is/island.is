@@ -17,6 +17,7 @@ interface PreferencesStore extends State {
   useBiometrics: boolean
   locale: Locale
   appearanceMode: AppearanceMode
+  appLockTimeout: number
   setLocale(locale: Locale): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
@@ -38,6 +39,7 @@ const defaultPreferences = {
   hasOnboardedNotifications: false,
   hasAcceptedNotifications: false,
   dismissed: [] as string[],
+  appLockTimeout: 5000,
 }
 
 export const preferencesStore = create<PreferencesStore>(

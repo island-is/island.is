@@ -46,7 +46,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         testID: testIDs.TABBAR_TAB_INBOX,
         selectedIconColor: theme.color.blue400,
         iconInsets: {
-          bottom: 1,
+          bottom: -4,
         },
         icon: require('../../assets/icons/tabbar-inbox.png'),
         selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
@@ -85,7 +85,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     ({ item }: { item: IDocument }) => {
       return (
         <PressableHighlight
-          highlightColor={theme.isDark ? '#080817' : theme.color.blue100}
+          // highlightColor={theme.isDark ? '#080817' : theme.color.blue100}
           onPress={() => navigateTo(`/inbox/${item.id}`)}
         >
           <ListItem

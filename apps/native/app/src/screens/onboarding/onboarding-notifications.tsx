@@ -16,7 +16,7 @@ import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
 const Illustration = styled.SafeAreaView`
-  background-color: ${(props) => props.theme.color.blue100};
+  background-color: ${(props) => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue100};
   align-items: center;
   max-height: 40%;
   height: 300px;
@@ -27,7 +27,7 @@ const Title = styled.Text`
   font-size: 20px;
   line-height: 28px;
   text-align: center;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   margin-left: 32px;
   margin-right: 32px;
   margin-bottom: 64px;

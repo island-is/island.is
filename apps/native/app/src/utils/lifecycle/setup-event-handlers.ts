@@ -8,8 +8,6 @@ import { evaluateUrl, navigateTo } from '../deep-linking'
 import { showLockScreenOverlay } from '../lock-screen-helpers'
 import { isOnboarded } from '../onboarding'
 
-const LOCK_SCREEN_TIMEOUT = 5000
-
 let backgroundAppLockTimeout: number
 
 export function setupEventHandlers() {
@@ -44,7 +42,7 @@ export function setupEventHandlers() {
       lockScreenActivatedAt,
       userInfo,
     } = authStore.getState()
-    const { dev__useLockScreen } = preferencesStore.getState()
+    const { dev__useLockScreen, appLockTimeout } = preferencesStore.getState()
 
     if (!userInfo || !isOnboarded() || dev__useLockScreen === false) {
       return
@@ -75,7 +73,7 @@ export function setupEventHandlers() {
       if (lockScreenComponentId) {
         if (
           lockScreenActivatedAt !== undefined &&
-          lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()
+          lockScreenActivatedAt + appLockTimeout > Date.now()
         ) {
           Navigation.dismissAllOverlays()
           authStore.setState(() => ({

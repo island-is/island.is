@@ -19,13 +19,13 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.shade.background};
 `
 
 const Title = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 20px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   margin-bottom: 8px;
   max-width: 75%;
   text-align: center;
@@ -35,7 +35,7 @@ const Subtitle = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 14px;
   min-height: 20px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   max-width: 75%;
   text-align: center;
 `
@@ -61,7 +61,8 @@ const CancelText = styled.Text`
 
 export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
   confirmPin?: string
-}> = ({ componentId, confirmPin }) => {
+  replacePin?: number
+}> = ({ componentId, confirmPin, replacePin }) => {
   const intl = useIntl()
   const [code, setCode] = useState('')
   const [invalid, setInvalid] = useState(false)
@@ -81,7 +82,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
   }
 
   const onCancelPress = () => {
-    Navigation.pop(componentId)
+    if (confirmPin) {
+      Navigation.pop(componentId)
+    } else if (replacePin) {
+      Navigation.dismissModal(componentId)
+    }
   }
 
   useEffect(() => {
@@ -92,7 +97,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             service: 'PIN_CODE',
           }).then(() => {
             preferencesStore.setState(() => ({ hasOnboardedPinCode: true }))
-            nextOnboardingStep()
+            if (replacePin) {
+              Navigation.dismissModal(componentId)
+            } else {
+              nextOnboardingStep()
+            }
           })
         } else {
           setInvalid(true)
@@ -114,6 +123,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
               name: ComponentRegistry.OnboardingPinCodeScreen,
               passProps: {
                 confirmPin: code,
+                replacePin,
               },
             },
           })
@@ -126,7 +136,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
 
   return (
     <Host
-      testID={confirmPin ? testIDs.SCREEN_ONBOARDING_CONFIRM_PIN : testIDs.SCREEN_ONBOARDING_ENTER_PIN}
+      testID={
+        confirmPin
+          ? testIDs.SCREEN_ONBOARDING_CONFIRM_PIN
+          : testIDs.SCREEN_ONBOARDING_ENTER_PIN
+      }
     >
       <SafeAreaView>
         <View
@@ -173,10 +187,17 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
               justifyContent: 'center',
             }}
           >
-            {confirmPin && (
-              <CancelButton onPress={onCancelPress} testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}>
+            {(confirmPin || replacePin) && (
+              <CancelButton
+                onPress={onCancelPress}
+                testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
+              >
                 <CancelText>
-                  <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
+                  {confirmPin ? (
+                    <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
+                  ) : (
+                    <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
+                  )}
                 </CancelText>
               </CancelButton>
             )}

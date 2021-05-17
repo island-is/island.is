@@ -5,7 +5,7 @@ import close from '../../assets/icons/close.png'
 
 const Host = styled.View`
   background-color: ${(props) =>
-    props.theme.isDark ? '#080817' : props.theme.color.blue100};
+    props.theme.isDark ? '#001333' : props.theme.color.blue100};
 `
 
 const MessageText = styled.Text`

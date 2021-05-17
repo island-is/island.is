@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { LicenceCard } from '@island.is/island-ui-native'
+import { Alert, LicenceCard } from '@island.is/island-ui-native'
 import React from 'react'
 import { Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -253,7 +253,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             style={{ height: 52 }}
             addPassButtonStyle={PassKit.AddPassButtonStyle.black}
             onPress={() => {
-              console.log('onPress')
+              alert('Not implemented yet');
             }}
           />
         </SafeAreaView>

@@ -73,7 +73,6 @@ export function WelcomeCard({ number = '1', description, imgSrc, backgroundColor
   return (
     <Host color={color} style={style}>
       {imgSrc && <Image source={imgSrc} />}
-      {theme.isDark && <Overlay />}
       <TextWrap>
         <Number>
           {number}

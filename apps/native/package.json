@@ -13,6 +13,10 @@
     "detox:test:ios": "yarn detox:test -c ios"
   },
   "dependencies": {
+    "@formatjs/intl-datetimeformat": "4.1.0",
+    "@formatjs/intl-getcanonicallocales": "1.6.0",
+    "@formatjs/intl-locale": "2.4.26",
+    "@formatjs/intl-pluralrules": "4.0.20",
     "@react-native-community/async-storage": "1.12.1",
     "@react-native-community/react-native-cookies": "1.1.1",
     "@react-native-segmented-control/segmented-control": "2.3.0",

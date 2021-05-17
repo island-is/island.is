@@ -11,10 +11,9 @@ export interface Config {
   apiEndpoint: string
   bundleId: string
   env: typeof env
-  constants: typeof Constants
+  constants: any
 }
 
-// Remove WebManifest, it throws a warning in React Native
 const { WebManifest, ...ConstantsRest } = Constants
 
 const defaults = {
@@ -45,6 +44,5 @@ export const config: Config = {
       android: env.BUNDLE_ID_ANDROID,
     }) || 'is.island.app',
   constants: ConstantsRest,
-  // ...defaults as any, // overwrite production
   env,
 }

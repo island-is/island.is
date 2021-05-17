@@ -1,4 +1,8 @@
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import {
+  AuthenticationType,
+  supportedAuthenticationTypesAsync,
+} from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
 import React, { useEffect, useState } from 'react'
 import { Platform, ScrollView, Switch, Text, View } from 'react-native'
@@ -13,11 +17,17 @@ import { PressableHighlight } from '../../components/pressable-highlight/pressab
 import { TableViewCell } from '../../components/tableview/tableview-cell'
 import { TableViewGroup } from '../../components/tableview/tableview-group'
 import { useAuthStore } from '../../stores/auth-store'
-import { usePreferencesStore } from '../../stores/preferences-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
+import { ComponentRegistry } from '../../utils/component-registry'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
+import { showPicker } from '../../utils/show-picker'
 import { testIDs } from '../../utils/test-ids'
+import { useBiometricType } from '../onboarding/onboarding-biometrics'
 
 export function TabSettings() {
   const authStore = useAuthStore()
@@ -32,6 +42,7 @@ export function TabSettings() {
     setAppearanceMode,
     useBiometrics,
     setUseBiometrics,
+    appLockTimeout,
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
@@ -44,26 +55,31 @@ export function TabSettings() {
     false,
   )
 
+  const [
+    supportedAuthenticationTypes,
+    setSupportedAuthenticationTypes,
+  ] = useState<AuthenticationType[]>([])
+
+  const biometricType = useBiometricType(supportedAuthenticationTypes)
+
   const onLogoutPress = async () => {
     await authStore.logout()
     await Navigation.dismissAllModals()
-    Navigation.setRoot({
+    await Navigation.setRoot({
       root: await getAppRoot(),
     })
   }
 
   const onLanguagePress = () => {
-    DialogAndroid.showPicker('Select language', null, {
-      negativeText: 'Cancel',
-      type: DialogAndroid.listRadio,
-      selectedId: locale,
+    showPicker({
+      type: 'radio',
+      title: intl.formatMessage({ id: 'settings.accessibilityLayout.language' }),
       items: [
         { label: 'Íslenska', id: 'is-IS' },
         { label: 'English', id: 'en-US' },
       ],
-      negativeColor: theme.color.dark400,
-      positiveColor: theme.color.blue400,
-      widgetColor: theme.color.blue400,
+      selectedId: locale,
+      cancel: true,
     }).then(({ selectedItem }: any) => {
       if (selectedItem) {
         setLocale(selectedItem.id)
@@ -86,11 +102,15 @@ export function TabSettings() {
       })
   }, [])
 
+  useEffect(() => {
+    supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
+  }, [])
+
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
       {!dismissed.includes('userSettingsInformational') && (
         <InfoMessage onClose={() => dismiss('userSettingsInformational')}>
-          Stillingar á virkni og útliti appsins
+          {intl.formatMessage({ id: 'settings.infoBoxText' })}
         </InfoMessage>
       )}
       <View style={{ height: 32 }} />
@@ -224,16 +244,50 @@ export function TabSettings() {
           />
         </PressableHighlight>
       </TableViewGroup>
-      <TableViewGroup header="Öryggi og persónuvernd">
-        <PressableHighlight onPress={() => {}}>
+      <TableViewGroup
+        header={intl.formatMessage({
+          id: 'settings.security.groupTitle',
+        })}
+      >
+        <PressableHighlight
+          onPress={() => {
+            Navigation.showModal({
+              stack: {
+                children: [
+                  {
+                    component: {
+                      name: ComponentRegistry.OnboardingPinCodeScreen,
+                      passProps: {
+                        replacePin: true,
+                      },
+                    },
+                  },
+                ],
+              },
+            })
+          }}
+        >
           <TableViewCell
-            title="Breyta leyninúmeri"
-            subtitle="Skiptu út 4 stafa leyninúmeri þínu fyrir nýtt"
+            title={intl.formatMessage({
+              id: 'settings.security.changePinLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.changePinDescription',
+            })}
           />
         </PressableHighlight>
         <TableViewCell
-          title="Nota Face ID"
-          subtitle="Möguleiki á að komast fyrr inn í appið"
+          title={intl.formatMessage(
+            {
+              id: 'settings.security.useBiometricsLabel',
+            },
+            {
+              biometricType
+            },
+          )}
+          subtitle={intl.formatMessage({
+            id: 'settings.security.useBiometricsDescription',
+          })}
           accessory={
             <Switch
               onValueChange={setUseBiometrics}
@@ -246,17 +300,45 @@ export function TabSettings() {
             />
           }
         />
-        <PressableHighlight onPress={() => {}}>
+        <PressableHighlight
+          onPress={() => {
+            showPicker({
+              title: intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' }),
+              items: [
+                {
+                  id: '5000',
+                  label: intl.formatNumber(5, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                },
+                {
+                  id: '10000',
+                  label: intl.formatNumber(10, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                },
+                {
+                  id: '15000',
+                  label: intl.formatNumber(15, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                },
+              ],
+              cancel: true,
+            }).then((res) => {
+              if (res.selectedItem) {
+                const appLockTimeout = Number(res.selectedItem.id)
+                preferencesStore.setState({ appLockTimeout })
+              }
+            })
+          }}
+        >
           <TableViewCell
-            title="Biðtími skjálæsingar"
-            subtitle="Hversu langur tími líður þar til skjálæsing fer á"
-            accessory={<Text>5 sekúndur</Text>}
+            title={intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' })}
+            subtitle={intl.formatMessage({ id: 'settings.security.appLockTimeoutDescription' })}
+            accessory={<Text>
+              {intl.formatNumber(Math.floor(appLockTimeout / 1000), { style: 'unit', unitDisplay: 'short', unit: 'second' })}
+            </Text>}
           />
         </PressableHighlight>
       </TableViewGroup>
-      <TableViewGroup header="About">
+      <TableViewGroup header={intl.formatMessage({ id: 'settings.about.groupTitle' })}>
         <TableViewCell
-          title="Version"
+          title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
           subtitle={`${config.constants.nativeAppVersion} build ${
             config.constants.nativeBuildVersion
           } ${config.constants.debugMode ? '(debug)' : ''}`}
@@ -272,10 +354,13 @@ export function TabSettings() {
           }
         />
         <TableViewCell title="Push Token" subtitle={pushToken} />
-        <PressableHighlight onPress={onLogoutPress} testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}>
+        <PressableHighlight
+          onPress={onLogoutPress}
+          testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
+        >
           <TableViewCell
-            title="Logout"
-            subtitle="You will be signed out of the app."
+            title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
+            subtitle={intl.formatMessage({ id: 'settings.about.logoutDescription' })}
           />
         </PressableHighlight>
       </TableViewGroup>

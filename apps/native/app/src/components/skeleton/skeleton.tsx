@@ -69,6 +69,14 @@ export function Skeleton(props: SkeletonProps) {
     }
   }, [props.active])
 
+  useEffect(() => {
+    return () => {
+      if (ar.current) {
+        ar.current.stop()
+      }
+    }
+  }, []);
+
   return (
     <Host onLayout={onLayout} error={props.error}>
       <Swoosh
