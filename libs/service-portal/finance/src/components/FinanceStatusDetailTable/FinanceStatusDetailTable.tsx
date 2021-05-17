@@ -1,42 +1,26 @@
 import React, { FC } from 'react'
-import { gql, useQuery } from '@apollo/client'
 import { Table as T } from '@island.is/island-ui/core'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
-  FinanceStatusOrganizationChargeType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { Box, Text, Columns, Column } from '@island.is/island-ui/core'
+import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {
   organization: FinanceStatusOrganizationType
-  chargeType: FinanceStatusOrganizationChargeType
+  financeStatusDetails: FinanceStatusDetailsType
 }
 
-const GetFinanceStatusDetailsQuery = gql`
-  query GetFinanceStatusDetailsQuery {
-    getFinanceStatusDetails
-  }
-`
-
-const FinanceStatusDetailTable: FC<Props> = ({ organization, chargeType }) => {
-  const detailsQuery = useQuery(GetFinanceStatusDetailsQuery, {
-    variables: {
-      nationalID: '2704685439', //userInfo.profile.nationalId
-      OrgID: organization?.id,
-      chargeTypeID: chargeType?.id,
-    },
-  })
-  const financeStatusDetails: FinanceStatusDetailsType =
-    detailsQuery.data?.getFinanceStatusDetails || {}
-  console.log({ financeStatusDetails })
-
+const FinanceStatusDetailTable: FC<Props> = ({
+  organization,
+  financeStatusDetails,
+}) => {
   const currencyKr = (kr: number) =>
     typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
 
-  console.log('financeStatusDetails:: ', financeStatusDetails)
   return (
-    <Box background="white">
+    <Box className={styles.wrapper} background="white">
       <T.Table>
         <T.Head>
           <T.Row>
@@ -73,7 +57,7 @@ const FinanceStatusDetailTable: FC<Props> = ({ organization, chargeType }) => {
                 currencyKr(row.dueTotals),
                 currencyKr(row.totals),
               ].map((item, i) => (
-                <T.Data key={i} text={{ truncate: true }}>
+                <T.Data key={i}>
                   <Text variant="small">{item}</Text>
                 </T.Data>
               ))}
