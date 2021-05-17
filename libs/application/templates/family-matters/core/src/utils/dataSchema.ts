@@ -28,34 +28,31 @@ export const validateTerms = (
 }
 
 export const validateContactInfo = (
-  emailErrorMessage: MessageDescriptor,
-  phoneErrorMessage: MessageDescriptor,
+  errors: Record<'email' | 'phone', MessageDescriptor>,
 ) => {
   return z.object({
     email: z.string().refine((v) => isValidEmail(v), {
-      params: emailErrorMessage,
+      params: errors.email,
     }),
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: phoneErrorMessage,
+      params: errors.phone,
     }),
   })
 }
 
 export const validateCounterParty = (
-  counterPartyError: MessageDescriptor,
-  emailErrorMessage: MessageDescriptor,
-  phoneErrorMessage: MessageDescriptor,
+  errors: Record<'email' | 'phone' | 'counterParty', MessageDescriptor>,
 ) => {
   return z
     .object({
       email: z.string().refine((v) => validateOptionalEmail(v), {
-        params: emailErrorMessage,
+        params: errors.email,
       }),
       phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
-        params: phoneErrorMessage,
+        params: errors.phone,
       }),
     })
     .refine((v) => v.email || v.phoneNumber, {
-      params: counterPartyError,
+      params: errors.counterParty,
     })
 }

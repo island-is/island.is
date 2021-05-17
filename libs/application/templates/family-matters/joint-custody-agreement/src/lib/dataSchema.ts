@@ -17,7 +17,11 @@ const {
   invalidPhoneNumber,
   approveTerms,
 } = error.validation
-const parentContactInfo = validateContactInfo(invalidEmail, invalidPhoneNumber)
+
+const parentContactInfo = validateContactInfo({
+  email: invalidEmail,
+  phone: invalidPhoneNumber,
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
@@ -30,11 +34,11 @@ export const dataSchema = z.object({
     params: error.validation.selectLegalResidence,
   }),
   parentA: parentContactInfo,
-  counterParty: validateCounterParty(
+  counterParty: validateCounterParty({
+    email: invalidEmail,
+    phone: invalidPhoneNumber,
     counterParty,
-    invalidEmail,
-    invalidPhoneNumber,
-  ),
+  }),
   selectDuration: z
     .object({
       type: z.enum([Duration.Permanent, Duration.Temporary]).refine((v) => v, {
