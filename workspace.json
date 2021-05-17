@@ -2625,6 +2625,27 @@
         }
       }
     },
+    "auth-scopes": {
+      "root": "libs/auth/scopes",
+      "sourceRoot": "libs/auth/scopes/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/scopes/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/scopes"],
+          "options": {
+            "jestConfig": "libs/auth/scopes/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -7111,27 +7132,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "auth-scopes": {
-      "root": "libs/auth/scopes",
-      "sourceRoot": "libs/auth/scopes/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/auth/scopes/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/auth/scopes"],
-          "options": {
-            "jestConfig": "libs/auth/scopes/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

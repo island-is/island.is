@@ -8,17 +8,18 @@ export const openApi = new DocumentBuilder()
   .setVersion('1.0')
   .addTag('User Profile', 'User profile api for Island.is users ')
   .addOAuth2({
-    type: "oauth2",
-    description: "OAuth2 authentication scheme.",
+    type: 'oauth2',
+    description: 'OAuth2 authentication scheme.',
     flows: {
       authorizationCode: {
         scopes: {
-          [UserProfileScope.read]: "Get a single user profile.",
-          [UserProfileScope.write]: "Update and email/sms varifications for a single user profile."
+          [UserProfileScope.read]: 'Get a single user profile.',
+          [UserProfileScope.write]:
+            'Update and email/sms varifications for a single user profile.',
         },
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,
-      }
-    }
+      },
+    },
   })
   .build()
