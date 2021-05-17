@@ -323,8 +323,11 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
-      "@island.is/service-portal/settings": [
-        "libs/service-portal/settings/src/index.ts"
+      "@island.is/service-portal/settings/access-control": [
+        "libs/service-portal/settings/access-control/src/index.ts"
+      ],
+      "@island.is/service-portal/settings/personal-information": [
+        "libs/service-portal/settings/personal-information/src/index.ts"
       ],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

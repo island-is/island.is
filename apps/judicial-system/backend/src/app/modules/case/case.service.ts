@@ -17,12 +17,14 @@ import { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
-  generateRequestPdf,
-  generateRulingPdf,
+  getRequestPdfAsBuffer,
+  getRequestPdfAsString,
+  getRulingPdfAsString,
   writeFile,
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
+import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -32,6 +34,7 @@ export class CaseService {
   constructor(
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
+    private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
@@ -118,12 +121,11 @@ export class CaseService {
     ])
   }
 
-  getAll(user: TUser): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
+  private findById(id: string): Promise<Case> {
+    this.logger.debug(`Finding case ${id}`)
 
-    return this.caseModel.findAll({
-      order: [['created', 'DESC']],
-      where: getCasesQueryFilter(user),
+    return this.caseModel.findOne({
+      where: { id },
       include: [
         {
           model: User,
@@ -146,11 +148,12 @@ export class CaseService {
     })
   }
 
-  findById(id: string): Promise<Case> {
-    this.logger.debug(`Finding case ${id}`)
+  getAll(user: TUser): Promise<Case[]> {
+    this.logger.debug('Getting all cases')
 
-    return this.caseModel.findOne({
-      where: { id },
+    return this.caseModel.findAll({
+      order: [['created', 'DESC']],
+      where: getCasesQueryFilter(user),
       include: [
         {
           model: User,
@@ -220,7 +223,7 @@ export class CaseService {
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    return generateRulingPdf(existingCase)
+    return getRulingPdfAsString(existingCase)
   }
 
   getRequestPdf(existingCase: Case): Promise<string> {
@@ -228,7 +231,7 @@ export class CaseService {
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
 
-    return generateRequestPdf(existingCase)
+    return getRequestPdfAsString(existingCase)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
@@ -236,7 +239,7 @@ export class CaseService {
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const pdf = await generateRulingPdf(existingCase)
+    const pdf = await getRulingPdfAsString(existingCase)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
@@ -290,7 +293,7 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    this.update(existingCase.id, {
+    await this.update(existingCase.id, {
       rulingDate: new Date(),
     } as UpdateCaseDto)
 
@@ -317,5 +320,23 @@ export class CaseService {
       legalArguments: existingCase.legalArguments,
       parentCaseId: existingCase.id,
     })
+  }
+
+  async uploadRequestPdfToCourt(id: string): Promise<void> {
+    this.logger.debug(`Uploading request pdf to court for case ${id}`)
+
+    const existingCase = await this.findById(id)
+
+    const pdf = await getRequestPdfAsBuffer(existingCase)
+
+    try {
+      const streamId = await this.courtService.uploadStream(pdf)
+      await this.courtService.createDocument(
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request to court', error)
+    }
   }
 }

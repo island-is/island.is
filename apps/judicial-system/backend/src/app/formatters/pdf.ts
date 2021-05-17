@@ -31,12 +31,7 @@ import {
   formatCustodyProvisions,
 } from './formatters'
 
-export function writeFile(fileName: string, documentContent: string) {
-  // In e2e tests, fs is null and we have not been able to mock fs
-  fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
-}
-
-export async function generateRequestPdf(existingCase: Case): Promise<string> {
+function constructRequestPdf(existingCase: Case) {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -210,6 +205,18 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       }`,
     )
     .end()
+  return stream
+}
+
+export function writeFile(fileName: string, documentContent: string) {
+  // In e2e tests, fs is null and we have not been able to mock fs
+  fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
+}
+
+export async function getRequestPdfAsString(
+  existingCase: Case,
+): Promise<string> {
+  const stream = constructRequestPdf(existingCase)
 
   // wait for the writing to finish
 
@@ -220,13 +227,31 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-request.pdf`, pdf as string)
+    writeFile(`${existingCase.id}-request.pdf`, pdf)
   }
 
   return pdf
 }
 
-export async function generateRulingPdf(existingCase: Case): Promise<string> {
+export async function getRequestPdfAsBuffer(
+  existingCase: Case,
+): Promise<Buffer> {
+  const stream = constructRequestPdf(existingCase)
+
+  // wait for the writing to finish
+
+  const pdf = await new Promise<Buffer>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContents() as Buffer)
+    })
+  })
+
+  return pdf
+}
+
+export async function getRulingPdfAsString(
+  existingCase: Case,
+): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -639,7 +664,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-ruling.pdf`, pdf as string)
+    writeFile(`${existingCase.id}-ruling.pdf`, pdf)
   }
 
   return pdf
