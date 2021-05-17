@@ -9,10 +9,10 @@ import {
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
-import Prosecutor from '../Prosecutor/Prosecutor'
-import ProsecutorInfo from '../Prosecutor/ProsecutorInfo'
+import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import { useEffectOnce } from 'react-use'
+import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 
 interface Props {
   rulingDate: string
@@ -87,7 +87,7 @@ const AppealSection: React.FC<Props> = (props) => {
           <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               !prosecutorPostponedAppealDate && (
-                <Prosecutor
+                <ProsecutorAppealDatePicker
                   handleProsecutorAppeal={handleProsecutorAppeal}
                   isInitialMount={isInitialMount}
                 />
@@ -97,7 +97,7 @@ const AppealSection: React.FC<Props> = (props) => {
           <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               prosecutorPostponedAppealDate && (
-                <ProsecutorInfo
+                <ProsecutorAppealInfo
                   prosecutorPostponedAppealDate={prosecutorPostponedAppealDate}
                   handleProsecutorAppealDismissal={
                     handleProsecutorAppealDismissal

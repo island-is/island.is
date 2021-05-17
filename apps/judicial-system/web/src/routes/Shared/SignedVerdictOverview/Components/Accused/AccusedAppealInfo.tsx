@@ -21,7 +21,7 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
     handleAccusedAppealDismissal,
   } = props
 
-  const appealDateVariants1 = {
+  const animateInAndOut = {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4, delay: 0.4 } },
     hidden: { y: 20, opacity: 0, transition: { duration: 0.4 } },
   }
@@ -29,7 +29,7 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
   return (
     <motion.div
       key="accusedAppealInfoBox"
-      variants={appealDateVariants1}
+      variants={animateInAndOut}
       initial={{ y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"

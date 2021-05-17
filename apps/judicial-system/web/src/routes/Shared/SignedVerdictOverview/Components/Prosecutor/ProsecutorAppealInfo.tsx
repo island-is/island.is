@@ -1,12 +1,7 @@
+import { motion } from 'framer-motion'
+import React from 'react'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import { CaseGender } from '@island.is/judicial-system/types'
-import { motion, useIsPresent } from 'framer-motion'
-import React, { useEffect } from 'react'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface Props {
   prosecutorPostponedAppealDate?: string
@@ -14,14 +9,12 @@ interface Props {
 }
 
 const ProsecutorInfo: React.FC<Props> = (props) => {
-  const isPresent = useIsPresent()
-
   const {
     prosecutorPostponedAppealDate,
     handleProsecutorAppealDismissal,
   } = props
 
-  const appealDateVariants1 = {
+  const animateInAndOut = {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4, delay: 0.4 } },
     hidden: { y: 20, opacity: 0, transition: { duration: 0.4 } },
   }
@@ -29,7 +22,7 @@ const ProsecutorInfo: React.FC<Props> = (props) => {
   return (
     <motion.div
       key="prosecutorAppealInfoBox"
-      variants={appealDateVariants1}
+      variants={animateInAndOut}
       initial={{ y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"

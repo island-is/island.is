@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { motion, useIsPresent } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Button } from '@island.is/island-ui/core'
-
-import {
-  capitalize,
-  formatAccusedByGender,
-} from '@island.is/judicial-system/formatters'
-import * as styles from '../AppealSection/AppealSection.treat'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
-import { CaseGender } from '@island.is/judicial-system/types'
+import * as styles from '../AppealSection/AppealSection.treat'
 
 interface Props {
   handleProsecutorAppeal: (date?: Date) => void
   isInitialMount: boolean
 }
 
-const Prosecutor: React.FC<Props> = (props) => {
+const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
   const { handleProsecutorAppeal, isInitialMount } = props
-  const isPresent = useIsPresent()
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
 
-  const appealDateVariants = {
+  const animateInAndOut = {
     visible: {
       y: 0,
       opacity: 1,
@@ -38,7 +31,7 @@ const Prosecutor: React.FC<Props> = (props) => {
   return (
     <motion.div
       key="prosecutorAppealDatepicker"
-      variants={appealDateVariants}
+      variants={animateInAndOut}
       initial={isInitialMount ? false : { y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"
@@ -62,4 +55,4 @@ const Prosecutor: React.FC<Props> = (props) => {
   )
 }
 
-export default Prosecutor
+export default ProsecutorAppealDatePicker
