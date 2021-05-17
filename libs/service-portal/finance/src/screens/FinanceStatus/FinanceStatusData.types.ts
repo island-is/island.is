@@ -1,4 +1,4 @@
-type FinanceStatusOrganizationChargeType = {
+export type FinanceStatusOrganizationChargeType = {
   id: string
   name: string
   principal: number
@@ -45,6 +45,7 @@ type FinanceStatusDetailsChangeItem = {
   documentID?: string
   payID?: string
 }
+
 export type FinanceStatusDetailsType = {
   timestamp: string
   chargeItemSubjects: Array<FinanceStatusDetailsChangeItem>
