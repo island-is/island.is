@@ -666,9 +666,6 @@ export class ResourcesService {
   async findApiResourceScopeByScopeName(
     scopeName: string,
   ): Promise<ApiResourceScope | null> {
-    console.log('KDKDKDKDKDK')
-    console.log(scopeName)
-    this.logger.debug('KDKDKDKDKDK')
     return await this.apiResourceScope.findOne({
       where: { scopeName: scopeName },
     })
