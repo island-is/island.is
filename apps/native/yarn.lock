@@ -5692,10 +5692,10 @@ react-native-keyboard-manager@6.5.4-0:
   resolved "https://registry.yarnpkg.com/react-native-keyboard-manager/-/react-native-keyboard-manager-6.5.4-0.tgz#966176c37ce1012feaf83e2aa2ddd121cab04153"
   integrity sha512-9d1y8uuXnD7BXH9VM508hRI8BZEnyMxVY8wlgOLEySQfiaFqVxEF4R82FYnbmwBBx7wjiHhfXJZ5y8JhVhnVhQ==
 
-react-native-keychain@6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-6.2.0.tgz#8f4cff503aad367141db5aea0189ead9240c28ff"
-  integrity sha512-U6fnOQRJPq+c0Abl+FoYy9v0H3kQU587tMamU/o+MoBSUScFLE3DQpkyT1PW4NF5IObgiGuqQdmjC2KgtBpjGA==
+react-native-keychain@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-7.0.0.tgz#11fd559fe86ae89f934b8c75ae228247deed5494"
+  integrity sha512-tH26sgW4OxB/llXmhO+DajFISEUoF1Ip2+WSDMIgCt8SP1xRE81m2qFzgIOc/7StYsUERxHhDPkxvq2H0/Goig==
 
 react-native-localize@2.0.2:
   version "2.0.2"

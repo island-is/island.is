@@ -26,6 +26,7 @@
     "react-intl": "*",
     "configcat-js": "*",
     "intl": "*",
-    "@formatjs/intl-datetimeformat": "*"
+    "@formatjs/intl-datetimeformat": "*",
+    "jsonwebtoken": "*"
   }
 }

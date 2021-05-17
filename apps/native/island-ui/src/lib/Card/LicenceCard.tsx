@@ -1,7 +1,8 @@
 import React from 'react';
-import styled from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import { Image, ImageSourcePropType } from 'react-native';
 import isVerifiedLogo from '../../assets/card/is-verified.png'
+import { LicenseType } from '../../../../app/src/types/license-type'
 
 const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
@@ -21,6 +22,7 @@ const Title = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
   margin-bottom: 8px;
   font-size: 16px;
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const ValidationWrap = styled.View`
@@ -31,16 +33,36 @@ const ValidationWrap = styled.View`
 
 const Validation = styled.Text`
   margin-bottom: 4px;
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 17px;
   font-weight: bold;
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const TimeStamp = styled.Text`
-  font-size: 12px;
+  font-size: 13px;
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const ImgWrap = styled.View`
 `;
+
+function mapLicenseColor(type: LicenseType) {
+  let backgroundColor = '#eeeeee'
+  if (type === LicenseType.DRIVERS_LICENSE) {
+    backgroundColor = '#f5e4ec'
+  }
+  if (type === LicenseType.IDENTIDY_CARD) {
+    backgroundColor = '#fff7e7'
+  }
+  if (type === LicenseType.PASSPORT) {
+    backgroundColor = '#ddefff'
+  }
+  if (type === LicenseType.WEAPON_LICENSE) {
+    backgroundColor = '#fffce0'
+  }
+  return backgroundColor
+}
 
 
 interface LicenceCardProps {
@@ -48,13 +70,31 @@ interface LicenceCardProps {
   status?: string;
   date?: string;
   agencyLogo: ImageSourcePropType;
-  backgroundColor?: string;
+  type: LicenseType;
   nativeID?: string;
+  style?: any;
 }
 
-export function LicenceCard({ title, status, date, backgroundColor = '#F8F5FA', agencyLogo, nativeID }: LicenceCardProps) {
+export function LicenceCard({ title, type, agencyLogo, nativeID, style, date }: LicenceCardProps) {
+  const theme = useTheme();
+  let backgroundColor = theme.shade.shade400;
+  switch (type) {
+    case LicenseType.DRIVERS_LICENSE:
+      backgroundColor = theme.isDark ? '#5F414E' : '#f5e4ec';
+      break;
+    case LicenseType.IDENTIDY_CARD:
+      backgroundColor = theme.isDark ? '#403E3B' : '#fff7e7';
+      break;
+    case LicenseType.PASSPORT:
+      backgroundColor = theme.isDark ? '#283139' : '#ddefff';
+      break;
+    case LicenseType.WEAPON_LICENSE:
+      backgroundColor = theme.isDark ? '#474421' : '#fffce0';
+      break;
+  }
+
   return (
-    <Host backgroundColor={backgroundColor} nativeID={nativeID}>
+    <Host backgroundColor={backgroundColor} nativeID={nativeID} style={style}>
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail">
           {title}

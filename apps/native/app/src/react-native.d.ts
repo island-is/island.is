@@ -7,4 +7,5 @@ declare module "*.jpg" {
   export = value;
 }
 
-declare module "react-native-passkit-wallet"
+declare module "react-native-passkit-wallet";
+declare module "react-native-dialogs";

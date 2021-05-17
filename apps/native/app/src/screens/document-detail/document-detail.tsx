@@ -1,31 +1,36 @@
-import React from 'react'
-import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useQuery } from '@apollo/client'
+import { Button } from '@island.is/island-ui-native'
+import React, { useState } from 'react'
+import { FormattedDate } from 'react-intl'
+import { Platform, Share, View } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  useNavigationButtonPress,
+  useNavigationComponentDidAppear,
+  useNavigationComponentDidDisappear,
+} from 'react-native-navigation-hooks/dist'
+import WebView from 'react-native-webview'
+import PDFReader from 'rn-pdf-reader-js'
+import styled from 'styled-components/native'
+import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
   GET_DOCUMENT_QUERY,
 } from '../../graphql/queries/get-document.query'
-import { client } from '../../graphql/client'
-import PDFReader from 'rn-pdf-reader-js'
-import styled from 'styled-components/native'
-import { FormattedDate } from 'react-intl'
-import { Button } from '@island.is/island-ui-native'
-import { Platform, Share } from 'react-native'
-import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
-import WebView from 'react-native-webview'
+import {
+  ListDocumentsResponse,
+  LIST_DOCUMENTS_QUERY,
+} from '../../graphql/queries/list-documents.query'
 import { authStore } from '../../stores/auth-store'
-import { useState } from 'react'
-import { useNavigationComponentDidAppear, useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
-import { View } from 'react-native'
-import { theme } from '@island.is/island-ui/theme'
+import { ButtonRegistry } from '../../utils/component-registry'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
 
-const Header = styled.View`
+const Header = styled.SafeAreaView`
   margin-left: 16px;
   margin-right: 16px;
   margin-bottom: 16px;
   margin-top: 8px;
-`;
+`
 
 const Row = styled.View`
   flex-direction: row;
@@ -42,9 +47,9 @@ const Title = styled.View`
 
 const TitleText = styled.Text`
   font-family: 'IBMPlexSans-SemiBold';
-  font-size: 12px;
-  line-height: 16px;
-  color: ${(props) => props.theme.color.dark400};
+  font-size: 13px;
+  line-height: 17px;
+  color: ${(props) => props.theme.shade.foreground};
   flex: 1;
 `
 
@@ -56,19 +61,18 @@ const Date = styled.View`
 const DateText = styled.Text<{ unread?: boolean }>`
   font-family: ${(props) =>
     props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 12px;
-  line-height: 16px;
-  color: ${(props) => props.theme.color.dark400};
+  font-size: 13px;
+  line-height: 17px;
+  color: ${(props) => props.theme.shade.foreground};
 `
-
 
 const Message = styled.Text`
   font-family: 'IBMPlexSans-Light';
   font-size: 16px;
   line-height: 24px;
-  color: ${(props) => props.theme.color.dark400};
+  color: ${(props) => props.theme.shade.foreground};
   padding-bottom: 8px;
-`;
+`
 
 const Bottom = styled.View`
   position: absolute;
@@ -76,12 +80,16 @@ const Bottom = styled.View`
   left: 0;
   right: 0;
   align-items: center;
-`;
+`
 
-const { title, useNavigationTitle } = createNavigationTitle('documentDetail.screenTitle');
+const { title, useNavigationTitle } = createNavigationTitle(
+  'documentDetail.screenTitle',
+)
 
-export const DocumentDetailScreen: NavigationFunctionComponent<{ docId: string }> = ({ componentId, docId }) => {
-  useNavigationTitle(componentId);
+export const DocumentDetailScreen: NavigationFunctionComponent<{
+  docId: string
+}> = ({ componentId, docId }) => {
+  useNavigationTitle(componentId)
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -91,23 +99,35 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{ docId: string }
     variables: {
       input: {
         id: docId,
-      }
-    }
-  });
-
-  const Document = {
-    ...docRes.data?.getDocument || {},
-    ...res.data?.listDocuments?.find(d => d.id === docId) || {},
-  };
-
-  const [visible, setVisible] = useState(false);
-
-  useNavigationComponentDidAppear(() => {
-    setVisible(true);
+      },
+    },
   })
 
-  useNavigationComponentDidDisappear(() =>{
-    setVisible(false);
+  const Document = {
+    ...(docRes.data?.getDocument || {}),
+    ...(res.data?.listDocuments?.find((d) => d.id === docId) || {}),
+  }
+
+  const [visible, setVisible] = useState(false)
+
+  useNavigationButtonPress((e) => {
+    Share.share(
+      {
+        title: Document.subject,
+        url: `data:application/pdf;base64,${Document?.content!}`,
+      },
+      {
+        subject: Document.subject,
+      },
+    )
+  }, componentId, ButtonRegistry.ShareButton);
+
+  useNavigationComponentDidAppear(() => {
+    setVisible(true)
+  })
+
+  useNavigationComponentDidDisappear(() => {
+    setVisible(false)
   })
 
   if (!Document.id) {
@@ -131,35 +151,36 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{ docId: string }
         </Row>
         <Message>{Document.subject}</Message>
       </Header>
-      <View style={{
-        flex: 1,
-        backgroundColor: '#F2F2F6'
-      }}>
-      {visible && Platform.select({
-        android: <PDFReader
-          source={{
-            base64: `data:application/pdf;base64,${Document.content!}`,
-          }}
-        />,
-        ios: <WebView
-          source={{
-            uri: Document.url!,
-            headers:{
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-            body: `documentId=${Document.id}&token=${authStore.getState().authorizeResult?.accessToken}`,
-            method: 'POST'
-          }}
-        />
-      })}
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
+        {visible &&
+          Platform.select({
+            android: (
+              <PDFReader
+                source={{
+                  base64: `data:application/pdf;base64,${Document.content!}`,
+                }}
+              />
+            ),
+            ios: (
+              <WebView
+                source={{
+                  uri: Document.url!,
+                  headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                  },
+                  body: `documentId=${Document.id}&__accessToken=${
+                    authStore.getState().authorizeResult?.accessToken
+                  }`,
+                  method: 'POST',
+                }}
+              />
+            ),
+          })}
       </View>
-      <Bottom pointerEvents="box-none">
-        <Button title="Vista eða Senda" onPress={() => {
-          Share.share({ title: Document.subject, url: `data:application/pdf;base64,${Document?.content!}` }, {
-            subject: Document.subject
-          })
-        }} />
-      </Bottom>
     </>
   )
 }
@@ -168,9 +189,10 @@ DocumentDetailScreen.options = {
   topBar: {
     visible: true,
     title,
-    backButton: {
-      color: theme.color.dark400,
-    },
-    rightButtons: [],
+    rightButtons: [{
+      id: ButtonRegistry.ShareButton,
+      icon: require('../../assets/icons/navbar-share.png'),
+      accessibilityLabel: 'Share',
+    }],
   },
 }

@@ -1,45 +1,46 @@
+import { Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
+import { AndroidSearchBar } from '../../components/android-search-bar/android-search-bar'
+import { AppLockScreen } from '../../screens/app-lock/app-lock'
+import { CognitoAuthScreen } from '../../screens/devtools/cognito-auth'
+import { StorybookScreen } from '../../screens/devtools/storybook'
+import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 import { HomeScreen } from '../../screens/home/home'
 import { InboxScreen } from '../../screens/inbox/inbox'
-import { WalletScreen } from '../../screens/wallet/wallet'
-import { SettingsScreen } from '../../screens/settings/settings'
 import { LoginScreen } from '../../screens/login/login'
-import { AppLockScreen } from '../../screens/app-lock/app-lock';
-import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass';
-import { NavigationBarTitle } from '../../components/navigation-bar-title/navigation-bar-title';
-import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
-import { StorybookScreen } from '../../screens/devtools/storybook';
-import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
-import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
-import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { NotificationDetailScreen } from '../../screens/notification-detail/notification-detail'
+import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
-import { CognitoAuthScreen } from '../../screens/devtools/cognito-auth'
-import { registerComponent } from '../register-component';
-import { ComponentRegistry } from '../navigation-registry';
-import { NavigationBarButton } from '../../components/navigation-bar-button/navigation-bar-button'
+import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
+import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
+import { UserScreen } from '../../screens/user/user'
+import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
+import { WalletScreen } from '../../screens/wallet/wallet'
+import { ComponentRegistry as CR } from '../component-registry'
+import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
   // dev only
-  registerComponent(ComponentRegistry.DevtoolsStorybookScreen, StorybookScreen)
-  registerComponent(ComponentRegistry.DevtoolsCognitoAuthScreen, CognitoAuthScreen);
+  registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
+  registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
 
   // screens
-  registerComponent(ComponentRegistry.LoginScreen, LoginScreen)
-  registerComponent(ComponentRegistry.OnboardingPinCodeScreen, OnboardingPinCodeScreen);
-  registerComponent(ComponentRegistry.OnboardingBiometricsScreen, OnboardingBiometricsScreen);
-  registerComponent(ComponentRegistry.OnboardingNotificationsScreen, OnboardingNotificationsScreen);
-  registerComponent(ComponentRegistry.HomeScreen, HomeScreen)
-  registerComponent(ComponentRegistry.InboxScreen, InboxScreen)
-  registerComponent(ComponentRegistry.WalletScreen, WalletScreen)
-  registerComponent(ComponentRegistry.SettingsScreen, SettingsScreen)
-  registerComponent(ComponentRegistry.AppLockScreen, AppLockScreen)
-  registerComponent(ComponentRegistry.WalletPassScreen, WalletPassScreen);
-  registerComponent(ComponentRegistry.DocumentDetailScreen, DocumentDetailScreen);
-  registerComponent(ComponentRegistry.NotificationsScreen, NotificationsScreen);
-  registerComponent(ComponentRegistry.NotificationDetailScreen, NotificationDetailScreen);
+  registerComponent(CR.LoginScreen, LoginScreen)
+  registerComponent(CR.OnboardingPinCodeScreen, OnboardingPinCodeScreen)
+  registerComponent(CR.OnboardingBiometricsScreen, OnboardingBiometricsScreen)
+  registerComponent(CR.OnboardingNotificationsScreen, OnboardingNotificationsScreen)
+  registerComponent(CR.HomeScreen, HomeScreen)
+  registerComponent(CR.InboxScreen, InboxScreen)
+  registerComponent(CR.WalletScreen, WalletScreen)
+  registerComponent(CR.UserScreen, UserScreen)
+  registerComponent(CR.AppLockScreen, AppLockScreen)
+  registerComponent(CR.WalletPassScreen, WalletPassScreen)
+  registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
+  registerComponent(CR.NotificationsScreen, NotificationsScreen)
+  registerComponent(CR.NotificationDetailScreen, NotificationDetailScreen)
 
   // ui components
-  Navigation.registerComponent(ComponentRegistry.NavigationBarTitle, () => NavigationBarTitle);
-  Navigation.registerComponent(ComponentRegistry.NavigationBarButton, () => NavigationBarButton);
+  if (Platform.OS === 'android') {
+    Navigation.registerComponent(CR.AndroidSearchBar, () => AndroidSearchBar)
+  }
 }

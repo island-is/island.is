@@ -1,9 +1,8 @@
-import 'intl';
-import 'intl/locale-data/jsonp/is';
-import 'intl/locale-data/jsonp/en';
-import { Platform } from 'react-native';
-import KeyboardManager from 'react-native-keyboard-manager';
-
+import 'intl'
+import 'intl/locale-data/jsonp/en'
+import 'intl/locale-data/jsonp/is'
+import { Platform } from 'react-native'
+import KeyboardManager from 'react-native-keyboard-manager'
 
 // in your index.js file
 if (!!(global as any).HermesInternal) {
@@ -14,18 +13,17 @@ if (!!(global as any).HermesInternal) {
   // require('@formatjs/intl-locale/polyfill')
 
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
-    (Intl.DateTimeFormat as any).__setDefaultTimeZone('GMT');
+    ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('GMT')
   }
 }
 
-
-global.Intl = (global as any).IntlPolyfill;
-(global.Intl as any).__disableRegExpRestore();
+global.Intl = (global as any).IntlPolyfill
+;(global.Intl as any).__disableRegExpRestore()
 
 export function setupGlobals() {
   if (Platform.OS === 'ios') {
-    KeyboardManager.setEnable(true);
-    KeyboardManager.setEnableAutoToolbar(true);
-    KeyboardManager.setToolbarPreviousNextButtonEnable(true);
+    KeyboardManager.setEnable(true)
+    KeyboardManager.setEnableAutoToolbar(true)
+    KeyboardManager.setToolbarPreviousNextButtonEnable(true)
   }
 }

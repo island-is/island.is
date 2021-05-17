@@ -3,15 +3,16 @@ import styled from 'styled-components/native';
 
 const Host = styled.View`
   display: flex;
-  flex: 1;
   width: 100%;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 
   padding-bottom: 16px;
   margin-top: 16px;
   margin-bottom: 16px;
+`;
+
+const TextContainer = styled.View`
+  flex: 1;
 `;
 
 const Text = styled.Text`
@@ -19,7 +20,6 @@ const Text = styled.Text`
   font-size: 20px;
   line-height: 26px;
   color: ${props => props.theme.shade.foreground};
-  margin-right: auto;
 `;
 
 interface HeadingProps {
@@ -30,9 +30,11 @@ interface HeadingProps {
 export function Heading({ children, button }: HeadingProps) {
   return (
     <Host>
-      <Text>
-        {children}
-      </Text>
+      <TextContainer>
+        <Text>
+          {children}
+        </Text>
+      </TextContainer>
       {button}
     </Host>
   )

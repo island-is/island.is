@@ -1,25 +1,25 @@
 import { Button } from '@island.is/island-ui-native'
-import React from 'react'
-import { SafeAreaView, Platform, Image, View } from 'react-native'
-import { nextOnboardingStep } from '../../utils/onboarding'
-import image from '../../assets/illustrations/digital-services-m1.png'
-import styled from 'styled-components/native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
-import { preferencesStore } from '../../stores/preferences-store'
 import {
+  AndroidImportance,
   getPermissionsAsync,
   requestPermissionsAsync,
   setNotificationChannelAsync,
-  AndroidImportance,
 } from 'expo-notifications'
+import React from 'react'
+import { Image, Platform, SafeAreaView, View } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import styled from 'styled-components/native'
+import image from '../../assets/illustrations/digital-services-m1.png'
+import { preferencesStore } from '../../stores/preferences-store'
+import { FormattedMessage, useIntl } from '../../utils/intl'
+import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-import { FormattedMessage, useIntl } from '../../utils/intl';
 
 const Illustration = styled.SafeAreaView`
   background-color: ${(props) => props.theme.color.blue100};
-  margin-top: -32px;
   align-items: center;
-  justify-content: center;
+  max-height: 40%;
+  height: 300px;
 `
 
 const Title = styled.Text`
@@ -112,7 +112,15 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
   return (
     <View testID={testIDs.SCREEN_ONBOARDING_NOTIFICATIONS} style={{ flex: 1 }}>
       <Illustration>
-        <Image source={image} style={{ marginBottom: -44 }} />
+        <Image
+          source={image}
+          style={{
+            marginTop: -20,
+            marginRight: -40,
+            height: '120%',
+          }}
+          resizeMode="contain"
+        />
       </Illustration>
       <SafeAreaView
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
@@ -126,9 +134,10 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
               id: 'onboarding.notifications.allowNotificationsButtonText',
             })}
             onPress={onAllowPress}
+            testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
           />
         </ButtonContainer>
-        <CancelButton onPress={onSkipPress}>
+        <CancelButton onPress={onSkipPress} testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}>
           <CancelText>
             <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
           </CancelText>
@@ -137,7 +146,6 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
     </View>
   )
 }
-
 
 OnboardingNotificationsScreen.options = {
   popGesture: false,
