@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme';
 import { FormattedDate } from 'react-intl';
 import { ImageSourcePropType } from 'react-native';
 import { Image } from 'react-native';
+import timeOutlineIcon from '../../assets/card/time-outline.png';
 
 const Host = styled.View`
   width: 100%;
@@ -96,18 +97,17 @@ interface StatusCardProps {
   title: string;
   description: string;
   date: Date;
-  icon?: ImageSourcePropType;
   badge?: React.ReactNode;
   progress?: number;
   actions: Array<{ text: string; onPress(): void }>;
 }
 
-export function StatusCard({ title, description, date, badge, progress, icon, actions = [] }: StatusCardProps) {
+export function StatusCard({ title, description, date, badge, progress, actions = [] }: StatusCardProps) {
   return (
     <Host>
       <Row>
         <Date>
-          {icon && <Image source={icon} style={{ width: 16, height: 16, marginRight: 4 }} />}
+          <Image source={timeOutlineIcon as ImageSourcePropType} style={{ width: 16, height: 16, marginRight: 4 }} />
           <DateText><FormattedDate value={date} /></DateText>
         </Date>
         {badge}

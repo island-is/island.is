@@ -124,7 +124,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           </Heading>
           <StatusCard
             title="Fæðingarorlof 4/6"
-            icon={timeOutlineIcon}
             date={new Date()}
             description="Skipting orlofstíma"
             badge={<Badge title="Vantar gögn" />}

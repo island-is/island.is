@@ -2,6 +2,8 @@ import React from 'react'
 import styled from 'styled-components/native';
 
 const Host = styled.View`
+  display: flex;
+  width: 100%;
   flex-direction: row;
 
   padding-bottom: 16px;
@@ -19,7 +21,6 @@ const Text = styled.Text`
   line-height: 26px;
   color: ${props => props.theme.shade.foreground};
 `;
-
 
 interface HeadingProps {
   children: React.ReactNode;

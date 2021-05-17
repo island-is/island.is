@@ -1,16 +1,16 @@
+
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
 
 const Host = styled.View`
-  padding: 0 30px;
+  flex-direction: row;
 `;
 
-interface ContainerProps {
+interface FieldRow {
   children: React.ReactNode;
 }
 
-export function Container({ children }: ContainerProps) {
+export function FieldRow({ children }: FieldRow) {
   return (
     <Host>
       {children}

@@ -3,6 +3,7 @@ import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import React from 'react'
 import { View } from 'react-native';
 import { Button } from './Button'
+import { Close } from './Close';
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>{children}</View>
@@ -18,9 +19,14 @@ storiesOf('Button', module)
     );
   })
   .add('Transparent', () => {
-    const title = text('Button transparent title', 'Sleppa í bili');
+    const title = text('Transparent Button Title', 'Sleppa í bili');
 
     return (
-      <Button title={title} isTransparent={boolean('Disabled', true)} onPress={() => void 0} />
+      <Button title={title} isTransparent={boolean('Is Transparent', true)} onPress={() => void 0} />
+    );
+  })
+  .add('Close Button', () => {
+    return (
+      <Close />
     );
   })

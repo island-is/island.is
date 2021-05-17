@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { theme, Colors } from '@island.is/island-ui/theme';
 import info from '../../assets/alert/info-alert.png';
 import close from '../../assets/alert/close.png';
-import { View, Animated, SafeAreaView, Image } from 'react-native';
+import { View, Animated, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
 
 const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Colors; }>`
   position: absolute;
@@ -23,13 +23,6 @@ const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Color
 const Icon = styled.View`
   align-items: center;
   justify-content: center;
-`;
-
-const Title = styled.Text`
-  font-size: 16px;
-  font-weight: ${theme.typography.semiBold};
-  color: ${props => props.theme.shade.foreground};
-  line-height: 24px;
 `;
 
 const Description = styled.Text`
@@ -54,7 +47,7 @@ export type AlertType = 'error' | 'info' | 'success' | 'warning'
 type VariantStyle = {
   background: Colors
   borderColor: Colors
-  icon: any
+  icon: ImageSourcePropType
 }
 
 type VariantStyles = {
@@ -89,16 +82,17 @@ interface AlertProps {
   title?: string,
   message?: string,
   style?: any;
-  onClose(): void;
-  onClosed(): void;
+  onClose?(): void;
+  onClosed?(): void;
   visible?: boolean;
+  hideIcon?: boolean;
 }
 
 const defaultOffsetY = {
   current: new Animated.Value(0),
 };
 
-export function Alert({ title, message, type, visible = true, onClose, onClosed, ...rest }: AlertProps) {
+export function Alert({ title, message, type, hideIcon = false, visible = true, onClose, onClosed, ...rest }: AlertProps) {
 
   const offsetY = useRef(new Animated.Value(0));
   const alertRef = useRef<View>(null);
@@ -115,7 +109,7 @@ export function Alert({ title, message, type, visible = true, onClose, onClosed,
       }).start(({ finished }) => {
         if (finished) {
           setIsVisible(false);
-          onClosed();
+          onClosed && onClosed();
           if (offsetY.current) {
             offsetY.current.setValue(1);
           }
@@ -153,18 +147,21 @@ export function Alert({ title, message, type, visible = true, onClose, onClosed,
         }}
       >
         <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Icon>
-            <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
-          </Icon>
-          <Content>
-            {title && <Title style={{ marginBottom: message ? 15 : 0 }}>{title}</Title>}
-            {message && (
-              <Description>{message}</Description>
-            )}
-          </Content>
-          <Close onPress={onClose}>
-            <Image source={close} style={{ width: 12, height: 12 }} />
-          </Close>
+         {!hideIcon &&
+            <Icon>
+              <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
+            </Icon>
+          }
+          {message && (
+            <Content>
+                <Description>{message}</Description>
+            </Content>
+          )}
+          {onClose &&
+            <Close onPress={onClose}>
+              <Image source={close as ImageSourcePropType} style={{ width: 12, height: 12 }} />
+            </Close>
+          }
         </SafeAreaView>
       </Host>
     </>

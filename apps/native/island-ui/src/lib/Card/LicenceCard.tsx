@@ -6,6 +6,7 @@ import { LicenseType } from '../../../../app/src/types/license-type'
 
 const Host = styled.View<{ backgroundColor?: string }>`
   display: flex;
+  width: 100%;
   flex-flow: row nowrap;
   justify-content: space-between;
   padding: 12px 24px;
@@ -66,13 +67,15 @@ function mapLicenseColor(type: LicenseType) {
 
 interface LicenceCardProps {
   title: string;
+  status?: string;
+  date?: string;
   agencyLogo: ImageSourcePropType;
   type: LicenseType;
   nativeID?: string;
   style?: any;
 }
 
-export function LicenceCard({ title, type, agencyLogo, nativeID, style }: LicenceCardProps) {
+export function LicenceCard({ title, type, agencyLogo, nativeID, style, date, status }: LicenceCardProps) {
   const theme = useTheme();
   let backgroundColor = theme.shade.shade400;
   switch (type) {
@@ -99,12 +102,11 @@ export function LicenceCard({ title, type, agencyLogo, nativeID, style }: Licenc
         <ValidationWrap>
           <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
           <Validation>
-            Í gildi
+            {status}
           </Validation>
         </ValidationWrap>
-
         <TimeStamp>
-          16:24 - 14.03.2021
+          {date}
         </TimeStamp>
       </Content>
       <ImgWrap>

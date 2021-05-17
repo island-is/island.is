@@ -65,6 +65,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       id: string
       title: string
       serviceProvider: string
+      dateTime: string
+      status: string
       type: LicenseType
     }
   }) => (
@@ -83,6 +85,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           nativeID={`license-${item.id}_source`}
           title={item.title}
           type={item.type}
+          date={item.dateTime}
+          status={item.status}
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>

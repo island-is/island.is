@@ -3,54 +3,72 @@
     "id": "1",
     "serviceProvider": "Þjóðskrá Íslands",
     "title": "Nafnskírteini",
-    "type": "IDENTIDY_CARD"
+    "type": "IDENTIDY_CARD",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "2",
     "serviceProvider": "Ríkislögreglustjóri",
     "title": "Ökuskírteini",
-    "type": "DRIVERS_LICENSE"
+    "type": "DRIVERS_LICENSE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "3",
     "serviceProvider": "Þjóðskrá Íslands",
     "title": "Vegabréf",
-    "type": "PASSPORT"
+    "type": "PASSPORT",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "4",
     "serviceProvider": "Ríkislögreglustjóri",
     "title": "Skotvopnaleyfi",
-    "type": "WEAPON_LICENSE"
+    "type": "WEAPON_LICENSE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "5",
     "serviceProvider": "Ríkissaksóknari",
     "title": "Sakavottorð",
-    "type": "CRIMINAL_RECORD_CERTIFICATE"
+    "type": "CRIMINAL_RECORD_CERTIFICATE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "6",
     "serviceProvider": "Umhverfisstofnun",
     "title": "Veiðikort",
-    "type": "FISHING_CARD"
+    "type": "FISHING_CARD",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "7",
     "serviceProvider": "Vinnueftirlitið",
     "title": "Vinnuvélaskírteini",
-    "type": "MACHINE_CERTIFICATE"
+    "type": "MACHINE_CERTIFICATE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "8",
     "serviceProvider": "Vinnueftirlitið",
     "title": "ADR skírteini",
-    "type": "ADR_LICENSE"
+    "type": "ADR_LICENSE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   },
   {
     "id": "9",
     "serviceProvider": "Landlæknisembættið",
     "title": "Bólusetningaskíreini",
-    "type": "VACCINE_CERTIFICATE"
+    "type": "VACCINE_CERTIFICATE",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
   }
 ]
