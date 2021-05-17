@@ -1,36 +1,33 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
+import { DistributiveOmit } from '@island.is/shared/types'
+import { getSelectedChild } from '../../parentalLeaveUtils'
 
 import {
   ChildInformation,
   ExistingChildApplication,
   PregnancyStatus,
   ChildrenAndExistingApplications,
+  ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 
-const applicationToChildInformation = (
-  application: Application,
-): ChildInformation | null => {
-  const selectedChildIndex = getValueViaPath(
-    application.answers,
-    'selectedChild',
-  )
-  const selectedChild = getValueViaPath(
-    application.externalData,
-    `children.data.childrenAndExistingApplications.children[${selectedChildIndex}]`,
-    null,
-  ) as ChildInformation | null
-
-  return selectedChild
-}
+// We do not require hasRights or remainingDays in this step
+// as it will be calculated later in the process
+type ChildInformationWithoutRights = DistributiveOmit<
+  ChildInformation,
+  'hasRights' | 'remainingDays'
+>
 
 export const applicationsToChildInformation = (
   applications: Application[],
   asOtherParent = false,
-): ChildInformation[] => {
-  const result: ChildInformation[] = []
+): ChildInformationWithoutRights[] => {
+  const result: ChildInformationWithoutRights[] = []
 
   for (const application of applications) {
-    const selectedChild = applicationToChildInformation(application)
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
 
     if (selectedChild !== null) {
       if (asOtherParent) {
@@ -61,7 +58,10 @@ export const applicationsToExistingChildApplication = (
   const result: ExistingChildApplication[] = []
 
   for (const application of applications) {
-    const childInformation = applicationToChildInformation(application)
+    const childInformation = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
 
     if (childInformation !== null) {
       result.push({
@@ -95,16 +95,23 @@ export const getChildrenFromMockData = (
     8,
   )}`
 
+  // TODO: Be able to configure rights when mocking
   const child: ChildInformation =
     parentalRelation === 'primary'
       ? {
           expectedDateOfBirth: formattedDOB,
           parentalRelation: 'primary',
+          // Hardcode rights when mocking data for now
+          hasRights: true,
+          remainingDays: 180,
         }
       : {
           expectedDateOfBirth: formattedDOB,
           parentalRelation: 'secondary',
           primaryParentNationalRegistryId,
+          // Hardcode rights when mocking data for now
+          hasRights: true,
+          remainingDays: 180,
         }
 
   return {
@@ -117,7 +124,7 @@ export const getChildrenAndExistingApplications = (
   applicationsWhereApplicant: Application[],
   applicationsWhereOtherParent: Application[],
   pregnancyStatus?: PregnancyStatus | null,
-): ChildrenAndExistingApplications => {
+): ChildrenWithoutRightsAndExistingApplications => {
   const existingApplications = applicationsToExistingChildApplication(
     applicationsWhereApplicant,
   )
@@ -126,7 +133,7 @@ export const getChildrenAndExistingApplications = (
     true,
   )
 
-  const children: ChildInformation[] = []
+  const children: ChildInformationWithoutRights[] = []
 
   for (const child of childrenWhereOtherParent) {
     const isAlreadyInList = children.some(

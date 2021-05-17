@@ -8,10 +8,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import {
-  ParentalLeave,
-  PregnancyStatus,
-} from '@island.is/api/domains/directorate-of-labour'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
@@ -95,10 +91,15 @@ export const formatIsk = (value: number): string =>
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const provider = getValueViaPath(
+  const selectedChild = getSelectedChild(
+    application.answers,
     application.externalData,
-    'children',
-  ) as PregnancyStatusAndRightsResults
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -108,7 +109,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let days = provider.remainingDays
+  let days = selectedChild.remainingDays
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     const requestedDays = requestRights.requestDays
@@ -117,7 +118,7 @@ export const getAvailableRightsInMonths = (application: Application) => {
   }
 
   if (
-    provider.hasRights &&
+    selectedChild.hasRights &&
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
@@ -196,7 +197,7 @@ export const getSelectedChild = (
   const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
   const selectedChild = getValueViaPath(
     externalData,
-    `children.data.childrenAndExistingApplications.children[${selectedChildIndex}]`,
+    `children.data.children[${selectedChildIndex}]`,
     null,
   ) as ChildInformation | null
 
@@ -213,13 +214,13 @@ export const isEligibleForParentalLeave = (
 
   const children = getValueViaPath(
     externalData,
-    'childrenAndExistingApplications.children',
+    'children.data.children',
     [],
   ) as ChildrenAndExistingApplications['children']
 
   const existingApplications = getValueViaPath(
     externalData,
-    'children.data.childrenAndExistingApplications.existingApplications',
+    'children.data.existingApplications',
     [],
   ) as ChildrenAndExistingApplications['existingApplications']
 

@@ -9,7 +9,11 @@ import {
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
-import { ChildInformation, ChildrenAndExistingApplications } from './types'
+import {
+  ChildInformation,
+  ChildrenAndExistingApplications,
+  ChildrenWithoutRightsAndExistingApplications,
+} from './types'
 import {
   getChildrenAndExistingApplications,
   getChildrenFromMockData,
@@ -102,7 +106,7 @@ export class Children extends BasicDataProvider {
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
     pregnancyStatus?: PregnancyStatus | null,
-  ): Promise<ChildrenAndExistingApplications> {
+  ): Promise<ChildrenWithoutRightsAndExistingApplications> {
     const useMockData =
       getValueViaPath(application.answers, 'useMockData', NO) === YES
 
@@ -144,50 +148,51 @@ export class Children extends BasicDataProvider {
   async provide(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<PregnancyStatusAndRightsResults> {
+  ): Promise<ChildrenAndExistingApplications> {
     const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus()
-    const dateOfBirth =
-      parentalLeavesAndPregnancyStatus.getPregnancyStatus?.expectedDateOfBirth
 
-    if (!dateOfBirth) {
-      return Promise.reject({
-        reason: parentalLeaveFormMessages.shared.pregnancyStatusAndRightsError,
-      })
-    }
-
-    const parentalLeavesEntitlements = await this.queryParentalLeavesEntitlements(
-      dateOfBirth,
-    )
-
-    const childrenAndExistingApplications = await this.childrenAndExistingApplications(
+    const {
+      children,
+      existingApplications,
+    } = await this.childrenAndExistingApplications(
       application,
       customTemplateFindQuery,
       parentalLeavesAndPregnancyStatus.getPregnancyStatus,
     )
-    const remainingDays = this.remainingDays(
-      dateOfBirth,
-      parentalLeavesAndPregnancyStatus.getParentalLeaves,
-      parentalLeavesEntitlements,
+
+    const childrenResult: ChildInformation[] = []
+
+    for (const child of children) {
+      const parentalLeavesEntitlements = await this.queryParentalLeavesEntitlements(
+        child.expectedDateOfBirth,
+      )
+
+      const remainingDays = this.remainingDays(
+        child.expectedDateOfBirth,
+        parentalLeavesAndPregnancyStatus.getParentalLeaves,
+        parentalLeavesEntitlements,
+      )
+
+      childrenResult.push({
+        ...child,
+        remainingDays,
+        hasRights:
+          parentalLeavesEntitlements?.independentMonths > 0 ||
+          parentalLeavesEntitlements.transferableMonths > 0,
+      })
+    }
+
     )
 
-    if (
-      childrenAndExistingApplications.children.length <= 0 ||
-      childrenAndExistingApplications.existingApplications.length <= 0
-    ) {
+    if (children.length <= 0 && existingApplications.length <= 0) {
       return Promise.reject({
         reason: parentalLeaveFormMessages.shared.childrenError,
       })
     }
 
     return {
-      childrenAndExistingApplications,
-      remainingDays,
-      hasRights:
-        parentalLeavesEntitlements?.independentMonths > 0 ||
-        parentalLeavesEntitlements.transferableMonths > 0,
-      hasActivePregnancy:
-        parentalLeavesAndPregnancyStatus.getPregnancyStatus
-          ?.hasActivePregnancy ?? false,
+      children: childrenResult,
+      existingApplications,
     }
   }
 
