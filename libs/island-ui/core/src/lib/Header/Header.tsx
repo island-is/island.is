@@ -65,7 +65,6 @@ export const Header = ({
       {info && (
         <Box
           className={styles.infoContainer}
-          display="flex"
           alignItems="center"
           height="full"
           marginLeft={[1, 1, 2, 4]}

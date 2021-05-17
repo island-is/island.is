@@ -9,8 +9,12 @@ export const container = responsiveStyleMap({
 })
 
 export const infoContainer = style({
+  display: 'none',
+
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'flex',
+
       borderLeftWidth: '1px',
       borderStyle: 'solid',
       borderColor: theme.color.dark100,
