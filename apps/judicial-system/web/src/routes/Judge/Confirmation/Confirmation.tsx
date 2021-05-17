@@ -547,7 +547,7 @@ export const Confirmation: React.FC = () => {
                       onChange={(evt) =>
                         validateAndSetTime(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -559,7 +559,7 @@ export const Confirmation: React.FC = () => {
                       onBlur={(evt) =>
                         validateAndSendTimeToServer(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
