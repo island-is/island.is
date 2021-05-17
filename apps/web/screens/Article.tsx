@@ -28,6 +28,7 @@ import {
   InstitutionsPanel,
   OrganizationFooter,
   Sticky,
+  AppendedArticleComponents,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -503,6 +504,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
+          <Box paddingTop={2}>
+            <AppendedArticleComponents article={article} />
+          </Box>
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
