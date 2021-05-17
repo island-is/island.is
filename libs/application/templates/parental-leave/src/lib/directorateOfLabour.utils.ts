@@ -34,7 +34,7 @@ export const monthsToDays = (months: number) => {
 /**
  * Return true if the dates are the first day and the last day of the same month
  */
-const fullMonthDates = (start: Date, end: Date) => {
+const isFullMonth = (start: Date, end: Date) => {
   if (!isSameMonth(start, end)) {
     return false
   }
@@ -51,12 +51,12 @@ export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
   }
 
   if (isSameMonth(start, end)) {
-    const isFullMonth = fullMonthDates(start, end)
+    const fullMonth = isFullMonth(start, end)
     const ratioOfDaysUsed =
       (end.getDate() - start.getDate()) / getDaysInMonth(start)
     const daysUsed = Math.round(ratioOfDaysUsed * DAYS_IN_MONTH)
 
-    return isFullMonth ? DAYS_IN_MONTH : daysUsed
+    return fullMonth ? DAYS_IN_MONTH : daysUsed
   }
 
   const ratioLeftOfStartMonth = 1 - start.getDate() / getDaysInMonth(start)
@@ -147,10 +147,8 @@ export const calculateDateWithNewPeriod = (start: Date, daysToUse: number) => {
   while (daysLeft > 0) {
     const currentDayOfMonth = endDate.getDate()
     const daysInMonth = getDaysInMonth(new Date(endDate))
-
     const VMSTDayToRealDayMultiplier = daysInMonth / DAYS_IN_MONTH
     const realDayToVMSTDayMultiplier = DAYS_IN_MONTH / daysInMonth
-
     const daysLeftOfMonth = daysInMonth - currentDayOfMonth + 1
     const daysLeftOfMonthCost = daysLeftOfMonth * realDayToVMSTDayMultiplier
 
