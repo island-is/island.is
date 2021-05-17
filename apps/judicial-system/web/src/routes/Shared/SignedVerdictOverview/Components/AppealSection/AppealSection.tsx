@@ -58,7 +58,7 @@ const AppealSection: React.FC<Props> = (props) => {
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
       <div className={styles.appealContainer}>
-        <BlueBox height={112}>
+        <BlueBox height={120}>
           <AnimatePresence>
             {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
               !accusedPostponedAppealDate && (
@@ -83,7 +83,7 @@ const AppealSection: React.FC<Props> = (props) => {
       </div>
 
       <div className={styles.appealContainer}>
-        <BlueBox height={112}>
+        <BlueBox height={120}>
           <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               !prosecutorPostponedAppealDate && (

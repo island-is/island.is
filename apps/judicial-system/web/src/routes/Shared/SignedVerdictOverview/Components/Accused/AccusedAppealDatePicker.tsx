@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatAccusedByGender,
@@ -51,12 +51,14 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
           size="sm"
           blueBox={false}
         />
-        <Button
-          onClick={() => handleAccusedAppeal(accusedAppealDate)}
-          disabled={!Boolean(accusedAppealDate)}
-        >
-          {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}
-        </Button>
+        <Box className={styles.appealButton}>
+          <Button
+            onClick={() => handleAccusedAppeal(accusedAppealDate)}
+            disabled={!Boolean(accusedAppealDate)}
+          >
+            {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}
+          </Button>
+        </Box>
       </div>
     </motion.div>
   )

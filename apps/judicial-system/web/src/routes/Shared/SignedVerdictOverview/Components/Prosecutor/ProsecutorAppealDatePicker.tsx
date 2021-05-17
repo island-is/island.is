@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@island.is/island-ui/core'
+import { Button, Box } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import * as styles from '../AppealSection/AppealSection.treat'
 
@@ -44,12 +44,14 @@ const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
           size="sm"
           blueBox={false}
         />
-        <Button
-          onClick={() => handleProsecutorAppeal(prosecutorAppealDate)}
-          disabled={!Boolean(prosecutorAppealDate)}
-        >
-          Sækjandi kærir
-        </Button>
+        <Box className={styles.appealButton}>
+          <Button
+            onClick={() => handleProsecutorAppeal(prosecutorAppealDate)}
+            disabled={!Boolean(prosecutorAppealDate)}
+          >
+            Sækjandi kærir
+          </Button>
+        </Box>
       </div>
     </motion.div>
   )

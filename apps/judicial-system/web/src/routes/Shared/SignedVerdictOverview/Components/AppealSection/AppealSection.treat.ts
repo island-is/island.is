@@ -11,3 +11,7 @@ export const appealInnerWrapper = style({
   gridTemplateColumns: '2fr auto',
   columnGap: theme.spacing[2],
 })
+
+export const appealButton = style({
+  maxHeight: theme.spacing[8],
+})
