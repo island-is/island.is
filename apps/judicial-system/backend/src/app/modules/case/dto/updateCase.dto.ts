@@ -71,6 +71,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly leadInvestigator?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly arrestDate?: Date
 
   @IsOptional()

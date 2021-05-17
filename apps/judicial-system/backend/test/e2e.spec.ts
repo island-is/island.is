@@ -107,6 +107,7 @@ const remainingCreateCaseData = {
   defenderPhoneNumber: '555-5555',
   sendRequestToDefender: true,
   court: 'Court',
+  leadInvestigator: 'Lead Investigator',
 }
 
 function remainingProsecutorCaseData() {
@@ -299,6 +300,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.sendRequestToDefender || null,
   )
   expect(caseOne.court || null).toBe(caseTwo.court || null)
+  expect(caseOne.leadInvestigator || null).toBe(
+    caseTwo.leadInvestigator || null,
+  )
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
     caseTwo.requestedCourtDate || null,

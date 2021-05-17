@@ -18,6 +18,7 @@ import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHe
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   user: User
@@ -308,6 +309,7 @@ export const UserForm: React.FC<Props> = (props) => {
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}
           nextButtonText="Vista"
+          previousUrl={constants.USER_LIST_ROUTE}
         />
       </FormContentContainer>
     </div>
