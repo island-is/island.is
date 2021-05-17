@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
-import AccusedInfo from '../Accused/AccusedInfo'
+import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import Prosecutor from '../Prosecutor/Prosecutor'
 import ProsecutorInfo from '../Prosecutor/ProsecutorInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
@@ -39,16 +39,6 @@ const AppealSection: React.FC<Props> = (props) => {
     handleAccusedAppealDismissal,
     handleProsecutorAppealDismissal,
   } = props
-  const [, setAccusedRemoved] = useState<boolean>()
-  const [, setAccusedInfoRemoved] = useState<boolean>()
-
-  const handleAccusedRemoved = () => {
-    setAccusedRemoved(true)
-  }
-
-  const handleAccusedInfoRemoved = () => {
-    setAccusedInfoRemoved(true)
-  }
 
   return (
     <>
@@ -74,11 +64,10 @@ const AppealSection: React.FC<Props> = (props) => {
           <AnimatePresence>
             {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
               accusedPostponedAppealDate && (
-                <AccusedInfo
+                <AccusedAppealInfo
                   accusedGender={accusedGender}
                   handleAccusedAppealDismissal={handleAccusedAppealDismissal}
                   accusedPostponedAppealDate={accusedPostponedAppealDate}
-                  handleAccusedInfoRemoved={handleAccusedInfoRemoved}
                 />
               )}
           </AnimatePresence>

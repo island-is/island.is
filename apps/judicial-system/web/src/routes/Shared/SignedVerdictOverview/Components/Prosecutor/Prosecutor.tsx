@@ -37,7 +37,6 @@ const Prosecutor: React.FC<Props> = (props) => {
   return (
     <motion.div
       key="prosecutorAppealDatepicker"
-      className={styles.accusedAppealDatepicker}
       variants={appealDateVariants}
       initial={{ y: 20, opacity: 0 }}
       exit="hidden"
