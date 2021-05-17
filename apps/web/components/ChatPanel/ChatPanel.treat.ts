@@ -1,8 +1,9 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { blue200, blue400, theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const root = style({
   display: 'flex',
+  width: 240,
   justifyContent: 'center',
   cursor: 'pointer',
   position: 'fixed',
@@ -11,12 +12,12 @@ export const root = style({
   border: 'none',
   borderRadius: '100%',
   color: 'white',
-  bottom: theme.spacing[15],
-  right: theme.spacing[3],
+  bottom: theme.spacing[2],
+  right: theme.spacing[1],
   ...themeUtils.responsiveStyle({
     md: {
-      bottom: theme.spacing[6],
-      right: theme.spacing[6],
+      bottom: theme.spacing[3],
+      right: theme.spacing[3],
     },
   }),
   transition: 'opacity 0.3s ease',
@@ -25,4 +26,44 @@ export const root = style({
 export const hidden = style({
   opacity: 0,
   zIndex: 0,
+})
+
+export const message = style({
+  background: blue400,
+  border: `1px solid ${blue200}`,
+  borderRadius: 8,
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+  maxWidth: 220,
+  padding: 8,
+  ...themeUtils.responsiveStyle({
+    md: {
+      padding: 16,
+    },
+  }),
+  textAlign: 'center',
+  transition: 'bottom 0.3s ease',
+})
+
+export const messageArrow = style({
+  position: 'absolute',
+  bottom: -10,
+  right: 44,
+  width: 0,
+  height: 0,
+  borderLeft: '10px solid transparent',
+  borderRight: '10px solid transparent',
+  borderTop: `10px solid ${blue200}`,
+})
+
+export const messageArrowBorder = style({
+  position: 'absolute',
+  bottom: -8,
+  right: 44,
+  width: 0,
+  height: 0,
+  borderLeft: '10px solid transparent',
+  borderRight: '10px solid transparent',
+  borderTop: `10px solid ${blue400}`,
 })

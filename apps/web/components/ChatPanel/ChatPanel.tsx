@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { Button, Icon } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { config, endpoints } from './config'
-import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import * as styles from './ChatPanel.treat'
 
@@ -17,9 +16,13 @@ declare global {
 
 interface ChatPanelProps {
   endpoint: keyof typeof endpoints
+  pushUp?: boolean
 }
 
-export const ChatPanel: React.FC<ChatPanelProps> = ({ endpoint }) => {
+export const ChatPanel: React.FC<ChatPanelProps> = ({
+  endpoint,
+  pushUp = false,
+}) => {
   const { width } = useWindowSize()
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
@@ -71,17 +74,19 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ endpoint }) => {
 
   return (
     <div className={cn(styles.root, { [styles.hidden]: !showButton })}>
-      <Button
-        variant="primary"
-        circle
-        size="large"
-        iconType="filled"
+      <div
+        className={styles.message}
+        style={{ bottom: pushUp ? 80 : 0 }}
         onClick={() => {
           window.boost.chatPanel.show()
         }}
       >
-        <Icon icon="chatbubble" color="white" size="large" type="outline" />
-      </Button>
+        <Text variant="h5" color="white">
+          Hæ, get ég aðstoðað?
+        </Text>
+        <div className={styles.messageArrow} />
+        <div className={styles.messageArrowBorder} />
+      </div>
     </div>
   )
 }
