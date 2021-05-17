@@ -1,10 +1,11 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+
 import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
+import { useAuth } from '@island.is/auth/react'
 
-import useAuth from '../hooks/useAuth'
 import { useInfoState } from '../context/InfoProvider'
 
 export const Application = () => {

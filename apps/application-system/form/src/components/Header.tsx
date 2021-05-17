@@ -3,15 +3,13 @@ import { useLocation } from 'react-router-dom'
 
 import { Header as UIHeader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useAuth } from '@island.is/auth/react'
 
-import { useAuthState } from '../context/AuthProvider'
-import useAuth from '../hooks/useAuth'
 import { fixSvgUrls } from '../utils'
 import { useInfoState } from '../context/InfoProvider'
 
-const Header: FC = () => {
-  const [{ isAuthenticated, userInfo }] = useAuthState()
-  const { signOutUser } = useAuth()
+export const Header: FC = () => {
+  const { isAuthenticated, userInfo, signOut } = useAuth()
   const { lang } = useLocale()
   const { changeLanguage } = useNamespaces()
   const location = useLocation()
@@ -42,9 +40,7 @@ const Header: FC = () => {
       userName={userInfo?.profile?.name}
       language={(lang ?? 'is') === 'is' ? 'EN' : 'IS'}
       switchLanguage={handleSwitchLanguage}
-      onLogout={signOutUser}
+      onLogout={signOut}
     />
   )
 }
-
-export default Header

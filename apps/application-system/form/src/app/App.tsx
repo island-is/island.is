@@ -6,57 +6,44 @@ import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
 import { NotFound } from '@island.is/application/ui-shell'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { Authenticator } from '@island.is/auth/react'
 
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
-import { Signin } from '../routes/SignIn'
-import { SilentSignIn } from '../routes/SilentSignin'
 import { AssignApplication } from '../routes/AssignApplication'
-import { AuthProvider } from '../context/AuthProvider'
 import { InfoProvider } from '../context/InfoProvider'
-import Header from '../components/Header'
-import Authenticator from '../components/Authenticator'
+import { Header } from '../components/Header'
 import { environment } from '../environments'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
-    <AuthProvider>
-      <InfoProvider>
-        <LocaleProvider locale={defaultLanguage} messages={{}}>
-          <Router basename="/umsoknir">
+    <InfoProvider>
+      <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <Router basename="/umsoknir">
+          <Authenticator>
             <Box background="white">
               <GridContainer>
                 <Header />
               </GridContainer>
             </Box>
-
             <Switch>
-              <Route path="/signin-oidc" component={Signin} />
-              <Route path="/silent/signin-oidc" component={SilentSignIn} />
+              <Route
+                exact
+                path="/tengjast-umsokn"
+                component={AssignApplication}
+              />
 
-              <Route>
-                <Authenticator>
-                  <Switch>
-                    <Route
-                      exact
-                      path="/tengjast-umsokn"
-                      component={AssignApplication}
-                    />
+              <Route exact path="/:slug" component={Applications} />
+              <Route exact path="/:slug/:id" component={Application} />
 
-                    <Route exact path="/:slug" component={Applications} />
-                    <Route exact path="/:slug/:id" component={Application} />
-
-                    <Route path="*">
-                      <NotFound />
-                    </Route>
-                  </Switch>
-                </Authenticator>
+              <Route path="*">
+                <NotFound />
               </Route>
             </Switch>
-          </Router>
-        </LocaleProvider>
-      </InfoProvider>
-    </AuthProvider>
+          </Authenticator>
+        </Router>
+      </LocaleProvider>
+    </InfoProvider>
   </ApolloProvider>
 )
 

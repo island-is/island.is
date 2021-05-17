@@ -235,7 +235,7 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
-    Router.replace({
+    Router.push({
       pathname: linkResolver('search').href,
       query: { q, [type]: key },
     })
@@ -273,6 +273,9 @@ const Search: Screen<CategoryProps> = ({
       n('allCategories', 'Allir flokkar'),
     value: filters.category ?? '',
   }
+
+  const isServer = typeof window === 'undefined'
+  console.log('sidebarDataTypes', sidebarDataTypes)
 
   return (
     <>
@@ -403,26 +406,28 @@ const Search: Screen<CategoryProps> = ({
               ) : null}
             </>
           ) : (
-            <Text variant="intro" as="p">
-              {totalSearchResults}{' '}
-              {totalSearchResults === 1
-                ? n('searchResult', 'leitarniðurstaða')
-                : n('searchResults', 'leitarniðurstöður')}{' '}
-              {(filters.category || filters.type) && (
-                <>
-                  {n('inCategory', 'í flokki')}
-                  {
-                    <>
-                      {': '}
-                      <strong>
-                        {sidebarData.tags[filters.category]?.title ??
-                          sidebarData.types[filters.type]?.title}
-                      </strong>
-                    </>
-                  }
-                </>
-              )}
-            </Text>
+            <Box marginBottom={2}>
+              <Text variant="intro" as="p">
+                {totalSearchResults}{' '}
+                {totalSearchResults === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}{' '}
+                {(filters.category || filters.type) && (
+                  <>
+                    {n('inCategory', 'í flokki')}
+                    {
+                      <>
+                        {': '}
+                        <strong>
+                          {sidebarData.tags[filters.category]?.title ??
+                            sidebarData.types[filters.type]?.title}
+                        </strong>
+                      </>
+                    }
+                  </>
+                )}
+              </Text>
+            </Box>
           )}
         </Stack>
         <Stack space={2}>
@@ -468,6 +473,25 @@ const Search: Screen<CategoryProps> = ({
               />
             </Box>
           )}
+          <Hidden above="sm">
+            <Box paddingTop={4}>
+              <Sidebar title={n('otherCategories')}>
+                <Stack space={[1, 1, 2]}>
+                  {sidebarDataTypes.map(([key, { title, total }]) => (
+                    <Filter
+                      key={key}
+                      selected={filters.type === key}
+                      onClick={() => {
+                        onSelectSidebarTag('type', key)
+                        !isServer && window.scrollTo(0, 0)
+                      }}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
+                </Stack>
+              </Sidebar>
+            </Box>
+          </Hidden>
         </Stack>
       </SidebarLayout>
     </>
