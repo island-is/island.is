@@ -27,6 +27,7 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
   const [selectedApiResource, setSelectedApiResource] = useState<ApiResource>(
     new ApiResource(),
   )
+  const [activeResource, setActiveResource] = useState<string>('null')
 
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeResourceForm'),
@@ -39,12 +40,9 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
           props.apiScope.name,
         )
         if (response) {
-          console.log('SETTING VALUE')
-          console.log(response.apiResourceName)
-          formState.isDirty = true
-          setValue('apiResourceName', response.apiResourceName, {
-            shouldDirty: true,
-          })
+          setActiveResource(response.apiResourceName)
+        } else {
+          setActiveResource('null')
         }
       }
     }
@@ -69,7 +67,6 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
   const save = async (data: ApiResourceScopeDTO) => {
     // Remove Api Resource from Api Resource Scope
     if (data.apiResourceName === 'null') {
-      console.log('deleting')
       const response = await ResourcesService.DeleteApiResourceScopeByScopeName(
         props.apiScope.name,
       )
@@ -118,14 +115,17 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
                     title={localization.fields['apiResourceName'].helpText}
                     ref={register()}
                     onChange={(e) => setSelectedItem(e.target.value)}
-                    defaultValue={'null'}
                   >
-                    <option value={'null'}>
+                    <option value={'null'} selected={activeResource === 'null'}>
                       {localization.fields['apiResourceName'].selectAnItem}
                     </option>
                     {apiResources.map((api: ApiResource) => {
                       return (
-                        <option value={api.name} key={api.name}>
+                        <option
+                          value={api.name}
+                          key={api.name}
+                          selected={api.name === activeResource}
+                        >
                           {api.name}
                         </option>
                       )

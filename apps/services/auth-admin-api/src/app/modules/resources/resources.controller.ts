@@ -584,7 +584,6 @@ export class ResourcesController {
   async findApiResourceScopeByScopeName(
     @Param('scopeName') scopeName: string,
   ): Promise<ApiResourceScope | null> {
-    console.log(scopeName)
     if (!scopeName) {
       throw new BadRequestException('scopeName must be provided')
     }
