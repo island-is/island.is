@@ -12,10 +12,11 @@ import { CaseGender } from '@island.is/judicial-system/types'
 
 interface Props {
   handleProsecutorAppeal: (date?: Date) => void
+  isInitialMount: boolean
 }
 
 const Prosecutor: React.FC<Props> = (props) => {
-  const { handleProsecutorAppeal } = props
+  const { handleProsecutorAppeal, isInitialMount } = props
   const isPresent = useIsPresent()
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
 
@@ -38,7 +39,7 @@ const Prosecutor: React.FC<Props> = (props) => {
     <motion.div
       key="prosecutorAppealDatepicker"
       variants={appealDateVariants}
-      initial={{ y: 20, opacity: 0 }}
+      initial={isInitialMount ? false : { y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"
     >

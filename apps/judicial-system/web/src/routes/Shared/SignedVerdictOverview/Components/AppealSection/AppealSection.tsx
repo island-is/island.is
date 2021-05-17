@@ -12,6 +12,7 @@ import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import Prosecutor from '../Prosecutor/Prosecutor'
 import ProsecutorInfo from '../Prosecutor/ProsecutorInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
+import { useEffectOnce } from 'react-use'
 
 interface Props {
   rulingDate: string
@@ -40,6 +41,12 @@ const AppealSection: React.FC<Props> = (props) => {
     handleProsecutorAppealDismissal,
   } = props
 
+  const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
+
+  useEffectOnce(() => {
+    setIsInitialMount(false)
+  })
+
   return (
     <>
       <Box marginBottom={1}>
@@ -58,6 +65,7 @@ const AppealSection: React.FC<Props> = (props) => {
                 <AccusedAppealDatePicker
                   handleAccusedAppeal={handleAccusedAppeal}
                   accusedGender={accusedGender}
+                  isInitialMount={isInitialMount}
                 />
               )}
           </AnimatePresence>
@@ -79,7 +87,10 @@ const AppealSection: React.FC<Props> = (props) => {
           <AnimatePresence>
             {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
               !prosecutorPostponedAppealDate && (
-                <Prosecutor handleProsecutorAppeal={handleProsecutorAppeal} />
+                <Prosecutor
+                  handleProsecutorAppeal={handleProsecutorAppeal}
+                  isInitialMount={isInitialMount}
+                />
               )}
           </AnimatePresence>
 

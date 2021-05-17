@@ -8,14 +8,16 @@ import {
 import * as styles from '../AppealSection/AppealSection.treat'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import { CaseGender } from '@island.is/judicial-system/types'
+import { useEffectOnce } from 'react-use'
 
 interface Props {
   handleAccusedAppeal: (date?: Date) => void
   accusedGender: CaseGender
+  isInitialMount: boolean
 }
 
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
-  const { handleAccusedAppeal, accusedGender } = props
+  const { handleAccusedAppeal, accusedGender, isInitialMount } = props
   const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
 
   const animateInAndOut = {
@@ -37,7 +39,7 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
     <motion.div
       key="accusedAppealDatepicker"
       variants={animateInAndOut}
-      initial={{ y: 20, opacity: 0 }}
+      initial={isInitialMount ? false : { y: 20, opacity: 0 }}
       exit="hidden"
       animate="visible"
     >
