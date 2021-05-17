@@ -233,7 +233,9 @@ export class UserProfileController {
     // route param matches the authenticated user.
     const profile = await this.findOneByNationalId(nationalId, user)
     if (!profile.email) {
-      throw new BadRequestException('Profile have no configured email address.')
+      throw new BadRequestException(
+        'Profile does not have a configured email address.',
+      )
     }
 
     return await this.verificationService.createEmailVerification(
