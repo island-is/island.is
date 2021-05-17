@@ -1004,9 +1004,9 @@
         "selectedItem": {
           "title": "Info about this Api Resource",
           "properties": {
-            "name": "Resource Name",
-            "description": "Description",
-            "displayName": "Display Name"
+            "name": { "name": "Resource Name" },
+            "description": { "name": "Description" },
+            "displayName": { "name": "Display Name" }
           }
         }
       },

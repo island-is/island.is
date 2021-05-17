@@ -16,13 +16,7 @@ interface Props {
 }
 
 const ApiScopeResourceForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-    setValue,
-  } = useForm<ApiResourceScopeDTO>()
+  const { register, handleSubmit, errors } = useForm<ApiResourceScopeDTO>()
   const [apiResources, setApiResources] = useState<ApiResource[]>([])
   const [selectedApiResource, setSelectedApiResource] = useState<ApiResource>(
     new ApiResource(),
@@ -144,19 +138,24 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
                   />
                 </div>
 
-                {/* <div
+                <div
                   className={`api-resource-scope-form__selected__item ${
-                    selectedApiResource ? 'show' : 'hidden'
+                    selectedApiResource && selectedApiResource?.name
+                      ? 'show'
+                      : 'hidden'
                   }`}
-                  key={selectedApiResource ? selectedApiResource?.name : ''}
+                  key={
+                    selectedApiResource && selectedApiResource?.name
+                      ? selectedApiResource?.name
+                      : 'none'
+                  }
                 >
                   <h3>{localization.sections['selectedItem'].title}</h3>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
                       {
-                        localization.sections['selectedItem'].properties[
-                          'apiResourceName'
-                        ].name
+                        localization.sections['selectedItem'].properties['name']
+                          .name
                       }
                     </div>
                     <div className="selected-item-property-value">
@@ -187,7 +186,7 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
                       {selectedApiResource?.description}
                     </div>
                   </div>
-                </div> */}
+                </div>
 
                 <div className="api-scope-resource-form__buttons__container">
                   <div className="api-scope-resource-form__button__container">
