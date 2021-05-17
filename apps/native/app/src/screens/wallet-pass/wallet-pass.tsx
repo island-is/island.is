@@ -1,15 +1,13 @@
-import { gql, useQuery } from '@apollo/client'
-import { Alert, LicenceCard } from '@island.is/island-ui-native'
 import React from 'react'
+import { gql, useQuery } from '@apollo/client'
 import {
   Field,
+  FieldCard,
   FieldGroup,
   FieldLabel,
-  FieldCard,
   FieldRow,
   LicenceCard,
 } from '@island.is/island-ui-native'
-import React from 'react'
 import { Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
