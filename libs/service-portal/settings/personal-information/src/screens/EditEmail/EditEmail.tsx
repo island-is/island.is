@@ -50,7 +50,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
           }),
         )
-        history.push(ServicePortalPath.UserProfileRoot)
+        history.push(ServicePortalPath.SettingsPersonalInformation)
       } catch (err) {
         toast.error(
           formatMessage({
@@ -123,7 +123,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
         email={email}
         onResendEmail={handleResendEmail}
         renderBackButton={() => (
-          <Link to={ServicePortalPath.UserProfileRoot}>
+          <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">
               {formatMessage({
                 id: 'service.portal:go-back',
@@ -161,7 +161,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       {status === 'success' && (
-        <Redirect to={ServicePortalPath.UserProfileRoot} />
+        <Redirect to={ServicePortalPath.SettingsPersonalInformation} />
       )}
     </>
   )
