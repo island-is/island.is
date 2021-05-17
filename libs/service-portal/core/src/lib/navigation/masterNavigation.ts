@@ -224,34 +224,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       description: 'Title of the actions category',
     }),
     children: [
-      // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        path: ServicePortalPath.FinanceRoot,
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:financeStatus',
-              defaultMessage: 'Staða',
-            }),
-            path: ServicePortalPath.FinanceStatus,
-          },
-        ],
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        // external: true,
-        systemRoute: true,
-      },
-
       // Fasteignir
       {
         name: defineMessage({
