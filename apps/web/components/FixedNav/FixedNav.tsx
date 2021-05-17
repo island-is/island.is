@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import * as styles from './FixedNav.treat'
 import {
-  ContentBlock,
+  GridContainer,
   Box,
   Button,
   FocusableBox,
@@ -39,59 +39,57 @@ export const FixedNav: FC = () => {
   )
 
   return (
-    <Box className={cn(styles.container, { [styles.show]: show })}>
-      <ContentBlock>
+    <GridContainer className={cn(styles.container, { [styles.show]: show })}>
+      <Box
+        paddingX={[2, 2, 6]}
+        paddingY={1}
+        width="full"
+        display="flex"
+        height="full"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="spaceBetween"
+      >
+        <Link {...linkResolver('homepage')}>
+          <FocusableBox marginRight={2}>
+            <Logo id="fixed-nav-logo-icon" iconOnly solid={true} />
+          </FocusableBox>
+        </Link>
+
         <Box
-          paddingX={[2, 2, 6]}
-          paddingY={1}
-          width="full"
           display="flex"
           height="full"
+          width="full"
           flexDirection="row"
           alignItems="center"
-          justifyContent="spaceBetween"
+          justifyContent="flexEnd"
         >
-          <Link {...linkResolver('homepage')}>
-            <FocusableBox marginRight={2}>
-              <Logo id="fixed-nav-logo-icon" iconOnly solid={true} />
-            </FocusableBox>
-          </Link>
-
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="flexEnd"
-          >
-            <Box>
-              <SearchInput
-                id="search_input_fixed_nav"
-                white
-                size="medium"
-                activeLocale={activeLocale}
-                placeholder={t.searchPlaceholder}
-                autocomplete={true}
-                autosuggest={false}
-              />
-            </Box>
-            <Box marginLeft={2}>
-              <Button
-                variant="ghost"
-                colorScheme="negative"
-                size="small"
-                icon="arrowUp"
-                onClick={() => {
-                  window.scrollTo(0, 0)
-                }}
-                aria-label={t.gotoTop}
-              />
-            </Box>
+          <Box>
+            <SearchInput
+              id="search_input_fixed_nav"
+              white
+              size="medium"
+              activeLocale={activeLocale}
+              placeholder={t.searchPlaceholder}
+              autocomplete={true}
+              autosuggest={false}
+            />
+          </Box>
+          <Box marginLeft={2}>
+            <Button
+              variant="ghost"
+              colorScheme="negative"
+              size="small"
+              icon="arrowUp"
+              onClick={() => {
+                window.scrollTo(0, 0)
+              }}
+              aria-label={t.gotoTop}
+            />
           </Box>
         </Box>
-      </ContentBlock>
-    </Box>
+      </Box>
+    </GridContainer>
   )
 }
 

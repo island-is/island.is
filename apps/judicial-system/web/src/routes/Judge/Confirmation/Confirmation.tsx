@@ -343,6 +343,7 @@ export const Confirmation: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -360,7 +361,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
