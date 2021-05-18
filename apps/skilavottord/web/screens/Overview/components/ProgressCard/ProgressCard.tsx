@@ -62,7 +62,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   <Box>
                     <Tag
                       variant={
-                        status === 'pendingRecycle' ? 'rose' : 'darkerMint'
+                        status === 'pendingRecycle' ? 'rose' : 'blueberry'
                       }
                       outlined
                     >
