@@ -12,7 +12,7 @@ const CenterView = ({ children }: any) => (
 storiesOf('List', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
-  .add('Default List Item', () => {
+  .add('List Item', () => {
     const title = text('List Item Title', 'Fjársýsla ríkisins');
     const subTitle = text('List Item Sub Title', 'Tilkynning um inneign');
     return (

@@ -1,24 +1,63 @@
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
-import { TextInputProps } from 'react-native';
+import { Skeleton } from '../Skeleton/Skeleton';
 
-const Host = styled.TextInput`
-  padding: 16px 16px;
-  margin-bottom: ${(props) => props.theme.spacing.gutter}px;
-  width: 100%;
+const Host = styled.SafeAreaView`
+  flex: 1;
+  border-bottom-width: 1px;
+  border-bottom-color: ${(props) =>
+    props.theme.isDark
+      ? props.theme.shade.shade200
+      : props.theme.color.blue100};
+  margin-left: 16px;
+  margin-right: 16px;
+`
 
-  border: ${theme.border.width.standard}px ${theme.border.style.solid} ${theme.border.color.standard};
-  border-radius: ${theme.border.radius.large};
-  color: ${theme.color.dark400};
-  font-size: 18px;
-`;
+const Content = styled.View`
+  padding-top: 24px;
+  padding-bottom: 24px;
+`
 
-interface InputProps extends TextInputProps {
+const Label = styled.Text`
+  font-family: 'IBMPlexSans';
+  font-size: 13px;
+  line-height: 17px;
+  color: ${(props) => props.theme.shade.foreground};
+  margin-bottom: 8px;
+`
+
+const Value = styled.Text`
+  font-family: 'IBMPlexSans-SemiBold';
+  font-size: 16px;
+  line-height: 20px;
+  color: ${(props) => props.theme.shade.foreground};
+`
+
+interface InputProps {
+  label: string
+  value?: string
+  loading?: boolean
+  error?: boolean
+  valueTestID?: string
 }
 
-export function Input({ ...rest }: InputProps) {
+export function Input({
+  label,
+  value,
+  loading,
+  error,
+  valueTestID
+ }: InputProps) {
   return (
-    <Host {...rest} />
+    <Host>
+      <Content>
+        <Label>{label}</Label>
+        {loading || error ? (
+          <Skeleton active={loading} error={error} />
+        ) : (
+          <Value testID={valueTestID}>{value ?? ''}</Value>
+        )}
+      </Content>
+    </Host>
   )
 }

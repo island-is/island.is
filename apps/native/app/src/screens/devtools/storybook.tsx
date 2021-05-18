@@ -11,6 +11,8 @@ configure(() =>{
   require('../../../../island-ui/src/lib/Heading/Heading.stories');
   require('../../../../island-ui/src/lib/List/List.stories');
   require('../../../../island-ui/src/lib/Field/Field.stories');
+  require('../../../../island-ui/src/lib/Tableview/Tableview.stories');
+  require('../../../../island-ui/src/lib/NavigationBarSheet/NavigationBarSheet.stories');
 }, module);
 
 export const StorybookUI = getStorybookUI({

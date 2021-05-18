@@ -1,3 +1,4 @@
+import { TableViewCell, TableViewGroup } from '@island.is/island-ui-native'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import {
   AuthenticationType,
@@ -14,8 +15,6 @@ import CodePush, {
 } from '../../../../node_modules/react-native-code-push'
 import { InfoMessage } from '../../components/info-message/info-message'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { TableViewCell } from '../../components/tableview/tableview-cell'
-import { TableViewGroup } from '../../components/tableview/tableview-group'
 import { useAuthStore } from '../../stores/auth-store'
 import {
   preferencesStore,

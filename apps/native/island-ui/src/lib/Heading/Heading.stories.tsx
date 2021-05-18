@@ -12,7 +12,7 @@ const CenterView = ({ children }: any) => (
 storiesOf('Heading', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
-  .add('Default Heading', () => {
+  .add('Heading', () => {
     return (
       <Heading>Tilkynningar</Heading>
     );

@@ -25,6 +25,7 @@ interface TableViewGroupProps {
 
 const Host = styled.View`
   margin-bottom: 32px;
+  width: 100%;
 `
 
 const Header = styled.SafeAreaView`
