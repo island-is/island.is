@@ -47,7 +47,7 @@ const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
         <Box className={styles.appealButton}>
           <Button
             onClick={() => handleProsecutorAppeal(prosecutorAppealDate)}
-            disabled={!Boolean(prosecutorAppealDate)}
+            disabled={!prosecutorAppealDate}
           >
             Sækjandi kærir
           </Button>

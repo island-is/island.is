@@ -33,7 +33,6 @@ const InfoBox: React.FC<Props> = (props) => {
         <Box
           component="button"
           aria-label="Hætta við"
-          aria-role="button"
           className={styles.trashButton}
           onClick={props.onDismiss}
         >

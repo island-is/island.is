@@ -8,7 +8,6 @@ import {
 import * as styles from '../AppealSection/AppealSection.treat'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import { CaseGender } from '@island.is/judicial-system/types'
-import { useEffectOnce } from 'react-use'
 
 interface Props {
   handleAccusedAppeal: (date?: Date) => void
@@ -54,7 +53,7 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
         <Box className={styles.appealButton}>
           <Button
             onClick={() => handleAccusedAppeal(accusedAppealDate)}
-            disabled={!Boolean(accusedAppealDate)}
+            disabled={!accusedAppealDate}
           >
             {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}
           </Button>
