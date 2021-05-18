@@ -1,4 +1,9 @@
+/**
+ * @jest-environment node
+ */
 /* eslint-disable  @typescript-eslint/no-var-requires */
+
+// eslint-disable-next-line no-restricted-imports
 import { cloneDeep } from 'lodash'
 
 describe('isRunningOnEnvironment', () => {

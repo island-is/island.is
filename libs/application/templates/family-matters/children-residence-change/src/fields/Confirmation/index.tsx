@@ -6,6 +6,7 @@ import {
   BorderedAccordion,
   CopyUrl,
 } from '@island.is/application/templates/family-matters-core/components'
+import { formatPhoneNumber } from '@island.is/application/templates/family-matters-core/utils'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
@@ -32,7 +33,11 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
             phoneNumberParagraph: answers.counterParty.phoneNumber
               ? formatMessage(
                   confirmation.general.description.paragraphs.phoneNumber,
-                  { phoneNumber: answers.counterParty.phoneNumber },
+                  {
+                    phoneNumber: formatPhoneNumber(
+                      answers.counterParty.phoneNumber,
+                    ),
+                  },
                 )
               : '',
             count: [
