@@ -12,3 +12,21 @@ export const infoBoxContainer = style({
 export const fluid = style({
   maxWidth: '100%',
 })
+
+export const light = style({
+  background: theme.color.white,
+})
+
+export const trashButton = style({
+  display: 'flex',
+  padding: '8px',
+  margin: '-8px',
+  borderRadius: theme.border.radius.standard,
+  transition: 'background-color .3s ease-in-out',
+
+  selectors: {
+    '&:hover, &:focus': {
+      backgroundColor: theme.color.blue200,
+    },
+  },
+})
