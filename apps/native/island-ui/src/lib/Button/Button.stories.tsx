@@ -25,7 +25,7 @@ storiesOf('Button', module)
       <Button title={title} isTransparent={boolean('Is Transparent', true)} onPress={() => void 0} />
     );
   })
-  .add('Close Button', () => {
+  .add('Close', () => {
     return (
       <Close />
     );

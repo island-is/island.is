@@ -1,7 +1,6 @@
 
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
 
 const Host = styled.View`
   width: 100%;

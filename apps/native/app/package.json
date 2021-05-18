@@ -29,6 +29,7 @@
     "@formatjs/intl-datetimeformat": "*",
     "jsonwebtoken": "*",
     "dotenv": "*",
-    "js-base64": "*"
+    "js-base64": "*",
+    "@formatjs/intl-numberformat": "*"
   }
 }

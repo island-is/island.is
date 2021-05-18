@@ -16,7 +16,7 @@ const CenterView = ({ children }: any) => (
 storiesOf('Field', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
-  .add('Single Field', () => {
+  .add('Compact', () => {
     return (
       <Field
         compact
@@ -27,7 +27,7 @@ storiesOf('Field', module)
       />
     );
   })
-  .add('2 Compact Fields', () => {
+  .add('2 Compact In Row', () => {
     return (
       <FieldRow>
         <Field
@@ -46,7 +46,7 @@ storiesOf('Field', module)
       </FieldRow>
     );
   })
-  .add('3 Fields In Group', () => {
+  .add('3 In Group', () => {
     return (
       <View style={{ width: '100%', paddingHorizontal: 16 }}>
         <FieldGroup>
@@ -59,7 +59,7 @@ storiesOf('Field', module)
       </View>
     );
   })
-  .add('Field Card', () => {
+  .add('Card', () => {
     return (
       <View style={{ paddingHorizontal: 16, width: '100%' }}>
         <FieldCard code="B" title="Fólksbíll">
@@ -71,7 +71,7 @@ storiesOf('Field', module)
       </View>
     );
   })
-  .add('Information Field Card', () => {
+  .add('Full Example', () => {
     return (
       <View style={{ width: '100%' }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>

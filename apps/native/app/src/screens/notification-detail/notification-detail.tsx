@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import { NavigationBarSheet } from '@island.is/island-ui-native'
 import {
   scheduleNotificationAsync,
   setNotificationCategoryAsync,
@@ -12,7 +13,6 @@ import {
 } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
-import { NavigationBarSheet } from '../../components/navigation-bar-sheet/navigation-bar-sheet'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import {

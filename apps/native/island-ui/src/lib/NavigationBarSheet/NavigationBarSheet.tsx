@@ -1,8 +1,8 @@
 import React from 'react'
-import { Platform, SafeAreaView } from 'react-native'
+import { ImageSourcePropType, Platform, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
-import { testIDs } from '../../utils/test-ids'
+import { testIDs } from '../../../../app/src/utils/test-ids'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -72,7 +72,7 @@ export function NavigationBarSheet({
               style={{
                 tintColor: theme.color.blue400,
               }}
-              source={closeIcon}
+              source={closeIcon as ImageSourcePropType}
             />
           </CloseButton>
         </Header>

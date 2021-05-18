@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-const FieldCardHost = styled.View`
+const Host = styled.View`
   border-width: 1px;
   border-color: ${(props) =>
     props.theme.isDark
@@ -13,7 +13,7 @@ const FieldCardHost = styled.View`
   margin-bottom: 8px;
 `
 
-const FieldCardHeader = styled.View`
+const Header = styled.View`
   flex-direction: row;
   border-bottom-width: 1px;
   border-bottom-color: ${(props) =>
@@ -23,7 +23,7 @@ const FieldCardHeader = styled.View`
   padding: 16px;
 `
 
-const FieldCardHeaderText = styled.Text`
+const HeaderText = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 16px;
   line-height: 20px;
@@ -39,14 +39,14 @@ interface FieldCardProps {
 
 export function FieldCard(props: FieldCardProps) {
   return (
-    <FieldCardHost>
-      <FieldCardHeader>
-        <FieldCardHeaderText style={{ fontFamily: 'IBMPlexSans-Bold' }}>
+    <Host>
+      <Header>
+        <HeaderText style={{ fontFamily: 'IBMPlexSans-Bold' }}>
           {props.code}
-        </FieldCardHeaderText>
-        <FieldCardHeaderText>{props.title}</FieldCardHeaderText>
-      </FieldCardHeader>
+        </HeaderText>
+        <HeaderText>{props.title}</HeaderText>
+      </Header>
       <View style={{ padding: 16, paddingBottom: 0 }}>{props.children}</View>
-    </FieldCardHost>
+    </Host>
   )
 }

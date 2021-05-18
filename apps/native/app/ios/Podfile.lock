@@ -404,8 +404,8 @@ PODS:
     - React-RCTText
   - RNCAsyncStorage (1.12.1):
     - React-Core
-  - RNKeychain (6.2.0):
-    - React
+  - RNKeychain (7.0.0):
+    - React-Core
   - RNLocalize (2.0.2):
     - React-Core
   - RNReanimated (2.1.0):
@@ -728,7 +728,7 @@ SPEC CHECKSUMS:
   ReactNativeKeyboardManager: 42eb423b3a30e92aaa982c74d89d7cb5d2c92b0e
   ReactNativeNavigation: 906b631a6847c26cacf5cb3791566f1fe205c65c
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
-  RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
+  RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: 43f6c30d8e19ad92282ae434d310fb463b31f419
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
