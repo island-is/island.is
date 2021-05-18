@@ -41,11 +41,37 @@ export class CaseService {
     private readonly logger: Logger,
   ) {}
 
+  private async uploadSignedRulingPdfToCourt(
+    existingCase: Case,
+    pdf: string,
+  ): Promise<boolean> {
+    this.logger.debug(
+      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
+    )
+
+    const buffer = Buffer.from(pdf, 'binary')
+
+    try {
+      const streamId = await this.courtService.uploadStream(buffer)
+      await this.courtService.createThingbok(
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+
+      return true
+    } catch (error) {
+      this.logger.error('Failed to upload request to court', error)
+
+      return false
+    }
+  }
+
   private async sendEmail(
     recipientName: string,
     recipientEmail: string,
     courtCaseNumber: string,
     signedRulingPdf: string,
+    body: string,
   ) {
     try {
       await this.emailService.sendEmail({
@@ -64,8 +90,8 @@ export class CaseService {
           },
         ],
         subject: `Úrskurður í máli ${courtCaseNumber}`,
-        text: 'Sjá viðhengi',
-        html: 'Sjá viðhengi',
+        text: body,
+        html: body,
         attachments: [
           {
             filename: `Þingbók og úrskurður ${courtCaseNumber}.pdf`,
@@ -87,36 +113,48 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
+    const uploaded = await this.uploadSignedRulingPdfToCourt(
+      existingCase,
+      signedRulingPdf,
+    )
+
     await Promise.all([
       this.sendEmail(
         existingCase.prosecutor?.name,
         existingCase.prosecutor?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
+        'Sjá viðhengi',
       ),
       this.sendEmail(
         existingCase.registrar?.name,
         existingCase.registrar?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
+        uploaded
+          ? `Meðfylgjandi skjal hefur einnig verið vistað undir möppunni Þingbækur í máli ${existingCase.courtCaseNumber} í Auði.`
+          : 'Ekki tókst að vista meðfylgjandi skjal í Auði.',
       ),
       this.sendEmail(
         existingCase.judge?.name,
         existingCase.judge?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
+        'Sjá viðhengi',
       ),
       this.sendEmail(
         existingCase.defenderName,
         existingCase.defenderEmail,
         existingCase.courtCaseNumber,
         signedRulingPdf,
+        'Sjá viðhengi',
       ),
       this.sendEmail(
         'Fangelsismálastofnun',
         environment.notifications.prisonAdminEmail,
         existingCase.courtCaseNumber,
         signedRulingPdf,
+        'Sjá viðhengi',
       ),
     ])
   }

@@ -8,10 +8,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import {
-  ParentalLeave,
-  PregnancyStatus,
-} from '@island.is/api/domains/directorate-of-labour'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
@@ -91,14 +87,10 @@ export function formatPeriods(
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-/**
- * Returns the number of months available for the applicant.
- */
-export const getAvailableRightsInMonths = (application: Application) => {
-  const provider = getValueViaPath(
-    application.externalData,
-    'children',
-  ) as PregnancyStatusAndRightsResults
+export const getTransferredDays = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => {
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -108,25 +100,44 @@ export const getAvailableRightsInMonths = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let days = provider.remainingDays
+  let days = 0
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     const requestedDays = requestRights.requestDays
 
-    days = days + requestedDays
+    days = requestedDays
   }
 
   if (
-    provider.hasRights &&
+    selectedChild.hasRights &&
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
     const givenDays = giveRights.giveDays
 
-    days = days - givenDays
+    days = -givenDays
   }
 
-  return daysToMonths(days)
+  return days
+}
+
+/**
+ * Returns the number of months available for the applicant.
+ */
+export const getAvailableRightsInMonths = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  return daysToMonths(
+    selectedChild.remainingDays +
+      getTransferredDays(application, selectedChild),
+  )
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -213,7 +224,7 @@ export const isEligibleForParentalLeave = (
 
   const children = getValueViaPath(
     externalData,
-    'childrenAndExistingApplications.children',
+    'children.data.children',
     [],
   ) as ChildrenAndExistingApplications['children']
 

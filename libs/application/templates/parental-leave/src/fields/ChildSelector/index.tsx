@@ -23,7 +23,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 
   const { children, existingApplications } = get(
     application,
-    'externalData.children.children.data',
+    'externalData.children.data',
     [],
   ) as {
     children: { expectedDateOfBirth: string }[]

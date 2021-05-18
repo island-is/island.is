@@ -146,6 +146,7 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
+    '<rootDir>/libs/utils/shared',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/zendesk',
