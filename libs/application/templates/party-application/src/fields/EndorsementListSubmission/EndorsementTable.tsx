@@ -1,83 +1,121 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Application } from '@island.is/application/core'
 import { Box, Table as T, Tooltip, Checkbox } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export interface Signature {
-  date: string
-  name: string
-  nationalRegistry: string
-  address: string
-  hasWarning?: boolean
-  selectedForSubmission?: boolean
-}
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
+import { useFormContext } from 'react-hook-form'
+import { Endorsement } from '../../lib/PartyApplicationTemplate'
 
 interface EndorsementTableProps {
   application: Application
-  signatures?: Signature[]
+  signatures?: Endorsement[]
+  selectedSignatures: Array<Endorsement>
 }
 
-const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
-  const { formatMessage } = useLocale()
-  const renderRow = (signature: Signature, index: number) => {
-    const cell = Object.entries(signature)
-    const [selectEndorsement, setSelectEndorsement] = useState(
-      signature.selectedForSubmission,
-    )
+const EndorsementTable: FC<EndorsementTableProps> = ({
+  application,
+  signatures,
+  selectedSignatures,
+}) => {
+  const { lang: locale, formatMessage } = useLocale()
+  const [selectedEndorsements, setSelectedEndorsements] = useState<
+    Endorsement[]
+  >([]) //todo initalize with answers.endorsements
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  const dummyEndorsements: Endorsement[] = [
+  {
+    id: 1,
+    date: '18 maí',
+    name: 'Sigga',
+    nationalId: '123',
+    address: 'Bla',
+    hasWarning: false,
+  },
+  {
+    id: 2,
+    date: '19 maí',
+    name: 'Albína',
+    nationalId: '234',
+    address: 'Bla',
+    hasWarning: false,
+  },
+]
+  // sama hér :D
+  async function updateApplicationWithEndorsements() {
+    console.log("be doing the update!", selectedEndorsements)
+    const LASTHOPE = selectedEndorsements
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            endorsements: LASTHOPE, // milljónth time is the charm
+            ...application.answers,
+          },
+        },
+        locale,
+      },
+    }).then((response) => {
+      //já það prentast data og endorsements [] bara tómt array
+      console.log(response) //prentast eitthvað hér? eða feilar hann áður en hann kemst hingað?
+      application.answers = response.data?.updateApplication?.answers
+    })
+  }
+
+  useEffect(() => {
+    console.log("do we have endorsements?", selectedEndorsements)
+    updateApplicationWithEndorsements()
+  }, [selectedEndorsements])
+
+  const renderRow = (endorsement: Endorsement) => {
     return (
-      <T.Row key={index}>
-        {cell.map(([_key, value], i) => {
-          if (typeof value === 'string') {
-            return (
-              <T.Data
-                key={i}
-                box={{
-                  background: signature.hasWarning ? 'yellow200' : 'white',
-                  textAlign: value === signature.address ? 'right' : 'left',
-                }}
-              >
-                {signature.hasWarning && value === signature.address ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                  >
-                    {value}
-                    <Box marginLeft={2}>
-                      <Tooltip
-                        color="yellow600"
-                        iconSize="medium"
-                        text={formatMessage(m.endorsementList.signatureInvalid)}
-                      />
-                    </Box>
-                  </Box>
-                ) : (
-                  value
-                )}
-              </T.Data>
-            )
-          } else if (_key === 'selectedForSubmission') {
-            return (
-              <T.Data
-                key={i}
-                box={{
-                  background: signature.hasWarning ? 'yellow200' : 'white',
-                }}
-              >
-                <Checkbox
-                  checked={signature.selectedForSubmission}
-                  onChange={() => {
-                    setSelectEndorsement(!selectEndorsement)
-                    signature.selectedForSubmission = !signature.selectedForSubmission
-                  }}
+      <T.Row key={endorsement.id}>
+        <T.Data key={endorsement.id + endorsement.date}>
+          {'formatDate(endorsement.date)'}
+        </T.Data>
+        <T.Data key={endorsement.id + endorsement.name}>
+          {endorsement.name}
+        </T.Data>
+        <T.Data key={endorsement.id + endorsement.nationalId}>
+          {'formatKennitala(endorsement.nationalId)'}
+        </T.Data>
+        <T.Data
+          key={endorsement.id}
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            textAlign: 'right',
+          }}
+        >
+          {endorsement.hasWarning ? (
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
+              {endorsement.address}
+              <Box marginLeft={2}>
+                <Tooltip
+                  color="blue400"
+                  iconSize="medium"
+                  text={'Invalid blabala'}
                 />
-              </T.Data>
-            )
-          } else {
-            return null
-          }
-        })}
+              </Box>
+            </Box>
+          ) : (
+            endorsement.address
+          )}
+        </T.Data>
+        <T.Data key={endorsement.id + 'something'}>
+          <Checkbox
+            checked={false} // bera saman með contains id
+            onChange={() =>
+              setSelectedEndorsements((currEndorsements) => [
+                ...currEndorsements,
+                endorsement,
+              ])
+            }
+          />
+        </T.Data>
       </T.Row>
     )
   }
@@ -100,7 +138,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
       <T.Body>
         {signatures &&
           signatures.length &&
-          signatures.map((signature, index) => renderRow(signature, index))}
+          signatures.map((signature, index) => renderRow(signature))}
       </T.Body>
     </T.Table>
   )

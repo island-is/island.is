@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, RadioButton } from '@island.is/island-ui/core'
 import EndorsementTable from './EndorsementTable'
@@ -6,51 +6,56 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { constituencyMapper } from './../../constants'
 import { Constituencies } from '../../types'
+import { Endorsement } from '../../../src/lib/PartyApplicationTemplate'
 
-const SIGNATURES = [
+const SIGNATURES: Endorsement[] = [
   {
+    id: 1,
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Baugholt 15',
-    selectedForSubmission: false,
+    hasWarning: false,
   },
   {
+    id: 2,
     date: '21.01.2021',
     name: 'Þórhildur Tyrfingsdóttir',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Miðskógar 17',
-    selectedForSubmission: false,
+    hasWarning: false,
   },
   {
+    id: 3,
     date: '21.01.2021',
     name: 'Stefán Haukdal',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Skúr hjá mömmu',
-    hasWarning: true,
-    selectedForSubmission: false,
+    hasWarning: false,
   },
   {
+    id: 4,
     date: '21.01.2021',
     name: 'Brian Johannesen',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Reykjavík',
-    selectedForSubmission: false,
+    hasWarning: false,
   },
   {
+    id: 5,
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Baugholt 15',
-    selectedForSubmission: false,
+    hasWarning: false,
   },
   {
+    id: 6,
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
-    nationalRegistry: '1991921335',
+    nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: true,
-    selectedForSubmission: false,
   },
 ]
 
@@ -59,9 +64,23 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [signatures, setSignatures] = useState(SIGNATURES)
   let [autoSelect, setAutoSelect] = useState(false)
   let [chooseManually, setChooseManually] = useState(false)
+
+  const [selectedSignatures, setSelectedSignatures] = useState(
+    [] as Array<Endorsement>,
+  )
+
   const maxEndorsements =
     constituencyMapper[application.answers.constituency as Constituencies].high
   const autoSelectRadioLabel = 'Senda inn fyrstu ' + maxEndorsements
+
+  /*useEffect(() => {
+    console.log(selectedSignatures.length)
+    if(selectedSignatures.length < maxEndorsements && selectedSignatures.length !== 0) {
+      setAutoSelect(autoSelect = false)
+      setChooseManually(chooseManually = true)
+      console.log('hæ')
+    }
+  }, [selectedSignatures])*/
 
   return (
     <Box marginBottom={8}>
@@ -84,10 +103,18 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
                 setAutoSelect((autoSelect = true))
                 setChooseManually((chooseManually = false))
                 signatures.map((s, i) => {
+                  const signatureExists = selectedSignatures.some(
+                    (sig: any) => sig.id === s.id,
+                  )
+
                   if (i <= maxEndorsements) {
-                    s.selectedForSubmission = true
+                    //s.selectedForSubmission = true // svo er spurning hvort það sé ekki þægilegra ða þetta sé bara einn component.. eða amk að þessi haldi utanum state-ið allt og taflan bara töfluna og ekkert annað.. er bara dumb UI
+                    if (!signatureExists) {
+                      selectedSignatures.push(s)
+                    }
                   }
                 })
+                setSelectedSignatures(selectedSignatures)
               }}
             />
             <Box marginLeft={5}>
@@ -99,14 +126,19 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
                   setAutoSelect((autoSelect = false))
                   setChooseManually((chooseManually = true))
                   signatures.map((s) => {
-                    s.selectedForSubmission = false
+                    // s.selectedForSubmission = false
+                    setSelectedSignatures([])
                   })
                 }}
               />
             </Box>
           </Box>
 
-          <EndorsementTable application={application} signatures={signatures} />
+          <EndorsementTable
+            application={application}
+            signatures={signatures}
+            selectedSignatures={selectedSignatures}
+          />
         </Box>
       )}
     </Box>
