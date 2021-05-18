@@ -4,7 +4,6 @@ import {
   AccordionItem,
   Box,
   Button,
-  GridColumn,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -40,7 +39,10 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { useRouter } from 'next/router'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseNull,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
@@ -176,31 +178,53 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleAccusedAppeal = () => {
-    if (workingCase) {
+  const handleAccusedAppeal = (date?: Date) => {
+    if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
-        accusedPostponedAppealDate: formatISO(new Date()),
+        accusedPostponedAppealDate: formatISO(date),
       })
 
       updateCase(
         workingCase.id,
-        parseString('accusedPostponedAppealDate', formatISO(new Date())),
+        parseString('accusedPostponedAppealDate', formatISO(date)),
       )
     }
   }
 
-  const handleProsecutorAppeal = () => {
-    if (workingCase) {
+  const handleProsecutorAppeal = (date?: Date) => {
+    if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
-        prosecutorPostponedAppealDate: formatISO(new Date()),
+        prosecutorPostponedAppealDate: formatISO(date),
       })
 
       updateCase(
         workingCase.id,
-        parseString('prosecutorPostponedAppealDate', formatISO(new Date())),
+        parseString('prosecutorPostponedAppealDate', formatISO(date)),
       )
+    }
+  }
+
+  const handleAccusedAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+    }
+  }
+
+  const handleProsecutorAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
     }
   }
 
@@ -363,26 +387,28 @@ export const SignedVerdictOverview: React.FC = () => {
               workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR) && (
-                <GridColumn span="11/12">
-                  <Box marginBottom={7}>
-                    <AppealSection
-                      rulingDate={workingCase.rulingDate}
-                      accusedGender={workingCase.accusedGender}
-                      accusedAppealDecision={workingCase.accusedAppealDecision}
-                      prosecutorAppealDecision={
-                        workingCase.prosecutorAppealDecision
-                      }
-                      accusedPostponedAppealDate={
-                        workingCase.accusedPostponedAppealDate
-                      }
-                      prosecutorPostponedAppealDate={
-                        workingCase.prosecutorPostponedAppealDate
-                      }
-                      handleAccusedAppeal={handleAccusedAppeal}
-                      handleProsecutorAppeal={handleProsecutorAppeal}
-                    />
-                  </Box>
-                </GridColumn>
+                <Box marginBottom={7}>
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedAppealDecision={workingCase.accusedAppealDecision}
+                    prosecutorAppealDecision={
+                      workingCase.prosecutorAppealDecision
+                    }
+                    accusedPostponedAppealDate={
+                      workingCase.accusedPostponedAppealDate
+                    }
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    handleProsecutorAppeal={handleProsecutorAppeal}
+                    handleAccusedAppealDismissal={handleAccusedAppealDismissal}
+                    handleProsecutorAppealDismissal={
+                      handleProsecutorAppealDismissal
+                    }
+                  />
+                </Box>
               )}
             <Box marginBottom={5}>
               <Accordion>

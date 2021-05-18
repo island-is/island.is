@@ -34,7 +34,9 @@ export const ComplaintDescription: FC<FieldBaseProps> = ({
         alignItems="center"
         marginBottom={2}
       >
-        <Text>{formatMessage(complaint.labels.complaintDescriptionLabel)}</Text>
+        <Text fontWeight="semiBold">
+          {formatMessage(complaint.labels.complaintDescriptionLabel)}
+        </Text>
         <Text variant="small" color="dark300">
           {wordCount} / 500 {formatMessage(sharedFields.word)}
         </Text>

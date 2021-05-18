@@ -38,7 +38,7 @@ const TransferOverview = ({ application }: Props) => {
         ))}
       </Box>
       <Box marginTop={4}>
-        <Text variant="h4">
+        <Text variant="h4" marginBottom={1}>
           {formatMessage(contract.labels.currentResidence)}
         </Text>
         <Text variant="h4" color="blue400">
@@ -49,7 +49,9 @@ const TransferOverview = ({ application }: Props) => {
         </Text>
       </Box>
       <Box marginTop={4}>
-        <Text variant="h4">{formatMessage(contract.labels.newResidence)}</Text>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(contract.labels.newResidence)}
+        </Text>
         <Text variant="h4" color="blue400">
           {childResidenceInfo.future.parentName}
         </Text>

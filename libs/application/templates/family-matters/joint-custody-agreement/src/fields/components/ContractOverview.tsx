@@ -4,6 +4,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 import {
   childrenResidenceInfo,
   formatDate,
+  formatPhoneNumber,
 } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import * as m from '../../lib/messages'
@@ -33,7 +34,7 @@ const ContractOverview = ({ application }: Props) => {
         {formatMessage(m.contract.labels.contactInformation)}
       </Text>
       <Text marginTop={1}>{answers[parentKey]?.email}</Text>
-      <Text>{answers[parentKey]?.phoneNumber}</Text>
+      <Text>{formatPhoneNumber(answers[parentKey]?.phoneNumber)}</Text>
       <Text marginTop={4} variant="h4">
         {formatMessage(m.duration.general.sectionTitle)}
       </Text>
