@@ -13,7 +13,7 @@ import { RskConfig } from './rsk.config'
 @Module({
   imports: [
     SequelizeModule.forFeature([Delegation, DelegationScope]),
-    RskModule.register(RskConfig.get()),
+    RskModule.register(RskConfig),
   ],
   controllers: [DelegationsController],
   providers: [DelegationsService, DelegationScopeService],
