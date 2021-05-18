@@ -17,15 +17,15 @@ export class DelegationScopeService {
     delegationScope: DelegationScopeDTO,
   ): Promise<DelegationScope | null> {
     this.logger.debug('Creating new delegation scope')
-    return await this.delegationScopeModel.create({ ...delegationScope })
+    return this.delegationScopeModel.create({ ...delegationScope })
   }
 
   async createMany(delegationId: string, scopes: string[]): Promise<any> {
-    const arr: DelegationScopeDTO[] = []
-    for (let i = 0; i < scopes.length; i++) {
-      arr.push({ delegationId: delegationId, scopeName: scopes[i] })
-    }
-    return this.delegationScopeModel.bulkCreate(arr)
+    const delegationScopes: DelegationScopeDTO[] = scopes.map((scope) => ({
+      delegationId,
+      scopeName: scope,
+    }))
+    return this.delegationScopeModel.bulkCreate(delegationScopes)
   }
 
   async findAll(
@@ -33,12 +33,11 @@ export class DelegationScopeService {
     scopeName: string | null = null,
   ): Promise<DelegationScope[] | null> {
     if (scopeName) {
-      const response = await this.delegationScopeModel.findOne({
+      return this.delegationScopeModel.findAll({
         where: { delegationId: delegationId, scopeName: scopeName },
       })
-      return <DelegationScope[]>[response]
     }
-    return await this.delegationScopeModel.findAll({
+    return this.delegationScopeModel.findAll({
       where: { delegationId: delegationId },
     })
   }
@@ -48,12 +47,12 @@ export class DelegationScopeService {
     scopeName?: string | null,
   ): Promise<number> {
     if (scopeName) {
-      return await this.delegationScopeModel.destroy({
+      return this.delegationScopeModel.destroy({
         where: { delegationId: delegationId, scopeName: scopeName },
       })
     }
 
-    return await this.delegationScopeModel.destroy({
+    return this.delegationScopeModel.destroy({
       where: { delegationId: delegationId },
     })
   }

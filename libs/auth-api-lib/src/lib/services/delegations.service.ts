@@ -1,5 +1,5 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
@@ -119,6 +119,13 @@ export class DelegationsService {
     id: string,
   ): Promise<Delegation | null> {
     this.logger.debug(`Updating a delegation with id ${id}`)
+
+    const delCheck = await this.delegationModel.findByPk(id)
+    if (!delCheck || delCheck?.fromNationalId !== nationalId) {
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
+    }
+
     await this.delegationModel.update(
       { ...delegation },
       { where: { id: id, fromNationalId: nationalId } },
@@ -166,17 +173,15 @@ export class DelegationsService {
 
     const delegation = await this.delegationModel.findByPk(id)
     if (!delegation || delegation?.fromNationalId !== nationalId) {
-      this.logger.debug('Delegation does is not assigned to user')
-      return 0
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
     }
 
     await this.delegationScopeService.delete(id)
 
-    const response = this.delegationModel.destroy({
+    return this.delegationModel.destroy({
       where: { id: id, fromNationalId: nationalId },
     })
-
-    return response
   }
 
   async deleteTo(nationalId: string, id: string): Promise<number> {
@@ -185,17 +190,15 @@ export class DelegationsService {
     const delegation = await this.delegationModel.findByPk(id)
 
     if (!delegation || delegation?.toNationalId !== nationalId) {
-      this.logger.debug('Delegation does is not assigned to user')
-      return 0
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
     }
 
     await this.delegationScopeService.delete(id)
 
-    const response = this.delegationModel.destroy({
+    return this.delegationModel.destroy({
       where: { id: id, toNationalId: nationalId },
     })
-
-    return response
   }
 }
 
