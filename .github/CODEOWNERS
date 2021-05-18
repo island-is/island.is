@@ -16,12 +16,14 @@
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
+/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
+/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
+libs/application/template-api-modules/src/lib/modules/templates/party-letter                  @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
-/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
 
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
@@ -46,10 +48,13 @@
 /libs/contentful-translation-extension/                                                       @island-is/aranja
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
+/libs/utils/shared/                                                                           @island-is/aranja
 /libs/clients/vmst/                                                                           @island-is/aranja
 /libs/shared/form-fields/                                                                     @island-is/aranja
 
-/libs/application/templates/children-residence-change/                                        @island-is/kolibri-modern-family
+/libs/service-portal/settings/access-control                                                  @island-is/vice-versa @island-is/aranja
+
+/libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
 
@@ -73,12 +78,14 @@
 /libs/service-portal/finance/                                                                 @island-is/sendiradid
 /libs/service-portal/graphql/                                                                 @island-is/sendiradid
 /libs/service-portal/health/                                                                  @island-is/sendiradid
-/libs/service-portal/settings/                                                                @island-is/sendiradid
+/libs/service-portal/settings/personal-information                                            @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos

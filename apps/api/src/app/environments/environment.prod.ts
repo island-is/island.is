@@ -86,4 +86,7 @@ export default {
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
   },
+  endorsementSystem: {
+    baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
+  },
 }

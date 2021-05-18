@@ -970,6 +970,43 @@
         }
       }
     },
+    "api-domains-endorsement-system": {
+      "root": "libs/api/domains/endorsement-system",
+      "sourceRoot": "libs/api/domains/endorsement-system/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/endorsement-system/tsconfig.lib.json",
+              "libs/api/domains/endorsement-system/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/endorsement-system/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/endorsement-system/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/endorsement-system"]
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -1699,8 +1736,8 @@
       }
     },
     "application-templates-children-residence-change": {
-      "root": "libs/application/templates/children-residence-change",
-      "sourceRoot": "libs/application/templates/children-residence-change/src",
+      "root": "libs/application/templates/family-matters/children-residence-change",
+      "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1709,19 +1746,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/children-residence-change/tsconfig.lib.json",
-              "libs/application/templates/children-residence-change/tsconfig.spec.json"
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.lib.json",
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/children-residence-change/**/*"
+              "!libs/application/templates/family-matters/children-residence-change/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/children-residence-change/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1874,6 +1911,28 @@
         }
       }
     },
+    "application-templates-family-matters-core": {
+      "root": "libs/application/templates/family-matters/core",
+      "sourceRoot": "libs/application/templates/family-matters/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/family-matters/core/tsconfig.lib.json",
+              "libs/application/templates/family-matters/core/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/family-matters/core/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -1978,6 +2037,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
+          }
+        }
+      }
+    },
+    "application-templates-joint-custody-agreement": {
+      "root": "libs/application/templates/family-matters/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2142,7 +2229,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-letter/src/lib/messages.ts'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/party-letter/src/lib/messages.ts'"
           }
         }
       }
@@ -2514,6 +2601,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/auth-nest-tools"]
+        }
+      }
+    },
+    "auth-react": {
+      "root": "libs/auth/react",
+      "sourceRoot": "libs/auth/react/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/react"],
+          "options": {
+            "jestConfig": "libs/auth/react/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -5655,9 +5763,32 @@
         }
       }
     },
-    "service-portal-settings": {
-      "root": "libs/service-portal/settings",
-      "sourceRoot": "libs/service-portal/settings/src",
+    "service-portal-settings-access-control": {
+      "root": "libs/service-portal/settings/access-control",
+      "sourceRoot": "libs/service-portal/settings/access-control/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/access-control/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/access-control"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-settings-personal-information": {
+      "root": "libs/service-portal/settings/personal-information",
+      "sourceRoot": "libs/service-portal/settings/personal-information/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -5666,27 +5797,29 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/service-portal/settings/tsconfig.lib.json",
-              "libs/service-portal/settings/tsconfig.spec.json"
+              "libs/service-portal/settings/personal-information/tsconfig.lib.json",
+              "libs/service-portal/settings/personal-information/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/service-portal/settings/**/*"
+              "!libs/service-portal/settings/personal-information/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/service-portal/settings/jest.config.js",
+            "jestConfig": "libs/service-portal/settings/personal-information/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/service-portal/settings"]
+          "outputs": [
+            "coverage/libs/service-portal/settings/personal-information"
+          ]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -6035,7 +6168,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
+            "commands": [
+              "nx run services-endorsements-api:build",
+              "node dist/apps/services/endorsements/api/buildOpenApi.js"
+            ],
+            "parallel": false
           }
         },
         "migrate": {
@@ -6048,14 +6185,14 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:all",
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed",
             "cwd": "apps/services/endorsements/api"
           }
         },
         "seed/undo": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo:all",
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo",
             "cwd": "apps/services/endorsements/api"
           }
         },
@@ -6846,6 +6983,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/utils/environment"]
+        }
+      }
+    },
+    "utils-shared": {
+      "root": "libs/utils/shared",
+      "sourceRoot": "libs/utils/shared/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils/shared"],
+          "options": {
+            "jestConfig": "libs/utils/shared/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

@@ -134,6 +134,13 @@ export class Case extends Model<Case> {
   court: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  leadInvestigator: string
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
@@ -257,7 +264,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtStartTime: Date
+  courtStartDate: Date
 
   @Column({
     type: DataType.DATE,

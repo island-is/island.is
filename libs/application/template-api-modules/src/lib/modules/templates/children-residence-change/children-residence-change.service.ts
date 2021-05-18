@@ -7,12 +7,12 @@ import {
   PersonType,
 } from '@island.is/api/domains/syslumenn'
 import {
-  CRCApplication,
-  Override,
   getSelectedChildrenFromExternalData,
   formatDate,
   childrenResidenceInfo,
-} from '@island.is/application/templates/children-residence-change'
+} from '@island.is/application/templates/family-matters-core/utils'
+import { Override } from '@island.is/application/templates/family-matters-core/types'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -23,6 +23,7 @@ import {
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennEmailFromPostalCode } from './utils'
+import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -61,7 +62,10 @@ export class ChildrenResidenceChangeService {
 
     const otherParent = selectedChildren[0].otherParent
 
-    const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+    const childResidenceInfo = childrenResidenceInfo(
+      applicant,
+      answers.selectedChildren,
+    )
     const currentAddress = childResidenceInfo.current.address
 
     if (!fileContent) {
@@ -134,20 +138,29 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           syslumennEmail,
         )
+        return undefined
       })
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentA.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentA.email,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentB.email,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentB.email,
     )
 
     return response
@@ -170,5 +183,12 @@ export class ChildrenResidenceChangeService {
         'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
+  }
+
+  async rejectApplication({ application }: props) {
+    await this.sharedTemplateAPIService.sendEmail(
+      applicationRejectedEmail,
+      (application as unknown) as Application,
+    )
   }
 }

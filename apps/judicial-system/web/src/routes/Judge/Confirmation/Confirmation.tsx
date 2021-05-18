@@ -247,7 +247,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
-        router.push(Constants.FEEDBACK_FORM_ROUTE)
+        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
@@ -331,7 +332,7 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
-
+  console.log(workingCase?.courtEndTime)
   return (
     <PageLayout
       activeSection={
@@ -342,6 +343,7 @@ export const Confirmation: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -359,7 +361,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
@@ -545,7 +547,7 @@ export const Confirmation: React.FC = () => {
                       onChange={(evt) =>
                         validateAndSetTime(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -557,7 +559,7 @@ export const Confirmation: React.FC = () => {
                       onBlur={(evt) =>
                         validateAndSendTimeToServer(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -598,9 +600,9 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdatingCase}
+              nextIsDisabled={!isValidCourtEndTime?.isValid}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdatingCase}
+              nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id

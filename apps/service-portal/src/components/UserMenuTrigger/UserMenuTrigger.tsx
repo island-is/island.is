@@ -1,7 +1,9 @@
 import React, { FC, useRef } from 'react'
-import { useStore } from '../../store/stateProvider'
-import { Box, Button, Hidden } from '@island.is/island-ui/core'
 import { useClickAway } from 'react-use'
+import { Box, Button, Hidden } from '@island.is/island-ui/core'
+import { useAuth } from '@island.is/auth/react'
+
+import { useStore } from '../../store/stateProvider'
 import { ActionType, MenuState } from '../../store/actions'
 import UserMenu from '../UserMenu/UserMenu'
 
@@ -31,7 +33,7 @@ const UserMenuTrigger: FC<{}> = () => {
     userMenuState === 'open' ? setMenuState('closed') : null,
   )
 
-  const [{ userInfo }] = useStore()
+  const { userInfo } = useAuth()
 
   useClickAway(ref, () =>
     userMenuState === 'open' ? setMenuState('closed') : null,

@@ -1,4 +1,4 @@
-import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsObject, IsOptional } from 'class-validator'
 import { IsEndorsementValidator } from '../../endorsementValidator/endorsementValidator.decorator'
 import { ValidationRule } from '../../endorsementValidator/endorsementValidator.service'
 export class ValidationRuleDto {
@@ -8,5 +8,5 @@ export class ValidationRuleDto {
   @IsOptional()
   @IsObject()
   @IsEndorsementValidator()
-  value?: string
+  value?: object
 }

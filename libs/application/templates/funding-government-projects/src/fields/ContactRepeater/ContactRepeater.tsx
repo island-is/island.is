@@ -37,7 +37,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
   const handleRemoveContact = (index: number) => remove(index)
 
   return (
-    <Box marginTop={6}>
+    <Box marginTop={[5, 6]}>
       <Text variant="h5">
         {formatMessage(
           informationAboutInstitution.labels.informationAboutContact,
@@ -62,18 +62,23 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
           />
         )
       })}
-      <Text marginY={3}>
-        {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
-      </Text>
-      <Button
-        variant="ghost"
-        icon="add"
-        iconType="outline"
-        size="small"
-        onClick={handleAddContact}
-      >
-        {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
-      </Button>
+      {fields.length < 2 && (
+        <>
+          <Box marginY={3}>
+            <Button
+              variant="ghost"
+              icon="add"
+              iconType="outline"
+              size="small"
+              onClick={handleAddContact}
+            >
+              {formatMessage(
+                informationAboutInstitution.labels.contactAddPerson,
+              )}
+            </Button>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }
