@@ -27,7 +27,6 @@ import { Case } from '../modules/case/models'
 import {
   formatAppeal,
   formatConclusion,
-  formatCourtCaseNumber,
   formatCustodyProvisions,
 } from './formatters'
 
@@ -296,15 +295,19 @@ export async function getRulingPdfAsString(
     .text('Þingbók', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(
-      formatCourtCaseNumber(existingCase.court, existingCase.courtCaseNumber),
-      { align: 'center' },
-    )
+    .text(existingCase.court, { align: 'center' })
     .fontSize(12)
     .lineGap(30)
-    .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald hófst þann ${formatDate(existingCase.courtStartDate, 'PPPp')}.`,
+      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      { align: 'center' },
+    )
+    .text(
+      `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
+        existingCase.judge.name
+      } ${existingCase.judge.title} dómþing. Fyrir er tekið mál nr. ${
+        existingCase.courtCaseNumber
+      }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
         lineGap: 6,
         paragraphGap: 0,

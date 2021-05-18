@@ -1,5 +1,6 @@
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Address, Child, NationalRegistry, Person } from '../types'
 
 export const formatSsn = (ssn: string) => {
@@ -82,4 +83,9 @@ export const getOtherParentInformation = (
     selectedChildren,
   )
   return selected?.[0]?.otherParent
+}
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
 }
