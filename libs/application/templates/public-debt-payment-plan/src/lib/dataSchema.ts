@@ -1,6 +1,6 @@
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+import { Payment, Prerequisites } from '../dataProviders/tempAPITypes'
 import { NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
@@ -34,10 +34,15 @@ interface NatRegResult extends SuccessfulDataProviderResult {
   }
 }
 
+interface PaymentPlanListResult extends SuccessfulDataProviderResult {
+  data: Payment[]
+}
+
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
   nationalRegistry?: NatRegResult
   userProfile?: UserProfileResult
+  paymentPlanList?: PaymentPlanListResult
 }
 
 export const PublicDebtPaymentPlanSchema = z.object({

@@ -21,3 +21,12 @@ export type Prerequisites = {
   wageReturnsOk: boolean
   wageReturnsText: string
 }
+
+export type Payment = {
+  id: string
+  ssn: string
+  type: 'S' | 'O' | 'N' | 'M'
+  paymentSchedule: string
+  organization: string
+  totalAmount: number
+}
