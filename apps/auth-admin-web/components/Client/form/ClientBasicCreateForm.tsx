@@ -5,7 +5,6 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
-import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
@@ -61,7 +60,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
 
   const save = async (data: FormOutput) => {
     if (!isEditing) {
-      const dto = new ClientDTO()
+      const dto = getDefaultsByClientType()
+
       dto.clientType = data.client.clientType
       dto.clientId = data.client.clientId
       dto.nationalId = data.client.nationalId
@@ -73,6 +73,20 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
         ClientService.setDefaults(clientSaved, data.baseUrl)
       }
     }
+  }
+
+  const getDefaultsByClientType = (): ClientDTO => {
+    const dto = new ClientDTO()
+    if (dto.clientType === 'spa' || dto.clientType === 'native') {
+      dto.requireClientSecret = false
+      dto.requirePkce = true
+    }
+
+    if (dto.clientType === 'web' || dto.clientType === 'machine') {
+      dto.requireClientSecret = true
+      dto.requirePkce = false
+    }
+    return dto
   }
 
   const checkAvailability = async (clientId: string) => {
@@ -116,34 +130,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
-      if (clientType === 'spa') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('spa'))
-      }
-
-      if (clientType === 'native') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('native'))
-      }
-
-      if (clientType === 'web') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('web'))
-      }
-
-      if (clientType === 'machine') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('machine'))
-      }
-
+      setClientTypeInfo(getClientTypeHTML(clientType))
       setClientTypeSelected(true)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
@@ -369,7 +356,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: true,
-                          validate: ValidationUtils.validateUrl,
+                          validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"

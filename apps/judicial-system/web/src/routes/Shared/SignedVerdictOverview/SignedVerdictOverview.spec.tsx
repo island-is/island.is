@@ -2,17 +2,13 @@ import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 import userEvent from '@testing-library/user-event'
-import fetchMock from 'fetch-mock'
 
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import {
-  FeatureProvider,
-  UserProvider,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 
@@ -118,10 +114,6 @@ describe('Signed Verdict Overview route', () => {
   })
 
   describe('Accepted case with active custody', () => {
-    fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
-    fetchMock.mock('/api/feature/CASE_FILES', true)
-    fetchMock.mock('/api/feature/CREATE_COURT_CASE', true)
-
     test('should have the correct title', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
@@ -229,11 +221,9 @@ describe('Signed Verdict Overview route', () => {
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <FeatureProvider>
-            <UserProvider>
-              <SignedVerdictOverview />
-            </UserProvider>
-          </FeatureProvider>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -253,11 +243,9 @@ describe('Signed Verdict Overview route', () => {
           mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
           addTypename={false}
         >
-          <FeatureProvider>
-            <UserProvider>
-              <SignedVerdictOverview />
-            </UserProvider>
-          </FeatureProvider>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 

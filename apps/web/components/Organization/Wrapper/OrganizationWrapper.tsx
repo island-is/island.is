@@ -1,5 +1,10 @@
 import React, { ReactNode } from 'react'
-import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
+import {
+  Image,
+  LinkGroup,
+  Organization,
+  OrganizationPage,
+} from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -8,8 +13,10 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Navigation,
   NavigationItem,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
@@ -21,9 +28,12 @@ import {
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { SjukratryggingarHeader } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
+import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 interface NavigationData {
   title: string
@@ -49,12 +59,16 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
+    case 'sjukratryggingar':
+      return <SjukratryggingarHeader organizationPage={organizationPage} />
+    case 'utlendingastofnun':
+      return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
     default:
@@ -62,16 +76,37 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   }
 }
 
-const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
-  switch (organizationPage.theme) {
-    case 'syslumenn':
-      return <SyslumennFooter organizationPage={organizationPage} />
-    default:
-      return null
-  }
+interface FooterProps {
+  organizations: Array<Organization>
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationFooter: React.FC<FooterProps> = ({
+  organizations,
+}) => {
+  const footerEnabled = ['syslumenn']
+
+  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
+  if (!organization) return null
+
+  if (organization.slug === 'syslumenn') {
+    return (
+      <SyslumennFooter
+        title={organization.title}
+        logo={organization.logo?.url}
+        footerItems={organization.footerItems}
+      />
+    )
+  }
+  return null
+}
+
+export const OrganizationChatPanel = ({
+  slugs,
+  pushUp = false,
+}: {
+  slugs: string[]
+  pushUp?: boolean
+}) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -79,13 +114,39 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
     return null
   }
 
-  switch (slug) {
-    case 'syslumenn':
-      return <ChatPanel endpoint="syslumenn" />
-    default:
-      return null
-  }
+  const chatEnabled = ['syslumenn']
+
+  const slug = slugs.find((x) => chatEnabled.includes(x))
+
+  return slug ? (
+    <ChatPanel
+      endpoint={slug as keyof typeof chatPanelEndpoints}
+      pushUp={pushUp}
+    />
+  ) : null
 }
+
+const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
+  <Box
+    background="purple100"
+    borderRadius="large"
+    padding={[3, 3, 4]}
+    marginY={3}
+  >
+    <Stack space={[1, 1, 2]}>
+      <Text variant="eyebrow" as="h2">
+        {linkGroup.name}
+      </Text>
+      {linkGroup.childrenLinks.map((link) => (
+        <Link key={link.url} href={link.url} underline="normal">
+          <Text key={link.url} as="span">
+            {link.text}
+          </Text>
+        </Link>
+      ))}
+    </Stack>
+  </Box>
+)
 
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
@@ -147,22 +208,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
                 {organizationPage.secondaryMenu && (
-                  <Box marginTop={3}>
-                    <Navigation
-                      colorScheme="purple"
-                      baseId="secondarynav"
-                      activeItemTitle={pageTitle}
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  </Box>
+                  <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
                 )}
                 {sidebarContent}
               </SidebarContainer>
@@ -224,7 +270,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   )}
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                      <Text variant="intro">{pageDescription}</Text>
+                      <Text variant="default">{pageDescription}</Text>
                     </Box>
                   )}
                 </GridColumn>
@@ -251,8 +297,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </GridContainer>
         )}
       </Main>
-      {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
-      <OrganizationChatPanel slug={organizationPage?.slug} />
+      {!minimal && (
+        <OrganizationFooter organizations={[organizationPage.organization]} />
+      )}
+      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
   )
 }

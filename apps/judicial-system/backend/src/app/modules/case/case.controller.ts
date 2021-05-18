@@ -68,6 +68,7 @@ const prosecutorUpdateRule = {
     'defenderPhoneNumber',
     'sendRequestToDefender',
     'court',
+    'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
     'requestedCustodyEndDate',
@@ -84,77 +85,50 @@ const prosecutorUpdateRule = {
   ],
 } as RolesRule
 
+const courtFields = [
+  'defenderName',
+  'defenderEmail',
+  'defenderPhoneNumber',
+  'courtCaseNumber',
+  'courtDate',
+  'courtRoom',
+  'courtStartDate',
+  'courtEndTime',
+  'courtAttendees',
+  'policeDemands',
+  'courtDocuments',
+  'accusedPleaDecision',
+  'accusedPleaAnnouncement',
+  'litigationPresentations',
+  'ruling',
+  'additionToConclusion',
+  'decision',
+  'custodyEndDate',
+  'custodyRestrictions',
+  'otherRestrictions',
+  'isolationTo',
+  'accusedAppealDecision',
+  'accusedAppealAnnouncement',
+  'prosecutorAppealDecision',
+  'prosecutorAppealAnnouncement',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
+  'judgeId',
+  'registrarId',
+]
+
 // Allows judges to update a specific set of fields
 const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
-  dtoFields: [
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'setCourtCaseNumberManually',
-    'courtCaseNumber',
-    'courtDate',
-    'courtRoom',
-    'courtStartTime',
-    'courtEndTime',
-    'courtAttendees',
-    'policeDemands',
-    'courtDocuments',
-    'accusedPleaDecision',
-    'accusedPleaAnnouncement',
-    'litigationPresentations',
-    'ruling',
-    'additionToConclusion',
-    'decision',
-    'custodyEndDate',
-    'custodyRestrictions',
-    'otherRestrictions',
-    'isolationTo',
-    'accusedAppealDecision',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealDecision',
-    'prosecutorAppealAnnouncement',
-    'accusedPostponedAppealDate',
-    'prosecutorPostponedAppealDate',
-    'judgeId',
-    'registrarId',
-  ],
+  dtoFields: courtFields,
 } as RolesRule
 
 // Allows registrars to update a specific set of fields
 const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
-  dtoFields: [
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'courtCaseNumber',
-    'courtDate',
-    'courtRoom',
-    'courtStartTime',
-    'courtEndTime',
-    'courtAttendees',
-    'policeDemands',
-    'courtDocuments',
-    'accusedPleaDecision',
-    'accusedPleaAnnouncement',
-    'litigationPresentations',
-    'ruling',
-    'decision',
-    'custodyEndDate',
-    'custodyRestrictions',
-    'otherRestrictions',
-    'accusedAppealDecision',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealDecision',
-    'prosecutorAppealAnnouncement',
-    'accusedPostponedAppealDate',
-    'prosecutorPostponedAppealDate',
-    'judgeId',
-    'registrarId',
-  ],
+  dtoFields: courtFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases
@@ -292,6 +266,15 @@ export class CaseController {
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase

@@ -64,6 +64,9 @@ export class Case implements TCase {
   readonly court?: string
 
   @Field({ nullable: true })
+  readonly leadInvestigator?: string
+
+  @Field({ nullable: true })
   readonly arrestDate?: string
 
   @Field({ nullable: true })
@@ -109,9 +112,6 @@ export class Case implements TCase {
   readonly prosecutor?: User
 
   @Field({ nullable: true })
-  readonly setCourtCaseNumberManually?: boolean
-
-  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Field({ nullable: true })
@@ -121,7 +121,7 @@ export class Case implements TCase {
   readonly courtRoom?: string
 
   @Field({ nullable: true })
-  readonly courtStartTime?: string
+  readonly courtStartDate?: string
 
   @Field({ nullable: true })
   readonly courtEndTime?: string

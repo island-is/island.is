@@ -71,6 +71,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly leadInvestigator?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly arrestDate?: Date
 
   @IsOptional()
@@ -134,11 +139,6 @@ export class UpdateCaseDto {
   readonly prosecutorId?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly setCourtCaseNumberManually?: boolean
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber?: string
@@ -156,7 +156,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly courtStartTime?: Date
+  readonly courtStartDate?: Date
 
   @IsOptional()
   @IsString()

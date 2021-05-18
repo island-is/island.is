@@ -62,6 +62,7 @@ export const LoginServiceForm: Form = buildForm({
             buildTextField({
               id: 'applicant.nationalId',
               title: applicant.labels.nationalId,
+              format: '######-####',
               backgroundColor: 'blue',
               width: 'half',
               required: true,

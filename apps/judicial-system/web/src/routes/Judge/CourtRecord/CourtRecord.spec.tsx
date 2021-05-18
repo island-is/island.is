@@ -11,8 +11,6 @@ import {
   AccusedPleaDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import formatISO from 'date-fns/formatISO'
-import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import CourtRecord from './CourtRecord'
 
@@ -32,11 +30,7 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_9',
-              courtStartTime: parseTime(formatISO(new Date()), '12:31'),
-            } as UpdateCase,
-            {
-              id: 'test_id_9',
-              courtEndTime: parseTime(formatISO(new Date()), '12:32'),
+              courtStartDate: '2020-09-16T19:51:28.000Z',
             } as UpdateCase,
             {
               id: 'test_id_9',
@@ -78,11 +72,6 @@ describe('/domari-krafa/thingbok', () => {
     )
 
     // Act
-    userEvent.type(
-      await screen.findByLabelText('Þinghald hófst (kk:mm) *'),
-      '12:31',
-    )
-
     expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
 
     expect(
@@ -114,5 +103,46 @@ describe('/domari-krafa/thingbok', () => {
         name: /Halda áfram/i,
       }),
     ).not.toBeDisabled()
+  })
+
+  test('should not autofill litigation presentations in travel ban cases', async () => {
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_10' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id_10',
+              courtStartDate: '2020-09-16T19:51:28.000Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_10',
+              courtAttendees:
+                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
+            } as UpdateCase,
+            {
+              id: 'test_id_10',
+              policeDemands:
+                'Þess er krafist að Jon Harring, kt. string, sæti farbanni með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <CourtRecord />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    expect(
+      await screen.findByLabelText(/Málflutningur og aðrar bókanir/),
+    ).toHaveDisplayValue('')
   })
 })

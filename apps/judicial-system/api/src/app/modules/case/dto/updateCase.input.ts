@@ -60,6 +60,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly leadInvestigator?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly arrestDate?: string
 
   @Allow()
@@ -112,10 +116,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly setCourtCaseNumberManually?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Allow()
@@ -128,7 +128,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly courtStartTime?: string
+  readonly courtStartDate?: string
 
   @Allow()
   @Field({ nullable: true })

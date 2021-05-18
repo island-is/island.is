@@ -26,7 +26,6 @@ import {
   Case,
   CaseState,
   NotificationType,
-  UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -34,7 +33,6 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
@@ -205,6 +203,7 @@ export const HearingArrangements: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>

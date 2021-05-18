@@ -1,13 +1,15 @@
+import { StaticText } from './Form'
+
 export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
-  reason?: string
+  reason?: StaticText
   status: 'failure' | 'success'
   statusCode?: number
 }
 
 export interface FailedDataProviderResult extends DataProviderResult {
-  reason: string
+  reason: StaticText
   status: 'failure'
 }
 

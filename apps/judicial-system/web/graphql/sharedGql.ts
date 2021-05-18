@@ -18,6 +18,7 @@ export const CaseQuery = gql`
       defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -40,11 +41,10 @@ export const CaseQuery = gql`
           name
         }
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands

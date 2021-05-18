@@ -94,6 +94,9 @@
     "api-domains-education": {
       "tags": []
     },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -104,6 +107,9 @@
       "tags": []
     },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-regulations": {
       "tags": []
     },
     "api-domains-rsk": {
@@ -164,6 +170,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-family-matters-core": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -171,6 +180,9 @@
       "tags": []
     },
     "application-templates-institution-collaboration": {
+      "tags": []
+    },
+    "application-templates-joint-custody-agreement": {
       "tags": []
     },
     "application-templates-login-service": {
@@ -219,6 +231,9 @@
     "auth-nest-tools": {
       "tags": []
     },
+    "auth-react": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -232,6 +247,9 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-regulations": {
       "tags": []
     },
     "clients-rsk-v1": {
@@ -474,7 +492,10 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
@@ -539,6 +560,9 @@
       "tags": []
     },
     "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {

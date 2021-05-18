@@ -19,7 +19,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  Feature,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -40,7 +39,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import AppealSection from './Components/AppealSection/AppealSection'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -54,7 +52,6 @@ export const SignedVerdictOverview: React.FC = () => {
   const id = router.query.id
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
-  const { features } = useContext(FeatureContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -212,8 +209,8 @@ export const SignedVerdictOverview: React.FC = () => {
       user?.role === UserRole.PROSECUTOR ||
       workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
       workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      !!workingCase?.accusedPostponedAppealDate ||
-      !!workingCase?.prosecutorPostponedAppealDate
+      Boolean(workingCase?.accusedPostponedAppealDate) ||
+      Boolean(workingCase?.prosecutorPostponedAppealDate)
     ) {
       return true
     } else {
@@ -304,7 +301,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     // Alternative travel ban restrictions
                     (workingCase.decision ===
                       CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                      (CaseType.TRAVEL_BAN &&
+                      (workingCase.type === CaseType.TRAVEL_BAN &&
                         workingCase.decision === CaseDecision.ACCEPTING)) &&
                       workingCase.custodyRestrictions
                         ?.filter((restriction) =>
@@ -392,21 +389,19 @@ export const SignedVerdictOverview: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
-                {features.includes(Feature.CASE_FILES) && (
-                  <AccordionItem
-                    id="id_4"
-                    label={`Rannsóknargögn (${
-                      workingCase.files ? workingCase.files.length : 0
-                    })`}
-                    labelVariant="h3"
-                  >
-                    <CaseFileList
-                      caseId={workingCase.id}
-                      files={workingCase.files || []}
-                      canOpenFiles={canCaseFilesBeOpened()}
-                    />
-                  </AccordionItem>
-                )}
+                <AccordionItem
+                  id="id_4"
+                  label={`Rannsóknargögn (${
+                    workingCase.files ? workingCase.files.length : 0
+                  })`}
+                  labelVariant="h3"
+                >
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={canCaseFilesBeOpened()}
+                  />
+                </AccordionItem>
               </Accordion>
             </Box>
             <Box marginBottom={15}>
@@ -433,7 +428,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
                 workingCase.isCustodyEndDateInThePast ||
-                (workingCase.childCase && true)
+                Boolean(workingCase.childCase)
               }
               nextButtonText={`Framlengja ${
                 workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'

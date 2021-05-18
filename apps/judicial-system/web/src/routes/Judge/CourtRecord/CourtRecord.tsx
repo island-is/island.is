@@ -1,21 +1,13 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   CourtDocuments,
   PageLayout,
-  TimeInputField,
   CaseNumbers,
   BlueBox,
   FormContentContainer,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -23,14 +15,13 @@ import {
   formatAccusedByGender,
   formatProsecutorDemands,
   NounCases,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
   Case,
   CaseCustodyRestrictions,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -40,14 +31,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
   setAndSendToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -55,9 +44,9 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [
-    courtDocumentStartErrorMessage,
-    setCourtDocumentStartErrorMessage,
-  ] = useState('')
+    courtRecordStartDateIsValid,
+    setCourtRecordStartDateIsValid,
+  ] = useState(true)
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
   const [
@@ -76,9 +65,6 @@ export const CourtRecord: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-  const { isValidTime: isValidCourtStartTime } = useDateTime({
-    time: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
   })
 
   useEffect(() => {
@@ -118,6 +104,8 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
+      autofill('courtStartDate', new Date().toString(), theCase)
+
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
       if (
@@ -148,11 +136,13 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill(
-        'litigationPresentations',
-        'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
-        theCase,
-      )
+      if (theCase.type === CaseType.CUSTODY) {
+        autofill(
+          'litigationPresentations',
+          'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+          theCase,
+        )
+      }
 
       setWorkingCase(theCase)
     }
@@ -168,6 +158,7 @@ export const CourtRecord: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -183,51 +174,29 @@ export const CourtRecord: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={3}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn span="5/12">
-                      <TimeInputField
-                        onChange={(evt) =>
-                          validateAndSetTime(
-                            'courtStartTime',
-                            new Date().toString(),
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            setWorkingCase,
-                            courtDocumentStartErrorMessage,
-                            setCourtDocumentStartErrorMessage,
-                          )
-                        }
-                        onBlur={(evt) =>
-                          validateAndSendTimeToServer(
-                            'courtStartTime',
-                            new Date().toString(),
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            updateCase,
-                            setCourtDocumentStartErrorMessage,
-                          )
-                        }
-                      >
-                        <Input
-                          data-testid="courtStartTime"
-                          name="courtStartTime"
-                          label="Þinghald hófst (kk:mm)"
-                          placeholder="Veldu tíma"
-                          defaultValue={formatDate(
-                            workingCase.courtStartTime,
-                            TIME_FORMAT,
-                          )}
-                          errorMessage={courtDocumentStartErrorMessage}
-                          hasError={courtDocumentStartErrorMessage !== ''}
-                          required
-                        />
-                      </TimeInputField>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
+                <DateTime
+                  name="courtStartDate"
+                  datepickerLabel="Dagsetning þinghalds"
+                  timeLabel="Þinghald hófst (kk:mm)"
+                  maxDate={new Date()}
+                  selectedDate={
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
+                      : new Date()
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    newSetAndSendDateToServer(
+                      'courtStartDate',
+                      date,
+                      valid,
+                      workingCase,
+                      setWorkingCase,
+                      setCourtRecordStartDateIsValid,
+                      updateCase,
+                    )
+                  }}
+                  required
+                />
               </Box>
               <Box marginBottom={3}>
                 <Input
@@ -471,7 +440,7 @@ export const CourtRecord: React.FC = () => {
               previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
-                !isValidCourtStartTime?.isValid ||
+                !courtRecordStartDateIsValid ||
                 !validate(workingCase.courtAttendees || '', 'empty').isValid ||
                 !validate(workingCase.policeDemands || '', 'empty').isValid ||
                 !validate(workingCase.litigationPresentations || '', 'empty')

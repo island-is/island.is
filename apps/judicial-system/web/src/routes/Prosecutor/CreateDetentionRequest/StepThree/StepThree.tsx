@@ -53,18 +53,15 @@ export const StepThree: React.FC = () => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
-        <>
-          <StepThreeForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            requestedCustodyEndDateIsValid={requestedCustodyEndDateIsValid}
-            setRequestedCustodyEndDateIsValid={
-              setRequestedCustodyEndDateIsValid
-            }
-          />
-        </>
+        <StepThreeForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          requestedCustodyEndDateIsValid={requestedCustodyEndDateIsValid}
+          setRequestedCustodyEndDateIsValid={setRequestedCustodyEndDateIsValid}
+        />
       ) : null}
     </PageLayout>
   )

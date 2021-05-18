@@ -26,7 +26,10 @@ import {
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
+  OrganizationFooter,
+  OrganizationChatPanel,
   Sticky,
+  AppendedArticleComponents,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -40,6 +43,7 @@ import {
   AllSlicesFragment as Slice,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
+  Organization,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -501,6 +505,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
+          <Box paddingTop={2}>
+            <AppendedArticleComponents article={article} />
+          </Box>
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
@@ -561,6 +568,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
+      <OrganizationChatPanel
+        slugs={article.organization.map((x) => x.slug)}
+        pushUp={isVisible}
+      />
+      <OrganizationFooter
+        organizations={article.organization as Organization[]}
+      />
     </>
   )
 }
