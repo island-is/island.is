@@ -38,8 +38,6 @@ const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
             box={{
               background: closed && !expanded ? 'transparent' : 'blue100',
               borderColor: closed && !expanded ? 'blue200' : 'blue100',
-              // paddingLeft: 2,
-              // paddingRight: 2,
               position: 'relative',
             }}
           >
@@ -52,17 +50,9 @@ const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
             alignItems: 'flexEnd',
             background: closed && !expanded ? 'transparent' : 'blue100',
             borderColor: closed && !expanded ? 'blue200' : 'blue100',
-            // paddingLeft: 2,
-            // paddingRight: 2,
           }}
         >
-          <Box
-            display="flex"
-            alignItems="flexEnd"
-            justifyContent="flexEnd"
-            // width="full"
-            // height="full"
-          >
+          <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
             <Button
               circle
               colorScheme="light"
