@@ -93,4 +93,7 @@ export default {
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
   },
+  endorsementSystem: {
+    baseApiUrl: 'http://localhost:4246',
+  },
 }

@@ -18,6 +18,7 @@ export const CaseQuery = gql`
       defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -43,7 +44,7 @@ export const CaseQuery = gql`
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands

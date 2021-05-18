@@ -33,6 +33,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/funding-government-projects'),
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: () =>
     import('@island.is/application/templates/public-debt-payment-plan'),
+  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: () =>
+    import('@island.is/application/templates/joint-custody-agreement'),
 }
 
 export default templates

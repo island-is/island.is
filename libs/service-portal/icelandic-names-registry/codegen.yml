@@ -1,8 +1,10 @@
 schema:
   - apps/api/src/api.graphql
-documents: libs/service-portal/icelandic-names-registry/src/queries/*.{ts,tsx}
+documents:
+  - libs/service-portal/icelandic-names-registry/src/queries/*.{ts,tsx}
+  - libs/service-portal/icelandic-names-registry/src/mutations/*.{ts,tsx}
 generates:
-  libs/service-portal/icelandic-names-registry/src/queries/schema.ts:
+  libs/service-portal/icelandic-names-registry/src/graphql/schema.ts:
     plugins:
       - typescript
       - typescript-operations
