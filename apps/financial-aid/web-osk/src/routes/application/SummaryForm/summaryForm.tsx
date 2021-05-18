@@ -34,6 +34,8 @@ import {
   NavigationProps,
   getHomeCircumstances,
   HomeCircumstances,
+  Employment,
+  getEmploymentStatus,
 } from '@island.is/financial-aid/types'
 
 interface MunicipalityData {
@@ -134,8 +136,10 @@ const SummaryForm = () => {
     },
     {
       label: 'Staða',
-      url: 'stada',
-      info: form?.employmentCustom ? form?.employmentCustom : form?.employment,
+      url: 'atvinna',
+      info: form?.employmentCustom
+        ? form?.employmentCustom
+        : getEmploymentStatus[form?.employment as Employment],
     },
   ]
 

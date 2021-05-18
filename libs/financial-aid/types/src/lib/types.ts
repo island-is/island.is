@@ -48,12 +48,4 @@ export type HomeCircumstances =
   | 'RegisteredLease'
   | 'Other'
 
-// OwnPlace = 'OwnPlace',
-
-// NEW = 'NEW',
-// DRAFT = 'DRAFT',
-// SUBMITTED = 'SUBMITTED',
-// RECEIVED = 'RECEIVED',
-// ACCEPTED = 'ACCEPTED',
-// REJECTED = 'REJECTED',
-// DELETED = 'DELETED',
+export type Employment = 'Working' | 'Unemployed' | 'CannotWork' | 'Other'

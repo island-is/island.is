@@ -14,7 +14,11 @@ import * as styles from './employmentForm.treat'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/types'
+import {
+  NavigationProps,
+  Employment,
+  getEmploymentStatus,
+} from '@island.is/financial-aid/types'
 
 const EmploymentForm = () => {
   const router = useRouter()
@@ -26,24 +30,14 @@ const EmploymentForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const employmentOptions = [
-    {
-      label: 'Ég er með atvinnu',
-      value: 'employed',
+  const options = ['Working', 'Unemployed', 'CannotWork', 'Other'].map(
+    (item) => {
+      return {
+        label: getEmploymentStatus[item as Employment],
+        value: item,
+      }
     },
-    {
-      label: 'Ég er atvinnulaus',
-      value: 'unemployed',
-    },
-    {
-      label: 'Ég er ekki vinnufær',
-      value: 'unableToWork',
-    },
-    {
-      label: 'Ekkert að ofan lýsir minni stöðu',
-      value: 'noneOfTheAbove',
-    },
-  ]
+  )
 
   return (
     <FormLayout
@@ -56,12 +50,12 @@ const EmploymentForm = () => {
         </Text>
 
         <RadioButtonContainer
-          options={employmentOptions}
+          options={options}
           error={error && !form?.employment}
-          isChecked={(value: string | number | boolean) => {
+          isChecked={(value: Employment) => {
             return value === form?.employment
           }}
-          onChange={(value: string | number | boolean) => {
+          onChange={(value: Employment) => {
             updateForm({ ...form, employment: value })
             if (error) {
               setError(false)
@@ -84,7 +78,7 @@ const EmploymentForm = () => {
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.employment === 'noneOfTheAbove',
+            [`${styles.inputAppear}`]: form?.employment === 'Other',
           })}
         >
           <Input
@@ -108,7 +102,7 @@ const EmploymentForm = () => {
         nextIsDisabled={form?.employment === ''}
         onNextButtonClick={() => {
           if (form?.employment) {
-            if (form?.employment !== 'noneOfTheAbove') {
+            if (form?.employment !== 'Other') {
               //Validation
               updateForm({ ...form, employmentCustom: '' })
               router.push(navigation?.nextUrl ?? '/')
