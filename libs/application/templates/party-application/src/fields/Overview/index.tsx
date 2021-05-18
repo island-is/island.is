@@ -62,8 +62,8 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(m.overviewSection.emailLabel)}
         </Text>
         <Input
-          id="email"
-          name="email"
+          id="responsiblePersonEmail"
+          name="responsiblePersonEmail"
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}

@@ -465,6 +465,12 @@ export const m: MessageDir = {
       defaultMessage: 'Hlaða niður atkvæðum',
       description: 'Download endorsements button',
     },
+    noEndorsementsMessage: {
+      id: 'pa.application:supreme.court.no.endorsements',
+      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
+      description:
+        'Message that will appear in the .csv file if there are no endorsements',
+    },
     rejectButton: {
       id: 'pa.application:supreme.court.reject.button',
       defaultMessage: 'Hafna',

@@ -32,7 +32,8 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const { formatMessage } = useLocale()
-  const { answers } = application // todo render correct answers
+  const { answers, externalData } = application // todo render correct answers
+  console.log(application)
   const [endorsements, setEndorsements] = useState<Endorsement[]>()
 
   const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {
@@ -62,6 +63,14 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
+  const filename = (): string => {
+    const strippedPartyName = answers.partyName.toString().replace(/\s/g, '')
+    const strippedPartyLetter = answers.partyLetter
+      .toString()
+      .replace(/\s/g, '')
+    return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
+  }
+
   return (
     <Box>
       <Text variant="h3"> {formatMessage(m.supremeCourt.subtitle)}</Text>
@@ -70,13 +79,13 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.partyNameLabel)}
           </Text>
-          <Text>{'Siggu flokkur'}</Text>
+          <Text>{answers.partyName}</Text>
         </Box>
         <Box width="half">
           <Text variant="h5">
             {formatMessage(m.supremeCourt.partyLetterLabel)}
           </Text>
-          <Text>{'Æ'}</Text>
+          <Text>{answers.partyLetter}</Text>
         </Box>
       </Box>
       <Box display="flex" marginBottom={5}>
@@ -84,7 +93,13 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.responsiblePersonLabel)}
           </Text>
-          <Text>{'Sigríður Hrafnsdóttir'}</Text>
+          <Text>
+            {
+              (externalData.nationalRegistry?.data as {
+                fullName?: string
+              })?.fullName
+            }
+          </Text>
         </Box>
         <Box marginBottom={3} width="half">
           <Text variant="h5">
@@ -100,8 +115,11 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
           <CSVLink
-            data={endorsements ?? 'Engum meðmælum hefur verið skilað'}
-            filename="medmaelendur.csv"
+            data={
+              endorsements ??
+              formatMessage(m.supremeCourt.noEndorsementsMessage)
+            }
+            filename={filename()}
           >
             <Button variant="text" icon="download" iconType="outline">
               {formatMessage(m.supremeCourt.csvButton)}

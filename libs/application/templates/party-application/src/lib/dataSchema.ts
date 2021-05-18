@@ -16,4 +16,5 @@ export const dataSchema = z.object({
   reasonForReject: z.string().optional(),
   endorsements: z.array(z.string()), // todo validate
 })
+
 export type SchemaFormValues = z.infer<typeof dataSchema>
