@@ -47,6 +47,7 @@ const dataSchema = z.object({
   //.refine((v) => v && v.length > 300, 'Valin meðmæli þurfa að vera yfir 300'),
 })
 export type Endorsement = z.TypeOf<typeof EndorsementSchema>
+export type PartyApplicationAnswers = z.TypeOf<typeof dataSchema>
 
 const PartyApplicationTemplate: ApplicationTemplate<
   ApplicationContext,

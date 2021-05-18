@@ -6,8 +6,20 @@ import { useLocale } from '@island.is/localization'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
-import { useFormContext } from 'react-hook-form'
-import { Endorsement } from '../../lib/PartyApplicationTemplate'
+import {
+  PartyApplicationAnswers,
+  Endorsement,
+} from '../../lib/PartyApplicationTemplate'
+import format from 'date-fns/format'
+import { format as formatKennitala } from 'kennitala'
+
+const formatDate = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
+}
 
 interface EndorsementTableProps {
   application: Application
@@ -21,70 +33,47 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   selectedSignatures,
 }) => {
   const { lang: locale, formatMessage } = useLocale()
+  const answers = (application as any).answers as PartyApplicationAnswers
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
-  >([]) //todo initalize with answers.endorsements
+  >(answers.endorsements ?? [])
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const dummyEndorsements: Endorsement[] = [
-  {
-    id: 1,
-    date: '18 maí',
-    name: 'Sigga',
-    nationalId: '123',
-    address: 'Bla',
-    hasWarning: false,
-  },
-  {
-    id: 2,
-    date: '19 maí',
-    name: 'Albína',
-    nationalId: '234',
-    address: 'Bla',
-    hasWarning: false,
-  },
-]
-  // sama hér :D
-  async function updateApplicationWithEndorsements() {
-    console.log("be doing the update!", selectedEndorsements)
-    const LASTHOPE = selectedEndorsements
+  const updateApplicationWithEndorsements = async () => {
+    const updatedAnswers = {
+      ...answers,
+      endorsements: selectedEndorsements,
+    }
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            endorsements: LASTHOPE, // milljónth time is the charm
-            ...application.answers,
+            ...updatedAnswers,
           },
         },
         locale,
       },
-    }).then((response) => {
-      //já það prentast data og endorsements [] bara tómt array
-      console.log(response) //prentast eitthvað hér? eða feilar hann áður en hann kemst hingað?
-      application.answers = response.data?.updateApplication?.answers
     })
   }
 
   useEffect(() => {
-    console.log("do we have endorsements?", selectedEndorsements)
     updateApplicationWithEndorsements()
   }, [selectedEndorsements])
 
   const renderRow = (endorsement: Endorsement) => {
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.date}>
-          {'formatDate(endorsement.date)'}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.name}>
-          {endorsement.name}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.nationalId}>
-          {'formatKennitala(endorsement.nationalId)'}
+        <T.Data>{formatDate(endorsement.date)}</T.Data>
+        <T.Data>{endorsement.name}</T.Data>
+        <T.Data
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+          }}
+        >
+          {formatKennitala(endorsement.nationalId)}
         </T.Data>
         <T.Data
-          key={endorsement.id}
           box={{
             background: endorsement.hasWarning ? 'yellow200' : 'white',
             textAlign: 'right',
@@ -97,7 +86,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                 <Tooltip
                   color="blue400"
                   iconSize="medium"
-                  text={'Invalid blabala'}
+                  text={'Invalid blabala'} // todo bæta við réttum texta hér
                 />
               </Box>
             </Box>
@@ -105,9 +94,13 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             endorsement.address
           )}
         </T.Data>
-        <T.Data key={endorsement.id + 'something'}>
+        <T.Data
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+          }}
+        >
           <Checkbox
-            checked={false} // bera saman með contains id
+            checked={selectedEndorsements?.some((e) => e.id === endorsement.id)}
             onChange={() =>
               setSelectedEndorsements((currEndorsements) => [
                 ...currEndorsements,
