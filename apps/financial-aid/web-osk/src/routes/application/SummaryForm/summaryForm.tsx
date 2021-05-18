@@ -29,7 +29,12 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { Municipality, NavigationProps } from '@island.is/financial-aid/types'
+import {
+  Municipality,
+  NavigationProps,
+  getHomeCircumstances,
+  HomeCircumstances,
+} from '@island.is/financial-aid/types'
 
 interface MunicipalityData {
   municipality: Municipality
@@ -118,7 +123,7 @@ const SummaryForm = () => {
       url: 'buseta',
       info: form?.homeCircumstancesCustom
         ? form?.homeCircumstancesCustom
-        : form?.homeCircumstances,
+        : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
     {
       label: 'Tekjur',

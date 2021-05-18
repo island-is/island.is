@@ -18,9 +18,6 @@ import {
   getHomeCircumstances,
   HomeCircumstances,
 } from '@island.is/financial-aid/types'
-// import {
-//   getHomeCircumstances,
-// } from '@island.is/financial-aid/'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()
@@ -84,7 +81,7 @@ const HomeCircumstancesForm = () => {
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.homeCircumstances === 'other',
+            [`${styles.inputAppear}`]: form?.homeCircumstances === 'Other',
           })}
         >
           <Input
@@ -112,7 +109,7 @@ const HomeCircumstancesForm = () => {
           //Temperary error state
           //Check if any radio is checked
           if (form?.homeCircumstances && navigation?.nextUrl) {
-            if (form?.homeCircumstances !== 'other') {
+            if (form?.homeCircumstances !== 'Other') {
               //Validation
               updateForm({ ...form, homeCircumstancesCustom: '' })
               router.push(navigation?.nextUrl)
