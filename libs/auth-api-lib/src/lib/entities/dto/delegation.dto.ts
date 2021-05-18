@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {
-  IsBoolean,
-  IsString,
-  IsOptional,
-  IsArray,
-  IsDateString,
-} from 'class-validator'
+import { IsString, IsOptional, IsArray, IsDateString } from 'class-validator'
 
 export class DelegationDTO {
   @IsString()
@@ -17,6 +11,7 @@ export class DelegationDTO {
   @IsDateString()
   @ApiProperty()
   validFrom!: Date
+  @IsOptional()
   @IsDateString()
   @ApiProperty()
   validTo?: Date

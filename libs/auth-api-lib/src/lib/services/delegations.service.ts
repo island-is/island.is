@@ -62,9 +62,9 @@ export class DelegationsService {
       }
     } catch (error) {
       this.logger.error(
-        `Error in findAllCompaniesTo. Status: ${error.status} (${
-          error.statusText
-        })\n${JSON.stringify(error.headers)}`,
+        `Error in findAllCompaniesTo. Status: ${error?.status} (${
+          error?.statusText
+        })\n${JSON.stringify(error?.headers)}`,
       )
     }
 

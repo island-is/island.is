@@ -13,11 +13,6 @@ import { DelegationScope } from './delegation-scope.model'
 
 @Table({
   tableName: 'delegation',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
   timestamps: false,
 })
 export class Delegation extends Model<Delegation> {
