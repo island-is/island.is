@@ -20,6 +20,7 @@ interface Props {
   blueBox?: boolean
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
+  size?: 'sm' | 'md'
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -36,6 +37,7 @@ const DateTime: React.FC<Props> = (props) => {
     blueBox = true,
     locked = false,
     backgroundColor = 'white',
+    size = 'md',
     onChange,
   } = props
 
@@ -155,6 +157,7 @@ const DateTime: React.FC<Props> = (props) => {
           handleCloseCalendar={onCalendarClose}
           required={required}
           backgroundColor={backgroundColor}
+          size={size}
         />
         <TimeInputField
           disabled={disabled || locked || currentDate === undefined}
@@ -173,6 +176,7 @@ const DateTime: React.FC<Props> = (props) => {
             iconType="outline"
             required={required}
             backgroundColor={backgroundColor}
+            size={size}
           />
         </TimeInputField>
       </div>
