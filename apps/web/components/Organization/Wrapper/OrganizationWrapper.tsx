@@ -31,6 +31,7 @@ import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 interface NavigationData {
   title: string
@@ -70,31 +71,36 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 }
 
 interface FooterProps {
-  theme: string
-  organization?: Organization
+  organizations: Array<Organization>
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
-  theme,
-  organization,
+  organizations,
 }) => {
+  const footerEnabled = ['syslumenn']
+
+  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
   if (!organization) return null
 
-  switch (theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
-      )
-    default:
-      return null
+  if (organization.slug === 'syslumenn') {
+    return (
+      <SyslumennFooter
+        title={organization.title}
+        logo={organization.logo?.url}
+        footerItems={organization.footerItems}
+      />
+    )
   }
+  return null
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationChatPanel = ({
+  slugs,
+  pushUp = false,
+}: {
+  slugs: string[]
+  pushUp?: boolean
+}) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -102,12 +108,16 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
     return null
   }
 
-  switch (slug) {
-    case 'syslumenn':
-      return <ChatPanel endpoint="syslumenn" />
-    default:
-      return null
-  }
+  const chatEnabled = ['syslumenn']
+
+  const slug = slugs.find((x) => chatEnabled.includes(x))
+
+  return slug ? (
+    <ChatPanel
+      endpoint={slug as keyof typeof chatPanelEndpoints}
+      pushUp={pushUp}
+    />
+  ) : null
 }
 
 const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
@@ -282,12 +292,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && (
-        <OrganizationFooter
-          theme={organizationPage.theme}
-          organization={organizationPage.organization}
-        />
+        <OrganizationFooter organizations={[organizationPage.organization]} />
       )}
-      <OrganizationChatPanel slug={organizationPage?.slug} />
+      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
   )
 }
