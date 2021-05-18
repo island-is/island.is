@@ -28,7 +28,7 @@ export const RadioValue = ({ label, value }: RadioValueProps) => {
 
       <Text>
         {answer === 'no'
-          ? formatMessage(coreMessages.radiosNo)
+          ? formatMessage(coreMessages.radioNo)
           : formatMessage(coreMessages.radioYes)}
       </Text>
     </Box>

@@ -144,7 +144,7 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Já',
     description: 'Yes option value',
   },
-  radiosNo: {
+  radioNo: {
     id: 'application.system:radio.option.no',
     defaultMessage: 'Nei',
     description: 'No option value',

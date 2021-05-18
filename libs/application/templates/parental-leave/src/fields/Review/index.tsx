@@ -22,7 +22,10 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 
-import { getOtherParentOptions } from '../../parentalLeaveUtils'
+import {
+  getOtherParentOptions,
+  getSelectedChild,
+} from '../../parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
@@ -76,6 +79,11 @@ const Review: FC<ReviewScreenProps> = ({
     spouseUsage,
     employerEmail,
   } = useApplicationAnswers(application)
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  const isPrimaryParent = selectedChild?.parentalRelation === 'primary'
   const pensionFundOptions = usePensionFund()
   const privatePensionFundOptions = usePrivatePensionFund()
   const unionOptions = useUnion()
@@ -151,7 +159,7 @@ const Review: FC<ReviewScreenProps> = ({
   return (
     <>
       <ReviewGroup
-        isEditable={editable}
+        isEditable={editable && isPrimaryParent}
         editChildren={
           <>
             <Label marginBottom={3}>
@@ -746,7 +754,7 @@ const Review: FC<ReviewScreenProps> = ({
         </GridRow>
       </ReviewGroup>
 
-      <ReviewGroup isEditable={editable}>
+      <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>
 

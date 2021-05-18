@@ -28,7 +28,6 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
     isGivingRights,
     giveDays,
   } = useApplicationAnswers(application)
-
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
