@@ -14,7 +14,7 @@ export interface ModuleConfig {
   xRoadClient: string
 }
 
-export class NationalRegistryXRoadModule {
+export class TjodskraModule {
   static register(config: ModuleConfig): DynamicModule {
     const headers = {
       Authorization: `Bearer ${config.token}`,
@@ -30,7 +30,7 @@ export class NationalRegistryXRoadModule {
     const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi]
 
     return {
-      module: NationalRegistryXRoadModule,
+      module: TjodskraModule,
       providers: exportedApis.map((Api) => ({
         provide: Api,
         useFactory: () => new Api(providerConfiguration),

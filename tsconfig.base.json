@@ -195,6 +195,7 @@
       ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
+      "@island.is/clients/tjodskra": ["libs/clients/tjodskra/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
