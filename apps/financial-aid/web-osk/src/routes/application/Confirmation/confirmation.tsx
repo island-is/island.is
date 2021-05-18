@@ -10,6 +10,7 @@ import * as styles from './confirmation.treat'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import { NavigationProps } from '@island.is/financial-aid/types'
 
 const Confirmation = () => {
   const router = useRouter()
@@ -17,8 +18,9 @@ const Confirmation = () => {
   const [accept, setAccept] = useState(false)
   const [error, setError] = useState(false)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   return (
     <FormLayout activeSection={navigation?.activeSectionIndex}>

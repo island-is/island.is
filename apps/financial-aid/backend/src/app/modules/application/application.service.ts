@@ -16,9 +16,8 @@ export class ApplicationService {
     return this.applicationModel.findAll()
   }
 
-  create(application: CreateApplicationDto ): Promise<ApplicationModel> {
+  create(application: CreateApplicationDto): Promise<ApplicationModel> {
     // this.logger.debug('Creating a new case')
     return this.applicationModel.create(application)
   }
-
 }

@@ -15,11 +15,15 @@ import * as styles from './personalTaxCreditForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
+import { NavigationProps } from '@island.is/financial-aid/types'
+
 const PersonalTaxCreditForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const [error, setError] = useState(false)
 

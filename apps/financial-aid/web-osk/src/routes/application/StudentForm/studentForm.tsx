@@ -14,23 +14,30 @@ import * as styles from './studentForm.treat'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
+import { NavigationProps } from '@island.is/financial-aid/types'
 
 const StudentForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const [error, setError] = useState(false)
 
   const options = [
     {
-      label: 'Já',
-      value: 0,
+      label: 'Nei',
+      value: 'No',
     },
     {
-      label: 'Nei',
-      value: 1,
+      label: 'Já',
+      value: 'Yes',
+    },
+    {
+      label: 'Ekki viss',
+      value: 'Unsure',
     },
   ]
 
@@ -41,10 +48,10 @@ const StudentForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
-          Ertu í námi?
+          Ertu í lánshæfu námi?
         </Text>
 
-        <div className={styles.container}>
+        <div>
           <RadioButtonContainer
             options={options}
             error={error && form?.student === undefined}

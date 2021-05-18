@@ -13,6 +13,8 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
+import { NavigationProps } from '@island.is/financial-aid/types'
+
 interface BankOptionsProps {
   label: string
   id: string
@@ -31,8 +33,9 @@ const Form = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const bankOptions = [
     {
@@ -107,12 +110,19 @@ const Form = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Bankareikningur
+          Greiðsla fjárhagsaðstoðar
         </Text>
 
         <Text marginBottom={[3, 3, 4]}>
-          Til að geta afgreitt umsókn rafrænt þurfum við að fá uppgefinn
-          bankareikning sem er í þínu nafni.
+          Til að geta afgreitt umsóknina þurfum við að fá uppgefinn
+          bankareikning í þínu nafni.
+        </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur
+          bankaupplýsingarnar upp verða þær geymdar í gagnagrunni Stafræns
+          Íslands. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og
+          óskað eftir þeim ef umsóknin verður samþykkt.
         </Text>
 
         <div className={styles.bankInformationContainer}>
@@ -142,13 +152,13 @@ const Form = () => {
           })}
         </div>
 
-        <Box marginBottom={5} marginTop={[3, 3, 0]}>
+        {/* <Box marginBottom={5} marginTop={[3, 3, 0]}>
           <AlertMessage
             type="info"
             title="Upplýsingar um bankareikning"
             message="Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur bankaupplýsingarnar upp eru þær geymdar í gagnagrunni Stafræns Íslands. Kjósirðu að gefa ekki upp bankaupplýsingarnar á þessu stigi verður hringt í þig og óskað eftir upplýsingunum ef umsóknin verður samþykkt."
           />
-        </Box>
+        </Box> */}
       </FormContentContainer>
 
       <FormFooter

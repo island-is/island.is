@@ -16,8 +16,6 @@ const Index = () => {
     },
   )
 
-  console.log(data)
-
   return (
     <div className="">
       HELOO {loading ? 'loading...' : data?.applications[0].name}

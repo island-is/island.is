@@ -1,5 +1,3 @@
-import ResidenceForm from '@island.is/financial-aid-web/osk/src/routes/application/ResidenceForm/residenceForm'
+import IncomeFilesForm from '@island.is/financial-aid-web/osk/src/routes/application/IncomeFilesForm/incomeFilesForm'
 
-export default ResidenceForm
-
-
+export default IncomeFilesForm

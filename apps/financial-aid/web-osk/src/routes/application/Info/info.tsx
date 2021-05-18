@@ -12,12 +12,7 @@ import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-interface ResultProps {
-  activeSectionIndex: number
-  activeSubSectionIndex?: number
-  prevUrl: string | undefined
-  nextUrl: string | undefined
-}
+import { NavigationProps } from '@island.is/financial-aid/types'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -25,10 +20,9 @@ const ApplicationInfo = () => {
   const [accept, setAccept] = useState(false)
   const [error, setError] = useState(false)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: ResultProps = useFormNavigation(
+  const navigation: NavigationProps = useFormNavigation(
     router.pathname,
-  ) as ResultProps
+  ) as NavigationProps
 
   return (
     <FormLayout activeSection={navigation?.activeSectionIndex}>

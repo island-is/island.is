@@ -12,6 +12,8 @@ import * as styles from './incomeFilesForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
+import { NavigationProps } from '@island.is/financial-aid/types'
+
 const IncomeFilesForm = () => {
   const router = useRouter()
 
@@ -20,8 +22,9 @@ const IncomeFilesForm = () => {
   const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   return (
     <FormLayout
@@ -30,7 +33,7 @@ const IncomeFilesForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Tekjugögn
+          Gögn
         </Text>
 
         <Text marginBottom={[3, 3, 4]}>

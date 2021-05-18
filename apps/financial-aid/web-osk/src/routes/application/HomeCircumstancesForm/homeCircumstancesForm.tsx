@@ -13,6 +13,7 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 
 import * as styles from './homeCircumstancesForm.treat'
 import cn from 'classnames'
+import { NavigationProps } from '@island.is/financial-aid/types'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()
@@ -20,29 +21,30 @@ const HomeCircumstancesForm = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const options = [
     {
       label: 'Ég bý í eigin húsnæði',
-      value: 'ownHouse',
+      value: 'ownPlace',
     },
     {
       label: 'Ég leigi með þinglýstan leigusamning',
-      value: 'rentingWithContract',
+      value: 'registeredLease',
     },
     {
       label: 'Ég bý eða leigi hjá öðrum án leigusamnings',
-      value: 'rentingWithOutContract',
+      value: 'registeredWithOutLease',
     },
     {
       label: 'Ég bý hjá foreldrum',
-      value: 'livingWithParents',
+      value: 'withParents',
     },
     {
       label: 'Ekkert að ofan lýsir mínum aðstæðum',
-      value: 'noneOfTheAbove',
+      value: 'other',
     },
   ]
 
@@ -85,8 +87,7 @@ const HomeCircumstancesForm = () => {
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]:
-              form?.homeCircumstances === 'noneOfTheAbove',
+            [`${styles.inputAppear}`]: form?.homeCircumstances === 'other',
           })}
         >
           <Input
@@ -114,7 +115,7 @@ const HomeCircumstancesForm = () => {
           //Temperary error state
           //Check if any radio is checked
           if (form?.homeCircumstances && navigation?.nextUrl) {
-            if (form?.homeCircumstances !== 'noneOfTheAbove') {
+            if (form?.homeCircumstances !== 'other') {
               //Validation
               updateForm({ ...form, homeCircumstancesCustom: '' })
               router.push(navigation?.nextUrl)

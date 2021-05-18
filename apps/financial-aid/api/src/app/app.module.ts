@@ -3,7 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
-import { ApplicationModule } from './modules/'
+import { ApplicationModule, MunicipalityModule } from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -22,6 +22,7 @@ const autoSchemaFile = environment.production
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
     ApplicationModule,
+    MunicipalityModule,
   ],
   providers: [BackendAPI],
 })

@@ -6,7 +6,7 @@ export interface Form {
   customPostalCode?: number
   homeCircumstances?: string
   homeCircumstancesCustom?: string
-  student?: boolean
+  student?: string
   employment?: string
   employmentCustom?: string
   hasIncome?: boolean
@@ -16,6 +16,7 @@ export interface Form {
   ledger?: string
   accountNumber?: string
   emailAddress?: string
+  interview?: boolean
   submitted: boolean
   section?: Array<string>
 }

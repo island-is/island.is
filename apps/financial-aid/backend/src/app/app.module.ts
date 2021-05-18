@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { environment } from '../environments'
-import { ApplicationModule } from './modules'
+import { ApplicationModule, MunicipalityModule } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -11,6 +11,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     ApplicationModule,
+    MunicipalityModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useMemo } from 'react'
 import {
   Text,
   Divider,
@@ -6,7 +6,15 @@ import {
   Button,
   AccordionCard,
   ContentBlock,
+  LoadingIcon,
 } from '@island.is/island-ui/core'
+
+import { useQuery } from '@apollo/client'
+
+import {
+  GetMunicipalityQuery,
+  GetApplicationQuery,
+} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
   FormContentContainer,
@@ -21,30 +29,80 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
+import { Municipality, NavigationProps } from '@island.is/financial-aid/types'
+
+interface MunicipalityData {
+  municipality: Municipality
+}
+
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const { data, error, loading } = useQuery<MunicipalityData>(
+    GetMunicipalityQuery,
+    {
+      variables: { input: { id: 'hfj' } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
+
+  const aidCalculator = (
+    homeCircumstances: string,
+    aid: {
+      ownApartmentOrLease: number
+      withOthersOrUnknow: number
+      withParents: number
+    },
+  ): number => {
+    switch (homeCircumstances) {
+      case 'ownPlace':
+        return aid.ownApartmentOrLease
+      case 'registeredLease':
+        return aid.ownApartmentOrLease
+      case 'registeredWithOutLease':
+        return aid.withOthersOrUnknow
+      case 'other':
+      case 'Unknown':
+        return aid.withOthersOrUnknow
+      case 'withParents':
+        return aid.withParents
+      default:
+        return aid.withParents
+    }
+  }
+
+  const aidAmount = useMemo(() => {
+    if (form && data && form.homeCircumstances) {
+      return aidCalculator(
+        form.homeCircumstances,
+        data?.municipality.settings.aid,
+      )
+    }
+  }, [form, data])
+
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const calculation = [
-    {
-      label: 'Full upphæð aðstoðar',
-      sum: '+ 200.000 kr.',
-    },
-    {
-      label: 'Ofgreidd aðstoð í Feb 2021',
-      sum: '- 10.000 kr.',
-    },
-    {
-      label: 'Skattur',
-      sum: '- 24.900 kr.',
-    },
-    {
-      label: 'Persónuafsláttur',
-      sum: '+ 32.900 kr.',
-    },
+    // {
+    //   label: 'Full upphæð aðstoðar',
+    //   sum: '+ 200.000 kr.',
+    // },
+    // {
+    //   label: 'Ofgreidd aðstoð í Feb 2021',
+    //   sum: '- 10.000 kr.',
+    // },
+    // {
+    //   label: 'Skattur',
+    //   sum: '- 24.900 kr.',
+    // },
+    // {
+    //   label: 'Persónuafsláttur',
+    //   sum: '+ 32.900 kr.',
+    // },
   ]
 
   const overview = [
@@ -52,8 +110,8 @@ const SummaryForm = () => {
       label: 'Heimili',
       url: 'heimili',
       info: form?.customAddress
-        ? 'Hafnargata 3, 220 Hafnarfjörður'
-        : form?.customHomeAddress + ', ' + form?.customPostalCode,
+        ? form?.customHomeAddress + ', ' + form?.customPostalCode
+        : 'Hafnargata 3, 220 Hafnarfjörður',
     },
     {
       label: 'Búseta',
@@ -86,49 +144,79 @@ const SummaryForm = () => {
           Yfirlit umsóknar
         </Text>
         <Text marginBottom={[3, 3, 5]}>
-          Við eigum enn eftir að klára gagnaöflun en samkvæmt því sem við vitum
-          um þig í dag getur þú miðað við:
+          <strong>Við eigum enn eftir að klára gagnaöflun</strong> en samkvæmt
+          því sem við vitum um þig í dag getur þú miðað við:
         </Text>
+
+        {data && (
+          <ContentBlock>
+            <Box marginBottom={[4, 4, 5]}>
+              <AccordionCard id="id_1" label="Bráðabirgðaútreikningur">
+                {calculation.map((item, index) => {
+                  return (
+                    <>
+                      <Box
+                        display="flex"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
+                        paddingTop={2}
+                        paddingBottom={2}
+                      >
+                        <Text variant="small">{item.label}</Text>
+                        <Text fontWeight="semiBold">{item.sum}</Text>
+                      </Box>
+
+                      <Divider />
+                    </>
+                  )
+                })}
+
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  paddingTop={2}
+                >
+                  <Text variant="small" fontWeight="semiBold">
+                    Áætluð aðstoð (hámark)
+                  </Text>
+                  <Text fontWeight="semiBold">
+                    {aidAmount !== undefined
+                      ? aidAmount?.toLocaleString('de-DE') + ' kr.'
+                      : 'Abbabb.. mistókst að reikna'}
+                  </Text>
+                </Box>
+              </AccordionCard>
+            </Box>
+          </ContentBlock>
+        )}
 
         <Divider />
 
-        <Text as="h2" variant="h5" paddingTop={[4, 4, 5]}>
-          Áætluð aðstoð
-        </Text>
+        <Box
+          display="flex"
+          alignItems="flexStart"
+          paddingY={[4, 4, 5]}
+          className={cn({
+            [`${styles.userInfoContainer}`]: true,
+          })}
+        >
+          <Box className={styles.mainInfo}>
+            <Text fontWeight="semiBold">Nafn</Text>
+            <Text marginBottom={3}>Nafn Nafnsson</Text>
 
-        <Text marginBottom={[4, 4, 5]}>
-          <strong>UPPHÆÐ kr.</strong> til útgreiðslu 2. eða 3. maí 2021
-        </Text>
-
-        <Text variant="small" marginBottom={[3, 3, 5]}>
-          Athugaðu að þetta er áætluð upphæð sem getur breyst. Þú færð svar frá
-          okkur innan þriggja vinnudaga um niðurstöðu umsóknar þinnar.
-        </Text>
-
-        <ContentBlock>
-          <Box marginBottom={[4, 4, 5]}>
-            <AccordionCard id="id_1" label="Sundurliðaður útreikningur">
-              {calculation.map((item, index) => {
-                return (
-                  <>
-                    {index !== 0 && <Divider />}
-
-                    <Box
-                      display="flex"
-                      justifyContent="spaceBetween"
-                      alignItems="center"
-                      paddingTop={2}
-                      paddingBottom={index === calculation.length - 1 ? 0 : 2}
-                    >
-                      <Text variant="small">{item.label}</Text>
-                      <Text fontWeight="semiBold">{item.sum}</Text>
-                    </Box>
-                  </>
-                )
-              })}
-            </AccordionCard>
+            <Text fontWeight="semiBold">Kennitala</Text>
+            <Text>190379-5829</Text>
           </Box>
-        </ContentBlock>
+
+          <Box className={styles.contactInfo}>
+            <Text fontWeight="semiBold">Sími</Text>
+            <Text marginBottom={3}>697-3345</Text>
+
+            <Text fontWeight="semiBold">Netfang</Text>
+            <Text>{form?.emailAddress}</Text>
+          </Box>
+        </Box>
 
         {overview.map((item, index) => {
           return (

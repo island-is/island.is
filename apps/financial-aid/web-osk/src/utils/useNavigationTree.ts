@@ -12,7 +12,7 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
         { type: 'SUB_SECTION', name: 'Heimili', url: '/umsokn/heimili' },
         { type: 'SUB_SECTION', name: 'Búseta', url: '/umsokn/buseta' },
         { type: 'SUB_SECTION', name: 'Nám', url: '/umsokn/nam' },
-        { type: 'SUB_SECTION', name: 'Staða', url: '/umsokn/stada' },
+        { type: 'SUB_SECTION', name: 'Atvinna', url: '/umsokn/atvinna' },
       ],
     },
     {
@@ -33,7 +33,7 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
           ]
         : [
             { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/tekjugogn' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
               name: 'Persónuafsláttur',
@@ -48,7 +48,7 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
     },
     {
       name: 'Samskipti',
-      url: '/umsokn/netfang',
+      url: '/umsokn/samskipti',
     },
     {
       name: 'Útreikningur',

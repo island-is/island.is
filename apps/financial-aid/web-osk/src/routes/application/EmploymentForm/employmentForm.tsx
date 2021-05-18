@@ -14,6 +14,7 @@ import * as styles from './employmentForm.treat'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import { NavigationProps } from '@island.is/financial-aid/types'
 
 const EmploymentForm = () => {
   const router = useRouter()
@@ -21,8 +22,9 @@ const EmploymentForm = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  //TODO: má ekki any hvernig er syntax?
-  const navigation: any = useFormNavigation(router.pathname)
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   const employmentOptions = [
     {
