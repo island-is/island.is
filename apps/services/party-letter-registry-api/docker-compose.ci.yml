@@ -4,7 +4,7 @@ services:
   sut:
     build:
       context: .
-      dockerfile: ../../scripts/ci/Dockerfile.test
+      dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: party_letter_registry
         APP: party-letter-registry
