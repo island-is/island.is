@@ -1,4 +1,5 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver, Args } from '@nestjs/graphql'
+import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 
@@ -10,28 +11,25 @@ import {
 } from '@island.is/auth-nest-tools'
 import { FinanceService } from '@island.is/clients/finance'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FinanceResolver {
   constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
-  async getFinanceStatus(/*@CurrentUser() user: User */ nationalID: string) {
-    // return this.FinanceService.getFinanceStatus(user.nationalId)
-    return this.FinanceService.getFinanceStatus(nationalID)
+  async getFinanceStatus(@CurrentUser() user: User) {
+    return this.FinanceService.getFinanceStatus(user.nationalId)
   }
 
   @Query(() => graphqlTypeJson)
   async getFinanceStatusDetails(
-    nationalID: string, // @CurrentUser() user: User,
-    OrgID: string,
-    chargeTypeID: string,
+    @CurrentUser() user: User,
+    @Args('input') input: GetFinancialOverviewInput,
   ) {
-    // return this.FinanceService.getFinanceStatusDetails(user.nationalId, OrgID, chargeTypeID)
     return this.FinanceService.getFinanceStatusDetails(
-      nationalID,
-      OrgID,
-      chargeTypeID,
+      user.nationalId,
+      input.OrgID,
+      input.chargeTypeID,
     )
   }
 }

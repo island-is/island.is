@@ -35,6 +35,7 @@ export class FinanceService extends RESTDataSource {
 
   async getFinanceStatus(nationalID: string): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
+      // `/customerStatusByOrganization?nationalID=${nationalID}`,
       `/customerStatusByOrganization?nationalID=${process.env.FINANCE_TEST_USER}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
@@ -49,6 +50,7 @@ export class FinanceService extends RESTDataSource {
     chargeTypeID: string,
   ): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatusDetails | null>(
+      // `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
       `/customerStatusByOrganizationDetails?nationalID=${
         process.env.FINANCE_TEST_USER
       }&OrgID=${'RIKI'}&chargeTypeID=${'AX'}`,

@@ -1,3 +1,7 @@
 export type FinanceStatus = {
-  foo: string;
+  foo: string
+}
+
+export type FinanceStatusDetails = {
+  foo: string
 }
