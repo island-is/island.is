@@ -7,6 +7,10 @@ import { Text, Page, Box, LoadingIcon, Stack } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
 
 import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+} from '@island.is/application/core'
 
 export const AssignApplication = () => {
   const location = useLocation()
@@ -18,7 +22,10 @@ export const AssignApplication = () => {
     { loading, error: assignApplicationError },
   ] = useMutation(ASSIGN_APPLICATION, {
     onCompleted({ assignApplication }) {
-      history.push(`../application/${assignApplication.id}`)
+      const { id, typeId } = assignApplication
+      const applicationSlug =
+        ApplicationConfigurations[typeId as ApplicationTypes].slug
+      history.push(`../${applicationSlug}/${id}`)
     },
   })
 
