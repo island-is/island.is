@@ -9,6 +9,7 @@ import {
   CreateCaseApi,
   CreateCustodyCaseApi,
   CreateDocumentApi,
+  CreateThingbokApi,
   FetchParams,
   RequestContext,
 } from '../../gen/fetch'
@@ -23,6 +24,7 @@ const genApis = [
   CreateCaseApi,
   CreateCustodyCaseApi,
   CreateDocumentApi,
+  CreateThingbokApi,
 ]
 
 function injectAgentMiddleware(agent: Agent) {

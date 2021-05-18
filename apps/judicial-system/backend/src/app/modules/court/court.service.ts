@@ -16,10 +16,19 @@ export class CourtService {
     })
   }
 
+  createThingbok(courtCaseNumber: string, streamId: string) {
+    return this.courtClientService.createThingbok({
+      caseNumber: courtCaseNumber,
+      subject: 'Þingbók og úrskurður',
+      fileName: 'Þingbók og úrskurður.pdf',
+      streamID: streamId,
+    })
+  }
+
   uploadStream(pdf: Buffer): Promise<string> {
     return this.courtClientService.uploadStream({
       value: pdf,
-      options: { filename: 'Krafa.pdf', contentType: 'application/pdf' },
+      options: { filename: 'upload.pdf', contentType: 'application/pdf' },
     })
   }
 }
