@@ -9,11 +9,20 @@ import {
 } from '../../lib/dataSchema'
 import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
-export const PaymentPlanList = ({ application }: FieldBaseProps) => {
+export const PaymentPlanList = ({
+  application,
+  goToScreen,
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const paymentPlanList = (application.externalData as PaymentPlanExternalData)
     .paymentPlanList
-  const anwers = application.answers as PublicDebtPaymentPlan
+  const answers = application.answers as PublicDebtPaymentPlan
+
+  const handleEditPaymentPlan = (id: string) => {
+    const clickedPlanIndex = answers.paymentPlans?.map((x) => x.id).indexOf(id)
+    if (clickedPlanIndex !== undefined && clickedPlanIndex > -1 && goToScreen)
+      goToScreen(`paymentPlans[${clickedPlanIndex}]`)
+  }
 
   return (
     <Box>
@@ -21,13 +30,14 @@ export const PaymentPlanList = ({ application }: FieldBaseProps) => {
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
       {paymentPlanList?.data.map((payment, index) => {
-        const isAnswered = anwers.paymentPlans.some(
+        const isAnswered = answers.paymentPlans?.some(
           (plan) => plan.id === payment.id,
         )
         return (
           <PaymentPlanCard
             payment={payment}
             isAnswered={isAnswered}
+            onEditClick={handleEditPaymentPlan}
             key={index}
           />
         )

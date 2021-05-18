@@ -1,9 +1,10 @@
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { Payment, PaymentType } from '../../../dataProviders/tempAPITypes'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
+import * as styles from './PaymentPlanCard.treat'
 
 // TODO: Map correct type to the appropriate label
 const getPaymentTypeLabel = (type: PaymentType) =>
@@ -14,6 +15,7 @@ const getPaymentTypeLabel = (type: PaymentType) =>
 interface Props {
   payment: Payment
   isAnswered: boolean
+  onEditClick: (id: string) => void
 }
 
 const ValueLine = ({
@@ -34,7 +36,11 @@ const ValueLine = ({
 )
 
 // TODO: Arrow down icon missing
-export const PaymentPlanCard = ({ payment }: Props) => {
+export const PaymentPlanCard = ({
+  payment,
+  isAnswered,
+  onEditClick,
+}: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { formatMessage } = useLocale()
 
@@ -56,7 +62,14 @@ export const PaymentPlanCard = ({ payment }: Props) => {
           {formatMessage(getPaymentTypeLabel(payment.type))}
         </Tag>
       </Box>
-      <Text variant="h3">{payment.paymentSchedule}</Text>
+      <Text variant="h3">
+        {isAnswered && (
+          <span className={styles.titleIcon}>
+            <Icon icon="checkmark" color="mint600" size="medium" />{' '}
+          </span>
+        )}
+        {payment.paymentSchedule}
+      </Text>
       <Text lineHeight="lg">
         <span>{formatMessage(paymentPlan.labels.totalAmount)}:</span>
         <b>{` ${payment.totalAmount.toLocaleString('is-IS')} kr.`}</b>
@@ -95,15 +108,33 @@ export const PaymentPlanCard = ({ payment }: Props) => {
           ))}
         </Box>
       </AnimateHeight>
-      <Box marginTop={2}>
-        <Button
-          variant="text"
-          icon={isExpanded ? 'caretUp' : 'caretDown'}
-          iconType="filled"
-          onClick={handleExpandClick}
-        >
-          {formatMessage(paymentPlan.labels.moreInfo)}
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="flexEnd"
+        marginTop={isAnswered ? 0 : 2}
+      >
+        <div>
+          <Button
+            variant="text"
+            icon={isExpanded ? 'caretUp' : 'caretDown'}
+            iconType="outline"
+            onClick={handleExpandClick}
+          >
+            {formatMessage(paymentPlan.labels.moreInfo)}
+          </Button>
+        </div>
+        {isAnswered && (
+          <Button
+            variant="ghost"
+            icon="pencil"
+            iconType="outline"
+            size="small"
+            onClick={onEditClick.bind(null, payment.id)}
+          >
+            {formatMessage(paymentPlan.labels.editPaymentPlan)}
+          </Button>
+        )}
       </Box>
     </Box>
   )

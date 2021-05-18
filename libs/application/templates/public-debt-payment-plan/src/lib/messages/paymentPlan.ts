@@ -58,5 +58,10 @@ export const paymentPlan = {
       defaultMessage: `Kostnaður`,
       description: `Expense label`,
     },
+    editPaymentPlan: {
+      id: `${t}:section.paymentPlan.editPaymentPlan`,
+      defaultMessage: `Breyta greiðsludreifingu`,
+      description: `Edit payment plan label`,
+    },
   }),
 }

@@ -38,7 +38,7 @@ const buildPaymentPlanStep = (index: number): CustomField[] => [
       (externalData.paymentPlanList?.data as any)[index] !== undefined,
   }),
   buildCustomField({
-    id: `paymentPlan[${index}]`,
+    id: `paymentPlans[${index}]`,
     title: 'Payment Plan',
     component: 'PaymentPlan',
     defaultValue: index,
