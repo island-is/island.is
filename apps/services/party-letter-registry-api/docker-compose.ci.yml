@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: ../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: party_letter_registry
+        APP: party-letter-registry
+    networks:
+      - local
+    depends_on:
+      - party_letter_registry
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=party_letter_registry
+    volumes:
+      - ../..:/code
+
+  party_letter_registry:
+    ports: []

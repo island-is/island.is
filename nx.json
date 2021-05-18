@@ -522,6 +522,9 @@
     "services-temporary-voter-registry-api": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-user-profile": {
       "tags": []
     },
