@@ -1,26 +1,28 @@
-import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import * as styles from './AppealSection.treat'
+import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
+import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
+import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
+import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
+import { useEffectOnce } from 'react-use'
+import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 
 interface Props {
   rulingDate: string
   accusedGender: CaseGender
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  handleAccusedAppeal: () => void
-  handleProsecutorAppeal: () => void
+  handleAccusedAppeal: (date?: Date) => void
+  handleProsecutorAppeal: (date?: Date) => void
+  handleAccusedAppealDismissal?: () => void
+  handleProsecutorAppealDismissal?: () => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
 }
@@ -35,12 +37,15 @@ const AppealSection: React.FC<Props> = (props) => {
     prosecutorPostponedAppealDate,
     handleAccusedAppeal,
     handleProsecutorAppeal,
+    handleAccusedAppealDismissal,
+    handleProsecutorAppealDismissal,
   } = props
 
-  const appealDateVariants = {
-    visible: { y: 0, opacity: 1 },
-    hidden: { y: 60, opacity: 0 },
-  }
+  const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
+
+  useEffectOnce(() => {
+    setIsInitialMount(false)
+  })
 
   return (
     <>
@@ -52,81 +57,55 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <div className={styles.buttonContainer}>
-        <AnimatePresence>
-          {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-            !accusedPostponedAppealDate && (
-              <motion.div
-                key="prosecutorAppealButton"
-                className={styles.prosecutorAppealButton}
-                initial={false}
-                exit={{ y: 50, opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Button size="small" onClick={handleAccusedAppeal}>
-                  {`${capitalize(
-                    formatAccusedByGender(accusedGender),
-                  )} kærir úrskurðinn`}
-                </Button>
-              </motion.div>
-            )}
-        </AnimatePresence>
-
-        <motion.div
-          variants={appealDateVariants}
-          animate={
-            accusedPostponedAppealDate
-              ? appealDateVariants.visible
-              : appealDateVariants.hidden
-          }
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
-          <InfoBox
-            text={`${capitalize(
-              formatAccusedByGender(accusedGender),
-            )} hefur kært úrskurðinn ${formatDate(
-              accusedPostponedAppealDate,
-              'PPPp',
-            )}`}
-            fluid
-          />
-        </motion.div>
+      <div className={styles.appealContainer}>
+        <BlueBox height={120}>
+          <AnimatePresence>
+            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+              !accusedPostponedAppealDate && (
+                <AccusedAppealDatePicker
+                  handleAccusedAppeal={handleAccusedAppeal}
+                  accusedGender={accusedGender}
+                  isInitialMount={isInitialMount}
+                />
+              )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+              accusedPostponedAppealDate && (
+                <AccusedAppealInfo
+                  accusedGender={accusedGender}
+                  handleAccusedAppealDismissal={handleAccusedAppealDismissal}
+                  accusedPostponedAppealDate={accusedPostponedAppealDate}
+                />
+              )}
+          </AnimatePresence>
+        </BlueBox>
       </div>
-      <div className={styles.buttonContainer}>
-        <AnimatePresence>
-          {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
-            !prosecutorPostponedAppealDate && (
-              <motion.div
-                key="prosecutorAppealButton"
-                className={styles.prosecutorAppealButton}
-                initial={false}
-                exit={{ y: 50, opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Button size="small" onClick={handleProsecutorAppeal}>
-                  Sækjandi kærir úrskurðinn
-                </Button>
-              </motion.div>
-            )}
-        </AnimatePresence>
 
-        <motion.div
-          variants={appealDateVariants}
-          animate={
-            prosecutorPostponedAppealDate
-              ? appealDateVariants.visible
-              : appealDateVariants.hidden
-          }
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <InfoBox
-            text={`Sækjandi hefur kært úrskurðinn ${formatDate(
-              prosecutorPostponedAppealDate,
-              'PPPp',
-            )}`}
-            fluid
-          />
-        </motion.div>
+      <div className={styles.appealContainer}>
+        <BlueBox height={120}>
+          <AnimatePresence>
+            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+              !prosecutorPostponedAppealDate && (
+                <ProsecutorAppealDatePicker
+                  handleProsecutorAppeal={handleProsecutorAppeal}
+                  isInitialMount={isInitialMount}
+                />
+              )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+              prosecutorPostponedAppealDate && (
+                <ProsecutorAppealInfo
+                  prosecutorPostponedAppealDate={prosecutorPostponedAppealDate}
+                  handleProsecutorAppealDismissal={
+                    handleProsecutorAppealDismissal
+                  }
+                />
+              )}
+          </AnimatePresence>
+        </BlueBox>
       </div>
     </>
   )

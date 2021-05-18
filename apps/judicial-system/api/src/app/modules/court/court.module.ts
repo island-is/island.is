@@ -20,6 +20,8 @@ import { CourtService } from './court.service'
       clientCert: environment.xRoad.clientCert,
       clientKey: environment.xRoad.clientKey,
       clientCa: environment.xRoad.clientCa,
+      username: environment.courtService.username,
+      password: environment.courtService.password,
     }),
   ],
   providers: [CourtResolver, CourtService],

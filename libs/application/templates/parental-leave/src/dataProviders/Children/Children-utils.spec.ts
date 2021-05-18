@@ -8,18 +8,18 @@ import {
 } from './Children-utils'
 
 import {
-  ChildInformation,
+  ChildInformationWithoutRights,
   PregnancyStatus,
-  ChildrenAndExistingApplications,
+  ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 
 let id = 0
 
 const PRIMARY_PARENT_ID = '0101302129'
 
-const createApplicationWithChildren = (
+const createApplicationWithChildrenWithoutRights = (
   applicant: string,
-  children: ChildInformation[],
+  children: ChildInformationWithoutRights[],
   selectedChildIndex: number,
   state = '',
 ): Application => {
@@ -52,7 +52,7 @@ describe('getChildrenAndExistingApplications', () => {
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus = undefined
 
-    const expected: ChildrenAndExistingApplications = {
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
       children: [],
       existingApplications: [],
     }
@@ -67,7 +67,7 @@ describe('getChildrenAndExistingApplications', () => {
   })
 
   it('should return child as existing application if already as applicant', () => {
-    const children: ChildInformation[] = [
+    const children: ChildInformationWithoutRights[] = [
       {
         expectedDateOfBirth: '2020-10-10',
         parentalRelation: 'primary',
@@ -75,7 +75,11 @@ describe('getChildrenAndExistingApplications', () => {
     ]
 
     const applicationsWhereApplicant: Application[] = [
-      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+      createApplicationWithChildrenWithoutRights(
+        PRIMARY_PARENT_ID,
+        children,
+        0,
+      ),
     ]
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus = undefined
@@ -84,7 +88,7 @@ describe('getChildrenAndExistingApplications', () => {
       applicationsWhereApplicant,
     )
 
-    const expected: ChildrenAndExistingApplications = {
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
       children: [],
       existingApplications: expectedExistingApplications,
     }
@@ -100,7 +104,7 @@ describe('getChildrenAndExistingApplications', () => {
   })
 
   it('should return child as secondary parental relation when listed as other parent in a primary parents application', () => {
-    const children: ChildInformation[] = [
+    const children: ChildInformationWithoutRights[] = [
       {
         expectedDateOfBirth: '2020-10-10',
         parentalRelation: 'primary',
@@ -109,19 +113,24 @@ describe('getChildrenAndExistingApplications', () => {
 
     const applicationsWhereApplicant: Application[] = []
     const applicationsWhereOtherParent: Application[] = [
-      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+      createApplicationWithChildrenWithoutRights(
+        PRIMARY_PARENT_ID,
+        children,
+        0,
+      ),
     ]
     const pregnancyStatus = undefined
 
-    const expectedChildren: ChildInformation[] = [
+    const expectedChildren: ChildInformationWithoutRights[] = [
       {
         ...children[0],
         parentalRelation: 'secondary',
         primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
+        transferredDays: 0,
       },
     ]
 
-    const expected: ChildrenAndExistingApplications = {
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
       children: expectedChildren,
       existingApplications: [],
     }
@@ -144,14 +153,14 @@ describe('getChildrenAndExistingApplications', () => {
       expectedDateOfBirth: '2021-05-10',
     }
 
-    const expectedChildren: ChildInformation[] = [
+    const expectedChildren: ChildInformationWithoutRights[] = [
       {
         parentalRelation: 'primary',
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
       },
     ]
 
-    const expected: ChildrenAndExistingApplications = {
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
       children: expectedChildren,
       existingApplications: [],
     }
@@ -167,15 +176,19 @@ describe('getChildrenAndExistingApplications', () => {
   })
 
   it('should not duplicate expected date of birth in in result.children and result.existingApplications when primary parent has already applied for her unborn child', () => {
-    const childFromPregnancyStatus: ChildInformation = {
+    const childFromPregnancyStatus: ChildInformationWithoutRights = {
       expectedDateOfBirth: '2021-05-10',
       parentalRelation: 'primary',
     }
 
-    const children: ChildInformation[] = [childFromPregnancyStatus]
+    const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
 
     const applicationsWhereApplicant: Application[] = [
-      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+      createApplicationWithChildrenWithoutRights(
+        PRIMARY_PARENT_ID,
+        children,
+        0,
+      ),
     ]
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus: PregnancyStatus = {
@@ -183,7 +196,7 @@ describe('getChildrenAndExistingApplications', () => {
       expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
     }
 
-    const expected: ChildrenAndExistingApplications = {
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
       children: [],
       existingApplications: [
         {
