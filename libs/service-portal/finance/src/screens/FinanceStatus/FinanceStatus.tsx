@@ -12,6 +12,7 @@ import {
   Button,
   DropdownMenu,
   SkeletonLoader,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -35,14 +36,13 @@ const GetFinanceStatusDetailsQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  console.log('kennitala:: ', userInfo.profile.nationalId)
   const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery, {
     variables: {
-      nationalID: '2704685439', //userInfo.profile.nationalId
+      nationalID: '2704685439',
     },
   })
   const financeStatusData: FinanceStatusDataType =
@@ -54,7 +54,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const financeStatusDetails: FinanceStatusDetailsType =
     detailsQuery.data?.getFinanceStatusDetails || {}
-  console.log({ financeStatusDetails })
 
   const currencyKr = (kr: number) =>
     typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
@@ -79,90 +78,100 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           </Column>
         </Columns>
         <Box marginTop={[3, 4, 4, 4, 5]}>
-          <Columns space="p2" align="right">
-            <Column width="content">
-              <Button
-                colorScheme="default"
-                icon="documents" // Need to add Printer
-                iconType="filled"
-                onClick={function noRefCheck() {}}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                Prenta
-              </Button>
-            </Column>
-            <Column width="content">
-              <Box className={styles.buttonWrapper}>
-                <DropdownMenu
-                  icon="ellipsisVertical" // Need to add ellipsisHorizontal
-                  menuLabel="Fleiri möguleikar"
-                  items={[
-                    {
-                      href: '#',
-                      title: 'Staða í lok árs ...',
-                    },
-                    {
-                      href: '#',
-                      title: 'Sækja sem PDF',
-                    },
-                    {
-                      onClick: function noRefCheck() {},
-                      title: 'Sækja sem Excel',
-                    },
-                  ]}
-                  title="Meira"
-                />
-              </Box>
-            </Column>
-          </Columns>
-          {loading ? (
+          {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
-          ) : null}
-          {financeStatusData?.organizations?.length > 0 ? (
-            <Box marginTop={2}>
-              <T.Table>
-                <ExpandHeader
-                  data={['Gjaldflokkur / stofnun', 'Umsjónarmaður', 'Staða']}
-                />
-                <T.Body>
-                  {financeStatusData.organizations.map(
-                    (org: FinanceStatusOrganizationType) =>
-                      org.chargeTypes.map((chargeType) => (
-                        <ExpandRow
-                          key={chargeType.id}
-                          onExpandCallback={() =>
-                            getDetailsQuery({
-                              variables: {
-                                nationalID: '2704685439', //userInfo.profile.nationalId
-                                OrgID: org.id,
-                                chargeTypeID: chargeType.id,
-                              },
-                            })
-                          }
-                          data={[
-                            chargeType.name,
-                            org.name,
-                            currencyKr(chargeType.totals),
-                          ]}
-                        >
-                          {financeStatusDetails?.chargeItemSubjects?.length >
-                          0 ? (
-                            <FinanceStatusDetailTable
-                              organization={org}
-                              financeStatusDetails={financeStatusDetails}
-                            />
-                          ) : null}
-                        </ExpandRow>
-                      )),
-                  )}
-                </T.Body>
-              </T.Table>
+          )}
+          {financeStatusData?.message && (
+            <Box paddingY={2}>
+              <AlertBanner
+                description={financeStatusData?.message}
+                variant="warning"
+              />
             </Box>
+          )}
+          {financeStatusData?.organizations?.length > 0 ? (
+            <>
+              <Columns space="p2" align="right">
+                <Column width="content">
+                  <Button
+                    colorScheme="default"
+                    icon="documents" // Need to add Printer
+                    iconType="filled"
+                    onClick={function noRefCheck() {}}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    Prenta
+                  </Button>
+                </Column>
+                <Column width="content">
+                  <Box className={styles.buttonWrapper}>
+                    <DropdownMenu
+                      icon="ellipsisVertical" // Need to add ellipsisHorizontal
+                      menuLabel="Fleiri möguleikar"
+                      items={[
+                        {
+                          href: '#',
+                          title: 'Staða í lok árs ...',
+                        },
+                        {
+                          href: '#',
+                          title: 'Sækja sem PDF',
+                        },
+                        {
+                          onClick: function noRefCheck() {},
+                          title: 'Sækja sem Excel',
+                        },
+                      ]}
+                      title="Meira"
+                    />
+                  </Box>
+                </Column>
+              </Columns>
+              <Box marginTop={2}>
+                <T.Table>
+                  <ExpandHeader
+                    data={['Gjaldflokkur / stofnun', 'Umsjónarmaður', 'Staða']}
+                  />
+                  <T.Body>
+                    {financeStatusData.organizations.map(
+                      (org: FinanceStatusOrganizationType) =>
+                        org.chargeTypes.map((chargeType) => (
+                          <ExpandRow
+                            key={chargeType.id}
+                            onExpandCallback={() =>
+                              getDetailsQuery({
+                                variables: {
+                                  nationalID: '2704685439',
+                                  OrgID: org.id,
+                                  chargeTypeID: chargeType.id,
+                                },
+                              })
+                            }
+                            data={[
+                              chargeType.name,
+                              org.name,
+                              currencyKr(chargeType.totals),
+                            ]}
+                          >
+                            {financeStatusDetails?.chargeItemSubjects?.length >
+                            0 ? (
+                              <FinanceStatusDetailTable
+                                organization={org}
+                                financeStatusDetails={financeStatusDetails}
+                              />
+                            ) : null}
+                          </ExpandRow>
+                        )),
+                    )}
+                  </T.Body>
+                </T.Table>
+              </Box>
+            </>
           ) : null}
         </Box>
       </Stack>

@@ -7,6 +7,7 @@ export type FinanceStatusOrganizationChargeType = {
   totals: number
   dueTotals: number
 }
+
 export type FinanceStatusOrganizationType = {
   id: string
   name: string
@@ -21,7 +22,9 @@ export type FinanceStatusOrganizationType = {
   dueStatusTotals: number
   chargeTypes: Array<FinanceStatusOrganizationChargeType>
 }
+
 export type FinanceStatusDataType = {
+  message?: string
   timestamp: string
   principalTotals: number
   interestTotals: number
@@ -30,7 +33,7 @@ export type FinanceStatusDataType = {
   organizations: Array<FinanceStatusOrganizationType>
 }
 
-type FinanceStatusDetailsChangeItem = {
+export type FinanceStatusDetailsChangeItem = {
   chargeItemSubject: string
   timePeriod: string
   estimate: boolean
