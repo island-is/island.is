@@ -28,7 +28,6 @@ export const AssignApplication = () => {
       // fall back to application if for some reason we can not find the configuration
       const slug = getSlugFromType(typeId) || 'application'
 
-      ApplicationConfigurations[typeId as ApplicationTypes].slug
       history.push(`../${slug}/${id}`)
     },
   })
