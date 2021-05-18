@@ -35,6 +35,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
             fullName: 'Tester Testers',
             nationalId: '1234567890',
           },
+          custodyParents: ['0000000000'],
           livesWithApplicant: true,
         },
         {
@@ -49,6 +50,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
             fullName: 'Tester Testers',
             nationalId: '1234567890',
           },
+          custodyParents: ['0000000000'],
           livesWithApplicant: true,
         },
       ],
