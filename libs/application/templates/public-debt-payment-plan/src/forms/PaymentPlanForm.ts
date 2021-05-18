@@ -30,7 +30,7 @@ import { NO, YES } from '../shared/constants'
 // The payment plan step where the user sets up this individual payment plan
 const buildPaymentPlanStep = (index: number): CustomField[] => [
   buildCustomField({
-    id: `payment-plan-${index}`,
+    id: `payment-plan-list-${index}`,
     title: paymentPlan.general.pageTitle,
     component: 'PaymentPlanList',
     condition: (_formValue, externalData) =>
@@ -38,7 +38,7 @@ const buildPaymentPlanStep = (index: number): CustomField[] => [
       (externalData.paymentPlanList?.data as any)[index] !== undefined,
   }),
   buildCustomField({
-    id: `payment-plan-${index}`,
+    id: `paymentPlan[${index}]`,
     title: 'Payment Plan',
     component: 'PaymentPlan',
     defaultValue: index,
@@ -57,6 +57,9 @@ const buildPaymentPlanSteps = (): CustomField[] =>
     return [...prev, step[0], step[1]] as CustomField[]
   }, [] as CustomField[])
 
+// TODO: Data providers are not called by default on every session start
+// We need to add custom validators to ensure that the application does not
+// become stale
 export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,

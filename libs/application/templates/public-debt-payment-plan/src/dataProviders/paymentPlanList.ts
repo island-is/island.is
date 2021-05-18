@@ -3,32 +3,62 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Payment } from './tempAPITypes'
+import { Payment, PaymentChargeType, PaymentType } from './tempAPITypes'
 
 export const createPaymentsResponse = (): Payment[] => [
   {
     id: '123',
     ssn: '0123456789',
-    type: 'S',
+    type: PaymentType.S,
     paymentSchedule: 'Sektir og sakarkostnaður',
     organization: 'Skatturinn',
     totalAmount: 50000,
+    chargeTypes: [
+      {
+        id: PaymentChargeType.AB,
+        name: 'Þing og sveitasjóðsgjöld',
+        principal: 152607,
+        interest: 8829,
+        expense: 0,
+        total: 163832,
+      },
+    ],
   },
   {
     id: '321',
     ssn: '9876542310',
-    type: 'O',
+    type: PaymentType.O,
     paymentSchedule: 'Ofgreiddar bætur',
     organization: 'Skatturinn',
     totalAmount: 30000,
+    chargeTypes: [
+      {
+        id: PaymentChargeType.AB,
+        name: 'Þing og sveitasjóðsgjöld',
+        principal: 152607,
+        interest: 8829,
+        expense: 0,
+        total: 163832,
+      },
+    ],
   },
   {
     id: '222',
     ssn: '6549873210',
-    type: 'N',
+    type: PaymentType.N,
     paymentSchedule: 'Launaafdráttur',
     organization: 'Sýslumaðurinn á Norðurlandi vestra',
     totalAmount: 100000,
+    chargeTypes: [
+      {
+        id: PaymentChargeType.AB,
+        name: 'Þing og sveitasjóðsgjöld',
+        principal: 152607,
+        interest: 8829,
+        expense: 0,
+        total: 163832,
+      },
+    ],
   },
 ]
 

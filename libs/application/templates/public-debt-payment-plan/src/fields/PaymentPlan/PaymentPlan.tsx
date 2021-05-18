@@ -1,10 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/core'
 import { Text } from '@island.is/island-ui/core'
 import React from 'react'
-import {
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
-} from '../../lib/dataSchema'
+import { PaymentPlanExternalData } from '../../lib/dataSchema'
 
 export const PaymentPlan = ({ application, field, errors }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData

@@ -10,12 +10,53 @@ export const paymentPlan = {
       description: 'Payment plan page title',
     },
     pageDescription: {
-      id: `${t}:section.paymentPlan.description`,
+      id: `${t}:section.paymentPlan.pageDescription`,
       defaultMessage: `Hér gefur að líta yfirlit yfir þær
       skuldir þar sem boðið er upp á greiðsludreifingu.
       Til að ganga frá greiðsludreifingu þarf að gera
       greiðsluáætlun fyrir allar útistandandi skuldir og undirrita áætlunina rafrænt.`,
     },
   }),
-  labels: defineMessages({}),
+  labels: defineMessages({
+    sentAsAClaim: {
+      id: `${t}:section.paymentPlan.sentAsAClaim`,
+      defaultMessage: `Þessi skuld verður send sem krafa`,
+      description: 'Notes that this payment will be sent as a claim',
+    },
+    deductedFromSalary: {
+      id: `${t}:section.paymentPlan.deductedFromSalary`,
+      defaultMessage: `Þessi skuld verður dregin af launum`,
+      description: `Notes that this payment will be deducted from the user's salary`,
+    },
+    totalAmount: {
+      id: `${t}:section.paymentPlan.totalAmount`,
+      defaultMessage: `Heildarupphæð`,
+      description: `Total amount label`,
+    },
+    moreInfo: {
+      id: `${t}:section.paymentPlan.moreInfo`,
+      defaultMessage: `Nánari upplýsingar`,
+      description: `More info label`,
+    },
+    feeCategory: {
+      id: `${t}:section.paymentPlan.feeCategory`,
+      defaultMessage: `Gjaldflokkur`,
+      description: `Fee category label`,
+    },
+    principal: {
+      id: `${t}:section.paymentPlan.principal`,
+      defaultMessage: `Höfuðstóll`,
+      description: `Principal amount label`,
+    },
+    interest: {
+      id: `${t}:section.paymentPlan.interest`,
+      defaultMessage: `Vextir`,
+      description: `Interest amount label`,
+    },
+    expense: {
+      id: `${t}:section.paymentPlan.expense`,
+      defaultMessage: `Kostnaður`,
+      description: `Expense label`,
+    },
+  }),
 }
