@@ -10,6 +10,7 @@ import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
 import {
   ApplicationConfigurations,
   ApplicationTypes,
+  getSlugFromType,
 } from '@island.is/application/core'
 
 export const AssignApplication = () => {
@@ -23,16 +24,12 @@ export const AssignApplication = () => {
   ] = useMutation(ASSIGN_APPLICATION, {
     onCompleted({ assignApplication }) {
       const { id, typeId } = assignApplication
-      const applicationConfiguration =
-        ApplicationConfigurations[typeId as ApplicationTypes]
 
-      const applicationSlug =
-        applicationConfiguration !== undefined
-          ? applicationConfiguration.slug
-          : 'application' // fallback if for some reason we can not find the configuration
+      // fall back to application if for some reason we can not find the configuration
+      const slug = getSlugFromType(typeId) || 'application'
 
       ApplicationConfigurations[typeId as ApplicationTypes].slug
-      history.push(`../${applicationSlug}/${id}`)
+      history.push(`../${slug}/${id}`)
     },
   })
 
