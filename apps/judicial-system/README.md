@@ -77,9 +77,11 @@ emailOptions: {
 
 You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
 
-In addition, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
+To enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL=<prison administration email>`
 
-Finally, to write to AWS S3 you need to be authenticated against AWS.
+To enable writing to AWS S3 you need to be authenticated against AWS.
+
+Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtService` sections in `environment.ts`.
 
 ### Graphql
 

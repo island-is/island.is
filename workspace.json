@@ -5763,9 +5763,32 @@
         }
       }
     },
-    "service-portal-settings": {
-      "root": "libs/service-portal/settings",
-      "sourceRoot": "libs/service-portal/settings/src",
+    "service-portal-settings-access-control": {
+      "root": "libs/service-portal/settings/access-control",
+      "sourceRoot": "libs/service-portal/settings/access-control/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/access-control/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/access-control"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-settings-personal-information": {
+      "root": "libs/service-portal/settings/personal-information",
+      "sourceRoot": "libs/service-portal/settings/personal-information/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -5774,27 +5797,29 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/service-portal/settings/tsconfig.lib.json",
-              "libs/service-portal/settings/tsconfig.spec.json"
+              "libs/service-portal/settings/personal-information/tsconfig.lib.json",
+              "libs/service-portal/settings/personal-information/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/service-portal/settings/**/*"
+              "!libs/service-portal/settings/personal-information/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/service-portal/settings/jest.config.js",
+            "jestConfig": "libs/service-portal/settings/personal-information/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/service-portal/settings"]
+          "outputs": [
+            "coverage/libs/service-portal/settings/personal-information"
+          ]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -6958,6 +6983,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/utils/environment"]
+        }
+      }
+    },
+    "utils-shared": {
+      "root": "libs/utils/shared",
+      "sourceRoot": "libs/utils/shared/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils/shared"],
+          "options": {
+            "jestConfig": "libs/utils/shared/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

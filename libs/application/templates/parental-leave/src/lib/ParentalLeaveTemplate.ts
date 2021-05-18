@@ -135,6 +135,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+            throwOnError: true,
           },
           roles: [
             {
@@ -209,6 +210,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {
@@ -305,6 +307,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
             shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
@@ -423,6 +426,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {

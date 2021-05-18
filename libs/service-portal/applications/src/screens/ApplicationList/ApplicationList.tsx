@@ -94,7 +94,11 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                   : isCompleted
                   ? formatMessage(m.cardStatusDone)
                   : formatMessage(m.cardStatusInProgress),
-                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
+                variant: isRejected
+                  ? 'red'
+                  : isCompleted
+                  ? 'blueberry'
+                  : 'blue',
                 outlined: false,
               }}
               cta={{
