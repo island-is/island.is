@@ -1,13 +1,15 @@
 import React, { createContext, useEffect, useState } from 'react'
 
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/types'
+
 export interface Form {
   customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
-  homeCircumstances?: string
+  homeCircumstances?: HomeCircumstances
   homeCircumstancesCustom?: string
   student?: string
-  employment?: string
+  employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles?: any

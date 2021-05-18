@@ -56,7 +56,7 @@ const SummaryForm = () => {
   )
 
   const aidCalculator = (
-    homeCircumstances: string,
+    homeCircumstances: HomeCircumstances,
     aid: {
       ownApartmentOrLease: number
       withOthersOrUnknow: number
@@ -64,16 +64,16 @@ const SummaryForm = () => {
     },
   ): number => {
     switch (homeCircumstances) {
-      case 'ownPlace':
+      case 'OwnPlace':
         return aid.ownApartmentOrLease
-      case 'registeredLease':
+      case 'RegisteredLease':
         return aid.ownApartmentOrLease
-      case 'registeredWithOutLease':
+      case 'WithOthers':
         return aid.withOthersOrUnknow
-      case 'other':
+      case 'Other':
       case 'Unknown':
         return aid.withOthersOrUnknow
-      case 'withParents':
+      case 'WithParents':
         return aid.withParents
       default:
         return aid.withParents
@@ -94,22 +94,22 @@ const SummaryForm = () => {
   ) as NavigationProps
 
   const calculation = [
-    // {
-    //   label: 'Full upphæð aðstoðar',
-    //   sum: '+ 200.000 kr.',
-    // },
-    // {
-    //   label: 'Ofgreidd aðstoð í Feb 2021',
-    //   sum: '- 10.000 kr.',
-    // },
-    // {
-    //   label: 'Skattur',
-    //   sum: '- 24.900 kr.',
-    // },
-    // {
-    //   label: 'Persónuafsláttur',
-    //   sum: '+ 32.900 kr.',
-    // },
+    {
+      label: 'Full upphæð aðstoðar',
+      sum: '+ 200.000 kr.',
+    },
+    {
+      label: 'Ofgreidd aðstoð í Feb 2021',
+      sum: '- 10.000 kr.',
+    },
+    {
+      label: 'Skattur',
+      sum: '- 24.900 kr.',
+    },
+    {
+      label: 'Persónuafsláttur',
+      sum: '+ 32.900 kr.',
+    },
   ]
 
   const overview = [
@@ -130,9 +130,10 @@ const SummaryForm = () => {
     {
       label: 'Tekjur',
       url: 'tekjur',
-      info: form?.incomeFiles
-        ? 'Ég hef fengið tekjur í þessum mánuði eða síðasta'
-        : 'Ég hef ekki fengið tekjur í þessum mánuði eða síðasta',
+      info:
+        'Ég hef ' +
+        (form?.incomeFiles ? '' : 'ekki') +
+        'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       label: 'Staða',
@@ -156,7 +157,6 @@ const SummaryForm = () => {
           <strong>Við eigum enn eftir að klára gagnaöflun</strong> en samkvæmt
           því sem við vitum um þig í dag getur þú miðað við:
         </Text>
-
         {data && (
           <ContentBlock>
             <Box marginBottom={[4, 4, 5]}>
@@ -200,8 +200,13 @@ const SummaryForm = () => {
           </ContentBlock>
         )}
 
-        <Divider />
+        {loading && (
+          <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
+            <LoadingIcon animate size={50} />
+          </Box>
+        )}
 
+        <Divider />
         <Box
           display="flex"
           alignItems="flexStart"
@@ -226,7 +231,6 @@ const SummaryForm = () => {
             <Text>{form?.emailAddress}</Text>
           </Box>
         </Box>
-
         {overview.map((item, index) => {
           return (
             <>
