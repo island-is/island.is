@@ -109,5 +109,18 @@ export const is = {
   "notifications.screenTitle": "Tilkynningar",
 
   // notification detail
-  "notificationDetail.screenTitle": "Tilkynning"
+  "notificationDetail.screenTitle": "Tilkynning",
+
+  // cards
+  "applicationStatusCard.openButtonLabel": "Opna umsókn",
+  "applicationStatusCard.state": `{
+    state,
+    select,
+    draft {Drög}
+    missingInfo {Vantar gögn}
+    inReview {Í vinnslu}
+    approved {Samþykkt}
+    rejected {Hafnað}
+  }`,
+  "applicationStatusCard.noActiveApplications": "Engar virkar umsóknir"
 }

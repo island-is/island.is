@@ -91,7 +91,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           <ListItem
             title={item.senderName}
             subtitle={item.subject}
-            date={new Date()}
+            date={new Date(item.date)}
             icon={
               <Image
                 source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}

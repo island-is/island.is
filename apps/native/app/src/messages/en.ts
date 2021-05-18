@@ -107,5 +107,18 @@ export const en: TranslatedMessages = {
   "notificationDetail.screenTitle": "Notification",
 
   // document detail
-  "documentDetail.screenTitle": "Document"
+  "documentDetail.screenTitle": "Document",
+
+  // cards
+  "applicationStatusCard.openButtonLabel": "Open application",
+  "applicationStatusCard.state": `{
+    state,
+    select,
+    draft {Draft}
+    missingInfo {Missing info}
+    inReview {In review}
+    approved {Approved}
+    rejected {Rejected}
+  }`,
+  "applicationStatusCard.noActiveApplications": "No active applications"
 }

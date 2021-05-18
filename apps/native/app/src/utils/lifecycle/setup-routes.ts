@@ -92,6 +92,7 @@ export function setupRoutes() {
       },
     })
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
+    await Navigation.dismissAllModals();
     await Navigation.popToRoot('INBOX_SCREEN')
     await Navigation.push('INBOX_TAB', {
       component: {

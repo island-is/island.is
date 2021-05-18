@@ -208,39 +208,12 @@ export function TabSettings() {
             />
           }
         />
-        <PressableHighlight
-          disabled={Platform.OS !== 'android'}
-          onPress={Platform.OS === 'android' ? onLanguagePress : undefined}
-        >
+        <PressableHighlight onPress={onLanguagePress}>
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.accessibilityLayout.language',
             })}
-            accessory={
-              Platform.OS === 'android' ? (
-                <Text>{locale === 'is-IS' ? 'Íslenska' : 'English'}</Text>
-              ) : undefined
-            }
-            bottom={Platform.select({
-              ios: (
-                <SegmentedControl
-                  values={['Íslenska', 'English']}
-                  selectedIndex={locale === 'is-IS' ? 0 : 1}
-                  style={{ marginTop: 16 }}
-                  appearance={theme.isDark ? 'dark' : 'light'}
-                  onChange={(event) => {
-                    const { selectedSegmentIndex } = event.nativeEvent
-                    setLocale(selectedSegmentIndex === 0 ? 'is-IS' : 'en-US')
-                  }}
-                  activeFontStyle={{
-                    fontFamily: 'IBMPlexSans-SemiBold',
-                  }}
-                  fontStyle={{
-                    fontFamily: 'IBMPlexSans',
-                  }}
-                />
-              ),
-            })}
+            accessory={<Text>{locale === 'is-IS' ? 'Íslenska' : 'English'}</Text>}
           />
         </PressableHighlight>
       </TableViewGroup>

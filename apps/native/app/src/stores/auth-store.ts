@@ -98,6 +98,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     const authorizeResult = await authorize({
       ...appAuthConfig,
       additionalParameters: {
+        prompt: 'login',
+        prompt_delegations: 'true',
         ui_locales: preferencesStore.getState().locale,
       },
     })

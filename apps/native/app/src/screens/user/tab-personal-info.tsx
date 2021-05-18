@@ -4,7 +4,6 @@ import React from 'react'
 import { ScrollView, View } from 'react-native'
 import styled from 'styled-components/native'
 import { InfoMessage } from '../../components/info-message/info-message'
-
 import { client } from '../../graphql/client'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useAuthStore } from '../../stores/auth-store'
@@ -52,7 +51,7 @@ function Input({
   value,
   loading,
   error,
-  valueTestID
+  valueTestID,
 }: {
   label: string
   value?: string

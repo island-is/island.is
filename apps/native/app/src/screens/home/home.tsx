@@ -37,6 +37,8 @@ import { navigateToNotification } from '../../utils/deep-linking'
 import { useIntl } from '../../utils/intl'
 import { openBrowser } from '../../utils/rn-island'
 import { testIDs } from '../../utils/test-ids'
+import { ListApplicationsResponse, LIST_APPLICATIONS_QUERY } from '../../graphql/queries/list-applications.query'
+import { ApplicationsModule } from './applications-module'
 
 const { title, useNavigationTitle } = createNavigationTitle('home.screenTitle')
 
@@ -77,6 +79,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     LIST_NOTIFICATIONS_QUERY,
     { client },
   )
+
+  const applicationsRes = useQuery<ListApplicationsResponse>(
+    LIST_APPLICATIONS_QUERY,
+    { client }
+  );
 
   return (
     <>
@@ -119,18 +126,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           </SafeAreaView>
         )}
         <SafeAreaView style={{ marginHorizontal: 16 }}>
-          <Heading>
-            {intl.formatMessage({ id: 'home.applicationsStatus' })}
-          </Heading>
-          <StatusCard
-            title="Fæðingarorlof 4/6"
-            date={new Date()}
-            description="Skipting orlofstíma"
-            badge={<Badge title="Vantar gögn" />}
-            progress={66}
-            actions={[{ text: 'Opna umsókn', onPress() {
-              openBrowser('https://island.is/minarsidur', componentId)
-            } }]}
+          <ApplicationsModule
+            applications={applicationsRes.data?.applicationApplications ?? []}
+            loading={applicationsRes.loading}
+            componentId={componentId}
           />
           <Heading>{intl.formatMessage({ id: 'home.notifications' })}</Heading>
           {notificationsRes.data?.listNotifications
