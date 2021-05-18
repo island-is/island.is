@@ -323,7 +323,6 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.streetAddress,
@@ -333,7 +332,6 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.postalCode,
@@ -343,7 +341,6 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.city,
