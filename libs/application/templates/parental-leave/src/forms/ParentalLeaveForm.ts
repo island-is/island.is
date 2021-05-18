@@ -41,7 +41,6 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { Period } from '../types'
-import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
 
 const percentOptions = createRange<{ label: string; value: string }>(
   10,
@@ -107,21 +106,21 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'otherParent',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
+          condition: (answers, externalData) => {
+            const selectedChild = getSelectedChild(answers, externalData)
+
+            if (selectedChild !== null) {
+              return selectedChild.parentalRelation === 'primary'
+            }
+
+            return true
+          },
           children: [
             buildMultiField({
               id: 'otherParent',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
-
-                if (selectedChild !== null) {
-                  return selectedChild.parentalRelation === 'primary'
-                }
-
-                return true
-              },
               children: [
                 buildRadioField({
                   id: 'otherParent',
@@ -513,10 +512,12 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
               condition: (answers, externalData: ExternalData) => {
-                const data = externalData?.children
-                  ?.data as PregnancyStatusAndRightsResults
+                const selectedChild = getSelectedChild(answers, externalData)
 
-                if (!data.hasRights || data.remainingDays === 0) {
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
                   return false
                 }
 

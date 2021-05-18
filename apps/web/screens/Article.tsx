@@ -568,10 +568,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
-      <OrganizationChatPanel slugs={article.organization.map((x) => x.slug)} />
+      <OrganizationChatPanel
+        slugs={article.organization.map((x) => x.slug)}
+        pushUp={isVisible}
+      />
       <OrganizationFooter
-        theme={article.organization[0]?.slug}
-        organization={article.organization[0] as Organization}
+        organizations={article.organization as Organization[]}
       />
     </>
   )
