@@ -116,7 +116,7 @@
         "libs/application/template-loader/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
-        "libs/application/templates/children-residence-change/src/index.ts"
+        "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
@@ -130,6 +130,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/family-matters-core/*": [
+        "libs/application/templates/family-matters/core/src/*"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -140,7 +143,7 @@
         "libs/application/templates/institution-collaboration/src/index.ts"
       ],
       "@island.is/application/templates/joint-custody-agreement": [
-        "libs/application/templates/joint-custody-agreement/src/index.ts"
+        "libs/application/templates/family-matters/joint-custody-agreement/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
@@ -177,6 +180,7 @@
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
+      "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
@@ -319,8 +323,11 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
-      "@island.is/service-portal/settings": [
-        "libs/service-portal/settings/src/index.ts"
+      "@island.is/service-portal/settings/access-control": [
+        "libs/service-portal/settings/access-control/src/index.ts"
+      ],
+      "@island.is/service-portal/settings/personal-information": [
+        "libs/service-portal/settings/personal-information/src/index.ts"
       ],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
@@ -335,6 +342,7 @@
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
+      "@island.is/utils/shared": ["libs/utils/shared/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

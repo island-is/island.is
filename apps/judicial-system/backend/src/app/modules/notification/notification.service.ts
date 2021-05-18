@@ -18,15 +18,17 @@ import {
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  generateRequestPdf,
+  getRequestPdfAsString,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
+  getRequestPdfAsBuffer,
 } from '../../formatters'
 import { Case } from '../case'
+import { CourtService } from '../court'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 
@@ -40,6 +42,7 @@ export class NotificationService {
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
@@ -219,7 +222,7 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const pdf = await generateRequestPdf(existingCase)
+    const pdf = await getRequestPdfAsString(existingCase)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -242,13 +245,45 @@ export class NotificationService {
     )
   }
 
+  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
+    const pdf = await getRequestPdfAsBuffer(existingCase)
+
+    try {
+      const streamId = await this.courtService.uploadStream(pdf)
+      await this.courtService.createDocument(
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request to court', error)
+    }
+  }
+
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    const recipients = await Promise.all([
+    const notificaion = await this.notificationModel.findOne({
+      where: {
+        caseId: existingCase.id,
+        type: NotificationType.READY_FOR_COURT,
+      },
+    })
+
+    const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(existingCase),
-      this.sendReadyForCourtSmsNotificationToCourt(existingCase),
-    ])
+    ]
+
+    // TODO: Find a better place for this
+    // No need to wait
+    if (existingCase.courtCaseNumber) {
+      this.uploadRequestPdfToCourt(existingCase)
+    }
+
+    if (!notificaion) {
+      promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
+    }
+
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       existingCase.id,
@@ -324,7 +359,7 @@ export class NotificationService {
     let attachments = null
 
     if (existingCase.sendRequestToDefender) {
-      const pdf = await generateRequestPdf(existingCase)
+      const pdf = await getRequestPdfAsString(existingCase)
 
       attachments = [
         {

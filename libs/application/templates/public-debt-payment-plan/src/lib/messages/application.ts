@@ -18,9 +18,34 @@ export const application = defineMessages({
 
 // All sections in the application
 export const section = defineMessages({
-  stepOne: {
-    id: `${t}:section.stepOne`,
-    defaultMessage: 'Skref eitt',
-    description: 'Skref eitt',
+  externalData: {
+    id: `${t}:section.externalData`,
+    defaultMessage: 'Gagnaöflun',
+    description: 'External data section',
+  },
+  info: {
+    id: `${t}:section.info`,
+    defaultMessage: 'Upplýsingar',
+    description: 'Info section',
+  },
+  employer: {
+    id: `${t}:section.employer`,
+    defaultMessage: 'Launagreiðandi',
+    description: 'Employer section',
+  },
+  paymentPlan: {
+    id: `${t}:section.paymentPlan`,
+    defaultMessage: 'Greiðsludreifing',
+    description: 'Payment plan section',
+  },
+  overview: {
+    id: `${t}:section.overview`,
+    defaultMessage: 'Yfirlit og rafræn undirskrift',
+    description: 'Overview and e-signature section',
+  },
+  confirmation: {
+    id: `${t}:section.confirmation`,
+    defaultMessage: 'Staðfesting',
+    description: 'Confirmation section',
   },
 })

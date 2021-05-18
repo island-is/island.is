@@ -37,7 +37,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
   const handleRemoveContact = (index: number) => remove(index)
 
   return (
-    <Box marginTop={6}>
+    <Box marginTop={[5, 6]}>
       <Text variant="h5">
         {formatMessage(
           informationAboutInstitution.labels.informationAboutContact,

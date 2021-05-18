@@ -7,7 +7,7 @@ import isArray from 'lodash/isArray'
 import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
-import { shouldShowFormItem } from '@island.is/application/core'
+import { shouldShowFormItem } from './conditionUtils'
 import { Field, RecordObject } from '../types/Fields'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
