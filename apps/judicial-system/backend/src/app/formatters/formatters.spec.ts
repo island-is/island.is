@@ -8,7 +8,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   formatConclusion,
-  formatCourtCaseNumber,
   formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
   formatCustodyProvisions,
@@ -75,20 +74,6 @@ describe('formatCustodyProvisions', () => {
     expect(res).toBe(
       'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
-  })
-})
-
-describe('formatCourtCaseNumber', () => {
-  test('should return formatted court case number', () => {
-    // Arrange
-    const court = 'Héraðsdómur Reykjavíkur'
-    const courtCaseNumber = 'R-5/2020'
-
-    // Act
-    const res = formatCourtCaseNumber(court, courtCaseNumber)
-
-    // Assert
-    expect(res).toBe('Málsnúmer Héraðsdóms Reykjavíkur R-5/2020')
   })
 })
 
