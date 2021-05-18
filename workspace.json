@@ -6630,6 +6630,93 @@
         "docker-express": {}
       }
     },
+    "services-search-indexer": {
+      "root": "apps/services/search-indexer",
+      "sourceRoot": "apps/services/search-indexer/src",
+      "projectType": "application",
+      "prefix": "services-search-indexer",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/search-indexer",
+            "main": "apps/services/search-indexer/src/main.ts",
+            "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "config/**",
+                "input": "apps/services/search-indexer",
+                "output": "./"
+              }
+            ],
+            "webpackConfig": "apps/services/search-indexer/webpack.config.js",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/search-indexer/src/environments/environment.ts",
+                  "with": "apps/services/search-indexer/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-search-indexer:build"
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.yml up -d --build",
+            "cwd": "apps/services/search-indexer/dev-services"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts",
+              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts"
+            ],
+            "cwd": "apps/services/search-indexer",
+            "parallel": false
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/services/search-indexer/tsconfig.app.json",
+              "apps/services/search-indexer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/search-indexer/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/search-indexer/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/services/search-indexer"]
+        },
+        "docker-express": {}
+      }
+    },
     "services-user-profile": {
       "root": "apps/services/user-profile",
       "sourceRoot": "apps/services/user-profile/src",

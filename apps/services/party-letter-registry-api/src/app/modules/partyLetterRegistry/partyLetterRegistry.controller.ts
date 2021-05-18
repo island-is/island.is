@@ -13,12 +13,12 @@ import { PartyLetterRegistryService } from './partyLetterRegistry.service'
 
 @Controller('party-letter-registry')
 export class PartyLetterRegistryController {
-  constructor (
+  constructor(
     private readonly partyLetterRegistryService: PartyLetterRegistryService,
   ) {}
 
   @Get()
-  async findByOwner (
+  async findByOwner(
     @Query() { owner }: FindByOwnerDto,
   ): Promise<PartyLetterRegistry> {
     const resource = await this.partyLetterRegistryService.findByOwner(owner)
@@ -31,7 +31,7 @@ export class PartyLetterRegistryController {
   }
 
   @Post()
-  async create (@Body() input: CreateDto): Promise<PartyLetterRegistry> {
+  async create(@Body() input: CreateDto): Promise<PartyLetterRegistry> {
     return await this.partyLetterRegistryService.create(input)
   }
 }

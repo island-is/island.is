@@ -516,13 +516,13 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-search-indexer": {
+    "services-party-letter-registry-api": {
       "tags": []
     },
     "services-temporary-voter-registry-api": {
       "tags": []
     },
-    "services-party-letter-registry-api": {
+    "services-search-indexer": {
       "tags": []
     },
     "services-user-profile": {

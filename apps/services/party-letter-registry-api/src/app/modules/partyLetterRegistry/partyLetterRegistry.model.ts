@@ -26,11 +26,11 @@ export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
   @Column({
     type: DataType.CHAR(2),
     allowNull: false,
-    get () {
+    get() {
       // this adds a space cause of char 2 we remove added spaces here
-      const value: string = ((this as unknown) as Model<
-        PartyLetterRegistry
-      >).getDataValue('partyLetter' as any)
+      const value: string = ((this as unknown) as Model<PartyLetterRegistry>).getDataValue(
+        'partyLetter' as any,
+      )
       return value.trim()
     },
   })

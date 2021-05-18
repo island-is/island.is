@@ -7,21 +7,21 @@ import { CreateDto } from './dto/create.dto'
 
 @Injectable()
 export class PartyLetterRegistryService {
-  constructor (
+  constructor(
     @InjectModel(PartyLetterRegistry)
     private partyLetterRegistryModel: typeof PartyLetterRegistry,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  findByOwner (owner: string) {
+  findByOwner(owner: string) {
     this.logger.debug(`Finding party letter for owner - "${owner}"`)
     return this.partyLetterRegistryModel.findOne({
       where: { owner },
     })
   }
 
-  create (input: CreateDto) {
+  create(input: CreateDto) {
     return this.partyLetterRegistryModel
       .create(input)
       .catch((error: UniqueConstraintError) => {

@@ -8,12 +8,12 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {
-  constructor (
+  constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  createSequelizeOptions (): SequelizeModuleOptions {
+  createSequelizeOptions(): SequelizeModuleOptions {
     let config
     switch (process.env.NODE_ENV) {
       case 'test':

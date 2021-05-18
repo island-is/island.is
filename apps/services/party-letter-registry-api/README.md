@@ -1,6 +1,7 @@
-# Party letter Registry
+# Party Letter Registry
 
 ## About
+
 **This service needs to be accessed by users through another service providing appropriate authentication for getting this data**  
 The consuming application should validate that the requesting user is in managers  
 This service contains the political party letter registry.  
