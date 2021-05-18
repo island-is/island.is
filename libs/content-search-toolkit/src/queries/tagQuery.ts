@@ -9,14 +9,13 @@ export const tagQuery = (tag: elasticTagField) => ({
       bool: {
         must: [
           {
-            term: {
-              'tags.key': tag.key,
-            },
-          },
-          {
-            term: {
-              'tags.type': tag.type,
-            },
+            term: tag.key
+              ? {
+                  'tags.key': tag.key,
+                }
+              : {
+                  'tags.value': tag.value,
+                },
           },
         ],
       },
