@@ -157,7 +157,6 @@ export function buildRadioField(data: {
   title: FormText
   description?: FormText
   options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
@@ -170,15 +169,13 @@ export function buildRadioField(data: {
     description,
     defaultValue,
     options,
-    emphasize = false,
-    largeButtons = false,
+    largeButtons = true,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
     defaultValue,
-    emphasize,
     largeButtons,
     disabled,
     width,

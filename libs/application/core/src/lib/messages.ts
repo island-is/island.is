@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  buttonEdit: {
+    id: 'application.system:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit button for review screen and so on',
+  },
   externalDataTitle: {
     id: 'application.system:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
@@ -133,6 +138,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Til að halda áfram umsóknarferli þarftu að skrá þig inn.',
     description:
       'To continue the application process, you will need to sign in.',
+  },
+  radioYes: {
+    id: 'application.system:radio.option.yes',
+    defaultMessage: 'Já',
+    description: 'Yes option value',
+  },
+  radiosNo: {
+    id: 'application.system:radio.option.no',
+    defaultMessage: 'Nei',
+    description: 'No option value',
   },
 })
 

@@ -117,7 +117,6 @@ export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
   largeButtons?: boolean
 }
 

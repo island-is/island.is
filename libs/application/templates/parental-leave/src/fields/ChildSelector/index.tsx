@@ -1,10 +1,10 @@
 import React, { FC, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
+
 import {
   ApplicationConfigurations,
   FieldBaseProps,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldDescription,
@@ -12,7 +12,9 @@ import {
 } from '@island.is/shared/form-fields'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useApplicationAnswers } from '../../hooks/use-application-answers'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
@@ -20,6 +22,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const { selectedChild } = useApplicationAnswers(application)
 
   const { children, existingApplications } = get(
     application,
@@ -65,12 +68,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
               disabled={false}
               name="selectedChild"
               largeButtons={true}
-              defaultValue={
-                getValueViaPath(
-                  application.answers,
-                  'selectedChild',
-                ) as string[]
-              }
+              defaultValue={selectedChild}
               options={children.map((child, index) => ({
                 value: `${index}`,
                 label: child.expectedDateOfBirth,

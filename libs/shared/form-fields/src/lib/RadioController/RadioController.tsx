@@ -16,7 +16,7 @@ interface Option {
   excludeOthers?: boolean
 }
 interface Props {
-  defaultValue?: string[]
+  defaultValue?: any
   disabled?: boolean
   error?: string
   id: string
@@ -24,7 +24,6 @@ interface Props {
   options?: Option[]
   largeButtons?: boolean
   split?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
-  emphasize?: boolean
   onSelect?: (s: string) => void
 }
 export const RadioController: FC<Props> = ({
@@ -34,8 +33,7 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
-  largeButtons = false,
-  emphasize = false,
+  largeButtons = true,
   onSelect = () => undefined,
   split = '1/1',
 }) => {
@@ -54,8 +52,7 @@ export const RadioController: FC<Props> = ({
               key={`option-${option.value}`}
             >
               <RadioButton
-                large={largeButtons || emphasize}
-                filled={emphasize}
+                large={largeButtons}
                 tooltip={option.tooltip}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
