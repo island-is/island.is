@@ -25,7 +25,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CaseService } from '../case'
+import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
   PresignedPost,
@@ -46,6 +46,8 @@ const registrarRule = UserRole.REGISTRAR as RolesRule
 
 const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
 
+const sevenDays = 7 * 24 * 60 * 60 * 1000
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
@@ -54,6 +56,76 @@ export class FileController {
     private readonly fileService: FileService,
     private readonly caseService: CaseService,
   ) {}
+
+  private hasCaseBeenAppealed(existingCase: Case): boolean {
+    return (
+      completedCaseStates.includes(existingCase.state) &&
+      (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        Boolean(existingCase.prosecutorPostponedAppealDate) ||
+        Boolean(existingCase.accusedPostponedAppealDate))
+    )
+  }
+
+  private getAppealDate(existingCase: Case): Date {
+    // Assumption: case has been appealed and the appeal date is in the past
+
+    // If either party appealed in court, then use the ruling date
+    if (
+      existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+    ) {
+      return existingCase.rulingDate
+    }
+
+    // Otherwise, use the earliest postponed appeal date
+    const prosecutorPostponedAppealDate =
+      existingCase.prosecutorPostponedAppealDate ?? new Date()
+    const accusedPostponedAppealDate =
+      existingCase.accusedPostponedAppealDate ?? new Date()
+
+    return prosecutorPostponedAppealDate < accusedPostponedAppealDate
+      ? prosecutorPostponedAppealDate
+      : accusedPostponedAppealDate
+  }
+
+  private isLessThanSevenDaysAfterAppealDate(existingCase: Case): boolean {
+    const appealDate = this.getAppealDate(existingCase)
+
+    return Date.now() < appealDate.getTime() + sevenDays
+  }
+
+  private doesUserHavePermissionToViewCaseFiles(
+    user: User,
+    existingCase: Case,
+  ): boolean {
+    // Prosecutors have permission to view all case files
+    if (user.role === UserRole.PROSECUTOR) {
+      return true
+    }
+
+    // Judges have permission to view files of appealed cases for 7 days, and
+    // of uncompleted received cases they have been assigned to
+    if (user.role === UserRole.JUDGE) {
+      return (
+        (this.hasCaseBeenAppealed(existingCase) &&
+          this.isLessThanSevenDaysAfterAppealDate(existingCase)) ||
+        (existingCase.state === CaseState.RECEIVED &&
+          user.id === existingCase.judgeId)
+      )
+    }
+
+    // Registrars have permission to view files of appealed cases for 7 days
+    if (user.role === UserRole.REGISTRAR) {
+      return (
+        this.hasCaseBeenAppealed(existingCase) &&
+        this.isLessThanSevenDaysAfterAppealDate(existingCase)
+      )
+    }
+
+    // Other users do not have permission to view any case files
+    return false
+  }
 
   @RolesRules(prosecutorRule)
   @Post('file/url')
@@ -157,40 +229,10 @@ export class FileController {
   ): Promise<SignedUrl> {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
-    if (user.role === UserRole.JUDGE) {
-      if (existingCase.state === CaseState.RECEIVED) {
-        if (user.id !== existingCase.judgeId) {
-          throw new ForbiddenException(
-            `User ${user.id} is not the assigned judge of case ${existingCase.id}`,
-          )
-        }
-
-        // The assigned judge can get files of received cases
-      } else if (
-        !completedCaseStates.includes(existingCase.state) ||
-        (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
-          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL &&
-          !existingCase.prosecutorPostponedAppealDate &&
-          !existingCase.accusedPostponedAppealDate)
-      ) {
-        throw new ForbiddenException(
-          'Judges can only get files of appealed cases or uncompleted received cases they have been assigned to',
-        )
-      }
-    }
-
-    if (user.role === UserRole.REGISTRAR) {
-      if (
-        !completedCaseStates.includes(existingCase.state) ||
-        (existingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL &&
-          existingCase.accusedAppealDecision !== CaseAppealDecision.APPEAL &&
-          !existingCase.prosecutorPostponedAppealDate &&
-          !existingCase.accusedPostponedAppealDate)
-      ) {
-        throw new ForbiddenException(
-          'Registrars can only get files of appealed cases',
-        )
-      }
+    if (!this.doesUserHavePermissionToViewCaseFiles(user, existingCase)) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have permission to view files of case ${existingCase.id}`,
+      )
     }
 
     const file = await this.fileService.findById(id)
