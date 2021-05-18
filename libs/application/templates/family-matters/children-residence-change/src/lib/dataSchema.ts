@@ -1,22 +1,10 @@
+import {
+  validateContactInfo,
+  validateCounterParty,
+  validateTerms,
+} from '@island.is/application/templates/family-matters-core/utils/dataSchema'
 import { error } from './messages/index'
 import * as z from 'zod'
-
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
-
-const validateOptionalEmail = (value: string) => {
-  return (value && isValidEmail(value)) || value === ''
-}
-
-const validateOptionalPhoneNumber = (value: string) => {
-  return (value && value.length === 7) || value === ''
-}
-
-const validateTerms = (arrayLength: number) => {
-  return z.array(z.string()).refine((v) => v && v.length === arrayLength, {
-    params: error.validation.approveTerms,
-  })
-}
 
 enum Duration {
   Permanent = 'permanent',
@@ -28,13 +16,16 @@ export enum ApproveContract {
   No = 'no',
 }
 
-const parentContactInfo = z.object({
-  email: z.string().refine((v) => isValidEmail(v), {
-    params: error.validation.invalidEmail,
-  }),
-  phoneNumber: z.string().refine((v) => v && v.length >= 7, {
-    params: error.validation.invalidPhoneNumber,
-  }),
+const {
+  counterParty,
+  invalidEmail,
+  invalidPhoneNumber,
+  approveTerms,
+} = error.validation
+
+const parentContactInfo = validateContactInfo({
+  email: invalidEmail,
+  phone: invalidPhoneNumber,
 })
 
 export const dataSchema = z.object({
@@ -47,23 +38,19 @@ export const dataSchema = z.object({
     .refine((v) => v && v.length > 0, { params: error.validation.selectChild }),
   residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
-  counterParty: z
-    .object({
-      email: z.string().refine((v) => validateOptionalEmail(v), {
-        params: error.validation.invalidEmail,
-      }),
-      phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
-        params: error.validation.invalidPhoneNumber,
-      }),
-    })
-    .refine((v) => v.email || v.phoneNumber, {
-      params: error.validation.counterParty,
-    }),
+  counterParty: validateCounterParty({
+    email: invalidEmail,
+    phone: invalidPhoneNumber,
+    counterParty,
+  }),
   parentB: parentContactInfo,
-  approveTerms: validateTerms(2),
-  approveTermsParentB: validateTerms(2),
-  approveChildSupportTerms: validateTerms(1),
-  approveChildSupportTermsParentB: validateTerms(1),
+  approveTerms: validateTerms(2, approveTerms),
+  approveTermsParentB: validateTerms(2, approveTerms),
+  approveChildSupportTerms: validateTerms(1, approveTerms),
+  approveChildSupportTermsParentB: validateTerms(
+    1,
+    error.validation.approveTerms,
+  ),
   confirmResidenceChangeInfo: z
     .array(z.string())
     .refine((v) => v && v.length === 1, {
