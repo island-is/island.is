@@ -17,7 +17,7 @@ import isEmpty from 'lodash/isEmpty'
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
-import { NO } from '../constants'
+import { NO, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 
@@ -42,6 +42,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
       return undefined
+    }
+
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj.selfEmployed as { file: any[] }).file)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'selfEmployed.file')
     }
 
     if (isSelfEmployed === NO && isEmpty(obj?.email)) {

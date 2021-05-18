@@ -1,10 +1,14 @@
 import { DynamicModule } from '@nestjs/common'
+
 import { VMSTModule } from '@island.is/clients/vmst'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
-import { ParentalLeaveService } from './parental-leave.service'
+import {
+  ParentalLeaveService,
+  APPLICATION_ATTACHMENT_BUCKET,
+} from './parental-leave.service'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
@@ -28,7 +32,13 @@ export class ParentalLeaveModule {
         }),
         SharedTemplateAPIModule.register(config),
       ],
-      providers: [ParentalLeaveService],
+      providers: [
+        ParentalLeaveService,
+        {
+          provide: APPLICATION_ATTACHMENT_BUCKET,
+          useValue: config.attachmentBucket,
+        },
+      ],
       exports: [ParentalLeaveService],
     }
   }

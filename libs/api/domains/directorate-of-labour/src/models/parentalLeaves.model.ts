@@ -1,4 +1,5 @@
-import { Field, ObjectType, Float, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { IsOptional } from 'class-validator'
 
 import { ParentalLeaveEmployer } from './parentalLeaveEmployer.model'
 import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
@@ -12,8 +13,9 @@ export class ParentalLeave {
   @Field(() => String)
   applicant!: string
 
-  @Field(() => String)
-  otherParentId!: string
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  otherParentId?: string | null
 
   @Field(() => String)
   expectedDateOfBirth!: string
@@ -40,5 +42,6 @@ export class ParentalLeave {
   status!: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   rightsCode?: string | null
 }
