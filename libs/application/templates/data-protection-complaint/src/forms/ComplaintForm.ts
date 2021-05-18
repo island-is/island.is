@@ -585,10 +585,15 @@ export const ComplaintForm: Form = buildForm({
                   title: complaint.labels.complaintDescription,
                   component: 'ComplaintDescription',
                 }),
+                buildCustomField({
+                  id: 'complaint.documentHeading',
+                  title: complaint.labels.complaintDescription,
+                  component: 'ComplaintDocumentHeading',
+                }),
                 buildFileUploadField({
                   id: 'complaint.documents',
-                  title: complaint.labels.complaintDocumentsTitle,
-                  introduction: complaint.labels.complaintDocumentsIntroduction,
+                  title: '',
+                  introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
                   uploadHeader: complaint.labels.complaintDocumentsHeader,
                   uploadDescription:
