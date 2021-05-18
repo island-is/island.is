@@ -1,10 +1,4 @@
 export {
-  writeFile,
-  getRequestPdfAsString,
-  getRequestPdfAsBuffer,
-  getRulingPdfAsString,
-} from './pdf'
-export {
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatProsecutorCourtDateEmailNotification,
@@ -17,3 +11,6 @@ export {
   formatDefenderRevokedEmailNotification,
   stripHtmlTags,
 } from './formatters'
+export { getRequestPdfAsString, getRequestPdfAsBuffer } from './requestPdf'
+export { getRulingPdfAsString } from './rulingPdf'
+export { writeFile } from './writeFile'
