@@ -21,6 +21,7 @@ import {
   FinanceStatusDetailsType,
 } from './FinanceStatusData.types'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
+import amountFormat from '../../utils/amountFormat'
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import * as styles from './FinanceStatus.treat'
 
@@ -55,8 +56,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   const financeStatusDetails: FinanceStatusDetailsType =
     detailsQuery.data?.getFinanceStatusDetails || {}
 
-  const currencyKr = (kr: number) =>
-    typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -155,7 +154,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                             data={[
                               chargeType.name,
                               org.name,
-                              currencyKr(chargeType.totals),
+                              amountFormat(chargeType.totals),
                             ]}
                           >
                             {financeStatusDetails?.chargeItemSubjects?.length >

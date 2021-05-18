@@ -4,6 +4,7 @@ import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
+import amountFormat from '../../utils/amountFormat'
 import { Box, Text, Columns, Column } from '@island.is/island-ui/core'
 import * as styles from './FinanceStatusDetailTable.treat'
 
@@ -16,9 +17,6 @@ const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
 }) => {
-  const currencyKr = (kr: number) =>
-    typeof kr === 'number' ? `${kr.toLocaleString('de-DE')} kr.` : ''
-
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
@@ -51,11 +49,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 row.timePeriod,
                 row.dueDate,
                 row.finalDueDate,
-                currencyKr(row.principal),
-                currencyKr(row.interest),
-                currencyKr(row.cost),
-                currencyKr(row.dueTotals),
-                currencyKr(row.totals),
+                amountFormat(row.principal),
+                amountFormat(row.interest),
+                amountFormat(row.cost),
+                amountFormat(row.dueTotals),
+                amountFormat(row.totals),
               ].map((item, i) => (
                 <T.Data key={i}>
                   <Text variant="small">{item}</Text>
