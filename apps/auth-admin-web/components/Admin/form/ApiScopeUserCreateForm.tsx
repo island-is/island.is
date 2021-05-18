@@ -38,7 +38,6 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
   useEffect(() => {
     const setScopes = async () => {
       const scopes = await ResourcesService.findAllAccessControlledApiScopes()
-      console.log(scopes)
       if (scopes) {
         setAccessControlledScopes(scopes)
       }

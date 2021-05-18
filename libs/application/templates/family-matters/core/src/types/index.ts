@@ -23,6 +23,7 @@ export interface Child {
   livesWithApplicant: boolean
   fullName: string
   otherParent: Person
+  custodyParents?: string[]
 }
 
 export interface NationalRegistry extends Person {

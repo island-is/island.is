@@ -11,6 +11,8 @@ import {
   CreateCustodyCaseRequest,
   CreateDocumentApi,
   CreateDocumentData,
+  CreateThingbokApi,
+  CreateThingbokRequest,
 } from '../../gen/fetch'
 
 import { UploadStreamApi } from './uploadStreamApi'
@@ -32,6 +34,8 @@ type CreateCaseArgs = Omit<CreateCaseData, 'authenticationToken'>
 
 type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
 
+type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
+
 let authenticationToken: string
 
 export const COURT_SERVICE_OPTIONS = 'export const COURT_SERVICE_OPTIONS'
@@ -46,6 +50,7 @@ export class CourtClientService {
     private readonly createCustodyCaseApi: CreateCustodyCaseApi,
     private readonly createCaseApi: CreateCaseApi,
     private readonly createDocumentApi: CreateDocumentApi,
+    private readonly createThingbokApi: CreateThingbokApi,
     private readonly uploadStreamApi: UploadStreamApi,
     @Inject(COURT_SERVICE_OPTIONS)
     private readonly options: CourtServiceOptions,
@@ -117,6 +122,15 @@ export class CourtClientService {
           ...args,
           authenticationToken,
         },
+      }),
+    )
+  }
+
+  createThingbok(args: CreateThingbokArgs): Promise<string> {
+    return this.wrappedRequest(() =>
+      this.createThingbokApi.createThingbok({
+        ...args,
+        authenticationToken,
       }),
     )
   }

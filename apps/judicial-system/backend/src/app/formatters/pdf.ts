@@ -31,15 +31,33 @@ import {
   formatCustodyProvisions,
 } from './formatters'
 
+function setPageNumbers(doc: PDFKit.PDFDocument) {
+  const pages = doc.bufferedPageRange()
+  for (let i = 0; i < pages.count; i++) {
+    doc.switchToPage(i)
+
+    // Set aside the margins and reset to ensure proper alignment
+    const oldMargins = doc.page.margins
+    doc.page.margins = { top: 0, bottom: 0, left: 0, right: 0 }
+    doc.text(`${i + 1}`, 0, doc.page.height - (oldMargins.bottom * 2) / 3, {
+      align: 'center',
+    })
+
+    // Reset margins
+    doc.page.margins = oldMargins
+  }
+}
+
 function constructRequestPdf(existingCase: Case) {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
       top: 40,
-      bottom: 40,
+      bottom: 60,
       left: 50,
       right: 50,
     },
+    bufferPages: true,
   })
 
   if (doc.info) {
@@ -204,7 +222,10 @@ function constructRequestPdf(existingCase: Case) {
         existingCase.prosecutor?.title || ''
       }`,
     )
-    .end()
+
+  setPageNumbers(doc)
+
+  doc.end()
   return stream
 }
 
@@ -256,10 +277,11 @@ export async function getRulingPdfAsString(
     size: 'A4',
     margins: {
       top: 40,
-      bottom: 40,
+      bottom: 60,
       left: 50,
       right: 50,
     },
+    bufferPages: true,
   })
 
   if (doc.info) {
@@ -653,7 +675,10 @@ export async function getRulingPdfAsString(
           )}.`
         : 'Þinghaldi er ekki lokið.',
     )
-    .end()
+
+  setPageNumbers(doc)
+
+  doc.end()
 
   // wait for the writing to finish
 

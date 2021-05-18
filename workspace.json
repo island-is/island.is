@@ -6986,6 +6986,27 @@
         }
       }
     },
+    "utils-shared": {
+      "root": "libs/utils/shared",
+      "sourceRoot": "libs/utils/shared/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils/shared"],
+          "options": {
+            "jestConfig": "libs/utils/shared/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "web": {
       "root": "apps/web",
       "sourceRoot": "apps/web",
