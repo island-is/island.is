@@ -11,6 +11,7 @@ import { ApiScopeStep } from '../../../entities/common/ApiScopeStep'
 import ApiScopeUserClaimsForm from '../../../components/Resource/forms/ApiScopeUserClaimsForm'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import LocalizationUtils from '../../../utils/localization.utils'
+import ApiScopeResourceForm from './../../../components/Resource/forms/ApiScopeResourceForm'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -109,6 +110,24 @@ const Index: React.FC = () => {
               handleNext={handleNext}
               handleBack={handleBack}
               handleNewClaimsAdded={refreshClaims}
+            />
+          </ApiScopeStepNav>
+        </ContentWrapper>
+      )
+    }
+
+    case ApiScopeStep.ApiResource: {
+      return (
+        <ContentWrapper>
+          <ResourcesTabsNav />
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiScopeResourceForm
+              apiScope={apiScope}
+              handleSave={handleNext}
+              handleCancel={handleBack}
             />
           </ApiScopeStepNav>
         </ContentWrapper>
