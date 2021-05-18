@@ -162,7 +162,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               {showTimeline ? (
                 <RegulationTimeline regulation={regulation} texts={texts} />
               ) : (
-                <RegulationChangelog regulation={regulation} texts={texts} />
+                <RegulationChangelog
+                  key={regulation.name}
+                  regulation={regulation}
+                  texts={texts}
+                />
               )}
               <button
                 onClick={() => setShowTimeline(!showTimeline)}

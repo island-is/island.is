@@ -37,7 +37,7 @@ export const RegulationTimeline = (props: RegulationTimelineProps) => {
       {renderOriginalVersion()}
       {renderPastEffects()}
       {renderCurrentVersion()}
-      {hasFutureEffects > 0 && renderFutureSplitter()}
+      {hasFutureEffects && renderFutureSplitter()}
       {renderFutureEffects()}
     </RegulationsSidebarBox>
   )

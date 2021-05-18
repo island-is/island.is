@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import * as s from './RegulationsSidebarBox.treat'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
@@ -21,6 +21,8 @@ import {
 } from './regulationUtils'
 
 type Effects = Array<RegulationHistoryItem>
+
+const CHANGELOG_COLLAPSE_LIMIT = 10
 
 export const useRegulationEffectPrepper = (
   props: RegulationChangelogProps,
@@ -59,6 +61,13 @@ export const useRegulationEffectPrepper = (
     }
   }, [regulation, today])
 
+  const [expanded, setExpanded] = useState(
+    () => effects.past.length < CHANGELOG_COLLAPSE_LIMIT,
+  )
+  useEffect(() => {
+    setExpanded(effects.past.length < CHANGELOG_COLLAPSE_LIMIT)
+  }, [effects])
+
   const isItemCurrent = (itemDate: ISODate) =>
     (regulation.timelineDate ||
       (!isViewingCurrent && regulation.lastAmendDate)) === itemDate
@@ -90,10 +99,15 @@ export const useRegulationEffectPrepper = (
     )
   }
 
-  const renderEffects = (effects: Effects) => {
+  const renderEffects = (effects: Effects, collapse?: boolean) => {
+    const effectList =
+      !collapse || expanded
+        ? effects
+        : effects.slice(0, Math.max(CHANGELOG_COLLAPSE_LIMIT - 3, 1))
+
     return (
       <>
-        {effects.map((item, i) => {
+        {effectList.map((item, i) => {
           const name = prettyName(item.name)
 
           const label = interpolate(
@@ -123,6 +137,15 @@ export const useRegulationEffectPrepper = (
             </RegulationsSidebarLink>
           )
         })}
+        {collapse && !expanded && (
+          <button
+            type="button"
+            className={s.showAllChanges}
+            onClick={() => setExpanded(true)}
+          >
+            {txt('historyExpand', 'Sýna allar breytingar')}
+          </button>
+        )}
       </>
     )
   }
@@ -146,7 +169,8 @@ export const useRegulationEffectPrepper = (
     isItemCurrent,
     renderOriginalVersion,
     renderPastSplitter,
-    renderPastEffects: () => renderEffects(effects.past),
+    renderPastEffects: (collapse?: boolean) =>
+      renderEffects(effects.past, collapse),
     renderCurrentVersion,
     renderFutureSplitter,
     renderFutureEffects: () => renderEffects(effects.future),
@@ -187,7 +211,7 @@ export const RegulationChangelog = (props: RegulationChangelogProps) => {
       {renderFutureEffects()}
 
       {renderPastSplitter()}
-      {renderPastEffects()}
+      {renderPastEffects(true)}
       {renderOriginalVersion()}
     </RegulationsSidebarBox>
   )
