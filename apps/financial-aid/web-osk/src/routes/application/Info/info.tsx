@@ -6,11 +6,18 @@ import {
   FormFooter,
   FormLayout,
   LogoHfj,
-} from '../../../components'
+} from '@island.is/financial-aid-web/osk/src/components'
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '../../../utils/formNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+
+interface ResultProps {
+  activeSectionIndex: number
+  activeSubSectionIndex?: number
+  prevUrl: string | undefined
+  nextUrl: string | undefined
+}
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -18,26 +25,24 @@ const ApplicationInfo = () => {
   const [accept, setAccept] = useState(false)
   const [error, setError] = useState(false)
 
-  const navigation = useFormNavigation({ currentId: 'approve' })
-
-  console.log(router)
-
-  // console.log(navigation)
+  //TODO: má ekki any hvernig er syntax?
+  const navigation: ResultProps = useFormNavigation(
+    router.pathname,
+  ) as ResultProps
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionNumber}>
+    <FormLayout activeSection={navigation?.activeSectionIndex}>
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Gagnaöflun
         </Text>
 
-        <Box display="flex" alignItems="center" marginBottom={3}>
+        <Box className={styles.textIconContainer} marginBottom={3}>
           <Icon
             color="blue400"
             icon="fileTrayFull"
             size="large"
             type="outline"
-            className={styles.iconMargin}
           />
 
           <Text as="h2" variant="h4">
@@ -77,10 +82,8 @@ const ApplicationInfo = () => {
             onChange={(event) => {
               if (error) {
                 setError(false)
-                setAccept(event.target.checked)
-              } else {
-                setAccept(event.target.checked)
               }
+              setAccept(event.target.checked)
             }}
             hasError={error}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}

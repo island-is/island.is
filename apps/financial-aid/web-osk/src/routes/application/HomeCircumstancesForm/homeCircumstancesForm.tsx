@@ -5,10 +5,11 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
-} from '../../../components'
+  RadioButtonContainer,
+} from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
-import useFormNavigation from '../../../utils/formNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 import * as styles from './homeCircumstancesForm.treat'
 import cn from 'classnames'
@@ -19,66 +20,55 @@ const HomeCircumstancesForm = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  const navigation = useFormNavigation({ currentId: 'homeCircumstances' })
+  //TODO: má ekki any hvernig er syntax?
+  const navigation: any = useFormNavigation(router.pathname)
 
   const options = [
     {
-      name: '',
       label: 'Ég bý í eigin húsnæði',
+      value: 'ownHouse',
     },
     {
-      name: '',
       label: 'Ég leigi með þinglýstan leigusamning',
+      value: 'rentingWithContract',
     },
     {
-      name: '',
       label: 'Ég bý eða leigi hjá öðrum án leigusamnings',
+      value: 'rentingWithOutContract',
     },
     {
-      name: '',
       label: 'Ég bý hjá foreldrum',
+      value: 'livingWithParents',
     },
     {
-      name: '',
       label: 'Ekkert að ofan lýsir mínum aðstæðum',
+      value: 'noneOfTheAbove',
     },
   ]
 
-  //homeCircumstances
-  //homeCircumstancesCustom
-
   return (
-    <FormLayout activeSection={navigation?.activeSectionNumber}>
+    <FormLayout
+      activeSection={navigation?.activeSectionIndex}
+      activeSubSection={navigation?.activeSubSectionIndex}
+    >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvernig býrðu?
         </Text>
 
-        {options.map((item, index) => {
-          return (
-            <Box
-              key={'homeCircumstancesOptions-' + index}
-              marginBottom={[2, 2, 3]}
-            >
-              <RadioButton
-                name={'homeCircumstancesOptions-' + index}
-                label={item.label}
-                value={item.label}
-                hasError={error && !form?.homeCircumstances}
-                checked={item.label === form?.homeCircumstances}
-                onChange={(event) => {
-                  //empty homecircumstance until validation
-                  updateForm({ ...form, homeCircumstances: event.target.value })
-                  if (error) {
-                    setError(false)
-                  }
-                }}
-                large
-                filled
-              />
-            </Box>
-          )
-        })}
+        <RadioButtonContainer
+          options={options}
+          error={error && !form?.homeCircumstances}
+          isChecked={(value: string | number | boolean) => {
+            return value === form?.homeCircumstances
+          }}
+          onChange={(value: string | number | boolean) => {
+            updateForm({ ...form, homeCircumstances: value })
+            if (error) {
+              setError(false)
+            }
+          }}
+        />
 
         <div
           className={cn({
@@ -96,7 +86,7 @@ const HomeCircumstancesForm = () => {
           className={cn({
             [`${styles.inputContainer}`]: true,
             [`${styles.inputAppear}`]:
-              form?.homeCircumstances === options[options.length - 1].label,
+              form?.homeCircumstances === 'noneOfTheAbove',
           })}
         >
           <Input
@@ -123,9 +113,8 @@ const HomeCircumstancesForm = () => {
         onNextButtonClick={() => {
           //Temperary error state
           //Check if any radio is checked
-          // TODO: type á homeCircumstances, ekki nota seinsta value fyrir logic
           if (form?.homeCircumstances && navigation?.nextUrl) {
-            if (form?.homeCircumstances !== options[options.length - 1].label) {
+            if (form?.homeCircumstances !== 'noneOfTheAbove') {
               //Validation
               updateForm({ ...form, homeCircumstancesCustom: '' })
               router.push(navigation?.nextUrl)

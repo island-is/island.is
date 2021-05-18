@@ -7,15 +7,15 @@ import {
   FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
+
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './studentForm.treat'
-
+import * as styles from './personalTaxCreditForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
-const StudentForm = () => {
+const PersonalTaxCreditForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
   //TODO: má ekki any hvernig er syntax?
@@ -25,11 +25,11 @@ const StudentForm = () => {
 
   const options = [
     {
-      label: 'Já',
+      label: 'Já, nýta persónuafslátt',
       value: 0,
     },
     {
-      label: 'Nei',
+      label: 'Nei, vil nota persónuafslátt í annað',
       value: 1,
     },
   ]
@@ -40,19 +40,25 @@ const StudentForm = () => {
       activeSubSection={navigation?.activeSubSectionIndex}
     >
       <FormContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
-          Ertu í námi?
+        <Text as="h1" variant="h2" marginBottom={2}>
+          Viltu nota persónuafslátt?
+        </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Lengflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn.
+          Almennt má segja að „Já“ sé besti kostur nema þú vitir sérstaklega um
+          annað sem þú vilt nýta hann í.
         </Text>
 
         <div className={styles.container}>
           <RadioButtonContainer
             options={options}
-            error={error && form?.student === undefined}
+            error={error && !form?.usePersonalTaxCredit}
             isChecked={(value: string | number | boolean) => {
-              return value === form?.student
+              return value === form?.usePersonalTaxCredit
             }}
             onChange={(value: string | number | boolean) => {
-              updateForm({ ...form, student: value })
+              updateForm({ ...form, usePersonalTaxCredit: value })
               if (error) {
                 setError(false)
               }
@@ -63,7 +69,8 @@ const StudentForm = () => {
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.student === undefined,
+            [`showErrorMessage`]:
+              error && form?.usePersonalTaxCredit === undefined,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
@@ -76,7 +83,7 @@ const StudentForm = () => {
         previousUrl={navigation?.prevUrl ?? '/'}
         nextUrl={navigation?.nextUrl ?? '/'}
         onNextButtonClick={() => {
-          if (form?.student !== undefined) {
+          if (form?.usePersonalTaxCredit !== undefined) {
             router.push(navigation?.nextUrl ?? '/')
           } else {
             setError(true)
@@ -87,4 +94,4 @@ const StudentForm = () => {
   )
 }
 
-export default StudentForm
+export default PersonalTaxCreditForm

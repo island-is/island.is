@@ -5,7 +5,8 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
-} from '../../../components'
+  RadioButtonContainer,
+} from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
@@ -13,7 +14,7 @@ import * as styles from './addressForm.treat'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'
-import useFormNavigation from '../../../utils/formNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 const AddressForm = () => {
   const router = useRouter()
@@ -21,62 +22,49 @@ const AddressForm = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  const navigation = useFormNavigation({ currentId: 'address' })
-
-  console.log(router)
+  //TODO: má ekki any hvernig er syntax?
+  const navigation: any = useFormNavigation(router.pathname)
 
   const addressOptions = [
     {
       label: 'Aðalstræti 1, 220 Hafnarfjörður',
       sublabel: 'Heimilisfang samkvæmt Þjóðskrá',
+      value: 0,
     },
     {
       label: 'Ég bý annarsstaðar',
+      value: 1,
     },
   ]
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionNumber}>
+    <FormLayout
+      activeSection={navigation?.activeSectionIndex}
+      activeSubSection={navigation?.activeSubSectionIndex}
+    >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvar býrðu?
         </Text>
-        {/* Todo: make into a reuseable compoment */}
-        {addressOptions.map((item, i) => {
-          let index = i + 1
-          return (
-            <Box
-              key={'addressOptions-' + index}
-              marginBottom={[2, 2, 3]}
-              // className={cn({
-              //   [`${styles.radioButtonContainer}`]: true
-              //   // [`${styles.radiobuttonError}`]: error && !form?.address
-              // })}
-            >
-              <RadioButton
-                name={'addressOptions-' + index}
-                label={item.label}
-                subLabel={item.sublabel}
-                value={index}
-                hasError={error && !form?.address}
-                checked={index === form?.address}
-                onChange={() => {
-                  updateForm({ ...form, address: index })
-                  if (error) {
-                    setError(false)
-                  }
-                }}
-                large
-                filled
-              />
-            </Box>
-          )
-        })}
+
+        <RadioButtonContainer
+          options={addressOptions}
+          error={error && !form?.customAddress}
+          isChecked={(value: string | number | boolean) => {
+            return value === form?.customAddress
+          }}
+          onChange={(value: string | number | boolean) => {
+            updateForm({ ...form, customAddress: value })
+            if (error) {
+              setError(false)
+            }
+          }}
+        />
 
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && !form?.address,
+            [`showErrorMessage`]: error && !form?.customAddress,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
@@ -87,7 +75,7 @@ const AddressForm = () => {
         <div
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.address === addressOptions.length,
+            [`${styles.inputAppear}`]: Boolean(form?.customAddress),
           })}
         >
           <div className={styles.homeAddress}>
@@ -125,8 +113,8 @@ const AddressForm = () => {
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
-          if (form?.address) {
-            if (form?.address !== addressOptions.length) {
+          if (form?.customAddress !== undefined) {
+            if (!Boolean(form?.customAddress)) {
               //Validation
               updateForm({
                 ...form,

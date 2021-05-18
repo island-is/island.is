@@ -5,13 +5,25 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
-} from '../../../components'
+} from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 import * as styles from './bankInfoForm.treat'
-import useFormNavigation from '../../../utils/formNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+
+interface BankOptionsProps {
+  label: string
+  id: string
+  name: string
+  placeHolder: string
+  maxLength: number
+  value: string | undefined
+  changeFunction: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+}
 
 const Form = () => {
   const router = useRouter()
@@ -19,7 +31,8 @@ const Form = () => {
   const { form, updateForm } = useContext(FormContext)
   const [error, setError] = useState(false)
 
-  const navigation = useFormNavigation({ currentId: 'bankInfo' })
+  //TODO: má ekki any hvernig er syntax?
+  const navigation: any = useFormNavigation(router.pathname)
 
   const bankOptions = [
     {
@@ -32,11 +45,9 @@ const Form = () => {
       changeFunction: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        // TODO: ekki nota any
-
         if (event.target.value.length <= event.target.maxLength) {
           updateForm({ ...form, bankNumber: event.target.value })
-          focusOnNextInput(event.target, 'ledger')
+          focusOnNextInput(event, 'ledger')
         }
       },
     },
@@ -47,9 +58,11 @@ const Form = () => {
       placeHolder: '00',
       maxLength: 2,
       value: form?.ledger,
-      changeFunction: (event: any) => {
+      changeFunction: (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      ) => {
         updateForm({ ...form, ledger: event.target.value })
-        focusOnNextInput(event.target, 'accountNumber')
+        focusOnNextInput(event, 'accountNumber')
       },
     },
     {
@@ -59,15 +72,20 @@ const Form = () => {
       placeHolder: '000000',
       maxLength: 6,
       value: form?.accountNumber,
-      changeFunction: (event: any) => {
+      changeFunction: (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      ) => {
         updateForm({ ...form, accountNumber: event.target.value })
-        focusOnNextInput(event.target, 'continueButton')
+        focusOnNextInput(event, 'continueButton')
       },
     },
   ]
-  // TODO: fix max lenght bug
-  const focusOnNextInput = (target: any, nextInputId: string) => {
-    if (target.value.length >= target.maxLength) {
+
+  const focusOnNextInput = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    nextInputId: string,
+  ) => {
+    if (event.target.value.length >= event.target.maxLength) {
       const el = document.getElementById(nextInputId)
       el?.focus()
     }
@@ -75,7 +93,7 @@ const Form = () => {
 
   const saveValue = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    fieldSettings: any,
+    fieldSettings: BankOptionsProps,
   ) => {
     if (event.target.value.length <= event.target.maxLength) {
       fieldSettings.changeFunction(event)
@@ -83,7 +101,10 @@ const Form = () => {
   }
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionNumber}>
+    <FormLayout
+      activeSection={navigation?.activeSectionIndex}
+      activeSubSection={navigation?.activeSubSectionIndex}
+    >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Bankareikningur
@@ -98,6 +119,7 @@ const Form = () => {
           {bankOptions.map((item, i) => {
             return (
               <Box
+                key={'bankInfo' + i}
                 marginBottom={[2, 2, 4]}
                 className={cn({
                   [`${styles.bankNumber}`]: i === 0,
