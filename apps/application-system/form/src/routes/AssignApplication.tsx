@@ -23,8 +23,15 @@ export const AssignApplication = () => {
   ] = useMutation(ASSIGN_APPLICATION, {
     onCompleted({ assignApplication }) {
       const { id, typeId } = assignApplication
+      const applicationConfiguration =
+        ApplicationConfigurations[typeId as ApplicationTypes]
+
       const applicationSlug =
-        ApplicationConfigurations[typeId as ApplicationTypes].slug
+        applicationConfiguration !== undefined
+          ? applicationConfiguration.slug
+          : 'application' // fallback if for some reason we can not find the configuration
+
+      ApplicationConfigurations[typeId as ApplicationTypes].slug
       history.push(`../${applicationSlug}/${id}`)
     },
   })
