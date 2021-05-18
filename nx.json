@@ -507,6 +507,9 @@
     "services-search-indexer": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-user-profile": {
       "tags": []
     },
