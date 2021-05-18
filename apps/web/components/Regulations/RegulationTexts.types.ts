@@ -4,6 +4,7 @@ export type RegulationHomeTexts = Partial<
   Record<
     | 'homeIntroLegend' // 'Reglugerðasafn'
     | 'homeIntro' // 'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.'
+    | 'homeIntroShowDetails' // 'Sjá nánar um safnið og fyrirvara'
     | 'homeIntroImageUrl' // 'https://placekitten.com/400/400'
     | 'homeIntroImageThumbnailUrl' // 'https://placekitten.com/50/50'
     | 'homeNewestRegulations' // 'Nýjustu reglugerðirnar'
@@ -59,6 +60,7 @@ export type RegulationPageTexts = Partial<
     | 'historyChange' // 'Breytt af %{name}'
     | 'historyCancel' // 'Brottfelld af %{name}'
     | 'historyCurrentVersion' // 'Núgildandi útgáfa'
+    | 'historyPastSplitter' // 'Gildandi breytingar'
     | 'historyFutureSplitter' // 'Væntanlegar breytingar'
     | 'infoboxTitle' // 'Upplýsingar'
     | 'infoboxMinistry' // 'Ráðuneyti'
