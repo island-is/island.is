@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table as T } from '@island.is/island-ui/core'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
+import FinanceTransactionsDetail from '../../components/FinanceTransactionsDetail/FinanceTransactionsDetail'
 import {
   Box,
   Text,
@@ -11,7 +12,6 @@ import {
   GridColumn,
   DatePicker,
   Select,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -85,6 +85,25 @@ const FinanceTransactions = () => {
               data={['Dagsetning', 'Tegund', 'Skýring', 'Upphæð']}
             />
             <T.Body>
+              <ExpandRow
+                data={[
+                  '07.01.2019',
+                  'Greiðslukvittun',
+                  'Sýslumaðurinn á Vesturlandi',
+                  '-',
+                ]}
+              >
+                <FinanceTransactionsDetail
+                  data={[
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
+                  ]}
+                />
+              </ExpandRow>
               <ExpandRow
                 data={[
                   '07.01.2019',
