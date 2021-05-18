@@ -20,7 +20,7 @@ export const error = {
     },
     invalidPhoneNumber: {
       id: 'jca.application:error.invalidPhoneNumber',
-      defaultMessage: 'Símanúmer þarf að vera 7 tölustafir',
+      defaultMessage: 'Símanúmer þarf að vera gilt íslenskt númer',
       description: 'Error message when phone number is invalid',
     },
     counterParty: {

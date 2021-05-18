@@ -40,15 +40,10 @@ export const parentBIntro = {
       description: 'Title for interview',
     },
     description: {
-      id: 'crc.application:section.parentBIntro.interview.description',
+      id: 'crc.application:section.parentBIntro.interview.description#markdown',
       defaultMessage:
-        'Við bendum á að alltaf er í boði að bóka viðtal hjá sýslumanni hvort sem um ágreiningsmál sé að ræða eður ei.',
+        'Við bendum á að alltaf er í boði að bóka viðtal hjá sýslumanni hvort sem um ágreiningsmál sé að ræða eður ei. [Bóka viðtal hjá sýslumanni.](https://www.syslumenn.is/timabokanir)',
       description: 'Description for interview',
-    },
-    button: {
-      id: 'crc.application:section.parentBIntro.interview.button',
-      defaultMessage: 'Bóka viðtal',
-      description: 'Button title for booking an interview',
     },
   }),
   contract: defineMessages({
