@@ -5,7 +5,6 @@ import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { NationalRegistryXRoadResolver } from './national-registry-x-road.resolver'
 import { NationalRegistryXRoadService } from './national-registry-x-road.service'
 
-// TODO Set env varibles
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 const XROAD_TJODSKRA_MEMBER_CODE = process.env.XROAD_TJODSKRA_MEMBER_CODE ?? ''
 const XROAD_TJODSKRA_API_PATH = process.env.XROAD_TJODSKRA_API_PATH ?? ''
