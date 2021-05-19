@@ -20,7 +20,7 @@ const validateOptionalPhoneNumber = (value: string) => {
 
 export const validateTerms = (
   errorMessage: MessageDescriptor,
-  arrayLength: number,
+  arrayLength?: number,
 ) => {
   const arrLength = arrayLength || 1
   return z.array(z.string()).refine((v) => v && v.length === arrLength, {
