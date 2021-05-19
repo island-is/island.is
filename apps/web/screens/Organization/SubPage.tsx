@@ -27,20 +27,17 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import {
+  lightThemes,
+  OrganizationSlice,
+  OrganizationWrapper,
+  SliceDropdown,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
-import dynamic from 'next/dynamic'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-
-const OrganizationSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
-)
-const SliceDropdown = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.SliceDropdown),
-)
 
 const { publicRuntimeConfig } = getConfig()
 
