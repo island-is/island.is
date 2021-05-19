@@ -2,7 +2,7 @@ import { getSlugFromType } from '@island.is/application/core'
 import { SendMailOptions } from 'nodemailer'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
-import { DistrictCommissionerLogo } from './consts'
+import { DistrictCommissionerLogoImg } from './consts'
 
 interface ApplicationSubmittedEmail {
   (
@@ -33,7 +33,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     : ''
   const subject = 'Afrit af samningi um breytt lögheimili barns'
   const body = `
-        <img src=${DistrictCommissionerLogo} height="78" width="246" />
+        <img src=${DistrictCommissionerLogoImg} height="78" width="246" />
 
 
         <h1>${subject}</h1>
