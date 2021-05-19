@@ -29,7 +29,7 @@ interface LatestNewsProps {
   overview?: LinkType
   parameters?: Array<string>
   readMoreText?: string
-  fullWidth: boolean
+  fullWidth?: boolean
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
