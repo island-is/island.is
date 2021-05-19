@@ -178,7 +178,9 @@ export function TabSettings() {
         })}
       >
         <TableViewCell
-          title="Use system appearance"
+          title={intl.formatMessage({
+            id: 'settings.accessibilityLayout.sytemDarkMode',
+          })}
           accessory={
             <Switch
               onValueChange={(value) => {

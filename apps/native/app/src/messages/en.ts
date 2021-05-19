@@ -33,6 +33,7 @@ export const en: TranslatedMessages = {
   "settings.infoBoxText": "Configure your app preferences",
   "settings.accessibilityLayout.groupTitle": "Layout and accessibility",
   "settings.accessibilityLayout.language": "Language",
+  "settings.accessibilityLayout.sytemDarkMode": "Use system appearance",
   "settings.accessibilityLayout.darkMode": "Dark mode",
   "settings.communication.groupTitle": "Notifications and communication",
   "settings.communication.newDocumentsNotifications": "Get notifications of new documents",
