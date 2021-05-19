@@ -6,6 +6,7 @@ import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
 import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
+import { BoxProps } from '../Box/types'
 
 export interface RadioButtonProps {
   name?: string
@@ -30,12 +31,7 @@ interface AriaError {
   'aria-describedby': string
 }
 
-interface BackgroundColorType {
-  white: 'white'
-  blue: 'blue100'
-}
-
-const backgroundColors: BackgroundColorType = {
+const backgroundColors: Record<InputBackgroundColor, BoxProps['background']> = {
   white: 'white',
   blue: 'blue100',
 }
