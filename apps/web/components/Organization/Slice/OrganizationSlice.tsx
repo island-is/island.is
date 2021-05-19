@@ -64,7 +64,7 @@ interface OrganizationSliceProps {
   organizationPageSlug?: string
 }
 
-const fullWidthSlices = ['TimelineSlice']
+const fullWidthSlices = ['TimelineSlice', 'LogoListSlice']
 const slicesWithContainer = ['LatestNewsSlice']
 
 const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
