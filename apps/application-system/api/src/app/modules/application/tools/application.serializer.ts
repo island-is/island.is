@@ -73,6 +73,9 @@ export class ApplicationSerializer
         ? intl.formatMessage(stateInfo.description)
         : null,
       name: intl.formatMessage(template.name),
+      institution: template.institution
+        ? intl.formatMessage(template.institution)
+        : null,
       progress: helper.getApplicationProgress(),
     })
 

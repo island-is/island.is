@@ -5,6 +5,11 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 export const parentalLeaveFormMessages: MessageDir = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
+    institution: {
+      id: 'pl.application:institution.name',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'Name of the institution responsible of the application',
+    },
     name: {
       id: 'pl.application:name',
       defaultMessage: 'Umsókn um fæðingarorlof',
