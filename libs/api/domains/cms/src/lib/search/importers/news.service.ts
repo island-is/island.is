@@ -46,7 +46,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
                 // add all tags as meta data to this document so we can query by it later
                 key: tag.id,
                 type: 'genericTag',
-                value: tag.title,
+                value: tag.slug,
               })),
             ],
             dateCreated: mapped.date || entry.sys.createdAt,
