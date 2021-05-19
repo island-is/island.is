@@ -38,7 +38,8 @@ export const Header: FC = () => {
       }
       authenticated={isAuthenticated}
       userName={userInfo?.profile?.name}
-      language={(lang ?? 'is') === 'is' ? 'EN' : 'IS'}
+      userAsDropdown={true}
+      language={lang}
       switchLanguage={handleSwitchLanguage}
       onLogout={signOut}
     />
