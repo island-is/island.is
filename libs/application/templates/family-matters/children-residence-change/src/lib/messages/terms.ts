@@ -24,16 +24,9 @@ export const terms = {
   residenceChangeCheckbox: defineMessages({
     label: {
       id: 'crc.application:section.effect.terms.residenceChange.label',
-      defaultMessage: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
-      description: 'Label for residence change checkbox',
-    },
-  }),
-  familySupportCheckbox: defineMessages({
-    label: {
-      id: 'crc.application:section.effect.terms.familySupport.label',
       defaultMessage:
-        'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
-      description: 'Label for family support checkbox',
+        'Ég skil að lögheimilisforeldri hefur ríkari heimildir og rétt til barnabótagreiðslna',
+      description: 'Label for residence change checkbox',
     },
   }),
 }
