@@ -91,4 +91,10 @@ export default {
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
   },
+  nationalRegistryXRoad: {
+    url: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080/r1/IS-DEV',
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '',
+    apiPath: process.env.XROAD_TJODSKRA_API_PATH ?? '',
+    clientId: process.env.XROAD_CLIENT_ID ?? '',
+  },
 }

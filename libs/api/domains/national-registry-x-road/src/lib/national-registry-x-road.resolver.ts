@@ -1,22 +1,30 @@
-import { Resolver, Query, Args } from '@nestjs/graphql'
+import { Resolver, Query } from '@nestjs/graphql'
 import { NationalRegistryXRoadService } from './national-registry-x-road.service'
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsAuthGuard,
+  IdsUserGuard,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
+import { ChildrenCustody } from '../models/ChildrenCustody'
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class NationalRegistryXRoadResolver {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  @Query(() => String, { nullable: true })
-  async getCustodyChildrenAndParents(
+  @Query(() => ChildrenCustody, { nullable: true })
+  async getChildrenCustodyAndParents(
     @CurrentUser() user: User,
   ): Promise<NationalRegistry | undefined> {
-    const bla = await this.nationalRegistryXRoadService.getCustodyChildrenAndParents(
+    return await this.nationalRegistryXRoadService.getCustodyChildrenAndParents(
       user.nationalId,
+      user.authorization,
     )
-    console.log('bla', bla)
-    return bla
   }
 }

@@ -9,22 +9,15 @@ import {
 } from '../../gen/fetch'
 
 export interface ModuleConfig {
-  token: string
   xRoadPath: string
   xRoadClient: string
 }
 
 export class TjodskraModule {
   static register(config: ModuleConfig): DynamicModule {
-    const headers = {
-      Authorization: `Bearer ${config.token}`,
-      'X-Road-Client': config.xRoadClient,
-    }
-
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
       basePath: config.xRoadPath,
-      headers,
     })
 
     const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi]

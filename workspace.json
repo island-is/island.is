@@ -1154,7 +1154,7 @@
             "jestConfig": "libs/api/domains/national-registry-x-road/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/api/domains/national-registry-x-rpad"]
+          "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
         }
       }
     },

@@ -5,27 +5,35 @@ import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { NationalRegistryXRoadResolver } from './national-registry-x-road.resolver'
 import { NationalRegistryXRoadService } from './national-registry-x-road.service'
 
-const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
-const XROAD_TJODSKRA_MEMBER_CODE = process.env.XROAD_TJODSKRA_MEMBER_CODE ?? ''
-const XROAD_TJODSKRA_API_PATH = process.env.XROAD_TJODSKRA_API_PATH ?? ''
-const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
+export interface NationalRegistryXRoadConfig {
+  xRoadBasePathWithEnv: string
+  xRoadTjodskraMemberCode: string
+  xRoadTjodskraApiPath: string
+  xRoadClientId: string
+}
 
 @Module({})
 export class NationalRegistryXRoadModule {
-  static register(): DynamicModule {
+  static register(config: NationalRegistryXRoadConfig): DynamicModule {
     return {
       module: NationalRegistryXRoadModule,
-      providers: [NationalRegistryXRoadResolver, NationalRegistryXRoadService],
+      providers: [
+        NationalRegistryXRoadResolver,
+        NationalRegistryXRoadService,
+        {
+          provide: 'Config',
+          useFactory: async () => config as NationalRegistryXRoadConfig,
+        },
+      ],
       imports: [
         TjodskraModule.register({
           xRoadPath: createXRoadAPIPath(
-            XROAD_BASE_PATH_WITH_ENV,
+            config.xRoadBasePathWithEnv,
             XRoadMemberClass.GovernmentInstitution,
-            XROAD_TJODSKRA_MEMBER_CODE,
-            XROAD_TJODSKRA_API_PATH,
+            config.xRoadTjodskraMemberCode,
+            config.xRoadTjodskraApiPath,
           ),
-          xRoadClient: XROAD_CLIENT_ID,
-          token: 'bla', // TODO Use real token
+          xRoadClient: config.xRoadClientId,
         }),
       ],
       exports: [],

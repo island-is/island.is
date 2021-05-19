@@ -1,16 +1,12 @@
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/tjodskra'
 import {
   NationalRegistry,
   Child,
 } from '@island.is/application/templates/family-matters-core/types'
-
-type TjodskraRequestParams = {
-  id: string
-  xRoadClient: string
-}
+import { NationalRegistryXRoadConfig } from '..'
 
 const handleError = (error: any) => {
   logger.error(error)
@@ -22,25 +18,25 @@ const handleError = (error: any) => {
 }
 @Injectable()
 export class NationalRegistryXRoadService {
-  constructor(private einstaklingarApi: EinstaklingarApi) {}
+  constructor(
+    private personApi: EinstaklingarApi,
+    @Inject('Config')
+    private config: NationalRegistryXRoadConfig,
+  ) {}
   async getCustodyChildrenAndParents(
     nationalId: string,
+    token: string,
   ): Promise<NationalRegistry | undefined> {
     try {
-      const requestObj: TjodskraRequestParams = {
+      const parentA = await this.personApi.einstaklingarGetEinstaklingur({
         id: nationalId,
-        xRoadClient: process.env.XROAD_CLIENT_ID ?? '',
-      }
+        xRoadClient: this.config.xRoadClientId,
+      })
 
-      const parentA = await this.einstaklingarApi.einstaklingarGetEinstaklingur(
-        requestObj,
+      const children = await this.getChildrenCustodyInformation(
+        nationalId,
+        token,
       )
-
-      console.log('parent', parentA)
-
-      const children = await this.getChildrenCustodyInformation(requestObj)
-
-      console.log('children', children)
 
       return {
         // TODO: FIX THESE UNDEFINDS AND HARD CODED VALUES IN THE RETURN VALUE
@@ -54,42 +50,54 @@ export class NationalRegistryXRoadService {
         children,
       }
     } catch (e) {
-      console.log('error', e)
       handleError(e)
     }
   }
 
+  private async getCustody(
+    parentNationalId: string,
+    token: string,
+  ): Promise<string[]> {
+    return await fetch(
+      `${this.config.xRoadBasePathWithEnv}/GOV/${this.config.xRoadTjodskraMemberCode}${this.config.xRoadTjodskraApiPath}/api/v1/einstaklingar/${parentNationalId}/forsja`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-Road-Client': this.config.xRoadClientId,
+        },
+      },
+    ).then((res) => res.json())
+  }
+
   private async getChildrenCustodyInformation(
-    requestObj: TjodskraRequestParams,
+    parentNationalId: string,
+    token: string,
   ): Promise<Child[]> {
-    let childrenNationalIds = await this.einstaklingarApi.einstaklingarGetForsja(
-      requestObj,
-    )
+    let childrenNationalIds = await this.getCustody(parentNationalId, token)
 
     let children = await Promise.all(
-      childrenNationalIds.map(async (nationalId) => {
-        return await this.einstaklingarApi.einstaklingarGetEinstaklingur({
-          id: nationalId,
-          xRoadClient: requestObj.xRoadClient,
+      childrenNationalIds.map(async (childNationalId) => {
+        return await this.personApi.einstaklingarGetEinstaklingur({
+          id: childNationalId,
+          xRoadClient: this.config.xRoadClientId,
         })
       }),
     )
-
     return await Promise.all(
       children.map(async (child) => {
-        let parents = await this.einstaklingarApi.einstaklingarGetForsjaForeldri(
-          { id: requestObj.id, barn: '', xRoadClient: requestObj.xRoadClient },
-        )
+        let parents = await this.personApi.einstaklingarGetForsjaForeldri({
+          id: parentNationalId,
+          barn: child.kennitala,
+          xRoadClient: this.config.xRoadClientId,
+        })
 
-        let parentB = await this.einstaklingarApi.einstaklingarGetEinstaklingur(
-          {
-            id: parents.find((id) => id !== requestObj.id) || null,
-            xRoadClient: requestObj.xRoadClient,
-          },
-        )
+        let parentB = await this.personApi.einstaklingarGetEinstaklingur({
+          id: parents.find((id) => id !== parentNationalId) || null,
+          xRoadClient: this.config.xRoadClientId,
+        })
 
-        let parentLegalHomeNationalId = await this.einstaklingarApi.einstaklingarGetLogforeldrar(
-          { id: child.kennitala, xRoadClient: requestObj.xRoadClient },
+        let parentLegalHomeNationalId = await this.personApi.einstaklingarGetLogforeldrar(
+          { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
         )
 
         return {
@@ -100,7 +108,9 @@ export class NationalRegistryXRoadService {
             postalCode: child.logheimili?.postnumer,
             city: child.logheimili?.stadur,
           },
-          livesWithApplicant: parentLegalHomeNationalId.includes(requestObj.id),
+          livesWithApplicant: parentLegalHomeNationalId.includes(
+            parentNationalId,
+          ),
           otherParent: {
             nationalId: parentB.kennitala,
             fullName: parentB.nafn,
