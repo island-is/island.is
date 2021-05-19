@@ -142,6 +142,7 @@
   - [UI Components](libs/application/ui-components/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
+- [Auth](libs/auth/README.md)
   - [@island.is/auth/react](libs/auth/react/README.md)
   - [Auth Scopes](libs/auth/scopes/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
@@ -192,6 +193,7 @@
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
   - [Utils Environment](libs/utils/environment/README.md)
+  - [Utils Shared](libs/utils/shared/README.md)
 
 ## Misc
 
