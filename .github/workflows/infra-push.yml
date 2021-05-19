@@ -87,18 +87,36 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       CHARTS: ${{ steps.gather_charts.outputs.CHARTS }}
+      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
     steps:
       - uses: actions/checkout@v2
       - name: Gather charts
         id: gather_charts
         run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps([os.path.splitext(f)[0] for f in os.listdir("infra/src/uber-charts/")]))')"
-  test:
+      - name: Generate docker image tag
+        id: docker_tags
+        run: |
+          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+          SHA="${{ github.event.pull_request.head.sha }}"
+          echo "SHA='$SHA' retrieved from event"
+          if [[ "$SHA" == "" ]]; then
+            SHA=$GITHUB_SHA
+            echo "SHA='$SHA', retrived from action environment"
+          fi
+          echo "Using SHA='$SHA' as docker tag sha"
+          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
+          echo "Docker tag will be ${DOCKER_TAG}"
+          echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+  test-and-build:
     runs-on: ubuntu-20.04
     needs:
       - prepare
       - pre-checks
 
     timeout-minutes: 5
+    env:
+      DOCKER_TAG: needs.prepare.outputs.CHARTS
     strategy:
       fail-fast: false
       matrix:
@@ -128,21 +146,23 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
-          docker run --rm -it
+          FEATURE_NAME=$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)
+          echo "COMMENT=$(docker run --rm -it 821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config:$DOCKER_TAG ingress-comment --images=api,web --chart=islandis --feature=$FEATURE_NAME)" >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
 
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const { COMMENT } = process.env
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
+              body: `${COMMENT}`
             })
 
   failure-notification:
