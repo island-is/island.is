@@ -53,6 +53,7 @@ export const ComplaintDescription: FC<FieldBaseProps> = ({
         rows={7}
         error={errors && getErrorViaPath(errors, `${field.id}`)}
         backgroundColor="blue"
+        required
       />
     </Box>
   )
