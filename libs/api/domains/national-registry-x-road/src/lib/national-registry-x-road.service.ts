@@ -2,11 +2,9 @@ import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/tjodskra'
-import {
-  NationalRegistry,
-  Child,
-} from '@island.is/application/templates/family-matters-core/types'
 import { NationalRegistryXRoadConfig } from '..'
+import { ChildrenCustodyResponse } from '../models/ChildrenCustodyResponse'
+import { ChildrenCustodyChild } from '../models/childrenCustodyChild'
 
 const handleError = (error: any) => {
   logger.error(error)
@@ -26,7 +24,7 @@ export class NationalRegistryXRoadService {
   async getCustodyChildrenAndParents(
     nationalId: string,
     token: string,
-  ): Promise<NationalRegistry | undefined> {
+  ): Promise<ChildrenCustodyResponse | undefined> {
     try {
       const parentA = await this.personApi.einstaklingarGetEinstaklingur({
         id: nationalId,
@@ -39,7 +37,7 @@ export class NationalRegistryXRoadService {
       )
 
       return {
-        // TODO: FIX THESE UNDEFINDS AND HARD CODED VALUES IN THE RETURN VALUE
+        // TODO: FIX THESE UNDEFINDS AND HARD CODED VALUES IN THE RETURN VALUES
         nationalId: nationalId,
         fullName: parentA.nafn,
         address: {
@@ -72,7 +70,7 @@ export class NationalRegistryXRoadService {
   private async getChildrenCustodyInformation(
     parentNationalId: string,
     token: string,
-  ): Promise<Child[]> {
+  ): Promise<ChildrenCustodyChild[]> {
     let childrenNationalIds = await this.getCustody(parentNationalId, token)
 
     let children = await Promise.all(
@@ -111,6 +109,10 @@ export class NationalRegistryXRoadService {
           livesWithApplicant: parentLegalHomeNationalId.includes(
             parentNationalId,
           ),
+          livesWithBothParents: [
+            parentNationalId,
+            parentB.kennitala,
+          ].every((id) => parentLegalHomeNationalId.includes(id)),
           otherParent: {
             nationalId: parentB.kennitala,
             fullName: parentB.nafn,

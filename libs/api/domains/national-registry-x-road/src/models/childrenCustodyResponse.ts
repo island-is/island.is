@@ -3,7 +3,7 @@ import { ChildrenCustodyAddress } from './childrenCustodyAddress'
 import { ChildrenCustodyChild } from './childrenCustodyChild'
 
 @ObjectType()
-export class ChildrenCustody {
+export class ChildrenCustodyResponse {
   @Field(() => String)
   nationalId!: string
 

@@ -7,8 +7,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
-import { ChildrenCustody } from '../models/ChildrenCustody'
+import { ChildrenCustodyResponse } from '../models/ChildrenCustodyResponse'
 import { UseGuards } from '@nestjs/common'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -18,10 +17,10 @@ export class NationalRegistryXRoadResolver {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  @Query(() => ChildrenCustody, { nullable: true })
+  @Query(() => ChildrenCustodyResponse, { nullable: true })
   async getChildrenCustodyAndParents(
     @CurrentUser() user: User,
-  ): Promise<NationalRegistry | undefined> {
+  ): Promise<ChildrenCustodyResponse | undefined> {
     return await this.nationalRegistryXRoadService.getCustodyChildrenAndParents(
       user.nationalId,
       user.authorization,

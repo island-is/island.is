@@ -12,6 +12,9 @@ export class ChildrenCustodyChild {
   @Field(() => Boolean)
   livesWithApplicant!: boolean
 
+  @Field(() => Boolean)
+  livesWithBothParents!: boolean
+
   @Field(() => ChildrenCustodyPerson)
   otherParent!: ChildrenCustodyPerson
 }
