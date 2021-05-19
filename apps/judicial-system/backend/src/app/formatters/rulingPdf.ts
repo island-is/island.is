@@ -73,7 +73,7 @@ export async function getRulingPdfAsString(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Viðstaddir', {})
+    .text('Viðstaddir')
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.courtAttendees, {
