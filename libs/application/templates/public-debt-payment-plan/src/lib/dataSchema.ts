@@ -58,8 +58,8 @@ export const PublicDebtPaymentPlanSchema = z.object({
   paymentPlans: z.array(
     z.object({
       id: z.string().nonempty(),
-      // amount: z.string(),
-      monthsTest: z.string().nonempty(),
+      amountPerMonth: z.number().optional(),
+      numberOfMonths: z.number().optional(),
     }),
   ),
 })

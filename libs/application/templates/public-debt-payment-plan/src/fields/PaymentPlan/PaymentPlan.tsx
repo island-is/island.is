@@ -1,18 +1,22 @@
-import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
 import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   PaymentPlanExternalData,
   PublicDebtPaymentPlan,
 } from '../../lib/dataSchema'
+import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
+import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
+import * as styles from './PaymentPlan.treat'
 
 type PaymentModeState = null | 'amount' | 'months'
 
+// An array might not work for this schema
+// Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const [paymentMode, setPaymentMode] = useState<PaymentModeState>(null)
@@ -22,11 +26,11 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const index = field.defaultValue as number
   const payment = externalData.paymentPlanList?.data[index]
   // Locate the index of the payment plan in answers. If none is found, use the default index
-  const answerIndex =
-    answers.paymentPlans?.findIndex(
-      (plan) => payment?.id && plan.id === payment.id,
-    ) || index
-  const entry = `paymentPlans[${answerIndex}]`
+  const answerIndex = answers.paymentPlans?.findIndex(
+    (plan) => payment?.id && plan.id === payment.id,
+  )
+  const entryIndex = answerIndex > -1 ? answerIndex : index
+  const entry = `paymentPlans[${entryIndex}]`
 
   const handleSelectPaymentMode = (mode: PaymentModeState) => {
     setPaymentMode(mode)
@@ -77,6 +81,54 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           onChange={handleSelectPaymentMode.bind(null, 'months')}
         />
       </Stack>
+      {paymentMode === 'amount' && (
+        <PlanSlider
+          id={`${entry}.amountPerMonth`}
+          minValue={30000}
+          maxValue={200000}
+          currentValue={30000}
+          multiplier={10000}
+          heading={paymentPlan.labels.chooseAmountPerMonth}
+          label={{
+            singular: 'kr.',
+            plural: 'kr.',
+          }}
+          descriptor={
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="small" fontWeight="semiBold">
+                <span>Greiðsla </span>
+                <span className={styles.valueLabel}>60.000 kr. </span>
+                <span>í 6 mánuði og </span>
+                <span className={styles.valueLabel}>45.585 kr. </span>
+                <span>á 7. mánuði.</span>
+              </Text>
+            </Box>
+          }
+        />
+      )}
+      {paymentMode === 'months' && (
+        <PlanSlider
+          id={`${entry}.numberOfMonths`}
+          minValue={1}
+          maxValue={12}
+          currentValue={12}
+          heading={paymentPlan.labels.chooseNumberOfMonths}
+          label={{
+            singular: formatMessage(shared.month),
+            plural: formatMessage(shared.months),
+          }}
+          descriptor={
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="small" fontWeight="semiBold">
+                <span>Greiðsla </span>
+                <span className={styles.valueLabel}>60.000 kr. </span>
+                <span>í 6 mánuði. Heildargreiðsla með vöxtum er </span>
+                <span className={styles.valueLabel}>45.585 kr.</span>
+              </Text>
+            </Box>
+          }
+        />
+      )}
     </div>
   )
 }
