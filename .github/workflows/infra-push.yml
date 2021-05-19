@@ -85,6 +85,8 @@ jobs:
 
   prepare:
     runs-on: ubuntu-20.04
+    needs:
+      - pre-checks
     outputs:
       CHARTS: ${{ steps.gather_charts.outputs.CHARTS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
@@ -116,7 +118,7 @@ jobs:
 
     timeout-minutes: 5
     env:
-      DOCKER_TAG: needs.prepare.outputs.CHARTS
+      DOCKER_TAG: needs.prepare.outputs.DOCKER_TAG
     strategy:
       fail-fast: false
       matrix:
