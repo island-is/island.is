@@ -32,7 +32,6 @@ const Index: React.FC = () => {
 
   const getUser = async (nationalId: string) => {
     const response = await AccessService.findOne(nationalId)
-    console.log(response)
     if (response) {
       const dto = response as ApiScopeUserDTO
       setApiScopeUser(dto)

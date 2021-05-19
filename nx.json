@@ -170,6 +170,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-family-matters-core": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -483,7 +486,10 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
@@ -548,6 +554,9 @@
       "tags": []
     },
     "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {

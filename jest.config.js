@@ -134,7 +134,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/finance',
     '<rootDir>/libs/service-portal/graphql',
     '<rootDir>/libs/service-portal/health',
-    '<rootDir>/libs/service-portal/settings',
+    '<rootDir>/libs/service-portal/settings/personal-information',
     '<rootDir>/libs/shared/babel',
     '<rootDir>/libs/shared/connected',
     '<rootDir>/libs/shared/constants',
@@ -146,6 +146,7 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
+    '<rootDir>/libs/utils/shared',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/zendesk',
@@ -154,5 +155,6 @@ module.exports = {
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
+    '<rootDir>/libs/service-portal/settings/access-control',
   ],
 }

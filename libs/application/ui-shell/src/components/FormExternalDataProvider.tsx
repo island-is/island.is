@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen } from '../types'
+import { useMutation } from '@apollo/client'
+import { Controller, useFormContext } from 'react-hook-form'
+import Markdown from 'markdown-to-jsx'
+
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Icon,
@@ -16,14 +20,13 @@ import {
   coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
-import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 
+import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
-import Markdown from 'markdown-to-jsx'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -45,14 +48,17 @@ const ProviderItem: FC<{
       )}
 
       {provider.type && dataProviderResult?.status === 'failure' && (
-        <InputError
-          errorMessage={
-            typeof dataProviderResult?.reason === 'object'
-              ? formatMessage(dataProviderResult?.reason)
-              : dataProviderResult?.reason
-          }
-          id={provider.id}
-        />
+        <Box marginTop={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            message={
+              typeof dataProviderResult?.reason === 'object'
+                ? formatMessage(dataProviderResult?.reason)
+                : dataProviderResult?.reason
+            }
+          />
+        </Box>
       )}
     </Box>
   )
