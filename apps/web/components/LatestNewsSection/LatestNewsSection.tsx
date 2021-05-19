@@ -29,6 +29,7 @@ interface LatestNewsProps {
   overview?: LinkType
   parameters?: Array<string>
   readMoreText?: string
+  fullWidth: boolean
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
@@ -39,6 +40,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   overview = 'newsoverview',
   parameters = [],
   readMoreText = '',
+  fullWidth = true,
 }) => {
   const newsItems = items.slice(0, 3)
   const { t } = useI18n()
@@ -77,8 +79,9 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
           {newsItems.map((newsItem) => {
             return (
               <GridColumn
-                span={['12/12', '12/12', '12/12', '4/12']}
+                span={['12/12', '12/12', '12/12', fullWidth ? '4/12' : '6/12']}
                 key={newsItem.slug}
+                paddingBottom={2}
               >
                 <NewsCard
                   title={newsItem.title}
