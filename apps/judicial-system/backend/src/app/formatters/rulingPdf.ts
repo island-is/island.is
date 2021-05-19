@@ -427,10 +427,7 @@ export async function getRulingPdfAsString(
     .text(' ')
     .text(
       existingCase.courtEndTime
-        ? `Þinghaldi lauk þann ${formatDate(
-            existingCase.courtEndTime,
-            'PPPp',
-          )}.`
+        ? `Þinghaldi lauk kl. ${formatDate(existingCase.courtEndTime, 'p')}.`
         : 'Þinghaldi er ekki lokið.',
     )
 

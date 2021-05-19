@@ -82,6 +82,11 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   @Expose()
+  @IsString()
+  institution?: string
+
+  @ApiPropertyOptional()
+  @Expose()
   @IsNumber()
   progress?: number
 
