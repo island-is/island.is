@@ -4,7 +4,7 @@ import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/tjodskra'
 import { NationalRegistryXRoadConfig } from '..'
 import { ChildrenCustodyResponse } from '../models/childrenCustodyResponse.model'
-import { ChildrenCustodyChild } from '../models/childrenCustodyChild.model.'
+import { ChildrenCustodyChild } from '../models/childrenCustodyChild.model'
 
 const handleError = (error: any) => {
   logger.error(error)

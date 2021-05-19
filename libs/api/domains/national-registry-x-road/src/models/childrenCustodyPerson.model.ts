@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ChildrenCustodyAddress } from './childrenCustodyAddress'
+import { ChildrenCustodyAddress } from './childrenCustodyAddress.model'
 
 @ObjectType()
 export class ChildrenCustodyPerson {
