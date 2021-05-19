@@ -20,9 +20,10 @@ const validateOptionalPhoneNumber = (value: string) => {
 
 export const validateTerms = (
   errorMessage: MessageDescriptor,
-  arrayLength: number = 1,
+  arrayLength: number,
 ) => {
-  return z.array(z.string()).refine((v) => v && v.length === arrayLength, {
+  const arrLength = arrayLength || 1
+  return z.array(z.string()).refine((v) => v && v.length === arrLength, {
     params: errorMessage,
   })
 }
