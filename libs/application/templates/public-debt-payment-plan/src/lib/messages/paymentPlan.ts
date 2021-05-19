@@ -16,6 +16,11 @@ export const paymentPlan = {
       Til að ganga frá greiðsludreifingu þarf að gera
       greiðsluáætlun fyrir allar útistandandi skuldir og undirrita áætlunina rafrænt.`,
     },
+    paymentPlanDescription: {
+      id: `${t}:section.paymentPlan.paymentPlanDescription`,
+      defaultMessage: 'Vinsamlegast veldu greiðslutímabil',
+      description: 'Payment plan page description',
+    },
   }),
   labels: defineMessages({
     sentAsAClaim: {
@@ -62,6 +67,21 @@ export const paymentPlan = {
       id: `${t}:section.paymentPlan.editPaymentPlan`,
       defaultMessage: `Breyta greiðsludreifingu`,
       description: `Edit payment plan label`,
+    },
+    paymentModeTitle: {
+      id: `${t}:section.paymentPlan.paymentModeTitle`,
+      defaultMessage: `Veldu greiðsludreifingu skuldar`,
+      description: `Payment mode label`,
+    },
+    payByAmount: {
+      id: `${t}:section.paymentPlan.payByAmount`,
+      defaultMessage: `Velja eftir fjárhæð`,
+      description: `Pay by amount radio label`,
+    },
+    payByMonths: {
+      id: `${t}:section.paymentPlan.payByMonths`,
+      defaultMessage: `Velja fjölda mánaða`,
+      description: `Pay by months label`,
     },
   }),
 }

@@ -14,8 +14,8 @@ const getPaymentTypeLabel = (type: PaymentType) =>
 
 interface Props {
   payment: Payment
-  isAnswered: boolean
-  onEditClick: (id: string) => void
+  isAnswered?: boolean
+  onEditClick?: (id: string) => void
 }
 
 const ValueLine = ({
@@ -58,7 +58,7 @@ export const PaymentPlanCard = ({
         <Text variant="eyebrow" color="purple400">
           {payment.organization}
         </Text>
-        <Tag variant="purple">
+        <Tag variant="purple" disabled>
           {formatMessage(getPaymentTypeLabel(payment.type))}
         </Tag>
       </Box>
@@ -124,7 +124,7 @@ export const PaymentPlanCard = ({
             {formatMessage(paymentPlan.labels.moreInfo)}
           </Button>
         </div>
-        {isAnswered && (
+        {isAnswered && onEditClick && (
           <Button
             variant="ghost"
             icon="pencil"

@@ -39,7 +39,7 @@ const buildPaymentPlanStep = (index: number): CustomField[] => [
   }),
   buildCustomField({
     id: `paymentPlans[${index}]`,
-    title: 'Payment Plan',
+    title: section.paymentPlan,
     component: 'PaymentPlan',
     defaultValue: index,
     condition: (_formValue, externalData) =>
