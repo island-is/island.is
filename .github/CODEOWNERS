@@ -80,6 +80,7 @@
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/personal-information                                            @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
@@ -127,6 +128,7 @@
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar
+/apps/services/auth-public-api/                                                               @island-is/fuglar
 /apps/auth-admin-web/                                                                         @island-is/fuglar
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
 /libs/auth-api-lib/                                                                           @island-is/fuglar
