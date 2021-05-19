@@ -17,6 +17,7 @@ import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useRouter } from 'next/router'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -28,6 +29,7 @@ interface LatestNewsProps {
   linkType?: LinkType
   overview?: LinkType
   parameters?: Array<string>
+  newsTag?: string
   readMoreText?: string
   fullWidth?: boolean
 }
@@ -39,6 +41,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   linkType = 'news',
   overview = 'newsoverview',
   parameters = [],
+  newsTag,
   readMoreText = '',
   fullWidth = true,
 }) => {
@@ -47,6 +50,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
+  const Router = useRouter()
   const titleProps = labelId ? { id: labelId } : {}
 
   return (
@@ -59,7 +63,13 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Link {...linkResolver(overview, [...parameters])} skipTab>
+            <Link
+              href={{
+                pathname: linkResolver(overview, parameters).href,
+                ...(!fullWidth && { query: { tag: newsTag } }),
+              }}
+              skipTab
+            >
               <Text variant="h5" as="p" paddingBottom={2}>
                 <Button
                   icon="arrowForward"
