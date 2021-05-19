@@ -70,6 +70,7 @@ export const slices = gql`
     __typename
     id
     title
+    tag
     news {
       id
       title
