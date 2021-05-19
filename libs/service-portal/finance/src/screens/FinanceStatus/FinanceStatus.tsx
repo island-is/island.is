@@ -96,7 +96,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <Column width="content">
                   <Button
                     colorScheme="default"
-                    icon="documents" // Need to add Printer
+                    icon="print"
                     iconType="filled"
                     onClick={function noRefCheck() {}}
                     preTextIconType="filled"
@@ -110,7 +110,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <Column width="content">
                   <Box className={styles.buttonWrapper}>
                     <DropdownMenu
-                      icon="ellipsisVertical" // Need to add ellipsisHorizontal
+                      icon="ellipsisHorizontal"
                       menuLabel="Fleiri möguleikar"
                       items={[
                         {
