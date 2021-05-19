@@ -18,8 +18,8 @@ export interface RadioButtonProps {
   tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
-  filled?: boolean
   large?: boolean
+  /** backgroundColor can only be used if the 'large' prop set to true */
   backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
@@ -30,6 +30,15 @@ interface AriaError {
   'aria-describedby': string
 }
 
+interface BackgroundColorType {
+  white: 'white'
+  blue: 'blue100'
+}
+
+const backgroundColors: BackgroundColorType = {
+  white: 'white',
+  blue: 'blue100',
+}
 export const RadioButton = ({
   label,
   subLabel,
@@ -43,7 +52,6 @@ export const RadioButton = ({
   hasError,
   errorMessage,
   large,
-  filled = false,
   backgroundColor,
 }: RadioButtonProps) => {
   const errorId = `${id}-error`
@@ -58,9 +66,10 @@ export const RadioButton = ({
     <Box
       className={cn(styles.container, {
         [styles.large]: large,
-        [styles.filled]: filled,
       })}
-      background={backgroundColor === 'blue' ? 'blue100' : undefined}
+      background={
+        large && backgroundColor ? backgroundColors[backgroundColor] : undefined
+      }
     >
       <input
         className={styles.input}
