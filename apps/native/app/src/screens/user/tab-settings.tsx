@@ -1,13 +1,15 @@
-import { TableViewCell, TableViewGroup } from '@island.is/island-ui-native'
-import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import {
+  TableViewAccessory,
+  TableViewCell,
+  TableViewGroup,
+} from '@island.is/island-ui-native'
 import {
   AuthenticationType,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
 import React, { useEffect, useState } from 'react'
-import { Platform, ScrollView, Switch, Text, View } from 'react-native'
-import DialogAndroid from 'react-native-dialogs'
+import { Platform, ScrollView, Switch, View } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
@@ -27,6 +29,7 @@ import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { showPicker } from '../../utils/show-picker'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import * as Sentry from '@sentry/react-native';
 
 export function TabSettings() {
   const authStore = useAuthStore()
@@ -72,7 +75,9 @@ export function TabSettings() {
   const onLanguagePress = () => {
     showPicker({
       type: 'radio',
-      title: intl.formatMessage({ id: 'settings.accessibilityLayout.language' }),
+      title: intl.formatMessage({
+        id: 'settings.accessibilityLayout.language',
+      }),
       items: [
         { label: 'Íslenska', id: 'is-IS' },
         { label: 'English', id: 'en-US' },
@@ -212,7 +217,11 @@ export function TabSettings() {
             title={intl.formatMessage({
               id: 'settings.accessibilityLayout.language',
             })}
-            accessory={<Text>{locale === 'is-IS' ? 'Íslenska' : 'English'}</Text>}
+            accessory={
+              <TableViewAccessory>
+                {locale === 'is-IS' ? 'Íslenska' : 'English'}
+              </TableViewAccessory>
+            }
           />
         </PressableHighlight>
       </TableViewGroup>
@@ -254,7 +263,7 @@ export function TabSettings() {
               id: 'settings.security.useBiometricsLabel',
             },
             {
-              biometricType
+              biometricType,
             },
           )}
           subtitle={intl.formatMessage({
@@ -275,19 +284,33 @@ export function TabSettings() {
         <PressableHighlight
           onPress={() => {
             showPicker({
-              title: intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' }),
+              title: intl.formatMessage({
+                id: 'settings.security.appLockTimeoutLabel',
+              }),
               items: [
                 {
                   id: '5000',
-                  label: intl.formatNumber(5, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                  label: intl.formatNumber(5, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
                 },
                 {
                   id: '10000',
-                  label: intl.formatNumber(10, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                  label: intl.formatNumber(10, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
                 },
                 {
                   id: '15000',
-                  label: intl.formatNumber(15, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
+                  label: intl.formatNumber(15, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
                 },
               ],
               cancel: true,
@@ -300,15 +323,27 @@ export function TabSettings() {
           }}
         >
           <TableViewCell
-            title={intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' })}
-            subtitle={intl.formatMessage({ id: 'settings.security.appLockTimeoutDescription' })}
-            accessory={<Text>
-              {intl.formatNumber(Math.floor(appLockTimeout / 1000), { style: 'unit', unitDisplay: 'short', unit: 'second' })}
-            </Text>}
+            title={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutDescription',
+            })}
+            accessory={
+              <TableViewAccessory>
+                {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                  style: 'unit',
+                  unitDisplay: 'short',
+                  unit: 'second',
+                })}
+              </TableViewAccessory>
+            }
           />
         </PressableHighlight>
       </TableViewGroup>
-      <TableViewGroup header={intl.formatMessage({ id: 'settings.about.groupTitle' })}>
+      <TableViewGroup
+        header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
+      >
         <TableViewCell
           title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
           subtitle={`${config.constants.nativeAppVersion} build ${
@@ -325,14 +360,25 @@ export function TabSettings() {
               : `${localPackage?.label}: ${localPackage.packageHash}`
           }
         />
-        <TableViewCell title="Push Token" subtitle={pushToken} />
+        <PressableHighlight
+          onPress={() => {
+            throw new Error("My first Sentry error!");
+          }}
+          onLongPress={() => {
+            Sentry.nativeCrash();
+          }}
+        >
+          <TableViewCell title="Push Token" subtitle={pushToken} />
+        </PressableHighlight>
         <PressableHighlight
           onPress={onLogoutPress}
           testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
         >
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
-            subtitle={intl.formatMessage({ id: 'settings.about.logoutDescription' })}
+            subtitle={intl.formatMessage({
+              id: 'settings.about.logoutDescription',
+            })}
           />
         </PressableHighlight>
       </TableViewGroup>

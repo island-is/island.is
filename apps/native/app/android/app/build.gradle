@@ -83,6 +83,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../../node_modules/@sentry/react-native/sentry.gradle"
 apply from: "../../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: '../../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
@@ -136,8 +137,8 @@ android {
         applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.0"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
@@ -218,6 +219,7 @@ dependencies {
     implementation project(':react-native-safe-area-context')
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-web-view')
+    implementation project(':react-native-sentry')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],

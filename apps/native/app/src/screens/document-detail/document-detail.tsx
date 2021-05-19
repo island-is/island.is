@@ -20,7 +20,7 @@ import {
   ListDocumentsResponse,
   LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
-import { authStore } from '../../stores/auth-store'
+import { authStore, useAuthStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { createNavigationTitle } from '../../utils/create-navigation-title'
 
@@ -89,6 +89,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
   useNavigationTitle(componentId)
+  const { authorizeResult } = useAuthStore();
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -172,9 +173,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   headers: {
                     'content-type': 'application/x-www-form-urlencoded',
                   },
-                  body: `documentId=${Document.id}&__accessToken=${
-                    authStore.getState().authorizeResult?.accessToken
-                  }`,
+                  body: `documentId=${Document.id}&__accessToken=${authorizeResult?.accessToken}`,
                   method: 'POST',
                 }}
               />

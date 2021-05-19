@@ -10,8 +10,9 @@ export interface Config {
   }
   apiEndpoint: string
   bundleId: string
-  env: typeof env
+  sentryDsn: string
   constants: any
+  env: typeof env
 }
 
 const { WebManifest, ...ConstantsRest } = Constants
@@ -35,7 +36,8 @@ export const config: Config = {
   identityServer: {
     clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
     issuer: env.IDENTITYSERVER_ISSUER || defaults.identityServer.issuer,
-    scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || defaults.identityServer.scopes,
+    scopes:
+      env.IDENTITYSERVER_SCOPES?.split(' ') || defaults.identityServer.scopes,
   },
   apiEndpoint: env.API_ENDPOINT || defaults.apiEndpoint,
   bundleId:
@@ -43,6 +45,7 @@ export const config: Config = {
       ios: env.BUNDLE_ID_IOS,
       android: env.BUNDLE_ID_ANDROID,
     }) || 'is.island.app',
+  sentryDsn: env.SENTRY_DSN,
   constants: ConstantsRest,
   env,
 }

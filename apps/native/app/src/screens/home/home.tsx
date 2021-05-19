@@ -56,6 +56,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   useScreenOptions(
     () => ({
       bottomTab: {
+        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
         testID: testIDs.TABBAR_TAB_HOME,
         iconInsets: {
           top: 14,

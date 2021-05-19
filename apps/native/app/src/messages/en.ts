@@ -42,7 +42,7 @@ export const en: TranslatedMessages = {
   "settings.security.changePinLabel": "Change PIN",
   "settings.security.changePinDescription": "Choose a new 4-digit PIN number",
   "settings.security.useBiometricsLabel": "Use {biometricType}",
-  "settings.security.useBiometricsDescription": "That way use can skip entering your PIN number",
+  "settings.security.useBiometricsDescription": "That way you can skip entering your PIN number",
   "settings.security.appLockTimeoutLabel": "App lock timeout",
   "settings.security.appLockTimeoutDescription": "Time until app lock will appear",
   "settings.about.groupTitle": "About",
@@ -88,7 +88,7 @@ export const en: TranslatedMessages = {
 
   // Home
   "home.screenTitle": "Overview",
-  "home.applicationsStatus": "Applications status",
+  "home.applicationsStatus": "Applications",
   "home.notifications": "Notifications",
   "home.welcomeText": "Hi",
 

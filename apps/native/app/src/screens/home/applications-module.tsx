@@ -22,7 +22,9 @@ const Empty = styled.View`
   height: 183px;
   margin-bottom: 16px;
   border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.color.blue200};
+  border: 1px solid
+    ${({ theme }) =>
+      theme.isDark ? theme.shade.shade300 : theme.color.blue200};
   align-items: center;
   justify-content: center;
 `

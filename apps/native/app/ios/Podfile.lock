@@ -437,6 +437,12 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSentry (2.4.3):
+    - React-Core
+    - Sentry (= 6.1.4)
+  - Sentry (6.1.4):
+    - Sentry/Core (= 6.1.4)
+  - Sentry/Core (6.1.4)
   - SSZipArchive (2.2.3)
   - UMAppLoader (2.1.0)
   - UMConstantsInterface (6.1.0):
@@ -526,6 +532,7 @@ DEPENDENCIES:
   - RNKeychain (from `../../node_modules/react-native-keychain`)
   - RNLocalize (from `../../node_modules/react-native-localize`)
   - RNReanimated (from `../../node_modules/react-native-reanimated`)
+  - "RNSentry (from `../../node_modules/@sentry/react-native`)"
   - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
   - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
   - "UMCore (from `../../node_modules/@unimodules/core/ios`)"
@@ -553,6 +560,7 @@ SPEC REPOS:
     - JWT
     - libevent
     - OpenSSL-Universal
+    - Sentry
     - SSZipArchive
     - YogaKit
 
@@ -651,6 +659,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-localize"
   RNReanimated:
     :path: "../../node_modules/react-native-reanimated"
+  RNSentry:
+    :path: "../../node_modules/@sentry/react-native"
   UMAppLoader:
     :path: "../../node_modules/unimodules-app-loader/ios"
   UMConstantsInterface:
@@ -732,6 +742,8 @@ SPEC CHECKSUMS:
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: 99e59cad311ca1b6872b1764514009416ccba03d
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
+  RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
+  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   UMAppLoader: fe2708bb0ac5cd70052bc207d06aa3b7e72b9e97
   UMConstantsInterface: bb94dd46039dcde276ed50225b29e22785e604bf
@@ -743,6 +755,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 7dc461047a969624c76087008bd6a4faaa72dad3
+PODFILE CHECKSUM: 540cfa4994e2f0b116a1a4f8ea2e8d3c157932d9
 
 COCOAPODS: 1.10.1

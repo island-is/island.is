@@ -20,6 +20,7 @@
     "@react-native-community/async-storage": "1.12.1",
     "@react-native-community/react-native-cookies": "1.1.1",
     "@react-native-segmented-control/segmented-control": "2.3.0",
+    "@sentry/react-native": "2.4.3",
     "expo-file-system": "11.0.2",
     "expo-local-authentication": "11.0.2",
     "expo-notifications": "0.11.6",

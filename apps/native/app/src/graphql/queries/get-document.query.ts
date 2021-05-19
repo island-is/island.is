@@ -4,11 +4,11 @@ import { DocumentFragment, IDocument } from '../fragments/document.fragment'
 export const GET_DOCUMENT_QUERY = gql`
   query getDocument($input: GetDocumentInput!) {
     getDocument(input: $input) {
-      ...DocumentFragment
+      fileType
       content
+      url
     }
   }
-  ${DocumentFragment}
 `
 
 export interface GetDocumentResponse {

@@ -114,6 +114,7 @@ export function TabBar(props: TabBarProps) {
               testID={item.testID}
             >
               <TabTitle
+                accessibilityLabel=""
                 style={{
                   opacity: Animated.subtract(
                     animatedIndex.current ?? 1,
