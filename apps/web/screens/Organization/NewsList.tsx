@@ -55,7 +55,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTagId: string
+  selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -67,7 +67,7 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
-  selectedTagId,
+  selectedTag,
   namespace,
 }) => {
   const Router = useRouter()
@@ -79,9 +79,9 @@ const NewsList: Screen<NewsListProps> = ({
     ({ primaryLink }) => primaryLink.url === Router.asPath,
   )
 
-  const newsTitle: string = currentNavItem
-    ? currentNavItem.primaryLink.text
-    : n('newsTitle', 'Fréttir og tilkynningar')
+  const newsTitle =
+    newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
+    n('newsTitle', 'Fréttir og tilkynningar')
 
   const years = Object.keys(datesMap)
   const months = datesMap[selectedYear] ?? []
@@ -114,7 +114,7 @@ const NewsList: Screen<NewsListProps> = ({
   ]
 
   const makeHref = (y: number | string, m?: number | string) => {
-    const params = { y, m, tag: selectedTagId }
+    const params = { y, m, tag: selectedTag }
     const query = Object.entries(params).reduce((queryObject, [key, value]) => {
       if (value) {
         queryObject[key] = value
@@ -344,7 +344,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
     )
   ).data.getOrganizationPage
-  const tag = organizationPage.newsTag ? organizationPage.newsTag.id : ''
+  const tag = (query.tag as string) ?? organizationPage.newsTag?.slug ?? ''
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -402,7 +402,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTagId: tag,
+    selectedTag: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
