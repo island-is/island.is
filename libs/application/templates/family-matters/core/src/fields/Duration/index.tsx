@@ -68,6 +68,7 @@ const Duration = ({
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
           largeButtons
+          backgroundColor="white"
           error={durationTypeError}
         />
 
