@@ -1,15 +1,8 @@
-import React, { FC, useState, useEffect } from 'react'
-import { Application } from '@island.is/application/core'
+import React, { FC } from 'react'
 import { Box, Table as T, Tooltip, Checkbox } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
-import {
-  PartyApplicationAnswers,
-  Endorsement,
-} from '../../lib/PartyApplicationTemplate'
+import { Endorsement } from '../../lib/PartyApplicationTemplate'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 
@@ -22,50 +15,37 @@ const formatDate = (date: string) => {
 }
 
 interface EndorsementTableProps {
-  application: Application
-  signatures?: Endorsement[]
-  selectedSignatures: Array<Endorsement>
+  endorsements: Endorsement[]
+  selectedEndorsements: Endorsement[]
+  onChange: (endorsement: Endorsement) => void
+  disabled: boolean
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
-  application,
-  signatures,
-  selectedSignatures,
+  endorsements,
+  selectedEndorsements,
+  onChange,
+  disabled,
 }) => {
   const { lang: locale, formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyApplicationAnswers
-  const [selectedEndorsements, setSelectedEndorsements] = useState<
-    Endorsement[]
-  >(answers.endorsements ?? [])
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-
-  const updateApplicationWithEndorsements = async () => {
-    const updatedAnswers = {
-      ...answers,
-      endorsements: selectedEndorsements,
-    }
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    })
-  }
-
-  useEffect(() => {
-    updateApplicationWithEndorsements()
-  }, [selectedEndorsements])
 
   const renderRow = (endorsement: Endorsement) => {
     return (
       <T.Row key={endorsement.id}>
-        <T.Data>{formatDate(endorsement.date)}</T.Data>
-        <T.Data>{endorsement.name}</T.Data>
+        <T.Data
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+          }}
+        >
+          {formatDate(endorsement.date)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
+          }}
+        >
+          {endorsement.name}
+        </T.Data>
         <T.Data
           box={{
             background: endorsement.hasWarning ? 'yellow200' : 'white',
@@ -100,13 +80,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           }}
         >
           <Checkbox
+            disabled={disabled}
             checked={selectedEndorsements?.some((e) => e.id === endorsement.id)}
-            onChange={() =>
-              setSelectedEndorsements((currEndorsements) => [
-                ...currEndorsements,
-                endorsement,
-              ])
-            }
+            onChange={() => onChange(endorsement)}
           />
         </T.Data>
       </T.Row>
@@ -129,9 +105,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {signatures &&
-          signatures.length &&
-          signatures.map((signature, index) => renderRow(signature))}
+        {endorsements &&
+          endorsements.length &&
+          endorsements.map((endorsement) => renderRow(endorsement))}
       </T.Body>
     </T.Table>
   )
