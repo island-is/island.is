@@ -72,9 +72,9 @@ export class NationalRegistryXRoadService {
     parentNationalId: string,
     token: string,
   ): Promise<ChildrenCustodyChild[]> {
-    let childrenNationalIds = await this.getCustody(parentNationalId, token)
+    const childrenNationalIds = await this.getCustody(parentNationalId, token)
 
-    let children = await Promise.all(
+    const children = await Promise.all(
       childrenNationalIds.map(async (childNationalId) => {
         return await this.personApi.einstaklingarGetEinstaklingur({
           id: childNationalId,
@@ -84,18 +84,18 @@ export class NationalRegistryXRoadService {
     )
     return await Promise.all(
       children.map(async (child) => {
-        let parents = await this.personApi.einstaklingarGetForsjaForeldri({
+        const parents = await this.personApi.einstaklingarGetForsjaForeldri({
           id: parentNationalId,
           barn: child.kennitala,
           xRoadClient: this.config.xRoadClientId,
         })
 
-        let parentB = await this.personApi.einstaklingarGetEinstaklingur({
+        const parentB = await this.personApi.einstaklingarGetEinstaklingur({
           id: parents.find((id) => id !== parentNationalId) || null,
           xRoadClient: this.config.xRoadClientId,
         })
 
-        let parentLegalHomeNationalId = await this.personApi.einstaklingarGetLogforeldrar(
+        const parentLegalHomeNationalId = await this.personApi.einstaklingarGetLogforeldrar(
           { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
         )
 
