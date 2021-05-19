@@ -1,4 +1,4 @@
-name: Monorepo pipeline - helm values check
+name: Helm values
 
 on:
   push:
@@ -14,6 +14,75 @@ on:
       - labeled
 
 jobs:
+  pre-checks:
+    name: Check if job should run
+    runs-on: ubuntu-20.04
+    env:
+      CREATE_PATTERNS: ^release/,^hotfix/
+    outputs:
+      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
+      PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
+    steps:
+      - name: Get git branch
+        id: git-branch
+        run: |
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+      - name: Generate deployment branch name
+        id: git-branch-deploy
+        run: |
+          GIT_BRANCH_DEPLOY=$GIT_BRANCH
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+              # If event is pull request but branch is not prefixed with feature/
+              GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
+            fi
+            # Avoid too long resource names
+            GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
+          fi
+          echo "::set-output name=GIT_BRANCH_DEPLOY::${GIT_BRANCH_DEPLOY}"
+          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
+      - name: Check if we want to run workflow
+        id: should-run
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
+            echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
+            do
+                echo "Checking branch against pattern '$pattern'"
+                if [[ "$GIT_BRANCH" =~ $pattern ]]; then
+                  echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  echo "::set-output name=PRE_CHECK::branch-created"
+                  exit 0
+                fi
+            done
+            echo "No pattern matches '$GIT_BRANCH', exiting."
+            exit 0
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ "${{ github.event.action }}" == "labeled" ]]; then
+              echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
+              deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
+            else
+              echo "Action is ${{ github.event.action }}, using labels on PR"
+              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            fi
+            if [[ "$deployFeature" == "true" ]]; then
+              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "::set-output name=PRE_CHECK::feature-deploy"
+              exit 0
+            fi
+            echo "Pull request does not have deploy-feature label, exiting..."
+            exit 0
+          fi
+          echo "::set-output name=PRE_CHECK::push"
+
   prepare:
     runs-on: ubuntu-20.04
     outputs:
@@ -25,7 +94,10 @@ jobs:
         run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps([os.path.splitext(f)[0] for f in os.listdir("infra/src/uber-charts/")]))')"
   test:
     runs-on: ubuntu-20.04
-    needs: prepare
+    needs:
+      - prepare
+      - pre-checks
+
     timeout-minutes: 5
     strategy:
       fail-fast: false
@@ -50,6 +122,28 @@ jobs:
 
       - name: Check chart values are up-to-date
         run: ./infra/scripts/ci/diff-chart-values.sh ${{matrix.chart}}
+
+      - name: Docker build image
+        working-directory: infra
+        if: needs.pre-checks.outputs.PRE_CHECK
+        run: |
+          ./scripts/build-docker-container.sh $DOCKER_TAG
+          docker run --rm -it
+        env:
+          PUBLISH: 'true'
+
+      - name: Comment on PR
+        if: steps.changes.outputs.changed == 1
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
+            })
 
   failure-notification:
     runs-on: ubuntu-20.04

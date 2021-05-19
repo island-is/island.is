@@ -6,6 +6,7 @@ import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
 import { Services, FeatureDeploymentServices } from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
+import { ServiceHelm } from './dsl/types/output-types'
 const { hideBin } = require('yargs/helpers')
 
 type ChartName = 'islandis'
@@ -67,6 +68,23 @@ const parseArguments = (argv: Arguments) => {
 }
 
 const getFeatureYaml = (argv: Arguments) => {}
+const buildIngressComment = (data: ServiceHelm[]): string =>
+  data
+    .filter((obj) => obj.ingress)
+    .map(({ ingress }) => Object.values(ingress!))
+    .flat()
+    .map(({ hosts }) => hosts)
+    .flat()
+    .map(({ host, paths }) => paths.map((path) => `https://${host}${path}`))
+    .flat()
+    .sort()
+    .join('\n')
+
+const buildComment = (data: { [key: string]: ServiceHelm }): string => {
+  return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
+    Object.values(data),
+  )}`
+}
 
 yargs(hideBin(process.argv))
   .command(
@@ -81,6 +99,20 @@ yargs(hideBin(process.argv))
         ...affectedServices,
       )
       await writeToOutput(dumpYaml(featureYaml), argv.output)
+    },
+  )
+  .command(
+    'ingress-comment',
+    'get helm values file',
+    (yargs) => {},
+    async (argv: Arguments) => {
+      const { ch, habitat, affectedServices } = parseArguments(argv)
+      const featureYaml = generateYamlForFeature(
+        ch,
+        habitat,
+        ...affectedServices,
+      )
+      await writeToOutput(buildComment(featureYaml), argv.output)
     },
   )
   .command(
