@@ -145,6 +145,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceCustomRenderer,
         subpage.sliceExtraText,
         namespace,
+        organizationPage.slug,
       )}
     </OrganizationWrapper>
   )
@@ -155,6 +156,7 @@ const renderSlices = (
   renderType: string,
   extraText: string,
   namespace: Namespace,
+  organizationPageSlug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
@@ -166,6 +168,7 @@ const renderSlices = (
           slice={slice}
           namespace={namespace}
           fullWidth={false}
+          organizationPageSlug={organizationPageSlug}
         />
       ))
   }
