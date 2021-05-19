@@ -32,7 +32,6 @@ const RadioFormField: FC<Props> = ({
     description,
     options,
     width,
-    emphasize,
     largeButtons,
   } = field
   const { formatMessage } = useLocale()
@@ -56,14 +55,9 @@ const RadioFormField: FC<Props> = ({
         />
       )}
 
-      <Box
-        background={emphasize ? 'blue100' : undefined}
-        padding={emphasize ? 3 : undefined}
-        marginTop={3}
-      >
+      <Box marginTop={3}>
         <RadioController
           largeButtons={largeButtons}
-          emphasize={emphasize}
           id={id}
           disabled={disabled}
           error={error}

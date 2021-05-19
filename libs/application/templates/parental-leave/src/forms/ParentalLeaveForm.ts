@@ -147,7 +147,6 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'otherParentRightOfAccess',
               largeButtons: true,
-              emphasize: true,
               condition: (answers) => answers.otherParent === 'manual',
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
@@ -218,7 +217,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  emphasize: true,
                   largeButtons: false,
                   id: 'usePrivatePensionFund',
                   title:
@@ -773,7 +771,6 @@ export const ParentalLeaveForm: Form = buildForm({
         //       title: parentalLeaveFormMessages.shareInformation.title,
         //       description:
         //         parentalLeaveFormMessages.shareInformation.description,
-        //       emphasize: false,
         //       largeButtons: true,
         //       options: [
         //         {
