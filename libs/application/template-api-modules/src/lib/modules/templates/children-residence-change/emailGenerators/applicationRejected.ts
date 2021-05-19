@@ -2,7 +2,7 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 
 import { EmailTemplateGenerator } from '../../../../types'
-import { DistrictCommissionerLogoImg } from './consts'
+import { DistrictCommissionerLogo } from './consts'
 
 export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
   const {
@@ -22,7 +22,7 @@ export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
 
   const subject = 'Samningi um breytt lögheimili og meðlag hafnað'
   const body = `
-        <img src=${DistrictCommissionerLogoImg} height="78" width="246" />
+        <img src=${DistrictCommissionerLogo} height="78" width="246" />
 
 
         <h1>${subject}</h1>
