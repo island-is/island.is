@@ -265,11 +265,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       title: m.section.overview,
       children: [
         buildMultiField({
-          id: 'residenceChangeOverview',
+          id: 'confirmContract',
           title: m.contract.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'residenceChangeReview',
+              id: 'confirmContract',
               title: m.contract.general.pageTitle,
               component: 'Overview',
             }),
