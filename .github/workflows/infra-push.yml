@@ -170,7 +170,7 @@ jobs:
     if: failure()
     needs:
       - prepare
-      - test
+      - test-and-build
     steps:
       - name: Send Slack notification
         uses: 8398a7/action-slack@v3
