@@ -28,6 +28,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
           linkType="organizationnews"
           overview="organizationnewsoverview"
           parameters={[organizationPageSlug]}
+          newsTag={slice.tag}
           readMoreText={slice.readMoreText}
           fullWidth={fullWidth}
         />
