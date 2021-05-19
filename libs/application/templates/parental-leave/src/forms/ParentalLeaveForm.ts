@@ -31,7 +31,7 @@ import {
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { NO, StartDateOptions, YES } from '../constants'
+import { MANUAL, NO, StartDateOptions, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -126,17 +126,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'otherParent',
                   title: 'Other parent',
                   options: (application) => getOtherParentOptions(application),
-                  largeButtons: true,
                 }),
                 buildTextField({
                   id: 'otherParentName',
-                  condition: (answers) => answers.otherParent === 'manual',
+                  condition: (answers) => answers.otherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'otherParentId',
-                  condition: (answers) => answers.otherParent === 'manual',
+                  condition: (answers) => answers.otherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -146,8 +145,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              largeButtons: true,
-              condition: (answers) => answers.otherParent === 'manual',
+              condition: (answers) => answers.otherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
@@ -217,13 +215,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  largeButtons: false,
                   id: 'usePrivatePensionFund',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
+                  width: 'half',
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -278,7 +276,6 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowance',
               title: parentalLeaveFormMessages.personalAllowance.useYours,
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -304,7 +301,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
                   width: 'half',
-                  largeButtons: true,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -340,7 +336,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 // TODO add check if this person has a spouse...
                 return true
               },
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -367,7 +362,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
                   width: 'half',
-                  largeButtons: true,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -408,7 +402,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -589,7 +582,6 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.periodAllAtOnce,
               description:
                 parentalLeaveFormMessages.shared.periodAllAtOnceDescription,
-              largeButtons: true,
               options: [
                 {
                   label: parentalLeaveFormMessages.shared.periodAllAtOnceYes,
@@ -625,7 +617,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'confirmLeaveDuration',
               title: parentalLeaveFormMessages.duration.title,
               description: parentalLeaveFormMessages.duration.description,
-              largeButtons: true,
               options: [
                 {
                   label: parentalLeaveFormMessages.duration.monthsOption,
@@ -771,7 +762,6 @@ export const ParentalLeaveForm: Form = buildForm({
         //       title: parentalLeaveFormMessages.shareInformation.title,
         //       description:
         //         parentalLeaveFormMessages.shareInformation.description,
-        //       largeButtons: true,
         //       options: [
         //         {
         //           label: parentalLeaveFormMessages.shareInformation.yesOption,

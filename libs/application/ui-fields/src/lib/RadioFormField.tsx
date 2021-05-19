@@ -14,6 +14,7 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
+
 import { getDefaultValue } from '../getDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -42,7 +43,7 @@ const RadioFormField: FC<Props> = ({
   ])
 
   return (
-    <div>
+    <Box>
       {showFieldName && (
         <Text variant={'h4'}>
           {formatText(title, application, formatMessage)}
@@ -79,7 +80,7 @@ const RadioFormField: FC<Props> = ({
           }))}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
 

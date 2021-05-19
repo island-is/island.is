@@ -170,7 +170,7 @@ export function buildRadioField(data: {
     description,
     defaultValue,
     options,
-    largeButtons = false,
+    largeButtons = true,
     disabled = false,
     width = 'full',
     backgroundColor,

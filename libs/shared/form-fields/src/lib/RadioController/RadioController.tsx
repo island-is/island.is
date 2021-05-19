@@ -17,7 +17,7 @@ interface Option {
   excludeOthers?: boolean
 }
 interface Props {
-  defaultValue?: string[]
+  defaultValue?: any
   disabled?: boolean
   error?: string
   id: string
@@ -35,7 +35,7 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
-  largeButtons = false,
+  largeButtons = true,
   onSelect = () => undefined,
   backgroundColor = 'blue',
   split = '1/1',
