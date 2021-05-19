@@ -7,7 +7,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { ChildrenCustodyResponse } from '../models/ChildrenCustodyResponse'
+import { ChildrenCustodyResponse } from '../models/childrenCustodyResponse.model'
 import { UseGuards } from '@nestjs/common'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
