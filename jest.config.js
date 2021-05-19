@@ -157,5 +157,6 @@ module.exports = {
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
     '<rootDir>/apps/services/auth-public-api',
     '<rootDir>/libs/service-portal/settings/access-control',
+    '<rootDir>/libs/auth/scopes',
   ],
 }
