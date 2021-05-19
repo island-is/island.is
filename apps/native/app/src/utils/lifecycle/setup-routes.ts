@@ -4,8 +4,8 @@ import { ComponentRegistry } from '../component-registry'
 import { config } from '../config'
 import { addRoute, addScheme } from '../deep-linking'
 import { Base64 } from 'js-base64';
-import { hideLockScreenOverlay } from '../lock-screen-helpers'
 import { preferencesStore } from '../../stores/preferences-store'
+import * as Sentry from '@sentry/react-native'
 
 export function setupRoutes() {
   // Setup app scheme (is.island.app://)
@@ -135,9 +135,11 @@ export function setupRoutes() {
   addRoute('/e2e/cookie/:cookie', ({ cookie }: any) => {
     const decodedCookie = Base64.decode(cookie);
     authStore.setState({ cookies: decodedCookie });
+    Sentry.init({ enabled: false });
   });
 
   addRoute('/e2e/disable-applock', () => {
     preferencesStore.setState({ dev__useLockScreen: false });
+    Sentry.init({ enabled: false });
   });
 }

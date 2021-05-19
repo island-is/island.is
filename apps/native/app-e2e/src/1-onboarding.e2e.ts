@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
 import { testIDs } from '../../app/src/utils/test-ids';
 import puppeteer from 'puppeteer';
 import { config } from './utils';
@@ -20,7 +20,7 @@ describe('Authentication', () => {
         notifications: 'YES',
       },
       // set cognito auth
-      url: `${config.bundleId}://e2e/cookie/X29hdXRoMl9kZXY9WEpYQ29ETVJKR0U0LVBxTjJuRmFaMElkOTVZT3ZMdEtOTHFwMzFHZ0E0MVJ0bjV1QzVEc19ua3E2b3FJY2FRNERoeEMxTDRVZm5UZThuZ0pfTlEwektJMXh2X0FIT202OFkwSmRneVBlek15Y1QzN2JGSWk5VVFiZmd2M2hhcndDTEpFSGxNRnR0WWo3Tk5FWWZlTnI1YVg4X0RHNm92QUVpNWV3YW9Tazg4cm5hZTBxSlloMjVPbWh3YjNVS2pjLWhfbzBvUC1SbG5HSUJJc3FpT3phUXhnZjh2RGJyMTRHd0RtMEE9PXwxNjIxMDc0OTI3fGVMMEQwd3pzRV9jOWhDXy1PUFRDSDZfV3JYaUlfeXRKWmRPQzg4R0RkVzQ9`
+      url: `${config.bundleId}://e2e/cookie/X29hdXRoMl9kZXY9eW1IYXpIdklrMFlGelJSU0dvX3NTa2NIUlhtNDR5d3AxaWRINzdXbHlmOEdnR1VVWnNJRUVaZ1Y1amZZNjNVZGNsTHBwWTRpU285dXd0MlJmczN2c2JabGhkdnpYUXpRZ1N0Z0l4aGFoTFpqdWtjTVNtbDhHZXBsdGw1QUxVZzEzNGJxeHBZNHR3MmtmV2RRQmNXUEZ6S2pSN3EwN0JCcU9vQmR0NVZkZk1SQ29WTzlLd1RlVUc5ZnUwcWRoZmgwc1c5M19GS3gwUndEemJBWTV2eFo0bjU5X1A1WjF4TDd3czBmdnc9PXwxNjIxMzM1MDgxfExiQ2NhU3N1TmlTUlBtYzBkNFQxa3JrTEhlM1JuWVpWcXYtRVpqem9qdVk9`
     });
 
     // enroll into biometrics
@@ -45,10 +45,12 @@ describe('Authentication', () => {
 
     const redirectUri = `${config.bundleId}://oauth`;
     const params = {
+      prompt_delegations: 'true',
       response_type: 'code',
+      ui_locales: 'en-US',
       code_challenge_method: 'S256',
       nonce: authNonce.text,
-      scope: config.identityServer.scopes,
+      scope: config.identityServer.scopes.join(' '),
       code_challenge: authCode.text,
       redirect_uri: redirectUri,
       client_id: config.identityServer.clientId,
@@ -59,10 +61,26 @@ describe('Authentication', () => {
     const returnUrl = encodeURIComponent(`/connect/authorize/callback?${qs}`);
     const url = `${config.identityServer.issuer}/login?ReturnUrl=${returnUrl}`
 
+    console.log({
+      params,
+      returnUrl,
+      url
+    })
+
+    // wait 1s
+    await new Promise(r => setTimeout(r, 1000));
+
     browser = await puppeteer.launch();
 
     const page = await browser.newPage();
     await page.goto(url);
+    page.on('response', (response: puppeteer.HTTPResponse) => {
+      const status = response.status();
+      console.log(status, response.url());
+      if (status !== 200) {
+        console.log(response.headers())
+      }
+    });
     await page.type('#phoneNumber', config.phoneNumber);
     await page.click('#submitPhoneNumber');
     await page.screenshot({  path: './app-e2e/artifacts/pupp-login.png' })
@@ -71,9 +89,7 @@ describe('Authentication', () => {
       page.on('response', (response: puppeteer.HTTPResponse) => {
         const status = response.status()
         const headers = response.headers();
-        console.log({ status }, response.url());
         if ((status >= 300) && (status <= 399)) {
-          console.log({ headers });
           const redirectUrl = headers['location'];
           if (redirectUrl.substr(0, redirectUri.length) === redirectUri) {
             resolve(redirectUrl);
@@ -112,12 +128,13 @@ describe('Authentication', () => {
   })
 
   it('should allow notifications', async () => {
-    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeVisible();
+    await device.disableSynchronization();
+    await waitFor(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeVisible();
     await element(by.id(testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON)).tap();
-    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeNotVisible();
+    await waitFor(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeNotVisible();
   })
 
   it('should show home screen', async () => {
-    await expect(element(by.id(testIDs.SCREEN_HOME))).toBeVisible();
+    await waitFor(element(by.id(testIDs.SCREEN_HOME))).toBeVisible();
   })
 });

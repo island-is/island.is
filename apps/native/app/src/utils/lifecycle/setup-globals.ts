@@ -3,6 +3,7 @@ import { LogBox } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import { config } from "../config";
+import { ReactNativeNavigationInstrumentation } from "../react-native-navigation-instrumentation";
 
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
@@ -34,7 +35,12 @@ import '@formatjs/intl-relativetimeformat/locale-data/is'
 // initialize sentry
 Sentry.init({
   dsn: config.sentryDsn,
-  debug: true,
+  tracesSampleRate: 1, // @todo reduce to 0.2 for production
+  integrations: [
+    new Sentry.ReactNativeTracing({
+      routingInstrumentation: new ReactNativeNavigationInstrumentation(),
+    }),
+  ],
 });
 
 // ignore expo warnings

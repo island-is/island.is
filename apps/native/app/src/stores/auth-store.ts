@@ -134,6 +134,10 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
 }))
 
+setTimeout(() => {
+  console.log(authStore.getState().authorizeResult?.accessToken);
+}, 1000)
+
 export const useAuthStore = createUse(authStore)
 
 export async function checkIsAuthenticated() {
