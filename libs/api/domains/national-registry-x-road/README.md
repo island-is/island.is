@@ -6,17 +6,17 @@ This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test api-domains-national-registry-x-roa` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test api-domains-national-registry-x-road` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## About service
 
 Documentation about [Þjóðskrá api](https://api-dev.skra.is)
 
-Some endpoints from Þjóðskrá need a valid jwt token for authentication. The forsja endpoint is an example of this. The way chosen to send the jwt token to Þjóðskrá was to wrap these calls in `national-registry-x-road.service.ts`
+Some endpoints from Þjóðskrá need a valid jwt token for authentication. The way chosen was to send the jwt token to Þjóðskrá in wrapped calls in `national-registry-x-road.service.ts`. The forsja endpoint is an example of this.
 
-## How to connect to xroad
+## How to connect to X-Road
 
-To use it you need to have proxy the xroad socat service:
+To use it you need to have proxy the X-Road socat service:
 
 ```bash
   ./scripts/run-xroad-proxy.sh

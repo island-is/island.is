@@ -21,6 +21,7 @@ export class NationalRegistryXRoadService {
     @Inject('Config')
     private config: NationalRegistryXRoadConfig,
   ) {}
+
   async getCustodyChildrenAndParents(
     nationalId: string,
     token: string,
@@ -101,11 +102,6 @@ export class NationalRegistryXRoadService {
         return {
           nationalId: child.kennitala,
           fullName: child.nafn,
-          address: {
-            streetName: child.logheimili?.heiti,
-            postalCode: child.logheimili?.postnumer,
-            city: child.logheimili?.stadur,
-          },
           livesWithApplicant: parentLegalHomeNationalId.includes(
             parentNationalId,
           ),

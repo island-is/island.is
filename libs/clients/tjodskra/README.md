@@ -4,9 +4,9 @@ This library implements a client to use Þjóðskrá APIs
 
 Documentation about [Þjóðskrá api](https://api-dev.skra.is)
 
-## How to connect to xroad
+## How to connect to X-Road
 
-To use it you need to have proxy the xroad socat service:
+To use it you need to have proxy the X-Road socat service:
 
 ```bash
   ./scripts/run-xroad-proxy.sh
