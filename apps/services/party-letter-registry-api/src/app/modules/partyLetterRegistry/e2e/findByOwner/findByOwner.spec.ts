@@ -23,7 +23,7 @@ describe('FindByOwnerPartyLetterRegistry', () => {
     })
   })
   it('GET /party-letter-registry should return not found error when national owns no letters', async () => {
-    const nationalId = '0101303019'
+    const nationalId = '0101302209'
     const response = await request(app.getHttpServer())
       .get(`/party-letter-registry?owner=${nationalId}`)
       .send()
