@@ -19,8 +19,8 @@ const validateOptionalPhoneNumber = (value: string) => {
 }
 
 export const validateTerms = (
-  arrayLength: number,
   errorMessage: MessageDescriptor,
+  arrayLength: number = 1,
 ) => {
   return z.array(z.string()).refine((v) => v && v.length === arrayLength, {
     params: errorMessage,
