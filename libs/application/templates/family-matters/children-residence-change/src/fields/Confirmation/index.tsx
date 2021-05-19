@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/components'
 import { formatPhoneNumber } from '@island.is/application/templates/family-matters-core/utils'
 import { confirmation, copyUrl } from '../../lib/messages'
+import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
@@ -16,37 +17,34 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { answers, externalData } = application
 
   return (
-    <>
-      <Box marginTop={3}>
-        <DescriptionText
-          text={confirmation.general.description}
-          // In confirmation.general.description we render conditionally what message appears depending on what values are defined in the application answers counter party object.
-          // The emailParagraph, phoneNumberParagraph and count that are passed to format to handle this logic.
-          // We could have gone another route of defining three translations strings, one for each situation, but we were not sure what would be better for the translator.
-          format={{
-            emailParagraph: answers.counterParty.email
-              ? formatMessage(
-                  confirmation.general.description.paragraphs.email,
-                  { email: answers.counterParty.email },
-                )
-              : '',
-            phoneNumberParagraph: answers.counterParty.phoneNumber
-              ? formatMessage(
-                  confirmation.general.description.paragraphs.phoneNumber,
-                  {
-                    phoneNumber: formatPhoneNumber(
-                      answers.counterParty.phoneNumber,
-                    ),
-                  },
-                )
-              : '',
-            count: [
-              answers.counterParty.email,
-              answers.counterParty.phoneNumber,
-            ].filter((item) => item).length,
-          }}
-        />
-      </Box>
+    <Box marginTop={3} paddingBottom={5}>
+      <DescriptionText
+        text={confirmation.general.description}
+        // In confirmation.general.description we render conditionally what message appears depending on what values are defined in the application answers counter party object.
+        // The emailParagraph, phoneNumberParagraph and count that are passed to format to handle this logic.
+        // We could have gone another route of defining three translations strings, one for each situation, but we were not sure what would be better for the translator.
+        format={{
+          emailParagraph: answers.counterParty.email
+            ? formatMessage(confirmation.general.description.paragraphs.email, {
+                email: answers.counterParty.email,
+              })
+            : '',
+          phoneNumberParagraph: answers.counterParty.phoneNumber
+            ? formatMessage(
+                confirmation.general.description.paragraphs.phoneNumber,
+                {
+                  phoneNumber: formatPhoneNumber(
+                    answers.counterParty.phoneNumber,
+                  ),
+                },
+              )
+            : '',
+          count: [
+            answers.counterParty.email,
+            answers.counterParty.phoneNumber,
+          ].filter((item) => item).length,
+        }}
+      />
       <Text variant="h4" marginTop={3}>
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
@@ -76,7 +74,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           <ContractOverview application={application} />
         </BorderedAccordion>
       </Box>
-      <Box marginTop={5} marginBottom={5}>
+      <Box className={confirmationIllustration}>
         <img
           src={
             'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
@@ -84,7 +82,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           alt=""
         />
       </Box>
-    </>
+    </Box>
   )
 }
 

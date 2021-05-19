@@ -234,6 +234,9 @@
     "auth-react": {
       "tags": []
     },
+    "auth-scopes": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -496,6 +499,9 @@
       "tags": []
     },
     "services-auth-api": {
+      "tags": []
+    },
+    "services-auth-public-api": {
       "tags": []
     },
     "services-documents": {
