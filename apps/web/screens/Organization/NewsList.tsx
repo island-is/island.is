@@ -200,7 +200,9 @@ const NewsList: Screen<NewsListProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === Router.asPath,
+      active:
+        organizationPage.newsTag?.slug === selectedTag &&
+        primaryLink.url === Router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
