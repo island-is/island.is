@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNotEmpty } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopesDTO {
@@ -28,6 +28,13 @@ export class ApiScopesDTO {
     example: 'set_description',
   })
   readonly description!: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  readonly apiScopeGroup!: string
 
   @IsBoolean()
   @IsNotEmpty()
