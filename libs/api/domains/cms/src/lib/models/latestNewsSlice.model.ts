@@ -15,6 +15,9 @@ export class LatestNewsSlice {
   title?: string
 
   @Field()
+  tag?: string
+
+  @Field()
   readMoreText?: string
 
   @Field(() => [News])
@@ -28,6 +31,7 @@ export const mapLatestNewsSlice = ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
+  tag: fields.newsTag?.fields.slug ?? '',
   readMoreText: fields.readMoreText ?? '',
   news: {
     tag: fields.newsTag ? mapGenericTag(fields.newsTag).slug : '',
