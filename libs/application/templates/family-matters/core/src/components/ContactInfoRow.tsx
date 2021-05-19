@@ -47,7 +47,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             type="tel"
             label={phoneNumber.label}
             error={phoneNumber.error}
-            format="###-####"
+            format="### ####"
             onChange={() => {
               clearErrors(phoneNumber.clearErrors || phoneNumber.id)
             }}

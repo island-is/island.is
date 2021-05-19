@@ -268,6 +268,15 @@ export class CaseController {
       throw new NotFoundException(`Case ${id} does not exist`)
     }
 
+    if (
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
+    }
+
     return updatedCase
   }
 

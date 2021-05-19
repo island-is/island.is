@@ -492,13 +492,19 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
       "tags": []
     },
     "services-auth-api": {
+      "tags": []
+    },
+    "services-auth-public-api": {
       "tags": []
     },
     "services-documents": {
@@ -557,6 +563,9 @@
       "tags": []
     },
     "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {
