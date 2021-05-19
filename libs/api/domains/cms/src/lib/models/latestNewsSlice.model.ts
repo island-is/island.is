@@ -33,7 +33,7 @@ export const mapLatestNewsSlice = ({
     tag: fields.newsTag ? mapGenericTag(fields.newsTag).slug : '',
     lang:
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
-    size: 3,
+    size: 4,
     order: 'desc',
   },
 })
