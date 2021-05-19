@@ -41,6 +41,7 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
         <RadioController
           id={field.id}
           largeButtons
+          backgroundColor="white"
           options={[
             {
               value: ApproveContract.Yes,
