@@ -5,18 +5,20 @@ import { LatestNewsSection, Section } from '@island.is/web/components'
 interface SliceProps {
   slice: LatestNewsSliceSchema
   organizationPageSlug: string
+  fullWidth: boolean
 }
 
 export const LatestNewsSlice: React.FC<SliceProps> = ({
   slice,
   organizationPageSlug,
+  fullWidth,
 }) => {
   return (
     <section key={slice.id}>
       <Section
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
-        background="purple100"
+        background={fullWidth ? 'purple100' : 'white'}
         aria-labelledby="latestNewsTitle"
       >
         <LatestNewsSection
@@ -27,6 +29,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
           overview="organizationnewsoverview"
           parameters={[organizationPageSlug]}
           readMoreText={slice.readMoreText}
+          fullWidth={fullWidth}
         />
       </Section>
     </section>

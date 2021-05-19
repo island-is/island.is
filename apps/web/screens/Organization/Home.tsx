@@ -31,7 +31,7 @@ interface HomeProps {
 
 const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
 
-const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
+const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -100,6 +100,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
+          fullWidth={true}
         />
       ))}
     </OrganizationWrapper>
