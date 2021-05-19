@@ -498,6 +498,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-auth-public-api": {
+      "tags": []
+    },
     "services-documents": {
       "tags": []
     },
