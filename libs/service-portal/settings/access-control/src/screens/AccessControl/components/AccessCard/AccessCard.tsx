@@ -63,7 +63,7 @@ function AccessCard({
           <Link to={href}>
             <ArrowLink>
               {formatMessage({
-                id: 'service.portal:view-access',
+                id: 'service.portal:access-control-view-access',
                 defaultMessage: 'Skoða aðgang',
               })}
             </ArrowLink>
