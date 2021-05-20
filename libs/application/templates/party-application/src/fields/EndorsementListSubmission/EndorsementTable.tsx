@@ -30,32 +30,33 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   const { lang: locale, formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
+    const rowBackground = endorsement.hasWarning ? 'yellow200' : 'white'
     return (
       <T.Row key={endorsement.id}>
         <T.Data
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
           }}
         >
           {formatDate(endorsement.date)}
         </T.Data>
         <T.Data
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
           }}
         >
           {endorsement.name}
         </T.Data>
         <T.Data
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
           }}
         >
           {formatKennitala(endorsement.nationalId)}
         </T.Data>
         <T.Data
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
             textAlign: 'right',
           }}
         >
@@ -78,7 +79,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         </T.Data>
         <T.Data
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
           }}
         >
           <Checkbox

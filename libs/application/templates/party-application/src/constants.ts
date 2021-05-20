@@ -7,7 +7,7 @@ export const constituencyMapper: Record<
     high: number
   }
 > = {
-  Norðausturkjördæmi: { low: 3, high: 5 }, //todo: change to 300 and 400
+  Norðausturkjördæmi: { low: 300, high: 400 },
   Norðvesturkjördæmi: { low: 240, high: 320 },
   'Reykjavíkurkjördæmi norður': { low: 330, high: 440 },
   'Reykjavíkurkjördæmi suður': { low: 330, high: 440 },
