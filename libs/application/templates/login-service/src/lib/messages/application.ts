@@ -28,7 +28,7 @@ export const section = defineMessages({
   },
   technicalContact: {
     id: `ls.application:section.technicalContact`,
-    defaultMessage: 'Tæknilegar tengiliður',
+    defaultMessage: 'Tæknilegur tengiliður',
     description: 'Technical Contact Section Title',
   },
   technicalInfo: {
