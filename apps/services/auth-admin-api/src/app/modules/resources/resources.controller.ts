@@ -14,6 +14,8 @@ import {
   ApiResourceAllowedScopeDTO,
   ApiResourceUserClaim,
   UserClaimDTO,
+  ApiScopeGroup,
+  ApiScopeGroupDTO,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -607,4 +609,54 @@ export class ResourcesController {
       scopeName,
     )
   }
+
+  // #region ApiScopeGroup
+  @Scopes(Scope.root, Scope.full)
+  @Get('api-scope-group')
+  async findApiScopeGroups(
+    @Query('page') page?: number,
+    @Query('count') count?: number,
+  ): Promise<
+    | ApiScopeGroup[]
+    | {
+        rows: ApiScopeGroup[]
+        count: number
+      }
+    | null
+  > {
+    if (!page || !count) {
+      return this.resourcesService.findAllApiScopeGroups()
+    }
+    return this.resourcesService.findAndCountAllApiScopeGroups(page, count)
+  }
+
+  @Scopes(Scope.root, Scope.full)
+  @Post('api-scope-group')
+  async createApiScopeGroup(
+    @Body() group: ApiScopeGroupDTO,
+  ): Promise<ApiScopeGroup | null> {
+    return await this.resourcesService.createApiScopeGroup(group)
+  }
+
+  // #region ApiScopeGroup
+  @Scopes(Scope.root, Scope.full)
+  @Put('api-scope-group/:id')
+  async updateApiScopeGroup(
+    @Body() group: ApiScopeGroupDTO,
+    @Param('id') id: string,
+  ): Promise<[number, ApiScopeGroup[]] | null> {
+    return await this.resourcesService.updateApiScopeGroup(group, id)
+  }
+
+  @Scopes(Scope.root, Scope.full)
+  @Delete('api-scope-group/:id')
+  async deleteApiScopeGroup(@Param('id') id: string): Promise<number | null> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.resourcesService.deleteApiScopeGroup(id)
+  }
+
+  // #endregion ApiScopeGroup
 }

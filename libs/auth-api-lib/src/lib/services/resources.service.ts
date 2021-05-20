@@ -767,5 +767,20 @@ export class ResourcesService {
     return this.apiScopeGroup.findAll()
   }
 
+  /** Returns all ApiScopeGroups with Paging */
+  async findAndCountAllApiScopeGroups(
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: ApiScopeGroup[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.apiScopeGroup.findAndCountAll({
+      limit: count,
+      offset: offset,
+    })
+  }
   // #endregion ApiScopeGroup
 }
