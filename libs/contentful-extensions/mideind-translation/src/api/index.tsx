@@ -1,5 +1,4 @@
-const base = 'https://stafraentisland.greynir.is/translate/'
-const base2 = 'http://localhost:2929/'
+const base = 'https://stafraentisland.greynir.is/translate'
 
 const defaultParams = {
   sourceLanguageCode: 'is',
@@ -13,7 +12,7 @@ async function translateTexts(texts: string[]) {
     ...defaultParams,
   }
 
-  const response = await fetch(base, {
+  const response = await fetch(`${base}/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,22 +28,24 @@ async function translateTexts(texts: string[]) {
   return translations
 }
 
-async function sendTexts(iceTexts: string[], enTexts: string[]) {
+async function sendTexts(iceTexts: string[], enTexts: string[], reference: string) {
   const body: any = {
-    ice: iceTexts,
-    en: enTexts,
+    machineTranslatedText: '',  // Required even if empty
+    translationReference: 1 || reference,  // Reference to be accepted later by Miðeind
+    originalText: iceTexts.join(" "), // String expected, not array
+    correctedText: enTexts.join(" "), // String expected, not array
+    languagePair: 'is-en',
+    model: 'transformer-base'
   }
 
-  console.log(body)
-
-  //const response = await fetch(base2, {
-  //  method: 'POST',
-  //  mode: 'no-cors',
-  //  headers: {
-  //    'Content-Type': 'application/json'
-  //  },
-  //  body: JSON.stringify(body)
-  //})
+  const response = await fetch(`${base}/corrected`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': process.env.MIDEIND_TOKEN || '',
+    },
+    body: JSON.stringify(body)
+  })
 }
 
 export { translateTexts, sendTexts }

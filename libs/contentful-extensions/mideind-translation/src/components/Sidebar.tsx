@@ -85,6 +85,10 @@ const Sidebar = (props: SidebarProps) => {
       const fields = props.sdk.entry.fields
       const keys = Object.keys(fields)
 
+      // A reference for Miðeind
+      // {content-id}:{versionNumberAtTranslateTime}
+      const translationReference = `${props.sdk.entry.getSys().id}:${parseInt(publishedVersion, 10) - 1}`
+
       let iceTexts: string[] = []
       let enTexts: string[] = []
 
@@ -104,7 +108,7 @@ const Sidebar = (props: SidebarProps) => {
         enTexts = [...enTexts, ...enExtractedTexts]
       }
 
-      sendTexts(iceTexts, enTexts)
+      sendTexts(iceTexts, enTexts, translationReference)
     }
   }
 

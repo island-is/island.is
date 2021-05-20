@@ -40,7 +40,6 @@ function extractField(field: any, eInterface: any, locale = 'is-IS') {
       return
     } else {
       var fieldValue = field.getValue(locale)
-      console.log({ fieldValue, locale })
       if (fieldValue) {
         const texts = extractText(fieldValue)
         return texts
