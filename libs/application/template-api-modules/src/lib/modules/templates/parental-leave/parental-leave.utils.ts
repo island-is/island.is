@@ -76,16 +76,18 @@ export const getEmployer = (
     : extractAnswer(application.answers, 'employer.nationalRegistryId'),
 })
 
-export const getOtherParentId = (application: Application): string => {
+export const getOtherParentId = (
+  application: Application,
+): ParentalLeave['otherParentId'] => {
   const otherParent = extractAnswer<string>(
     application.answers,
     'otherParent',
     null,
   )
-  const otherParentId = extractAnswer<string>(
+  const otherParentId = extractAnswer<string | null>(
     application.answers,
     'otherParentId',
-    '',
+    null,
   )
 
   if (otherParent === formConstants.spouseSelection.spouse) {
