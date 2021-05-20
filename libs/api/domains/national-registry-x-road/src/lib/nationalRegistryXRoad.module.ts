@@ -2,8 +2,8 @@ import { DynamicModule, Module } from '@nestjs/common'
 import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
-import { NationalRegistryXRoadResolver } from './national-registry-x-road.resolver'
-import { NationalRegistryXRoadService } from './national-registry-x-road.service'
+import { NationalRegistryXRoadResolver } from './nationalRegistryXRoad.resolver'
+import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 
 export interface NationalRegistryXRoadConfig {
   xRoadBasePathWithEnv: string

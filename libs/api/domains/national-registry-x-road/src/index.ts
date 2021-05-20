@@ -1,1 +1,1 @@
-export * from './lib/national-registry-x-road.module'
+export * from './lib/nationalRegistryXRoad.module'

@@ -1,5 +1,5 @@
 import { Resolver, Query } from '@nestjs/graphql'
-import { NationalRegistryXRoadService } from './national-registry-x-road.service'
+import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import {
   CurrentUser,
   IdsAuthGuard,

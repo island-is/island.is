@@ -2,7 +2,7 @@ import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryXRoadConfig } from '..'
+import { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { ChildrenCustodyResponse } from '../models/childrenCustodyResponse.model'
 import { ChildrenCustodyChild } from '../models/childrenCustodyChild.model'
 
