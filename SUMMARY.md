@@ -150,6 +150,7 @@
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
+  - [National Registry Clients](libs/clients/national-registry/README.md)
     - [Clients National Registry V1](libs/clients/national-registry/v1/README.md)
     - [Clients National Registry V2](libs/clients/national-registry/v2/README.md)
   - [Regulations](libs/clients/regulations/README.md)
