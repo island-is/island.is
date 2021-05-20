@@ -6,7 +6,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        CREATE TABLE group_id (
+        CREATE TABLE api_scope_group (
           id UUID NOT NULL,
           name VARCHAR NOT NULL,
           description VARCHAR NOT NULL,
@@ -30,7 +30,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
     BEGIN;
       ALTER TABLE api_scope
-      DROP COLUMN group_id;
+      DROP COLUMN api_scope_group;
       DROP TABLE group_id;
       COMMIT;
     `)
