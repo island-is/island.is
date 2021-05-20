@@ -57,6 +57,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const OverviewLinksSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -93,6 +97,8 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
       return <StorySlice slice={slice} />
+    case 'OverviewLinks':
+      return <OverviewLinksSlice slice={slice} />
     case 'LatestNewsSlice':
       return (
         <LatestNewsSlice

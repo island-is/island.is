@@ -45,7 +45,10 @@
 /libs/application/templates/meta-application/                                                 @island-is/aranja
 /libs/application/templates/parental-leave/                                                   @island-is/aranja
 /libs/application/templates/reference-template/                                               @island-is/aranja
-/libs/contentful-translation-extension/                                                       @island-is/aranja
+/libs/contentful-extensions/                                                                  @island-is/aranja @island-is/kosmos-kaos
+/libs/contentful-extensions/translation/                                                      @island-is/aranja
+/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
+/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
 /libs/utils/shared/                                                                           @island-is/aranja
