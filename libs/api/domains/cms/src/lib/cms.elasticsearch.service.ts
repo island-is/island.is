@@ -100,7 +100,7 @@ export class CmsElasticsearchService {
       tagQuery = {
         tags: [
           {
-            value: tag,
+            key: tag,
             type: 'genericTag',
           },
         ],
