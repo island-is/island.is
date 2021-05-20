@@ -45,6 +45,12 @@ const NewsItem: Screen<NewsItemProps> = ({
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
 
+  // We only display breadcrumbs and highlighted nav item if the news has the
+  // primary news tag of the organization
+  const isOrganizationNews = newsItem.genericTags.some(
+    (x) => x.slug === organizationPage.newsTag.slug,
+  )
+
   const overviewPath: string = Router.asPath.substring(
     0,
     Router.asPath.lastIndexOf('/'),
@@ -68,19 +74,24 @@ const NewsItem: Screen<NewsItemProps> = ({
       href: linkResolver('organizationpage', [organizationPage.slug]).href,
       typename: 'organizationpage',
     },
-    {
-      title: newsOverviewTitle,
-      href: linkResolver('organizationnewsoverview', [organizationPage.slug])
-        .href,
-      typename: 'organizationnewsoverview',
-    },
+    ...(isOrganizationNews
+      ? [
+          {
+            title: newsOverviewTitle,
+            href: linkResolver('organizationnewsoverview', [
+              organizationPage.slug,
+            ]).href,
+            typename: 'organizationnewsoverview',
+          },
+        ]
+      : []),
   ]
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === overviewPath,
+      active: isOrganizationNews && primaryLink.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
