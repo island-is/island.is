@@ -3,10 +3,10 @@ import {
   Heading,
   Skeleton,
   StatusCard,
+  ViewPager,
 } from '@island.is/island-ui-native'
 import React from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { ViewPager } from '../../components/view-pager/view-pager'
 import { IApplication } from '../../graphql/fragments/application.fragment'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
