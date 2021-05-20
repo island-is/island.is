@@ -20,7 +20,7 @@ module.exports = {
 
         ALTER TABLE api_scope 
         ADD CONSTRAINT FK_api_scope_api_scope_group FOREIGN KEY (group_id)
-        REFERENCES public.group_id (id);
+        REFERENCES api_scope_group (id);
 
       COMMIT;
     `)
