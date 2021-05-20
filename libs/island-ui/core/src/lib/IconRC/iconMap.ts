@@ -5,6 +5,7 @@ export type Icon =
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
+  | 'arrowDown'
   | 'attach'
   | 'business'
   | 'calendar'
