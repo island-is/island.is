@@ -28,9 +28,10 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
           linkType="organizationnews"
           overview="organizationnewsoverview"
           parameters={[organizationPageSlug]}
-          newsTag={slice.tag}
+          newsTag={!fullWidth && slice.tag}
           readMoreText={slice.readMoreText}
-          fullWidth={fullWidth}
+          variant={fullWidth ? 'default' : 'bigCards'}
+          itemMaxDisplayedCount={fullWidth ? 3 : 4}
         />
       </Section>
     </section>

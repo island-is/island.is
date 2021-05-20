@@ -17,7 +17,6 @@ import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useRouter } from 'next/router'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -31,7 +30,8 @@ interface LatestNewsProps {
   parameters?: Array<string>
   newsTag?: string
   readMoreText?: string
-  fullWidth?: boolean
+  itemMaxDisplayedCount?: number
+  variant?: 'default' | 'bigCards'
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
@@ -43,14 +43,14 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   parameters = [],
   newsTag,
   readMoreText = '',
-  fullWidth = true,
+  itemMaxDisplayedCount = 3,
+  variant = 'default',
 }) => {
-  const newsItems = items.slice(0, fullWidth ? 3 : 4)
+  const newsItems = items.slice(0, itemMaxDisplayedCount)
   const { t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
-  const Router = useRouter()
   const titleProps = labelId ? { id: labelId } : {}
 
   return (
@@ -66,7 +66,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
             <Link
               href={{
                 pathname: linkResolver(overview, parameters).href,
-                ...(!fullWidth && { query: { tag: newsTag } }),
+                ...(!!newsTag && { query: { tag: newsTag } }),
               }}
               skipTab
             >
@@ -89,7 +89,12 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
           {newsItems.map((newsItem) => {
             return (
               <GridColumn
-                span={['12/12', '12/12', '12/12', fullWidth ? '4/12' : '6/12']}
+                span={[
+                  '12/12',
+                  '12/12',
+                  '12/12',
+                  variant === 'default' ? '4/12' : '6/12',
+                ]}
                 key={newsItem.slug}
                 paddingBottom={2}
               >
