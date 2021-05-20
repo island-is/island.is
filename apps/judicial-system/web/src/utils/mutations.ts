@@ -209,6 +209,7 @@ export const CreateUserMutation = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -228,6 +229,7 @@ export const UsersQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -247,6 +249,7 @@ export const UserQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -267,6 +270,7 @@ export const InstitutionsQuery = gql`
   query InstitutionsQuery {
     institutions {
       id
+      type
       name
     }
   }

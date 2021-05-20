@@ -262,6 +262,7 @@ function expectInstitutionsToMatch(
   expect(institutionOne?.id).toBe(institutionTwo?.id)
   expect(institutionOne?.created).toBe(institutionTwo?.created)
   expect(institutionOne?.modified).toBe(institutionTwo?.modified)
+  expect(institutionOne?.type).toBe(institutionTwo?.type)
   expect(institutionOne?.name).toBe(institutionTwo?.name)
 }
 

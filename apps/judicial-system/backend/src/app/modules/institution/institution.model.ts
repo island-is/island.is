@@ -8,6 +8,7 @@ import {
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { InstitutionType } from '@island.is/judicial-system/types'
 
 @Table({
   tableName: 'institution',
@@ -30,6 +31,13 @@ export class Institution extends Model<Institution> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(InstitutionType),
+  })
+  type: InstitutionType
 
   @Column({
     type: DataType.STRING,

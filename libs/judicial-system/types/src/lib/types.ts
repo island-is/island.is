@@ -2,18 +2,24 @@ export enum Feature {
   NONE = 'NONE',
 }
 
-export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+export enum InstitutionType {
+  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
+  COURT = 'COURT',
 }
 
 export interface Institution {
   id: string
   created: string
   modified: string
+  type: InstitutionType
   name: string
+}
+
+export enum UserRole {
+  PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
+  JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {

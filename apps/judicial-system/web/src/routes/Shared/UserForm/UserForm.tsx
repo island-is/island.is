@@ -13,7 +13,12 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
@@ -39,12 +44,18 @@ export const UserForm: React.FC<Props> = (props) => {
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const selectInstitutions = props.institutions.map((institution) => {
-    return {
+  const selectInstitutions = props.institutions
+    .filter((institution) =>
+      user.role === UserRole.PROSECUTOR
+        ? institution.type === InstitutionType.PROSECUTORS_OFFICE
+        : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+        ? institution.type === InstitutionType.COURT
+        : false,
+    )
+    .map((institution) => ({
       label: institution.name,
       value: institution.id,
-    }
-  })
+    }))
 
   const usersInstitution = selectInstitutions.find(
     (institution) => institution.label === user.institution?.name,
@@ -96,7 +107,12 @@ export const UserForm: React.FC<Props> = (props) => {
       }
     }
 
-    return true
+    // TODO: Find a better way to validate the match between user role and institution type
+    return user.role === UserRole.PROSECUTOR
+      ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
+      : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+      ? user.institution?.type === InstitutionType.COURT
+      : false
   }
 
   const storeAndRemoveErrorIfValid = (field: string, value: string) => {
