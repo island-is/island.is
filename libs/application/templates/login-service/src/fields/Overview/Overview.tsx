@@ -31,7 +31,7 @@ const ValueLine = ({ title, value, hasDivider = true }: ValueLineProps) => {
   )
 }
 
-export const Overview = ({ application, field }: FieldBaseProps) => {
+export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const answers = application.answers as LoginService
 
