@@ -80,6 +80,7 @@ const NewsList: Screen<NewsListProps> = ({
   )
 
   const newsTitle =
+    currentNavItem?.primaryLink.text ??
     newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
     n('newsTitle', 'Fréttir og tilkynningar')
 
