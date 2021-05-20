@@ -18,6 +18,8 @@ type autofillProperties = Pick<
   | 'policeDemands'
   | 'litigationPresentations'
   | 'courtStartDate'
+  | 'courtCaseFacts'
+  | 'courtLegalArguments'
 >
 
 interface CreateCourtCaseMutationResponse {

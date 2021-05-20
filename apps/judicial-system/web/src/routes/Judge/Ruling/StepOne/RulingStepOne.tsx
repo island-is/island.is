@@ -67,7 +67,7 @@ export const RulingStepOne: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -118,6 +118,14 @@ export const RulingStepOne: React.FC = () => {
           theCase.id,
           parseString('isolationTo', theCase.custodyEndDate || ''),
         )
+      }
+
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
+
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
 
       setWorkingCase(theCase)
