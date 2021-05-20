@@ -1,15 +1,15 @@
 import {
   Alert,
-  TableViewAccessory,
   TableViewCell,
   TableViewGroup,
+  TableViewAccessory,
 } from '@island.is/island-ui-native'
 import {
   AuthenticationType,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Platform, ScrollView, Switch, View, Animated } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
