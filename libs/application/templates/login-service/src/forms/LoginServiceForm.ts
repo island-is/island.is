@@ -150,6 +150,13 @@ export const LoginServiceForm: Form = buildForm({
                 },
               ],
             }),
+            buildCustomField({
+              id: 'technicalContact.techAnnouncementsEmailTitle',
+              title: technicalContact.labels.techAnnouncementsEmailTitle,
+              component: 'FieldTitle',
+            },  {
+              marginTop: [3, 5],
+            }),
             buildTextField({
               id: 'technicalContact.techAnnouncementsEmail',
               title: technicalContact.labels.techAnnouncementsEmail,
@@ -196,13 +203,6 @@ export const LoginServiceForm: Form = buildForm({
               title: technicalInfo.labels.prodReturnUrl,
               backgroundColor: 'blue',
               required: true,
-            }),
-            buildTextField({
-              id: 'technicalInfo.clientId',
-              title: technicalInfo.labels.clientId,
-              description: technicalInfo.labels.clientIdDescription,
-              placeholder: technicalInfo.labels.clientIdPlaceholder,
-              backgroundColor: 'blue',
             }),
           ],
         }),

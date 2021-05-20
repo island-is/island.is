@@ -42,7 +42,7 @@ export const applicant = {
     },
     responsiblePartyDescription: {
       id: `ls.application:section.applicant.responsiblePartyDescription`,
-      defaultMessage: 'Stuttur texti um hvað ábyrgðaraðili er',
+      defaultMessage: 'Ábyrgðarmaður og eigandi þjónustunnar sem kemur til með að nota innskráningarþjónustuna',
       description: 'Applicant responsiblePartyDescription label',
     },
     responsiblePartyName: {
