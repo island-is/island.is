@@ -5,6 +5,7 @@ import {
   Heading,
   NotificationCard,
   StatusCard,
+  ViewPager,
   WelcomeCard,
 } from '@island.is/island-ui-native'
 import React from 'react'
@@ -22,7 +23,6 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
 import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
 import logo from '../../assets/logo/logo-64w.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { ViewPager } from '../../components/view-pager/view-pager'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import {

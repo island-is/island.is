@@ -1,9 +1,9 @@
+import { SearchBar } from '@island.is/island-ui-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import { I18nProvider } from '../../contexts/i18n-provider'
 import { ThemeProvider } from '../../contexts/theme-provider'
 import { uiStore, useUiStore } from '../../stores/ui-store'
-import { SearchBar } from '../search-bar/search-bar'
 
 interface NavigationBarTitleProps {
   title: string

@@ -1,4 +1,4 @@
-import { NavigationBarSheet } from '@island.is/island-ui-native'
+import { NavigationBarSheet, TabBar } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import {
@@ -6,7 +6,6 @@ import {
   NavigationFunctionComponent
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
-import { TabBar } from '../../components/tab-bar/tab-bar'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { useIntl } from '../../utils/intl'
 import { testIDs } from '../../utils/test-ids'

@@ -13,6 +13,9 @@ configure(() =>{
   require('../../../../island-ui/src/lib/Field/Field.stories');
   require('../../../../island-ui/src/lib/Tableview/Tableview.stories');
   require('../../../../island-ui/src/lib/NavigationBarSheet/NavigationBarSheet.stories');
+  require('../../../../island-ui/src/lib/ViewPager/ViewPager.stories');
+  require('../../../../island-ui/src/lib/TabBar/TabBar.stories');
+  require('../../../../island-ui/src/lib/SearchBar/SearchBar.stories');
 }, module);
 
 export const StorybookUI = getStorybookUI({
