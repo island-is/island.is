@@ -6,6 +6,7 @@ import {
   GridRow,
   GridColumn,
   InputError,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
 interface Option {
@@ -16,7 +17,7 @@ interface Option {
   excludeOthers?: boolean
 }
 interface Props {
-  defaultValue?: string[]
+  defaultValue?: any
   disabled?: boolean
   error?: string
   id: string
@@ -24,7 +25,7 @@ interface Props {
   options?: Option[]
   largeButtons?: boolean
   split?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
-  emphasize?: boolean
+  backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
 }
 export const RadioController: FC<Props> = ({
@@ -34,9 +35,9 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
-  largeButtons = false,
-  emphasize = false,
+  largeButtons = true,
   onSelect = () => undefined,
+  backgroundColor = 'blue',
   split = '1/1',
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -54,8 +55,7 @@ export const RadioController: FC<Props> = ({
               key={`option-${option.value}`}
             >
               <RadioButton
-                large={largeButtons || emphasize}
-                filled={emphasize}
+                large={largeButtons}
                 tooltip={option.tooltip}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
@@ -72,7 +72,7 @@ export const RadioController: FC<Props> = ({
                 value={option.value}
                 disabled={disabled}
                 hasError={error !== undefined}
-                backgroundColor="blue"
+                backgroundColor={backgroundColor}
               />
             </GridColumn>
           ))}

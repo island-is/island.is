@@ -57,46 +57,43 @@ const AppealSection: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
       </Box>
-      <div className={styles.appealContainer}>
-        <BlueBox height={120}>
-          <AnimatePresence>
-            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-              !accusedPostponedAppealDate && (
+      {accusedAppealDecision === CaseAppealDecision.POSTPONE && (
+        <div className={styles.appealContainer}>
+          <BlueBox height={120}>
+            <AnimatePresence>
+              {!accusedPostponedAppealDate && (
                 <AccusedAppealDatePicker
                   handleAccusedAppeal={handleAccusedAppeal}
                   accusedGender={accusedGender}
                   isInitialMount={isInitialMount}
                 />
               )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-              accusedPostponedAppealDate && (
+            </AnimatePresence>
+            <AnimatePresence>
+              {accusedPostponedAppealDate && (
                 <AccusedAppealInfo
                   accusedGender={accusedGender}
                   handleAccusedAppealDismissal={handleAccusedAppealDismissal}
                   accusedPostponedAppealDate={accusedPostponedAppealDate}
                 />
               )}
-          </AnimatePresence>
-        </BlueBox>
-      </div>
-
-      <div className={styles.appealContainer}>
-        <BlueBox height={120}>
-          <AnimatePresence>
-            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
-              !prosecutorPostponedAppealDate && (
+            </AnimatePresence>
+          </BlueBox>
+        </div>
+      )}
+      {prosecutorAppealDecision === CaseAppealDecision.POSTPONE && (
+        <div className={styles.appealContainer}>
+          <BlueBox height={120}>
+            <AnimatePresence>
+              {!prosecutorPostponedAppealDate && (
                 <ProsecutorAppealDatePicker
                   handleProsecutorAppeal={handleProsecutorAppeal}
                   isInitialMount={isInitialMount}
                 />
               )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
-              prosecutorPostponedAppealDate && (
+            </AnimatePresence>
+            <AnimatePresence>
+              {prosecutorPostponedAppealDate && (
                 <ProsecutorAppealInfo
                   prosecutorPostponedAppealDate={prosecutorPostponedAppealDate}
                   handleProsecutorAppealDismissal={
@@ -104,9 +101,10 @@ const AppealSection: React.FC<Props> = (props) => {
                   }
                 />
               )}
-          </AnimatePresence>
-        </BlueBox>
-      </div>
+            </AnimatePresence>
+          </BlueBox>
+        </div>
+      )}
     </>
   )
 }
