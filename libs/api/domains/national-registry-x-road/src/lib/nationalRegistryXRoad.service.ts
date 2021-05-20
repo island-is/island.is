@@ -87,20 +87,20 @@ export class NationalRegistryXRoadService {
           xRoadClient: this.config.xRoadClientId,
         })
 
-        const parentLegalHomeNationalId = await this.personApi.einstaklingarGetLogforeldrar(
+        const parentLegalHomeNationalIds = await this.personApi.einstaklingarGetLogforeldrar(
           { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
         )
 
         return {
           nationalId: child.kennitala,
           fullName: child.nafn,
-          livesWithApplicant: parentLegalHomeNationalId.includes(
+          livesWithApplicant: parentLegalHomeNationalIds.includes(
             parentNationalId,
           ),
           livesWithBothParents: [
             parentNationalId,
             parentB.kennitala,
-          ].every((id) => parentLegalHomeNationalId.includes(id)),
+          ].every((id) => parentLegalHomeNationalIds.includes(id)),
           parents: [
             {
               nationalId: parentB.kennitala,

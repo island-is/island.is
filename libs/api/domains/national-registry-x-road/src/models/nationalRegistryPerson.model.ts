@@ -13,7 +13,7 @@ export class NationalRegistryPerson {
   address?: NationalRegistryAddress
 
   @Field(() => Boolean)
-  livesWithParents?: Boolean
+  livesWithApplicant?: Boolean
 
   @Field(() => Boolean)
   livesWithBothParents?: Boolean
