@@ -324,7 +324,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                   <RadioButton
                     name="accusedPleaDecision"
@@ -346,7 +346,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                 </div>
                 <Input

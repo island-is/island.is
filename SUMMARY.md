@@ -144,6 +144,7 @@
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth](libs/auth/README.md)
   - [@island.is/auth/react](libs/auth/react/README.md)
+  - [Auth Scopes](libs/auth/scopes/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
