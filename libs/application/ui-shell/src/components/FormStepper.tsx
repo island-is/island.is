@@ -72,7 +72,7 @@ const FormStepper: FC<FormStepperProps> = ({
 
       case FormModes.APPROVED:
         return (
-          <Tag variant="darkerMint" outlined>
+          <Tag variant="blueberry" outlined>
             Status: Approved
           </Tag>
         )

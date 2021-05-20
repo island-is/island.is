@@ -5,7 +5,6 @@
   border-bottom: solid $color-border 1px;
   font-size: 0.7rem;
   margin: 0 -40px;
-  background: $color-bg-content;
 
   &__title {
     font-weight: $weight-semi-bold;
@@ -18,4 +17,17 @@
   div:not(:first-child) {
     padding-left: 1rem;
   }
+}
+
+.local {
+  background: $color-bg-content;
+}
+.development {
+  background-color: #1ae31a;
+}
+.staging {
+  background-color: yellow;
+}
+.production {
+  display: none;
 }

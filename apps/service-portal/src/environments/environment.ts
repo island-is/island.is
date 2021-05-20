@@ -4,7 +4,7 @@
 export default {
   production: false,
   identityServer: {
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
+    authority: 'https://identity-server.dev01.devland.is',
   },
   sentry: {
     dsn:

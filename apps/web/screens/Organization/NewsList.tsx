@@ -55,7 +55,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTagId: string
+  selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -67,13 +67,22 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
-  selectedTagId,
+  selectedTag,
   namespace,
 }) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
+
+  const currentNavItem = organizationPage.menuLinks.find(
+    ({ primaryLink }) => primaryLink.url === Router.asPath,
+  )
+
+  const newsTitle =
+    currentNavItem?.primaryLink.text ??
+    newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
+    n('newsTitle', 'Fréttir og tilkynningar')
 
   const years = Object.keys(datesMap)
   const months = datesMap[selectedYear] ?? []
@@ -106,7 +115,7 @@ const NewsList: Screen<NewsListProps> = ({
   ]
 
   const makeHref = (y: number | string, m?: number | string) => {
-    const params = { y, m, tag: selectedTagId }
+    const params = { y, m, tag: selectedTag }
     const query = Object.entries(params).reduce((queryObject, [key, value]) => {
       if (value) {
         queryObject[key] = value
@@ -145,7 +154,7 @@ const NewsList: Screen<NewsListProps> = ({
       >
         <Stack space={3}>
           <Text variant="h4" as="h1" color="purple600">
-            {n('newsTitle', 'Fréttir og tilkynningar')}
+            {newsTitle}
           </Text>
           <Divider weight="purple200" />
           <NativeSelect
@@ -192,7 +201,9 @@ const NewsList: Screen<NewsListProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      active:
+        organizationPage.newsTag?.slug === selectedTag &&
+        primaryLink.url === Router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -202,7 +213,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('newsTitle', 'Fréttir og tilkynningar')}
+      pageTitle={newsTitle}
       organizationPage={organizationPage}
       breadcrumbItems={breadCrumbs}
       sidebarContent={sidebar}
@@ -213,7 +224,7 @@ const NewsList: Screen<NewsListProps> = ({
     >
       <Stack space={[3, 3, 4]}>
         <Text variant="h1" as="h1" marginBottom={2}>
-          {n('newsTitle', 'Fréttir og tilkynningar')}
+          {newsTitle}
         </Text>
         {selectedYear && (
           <Hidden below="lg">
@@ -336,7 +347,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
     )
   ).data.getOrganizationPage
-  const tag = organizationPage.newsTag ? organizationPage.newsTag.id : ''
+  const tag = (query.tag as string) ?? organizationPage.newsTag?.slug ?? ''
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -394,7 +405,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTagId: tag,
+    selectedTag: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

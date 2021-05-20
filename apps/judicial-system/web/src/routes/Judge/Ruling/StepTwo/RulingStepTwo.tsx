@@ -79,6 +79,7 @@ export const RulingStepTwo: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -187,7 +188,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -219,7 +220,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -256,7 +257,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -335,7 +336,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -364,7 +365,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -397,7 +398,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>

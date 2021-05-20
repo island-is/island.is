@@ -130,11 +130,13 @@ export class IcelandicNameController {
   @ApiNotFoundResponse({
     description: 'The name was not found.',
   })
-  async deleteById(@Param('id') id: number): Promise<void> {
+  async deleteById(@Param('id') id: number): Promise<number> {
     const count = await this.icelandicNameService.deleteById(id)
 
     if (count === 0) {
       throw new NotFoundException(`Name with id ${id} was not found!`)
     }
+
+    return count
   }
 }
