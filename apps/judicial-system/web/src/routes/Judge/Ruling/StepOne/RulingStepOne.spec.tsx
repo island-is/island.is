@@ -37,6 +37,10 @@ describe('/domari-krafa/urskurdur', () => {
             } as UpdateCase,
             {
               id: 'test_id_3',
+              courtLegalArguments: 'Court Legal Arguments',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
               ruling: 'Court Legal Arguments',
             } as UpdateCase,
             {
@@ -69,6 +73,11 @@ describe('/domari-krafa/urskurdur', () => {
     userEvent.type(
       await screen.findByLabelText('Málsatvik *'),
       'Court Case Facts',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Lagarök *'),
+      'Court Legal Arguments',
     )
 
     userEvent.type(

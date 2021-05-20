@@ -59,6 +59,10 @@ export const RulingStepOne: React.FC = () => {
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
   ] = useState<string>('')
+  const [
+    courtLegalArgumentsErrorMessage,
+    setCourtLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
   const id = router.query.id
@@ -218,7 +222,50 @@ export const RulingStepOne: React.FC = () => {
                   errorMessage={courtCaseFactsErrorMessage}
                   hasError={courtCaseFactsErrorMessage !== ''}
                   textarea
-                  rows={7}
+                  rows={16}
+                  required
+                />
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Greinargerð um lagarök{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtLegalArguments"
+                  name="courtLegalArguments"
+                  label="Lagarök"
+                  defaultValue={workingCase.courtLegalArguments}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLegalArguments',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtLegalArgumentsErrorMessage,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLegalArguments',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtLegalArgumentsErrorMessage}
+                  hasError={courtLegalArgumentsErrorMessage !== ''}
+                  textarea
+                  rows={16}
                   required
                 />
               </Box>
