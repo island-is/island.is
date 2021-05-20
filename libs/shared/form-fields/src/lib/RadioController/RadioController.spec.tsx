@@ -56,7 +56,7 @@ describe('RadioController', () => {
     ]
     render(
       <Wrapper>
-        <RadioController id="values" largeButtons={true} options={options} />
+        <RadioController id="values" options={options} />
       </Wrapper>,
     )
     expect(screen.getByText('nice sublabel')).toBeInTheDocument()
@@ -69,7 +69,7 @@ describe('RadioController', () => {
     ]
     render(
       <Wrapper>
-        <RadioController id="values" options={options} />
+        <RadioController id="values" largeButtons={false} options={options} />
       </Wrapper>,
     )
     expect(screen.queryByText('nice sublabel')).not.toBeInTheDocument()

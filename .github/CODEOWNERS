@@ -21,7 +21,7 @@
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
-libs/application/template-api-modules/src/lib/modules/templates/party-letter                  @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
@@ -45,7 +45,10 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/application/templates/meta-application/                                                 @island-is/aranja
 /libs/application/templates/parental-leave/                                                   @island-is/aranja
 /libs/application/templates/reference-template/                                               @island-is/aranja
-/libs/contentful-translation-extension/                                                       @island-is/aranja
+/libs/contentful-extensions/                                                                  @island-is/aranja @island-is/kosmos-kaos
+/libs/contentful-extensions/translation/                                                      @island-is/aranja
+/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
+/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
 /libs/utils/shared/                                                                           @island-is/aranja
@@ -80,6 +83,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/service-portal/health/                                                                  @island-is/sendiradid
 /libs/service-portal/settings/personal-information                                            @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
@@ -127,6 +131,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar
+/apps/services/auth-public-api/                                                               @island-is/fuglar
 /apps/auth-admin-web/                                                                         @island-is/fuglar
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
 /libs/auth-api-lib/                                                                           @island-is/fuglar

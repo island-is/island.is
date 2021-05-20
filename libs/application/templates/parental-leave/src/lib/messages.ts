@@ -5,6 +5,11 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 export const parentalLeaveFormMessages: MessageDir = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
+    institution: {
+      id: 'pl.application:institution.name',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'Name of the institution responsible of the application',
+    },
     name: {
       id: 'pl.application:name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -153,7 +158,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-
     rightsSection: {
       id: 'pl.application:rights.section',
       defaultMessage: 'Réttindi til fæðingarorlofs',
@@ -645,6 +649,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
       description: 'Type a number from 0 to 100',
     },
+    allowanceUsage: {
+      id: 'pl.application:allowance.allowance.usage',
+      defaultMessage: 'Hlutfall af persónuafslættinum',
+      description: 'Review copy for the usage percentage',
+    },
   }),
 
   leavePlan: defineMessages({
@@ -1048,6 +1057,43 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
+    },
+    rightsTotal: {
+      id: 'pl.application:review.rights.total',
+      defaultMessage: 'Samtals: {months}',
+      description:
+        'Copy for the total of months for the parental leave on the review screen',
+    },
+    rightsPersonalMonths: {
+      id: 'pl.application:review.rights.personal.months',
+      defaultMessage: '{months} persónulegir mánuðir',
+      description: 'Copy for the number of personal months',
+    },
+    rightsAllowanceRequested: {
+      id: 'pl.application:review.rights.allowance.requested',
+      defaultMessage: '{requested} mánuður veittur af öðru foreldri',
+      description: 'Requested months from other parent',
+    },
+    rightsAllowanceGiven: {
+      id: 'pl.application:review.rights.allowance.given',
+      defaultMessage: '{given} mánuður gefinn hinu foreldrinu',
+      description: 'Given months to the other parent',
+    },
+    period: {
+      id: 'pl.application:review.period',
+      defaultMessage: 'Tímabilinu {index} - {ratio}%',
+      description: 'Period copy',
+    },
+    usePersonalAllowance: {
+      id: 'pl.application:review.use.personal.allowance',
+      defaultMessage: 'Nota allan persónuafsláttinn',
+      description: 'If parent decided to use all its personal discount',
+    },
+    useSpousePersonalAllowance: {
+      id: 'pl.application:review.use.spouse.personal.allowance',
+      defaultMessage: 'Fullnýta persónuafslátt maka',
+      description:
+        'If parent decided to use all the other parent personal discount',
     },
   }),
 

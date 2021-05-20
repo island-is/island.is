@@ -28,6 +28,7 @@ import {
   ITwoColumnText,
   IOffices,
   IAccordionSlice,
+  IOverviewLinks,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -78,6 +79,7 @@ import {
   AccordionSlice,
   mapAccordionSlice,
 } from '../models/accordionSlice.model'
+import { mapOverviewLinks, OverviewLinks } from '../models/overviewLinks.model'
 
 type SliceTypes =
   | ITimeline
@@ -105,6 +107,7 @@ type SliceTypes =
   | ITwoColumnText
   | IOffices
   | IAccordionSlice
+  | IOverviewLinks
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -137,6 +140,7 @@ export const SliceUnion = createUnionType({
     TwoColumnText,
     Offices,
     AccordionSlice,
+    OverviewLinks,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -194,6 +198,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapOffices(slice as IOffices)
     case 'accordionSlice':
       return mapAccordionSlice(slice as IAccordionSlice)
+    case 'overviewLinks':
+      return mapOverviewLinks(slice as IOverviewLinks)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

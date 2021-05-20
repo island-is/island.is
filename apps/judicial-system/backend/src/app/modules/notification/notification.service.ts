@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -26,6 +27,7 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   getRequestPdfAsBuffer,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -35,6 +37,12 @@ import { Notification, SendNotificationResponse } from './models'
 interface Recipient {
   address: string
   success: boolean
+}
+
+interface Attachment {
+  filename: string
+  content: string
+  encoding: string
 }
 
 @Injectable()
@@ -116,11 +124,7 @@ export class NotificationService {
     recipientEmail: string,
     subject: string,
     html: string,
-    attachments: {
-      filename: string
-      content: string
-      encoding: string
-    }[] = null,
+    attachments: Attachment[] = null,
   ): Promise<Recipient> {
     try {
       await this.emailService.sendEmail({
@@ -356,7 +360,7 @@ export class NotificationService {
       existingCase.courtRoom,
     )
 
-    let attachments = null
+    let attachments: Attachment[]
 
     if (existingCase.sendRequestToDefender) {
       const pdf = await getRequestPdfAsString(existingCase)
@@ -448,11 +452,26 @@ export class NotificationService {
       existingCase.additionToConclusion,
     )
 
+    let attachments: Attachment[]
+
+    if (existingCase.state === CaseState.ACCEPTED) {
+      const pdf = await getCustodyNoticePdfAsString(existingCase)
+      attachments = [
+        {
+          filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ]
+    }
+
+    // TODO: Consider adding the prosecutor as cc to the prison email
     await this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
       html,
+      attachments,
     )
 
     return this.sendEmail(
@@ -460,6 +479,7 @@ export class NotificationService {
       environment.notifications.prisonEmail,
       subject,
       html,
+      attachments,
     )
   }
 
