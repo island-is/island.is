@@ -32,8 +32,8 @@ const GetFinanceStatusQuery = gql`
 `
 
 const GetFinanceStatusDetailsQuery = gql`
-  query GetFinanceStatusDetailsQuery {
-    getFinanceStatusDetails
+  query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
+    getFinanceStatusDetails(input: $input)
   }
 `
 
@@ -41,11 +41,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery, {
-    variables: {
-      nationalID: '2704685439',
-    },
-  })
+  const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery)
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
   console.log({ financeStatusData, loading })
@@ -145,9 +141,10 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                             onExpandCallback={() =>
                               getDetailsQuery({
                                 variables: {
-                                  nationalID: '2704685439',
-                                  OrgID: org.id,
-                                  chargeTypeID: chargeType.id,
+                                  input: {
+                                    OrgID: org.id,
+                                    chargeTypeID: chargeType.id,
+                                  },
                                 },
                               })
                             }
