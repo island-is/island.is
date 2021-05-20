@@ -110,7 +110,8 @@ export const m: MessageDir = {
     },
     signaturesInvalid: {
       id: 'pa.application:endorsementListSubmission.signaturesInvalid',
-      defaultMessage: 'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      defaultMessage:
+        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
       description: 'Warning message for invalid endorsements',
     },
     signaturesInvalidTitle: {
@@ -220,7 +221,8 @@ export const m: MessageDir = {
     },
     invalidEndorsement: {
       id: 'pa.application:endorsementListSubmission.invalidEndorsement',
-      defaultMessage: 'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      defaultMessage:
+        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
       description: 'Warning message for invalid endorsements',
     },
     selectAuto: {
@@ -241,14 +243,12 @@ export const m: MessageDir = {
     warningMessageTitleHigh: {
       id: 'pa.application:endorsementListSubmission.warningMessageTitleHigh',
       defaultMessage: 'Leyfilegur fjöldi meðmæla of mikill',
-      description:
-        'Warning message title when nr of endorsements is too high',
+      description: 'Warning message title when nr of endorsements is too high',
     },
     warningMessageTitleLow: {
       id: 'pa.application:endorsementListSubmission.warningMessageTitleLow',
       defaultMessage: 'Leyfilegur fjöldi meðmæla of litill',
-      description:
-        'Warning message title when nr of endorsements is too low',
+      description: 'Warning message title when nr of endorsements is too low',
     },
     warningMessagePt1: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt1',

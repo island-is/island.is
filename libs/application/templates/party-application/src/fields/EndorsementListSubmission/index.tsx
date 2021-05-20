@@ -146,7 +146,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     const updatedAnswers = {
       ...answers,
       endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter(e => e.hasWarning!!)
+      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning!!),
     }
 
     await updateApplication({

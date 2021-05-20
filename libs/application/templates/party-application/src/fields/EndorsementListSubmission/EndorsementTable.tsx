@@ -66,7 +66,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                 <Tooltip
                   color="yellow600"
                   iconSize="medium"
-                  text={formatMessage(m.endorsementListSubmission.invalidEndorsement)}
+                  text={formatMessage(
+                    m.endorsementListSubmission.invalidEndorsement,
+                  )}
                 />
               </Box>
             </Box>

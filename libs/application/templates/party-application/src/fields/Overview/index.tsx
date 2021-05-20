@@ -56,7 +56,11 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
             />
           </Box>
         </Inline>
-        <Text>{answers.endorsementsWithWarning ? answers.endorsementsWithWarning.length : 0}</Text>
+        <Text>
+          {answers.endorsementsWithWarning
+            ? answers.endorsementsWithWarning.length
+            : 0}
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5" marginBottom={2}>
