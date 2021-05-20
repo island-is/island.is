@@ -16,7 +16,6 @@ import {
   OrganizationSlice,
   OrganizationWrapper,
   SearchBox,
-  SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
@@ -74,9 +73,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       ))}
       sidebarContent={
         <>
-          {organizationPage.sidebarCards.map((card) => (
-            <SidebarCard key={card.id} sidebarCard={card} />
-          ))}
           {WITH_SEARCH.includes(organizationPage.slug) && (
             <SearchBox
               organization={organizationPage.slug}
