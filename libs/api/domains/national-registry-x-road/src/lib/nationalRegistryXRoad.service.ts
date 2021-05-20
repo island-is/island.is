@@ -1,31 +1,24 @@
-import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
-import { ChildrenCustodyResponse } from '../models/childrenCustodyResponse.model'
-import { ChildrenCustodyChild } from '../models/childrenCustodyChild.model'
+import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-const handleError = (error: any) => {
-  logger.error(error)
-
-  throw new ApolloError(
-    'Failed to resolve request',
-    error?.message ?? error?.response?.message,
-  )
-}
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
     private personApi: EinstaklingarApi,
     @Inject('Config')
     private config: NationalRegistryXRoadConfig,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async getCustodyChildrenAndParents(
     nationalId: string,
     token: string,
-  ): Promise<ChildrenCustodyResponse | undefined> {
+  ): Promise<NationalRegistryPerson | undefined> {
     try {
       const parentA = await this.personApi.einstaklingarGetEinstaklingur({
         id: nationalId,
@@ -48,7 +41,7 @@ export class NationalRegistryXRoadService {
         children,
       }
     } catch (e) {
-      handleError(e)
+      this.handleError(e)
     }
   }
 
@@ -70,7 +63,7 @@ export class NationalRegistryXRoadService {
   private async getChildrenCustodyInformation(
     parentNationalId: string,
     token: string,
-  ): Promise<ChildrenCustodyChild[]> {
+  ): Promise<NationalRegistryPerson[]> {
     const childrenNationalIds = await this.getCustody(parentNationalId, token)
 
     const children = await Promise.all(
@@ -108,17 +101,28 @@ export class NationalRegistryXRoadService {
             parentNationalId,
             parentB.kennitala,
           ].every((id) => parentLegalHomeNationalId.includes(id)),
-          otherParent: {
-            nationalId: parentB.kennitala,
-            fullName: parentB.nafn,
-            address: {
-              streetName: parentB.logheimili?.heiti || undefined,
-              postalCode: parentB.logheimili?.postnumer || undefined,
-              city: parentB.logheimili?.stadur || undefined,
+          parents: [
+            {
+              nationalId: parentB.kennitala,
+              fullName: parentB.nafn,
+              address: {
+                streetName: parentB.logheimili?.heiti || undefined,
+                postalCode: parentB.logheimili?.postnumer || undefined,
+                city: parentB.logheimili?.stadur || undefined,
+              },
             },
-          },
+          ],
         }
       }),
+    )
+  }
+
+  private handleError(error: any) {
+    this.logger.error(error)
+
+    throw new ApolloError(
+      'Failed to resolve request',
+      error?.message ?? error?.response?.message,
     )
   }
 }

@@ -1,2 +1,2 @@
-export { NationalRegistryModule } from './lib/national-registry.module'
+export { NationalRegistryModule } from './lib/nationalRegistry.module'
 export * from '../gen/fetch'
