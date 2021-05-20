@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class ChildrenCustodyAddress {
+export class NationalRegistryAddress {
   @Field(() => String)
-  streetName!: string
+  streetName?: string
 
   @Field(() => String)
-  postalCode!: string
+  postalCode?: string
 
   @Field(() => String)
-  city!: string
+  city?: string
 }

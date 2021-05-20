@@ -38,13 +38,12 @@ export class NationalRegistryXRoadService {
       )
 
       return {
-        // TODO: FIX THESE UNDEFINDS AND HARD CODED VALUES IN THE RETURN VALUES
         nationalId: nationalId,
         fullName: parentA.nafn,
         address: {
-          streetName: parentA.logheimili?.heiti ?? '',
-          postalCode: parentA.logheimili?.postnumer ?? '',
-          city: parentA.logheimili?.stadur ?? '',
+          streetName: parentA.logheimili?.heiti || undefined,
+          postalCode: parentA.logheimili?.postnumer || undefined,
+          city: parentA.logheimili?.stadur || undefined,
         },
         children,
       }
@@ -113,9 +112,9 @@ export class NationalRegistryXRoadService {
             nationalId: parentB.kennitala,
             fullName: parentB.nafn,
             address: {
-              streetName: parentB.logheimili?.heiti ?? '',
-              postalCode: parentB.logheimili?.postnumer ?? '',
-              city: parentB.logheimili?.stadur ?? '',
+              streetName: parentB.logheimili?.heiti || undefined,
+              postalCode: parentB.logheimili?.postnumer || undefined,
+              city: parentB.logheimili?.stadur || undefined,
             },
           },
         }

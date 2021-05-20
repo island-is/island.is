@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ChildrenCustodyPerson } from './childrenCustodyPerson.model'
+import { NationalRegistryPerson } from './nationalRegistryPerson.model'
 
 @ObjectType()
 export class ChildrenCustodyChild {
@@ -15,6 +15,6 @@ export class ChildrenCustodyChild {
   @Field(() => Boolean)
   livesWithBothParents!: boolean
 
-  @Field(() => ChildrenCustodyPerson)
-  otherParent!: ChildrenCustodyPerson
+  @Field(() => NationalRegistryPerson)
+  otherParent!: NationalRegistryPerson
 }

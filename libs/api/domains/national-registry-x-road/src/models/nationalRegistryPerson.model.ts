@@ -1,9 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
-import { ChildrenCustodyChild } from './childrenCustodyChild.model'
 
 @ObjectType()
-export class ChildrenCustodyResponse {
+export class NationalRegistryPerson {
   @Field(() => String)
   nationalId!: string
 
@@ -12,7 +11,4 @@ export class ChildrenCustodyResponse {
 
   @Field(() => NationalRegistryAddress)
   address!: NationalRegistryAddress
-
-  @Field(() => [ChildrenCustodyChild])
-  children!: ChildrenCustodyChild[]
 }
