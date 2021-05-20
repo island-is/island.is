@@ -100,6 +100,8 @@ const courtFields = [
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
+  'courtCaseFacts',
+  'courtLegalArguments',
   'ruling',
   'additionToConclusion',
   'decision',

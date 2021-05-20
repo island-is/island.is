@@ -166,6 +166,8 @@ export interface Case {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
@@ -256,6 +258,8 @@ export interface UpdateCase {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string

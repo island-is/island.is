@@ -53,6 +53,8 @@ export const CaseQuery = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate

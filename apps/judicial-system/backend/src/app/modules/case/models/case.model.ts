@@ -328,6 +328,20 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
+  courtCaseFacts: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLegalArguments: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   ruling: string
 
   @Column({

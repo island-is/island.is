@@ -147,6 +147,8 @@ function remainingJudgeCaseData() {
     accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
+    courtCaseFacts: 'Court Case Facts',
+    courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
     custodyEndDate: '2021-09-28T12:00:00.000Z',
@@ -347,6 +349,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.litigationPresentations || null).toBe(
     caseTwo.litigationPresentations || null,
+  )
+  expect(caseOne.courtCaseFacts || null).toBe(caseTwo.courtCaseFacts || null)
+  expect(caseOne.courtLegalArguments || null).toBe(
+    caseTwo.courtLegalArguments || null,
   )
   expect(caseOne.ruling || null).toBe(caseTwo.ruling || null)
   expect(caseOne.decision || null).toBe(caseTwo.decision || null)
