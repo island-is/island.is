@@ -6,14 +6,23 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { m } from '../../lib/messages'
-import { UserEndorsements } from '../../types'
+import { Endorsement } from '@island.is/api/schema'
+
+export type UserEndorsements = Pick<
+  Endorsement,
+  'id' | 'created' | 'endorsementList'
+>
 
 const GET_ENDORSEMENTS = gql`
   query endorsementSystemUserEndorsements {
     endorsementSystemUserEndorsements {
       id
       endorser
-      endorsementListId
+      endorsementList {
+        id
+        title
+        description
+      }
       meta {
         fullName
         address
@@ -31,18 +40,9 @@ const Endorsements = () => {
   const { loading, error } = useQuery(GET_ENDORSEMENTS, {
     onCompleted: async ({ endorsementSystemUserEndorsements }) => {
       if (!loading && endorsementSystemUserEndorsements) {
-        const hasEndorsements =
-          !error && !loading && endorsementSystemUserEndorsements?.length
-            ? endorsementSystemUserEndorsements.length > 0
-            : false
-        const mapToEndorsementList: UserEndorsements[] = hasEndorsements
-          ? endorsementSystemUserEndorsements.map((x: any) => ({
-              date: x.created,
-              id: x.id,
-              endorsementListId: x.endorsementListId,
-            }))
-          : undefined
-        setEndorsements(mapToEndorsementList)
+        const organisationsPreview: UserEndorsements[] =
+          endorsementSystemUserEndorsements || []
+        setEndorsements(organisationsPreview)
       }
     },
   })
@@ -62,15 +62,16 @@ const Endorsements = () => {
             {endorsements.map((endorsement) => {
               return (
                 <ActionCard
+                  key={endorsement.id}
                   backgroundColor="blue"
-                  eyebrow={formatDate(endorsement.date, 'dd.MM.yyyy')}
-                  heading={endorsement.id}
+                  eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
+                  heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
                     label: 'Alþingi 2021',
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
-                  text={endorsement.endorsementListId}
+                  text="Kjördæmi"
                   cta={{
                     label: formatMessage(m.endorsement.actionCardButton),
                     variant: 'text',
