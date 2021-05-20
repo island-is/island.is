@@ -61,6 +61,14 @@ export const routesTemplate = {
     is: '/stofnanir/syslumenn/uppbod',
     en: '',
   },
+  apicataloguedetailpage: {
+    is: '/stofnanir/stafraent-island/vefthjonustur/[slug]',
+    en: '/en/developers/webservices/[slug]',
+  },
+  apicataloguepage: {
+    is: '/stofnanir/stafraent-island/vefthjonustur',
+    en: '/en/developers/webservices',
+  },
   organizationsubpage: {
     is: '/stofnanir/[slug]/[subSlug]',
     en: '/en/organizations/[slug]/[subSlug]',
