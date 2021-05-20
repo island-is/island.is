@@ -8,7 +8,7 @@ module.exports = {
           'case',
           'court_case_facts',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
@@ -17,7 +17,7 @@ module.exports = {
           'case',
           'court_legal_arguments',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
