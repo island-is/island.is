@@ -37,11 +37,6 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
 
   return (
     <>
-      {field.description && (
-        <Text marginTop={1} marginBottom={[3, 5]}>
-          {formatText(field.description, application, formatMessage)}
-        </Text>
-      )}
       <Text variant="h2" marginBottom={3}>
         {formatText(applicant.general.pageTitle, application, formatMessage)}
       </Text>
