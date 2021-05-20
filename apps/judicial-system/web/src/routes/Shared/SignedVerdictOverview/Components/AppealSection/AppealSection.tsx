@@ -81,14 +81,13 @@ const AppealSection: React.FC<Props> = (props) => {
           <div className={styles.appealContainer}>
             <BlueBox height={112}>
               <AnimatePresence>
-                {!Boolean(accusedPostponedAppealDate) &&
-                  !isAppealGracePeriodExpired && (
-                    <AccusedAppealDatePicker
-                      handleAccusedAppeal={handleAccusedAppeal}
-                      accusedGender={accusedGender}
-                      isInitialMount={isInitialMount}
-                    />
-                  )}
+                {!accusedPostponedAppealDate && !isAppealGracePeriodExpired && (
+                  <AccusedAppealDatePicker
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    accusedGender={accusedGender}
+                    isInitialMount={isInitialMount}
+                  />
+                )}
               </AnimatePresence>
               <AnimatePresence>
                 {accusedPostponedAppealDate && (
