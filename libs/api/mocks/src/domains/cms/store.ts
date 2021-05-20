@@ -52,6 +52,10 @@ export const store = createStore(() => {
 
   const newsList = orderBy(news.list(12), ['date'], ['desc'])
 
+  const lifeEvents = lifeEvent.list(6, {
+    category: () => faker.random.arrayElement(articleCategories),
+  })
+
   const frontpage = {
     ...createFrontpage(),
     ...{ namespace: { namespace: 'homepage', fields: '{}' } },
@@ -61,6 +65,7 @@ export const store = createStore(() => {
 
   return {
     frontpage,
+    lifeEvents,
     newsList,
     alertBanner,
     menu,
