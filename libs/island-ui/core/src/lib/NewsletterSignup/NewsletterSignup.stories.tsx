@@ -18,6 +18,10 @@ export const Default = () => {
       placeholder="Settu inn netfangið þitt"
       label="Netfang"
       onChange={() => console.log('change')}
+      onSubmit={() => console.log('submit')}
+      successTitle="Skráning tókst!"
+      successMessage="Tölvupóstur hefur verið sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
+      errorMessage="Skráning tókst ekki"
       value=""
     />
   )
@@ -35,6 +39,10 @@ export const BlueVariant = () => {
       label="Netfang"
       variant="blue"
       onChange={() => console.log('change')}
+      onSubmit={() => console.log('submit')}
+      successTitle="Skráning tókst!"
+      successMessage="Tölvupóstur hefur verið sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
+      errorMessage="Skráning tókst ekki"
       value=""
     />
   )
@@ -52,9 +60,12 @@ export const errorState = () => {
       label="Netfang"
       variant="blue"
       onChange={() => console.log('change')}
+      onSubmit={() => console.log('submit')}
       value="example@example.com"
       state="error"
-      errorMessage="Skráning tókst ekki."
+      successTitle="Skráning tókst!"
+      successMessage="Tölvupóstur hefur verið sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
+      errorMessage="Skráning tókst ekki"
     />
   )
 }
@@ -71,10 +82,12 @@ export const successState = () => {
       label="Netfang"
       variant="blue"
       onChange={() => console.log('change')}
+      onSubmit={() => console.log('submit')}
       value="example@example.com"
       state="success"
       successTitle="Skráning tókst!"
-      successMessage="Tölvupóstur heufr veirð sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
+      successMessage="Tölvupóstur hefur verið sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
+      errorMessage="Skráning tókst ekki"
     />
   )
 }
