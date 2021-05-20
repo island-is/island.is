@@ -10,10 +10,10 @@ export class OverviewLinks {
   id!: string
 
   @Field(() => [IntroLinkImage])
-  overviewLinks?: Array<IntroLinkImage>
+  overviewLinks!: Array<IntroLinkImage>
 
   @Field(() => Link, { nullable: true })
-  link?: Link | null
+  link!: Link | null
 }
 
 export const mapOverviewLinks = ({
