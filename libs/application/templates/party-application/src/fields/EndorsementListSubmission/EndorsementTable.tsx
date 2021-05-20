@@ -64,9 +64,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
               {endorsement.address}
               <Box marginLeft={2}>
                 <Tooltip
-                  color="blue400"
+                  color="yellow600"
                   iconSize="medium"
-                  text={'Invalid blabala'} // todo bæta við réttum texta hér
+                  text={formatMessage(m.endorsementListSubmission.invalidEndorsement)}
                 />
               </Box>
             </Box>

@@ -109,6 +109,11 @@ export const m: MessageDir = {
       description: 'Signatures count',
     },
     signaturesInvalid: {
+      id: 'pa.application:endorsementListSubmission.signaturesInvalid',
+      defaultMessage: 'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      description: 'Warning message for invalid endorsements',
+    },
+    signaturesInvalidTitle: {
       id: 'pa.application:overview.signatures.invalid',
       defaultMessage: 'Fjöldi meðmælenda í vafa',
       description: 'Invalid signatures count',
@@ -212,6 +217,48 @@ export const m: MessageDir = {
       defaultMessage:
         'Fjöldi meðmælenda skal vera margfeldi af þingsætatölu kjördæmisins og talnanna 30 að lágmarki og 40 að hámarki.',
       description: 'Choose endorsements description',
+    },
+    invalidEndorsement: {
+      id: 'pa.application:endorsementListSubmission.invalidEndorsement',
+      defaultMessage: 'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      description: 'Warning message for invalid endorsements',
+    },
+    selectAuto: {
+      id: 'pa.application:endorsementListSubmission.selectAuto',
+      defaultMessage: 'Senda inn fyrstu ',
+      description: 'Radio button title for auto selecting endorsements',
+    },
+    selectRandom: {
+      id: 'pa.application:endorsementListSubmission.chooseRandom',
+      defaultMessage: 'Valið af handahófi',
+      description: 'Radio button title for selecting random endorsements',
+    },
+    chosenEndorsements: {
+      id: 'pa.application:endorsementListSubmission.chosenEndorsements',
+      defaultMessage: 'Fjöldi atkvæða valin:',
+      description: 'Chosen endorsements',
+    },
+    warningMessageTitleHigh: {
+      id: 'pa.application:endorsementListSubmission.warningMessageTitleHigh',
+      defaultMessage: 'Leyfilegur fjöldi meðmæla of mikill',
+      description:
+        'Warning message title when nr of endorsements is too high',
+    },
+    warningMessageTitleLow: {
+      id: 'pa.application:endorsementListSubmission.warningMessageTitleLow',
+      defaultMessage: 'Leyfilegur fjöldi meðmæla of litill',
+      description:
+        'Warning message title when nr of endorsements is too low',
+    },
+    warningMessagePt1: {
+      id: 'pa.application:endorsementListSubmission.warningMessagePt1',
+      defaultMessage: 'Fjöldi í þessu kjördæmi þarf að vera á milli ',
+      description: 'Warning message',
+    },
+    warningMessagePt2: {
+      id: 'pa.application:endorsementListSubmission.warningMessagePt2',
+      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      description: 'Warning message',
     },
   }),
   applicationApproved: defineMessages({

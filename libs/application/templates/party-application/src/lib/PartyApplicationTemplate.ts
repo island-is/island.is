@@ -43,8 +43,8 @@ const dataSchema = z.object({
   approveDisclaimer: z.boolean().refine((v) => v, {
     message: m.validation.approveTerms.defaultMessage as string,
   }),
-  endorsements: z.array(EndorsementSchema).optional(),
-  //.refine((v) => v && v.length > 300, 'Valin meðmæli þurfa að vera yfir 300'),
+  endorsements: z.array(EndorsementSchema).optional(), //todo: validate
+  endorsementsWithWarning: z.array(EndorsementSchema).optional(),
 })
 export type Endorsement = z.TypeOf<typeof EndorsementSchema>
 export type PartyApplicationAnswers = z.TypeOf<typeof dataSchema>
