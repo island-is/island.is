@@ -28,6 +28,14 @@ export const accessControlModule: ServicePortalModule = {
         path: ServicePortalPath.SettingsAccessControlGrant,
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
+      {
+        name: defineMessage({
+          id: 'service.portal:accessControlAccess',
+          defaultMessage: 'Aðgangur',
+        }),
+        path: ServicePortalPath.SettingsAccessControlAccess,
+        render: () => lazy(() => import('./screens/Access')),
+      },
     ]
 
     return routes

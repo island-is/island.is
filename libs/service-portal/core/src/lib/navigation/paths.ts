@@ -15,6 +15,7 @@ export enum ServicePortalPath {
   SettingsRoot = '/stillingar',
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:id',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
