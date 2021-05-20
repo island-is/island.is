@@ -57,7 +57,7 @@ export class ApiScope extends Model<ApiScope> {
   })
   @ForeignKey(() => ApiScopeGroup)
   @ApiProperty()
-  apiScopeGroup!: string
+  groupId!: string
 
   @Column({
     type: DataType.BOOLEAN,

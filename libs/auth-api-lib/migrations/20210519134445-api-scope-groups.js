@@ -6,7 +6,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        CREATE TABLE api_scope_group (
+        CREATE TABLE group_id (
           id UUID NOT NULL,
           name VARCHAR NOT NULL,
           description VARCHAR NOT NULL,
@@ -16,11 +16,11 @@ module.exports = {
         );
 
         ALTER TABLE api_scope 
-        ADD COLUMN api_scope_group UUID NULL;
+        ADD COLUMN group_id UUID NULL;
 
         ALTER TABLE api_scope 
-        ADD CONSTRAINT FK_api_scope_api_scope_group FOREIGN KEY (api_scope_group)
-        REFERENCES public.api_scope_group (id);
+        ADD CONSTRAINT FK_api_scope_api_scope_group FOREIGN KEY (group_id)
+        REFERENCES public.group_id (id);
 
       COMMIT;
     `)
@@ -30,8 +30,8 @@ module.exports = {
     return queryInterface.sequelize.query(`
     BEGIN;
       ALTER TABLE api_scope
-      DROP COLUMN api_scope_group;
-      DROP TABLE api_scope_group;
+      DROP COLUMN group_id;
+      DROP TABLE group_id;
       COMMIT;
     `)
   },
