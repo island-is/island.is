@@ -11,17 +11,11 @@ export enum SortField {
   POPULAR = 'popular',
 }
 
-export type elasticTagField =
-  | {
-      key?: string
-      type: string
-      value: string
-    }
-  | {
-      key: string
-      type: string
-      value?: string
-    }
+export type elasticTagField = {
+  key: string
+  type: string
+  value?: string
+}
 
 export interface SyncRequest {
   add: MappedData[]
