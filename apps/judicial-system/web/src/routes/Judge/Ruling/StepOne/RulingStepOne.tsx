@@ -412,6 +412,8 @@ export const RulingStepOne: React.FC = () => {
               previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
               nextIsDisabled={
+                !workingCase.courtCaseFacts ||
+                !workingCase.courtLegalArguments ||
                 !workingCase.decision ||
                 !validate(workingCase.ruling || '', 'empty').isValid ||
                 (workingCase.decision !== CaseDecision.REJECTING &&
