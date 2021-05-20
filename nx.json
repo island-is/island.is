@@ -109,6 +109,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-payment": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -247,6 +250,9 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-payment": {
       "tags": []
     },
     "clients-regulations": {

@@ -86,6 +86,9 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
+      "@island.is/api/domains/payment": [
+        "libs/api/domains/payment/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -189,6 +192,9 @@
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry": [
         "libs/clients/national-registry/src/index.ts"
+      ],
+      "@island.is/clients/payment": [
+        "libs/clients/payment/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"

@@ -1128,6 +1128,33 @@
         }
       }
     },
+    "api-domains-payment": {
+      "root": "libs/api/domains/payment",
+      "sourceRoot": "libs/api/domains/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/payment/tsconfig.lib.json",
+              "libs/api/domains/payment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/payment"]
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -2739,6 +2766,33 @@
             "jestConfig": "libs/clients/national-registry/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "clients-payment": {
+      "root": "libs/clients/payment",
+      "sourceRoot": "libs/clients/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/rsk/v1/tsconfig.lib.json",
+              "libs/clients/rsk/v1/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/payment"]
         }
       }
     },
