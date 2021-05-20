@@ -2029,6 +2029,31 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
   }
 }
 
+export interface IOverviewLinksFields {
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'overviewLinks'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IPageFields {
   /** Content status */
   contentStatus:
