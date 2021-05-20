@@ -16,12 +16,12 @@ import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 function GrantAccess() {
-  const { handleSubmit, control, errors, reset } = useForm()
+  const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
   const history = useHistory()
   const loading = false
 
-  const onSubmit = handleSubmit(({ name, nationalId }) => {
+  const onSubmit = handleSubmit(({ nationalId }) => {
     // TODO: mutate
     history.push(nationalId)
   })

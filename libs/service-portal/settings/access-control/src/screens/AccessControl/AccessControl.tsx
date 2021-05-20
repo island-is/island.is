@@ -1,7 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 
 import { Accesses } from './components'
