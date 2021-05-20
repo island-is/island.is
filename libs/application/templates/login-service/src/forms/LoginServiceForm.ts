@@ -21,6 +21,7 @@ import {
   overview,
   submitted,
 } from '../lib/messages'
+import { TYPE_OF_OPERATION } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -71,10 +72,10 @@ export const LoginServiceForm: Form = buildForm({
               id: 'applicant.typeOfOperation',
               title: applicant.labels.typeOfOperation,
               backgroundColor: 'blue',
-              options: [
-                { label: 'Einn', value: 'Einn' },
-                { label: 'Tveir', value: 'Tveir' },
-              ],
+              options: TYPE_OF_OPERATION.map((value) => ({
+                label: value,
+                value: value,
+              })),
             }),
             buildCustomField(
               {
