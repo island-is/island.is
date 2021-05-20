@@ -661,6 +661,36 @@
   ],
   "formControls": [
     {
+      "id": "ApiScopeGroupCreateForm",
+      "title": "Create a Api Scope Group",
+      "editTitle": "Edit Api Scope Group",
+      "help": "Create a group to organize Api Scopes",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "applications",
+          "helpText": "The name of the group",
+          "errorMessage": "The group is required and can not include invalid characters"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description of the group",
+          "helpText": "The default description of the group which the end user sees",
+          "errorMessage": "The group description is required and can not include invalid characters"
+        }
+      }
+    },
+    {
       "id": "ApiScopeUserCreateForm",
       "title": "Create a new Api Scope User",
       "editTitle": "Edit Api Scope User",
