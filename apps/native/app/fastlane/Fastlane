@@ -1,0 +1,304 @@
+# This is the minimum version number required.
+fastlane_version "2.106.0"
+
+default_platform :android
+
+platform :ios do
+
+  # Use the right Xcode version
+  # xcversion(version: "9.4.1")
+
+  before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+    # cocoapods
+  end
+
+  brands = {
+    "dev" => {
+      :appId => "is.island.appdev",
+      :displayName => "Ísland",
+      :appNotificationsId => "is.island.appdev.richnotifications",
+      :distribution_external => false
+    }
+  }
+
+
+  lane :upload do |options|
+    brand = options[:brand]
+    options[:ipa_name] = "IslandApp_#{brand}.ipa" if options[:ipa_name].nil?
+
+    brandProps = brands[brand]
+
+    options.merge!(
+      app_identifier: brandProps[:appId], 
+      app_identifier_richnotifications: brandProps[:appNotificationsId],
+      distribute_external: brandProps[:distribution_external]
+    )
+
+    pilot(
+      app_identifier: options[:app_identifier], 
+      ipa: options[:ipa_name],
+      skip_waiting_for_build_processing: true,
+    )
+
+  end
+
+    
+  desc "Config and build"
+  lane :config_and_build do |options|
+    brand = options[:brand]
+
+    options[:bitrise] = false if options[:bitrise].nil?
+    options[:publish] = false if options[:publish].nil?
+    options[:clean] = true if options[:clean].nil?
+    options[:ipa_name] = "IslandApp_#{brand}.ipa" if options[:ipa_name].nil?
+
+    brandProps = brands[brand]
+
+    config(options)
+
+    options.merge!(
+      app_identifier: brandProps[:appId], 
+      app_identifier_richnotifications: brandProps[:appNotificationsId],
+      distribute_external: brandProps[:distribution_external]
+    )
+
+  
+    build(options)
+    publish(options) if options[:publish]
+  end
+
+
+  desc "Configure project with brand assets and config"
+  lane :config do |options|
+     brand = options[:brand]
+     brandProps = brands[brand]
+
+  end
+
+  desc "Common build lane of both Test and Production"
+  lane :build do |options|
+    # Ensure that your git status is not dirty
+    # ensure_git_status_clean
+    
+    # Increment the build number (not the version number)
+    puts "BUILD NUMBER: "+ENV["BUILD_NUMBER"] if options[:bitrise]
+    
+    increment_build_number(
+      build_number: ENV["BUILD_NUMBER"],
+      xcodeproj: "ios/IslandApp.xcodeproj"
+    ) if options[:bitrise]
+
+    increment_build_number(
+      xcodeproj: "ios/IslandApp.xcodeproj"
+    ) if !options[:bitrise]
+
+
+    # Retrieve certificated
+    match(type: "appstore", readonly: true, app_identifier: [ options[:app_identifier], options[:app_identifier_richnotifications]])
+
+    #
+    clear_derived_data
+
+    update_project_provisioning(
+      xcodeproj: "ios/IslandApp.xcodeproj",
+      target_filter: "IslandApp", 
+      profile: "#{ENV['sigh_'+options[:app_identifier]+'_appstore_profile-path']}",
+      build_configuration: "Release",
+      code_signing_identity: "iPhone Distribution"
+    )    
+
+    # Build app
+    build_ios_app(
+      workspace: "ios/IslandApp.xcworkspace",
+      scheme: "IslandApp release", 
+      include_bitcode: true, 
+      configuration: "Release",
+      silent: false,
+      clean: options[:clean],
+      xcargs: extraArgs,
+      output_directory: "ios/build",
+      output_name: options[:ipa_name],
+      export_options: {
+        method: "app-store"
+      }
+    )    
+  
+  end
+
+  lane :publish do |options|
+
+    # Make changelog of commits since last fastlane   
+    @changelog =  changelog_from_git_commits( 
+      pretty: "%h %s", 
+      commits_count: 4,
+      merge_commit_filtering: "exclude_merges",
+      match_lightweight_tag: false,
+      tag_match_pattern: options[:app_identifier]+"/"+ENV["FASTLANE_PLATFORM_NAME"]+ENV["FASTLANE_LANE_NAME"]+"/*"
+      )
+
+    File.open("changelog_notes.txt", 'w') do |file|
+        file.write @changelog
+    end
+
+    # Upload to TestFlight
+    pilot(
+      beta_app_review_info: {
+        contact_email: "andrihr@island.is",
+        contact_first_name: "Andri Heiðar",
+        contact_last_name: "Kristinsson",
+        contact_phone: "+354",
+        demo_account_name: "Gervimadur",
+        demo_account_password: "Gervipass"
+    },
+      wait_processing_interval: 60,
+      app_identifier: options[:app_identifier], 
+      changelog: @changelog, 
+      ipa: "ios/build/"+options[:ipa_name],
+      skip_waiting_for_build_processing: false,
+      distribute_external: options[:distribute_external],
+      groups: "IslandApp"
+    )
+
+    # Download Dsyms from Appstore and upload to Firebase Crashlytics
+    download_dsyms(
+      app_identifier: options[:app_identifier],
+      build_number: ENV["BUILD_NUMBER"],
+      wait_for_dsym_processing: true
+    )
+
+    upload_symbols_to_crashlytics(
+      dsym_path: lane_context[SharedValues::DSYM_PATHS[0]], 
+      gsp_path: "ios/GoogleService-Info.plist",
+      binary_path: "ios/Pods/FirebaseCrashlytics/upload-symbols"
+    )
+    clean_build_artifacts
+
+    # Commit the version bump
+    commit_version_bump(xcodeproj: "ios/IslandApp.xcodeproj", force: true) if !options[:bitrise]
+
+    # Add a git tag for this build. This will automatically
+    # use an appropriate git tag name
+    add_git_tag(
+      grouping: options[:app_identifier]
+    )
+
+    # Push the new commit and tag back to your git remote
+    push_to_git_remote if !options[:bitrise]
+
+  end
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
+  end
+end
+
+
+platform :android do
+
+  desc "Deploy to Google Play Store"
+  lane :deploy do |options|
+
+    options[:bitrise] = false if options[:bitrise].nil?
+
+
+    @app_identifier = 'is.island.appdev'
+
+    File.open("./metadata/android/en-US/title.txt", 'w') do |file|
+      file.write "Islandis"
+    end
+
+    @apk = './android/app/build/outputs/apk//app-islandis-release.apk'
+
+    options.merge!(
+      flavor: 'islandis', 
+      app_identifier: @app_identifier,
+    )
+
+    build(options)
+
+    upload(options)
+   
+  end
+
+
+  lane :build do |options|
+
+    # Ensure that your git status is not dirty
+    # ensure_git_status_clean
+
+    increment_version_code(
+      gradle_file_path: "./android/app/build.gradle"
+    ) if !options[:bitrise]
+
+    android_set_version_code(
+      version_code: ENV["BUILD_NUMBER"], 
+      gradle_file: "./android/app/build.gradle"
+    ) if options[:bitrise]
+
+    @version_code = get_version_code(gradle_file_path:"android/app/build.gradle")
+   
+    @changelog =  changelog_from_git_commits( 
+                    pretty: "%h %s", 
+                    commits_count: 4,
+                    merge_commit_filtering: "exclude_merges",
+                    match_lightweight_tag: false,
+                    tag_match_pattern: "builds/"+ENV["FASTLANE_PLATFORM_NAME"]+ENV["FASTLANE_LANE_NAME"]+"/*"
+                  )
+
+    @changelog = "%.500s" % @changelog # cutting off after 500 characters since that is Google Play Store's limit
+
+    File.open("./metadata/android/en-US/changelogs/" + @version_code + ".txt", 'w') do |file|
+      file.write @changelog
+    end
+
+    gradle(
+      project_dir: './android/',
+      task: 'bundle',
+      flavor: options[:flavor],
+      build_type: 'Release'
+     )
+
+  end
+
+  lane :upload do |options|
+ 
+     upload_to_play_store(
+       package_name: options[:app_identifier], 
+       aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+       track: 'internal', 
+       track_promote_to: 'internal',
+       rollout: '1.0',
+       skip_upload_apk: true,
+       skip_upload_metadata: false,
+       skip_upload_images: true,
+       skip_upload_screenshots: true
+     )
+
+    # Commit the version bump
+    commit_android_version_bump( app_folder_name: "android/app", force: true) if !options[:bitrise]
+
+    # Add a git tag for this build. This will automatically
+    # use an appropriate git tag name
+    add_git_tag(
+      grouping: options[:app_identifier],
+      build_number: @version_code
+    )
+
+    # Push the new commit and tag back to your git remote
+    push_to_git_remote if !options[:bitrise]
+  
+  end
+
+end

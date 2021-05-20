@@ -138,6 +138,10 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
+    fastlane-plugin-commit_android_version_bump (0.2.0)
+    fastlane-plugin-get_version_code (0.2.0)
+    fastlane-plugin-increment_version_code (0.4.3)
+    fastlane-plugin-versioning_android (0.1.0)
     ffi (1.15.0)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -269,6 +273,10 @@ PLATFORMS
 DEPENDENCIES
   cocoapods (= 1.10.1)
   fastlane (= 2.178.0)
+  fastlane-plugin-commit_android_version_bump
+  fastlane-plugin-get_version_code
+  fastlane-plugin-increment_version_code
+  fastlane-plugin-versioning_android
   xcode-install (= 2.5.0)
 
 BUNDLED WITH
