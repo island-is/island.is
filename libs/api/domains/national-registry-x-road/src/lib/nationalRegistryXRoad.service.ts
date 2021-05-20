@@ -15,30 +15,23 @@ export class NationalRegistryXRoadService {
     private logger: Logger,
   ) {}
 
-  async getCustodyChildrenAndParents(
+  async getNationalRegistryPerson(
     nationalId: string,
-    token: string,
   ): Promise<NationalRegistryPerson | undefined> {
     try {
-      const parentA = await this.personApi.einstaklingarGetEinstaklingur({
+      const person = await this.personApi.einstaklingarGetEinstaklingur({
         id: nationalId,
         xRoadClient: this.config.xRoadClientId,
       })
 
-      const children = await this.getChildrenCustodyInformation(
-        nationalId,
-        token,
-      )
-
       return {
         nationalId: nationalId,
-        fullName: parentA.nafn,
+        fullName: person.nafn,
         address: {
-          streetName: parentA.logheimili?.heiti || undefined,
-          postalCode: parentA.logheimili?.postnumer || undefined,
-          city: parentA.logheimili?.stadur || undefined,
+          streetName: person.logheimili?.heiti || undefined,
+          postalCode: person.logheimili?.postnumer || undefined,
+          city: person.logheimili?.stadur || undefined,
         },
-        children,
       }
     } catch (e) {
       this.handleError(e)
@@ -60,61 +53,65 @@ export class NationalRegistryXRoadService {
     ).then((res) => res.json())
   }
 
-  private async getChildrenCustodyInformation(
+  async getChildrenCustodyInformation(
     parentNationalId: string,
     token: string,
-  ): Promise<NationalRegistryPerson[]> {
-    const childrenNationalIds = await this.getCustody(parentNationalId, token)
+  ): Promise<NationalRegistryPerson[] | undefined> {
+    try {
+      const childrenNationalIds = await this.getCustody(parentNationalId, token)
 
-    const children = await Promise.all(
-      childrenNationalIds.map(async (childNationalId) => {
-        return await this.personApi.einstaklingarGetEinstaklingur({
-          id: childNationalId,
-          xRoadClient: this.config.xRoadClientId,
-        })
-      }),
-    )
-    return await Promise.all(
-      children.map(async (child) => {
-        const parents = await this.personApi.einstaklingarGetForsjaForeldri({
-          id: parentNationalId,
-          barn: child.kennitala,
-          xRoadClient: this.config.xRoadClientId,
-        })
+      const children = await Promise.all(
+        childrenNationalIds.map(async (childNationalId) => {
+          return await this.personApi.einstaklingarGetEinstaklingur({
+            id: childNationalId,
+            xRoadClient: this.config.xRoadClientId,
+          })
+        }),
+      )
+      return await Promise.all(
+        children.map(async (child) => {
+          const parents = await this.personApi.einstaklingarGetForsjaForeldri({
+            id: parentNationalId,
+            barn: child.kennitala,
+            xRoadClient: this.config.xRoadClientId,
+          })
 
-        const parentB = await this.personApi.einstaklingarGetEinstaklingur({
-          id: parents.find((id) => id !== parentNationalId) || null,
-          xRoadClient: this.config.xRoadClientId,
-        })
+          const parentB = await this.personApi.einstaklingarGetEinstaklingur({
+            id: parents.find((id) => id !== parentNationalId) || null,
+            xRoadClient: this.config.xRoadClientId,
+          })
 
-        const parentLegalHomeNationalIds = await this.personApi.einstaklingarGetLogforeldrar(
-          { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
-        )
+          const parentLegalHomeNationalIds = await this.personApi.einstaklingarGetLogforeldrar(
+            { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
+          )
 
-        return {
-          nationalId: child.kennitala,
-          fullName: child.nafn,
-          livesWithApplicant: parentLegalHomeNationalIds.includes(
-            parentNationalId,
-          ),
-          livesWithBothParents: [
-            parentNationalId,
-            parentB.kennitala,
-          ].every((id) => parentLegalHomeNationalIds.includes(id)),
-          parents: [
-            {
-              nationalId: parentB.kennitala,
-              fullName: parentB.nafn,
-              address: {
-                streetName: parentB.logheimili?.heiti || undefined,
-                postalCode: parentB.logheimili?.postnumer || undefined,
-                city: parentB.logheimili?.stadur || undefined,
+          return {
+            nationalId: child.kennitala,
+            fullName: child.nafn,
+            livesWithApplicant: parentLegalHomeNationalIds.includes(
+              parentNationalId,
+            ),
+            livesWithBothParents: [
+              parentNationalId,
+              parentB.kennitala,
+            ].every((id) => parentLegalHomeNationalIds.includes(id)),
+            parents: [
+              {
+                nationalId: parentB.kennitala,
+                fullName: parentB.nafn,
+                address: {
+                  streetName: parentB.logheimili?.heiti || undefined,
+                  postalCode: parentB.logheimili?.postnumer || undefined,
+                  city: parentB.logheimili?.stadur || undefined,
+                },
               },
-            },
-          ],
-        }
-      }),
-    )
+            ],
+          }
+        }),
+      )
+    } catch (e) {
+      this.handleError(e)
+    }
   }
 
   private handleError(error: any) {
