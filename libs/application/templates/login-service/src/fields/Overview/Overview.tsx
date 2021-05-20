@@ -136,13 +136,6 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
         title={technicalInfo.labels.prodReturnUrl}
         value={answers.technicalInfo.prodReturnUrl}
       />
-      {answers.technicalInfo.clientId && (
-        <ValueLine
-          title={technicalInfo.labels.clientId}
-          value={answers.technicalInfo.clientId}
-          hasDivider={false}
-        />
-      )}
     </>
   )
 }
