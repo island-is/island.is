@@ -1,0 +1,6 @@
+{
+  "id": "contentful-mideind-extension",
+  "name": "contentful-mideind-extension",
+  "srcdoc": "./build/index.html",
+  "sidebar": true
+}

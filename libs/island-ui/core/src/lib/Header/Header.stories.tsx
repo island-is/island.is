@@ -9,3 +9,9 @@ export default {
 export const Default = () => (
   <Header authenticated language="EN" logoutText="Logout" />
 )
+
+export const Info = () => (
+  <Header
+    info={{ title: 'Institution name', description: 'Application name' }}
+  />
+)
