@@ -30,8 +30,8 @@ module.exports = {
     return queryInterface.sequelize.query(`
     BEGIN;
       ALTER TABLE api_scope
-      DROP COLUMN api_scope_group;
-      DROP TABLE group_id;
+      DROP COLUMN group_id;
+      DROP TABLE api_scope_group;
       COMMIT;
     `)
   },
