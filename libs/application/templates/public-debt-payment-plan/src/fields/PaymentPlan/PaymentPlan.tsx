@@ -9,6 +9,10 @@ import {
 } from '../../lib/dataSchema'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
+import {
+  getEmptyPaymentPlanEntryKey,
+  getPaymentPlanKeyById,
+} from '../../shared/utils'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.treat'
@@ -24,13 +28,25 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
+  // Assign a payment to this screen by using the index of the step
   const payment = externalData.paymentPlanList?.data[index]
-  // Locate the index of the payment plan in answers. If none is found, use the default index
-  const answerIndex = answers.paymentPlans?.findIndex(
-    (plan) => payment?.id && plan.id === payment.id,
+  // Locate the entry of the payment plan in answers.
+  const entryKey = getPaymentPlanKeyById(
+    answers.paymentPlans,
+    payment?.id || '',
   )
-  const entryIndex = answerIndex > -1 ? answerIndex : index
-  const entry = `paymentPlans[${entryIndex}]`
+  // If no entry is found, find an empty entry to assign to this payment
+  const answerKey =
+    entryKey || getEmptyPaymentPlanEntryKey(answers.paymentPlans)
+
+  if (!answerKey) {
+    // There is no entry available for this plan
+    // The user can not continue the application
+    // TODO: Better UX for this
+    return <div>No more available entries in schema</div>
+  }
+
+  const entry = `paymentPlans.${answerKey}`
 
   const handleSelectPaymentMode = (mode: PaymentModeState) => {
     setPaymentMode(mode)

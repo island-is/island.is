@@ -45,6 +45,14 @@ export type PaymentPlanExternalData = {
   paymentPlanList?: PaymentPlanListResult
 }
 
+const paymentPlanSchema = z
+  .object({
+    id: z.string().nonempty(),
+    amountPerMonth: z.number().optional(),
+    numberOfMonths: z.number().optional(),
+  })
+  .optional()
+
 export const PublicDebtPaymentPlanSchema = z.object({
   // TODO: Applicant schema
   employer: z.object({
@@ -55,13 +63,32 @@ export const PublicDebtPaymentPlanSchema = z.object({
     isFulfilled: z.boolean().refine((x) => x),
     activePayment: z.string().optional(),
   }),
-  paymentPlans: z.array(
-    z.object({
-      id: z.string().nonempty(),
-      amountPerMonth: z.number().optional(),
-      numberOfMonths: z.number().optional(),
-    }),
-  ),
+  paymentPlans: z.object({
+    one: paymentPlanSchema,
+    two: paymentPlanSchema,
+    three: paymentPlanSchema,
+    four: paymentPlanSchema,
+    five: paymentPlanSchema,
+    six: paymentPlanSchema,
+  }),
 })
+
+export const paymentPlanIndexKeyMapper = {
+  0: 'one',
+  1: 'two',
+  2: 'three',
+  3: 'four',
+  4: 'five',
+  5: 'six',
+}
+
+export const paymentPlanEntryKeys = [
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+]
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>

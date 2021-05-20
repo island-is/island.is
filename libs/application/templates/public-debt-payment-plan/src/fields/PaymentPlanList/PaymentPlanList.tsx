@@ -8,6 +8,7 @@ import {
   PublicDebtPaymentPlan,
 } from '../../lib/dataSchema'
 import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
+import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
 
 export const PaymentPlanList = ({
   application,
@@ -19,9 +20,9 @@ export const PaymentPlanList = ({
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handleEditPaymentPlan = (id: string) => {
-    const clickedPlanIndex = answers.paymentPlans?.map((x) => x.id).indexOf(id)
-    if (clickedPlanIndex !== undefined && clickedPlanIndex > -1 && goToScreen)
-      goToScreen(`paymentPlans[${clickedPlanIndex}]`)
+    const clickedPlanKey = getPaymentPlanKeyById(answers.paymentPlans, id)
+    if (clickedPlanKey && goToScreen)
+      goToScreen(`paymentPlans.${clickedPlanKey}`)
   }
 
   return (
@@ -30,9 +31,10 @@ export const PaymentPlanList = ({
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
       {paymentPlanList?.data.map((payment, index) => {
-        const isAnswered = answers.paymentPlans?.some(
-          (plan) => plan.id === payment.id,
+        const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
+          (id) => id === payment.id,
         )
+
         return (
           <PaymentPlanCard
             payment={payment}

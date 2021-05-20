@@ -16,6 +16,7 @@ import {
 import { Prerequisites } from '../dataProviders/tempAPITypes'
 import {
   PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../lib/dataSchema'
 import { section, application, employer } from '../lib/messages'
@@ -28,23 +29,23 @@ import { NO, YES } from '../shared/constants'
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
 // The payment plan step where the user sets up this individual payment plan
-const buildPaymentPlanStep = (index: number): CustomField[] => [
+const buildPaymentPlanStep = (index: 0 | 1 | 2 | 3 | 4 | 5): CustomField[] => [
   buildCustomField({
     id: `payment-plan-list-${index}`,
     title: paymentPlan.general.pageTitle,
     component: 'PaymentPlanList',
-    condition: (_formValue, externalData) =>
-      externalData.paymentPlanList?.data !== undefined &&
-      (externalData.paymentPlanList?.data as any)[index] !== undefined,
+    condition: (_formValue, externalData) => {
+      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+    },
   }),
   buildCustomField({
-    id: `paymentPlans[${index}]`,
+    id: `paymentPlans.${paymentPlanIndexKeyMapper[index]}`,
     title: section.paymentPlan,
     component: 'PaymentPlan',
     defaultValue: index,
-    condition: (_formValue, externalData) =>
-      externalData.paymentPlanList?.data !== undefined &&
-      (externalData.paymentPlanList?.data as any)[index] !== undefined,
+    condition: (_formValue, externalData) => {
+      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+    },
   }),
 ]
 
@@ -53,7 +54,7 @@ const buildPaymentPlanStep = (index: number): CustomField[] => [
 // an entry in the payment plan list received by the API
 const buildPaymentPlanSteps = (): CustomField[] =>
   [...Array(6)].reduce((prev: CustomField[], _curr, index) => {
-    const step = buildPaymentPlanStep(index)
+    const step = buildPaymentPlanStep(index as 0 | 1 | 2 | 3 | 4 | 5)
     return [...prev, step[0], step[1]] as CustomField[]
   }, [] as CustomField[])
 
