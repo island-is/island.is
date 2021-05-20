@@ -28,14 +28,18 @@ async function translateTexts(texts: string[]) {
   return translations
 }
 
-async function sendTexts(iceTexts: string[], enTexts: string[], reference: string) {
+async function sendTexts(
+  iceTexts: string[],
+  enTexts: string[],
+  reference: string,
+) {
   const body: any = {
-    machineTranslatedText: '',  // Required even if empty
-    translationReference: 1 || reference,  // Reference to be accepted later by Miðeind
-    originalText: iceTexts.join(" "), // String expected, not array
-    correctedText: enTexts.join(" "), // String expected, not array
+    machineTranslatedText: '', // Required even if empty
+    translationReference: 1 || reference, // Reference to be accepted later by Miðeind
+    originalText: iceTexts.join(' '), // String expected, not array
+    correctedText: enTexts.join(' '), // String expected, not array
     languagePair: 'is-en',
-    model: 'transformer-base'
+    model: 'transformer-base',
   }
 
   const response = await fetch(`${base}/corrected`, {
@@ -44,7 +48,7 @@ async function sendTexts(iceTexts: string[], enTexts: string[], reference: strin
       'Content-Type': 'application/json',
       'X-API-Key': process.env.MIDEIND_TOKEN || '',
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   })
 }
 

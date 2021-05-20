@@ -87,7 +87,9 @@ const Sidebar = (props: SidebarProps) => {
 
       // A reference for Miðeind
       // {content-id}:{versionNumberAtTranslateTime}
-      const translationReference = `${props.sdk.entry.getSys().id}:${parseInt(publishedVersion, 10) - 1}`
+      const translationReference = `${props.sdk.entry.getSys().id}:${
+        parseInt(publishedVersion, 10) - 1
+      }`
 
       let iceTexts: string[] = []
       let enTexts: string[] = []
