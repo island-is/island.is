@@ -6222,11 +6222,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/services/endorsements/api/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/services/endorsements/api",
                 "output": "./"
