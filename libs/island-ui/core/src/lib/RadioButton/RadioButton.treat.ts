@@ -13,10 +13,6 @@ export const container = style({
   position: 'relative',
 })
 
-export const filled = style({
-  background: theme.color.white,
-})
-
 export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,

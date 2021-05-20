@@ -45,6 +45,7 @@ export const PrerequisitesForm: Form = buildForm({
                       buildRadioField({
                         id: 'useMockData',
                         title: 'Viltu nota gervigögn?',
+                        width: 'half',
                         options: [
                           {
                             value: YES,
@@ -59,6 +60,7 @@ export const PrerequisitesForm: Form = buildForm({
                       buildRadioField({
                         id: 'useMockedParentalRelation',
                         title: 'Tengsl við barn:',
+                        width: 'half',
                         condition: (answers) => answers.useMockData === YES,
                         options: [
                           {
