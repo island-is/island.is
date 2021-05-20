@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
@@ -33,6 +40,8 @@ import {
 import {
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
@@ -42,8 +51,14 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState(true)
-  const [isolationToIsValid, setIsolationToIsValid] = useState(true)
+  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState<boolean>(
+    true,
+  )
+  const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
+  const [
+    courtCaseFactsErrorMessage,
+    setCourtCaseFactsErrorMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
   const id = router.query.id
@@ -164,6 +179,49 @@ export const RulingStepOne: React.FC = () => {
                   />
                 </AccordionItem>
               </Accordion>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Greinargerð um málsatvik{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtCaseFacts"
+                  name="courtCaseFacts"
+                  label="Málsatvik"
+                  defaultValue={workingCase.courtCaseFacts}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtCaseFacts',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtCaseFactsErrorMessage,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtCaseFacts',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtCaseFactsErrorMessage}
+                  hasError={courtCaseFactsErrorMessage !== ''}
+                  textarea
+                  rows={7}
+                  required
+                />
+              </Box>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
