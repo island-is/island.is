@@ -6,6 +6,7 @@ import {
   BorderedAccordion,
 } from '@island.is/application/templates/family-matters-core/components'
 import { parentBConfirmation } from '../../lib/messages'
+import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
@@ -13,10 +14,8 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
 
   return (
-    <>
-      <Box marginTop={3}>
-        <DescriptionText text={parentBConfirmation.general.description} />
-      </Box>
+    <Box marginTop={3} paddingBottom={5}>
+      <DescriptionText text={parentBConfirmation.general.description} />
       <Text variant="h4" marginTop={3}>
         {formatMessage(parentBConfirmation.nextSteps.title)}
       </Text>
@@ -33,7 +32,7 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
           <ContractOverview application={application} />
         </BorderedAccordion>
       </Box>
-      <Box marginTop={5}>
+      <Box className={confirmationIllustration}>
         <img
           src={
             'https://images.ctfassets.net/8k0h54kbe6bj/6UGl8bkfOwUDKYveXfKkh0/c09265b9301b0be52c678a7197a64154/crc-application-submitted.svg'
@@ -41,7 +40,7 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
           alt=""
         />
       </Box>
-    </>
+    </Box>
   )
 }
 

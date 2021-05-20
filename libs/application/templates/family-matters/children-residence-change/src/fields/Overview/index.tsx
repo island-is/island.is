@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
+import { CheckboxController } from '@island.is/shared/form-fields'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
@@ -25,9 +26,12 @@ import { CRCFieldBaseProps } from '../../types'
 import * as style from '../Shared.treat'
 
 const Overview = ({
+  field,
+  error,
   application,
   setBeforeSubmitCallback,
 }: CRCFieldBaseProps) => {
+  const { id, disabled } = field
   const { answers, externalData } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
@@ -172,7 +176,7 @@ const Overview = ({
       <Box marginTop={4}>
         <ContractOverview application={application} />
       </Box>
-      <Box marginTop={5} marginBottom={3}>
+      <Box marginTop={5}>
         <Button
           colorScheme="default"
           icon="open"
@@ -187,6 +191,22 @@ const Overview = ({
         >
           {formatMessage(m.contract.pdfButton.label)}
         </Button>
+      </Box>
+      <Box marginTop={5}>
+        <CheckboxController
+          id={id}
+          disabled={disabled}
+          name={`${id}`}
+          error={error}
+          large={true}
+          defaultValue={[]}
+          options={[
+            {
+              value: 'yes',
+              label: formatMessage(m.contract.checkbox.label),
+            },
+          ]}
+        />
       </Box>
     </Box>
   )
