@@ -4882,7 +4882,28 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": ["apps/reference-backend/src/assets"],
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/reference-backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/reference-backend/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/reference-backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/reference-backend",
+                "output": "./"
+              }
+            ],
             "maxWorkers": 2,
             "webpackConfig": "apps/reference-backend/webpack.config.js"
           },
@@ -6193,7 +6214,29 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
+            "webpackConfig": "apps/services/endorsements/api/webpack.config.js",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/services/endorsements/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/services/endorsements/api/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/endorsements/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/endorsements/api",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
