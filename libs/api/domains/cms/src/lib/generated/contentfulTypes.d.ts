@@ -949,6 +949,9 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
 export interface IGenericTagFields {
   /** Title */
   title: string
+
+  /** Slug */
+  slug: string
 }
 
 /** A generic uniquely named tag that can be used for tag miscellaneous things. */
