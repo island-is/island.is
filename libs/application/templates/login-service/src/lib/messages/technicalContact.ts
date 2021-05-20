@@ -34,7 +34,7 @@ export const technicalContact = {
       id: `ls.application:section.technicalContact.sameAsResponsibleParty`,
       defaultMessage: 'Sami og ábyrgðaraðili',
       description: 'Technical contact sameAsResponsibleParty label',
-    },  
+    },
     techAnnouncementsEmailTitle: {
       id: `ls.application:section.technicalContact.techAnnouncementsEmailTitle`,
       defaultMessage: 'Tæknilegar tilkynningar',

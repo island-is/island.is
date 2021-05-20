@@ -150,13 +150,16 @@ export const LoginServiceForm: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
-              id: 'technicalContact.techAnnouncementsEmailTitle',
-              title: technicalContact.labels.techAnnouncementsEmailTitle,
-              component: 'FieldTitle',
-            },  {
-              marginTop: [3, 5],
-            }),
+            buildCustomField(
+              {
+                id: 'technicalContact.techAnnouncementsEmailTitle',
+                title: technicalContact.labels.techAnnouncementsEmailTitle,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: [3, 5],
+              },
+            ),
             buildTextField({
               id: 'technicalContact.techAnnouncementsEmail',
               title: technicalContact.labels.techAnnouncementsEmail,

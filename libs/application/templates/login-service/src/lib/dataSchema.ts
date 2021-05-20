@@ -22,7 +22,7 @@ export const LoginServiceSchema = z.object({
     type: z.string().nonempty(),
     devReturnUrl: z.string().optional(),
     stagingReturnUrl: z.string().optional(),
-    prodReturnUrl: z.string().nonempty()
+    prodReturnUrl: z.string().nonempty(),
   }),
 })
 
