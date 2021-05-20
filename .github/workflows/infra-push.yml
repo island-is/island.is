@@ -14,16 +14,14 @@ on:
       - labeled
 
 jobs:
-  pre-checks:
-    name: Check if job should run
+  test-and-build:
     runs-on: ubuntu-20.04
+    timeout-minutes: 5
     env:
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
       CREATE_PATTERNS: ^release/,^hotfix/
-    outputs:
-      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
-      GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
-      PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
     steps:
+      - uses: actions/checkout@v2
       - name: Get git branch
         id: git-branch
         run: |
@@ -46,8 +44,6 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
       - name: Check if we want to run workflow
         id: should-run
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
@@ -82,19 +78,6 @@ jobs:
             exit 0
           fi
           echo "::set-output name=PRE_CHECK::push"
-
-  prepare:
-    runs-on: ubuntu-20.04
-    needs:
-      - pre-checks
-    outputs:
-      CHARTS: ${{ steps.gather_charts.outputs.CHARTS }}
-      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Gather charts
-        id: gather_charts
-        run: echo "::set-output name=CHARTS::$(python -c 'import os, json; print(json.dumps([os.path.splitext(f)[0] for f in os.listdir("infra/src/uber-charts/")]))')"
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -108,24 +91,7 @@ jobs:
           echo "Using SHA='$SHA' as docker tag sha"
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-  test-and-build:
-    runs-on: ubuntu-20.04
-    needs:
-      - prepare
-      - pre-checks
-
-    timeout-minutes: 5
-    env:
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-    strategy:
-      fail-fast: false
-      matrix:
-        chart: ${{ fromJson(needs.prepare.outputs.CHARTS) }}
-    steps:
-      - uses: actions/checkout@v2
       - name: Cache for NodeJS dependencies
         id: node-modules
         uses: actions/cache@v2
@@ -142,10 +108,10 @@ jobs:
         run: ./infra/scripts/ci/test-unit.sh
 
       - name: Check chart values are up-to-date
-        run: ./infra/scripts/ci/diff-chart-values.sh ${{matrix.chart}}
+        run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
 
       - name: Docker login
-        if: needs.pre-checks.outputs.PRE_CHECK
+        if: steps.should-run.outputs.PRE_CHECK
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
@@ -153,7 +119,7 @@ jobs:
 
       - name: Docker build image
         working-directory: infra
-        if: needs.pre-checks.outputs.PRE_CHECK
+        if: steps.should-run.outputs.PRE_CHECK
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           FEATURE_NAME=$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)
@@ -175,14 +141,8 @@ jobs:
               body: `${COMMENT}`
             })
 
-  failure-notification:
-    runs-on: ubuntu-20.04
-    if: failure()
-    needs:
-      - prepare
-      - test-and-build
-    steps:
       - name: Send Slack notification
+        if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: failure
