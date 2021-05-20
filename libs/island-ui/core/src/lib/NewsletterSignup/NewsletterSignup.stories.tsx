@@ -50,6 +50,7 @@ export const errorState = () => {
       buttonText="Skrá mig"
       placeholder="Settu inn netfangið þitt"
       label="Netfang"
+      variant="blue"
       onChange={() => console.log('change')}
       value="example@example.com"
       state="error"
@@ -68,10 +69,12 @@ export const successState = () => {
       buttonText="Skrá mig"
       placeholder="Settu inn netfangið þitt"
       label="Netfang"
+      variant="blue"
       onChange={() => console.log('change')}
       value="example@example.com"
       state="success"
-      successMessage="Skráning tókst!"
+      successTitle="Skráning tókst!"
+      successMessage="Tölvupóstur heufr veirð sendur á jon@jonsbakari.is til staðfestingar. Takk fyrir."
     />
   )
 }

@@ -6,29 +6,18 @@ import { Button } from '../Button/Button'
 import * as styles from './NewsletterSignup.treat'
 import { Box } from '../Box/Box'
 import { Hidden } from '../Hidden/Hidden'
+import { AlertMessage } from '../AlertMessage/AlertMessage'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'
 
-interface MessageProps {
-  state: State
-  successMessage?: string
+interface ErrorMessageProps {
   errorMessage?: string
 }
 
-const Message = ({ state, successMessage, errorMessage }: MessageProps) => (
-  <Text
-    variant="eyebrow"
-    fontWeight="medium"
-    color={
-      (state === 'success' && 'blue400') ||
-      (state === 'error' && 'red600') ||
-      undefined
-    }
-    paddingTop={1}
-  >
-    {(state === 'success' && successMessage) ||
-      (state === 'error' && errorMessage)}
+const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => (
+  <Text variant="eyebrow" fontWeight="medium" color="red600" paddingTop={1}>
+    {errorMessage}
   </Text>
 )
 
@@ -42,8 +31,9 @@ interface Props {
   buttonText: string
   variant?: ColorVariant
   state?: State
-  errorMessage?: string
-  successMessage?: string
+  errorMessage: string
+  successTitle: string
+  successMessage: string
   onChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
@@ -65,6 +55,7 @@ export const NewsletterSignup: React.FC<Props> = ({
   onSubmit,
   value,
   errorMessage,
+  successTitle,
   successMessage,
 }) => {
   return (
@@ -72,54 +63,55 @@ export const NewsletterSignup: React.FC<Props> = ({
       <Text variant="h3" as="h3" color="blue400" paddingBottom={1}>
         {heading}
       </Text>
-      <Text variant="default" paddingBottom={3}>
-        {text}
-      </Text>
-      <Box display="flex" flexDirection={['column', 'column', 'row']}>
-        <Box className={styles.inputWrap}>
-          <Input
-            id={id}
-            name={name}
-            value={value}
-            placeholder={placeholder}
-            label={label}
-            type="email"
-            hasError={state === 'error'}
-            icon={state === 'success' ? 'checkmark' : undefined}
-            onChange={onChange}
+      {state === 'success' ? (
+        <Box className={styles.successBox} marginTop={2}>
+          <AlertMessage
+            type="success"
+            title={successTitle}
+            message={successMessage}
           />
-          <Hidden above="sm">
-            {(state === 'success' || state === 'error') && (
-              <Message
-                state={state}
-                successMessage={successMessage}
-                errorMessage={errorMessage}
-              />
-            )}
-          </Hidden>
         </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          className={styles.buttonWrap}
-          paddingTop={[3, 2, 0]}
-          marginLeft={[0, 0, 8]}
-        >
-          <Box>
-            <Button as="span" onClick={onSubmit} variant="text">
-              {buttonText}
-            </Button>
+      ) : (
+        <Box>
+          <Text variant="default" paddingBottom={3}>
+            {text}
+          </Text>
+          <Box display="flex" flexDirection={['column', 'column', 'row']}>
+            <Box className={styles.inputWrap}>
+              <Input
+                id={id}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                label={label}
+                type="email"
+                hasError={state === 'error'}
+                onChange={onChange}
+              />
+              <Hidden above="sm">
+                {state === 'error' && (
+                  <ErrorMessage errorMessage={errorMessage} />
+                )}
+              </Hidden>
+            </Box>
+            <Box
+              display="flex"
+              alignItems="center"
+              className={styles.buttonWrap}
+              paddingTop={[3, 2, 0]}
+              marginLeft={[0, 0, 8]}
+            >
+              <Box>
+                <Button as="span" onClick={onSubmit} variant="text">
+                  {buttonText}
+                </Button>
+              </Box>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      )}
       <Hidden below="md">
-        {(state === 'success' || state === 'error') && (
-          <Message
-            state={state}
-            successMessage={successMessage}
-            errorMessage={errorMessage}
-          />
-        )}
+        {state === 'error' && <ErrorMessage errorMessage={errorMessage} />}
       </Hidden>
     </Box>
   )
