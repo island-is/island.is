@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { TjodskraModule } from '@island.is/clients/tjodskra'
+import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { NationalRegistryXRoadResolver } from './national-registry-x-road.resolver'
@@ -26,7 +26,7 @@ export class NationalRegistryXRoadModule {
         },
       ],
       imports: [
-        TjodskraModule.register({
+        NationalRegistryModule.register({
           xRoadPath: createXRoadAPIPath(
             config.xRoadBasePathWithEnv,
             XRoadMemberClass.GovernmentInstitution,

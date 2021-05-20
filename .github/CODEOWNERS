@@ -57,7 +57,7 @@
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
-/libs/clients/tjodskra                                                                        @island-is/kolibri-modern-family
+/libs/clients/national-registry/v2                                                            @island-is/kolibri-modern-family
 /libs/api/domains/national-registry-x-road                                                    @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                                                        @island-is/kolibri-justice-league

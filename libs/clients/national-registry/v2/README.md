@@ -1,4 +1,4 @@
-# National Registry X Road
+# Clients National Registry V2
 
 This library implements a client to use Þjóðskrá APIs
 
@@ -25,11 +25,11 @@ and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODS
 Add the service to your module imports:
 
 ```typescript
-import { TjodskraModule } from '@island.is/clients/tjodskra'
+import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
     imports: [
-        TjodskraModule.register({
+        NationalRegistryModule.register({
             xRoadPath: createXRoadAPIPath(
             config.xRoadBasePathWithEnv,
             XRoadMemberClass.GovernmentInstitution,

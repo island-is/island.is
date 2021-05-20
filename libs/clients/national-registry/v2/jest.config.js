@@ -9,6 +9,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/tjodskra',
-  displayName: 'tjodskra',
+  coverageDirectory: '../../../coverage/libs/clients/national-registry/v2',
+  displayName: 'National-registry-v2',
 }

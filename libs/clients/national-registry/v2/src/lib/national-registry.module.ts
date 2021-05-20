@@ -13,7 +13,7 @@ export interface ModuleConfig {
   xRoadClient: string
 }
 
-export class TjodskraModule {
+export class NationalRegistryModule {
   static register(config: ModuleConfig): DynamicModule {
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
@@ -23,7 +23,7 @@ export class TjodskraModule {
     const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi]
 
     return {
-      module: TjodskraModule,
+      module: NationalRegistryModule,
       providers: exportedApis.map((Api) => ({
         provide: Api,
         useFactory: () => new Api(providerConfiguration),

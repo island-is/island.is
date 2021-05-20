@@ -249,7 +249,10 @@
     "clients-mms": {
       "tags": []
     },
-    "clients-national-registry": {
+    "clients-national-registry-v1": {
+      "tags": []
+    },
+    "clients-national-registry-v2": {
       "tags": []
     },
     "clients-regulations": {
@@ -259,9 +262,6 @@
       "tags": []
     },
     "clients-rsk-v2": {
-      "tags": []
-    },
-    "clients-tjodskra": {
       "tags": []
     },
     "clients-vmst": {
