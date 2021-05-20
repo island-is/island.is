@@ -27,7 +27,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   onChange,
   disabled,
 }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
     const rowBackground = endorsement.hasWarning ? 'yellow200' : 'white'

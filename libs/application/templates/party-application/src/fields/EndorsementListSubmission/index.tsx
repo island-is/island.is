@@ -19,7 +19,7 @@ import isEqual from 'lodash/isEqual'
 import { toast } from '@island.is/island-ui/core'
 import { Constituencies } from '../../types'
 import { constituencyMapper } from '../../constants'
-import { sortBy } from 'lodash'
+import sortBy from 'lodash/sortBy'
 
 const ENDORSEMENTS: Endorsement[] = [
   {
@@ -75,7 +75,7 @@ const ENDORSEMENTS: Endorsement[] = [
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
   const answers = (application as any).answers as PartyApplicationAnswers
-  const [endorsements, setEndorsements] = useState(sortBy(ENDORSEMENTS, 'date'))
+  const [endorsements] = useState(sortBy(ENDORSEMENTS, 'date'))
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
   >([])
@@ -146,7 +146,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     const updatedAnswers = {
       ...answers,
       endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning!!),
+      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
     }
 
     await updateApplication({
@@ -164,7 +164,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     })
   }
 
-  /* on initial render: if on initail render we have endorsements selected we want to decide which radio button should be checked */
+  /* on intital render: decide which radio button should be checked */
   useEffect(() => {
     if (answers.endorsements && answers.endorsements.length > 0) {
       setSelectedEndorsements(answers.endorsements)
@@ -175,7 +175,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
       firstMaxEndorsements()
       setAutoSelect(true)
     }
-  }, [])
+  })
 
   return (
     <Box marginBottom={8}>
