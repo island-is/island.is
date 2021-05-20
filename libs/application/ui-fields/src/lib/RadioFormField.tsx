@@ -14,6 +14,7 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
+
 import { getDefaultValue } from '../getDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -32,7 +33,6 @@ const RadioFormField: FC<Props> = ({
     description,
     options,
     width,
-    emphasize,
     largeButtons,
   } = field
   const { formatMessage } = useLocale()
@@ -43,7 +43,7 @@ const RadioFormField: FC<Props> = ({
   ])
 
   return (
-    <div>
+    <Box>
       {showFieldName && (
         <Text variant={'h4'}>
           {formatText(title, application, formatMessage)}
@@ -56,14 +56,9 @@ const RadioFormField: FC<Props> = ({
         />
       )}
 
-      <Box
-        background={emphasize ? 'blue100' : undefined}
-        padding={emphasize ? 3 : undefined}
-        marginTop={3}
-      >
+      <Box marginTop={3}>
         <RadioController
           largeButtons={largeButtons}
-          emphasize={emphasize}
           id={id}
           disabled={disabled}
           error={error}
@@ -85,7 +80,7 @@ const RadioFormField: FC<Props> = ({
           }))}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
 

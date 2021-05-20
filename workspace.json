@@ -2625,6 +2625,27 @@
         }
       }
     },
+    "auth-scopes": {
+      "root": "libs/auth/scopes",
+      "sourceRoot": "libs/auth/scopes/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/scopes/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/scopes"],
+          "options": {
+            "jestConfig": "libs/auth/scopes/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -3027,16 +3048,48 @@
         }
       }
     },
-    "contentful-translation-extension": {
-      "root": "libs/contentful-translation-extension",
-      "sourceRoot": "libs/contentful-translation-extension/src",
+    "contentful-mideind-extension": {
+      "root": "libs/contentful-extensions/mideind-translation",
+      "sourceRoot": "libs/contentful-extensions/mideind-translation/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/contentful-translation-extension/jest.config.js",
+            "jestConfig": "libs/contentful-extensions/mideind-translation/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-mideind-extension"]
+        }
+      }
+    },
+    "contentful-parent-slug-extension": {
+      "root": "libs/contentful-extensions/parent-slug",
+      "sourceRoot": "libs/contentful-extensions/parent-slug/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/parent-slug/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-parent-slug-extension"]
+        }
+      }
+    },
+    "contentful-translation-extension": {
+      "root": "libs/contentful-extensions/translation",
+      "sourceRoot": "libs/contentful-extensions/translation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/translation/jest.config.js",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/contentful-translation-extension"]
@@ -3044,14 +3097,14 @@
         "serve": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "contentful-extension-scripts start --input libs/contentful-translation-extension --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
+            "command": "contentful-extension-scripts start --input libs/contentful-extensions/translation --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
           }
         },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/contentful-translation-extension",
-            "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
+            "command": "contentful-extension-scripts build --input libs/contentful-extensions/translation --output dist/contentful-translation-extension"
           },
           "configurations": {
             "production": {}

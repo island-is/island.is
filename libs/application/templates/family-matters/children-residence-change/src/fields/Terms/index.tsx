@@ -18,10 +18,6 @@ const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
           value: 'effect',
           label: formatMessage(terms.residenceChangeCheckbox.label),
         },
-        {
-          value: 'childBenefit',
-          label: formatMessage(terms.familySupportCheckbox.label),
-        },
       ]}
     >
       <DescriptionText text={terms.general.description} />

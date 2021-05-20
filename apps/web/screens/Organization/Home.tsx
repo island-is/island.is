@@ -16,7 +16,6 @@ import {
   OrganizationSlice,
   OrganizationWrapper,
   SearchBox,
-  SidebarCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
@@ -31,7 +30,7 @@ interface HomeProps {
 
 const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
 
-const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
+const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -74,9 +73,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       ))}
       sidebarContent={
         <>
-          {organizationPage.sidebarCards.map((card) => (
-            <SidebarCard key={card.id} sidebarCard={card} />
-          ))}
           {WITH_SEARCH.includes(organizationPage.slug) && (
             <SearchBox
               organization={organizationPage.slug}
@@ -100,6 +96,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
+          fullWidth={true}
         />
       ))}
     </OrganizationWrapper>

@@ -234,6 +234,9 @@
     "auth-react": {
       "tags": []
     },
+    "auth-scopes": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -277,6 +280,12 @@
       "tags": []
     },
     "content-search-toolkit": {
+      "tags": []
+    },
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
       "tags": []
     },
     "contentful-translation-extension": {
