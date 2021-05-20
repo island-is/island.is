@@ -13,6 +13,7 @@ import {
   StaticText,
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
+import has from 'lodash/has'
 
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
@@ -58,6 +59,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = buildValidationError(FIRST_PERIOD_START)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
+    console.log(
+      '########## answerValidators[FIRST_PERIOD_START]',
+      application.answers,
+    )
+
     if (!expectedDateOfBirth) {
       return buildError(errorMessages.dateOfBirth)
     }
@@ -67,10 +73,37 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PERIODS]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
     const newPeriodIndex = periods.length - 1
-    const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const period = periods[newPeriodIndex]
+    const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
     const dob = expectedDateOfBirth as string
+    const answeredPeriods = application.answers.periods as Period[]
+    const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
+
+    console.log('########## answerValidators[PERIODS]')
+    console.log('########## newAnswer', newAnswer)
+    console.log('########## period', period)
+    console.log('########## application.answers', application.answers)
+    console.log('########## lastAnsweredPeriod', lastAnsweredPeriod)
+
+    if (isEmpty(period)) {
+      let field = 'startDate'
+      if (
+        application.answers.firstPeriodStart !== undefined ||
+        lastAnsweredPeriod?.startDate !== undefined
+      ) {
+        field = 'endDate'
+      }
+      console.log(
+        '########## answerValidators[PERIODS] isEmpty(period) field:',
+        field,
+        'application.answers.firstPeriodStart:',
+        application.answers.firstPeriodStart,
+        'lastAnsweredPeriod?.startDate',
+        lastAnsweredPeriod?.startDate,
+      )
+      return buildError(errorMessages.periodsDateRequired, field)
+    }
 
     if (period?.startDate !== undefined) {
       const field = 'startDate'
@@ -112,6 +145,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ) {
         return buildError(errorMessages.periodsStartDateOverlaps, field)
       }
+    }
+
+    // The user already has already set one or more periods, and is now adding another.
+    // We check if the endDate of the new period is not undefined
+    if (
+      !period?.endDate &&
+      period?.startDate === lastAnsweredPeriod?.startDate &&
+      has(lastAnsweredPeriod, 'startDate') &&
+      !has(lastAnsweredPeriod, 'endDate')
+    ) {
+      const field = 'endDate'
+      return buildError(errorMessages.periodsEndDateRequired, field)
     }
 
     if (period?.endDate !== undefined) {

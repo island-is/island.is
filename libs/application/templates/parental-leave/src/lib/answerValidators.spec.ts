@@ -64,6 +64,73 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return error for a period with estimatedDateOfBirth startDate and undefined endDate', () => {
+    const newAnswers = [{}]
+    const newApplication = {
+      ...application,
+      answers: {
+        firstPeriodStart: 'estimatedDateOfBirth',
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  })
+
+  it('should return error for a period 2nd (or later) period that is empty (ex: they try to continue with empty startDate)', () => {
+    const newAnswers = [
+      { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
+      {},
+    ]
+    const newApplication = {
+      ...application,
+      answers: {
+        periods: [
+          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+        ],
+        firstPeriodStart: 'estimatedDateOfBirth',
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsDateRequired,
+      path: 'periods[1].endDate', // TODO Fix the field logic
+      values: undefined,
+    })
+  })
+
+  it('should return error for a 2nd (or later) period with a startDate and endDate undefined)', () => {
+    const newAnswers = [
+      { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+      { startDate: '2021-07-15' },
+    ]
+    const newApplication = {
+      ...application,
+      answers: {
+        periods: [
+          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+          { startDate: '2021-07-15' },
+        ],
+        firstPeriodStart: 'estimatedDateOfBirth',
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[1].endDate',
+      values: undefined,
+    })
+  })
+
   it('should return error for startDate before DOB', () => {
     const newAnswers = [{ startDate: '2021-01-12' }]
 
