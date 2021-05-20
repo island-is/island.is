@@ -50,8 +50,8 @@ export const dataSchema = z.object({
       params: error.validation.durationDate,
       path: ['date'],
     }),
-  approveTerms: validateTerms(2, approveTerms),
-  approveChildSupportTerms: validateTerms(1, approveTerms),
+  approveTerms: validateTerms(approveTerms, 2),
+  approveChildSupportTerms: validateTerms(approveTerms),
   parentB: parentContactInfo,
 })
 
