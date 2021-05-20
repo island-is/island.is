@@ -16,6 +16,7 @@ import {
   Link,
   Navigation,
   NavigationItem,
+  ProfileCard,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -210,6 +211,15 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {organizationPage.secondaryMenu && (
                   <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
                 )}
+                {organizationPage.sidebarCards.map((card) => (
+                  <ProfileCard
+                    title={card.title}
+                    description={card.content}
+                    link={card.link}
+                    image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                    size="small"
+                  />
+                ))}
                 {sidebarContent}
               </SidebarContainer>
             }
