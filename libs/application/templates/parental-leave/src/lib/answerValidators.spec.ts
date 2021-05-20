@@ -64,8 +64,19 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return error for a period with undefined startDate and undefined endDate', () => {
+    const newAnswers = [{}]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: errorMessages.periodsStartDateRequired,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  })
+
   it('should return error for a period with estimatedDateOfBirth startDate and undefined endDate', () => {
     const newAnswers = [{}]
+
     const newApplication = {
       ...application,
       answers: {
@@ -76,13 +87,13 @@ describe('answerValidators', () => {
     expect(
       answerValidators['periods'](newAnswers, newApplication),
     ).toStrictEqual({
-      message: errorMessages.periodsDateRequired,
+      message: errorMessages.periodsEndDateRequired,
       path: 'periods[0].endDate',
       values: undefined,
     })
   })
 
-  it('should return error for a period 2nd (or later) period that is empty (ex: they try to continue with empty startDate)', () => {
+  it('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
     const newAnswers = [
       { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
       {},
@@ -93,20 +104,19 @@ describe('answerValidators', () => {
         periods: [
           { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
         ],
-        firstPeriodStart: 'estimatedDateOfBirth',
       },
     } as Application
 
     expect(
       answerValidators['periods'](newAnswers, newApplication),
     ).toStrictEqual({
-      message: errorMessages.periodsDateRequired,
-      path: 'periods[1].endDate', // TODO Fix the field logic
+      message: errorMessages.periodsStartDateRequired,
+      path: 'periods[1].startDate',
       values: undefined,
     })
   })
 
-  it('should return error for a 2nd (or later) period with a startDate and endDate undefined)', () => {
+  it('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
     const newAnswers = [
       { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
       { startDate: '2021-07-15' },

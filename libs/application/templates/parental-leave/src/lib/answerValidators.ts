@@ -59,11 +59,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = buildValidationError(FIRST_PERIOD_START)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
-    console.log(
-      '########## answerValidators[FIRST_PERIOD_START]',
-      application.answers,
-    )
-
     if (!expectedDateOfBirth) {
       return buildError(errorMessages.dateOfBirth)
     }
@@ -80,29 +75,20 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const answeredPeriods = application.answers.periods as Period[]
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
 
-    console.log('########## answerValidators[PERIODS]')
-    console.log('########## newAnswer', newAnswer)
-    console.log('########## period', period)
-    console.log('########## application.answers', application.answers)
-    console.log('########## lastAnsweredPeriod', lastAnsweredPeriod)
-
     if (isEmpty(period)) {
+      let message = errorMessages.periodsStartDateRequired
       let field = 'startDate'
       if (
-        application.answers.firstPeriodStart !== undefined ||
-        lastAnsweredPeriod?.startDate !== undefined
+        (!answeredPeriods &&
+          application.answers.firstPeriodStart &&
+          application.answers.firstPeriodStart !== 'specificDate') ||
+        (lastAnsweredPeriod?.startDate !== undefined &&
+          !lastAnsweredPeriod?.endDate)
       ) {
         field = 'endDate'
+        message = errorMessages.periodsEndDateRequired
       }
-      console.log(
-        '########## answerValidators[PERIODS] isEmpty(period) field:',
-        field,
-        'application.answers.firstPeriodStart:',
-        application.answers.firstPeriodStart,
-        'lastAnsweredPeriod?.startDate',
-        lastAnsweredPeriod?.startDate,
-      )
-      return buildError(errorMessages.periodsDateRequired, field)
+      return buildError(message, field)
     }
 
     if (period?.startDate !== undefined) {

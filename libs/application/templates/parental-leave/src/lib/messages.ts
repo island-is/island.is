@@ -1305,11 +1305,6 @@ export const errorMessages = defineMessages({
       'Við höfum ekki getað sótt sjálfkrafa fæðingardag barnsins þíns. Vinsamlegast reyndu aftur síðar.',
     description: `Can't retrieve the DOB copy`,
   },
-  periodsDateRequired: {
-    id: 'pl.application:answerValidators.periodsDateRequired',
-    defaultMessage: 'Vinsamlegast veldu dagsetningu',
-    description: 'Start or end date can not be empty',
-  },
   periodsStartDate: {
     id: 'pl.application:answerValidators.periodsStartDate',
     defaultMessage: 'Upphafsdagsetningin er ekki gild.',
