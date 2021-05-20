@@ -15,10 +15,16 @@ export const noChildren = defineMessages({
     description:
       'Description displayed in modal when there are no children found',
   },
-  buttonLabel: {
-    id: 'crc.application:section.backgroundInformation.noChildren.buttonLabel',
+  linkHref: {
+    id: 'crc.application:section.backgroundInformation.noChildren.linkHref',
+    defaultMessage: 'https://www.island.is/',
+    description:
+      'Link href displayed in modal when there are no children found',
+  },
+  linkText: {
+    id: 'crc.application:section.backgroundInformation.noChildren.linkText',
     defaultMessage: 'Beiðni um breytta forsjá.',
     description:
-      'Button label displayed in modal when there are no children found',
+      'Link text displayed in modal when there are no children found',
   },
 })
