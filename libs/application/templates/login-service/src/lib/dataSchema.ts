@@ -19,10 +19,10 @@ export const LoginServiceSchema = z.object({
     techAnnouncementsEmail: z.string().nonempty(),
   }),
   technicalInfo: z.object({
-    type: z.string(),
+    type: z.string().nonempty(),
     devReturnUrl: z.string().optional(),
     stagingReturnUrl: z.string().optional(),
-    prodReturnUrl: z.string(),
+    prodReturnUrl: z.string().nonempty(),
     clientId: z.string().optional(),
   }),
 })
