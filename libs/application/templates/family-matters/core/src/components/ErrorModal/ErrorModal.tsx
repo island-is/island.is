@@ -1,27 +1,28 @@
 import React, { FC } from 'react'
 import {
-  Button,
   Box,
   ModalBase,
   Text,
   Stack,
   GridRow,
   GridColumn,
+  ArrowLink,
 } from '@island.is/island-ui/core'
 import * as styles from './ErrorModal.treat'
+import { link } from '../DescriptionText.treat'
 
-interface ButtonProp {
-  label: string
-  onClick: () => void
+interface LinkProp {
+  href: string
+  text: string
 }
 
 interface Props {
   title: string
-  ctaButton: ButtonProp
+  link: LinkProp
   ariaLabel?: string
 }
 
-const ErrorModal: FC<Props> = ({ title, ariaLabel, children, ctaButton }) => {
+const ErrorModal: FC<Props> = ({ title, ariaLabel, children, link }) => {
   return (
     <ModalBase
       baseId="noChildrenFoundModal"
@@ -29,6 +30,7 @@ const ErrorModal: FC<Props> = ({ title, ariaLabel, children, ctaButton }) => {
       className={styles.dialog}
       modalLabel={ariaLabel || title}
       hideOnClickOutside={false}
+      hideOnEsc={false}
     >
       <Box
         background="white"
@@ -45,11 +47,7 @@ const ErrorModal: FC<Props> = ({ title, ariaLabel, children, ctaButton }) => {
             {children}
           </Stack>
           <GridRow align="flexEnd">
-            <GridColumn span={['1/1', '1/2', '1/2']}>
-              <Button size="default" onClick={ctaButton.onClick} fluid>
-                {ctaButton.label}
-              </Button>
-            </GridColumn>
+            <ArrowLink href={link.href}>{link.text}</ArrowLink>
           </GridRow>
         </Stack>
       </Box>

@@ -16,10 +16,9 @@ const NoChildrenErrorModal = () => {
   return (
     <ErrorModal
       title={formatMessage(noChildren.title)}
-      ctaButton={{
-        label: formatMessage(noChildren.buttonLabel),
-        // TODO: Add link to correct page on island.is
-        onClick: () => console.log('cta'),
+      link={{
+        text: formatMessage(noChildren.linkText),
+        href: formatMessage(noChildren.linkHref),
       }}
     >
       <DescriptionText text={noChildren.description} />
