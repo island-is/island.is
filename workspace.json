@@ -4889,11 +4889,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/reference-backend/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/reference-backend",
                 "output": "./"
