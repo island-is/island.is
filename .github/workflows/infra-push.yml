@@ -119,6 +119,7 @@ jobs:
     timeout-minutes: 5
     env:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
     strategy:
       fail-fast: false
       matrix:
@@ -143,13 +144,20 @@ jobs:
       - name: Check chart values are up-to-date
         run: ./infra/scripts/ci/diff-chart-values.sh ${{matrix.chart}}
 
+      - name: Docker login
+        if: needs.pre-checks.outputs.PRE_CHECK
+        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
       - name: Docker build image
         working-directory: infra
         if: needs.pre-checks.outputs.PRE_CHECK
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           FEATURE_NAME=$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)
-          echo "COMMENT=$(docker run --rm -it 821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config:$DOCKER_TAG ingress-comment --images=api,web --chart=islandis --feature=$FEATURE_NAME)" >> $GITHUB_ENV
+          echo "COMMENT=$(docker run --rm -it ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=api,web --chart=islandis --feature=$FEATURE_NAME)" >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
 
