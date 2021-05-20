@@ -75,10 +75,6 @@ export const CourtRecord: React.FC = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
-      if (wc.judge) {
-        attendees += `${wc.judge.name} ${wc.judge.title}\n`
-      }
-
       if (wc.registrar) {
         attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
       }
@@ -328,7 +324,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                   <RadioButton
                     name="accusedPleaDecision"
@@ -350,7 +346,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                 </div>
                 <Input

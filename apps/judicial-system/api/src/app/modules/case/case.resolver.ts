@@ -22,11 +22,7 @@ import {
 
 import { BackendAPI } from '../../../services'
 import { CaseFile } from '../file'
-import {
-  CaseInterceptor,
-  CasesInterceptor,
-  UpdateCaseInterceptor,
-} from './interceptors'
+import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -107,7 +103,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(UpdateCaseInterceptor)
+  @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,

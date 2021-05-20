@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði',
     description: 'Some description',
   },
+  institutionName: {
+    id: 'example.application.institution',
+    defaultMessage: 'Institution reference',
+    description: `Institution's name`,
+  },
   name: {
     id: 'example.application:name',
     defaultMessage: 'Umsókn um tilvísunar sniðmát',

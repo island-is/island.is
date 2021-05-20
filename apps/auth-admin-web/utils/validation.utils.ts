@@ -2,7 +2,7 @@
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
+  public static identifierPattern = /^[@a-zA-Z0-9_.-]*$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/

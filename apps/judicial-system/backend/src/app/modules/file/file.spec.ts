@@ -4,7 +4,7 @@ import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 import { NotFoundException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
@@ -79,7 +79,7 @@ describe('FileModule', () => {
 
   describe('Given a case', () => {
     const caseId = uuid()
-    const user = {} as User
+    const user = { role: UserRole.PROSECUTOR } as User
     const fileName = 'test.txt'
 
     it('should create a presigned post', async () => {

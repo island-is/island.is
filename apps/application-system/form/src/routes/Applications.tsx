@@ -137,7 +137,7 @@ export const Applications: FC = () => {
                         variant: isRejected
                           ? 'red'
                           : isCompleted
-                          ? 'mint'
+                          ? 'blueberry'
                           : 'blue',
                         outlined: false,
                       }}
