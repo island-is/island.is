@@ -37,6 +37,7 @@ const SelectLegalResidence = ({
         <RadioController
           id={field.id}
           largeButtons={true}
+          backgroundColor="white"
           error={error}
           defaultValue={(fakeDefault as unknown) as string[]}
           options={[

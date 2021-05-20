@@ -15,6 +15,7 @@ export const ApplicationFragment = gql`
     externalData
     progress
     name
+    institution
     status
   }
 `

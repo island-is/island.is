@@ -1,12 +1,12 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 
 import { Logo } from '../Logo/Logo'
-
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
-import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
 import { Hidden } from '../Hidden/Hidden'
+import { UserMenu } from './UserMenu/UserMenu'
+import * as styles from './Header.treat'
 
 export interface HeaderProps {
   authenticated?: boolean
@@ -17,6 +17,12 @@ export interface HeaderProps {
   switchLanguage?: () => void
   userLogo?: string
   userName?: string
+  userAsDropdown?: boolean
+  dropdownItems?: ReactNode
+  info?: {
+    title: string
+    description?: string
+  }
 }
 
 const LogoIcon = (
@@ -39,21 +45,65 @@ export const Header = ({
   switchLanguage,
   userLogo,
   userName = '',
+  userAsDropdown,
+  dropdownItems,
+  info,
 }: HeaderProps) => {
-  const logo = () => {
+  const renderLogo = () => {
     if (logoRender) {
       return logoRender(LogoIcon)
     }
+
     return LogoIcon
   }
-  return (
-    <Box
-      className={styles.container}
-      display="flex"
-      alignItems="center"
-      justifyContent="spaceBetween"
-    >
-      {logo()}
+
+  const renderInfo = () => {
+    if (!info) {
+      return null
+    }
+
+    return (
+      <Box
+        display="flex"
+        className={styles.infoContainer}
+        alignItems="center"
+        height="full"
+        marginLeft={[1, 1, 2, 4]}
+        marginRight="auto"
+      >
+        <Box marginLeft={[1, 1, 2, 4]}>
+          <Text variant="eyebrow">{info.title}</Text>
+          {info.description && (
+            <p className={styles.infoDescription}>{info.description}</p>
+          )}
+        </Box>
+      </Box>
+    )
+  }
+
+  const renderDropdown = () => {
+    if (!userAsDropdown) {
+      return null
+    }
+
+    return (
+      <UserMenu
+        authenticated={authenticated}
+        username={userName}
+        language={language}
+        dropdownItems={dropdownItems}
+        switchLanguage={switchLanguage}
+        onLogout={onLogout}
+      />
+    )
+  }
+
+  const renderDefault = () => {
+    if (userAsDropdown) {
+      return null
+    }
+
+    return (
       <Box display="flex" alignItems="center">
         {authenticated && (
           <Box
@@ -75,11 +125,13 @@ export const Header = ({
             </Text>
           </Box>
         )}
+
         {language && (
           <Button variant="utility" onClick={switchLanguage}>
             {language}
           </Button>
         )}
+
         {authenticated && (
           <Box marginLeft={2}>
             <Button variant="utility" icon="lockClosed" onClick={onLogout}>
@@ -88,6 +140,20 @@ export const Header = ({
           </Box>
         )}
       </Box>
+    )
+  }
+
+  return (
+    <Box
+      className={styles.container}
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+    >
+      {renderLogo()}
+      {renderInfo()}
+      {renderDropdown()}
+      {renderDefault()}
     </Box>
   )
 }

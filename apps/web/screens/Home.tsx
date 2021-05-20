@@ -141,6 +141,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
       <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
         <LatestNewsSection
           label={gn('newsAndAnnouncements')}
+          readMoreText={gn('seeMore')}
           labelId="latestNewsTitle"
           items={news}
         />

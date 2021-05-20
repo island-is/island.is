@@ -47,6 +47,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
+  institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
