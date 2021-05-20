@@ -52,7 +52,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTagId: string
+  selectedTagSlug: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -63,7 +63,7 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
-  selectedTagId,
+  selectedTagSlug,
   namespace,
 }) => {
   const Router = useRouter()
@@ -102,7 +102,7 @@ const NewsList: Screen<NewsListProps> = ({
   ]
 
   const makeHref = (y: number | string, m?: number | string) => {
-    const params = { y, m, tag: selectedTagId }
+    const params = { y, m, tag: selectedTagSlug }
     const query = Object.entries(params).reduce((queryObject, [key, value]) => {
       if (value) {
         queryObject[key] = value
@@ -120,14 +120,14 @@ const NewsList: Screen<NewsListProps> = ({
   // instead of making a request for all tags
   const selectedTag =
     newsList.length &&
-    selectedTagId &&
+    selectedTagSlug &&
     transform(
       newsList,
       (tag, item) => {
-        const found = item.genericTags.find((t) => t.id === selectedTagId)
+        const found = item.genericTags.find((t) => t.slug === selectedTagSlug)
 
         if (found) {
-          tag.id = found.id
+          tag.slug = found.slug
           tag.title = found.title
           // exit early since we have what we need
           return false
@@ -135,7 +135,7 @@ const NewsList: Screen<NewsListProps> = ({
 
         return true
       },
-      { id: '', title: '' },
+      { slug: '', title: '' },
     )
 
   const breadCrumbs: BreadCrumbItem[] = [
@@ -381,7 +381,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTagId: tag,
+    selectedTagSlug: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
