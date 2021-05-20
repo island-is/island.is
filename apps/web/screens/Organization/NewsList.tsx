@@ -75,12 +75,16 @@ const NewsList: Screen<NewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
-  const currentNavItem = organizationPage.menuLinks.find(
-    ({ primaryLink }) => primaryLink.url === Router.asPath,
-  )
+  const currentNavItem =
+    organizationPage.menuLinks.find(
+      ({ primaryLink }) => primaryLink.url === Router.asPath,
+    )?.primaryLink ??
+    organizationPage.secondaryMenu?.childrenLinks.find(
+      ({ url }) => url === Router.asPath,
+    )
 
   const newsTitle =
-    currentNavItem?.primaryLink.text ??
+    currentNavItem?.text ??
     newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
     n('newsTitle', 'Fréttir og tilkynningar')
 
