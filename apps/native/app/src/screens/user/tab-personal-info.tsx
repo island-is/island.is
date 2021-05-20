@@ -3,7 +3,6 @@ import { Alert, Input, InputRow } from '@island.is/island-ui-native'
 import React, { useRef, useState } from 'react'
 import { ScrollView, View, Animated } from 'react-native'
 import { InfoMessage } from '../../components/info-message/info-message'
-
 import { client } from '../../graphql/client'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useAuthStore } from '../../stores/auth-store'

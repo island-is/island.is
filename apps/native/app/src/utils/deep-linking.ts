@@ -149,14 +149,32 @@ export const resetSchemes = () => {
   deepLinkingStore.setState(() => ({ schemes: [] }))
 }
 
+const navigateTimeMap = new Map();
+const NAVIGATE_TIMEOUT = 500;
 /**
  * Navigate to a specific url within the app
  * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
  * @returns
  */
 export function navigateTo(url: string, extraProps: any = {}) {
+  const now = Date.now();
+  // find last navigate time to this route
+  const lastNavigate = navigateTimeMap.get(url);
+
+  if (lastNavigate && (now - lastNavigate) <= NAVIGATE_TIMEOUT) {
+    // user tried to navigate to same route twice within TAP_TIMEOUT (500ms)
+    return;
+  }
+
+  // update navigate time for this route
+  navigateTimeMap.set(url, now);
+
+  // setup linking url
   const linkingUrl = `${config.bundleId}://${url.replace(/^\//, '')}`
+
+  // evalute and route
   return evaluateUrl(linkingUrl, extraProps)
+
   // @todo when to use native linking system?
   // return Linking.openURL(linkingUrl);
 }
@@ -167,15 +185,12 @@ export function navigateTo(url: string, extraProps: any = {}) {
  * @param notification Notification object, requires `id` and an optional `link`
  * @param componentId use specific componentId to open web browser in
  */
-export function navigateToNotification(
-  notification: { id: string; link?: string },
-  componentId?: string,
-) {
-  const { id, link } = notification
+export function navigateToNotification(notification: { id: string; link?: string }, componentId?: string) {
+  const { id, link } = notification;
   // mark notification as read
   if (id) {
-    notificationsStore.getState().setRead(id)
-    const didNavigate = navigateTo(link ?? `/notification/${id}`)
+    notificationsStore.getState().setRead(id);
+    const didNavigate = navigateTo(link ?? `/notification/${id}`);
     if (!didNavigate && link) {
       if (!componentId) {
         // Use home tab for browser
@@ -185,7 +200,7 @@ export function navigateToNotification(
           },
         })
       }
-      openBrowser(link, componentId ?? 'HOME_SCREEN')
+      openBrowser(link, componentId ?? 'HOME_SCREEN');
     }
   }
 }

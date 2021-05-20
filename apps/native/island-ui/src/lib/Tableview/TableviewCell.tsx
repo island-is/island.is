@@ -92,6 +92,12 @@ const SubtitleText = styled.Text`
   color: ${(props) => props.theme.color.dark300};
 `
 
+export const TableViewAccessory = styled.Text`
+  font-family: 'IBMPlexSans';
+  font-size: 14px;
+  color: ${(props) => props.theme.color.dark400};
+`
+
 export function TableViewCell(props: TableViewCellProps) {
   const {
     title,

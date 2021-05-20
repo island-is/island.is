@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Dimensions } from 'react-native'
 import { Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
@@ -26,8 +27,9 @@ const Title = styled.Text`
   font-family: 'IBMPlexSans';
   font-size: 20px;
   color: ${(props) => props.theme.shade.foreground};
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   max-width: 75%;
+  min-width: 360px;
   text-align: center;
 `
 
@@ -156,7 +158,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           <Image
             source={logo}
             resizeMode="contain"
-            style={{ width: 45, height: 45, marginBottom: 20 }}
+            style={{ width: 45, height: 45, marginBottom: 16 }}
           />
           <Title>
             {confirmPin ? (
@@ -172,8 +174,8 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             code={code}
             invalid={invalid}
             maxChars={MAX_PIN_CHARS}
+            style={{ marginBottom: 20 }}
           />
-          <View style={{ height: 32 }} />
           <PinKeypad
             onInput={onPinInput}
             onBackPress={onBackPress}

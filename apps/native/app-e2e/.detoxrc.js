@@ -1,4 +1,4 @@
-{
+module.exports = {
   "testRunner": "jest",
   "runnerConfig": "config.json",
   "apps": {

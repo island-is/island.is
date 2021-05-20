@@ -67,10 +67,10 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
               : undefined,
         },
         searchBar: {
-          // tintColor: theme.color.blue400,
           backgroundColor: '#fff',
           visible: true,
           placeholder: 'Leita að skjölum...',
+          hideTopBarOnFocus: true,
         },
       },
     }),
@@ -84,14 +84,11 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const renderInboxItem = useCallback(
     ({ item }: { item: IDocument }) => {
       return (
-        <PressableHighlight
-          // highlightColor={theme.isDark ? '#080817' : theme.color.blue100}
-          onPress={() => navigateTo(`/inbox/${item.id}`)}
-        >
+        <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`)}>
           <ListItem
             title={item.senderName}
             subtitle={item.subject}
-            date={new Date()}
+            date={new Date(item.date)}
             icon={
               <Image
                 source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
@@ -196,6 +193,7 @@ InboxScreen.options = {
       tintColor: theme.color.blue400,
       visible: true,
       placeholder: 'Leita að skjölum...',
+      hideTopBarOnFocus: true,
     },
   },
 }

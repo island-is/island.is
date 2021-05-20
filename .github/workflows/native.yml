@@ -63,6 +63,7 @@ jobs:
           ln -s "$(pwd)/node_modules/hermes-engine" "$(pwd)/apps/native/app/node_modules/hermes-engine"
           ln -s "$(pwd)/node_modules/jsc-android" "$(pwd)/apps/native/app/node_modules/jsc-android"
           ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
+          echo "ZGVmYXVsdHMudXJsPWh0dHBzOi8vc2VudHJ5LmlvLwpkZWZhdWx0cy5vcmc9c29saWQtbW9iaWxlLXJ6CmRlZmF1bHRzLnByb2plY3Q9aXNsYW5kLWFwcC1kZW1vCmF1dGgudG9rZW49Nzk4OGY3YmM3N2Y5NGZhNDlhYmU3ODZjOGY4MzdmNzg0MTJlMmY1NzJiY2M0NDkxODQ0ODFjMTI3OTFiYTE4Mgo=" | base64 --decode > "$(pwd)/apps/native/app/ios/sentry.properties"
 
       - name: Install applesimutils
         run: |

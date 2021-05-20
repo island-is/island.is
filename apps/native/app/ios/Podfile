@@ -26,6 +26,7 @@ target 'IslandApp' do
   )
 
   pod 'CodePush', :path => '../../node_modules/react-native-code-push'
+  pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
   pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
   pod 'RNReanimated', :path => '../../node_modules/react-native-reanimated'

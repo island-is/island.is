@@ -1,30 +1,28 @@
-import { by, device, element } from 'detox'
+import { by, element } from 'detox'
 import { testIDs } from '../../app/src/utils/test-ids'
-import { config } from './utils'
+import { launchAsynchronizedApp } from './utils'
 
 describe('Notifications', () => {
   beforeAll(async () => {
-    await device.launchApp({
-      permissions: {
-        faceid: 'YES',
-        notifications: 'YES',
-      },
-      url: `${config.bundleId}://e2e/disable-applock`,
-    })
+    await launchAsynchronizedApp()
   })
 
   it('should show user screen', async () => {
     await waitFor(element(by.id(testIDs.SCREEN_HOME))).toBeVisible()
-    console.log('Disable synchronization')
-    await device.disableSynchronization()
     await element(by.id(testIDs.TOPBAR_USER_BUTTON)).tap()
     await waitFor(element(by.id(testIDs.SCREEN_USER))).toBeVisible()
-    await waitFor(element(by.id(testIDs.USER_SCREEN_PROFILE_INFO))).toBeVisible()
+    await waitFor(
+      element(by.id(testIDs.USER_SCREEN_PROFILE_INFO)),
+    ).toBeVisible()
   })
 
   it('should have user profile tab open', async () => {
-    await waitFor(element(by.id(testIDs.USER_SCREEN_PROFILE_INFO))).toBeVisible()
-    await waitFor(element(by.id(testIDs.USER_PROFILE_INFO_DISPLAY_NAME_VALUE))).toExist();
+    await waitFor(
+      element(by.id(testIDs.USER_SCREEN_PROFILE_INFO)),
+    ).toBeVisible()
+    await waitFor(
+      element(by.id(testIDs.USER_PROFILE_INFO_DISPLAY_NAME_VALUE)),
+    ).toExist()
   })
 
   it('should be able to tap settings', async () => {

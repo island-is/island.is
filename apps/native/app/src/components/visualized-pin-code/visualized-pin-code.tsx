@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import { Animated } from 'react-native'
+import { Animated, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 interface VisualizedPinCodeProps {
@@ -7,6 +7,7 @@ interface VisualizedPinCodeProps {
   invalid: boolean
   minChars?: number
   maxChars?: number
+  style?: ViewStyle
 }
 
 const Host = styled(Animated.View)`
@@ -55,6 +56,7 @@ export function VisualizedPinCode({
   invalid,
   minChars = 4,
   maxChars = 6,
+  style,
 }: VisualizedPinCodeProps) {
   const charsCount = Math.max(minChars, Math.min(maxChars, code.length))
   const value = useRef(new Animated.Value(0))
@@ -117,7 +119,7 @@ export function VisualizedPinCode({
   }, [code])
 
   return (
-    <Host style={{ transform: [{ translateX: value.current }] }}>
+    <Host style={[{ transform: [{ translateX: value.current }] }, style]}>
       {Array.from({ length: charsCount }).map((n, i) => (
         <DotGroup key={i}>
           <Dot state="inactive" />

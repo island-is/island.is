@@ -7,8 +7,8 @@
     "nx": "cd .. && yarn nx",
     "postinstall": "patch-package && cd app && yarn build:env .env",
     "pod:install": "cd app/ios && pod install",
-    "detox:build": "detox build -C app-e2e/.detoxrc.json -o app-e2e/config.json",
-    "detox:test": "detox test -C app-e2e/.detoxrc.json -o app-e2e/config.json -r",
+    "detox:build": "detox build -C app-e2e/.detoxrc.js -o app-e2e/config.json",
+    "detox:test": "detox test -C app-e2e/.detoxrc.js -o app-e2e/config.json -r",
     "detox:build:ios": "yarn detox:build -c ios",
     "detox:test:ios": "yarn detox:test -c ios"
   },
@@ -20,37 +20,38 @@
     "@react-native-community/async-storage": "1.12.1",
     "@react-native-community/react-native-cookies": "1.1.1",
     "@react-native-segmented-control/segmented-control": "2.3.0",
-    "expo-file-system": "10.0.0",
-    "expo-local-authentication": "10.0.0",
-    "expo-notifications": "0.9.0",
+    "@sentry/react-native": "2.4.3",
+    "expo-file-system": "11.0.2",
+    "expo-local-authentication": "11.0.2",
+    "expo-notifications": "0.11.6",
     "react-native-app-auth": "6.2.0",
     "react-native-code-push": "7.0.1",
     "react-native-dialogs": "1.1.1",
-    "react-native-keyboard-manager": "6.5.4-0",
+    "react-native-keyboard-manager": "6.5.4-1",
     "react-native-keychain": "7.0.0",
-    "react-native-localize": "2.0.2",
-    "react-native-navigation": "7.11.3",
+    "react-native-localize": "2.0.3",
+    "react-native-navigation": "7.14.0",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkit-wallet": "0.1.4",
     "react-native-reanimated": "2.1.0",
     "react-native-safe-area-context": "3.2.0",
-    "react-native-ultimate-config": "3.3.1",
-    "react-native-unimodules": "0.12.0",
-    "react-native-webview": "11.3.1",
+    "react-native-ultimate-config": "3.3.4",
+    "react-native-unimodules": "0.13.3",
+    "react-native-webview": "11.4.5",
     "rn-pdf-reader-js": "4.1.1",
-    "zustand": "3.3.3"
+    "zustand": "3.5.1"
   },
   "devDependencies": {
-    "@types/react-native": "0.64.0",
-    "detox": "18.7.1",
+    "@types/react-native": "0.64.5",
+    "detox": "18.13.0",
     "detox-recorder": "1.0.151",
     "jest": "26.6.3",
     "jest-circus": "26.6.3",
     "patch-package": "6.4.7",
     "postinstall-postinstall": "2.1.0",
-    "puppeteer": "8.0.0"
+    "puppeteer": "9.1.1"
   },
   "resolutions": {
-    "@types/react-native": "0.64.0"
+    "@types/react-native": "0.64.5"
   }
 }

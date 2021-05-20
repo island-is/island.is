@@ -42,6 +42,7 @@ export function getDefaultOptions(
       animated: true,
       style: theme.isDark ? 'light' : 'dark',
       visible: true,
+      hideWithTopBar: true,
     },
     window: {
       backgroundColor: '#222222',

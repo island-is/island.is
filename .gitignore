@@ -129,6 +129,8 @@ buck-out/
 # react-native-ultimate-config
 rnuc.xcconfig
 
-## Nested node_modules
+# sentry
+sentry.properties
 
+## Nested node_modules
 node_modules/

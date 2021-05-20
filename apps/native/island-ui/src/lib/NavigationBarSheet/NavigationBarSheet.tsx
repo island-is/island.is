@@ -67,7 +67,7 @@ export function NavigationBarSheet({
       <SafeAreaView>
         <Header style={style}>
           <HeaderTitle>{title}</HeaderTitle>
-          <CloseButton onPress={onClosePress} testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}>
+          <CloseButton onPress={onClosePress} testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON} accessibilityLabel="Close">
             <CloseIcon
               style={{
                 tintColor: theme.color.blue400,

@@ -39,6 +39,10 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
 
   const x = useRef(new Animated.Value(0)).current
 
+  if (pages === 0) {
+    return null;
+  }
+
   return (
     <>
       <Animated.ScrollView

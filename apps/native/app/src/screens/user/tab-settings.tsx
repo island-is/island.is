@@ -1,13 +1,16 @@
-import { Alert, TableViewCell, TableViewGroup } from '@island.is/island-ui-native'
-import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import {
+  Alert,
+  TableViewAccessory,
+  TableViewCell,
+  TableViewGroup,
+} from '@island.is/island-ui-native'
 import {
   AuthenticationType,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
-import React, { useEffect, useState, useRef } from 'react'
-import { Platform, ScrollView, Switch, Text, View, Animated } from 'react-native'
-import DialogAndroid from 'react-native-dialogs'
+import React, { useEffect, useState } from 'react'
+import { Platform, ScrollView, Switch, View, Animated } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
@@ -26,6 +29,7 @@ import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { showPicker } from '../../utils/show-picker'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import * as Sentry from '@sentry/react-native';
 
 export function TabSettings() {
   const authStore = useAuthStore()
@@ -75,7 +79,9 @@ export function TabSettings() {
   const onLanguagePress = () => {
     showPicker({
       type: 'radio',
-      title: intl.formatMessage({ id: 'settings.accessibilityLayout.language' }),
+      title: intl.formatMessage({
+        id: 'settings.accessibilityLayout.language',
+      }),
       items: [
         { label: 'Íslenska', id: 'is-IS' },
         { label: 'English', id: 'en-US' },
@@ -133,259 +139,273 @@ export function TabSettings() {
           }],
         }}
       >
-        <View style={{ height: 32 }} />
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.communication.groupTitle',
+      <View style={{ height: 32 }} />
+      <TableViewGroup
+        header={intl.formatMessage({
+          id: 'settings.communication.groupTitle',
+        })}
+      >
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.communication.newDocumentsNotifications',
           })}
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.communication.newDocumentsNotifications',
-            })}
-            accessory={
-              <Switch
-                onValueChange={setNotificationsNewDocuments}
-                value={notificationsNewDocuments}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.communication.appUpdatesNotifications',
-            })}
-            accessory={
-              <Switch
-                onValueChange={setAppUpdatesNotifications}
-                value={appUpdatesNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.communication.applicationsNotifications',
-            })}
-            accessory={
-              <Switch
-                onValueChange={setApplicationsNotifications}
-                value={applicationsNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-        </TableViewGroup>
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.accessibilityLayout.groupTitle',
-          })}
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.sytemDarkMode',
-            })}
-            accessory={
-              <Switch
-                onValueChange={(value) => {
-                  setAppearanceMode(value ? 'automatic' : 'light')
-                }}
-                value={appearanceMode === 'automatic'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.darkMode',
-            })}
-            accessory={
-              <Switch
-                disabled={appearanceMode === 'automatic'}
-                onValueChange={(value) =>
-                  setAppearanceMode(value ? 'dark' : 'light')
-                }
-                value={appearanceMode === 'dark'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <PressableHighlight
-            disabled={Platform.OS !== 'android'}
-            onPress={Platform.OS === 'android' ? onLanguagePress : undefined}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              accessory={
-                Platform.OS === 'android' ? (
-                  <Text>{locale === 'is-IS' ? 'Íslenska' : 'English'}</Text>
-                ) : undefined
-              }
-              bottom={Platform.select({
-                ios: (
-                  <SegmentedControl
-                    values={['Íslenska', 'English']}
-                    selectedIndex={locale === 'is-IS' ? 0 : 1}
-                    style={{ marginTop: 16 }}
-                    appearance={theme.isDark ? 'dark' : 'light'}
-                    onChange={(event) => {
-                      const { selectedSegmentIndex } = event.nativeEvent
-                      setLocale(selectedSegmentIndex === 0 ? 'is-IS' : 'en-US')
-                    }}
-                    activeFontStyle={{
-                      fontFamily: 'IBMPlexSans-SemiBold',
-                    }}
-                    fontStyle={{
-                      fontFamily: 'IBMPlexSans',
-                    }}
-                  />
-                ),
-              })}
+          accessory={
+            <Switch
+              onValueChange={setNotificationsNewDocuments}
+              value={notificationsNewDocuments}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
             />
-          </PressableHighlight>
-        </TableViewGroup>
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.security.groupTitle',
+          }
+        />
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.communication.appUpdatesNotifications',
           })}
-        >
-          <PressableHighlight
-            onPress={() => {
-              Navigation.showModal({
-                stack: {
-                  children: [
-                    {
-                      component: {
-                        name: ComponentRegistry.OnboardingPinCodeScreen,
-                        passProps: {
-                          replacePin: true,
-                        },
+          accessory={
+            <Switch
+              onValueChange={setAppUpdatesNotifications}
+              value={appUpdatesNotifications}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
+        />
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.communication.applicationsNotifications',
+          })}
+          accessory={
+            <Switch
+              onValueChange={setApplicationsNotifications}
+              value={applicationsNotifications}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
+        />
+      </TableViewGroup>
+      <TableViewGroup
+        header={intl.formatMessage({
+          id: 'settings.accessibilityLayout.groupTitle',
+        })}
+      >
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.accessibilityLayout.sytemDarkMode',
+          })}
+          accessory={
+            <Switch
+              onValueChange={(value) => {
+                setAppearanceMode(value ? 'automatic' : 'light')
+              }}
+              value={appearanceMode === 'automatic'}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
+        />
+        <TableViewCell
+          title={intl.formatMessage({
+            id: 'settings.accessibilityLayout.darkMode',
+          })}
+          accessory={
+            <Switch
+              disabled={appearanceMode === 'automatic'}
+              onValueChange={(value) =>
+                setAppearanceMode(value ? 'dark' : 'light')
+              }
+              value={appearanceMode === 'dark'}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
+        />
+        <PressableHighlight onPress={onLanguagePress}>
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.language',
+            })}
+            accessory={
+              <TableViewAccessory>
+                {locale === 'is-IS' ? 'Íslenska' : 'English'}
+              </TableViewAccessory>
+            }
+          />
+        </PressableHighlight>
+      </TableViewGroup>
+      <TableViewGroup
+        header={intl.formatMessage({
+          id: 'settings.security.groupTitle',
+        })}
+      >
+        <PressableHighlight
+          onPress={() => {
+            Navigation.showModal({
+              stack: {
+                children: [
+                  {
+                    component: {
+                      name: ComponentRegistry.OnboardingPinCodeScreen,
+                      passProps: {
+                        replacePin: true,
                       },
                     },
-                  ],
-                },
-              })
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.security.changePinLabel',
-              })}
-              subtitle={intl.formatMessage({
-                id: 'settings.security.changePinDescription',
-              })}
-            />
-          </PressableHighlight>
-          <TableViewCell
-            title={intl.formatMessage(
-              {
-                id: 'settings.security.useBiometricsLabel',
-              },
-              {
-                biometricType
-              },
-            )}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.useBiometricsDescription',
-            })}
-            accessory={
-              <Switch
-                onValueChange={setUseBiometrics}
-                value={useBiometrics}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <PressableHighlight
-            onPress={() => {
-              showPicker({
-                title: intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' }),
-                items: [
-                  {
-                    id: '5000',
-                    label: intl.formatNumber(5, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
-                  },
-                  {
-                    id: '10000',
-                    label: intl.formatNumber(10, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
-                  },
-                  {
-                    id: '15000',
-                    label: intl.formatNumber(15, { style: 'unit', unitDisplay: 'long', unit: 'second' }),
                   },
                 ],
-                cancel: true,
-              }).then((res) => {
-                if (res.selectedItem) {
-                  const appLockTimeout = Number(res.selectedItem.id)
-                  preferencesStore.setState({ appLockTimeout })
-                }
-              })
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({ id: 'settings.security.appLockTimeoutLabel' })}
-              subtitle={intl.formatMessage({ id: 'settings.security.appLockTimeoutDescription' })}
-              accessory={<Text>
-                {intl.formatNumber(Math.floor(appLockTimeout / 1000), { style: 'unit', unitDisplay: 'short', unit: 'second' })}
-              </Text>}
-            />
-          </PressableHighlight>
-        </TableViewGroup>
-        <TableViewGroup header={intl.formatMessage({ id: 'settings.about.groupTitle' })}>
+              },
+            })
+          }}
+        >
           <TableViewCell
-            title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
-            subtitle={`${config.constants.nativeAppVersion} build ${
-              config.constants.nativeBuildVersion
-            } ${config.constants.debugMode ? '(debug)' : ''}`}
+            title={intl.formatMessage({
+              id: 'settings.security.changePinLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.changePinDescription',
+            })}
           />
+        </PressableHighlight>
+        <TableViewCell
+          title={intl.formatMessage(
+            {
+              id: 'settings.security.useBiometricsLabel',
+            },
+            {
+              biometricType,
+            },
+          )}
+          subtitle={intl.formatMessage({
+            id: 'settings.security.useBiometricsDescription',
+          })}
+          accessory={
+            <Switch
+              onValueChange={setUseBiometrics}
+              value={useBiometrics}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
+        />
+        <PressableHighlight
+          onPress={() => {
+            showPicker({
+              title: intl.formatMessage({
+                id: 'settings.security.appLockTimeoutLabel',
+              }),
+              items: [
+                {
+                  id: '5000',
+                  label: intl.formatNumber(5, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
+                },
+                {
+                  id: '10000',
+                  label: intl.formatNumber(10, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
+                },
+                {
+                  id: '15000',
+                  label: intl.formatNumber(15, {
+                    style: 'unit',
+                    unitDisplay: 'long',
+                    unit: 'second',
+                  }),
+                },
+              ],
+              cancel: true,
+            }).then((res) => {
+              if (res.selectedItem) {
+                const appLockTimeout = Number(res.selectedItem.id)
+                preferencesStore.setState({ appLockTimeout })
+              }
+            })
+          }}
+        >
           <TableViewCell
-            title="Codepush"
-            subtitle={
-              loadingCP
-                ? 'Loading...'
-                : !localPackage
-                ? 'N/A: Using native bundle'
-                : `${localPackage?.label}: ${localPackage.packageHash}`
+            title={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutDescription',
+            })}
+            accessory={
+              <TableViewAccessory>
+                {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                  style: 'unit',
+                  unitDisplay: 'short',
+                  unit: 'second',
+                })}
+              </TableViewAccessory>
             }
           />
+        </PressableHighlight>
+      </TableViewGroup>
+      <TableViewGroup
+        header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
+      >
+        <TableViewCell
+          title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
+          subtitle={`${config.constants.nativeAppVersion} build ${
+            config.constants.nativeBuildVersion
+          } ${config.constants.debugMode ? '(debug)' : ''}`}
+        />
+        <TableViewCell
+          title="Codepush"
+          subtitle={
+            loadingCP
+              ? 'Loading...'
+              : !localPackage
+              ? 'N/A: Using native bundle'
+              : `${localPackage?.label}: ${localPackage.packageHash}`
+          }
+        />
+        <PressableHighlight
+          onPress={() => {
+            throw new Error("My first Sentry error!");
+          }}
+          onLongPress={() => {
+            Sentry.nativeCrash();
+          }}
+        >
           <TableViewCell title="Push Token" subtitle={pushToken} />
-          <PressableHighlight
-            onPress={onLogoutPress}
-            testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
-          >
-            <TableViewCell
-              title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
-              subtitle={intl.formatMessage({ id: 'settings.about.logoutDescription' })}
-            />
-          </PressableHighlight>
-        </TableViewGroup>
+        </PressableHighlight>
+        <PressableHighlight
+          onPress={onLogoutPress}
+          testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
+        >
+          <TableViewCell
+            title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
+            subtitle={intl.formatMessage({
+              id: 'settings.about.logoutDescription',
+            })}
+          />
+        </PressableHighlight>
+      </TableViewGroup>
       </Animated.View>
     </ScrollView>
   )

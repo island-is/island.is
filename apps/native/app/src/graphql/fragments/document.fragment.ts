@@ -10,7 +10,6 @@ export const DocumentFragment = gql`
     opened
     fileType
     url
-    content
   }
 `;
 
