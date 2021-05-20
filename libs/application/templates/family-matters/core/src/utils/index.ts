@@ -89,3 +89,16 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
 }
+
+export const getBaseUrl = () => {
+  const isDev = window.location.origin.includes('dev01.devland.is')
+  const isStaging = window.location.origin.includes('staging01.devland.is')
+
+  if (isStaging) {
+    return 'https://beta.staging01.devland.is'
+  } else if (isDev) {
+    return 'https://beta.dev01.devland.is'
+  } else {
+    return 'https://island.is'
+  }
+}
