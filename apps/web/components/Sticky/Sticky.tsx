@@ -36,6 +36,7 @@ export const Sticky: FC<Props> = ({
       ref={ref}
       style={{
         top,
+        zIndex: 1,
         ...(usesSticky && { position: 'sticky' }),
       }}
     >

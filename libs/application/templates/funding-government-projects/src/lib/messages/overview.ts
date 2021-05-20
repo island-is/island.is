@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl'
 export const overview = {
   general: defineMessages({
     pageTitle: {
-      id: `section.overview.pageTitle`,
+      id: `affgp.application:section.overview.pageTitle`,
       defaultMessage: 'Yfirlit og staðfesting umsóknar',
       description: 'Overview page title',
     },
     pageDescription: {
-      id: `section.overview.pageDescription`,
+      id: `affgp.application:section.overview.pageDescription`,
       defaultMessage:
         'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins ef umsóknin er skýr og hnitmiðuð. ',
       description: 'Overview page description',
@@ -16,7 +16,7 @@ export const overview = {
   }),
   labels: defineMessages({
     submit: {
-      id: `section.overview.submit`,
+      id: `affgp.application:section.overview.submit`,
       defaultMessage: 'Staðfesta umsókn',
       description: 'Over submit field label',
     },

@@ -32,7 +32,7 @@ export class AppService {
     })
 
     if (!res.ok) {
-      console.log('Could not create a new case', res)
+      this.logger.error('Could not create a new case', res)
 
       throw new BadGatewayException('Could not create a new case')
     }

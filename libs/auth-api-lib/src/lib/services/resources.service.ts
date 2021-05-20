@@ -80,6 +80,11 @@ export class ResourcesService {
     }
   }
 
+  /** Finds all Api resources without paging */
+  async findAllApiResources(): Promise<ApiResource[] | null> {
+    return this.apiResourceModel.findAll({ order: [['name', 'asc']] })
+  }
+
   /** Finds Api resources with by national Id and returns with paging */
   async findApiResourcesByNationalId(
     searchString: string,
@@ -647,6 +652,22 @@ export class ResourcesService {
 
     return await this.apiResourceScope.destroy({
       where: { apiResourceName: apiResourceName, scopeName: scopeName },
+    })
+  }
+
+  /** Removes connections from ApiResourceScope for an Api Scope */
+  async removeApiScopeFromApiResourceScope(scopeName: string): Promise<number> {
+    return await this.apiResourceScope.destroy({
+      where: { scopeName: scopeName },
+    })
+  }
+
+  /** Get the Api resource conntected to Api Scope */
+  async findApiResourceScopeByScopeName(
+    scopeName: string,
+  ): Promise<ApiResourceScope | null> {
+    return await this.apiResourceScope.findOne({
+      where: { scopeName: scopeName },
     })
   }
 

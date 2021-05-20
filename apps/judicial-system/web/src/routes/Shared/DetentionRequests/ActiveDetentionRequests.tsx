@@ -31,7 +31,8 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isJudge = user?.role === UserRole.JUDGE
+  const isCourtRole =
+    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
   const [sortConfig, setSortConfig] = useState<SortConfig>()
   // The index of requset that's about to be removed
@@ -204,7 +205,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
                 variant={
                   mapCaseStateToTagVariant(
                     c.state,
-                    isJudge,
+                    isCourtRole,
                     c.isCustodyEndDateInThePast,
                   ).color
                 }
@@ -214,7 +215,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
                 {
                   mapCaseStateToTagVariant(
                     c.state,
-                    isJudge,
+                    isCourtRole,
                     c.isCustodyEndDateInThePast,
                   ).text
                 }

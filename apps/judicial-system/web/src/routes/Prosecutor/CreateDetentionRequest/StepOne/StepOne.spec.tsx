@@ -213,6 +213,11 @@ describe('/krafa without ID', () => {
       'Harringvej 2',
     )
 
+    userEvent.type(
+      await screen.findByLabelText(/Sláðu inn stjórnanda rannsóknar/),
+      'Ben 10',
+    )
+
     expect(
       await screen.findByRole('button', {
         name: /Stofna kröfu/i,

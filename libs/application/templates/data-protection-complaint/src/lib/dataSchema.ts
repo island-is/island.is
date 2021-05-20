@@ -124,7 +124,7 @@ export const DataProtectionComplaintSchema = z.object({
         (x) => x?.split(' ').length <= 500,
         error.wordCountReached.defaultMessage,
       ),
-    documents: z.array(FileSchema).nonempty(),
+    documents: z.array(FileSchema),
   }),
   overview: z.object({
     termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),

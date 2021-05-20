@@ -13,6 +13,12 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
+  SettingsAccessControl = '/stillingar/adgangsstyring',
+  SettingsPersonalInformation = '/stillingar/personuupplysingar',
+  SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
+  SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
+  SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
+  SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
@@ -54,13 +60,6 @@ export enum ServicePortalPath {
   MyLicensesRoot = '/min-rettindi',
   ParentalLeave = '/min-rettindi/faedingarorlof',
   DrivingLicense = '/min-rettindi/okuskirteini',
-
-  // User Profile
-  UserProfileRoot = '/stillingar',
-  UserProfileEditPhoneNumber = '/stillingar/breyta-simanumeri',
-  UserProfileEditEmail = '/stillingar/breyta-netfangi',
-  UserProfileEditLanguage = '/stillingar/breyta-tungumali',
-  UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',

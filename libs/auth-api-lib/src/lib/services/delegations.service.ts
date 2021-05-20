@@ -1,9 +1,13 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
 import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
+import { DelegationDTO } from '../entities/dto/delegation.dto'
+import { uuid } from 'uuidv4'
+import { DelegationScopeService } from './delegation-scope.service'
+import { DelegationScope } from '@island.is/auth-api-lib'
 
 @Injectable()
 export class DelegationsService {
@@ -12,6 +16,8 @@ export class DelegationsService {
     private rskApi: RskApi,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @Inject(DelegationScopeService)
+    private delegationScopeService: DelegationScopeService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -48,7 +54,6 @@ export class DelegationsService {
                 toNationalId: toNationalId,
                 fromNationalId: p.kennitala,
                 fromName: p.nafn,
-                isFromCompany: true,
                 type: DelegationType.ProcurationHolder,
                 provider: DelegationProvider.CompanyRegistry,
               },
@@ -57,9 +62,9 @@ export class DelegationsService {
       }
     } catch (error) {
       this.logger.error(
-        `Error in findAllCompaniesTo. Status: ${error.status} (${
-          error.statusText
-        })\n${JSON.stringify(error.headers._headers)}`,
+        `Error in findAllCompaniesTo. Status: ${error?.status} (${
+          error?.statusText
+        })\n${JSON.stringify(error?.headers)}`,
       )
     }
 
@@ -75,7 +80,6 @@ export class DelegationsService {
           { toNationalId: toNationalId },
           { validFrom: { [Op.lt]: now } },
           { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-          { validCount: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: 0 }] } },
         ],
       },
     })
@@ -86,11 +90,115 @@ export class DelegationsService {
           toNationalId: d.toNationalId,
           fromNationalId: d.fromNationalId,
           fromName: d.fromDisplayName,
-          isFromCompany: d.isFromCompany,
           type: DelegationType.Custom,
           provider: DelegationProvider.Custom,
         },
     )
+  }
+
+  async create(
+    nationalId: string,
+    delegation: DelegationDTO,
+  ): Promise<Delegation | null> {
+    this.logger.debug('Creating a new delegation')
+    const id = uuid()
+    await this.delegationModel.create({
+      id: id,
+      fromNationalId: nationalId,
+      ...delegation,
+    })
+    if (delegation.scopes) {
+      this.delegationScopeService.createMany(id, delegation.scopes)
+    }
+    return this.findOne(nationalId, id)
+  }
+
+  async update(
+    nationalId: string,
+    delegation: DelegationDTO,
+    id: string,
+  ): Promise<Delegation | null> {
+    this.logger.debug(`Updating a delegation with id ${id}`)
+
+    const delCheck = await this.delegationModel.findByPk(id)
+    if (!delCheck || delCheck?.fromNationalId !== nationalId) {
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
+    }
+
+    await this.delegationModel.update(
+      { ...delegation },
+      { where: { id: id, fromNationalId: nationalId } },
+    )
+    await this.delegationScopeService.delete(id)
+    if (delegation.scopes) {
+      await this.delegationScopeService.createMany(id, delegation.scopes)
+    }
+    return this.findOne(nationalId, id)
+  }
+
+  async findOne(nationalId: string, id: string): Promise<Delegation | null> {
+    this.logger.debug(`Finding a delegation with id ${id}`)
+    return await this.delegationModel.findOne({
+      where: {
+        id: id,
+        fromNationalId: nationalId,
+      },
+      include: [DelegationScope],
+    })
+  }
+
+  async findAllCustomTo(nationalId: string): Promise<Delegation[] | null> {
+    this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
+    return await this.delegationModel.findAll({
+      where: {
+        toNationalId: nationalId,
+      },
+      include: [DelegationScope],
+    })
+  }
+
+  async findAllCustomFrom(nationalId: string): Promise<Delegation[] | null> {
+    this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
+    return await this.delegationModel.findAll({
+      where: {
+        fromNationalId: nationalId,
+      },
+      include: [DelegationScope],
+    })
+  }
+
+  async deleteFrom(nationalId: string, id: string): Promise<number> {
+    this.logger.debug(`Deleting Delegation for Id ${id}`)
+
+    const delegation = await this.delegationModel.findByPk(id)
+    if (!delegation || delegation?.fromNationalId !== nationalId) {
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
+    }
+
+    await this.delegationScopeService.delete(id)
+
+    return this.delegationModel.destroy({
+      where: { id: id, fromNationalId: nationalId },
+    })
+  }
+
+  async deleteTo(nationalId: string, id: string): Promise<number> {
+    this.logger.debug(`Deleting Delegation for Id ${id}`)
+
+    const delegation = await this.delegationModel.findByPk(id)
+
+    if (!delegation || delegation?.toNationalId !== nationalId) {
+      this.logger.debug('Delegation is not assigned to user')
+      throw new UnauthorizedException()
+    }
+
+    await this.delegationScopeService.delete(id)
+
+    return this.delegationModel.destroy({
+      where: { id: id, toNationalId: nationalId },
+    })
   }
 }
 
@@ -98,7 +206,6 @@ export interface IDelegation {
   toNationalId: string
   fromNationalId: string
   fromName: string
-  isFromCompany: boolean
   type: DelegationType
   provider: DelegationProvider
 }

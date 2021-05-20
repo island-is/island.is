@@ -23,7 +23,6 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
-  isDev,
 } from './parentalLeaveTemplateUtils'
 import { getSelectedChild } from '../parentalLeaveUtils'
 
@@ -48,6 +47,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
+  institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
@@ -117,7 +117,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               cond: needsOtherParentApproval,
             },
             { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -136,6 +135,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+            throwOnError: true,
           },
           roles: [
             {
@@ -170,7 +170,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
               cond: hasEmployer,
             },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -211,6 +210,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {
@@ -267,7 +267,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: [
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -307,6 +306,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
@@ -402,7 +403,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
             },
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
@@ -426,6 +426,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {
@@ -466,7 +467,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: [
-            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
