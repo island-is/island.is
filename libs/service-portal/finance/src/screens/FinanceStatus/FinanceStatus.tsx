@@ -22,6 +22,7 @@ import {
 } from './FinanceStatusData.types'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
+import { downloadCSV } from '../../utils/downloadCSV'
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import * as styles from './FinanceStatus.treat'
 
@@ -51,6 +52,12 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   )
   const financeStatusDetails: FinanceStatusDetailsType =
     detailsQuery.data?.getFinanceStatusDetails || {}
+
+  const exportCsv = async (data: any) => {
+    const filename = `Testcsv, ${new Date().toISOString().split('T')[0]}.csv`
+
+    await downloadCSV(filename, ['header 1', 'header 2'], data)
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -114,8 +121,8 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                           title: 'Staða í lok árs ...',
                         },
                         {
-                          href: '#',
-                          title: 'Sækja sem PDF',
+                          onClick: () => exportCsv([financeStatusData]),
+                          title: 'Sækja sem CSV',
                         },
                         {
                           onClick: function noRefCheck() {},
