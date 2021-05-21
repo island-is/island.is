@@ -11,10 +11,11 @@ import { confirmation, copyUrl } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
+import { Roles } from '../../lib/constants'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+  const { answers } = application
 
   return (
     <Box marginTop={3} paddingBottom={5}>
@@ -50,11 +51,9 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
       </Text>
       <Box marginTop={2}>
         <DescriptionText
-          text={confirmation.nextSteps.description}
+          text={confirmation.nextSteps.description2}
           format={{
-            parentBName:
-              externalData.nationalRegistry.data.children[0].otherParent
-                .fullName,
+            date: answers.confirmContract.timestamp,
           }}
         />
       </Box>
@@ -71,7 +70,10 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           title={formatMessage(confirmation.contractOverview.accordionTitle)}
           id="id_1"
         >
-          <ContractOverview application={application} />
+          <ContractOverview
+            application={application}
+            parentKey={Roles.ParentA}
+          />
         </BorderedAccordion>
       </Box>
       <Box className={confirmationIllustration}>

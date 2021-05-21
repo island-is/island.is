@@ -13,7 +13,7 @@ import {
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import * as m from '../../lib/messages'
-import { ApplicationStates } from '../../lib/constants'
+import { ApplicationStates, Roles } from '../../lib/constants'
 import { ContractOverview } from '../components'
 import {
   fileSignatureReducer,
@@ -24,10 +24,21 @@ import {
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
 import * as style from '../Shared.treat'
+import { addDays } from 'date-fns'
+import format from 'date-fns/format'
+import { useFormContext } from 'react-hook-form'
+
+const confirmContractTerms = 'confirmContract.terms'
+const confirmContractTimestamp = 'confirmContract.timestamp'
+
+export const confirmContractIds = [
+  confirmContractTerms,
+  confirmContractTimestamp,
+]
 
 const Overview = ({
   field,
-  error,
+  errors,
   application,
   setBeforeSubmitCallback,
 }: CRCFieldBaseProps) => {
@@ -88,6 +99,8 @@ const Overview = ({
   const pdfUrl =
     createResponse?.createPdfPresignedUrl?.url ||
     getResponse?.getPresignedUrl?.url
+
+  const { register } = useFormContext()
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -174,7 +187,12 @@ const Overview = ({
         )}
       </Box>
       <Box marginTop={4}>
-        <ContractOverview application={application} />
+        <ContractOverview
+          application={application}
+          parentKey={
+            application.state === 'draft' ? Roles.ParentA : Roles.ParentB
+          }
+        />
       </Box>
       <Box marginTop={5}>
         <Button
@@ -194,10 +212,9 @@ const Overview = ({
       </Box>
       <Box marginTop={5}>
         <CheckboxController
-          id={id}
+          id={confirmContractTerms}
           disabled={disabled}
-          name={`${id}`}
-          error={error}
+          error={errors?.confirmContract?.terms}
           large={true}
           defaultValue={[]}
           options={[
@@ -208,6 +225,14 @@ const Overview = ({
           ]}
         />
       </Box>
+      {application.state === 'draft' && (
+        <input
+          name={confirmContractTimestamp}
+          type="hidden"
+          value={format(addDays(new Date(), 28), 'dd.MM.yyyy')}
+          ref={register}
+        />
+      )}
     </Box>
   )
 }
