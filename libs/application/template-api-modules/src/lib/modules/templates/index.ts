@@ -7,6 +7,7 @@ import { ChildrenResidenceChangeModule } from './children-residence-change/child
 import { LoginServiceModule } from './login-service/login-service.module'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { PartyLetterModule } from './party-letter/party-letter.module'
+import { PublicDebtPaymentPlanModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -18,6 +19,7 @@ export const modules = [
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   PartyLetterModule,
+  PublicDebtPaymentPlanModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -29,3 +31,4 @@ export { ChildrenResidenceChangeService } from './children-residence-change/chil
 export { LoginServiceService } from './login-service/login-service.service'
 export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 export { PartyLetterService } from './party-letter/party-letter.service'
+export { PublicDebtPaymentPlanService } from './public-debt-payment-plan/public-debt-payment-plan.service'
