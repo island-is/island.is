@@ -5,11 +5,9 @@ import {
   Text,
   Stack,
   GridRow,
-  GridColumn,
   ArrowLink,
 } from '@island.is/island-ui/core'
 import * as styles from './ErrorModal.treat'
-import { link } from '../DescriptionText.treat'
 
 interface LinkProp {
   href: string
