@@ -18,7 +18,6 @@ interface Props {
 
 const ContractOverview = ({ application }: Props) => {
   const { formatMessage, locale } = useIntl()
-  console.log('locale', locale)
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
