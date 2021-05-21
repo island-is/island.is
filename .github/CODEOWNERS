@@ -15,6 +15,7 @@
 
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
+/apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
@@ -25,12 +26,11 @@
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
-/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
-/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
-
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
 /libs/service-portal/education/                                                               @island-is/kosmos-kaos
 /libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
+/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
+/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/api/domains/translations/                                                               @island-is/aranja-core
