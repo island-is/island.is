@@ -1,16 +1,21 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
+import { PdfTypes } from '@island.is/application/core'
 import {
   DescriptionText,
   BorderedAccordion,
+  PdfLink,
 } from '@island.is/application/templates/family-matters-core/components'
-import { parentBConfirmation } from '../../lib/messages'
+import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
+import { parentBConfirmation, contract } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 
 const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
+  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
+  const { pdfUrl } = useGeneratePdfUrl(application.id, pdfType)
   const { formatMessage } = useIntl()
 
   return (
@@ -22,7 +27,13 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
       <Box marginTop={2}>
         <DescriptionText text={parentBConfirmation.nextSteps.description} />
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={5}>
+        <Box marginBottom={3}>
+          <PdfLink
+            url={pdfUrl}
+            label={formatMessage(contract.pdfButton.label)}
+          />
+        </Box>
         <BorderedAccordion
           title={formatMessage(
             parentBConfirmation.contractOverview.accordionTitle,
