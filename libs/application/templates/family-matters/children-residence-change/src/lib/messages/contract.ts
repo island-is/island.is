@@ -59,6 +59,13 @@ export const contract = {
       description: 'Text for child benefit',
     },
   }),
+  duration: defineMessage({
+    text: {
+      id: 'crc.application:section.contract.overview.duration.text',
+      defaultMessage: 'Samningurinn er tímabundinn og gildir til {date}',
+      description: 'Duration contract text',
+    },
+  }),
   checkbox: defineMessage({
     label: {
       id: 'crc.application:section.contract.overview.checkbox.label',
