@@ -6,7 +6,7 @@ import {
 } from 'react-toastify'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
-import { Icon, IconMapIcon } from '../IconRC/Icon'
+import { Icon } from '../Icon/Icon'
 import { Text } from '../Text/Text'
 import * as toastStyles from './Toast.treat'
 
@@ -31,10 +31,17 @@ const RenderMessage = ({
     info: 'blue400' as const,
   }
 
+  const icons = {
+    error: 'toasterError' as const,
+    success: 'toasterSuccess' as const,
+    warning: 'toasterWarning' as const,
+    info: 'toasterInfo' as const,
+  }
+
   return (
     <Box display="flex" padding={1} alignItems="flexStart">
       <Box flexShrink={0}>
-        <Icon icon={type as IconMapIcon} color={colors[type]} />
+        <Icon type={icons[type]} color={colors[type]} />
       </Box>
       <Box paddingLeft={2}>
         <Text variant="h5">{message}</Text>
