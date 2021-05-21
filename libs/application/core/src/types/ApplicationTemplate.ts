@@ -19,6 +19,7 @@ export interface ApplicationTemplate<
   readonly readyForProduction?: boolean
   readonly type: ApplicationTypes
   readonly name: StaticText
+  readonly institution?: StaticText
   readonly translationNamespaces?: string[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<

@@ -2,8 +2,8 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import {
-  ApplicationIdentityServerScope,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
@@ -65,10 +65,7 @@ beforeAll(async () => {
         .useValue(
           new MockAuthGuard({
             nationalId,
-            scope: [
-              ApplicationIdentityServerScope.read,
-              ApplicationIdentityServerScope.write,
-            ],
+            scope: [ApplicationScope.read, ApplicationScope.write],
           }),
         )
         .compile()

@@ -6,16 +6,13 @@ import {
   CreatedAt,
   UpdatedAt,
   PrimaryKey,
+  HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { DelegationScope } from './delegation-scope.model'
 
 @Table({
   tableName: 'delegation',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
   timestamps: false,
 })
 export class Delegation extends Model<Delegation> {
@@ -41,13 +38,6 @@ export class Delegation extends Model<Delegation> {
   fromDisplayName!: string
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isFromCompany!: boolean
-
-  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -65,12 +55,6 @@ export class Delegation extends Model<Delegation> {
   })
   validTo?: Date
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  validCount?: number
-
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
@@ -79,5 +63,6 @@ export class Delegation extends Model<Delegation> {
   @ApiProperty()
   readonly modified?: Date
 
-  name!: string
+  @HasMany(() => DelegationScope)
+  delegationScopes?: DelegationScope[]
 }

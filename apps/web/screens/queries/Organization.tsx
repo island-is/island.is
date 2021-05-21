@@ -65,6 +65,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       }
       organization {
         title
+        slug
         logo {
           url
         }
@@ -88,6 +89,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       newsTag {
         id
         title
+        slug
       }
       featuredImage {
         url

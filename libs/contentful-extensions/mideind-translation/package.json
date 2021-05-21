@@ -1,0 +1,48 @@
+{
+  "name": "contentful-mideind-extension",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@jeremybarbet/contentful-extension-scripts": "0.22.7",
+    "@contentful/eslint-config-extension": "0.4.2",
+    "@babel/core": "7.12.3",
+    "@babel/plugin-transform-runtime": "7.12.1",
+    "@babel/preset-env": "7.12.1",
+    "@babel/preset-react": "7.12.1",
+    "@testing-library/react": "11.1.1",
+    "cssnano": "4.1.10",
+    "contentful-cli": "1.4.48",
+    "eslint": "7.12.1",
+    "typescript": "4.0.5",
+    "@types/jest": "26.0.15",
+    "@types/react": "16.9.56",
+    "@types/react-dom": "16.9.9",
+    "@types/webpack-env": "1.15.3"
+  },
+  "scripts": {
+    "start": "contentful-extension-scripts start --output build/ --id mideind-translation --name mideind-translation --space-id 8k0h54kbe6bj --field-types Object",
+    "build": "contentful-extension-scripts build --output build/ --id mideind-translation --name mideind-translation --space-id 8k0h54kbe6bj --field-types Object",
+    "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx && tsc -p ./ --noEmit",
+    "test": "contentful-extension-scripts test --env=jsdom --watch",
+    "test:coverage": "contentful-extension-scripts test --env=jsdom --coverage",
+    "deploy": "npm run build && contentful extension update --force",
+    "configure": "contentful space use && contentful space environment use",
+    "login": "contentful login",
+    "logout": "contentful logout",
+    "help": "contentful-extension-scripts help"
+  },
+  "dependencies": {
+    "@contentful/forma-36-fcss": "^0.0.35",
+    "@contentful/forma-36-react-components": "3.11.3",
+    "@contentful/forma-36-tokens": "^0.5.2",
+    "contentful-ui-extensions-sdk": "3.24.0",
+    "prop-types": "15.7.2",
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "browserslist": [
+    "last 5 Chrome version",
+    "> 1%",
+    "not ie <= 11"
+  ]
+}

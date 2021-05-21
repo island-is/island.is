@@ -26,6 +26,16 @@ enum Roles {
   APPLICANT = 'applicant',
   SIGNATUREE = 'signaturee',
 }
+
+const EndorsementSchema = z.object({
+  id: z.number(),
+  date: z.string(),
+  name: z.string(),
+  nationalId: z.string(),
+  address: z.string(),
+  hasWarning: z.boolean(),
+})
+
 const dataSchema = z.object({
   constituency: z
     .string()
@@ -33,7 +43,11 @@ const dataSchema = z.object({
   approveDisclaimer: z.boolean().refine((v) => v, {
     message: m.validation.approveTerms.defaultMessage as string,
   }),
+  endorsements: z.array(EndorsementSchema).optional(), //todo: validate
+  endorsementsWithWarning: z.array(EndorsementSchema).optional(),
 })
+export type Endorsement = z.TypeOf<typeof EndorsementSchema>
+export type PartyApplicationAnswers = z.TypeOf<typeof dataSchema>
 
 const PartyApplicationTemplate: ApplicationTemplate<
   ApplicationContext,

@@ -28,7 +28,10 @@ interface LatestNewsProps {
   linkType?: LinkType
   overview?: LinkType
   parameters?: Array<string>
+  newsTag?: string
   readMoreText?: string
+  itemMaxDisplayedCount?: number
+  variant?: 'default' | 'bigCards'
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
@@ -38,9 +41,12 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   linkType = 'news',
   overview = 'newsoverview',
   parameters = [],
+  newsTag,
   readMoreText = '',
+  itemMaxDisplayedCount = 3,
+  variant = 'default',
 }) => {
-  const newsItems = items.slice(0, 3)
+  const newsItems = items.slice(0, itemMaxDisplayedCount)
   const { t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
@@ -57,7 +63,13 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Link {...linkResolver(overview, [...parameters])} skipTab>
+            <Link
+              href={{
+                pathname: linkResolver(overview, parameters).href,
+                ...(!!newsTag && { query: { tag: newsTag } }),
+              }}
+              skipTab
+            >
               <Text variant="h5" as="p" paddingBottom={2}>
                 <Button
                   icon="arrowForward"
@@ -77,8 +89,14 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
           {newsItems.map((newsItem) => {
             return (
               <GridColumn
-                span={['12/12', '12/12', '12/12', '4/12']}
+                span={[
+                  '12/12',
+                  '12/12',
+                  '12/12',
+                  variant === 'default' ? '4/12' : '6/12',
+                ]}
                 key={newsItem.slug}
+                paddingBottom={2}
               >
                 <NewsCard
                   title={newsItem.title}

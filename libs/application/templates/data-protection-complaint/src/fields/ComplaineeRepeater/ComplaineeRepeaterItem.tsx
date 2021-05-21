@@ -80,6 +80,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, nameField)}
+          required
           backgroundColor="blue"
         />
         <InputController
@@ -91,6 +92,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, addressField)}
+          required
           backgroundColor="blue"
         />
         <InputController
@@ -103,6 +105,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, nationalIdField)}
+          required
           backgroundColor="blue"
         />
       </Stack>
