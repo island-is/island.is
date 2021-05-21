@@ -6,11 +6,6 @@ import {
 } from '@island.is/application/templates/family-matters-core/components'
 import { noChildren } from '../../lib/messages'
 
-const typeInput = 'selectDuration.type'
-const dateInput = 'selectDuration.date'
-
-export const selectDurationInputs = [typeInput, dateInput]
-
 const NoChildrenErrorModal = () => {
   const { formatMessage } = useIntl()
   return (
