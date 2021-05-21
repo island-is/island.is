@@ -36,6 +36,7 @@ import getConfig from 'next/config'
 import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import { useRouter } from 'next/router'
+import * as styles from './OrganizationWrapper.treat'
 
 interface NavigationData {
   title: string
@@ -241,30 +242,14 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             }
           >
             <Hidden above="sm">
-              <Box marginY={2}>
-                <Navigation
-                  baseId="pageNav"
-                  isMenuDialog={true}
-                  items={navigationData.items}
-                  title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
-              {organizationPage.secondaryMenu && (
+              <Box className={styles.menuStyle}>
                 <Box marginY={2}>
                   <Navigation
-                    colorScheme="purple"
-                    baseId="secondarynav"
+                    baseId="pageNav"
                     isMenuDialog={true}
-                    title={organizationPage.secondaryMenu.name}
-                    items={secondaryNavList}
+                    items={navigationData.items}
+                    title={navigationData.title}
+                    activeItemTitle={navigationData.activeItemTitle}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -274,7 +259,25 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     }}
                   />
                 </Box>
-              )}
+                {organizationPage.secondaryMenu && (
+                  <Box marginY={2}>
+                    <Navigation
+                      colorScheme="purple"
+                      baseId="secondarynav"
+                      isMenuDialog={true}
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Hidden>
             <GridContainer>
               <GridRow>
