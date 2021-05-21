@@ -32,6 +32,7 @@ const StatusBar: React.FC = () => {
       <div className="statusbar__message">{getMessage(state)}</div>
       <div className="statusbar__code">{state.statusCode}</div>
       <div className="statusbar__error">{state.error}</div>
+      <div className="hidden">v0.5</div>
     </div>
   )
 }

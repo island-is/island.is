@@ -85,6 +85,13 @@ export const contract = {
       description: 'Text for child benefit',
     },
   }),
+  duration: defineMessages({
+    text: {
+      id: 'jca.application:section.contract.overview.duration.text',
+      defaultMessage: 'Samningurinn er tímabundinn og gildir til {date}',
+      description: 'Duration contract text',
+    },
+  }),
   pdfButton: defineMessages({
     label: {
       id: 'jca.application:section.contract.overview.pdfButton.label',

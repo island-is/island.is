@@ -1438,6 +1438,9 @@ export interface IMailingListSignupFields {
 
   /** Submit button text */
   buttonText: string
+
+  /** Signup URL */
+  signupUrl: string
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1965,6 +1968,7 @@ export interface IOrganizationSubpageFields {
         | IAccordionSlice
         | IContactUs
         | IDistricts
+        | IMailingListSignup
         | IOffices
         | IOneColumnText
         | ITeamList
