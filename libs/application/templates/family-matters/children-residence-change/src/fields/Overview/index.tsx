@@ -1,19 +1,17 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
+import { useMutation, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import {
-  CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
   UPLOAD_SIGNED_FILE,
-  GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import * as m from '../../lib/messages'
-import { ApplicationStates } from '../../lib/constants'
 import { ContractOverview } from '../components'
 import {
   fileSignatureReducer,
@@ -31,6 +29,11 @@ const Overview = ({
   application,
   setBeforeSubmitCallback,
 }: CRCFieldBaseProps) => {
+  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
+  const { pdfUrl, loading: pdfLoading } = useGeneratePdfUrl(
+    application.id,
+    pdfType,
+  )
   const { id, disabled } = field
   const { answers, externalData } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
@@ -45,17 +48,6 @@ const Overview = ({
   const parentB = children[0].otherParent
 
   const { formatMessage } = useIntl()
-  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
-
-  const [
-    createPdfPresignedUrl,
-    { loading: createLoadingUrl, data: createResponse },
-  ] = useMutation(CREATE_PDF_PRESIGNED_URL)
-
-  const [
-    getPresignedUrl,
-    { data: getResponse, loading: getLoadingUrl },
-  ] = useLazyQuery(GET_PRESIGNED_URL)
 
   const [
     requestFileSignature,
@@ -63,31 +55,6 @@ const Overview = ({
   ] = useMutation(REQUEST_FILE_SIGNATURE)
 
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
-
-  useEffect(() => {
-    const input = {
-      variables: {
-        input: {
-          id: application.id,
-          type: pdfType,
-        },
-      },
-    }
-
-    application.state === ApplicationStates.DRAFT
-      ? createPdfPresignedUrl(input)
-      : getPresignedUrl(input)
-  }, [
-    application.id,
-    createPdfPresignedUrl,
-    getPresignedUrl,
-    application.state,
-    pdfType,
-  ])
-
-  const pdfUrl =
-    createResponse?.createPdfPresignedUrl?.url ||
-    getResponse?.getPresignedUrl?.url
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -186,7 +153,7 @@ const Overview = ({
           size="default"
           type="button"
           variant="ghost"
-          loading={createLoadingUrl || getLoadingUrl}
+          loading={pdfLoading}
           disabled={!pdfUrl}
         >
           {formatMessage(m.contract.pdfButton.label)}
@@ -195,7 +162,7 @@ const Overview = ({
       <Box marginTop={5}>
         <CheckboxController
           id={id}
-          disabled={disabled}
+          disabled={disabled || pdfLoading}
           name={`${id}`}
           error={error}
           large={true}
