@@ -673,6 +673,10 @@
         "cancel": {
           "text": "Cancel",
           "helpText": "Cancel changes"
+        },
+        "new": {
+          "text": "Create a new group",
+          "helpText": "Create a new Api Scope Group"
         }
       },
       "fields": {
@@ -1166,6 +1170,10 @@
         "cancel": {
           "text": "Cancel",
           "helpText": "Cancel changes"
+        },
+        "new": {
+          "text": "Create new claim",
+          "helpText": "Create a new claim"
         }
       },
       "fields": {

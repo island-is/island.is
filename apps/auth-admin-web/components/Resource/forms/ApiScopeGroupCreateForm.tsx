@@ -8,6 +8,7 @@ import { FormControl } from '../../../entities/common/Localization'
 import ValidationUtils from './../../../utils/validation.utils'
 import { ApiScopeGroupDTO } from './../../../entities/dtos/api-scope-group.dto'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 
 interface Props {
   apiScopeGroup?: ApiScopeGroup
@@ -25,6 +26,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     formState,
   } = useForm<ApiScopeGroupDTO>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [visible, setVisible] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),
   )
@@ -48,16 +50,31 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div className="api-scope-group">
-      <div className="api-scope-group__wrapper">
-        <div className="api-scope-group__container">
+    <div className="api-scope-group-create-form">
+      <div className="api-scope-group-create-form__button__show">
+        <a
+          className="api-scope-group-create-form__button__show"
+          onClick={() => setVisible(!visible)}
+          title={localization.buttons['new'].helpText}
+        >
+          <i className="icon__new"></i>
+          <span>{localization.buttons['new'].text}</span>
+        </a>
+      </div>
+      <div className="api-scope-group-create-form__wrapper">
+        <div className="api-scope-group-create-form__container">
           <h1>{localization.title}</h1>
-          <div className="api-scope-group__container__form">
-            <div className="api-scope-group__help">{localization.help}</div>
+          <div className="api-scope-group-create-form__container__form">
+            <div className="api-scope-group-create-form__help">
+              {localization.help}
+            </div>
             <form onSubmit={handleSubmit(save)}>
-              <div className="api-scope-group__container__fields">
-                <div className="api-scope-group__container__field">
-                  <label htmlFor="name" className="api-scope-group__label">
+              <div className="api-scope-group-create-form__container__fields">
+                <div className="api-scope-group-create-form__container__field">
+                  <label
+                    htmlFor="name"
+                    className="api-scope-group-create-form__label"
+                  >
                     {localization.fields['name'].label}
                   </label>
                   <input
@@ -81,10 +98,10 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     message={localization.fields['name'].errorMessage}
                   />
                 </div>
-                <div className="api-scope-group__container__field">
+                <div className="api-scope-group-create-form__container__field">
                   <label
                     htmlFor="description"
-                    className="api-scope-group__label"
+                    className="api-scope-group-create-form__label"
                   >
                     {localization.fields['description'].label}
                   </label>
@@ -110,24 +127,30 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     name="name"
                     message={localization.fields['description'].errorMessage}
                   />
+                  <TranslationCreateFormDropdown
+                    className="apiscopegroup"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.apiScopeGroup.id}
+                  />
                 </div>
               </div>
             </form>
-            <div className="api-scope-group__buttons__container">
-              <div className="api-scope-group__button__container">
+            <div className="api-scope-group-create-form__buttons__container">
+              <div className="api-scope-group-create-form__button__container">
                 <button
                   type="button"
-                  className="api-scope-group__button__cancel"
+                  className="api-scope-group-create-form__button__cancel"
                   onClick={props.handleBack}
                   title={localization.buttons['cancel'].helpText}
                 >
                   {localization.buttons['cancel'].text}
                 </button>
               </div>
-              <div className="api-scope-group__button__container">
+              <div className="api-scope-group-create-form__button__container">
                 <button
                   type="button"
-                  className="api-scope-group__button__save"
+                  className="api-scope-group-create-form__button__save"
                   onClick={props.handleNext}
                   title={localization.buttons['save'].helpText}
                 >
