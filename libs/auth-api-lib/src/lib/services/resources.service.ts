@@ -779,6 +779,6 @@ export class ResourcesService {
           name: { [Op.in]: requestedScopes },
         },
       })
-      .map((s) => s.name)
+      .map((s: ApiScope) => s.name)
   }
 }
