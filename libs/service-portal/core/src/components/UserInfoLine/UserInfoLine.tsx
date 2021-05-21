@@ -5,7 +5,7 @@ import {
   Button,
   GridRow,
   GridColumn,
-  LoadingIcon,
+  LoadingDots,
   GridColumnProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -76,7 +76,7 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             {loading ? (
-              <LoadingIcon animate size={20} />
+              <LoadingDots />
             ) : renderContent ? (
               renderContent()
             ) : (
