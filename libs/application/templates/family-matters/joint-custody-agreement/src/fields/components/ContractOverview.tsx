@@ -17,7 +17,7 @@ interface Props {
 }
 
 const ContractOverview = ({ application }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, locale } = useIntl()
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
@@ -41,7 +41,12 @@ const ContractOverview = ({ application }: Props) => {
       <Text marginTop={1}>
         {answers.selectDuration.type === 'temporary' &&
         answers.selectDuration.date
-          ? formatDate(answers.selectDuration.date)
+          ? formatMessage(m.contract.duration.text, {
+              date: formatDate({
+                date: answers.selectDuration.date,
+                localeKey: locale,
+              }),
+            })
           : formatMessage(m.duration.permanentInput.label)}
       </Text>
       <Box marginTop={4}>

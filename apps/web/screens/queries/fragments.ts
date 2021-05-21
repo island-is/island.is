@@ -45,6 +45,7 @@ export const slices = gql`
     description
     inputLabel
     buttonText
+    signupUrl
   }
 
   fragment StoryFields on StorySlice {

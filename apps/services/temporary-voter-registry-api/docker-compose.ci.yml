@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: temporary_voter_registry
+        APP: services-temporary-voter-registry-api
+    networks:
+      - local
+    depends_on:
+      - temporary_voter_registry
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=temporary_voter_registry
+    volumes:
+      - ../../..:/code
+
+  temporary_voter_registry:
+    ports: []

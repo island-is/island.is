@@ -32,9 +32,8 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
     'sp.messages',
     'global',
   ])
-  const { userInfo } = useAuth()
+  const { userInfo, signOut } = useAuth()
   const { data: userProfile } = useUserProfile()
-
   const handleLanguageChange = (option: ValueType<Option>) =>
     changeLanguage((option as Option).value.toString() as Locale)
 
@@ -44,6 +43,7 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
       language={lang}
       dropdownState={state}
       setDropdownState={onClose}
+      onLogout={signOut}
       dropdownItems={
         <Box>
           <Box
@@ -56,7 +56,13 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
               <Icon type="outline" icon="mail" color="blue300" />
             </Box>
 
-            <Text>{userProfile?.email || ''}</Text>
+            <Text>
+              {userProfile?.email ??
+                formatMessage({
+                  id: 'service.portal:missing-userProfile-email',
+                  defaultMessage: 'Tölvupóst vantar',
+                })}
+            </Text>
           </Box>
 
           <Box
@@ -69,7 +75,13 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
               <Icon type="outline" icon="call" color="blue300" />
             </Box>
 
-            <Text>{userProfile?.mobilePhoneNumber || ''}</Text>
+            <Text>
+              {userProfile?.mobilePhoneNumber ??
+                formatMessage({
+                  id: 'service.portal:missing-userProfile-mobilePhoneNumber',
+                  defaultMessage: 'Símanúmer vantar',
+                })}
+            </Text>
           </Box>
 
           <Link

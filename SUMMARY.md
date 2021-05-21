@@ -96,6 +96,7 @@
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)
+  - [Temporary Voter Registry](apps/services/temporary-voter-registry-api/README.md)
   - [User Profile](apps/services/user-profile/README.md)
   - [X-Road Collector](apps/services/xroad-collector/README.md)
 - [Car Recycling - Skilavottorð](apps/skilavottord/README.md)

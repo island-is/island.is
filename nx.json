@@ -519,6 +519,9 @@
     "services-search-indexer": {
       "tags": []
     },
+    "services-temporary-voter-registry-api": {
+      "tags": []
+    },
     "services-user-profile": {
       "tags": []
     },

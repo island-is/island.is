@@ -1362,6 +1362,11 @@ export const errorMessages = defineMessages({
       'Nýtt tímabil getur ekki byrjað innan annars tímabils sem þegar er vistað.',
     description: 'Copy when start date overlaps other periods',
   },
+  periodsStartDateRequired: {
+    id: 'pl.application:answerValidators.periodsStartDateRequired',
+    defaultMessage: 'Vinsamlegast veldu upphafsdagsetningu',
+    description: 'Start date can not be empty',
+  },
   periodsEndDate: {
     id: 'pl.application:answerValidators.periodsEndDate',
     defaultMessage:
@@ -1383,6 +1388,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
     description: 'Copy when end date overlaps other period',
+  },
+  periodsEndDateRequired: {
+    id: 'pl.application:answerValidators.periodsEndDateRequired',
+    defaultMessage: 'Vinsamlegast veldu lokadagsetningu',
+    description: 'End date can not be empty',
   },
   periodsRatio: {
     id: 'pl.application:answerValidators.periodsRatio',
