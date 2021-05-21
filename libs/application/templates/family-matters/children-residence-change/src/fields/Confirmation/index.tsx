@@ -51,7 +51,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
       </Text>
       <Box marginTop={2}>
         <DescriptionText
-          text={confirmation.nextSteps.description2}
+          text={confirmation.nextSteps.description}
           format={{
             date: answers.confirmContract.timestamp,
           }}
