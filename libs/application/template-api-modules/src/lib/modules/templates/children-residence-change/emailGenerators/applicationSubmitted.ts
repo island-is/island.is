@@ -2,13 +2,14 @@ import { getSlugFromType } from '@island.is/application/core'
 import { SendMailOptions } from 'nodemailer'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
-import { DistrictCommissionerLogo } from './consts'
+import { DistrictCommissionerLogo, fontStyles, ulStyles } from './consts'
 
 interface ApplicationSubmittedEmail {
   (
     props: EmailTemplateGeneratorProps,
     fileContent: string,
     recipientEmail: string,
+    syslumennName: string,
     caseNumber?: string,
   ): SendMailOptions
 }
@@ -17,6 +18,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   props,
   fileContent,
   recipientEmail,
+  syslumennName,
   caseNumber,
 ) => {
   const {
@@ -25,29 +27,23 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
+
   const fileName =
     'Samningur um breytt lögheimili barna og meðlag' +
     (caseNumber ? ` nr. ${caseNumber}` : '')
   const caseNumberString = caseNumber
-    ? `\nErindið fékk málsnúmerið <strong>${caseNumber}</strong> hjá sýslumanni. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.\n`
+    ? `<li><strong>${syslumennName}</strong> hefur nú móttekið erindið sem fékk málsnúmerið <strong>${caseNumber}</strong>. Hægt er að vísa í það í frekari samskiptum við fulltrúa sýslumanns.</li>`
     : ''
-  const subject = 'Afrit af samningi um breytt lögheimili barns'
+  const subject = 'Samningur um breytt lögheimili barns og meðlag'
   const body = `
         <img src=${DistrictCommissionerLogo} height="78" width="246" />
 
 
-        <h1>${subject}</h1>
+        <h1 style="margin-bottom: 0;">${subject} undirritaður af báðum foreldrum</h1>
+        <p style="${fontStyles} margin: 20px 0;">Báðir foreldrar hafa undirritað samning um breytt lögheimili og meðlag. Í viðhengi er afrit af undirrituðum samning.</p>
+        <strong style="${fontStyles} display: block; margin-bottom: 8px;">Næstu skref </strong><ul style="${ulStyles}"><li>Umsóknin fer nú í afgreiðslu hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband. Afgreiðsla sýslumans getur tekið tvær vikur.</li><li>Ef sýslumaður samþykkir breytinguna fáið þið staðfestingu senda í rafræn skjöl á Island.is. Sýslumaður mun síðan tilkynna Þjóðskrá Íslands um lögheimilisbreytingu ef við á.</li><li>Í samningnum er samið um einfalt meðlag sem rennur til nýs lögheimilisforeldris. Foreldrar sem semja um aukið meðlag þurfa að gera um það sérstakan samning og leita staðfestingar sýslumanns. Til að meðlag fari í innheimtu þarf nýtt lögheimilisforeldri að skila staðfestingu sýslumanns rafrænt til Tryggingastofnunar.</li>${caseNumberString}</ul>
 
-        Í viðhengi er afrit af samningi, um breytt lögheimili barna, sem þú undirritaðir.
-
-        Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
-
-        Staðfesting sýslumanns verður send í rafræn skjöl á Ísland.is.
-        ${caseNumberString}
-        Þú getur séð stöðu umsóknarinnar á mínum síðum á Ísland.is.
-
-
-        <a href=${applicationLink} target="_blank">Opna umsókn</a>.
+        <a style="${fontStyles}" href=${applicationLink} target="_blank">Opna umsókn</a>.
       `
 
   return {
