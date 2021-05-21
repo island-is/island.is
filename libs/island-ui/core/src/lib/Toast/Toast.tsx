@@ -30,14 +30,12 @@ const RenderMessage = ({
     warning: 'yellow600' as const,
     info: 'blue400' as const,
   }
-
   const icons = {
     error: 'toasterError' as const,
     success: 'toasterSuccess' as const,
     warning: 'toasterWarning' as const,
     info: 'toasterInfo' as const,
   }
-
   return (
     <Box display="flex" padding={1} alignItems="flexStart">
       <Box flexShrink={0}>
