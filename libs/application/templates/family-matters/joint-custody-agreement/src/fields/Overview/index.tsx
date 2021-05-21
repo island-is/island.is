@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
+import { useMutation, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import {
