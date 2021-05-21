@@ -17,6 +17,7 @@ import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { NewsCardNew } from '@island.is/web/components'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -98,14 +99,13 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 key={newsItem.slug}
                 paddingBottom={2}
               >
-                <NewsCard
+                <NewsCardNew
                   title={newsItem.title}
                   subtitle={newsItem.subtitle}
                   introduction={newsItem.intro}
                   slug={newsItem.slug}
                   readMoreText={t.readMore}
                   image={newsItem.image}
-                  tags={newsItem.genericTags.map(({ title }) => ({ title }))}
                   href={
                     linkResolver(linkType, [...parameters, newsItem.slug]).href
                   }

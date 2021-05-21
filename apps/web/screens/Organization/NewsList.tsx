@@ -7,6 +7,7 @@ import {
   Select as NativeSelect,
   OrganizationWrapper,
   lightThemes,
+  NewsCardNew,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -274,7 +275,7 @@ const NewsList: Screen<NewsListProps> = ({
           </Text>
         )}
         {newsList.map((newsItem, index) => (
-          <NewsCard
+          <NewsCardNew
             key={index}
             title={newsItem.title}
             introduction={newsItem.intro}
@@ -289,7 +290,6 @@ const NewsList: Screen<NewsListProps> = ({
             }
             date={newsItem.date}
             readMoreText={n('readMore', 'Lesa nánar')}
-            tags={newsItem.genericTags.map(({ title }) => ({ title }))}
           />
         ))}
         {newsList.length > 0 && (
