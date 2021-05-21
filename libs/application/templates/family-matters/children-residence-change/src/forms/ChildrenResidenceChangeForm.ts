@@ -298,7 +298,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 {
                   event: DefaultEvents.ASSIGN,
                   name: m.application.signature,
-                  type: 'primary',
+                  type: 'sign',
                 },
               ],
             }),
