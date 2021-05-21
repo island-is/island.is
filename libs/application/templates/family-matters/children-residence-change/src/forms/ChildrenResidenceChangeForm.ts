@@ -18,6 +18,8 @@ import Logo from '@island.is/application/templates/family-matters-core/assets/Lo
 import { selectDurationInputs } from '../fields/Duration'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
+import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
+import { hasChildren } from '../lib/utils'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
@@ -127,6 +129,14 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
               ],
             }),
+            buildCustomField({
+              id: 'errorModal',
+              component: 'NoChildrenErrorModal',
+              title: '',
+              condition: (_, externalData) => {
+                return !hasChildren((externalData as unknown) as ExternalData)
+              },
+            }),
           ],
         }),
         buildSubSection({
@@ -164,6 +174,14 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: '',
                 }),
               ],
+            }),
+            buildCustomField({
+              id: 'errorModal',
+              component: 'NoChildrenErrorModal',
+              title: '',
+              condition: (_, externalData) => {
+                return !hasChildren((externalData as unknown) as ExternalData)
+              },
             }),
           ],
         }),
