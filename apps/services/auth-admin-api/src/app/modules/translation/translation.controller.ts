@@ -31,7 +31,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -48,7 +48,7 @@ export class TranslationController {
   ) {}
 
   /** Gets all translations and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('translations')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -90,7 +90,7 @@ export class TranslationController {
   }
 
   /** Get's and counts all languages */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('languages')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -123,7 +123,7 @@ export class TranslationController {
   }
 
   /** Get's and counts all languages */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('all-languages')
   @ApiOkResponse({ type: [Language] })
   @Audit<Language[]>({
@@ -134,7 +134,7 @@ export class TranslationController {
   }
 
   /** Adds a new Language */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('language')
   @ApiCreatedResponse({ type: Language })
   @Audit<Language>({
@@ -145,7 +145,7 @@ export class TranslationController {
   }
 
   /** Updates a an existing Language */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('language')
   @ApiCreatedResponse({ type: Language })
   async updateLanguage(
@@ -165,7 +165,7 @@ export class TranslationController {
   }
 
   /** Deletes a Language */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('language/:isoKey')
   @ApiCreatedResponse({ type: Language })
   async deleteLanguage(
@@ -184,7 +184,7 @@ export class TranslationController {
   }
 
   /** Deletes a Language */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('language/:isoKey')
   @ApiOkResponse({ type: Language })
   @Audit<Language>({
@@ -195,7 +195,7 @@ export class TranslationController {
   }
 
   /** Adds a new translation */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('translation')
   @ApiCreatedResponse({ type: Translation })
   @Audit<Translation>({
@@ -211,7 +211,7 @@ export class TranslationController {
   }
 
   /** Gets translation by it's key */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('translation/:language/:className/:property/:key')
   @ApiOkResponse({ type: Translation })
   @Audit<Translation>({
@@ -235,7 +235,7 @@ export class TranslationController {
   }
 
   /** Updates a translation */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('translation')
   @ApiCreatedResponse({ type: Translation })
   async updateTranslation(
@@ -254,7 +254,7 @@ export class TranslationController {
   }
 
   /** Delete translation */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('translation')
   @ApiCreatedResponse({ type: Translation })
   async deleteTranslation(

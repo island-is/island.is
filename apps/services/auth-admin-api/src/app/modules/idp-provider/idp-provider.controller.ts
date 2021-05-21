@@ -30,7 +30,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -47,7 +47,7 @@ export class IdpProviderController {
   ) {}
 
   /** Gets all idp restrictions and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -86,7 +86,7 @@ export class IdpProviderController {
   }
 
   /** Finds available idp restrictions */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get(':name')
   @ApiOkResponse({ type: IdpProvider })
   @Audit<IdpProvider>({
@@ -97,7 +97,7 @@ export class IdpProviderController {
   }
 
   /** Adds new IDP provider */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: IdpProvider })
   @Audit<IdpProvider>({
@@ -108,7 +108,7 @@ export class IdpProviderController {
   }
 
   /** Deletes an idp provider */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':name')
   @ApiCreatedResponse()
   async delete(
@@ -131,7 +131,7 @@ export class IdpProviderController {
   }
 
   /** Updates an idp provider */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put(':name')
   @ApiCreatedResponse()
   async update(

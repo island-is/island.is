@@ -44,7 +44,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -61,7 +61,7 @@ export class ResourcesController {
   ) {}
 
   /** Gets all Identity Resources and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -94,7 +94,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Scopes and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -127,7 +127,7 @@ export class ResourcesController {
   }
 
   /** Finds all access controlled scopes */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('access-controlled-scopes')
   @ApiOkResponse({ type: [ApiScope] })
   @Audit<ApiScope[]>({
@@ -138,7 +138,7 @@ export class ResourcesController {
   }
 
   /** Get's all Api resources and total count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-resources')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -177,7 +177,7 @@ export class ResourcesController {
   }
 
   /** Get's all Api resources and total count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('all-api-resources')
   @ApiOkResponse({ type: [ApiResource] })
   @Audit<ApiResource[]>({
@@ -188,7 +188,7 @@ export class ResourcesController {
   }
 
   /** Gets Identity Resources by Scope Names */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('identity-resources/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
@@ -204,7 +204,7 @@ export class ResourcesController {
   }
 
   /** Gets Api Scopes by Scope Names */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scopes/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: ApiScope, isArray: true })
@@ -220,7 +220,7 @@ export class ResourcesController {
   }
 
   /** Gets Api Resources by either Api Resource Names or Api Scope Names */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-resources/names')
   @ApiQuery({ name: 'apiResourceNames', required: false })
   @ApiQuery({ name: 'apiScopeNames', required: false })
@@ -249,7 +249,7 @@ export class ResourcesController {
     ) // TODO: Check if we can use ParseArrayPipe from v7
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('identity-resource/:id')
   @Audit<IdentityResource>({
     resources: (resource) => resource?.name,
@@ -261,7 +261,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Identity Resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('identity-resource')
   @ApiCreatedResponse({ type: IdentityResource })
   @Audit<IdentityResource>({
@@ -274,7 +274,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Identity Resource by it's name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('identity-resource/:name')
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
@@ -299,7 +299,7 @@ export class ResourcesController {
   }
 
   /** Deletes an existing Identity Resource by it's name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('identity-resource/:name')
   async deleteIdentityResource(
     @Param('name') name: string,
@@ -321,7 +321,7 @@ export class ResourcesController {
   }
 
   /** Gets all Identity Resource User Claims */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('identity-resource-user-claim')
   @ApiOkResponse({ type: [IdentityResourceUserClaim] })
   @Audit<IdentityResourceUserClaim[]>({
@@ -335,7 +335,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Identity Resource User Claim */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('identity-resource-user-claim')
   @ApiCreatedResponse({ type: IdentityResourceUserClaim })
   @Audit<IdentityResourceUserClaim>({
@@ -348,7 +348,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Scope User Claims */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scope-user-claim')
   @ApiOkResponse({ type: [ApiScopeUserClaim] })
   @Audit<ApiScopeUserClaim[]>({
@@ -359,7 +359,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Resource User Claim */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-resource-user-claim')
   @ApiCreatedResponse({ type: ApiResourceUserClaim })
   @Audit<ApiResourceUserClaim>({
@@ -372,7 +372,7 @@ export class ResourcesController {
   }
 
   /** Gets all Api Resource User Claims */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-resource-user-claim')
   @ApiOkResponse({ type: [ApiResourceUserClaim] })
   @Audit<ApiResourceUserClaim>({
@@ -383,7 +383,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Scope User Claim */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-scope-user-claim')
   @ApiCreatedResponse({ type: ApiScopeUserClaim })
   @Audit<ApiScopeUserClaim>({
@@ -396,7 +396,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Scope */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-scope')
   @ApiCreatedResponse({ type: ApiScope })
   @Audit<ApiScope>({
@@ -407,7 +407,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-resource')
   @ApiCreatedResponse({ type: ApiResource })
   @Audit<ApiResource>({
@@ -420,7 +420,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Api Scope */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
@@ -445,7 +445,7 @@ export class ResourcesController {
   }
 
   /** Updates an existing Api Scope */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('api-resource/:name')
   @ApiOkResponse({ type: ApiResource })
   async updateApiResource(
@@ -470,7 +470,7 @@ export class ResourcesController {
   }
 
   /** Deletes an existing Api Scope by it's name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-scope/:name')
   @ApiOkResponse()
   async deleteApiScope(
@@ -493,7 +493,7 @@ export class ResourcesController {
   }
 
   /** Performs a soft delete on an Api resource by it's name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-resource/:name')
   @ApiOkResponse()
   async deleteApiResource(
@@ -515,7 +515,7 @@ export class ResourcesController {
     )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('identity-resource-user-claims/:identityResourceName/:claimName')
   @Audit<IdentityResourceUserClaim>({
     resources: (claim) => `${claim.identityResourceName}/${claim.claimName}`,
@@ -530,7 +530,7 @@ export class ResourcesController {
     )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('identity-resource-user-claims/:identityResourceName/:claimName')
   async removeResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
@@ -551,7 +551,7 @@ export class ResourcesController {
     )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-scope-user-claims/:apiScopeName/:claimName')
   @ApiCreatedResponse({ type: ApiScopeUserClaim })
   @Audit<ApiScopeUserClaim>({
@@ -564,7 +564,7 @@ export class ResourcesController {
     return this.resourcesService.addApiScopeUserClaim(apiScopeName, claimName)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-scope-user-claims/:apiScopeName/:claimName')
   async removeApiScopeUserClaim(
     @Param('apiScopeName') apiScopeName: string,
@@ -582,7 +582,7 @@ export class ResourcesController {
     )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scope/:name')
   @Audit<ApiScope>({
     resources: (scope) => scope?.name,
@@ -591,14 +591,14 @@ export class ResourcesController {
     return this.resourcesService.getApiScopeByName(name)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('is-scope-name-available/:name')
   @Audit()
   async isScopeNameAvailable(@Param('name') name: string): Promise<boolean> {
     return this.resourcesService.isScopeNameAvailable(name)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-resource/:name')
   @Audit<ApiResource>({
     resources: (resource) => resource?.name,
@@ -609,7 +609,7 @@ export class ResourcesController {
     return this.resourcesService.getApiResourceByName(name)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-resource-claims/:apiResourceName/:claimName')
   @Audit<ApiResourceUserClaim>({
     resources: (claim) => `${claim.apiResourceName}/${claim.claimName}`,
@@ -629,7 +629,7 @@ export class ResourcesController {
   }
 
   /** Removes user claim from Api Resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-resource-claims/:apiResourceName/:claimName')
   async removeApiResourceUserClaim(
     @Param('apiResourceName') apiResourceName: string,
@@ -655,7 +655,7 @@ export class ResourcesController {
   }
 
   /** Add secret to ApiResource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-resource-secret')
   @ApiCreatedResponse({ type: ApiResourceSecret })
   @Audit<ApiResourceSecret>({
@@ -672,7 +672,7 @@ export class ResourcesController {
   }
 
   /** Remove a secret from Api Resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-resource-secret')
   async removeApiResourceSecret(
     @Body() apiSecret: ApiResourceSecretDTO,
@@ -696,7 +696,7 @@ export class ResourcesController {
   }
 
   /** Adds an allowed scope to api resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-resources-allowed-scope')
   @ApiCreatedResponse({ type: ApiResourceScope })
   @Audit<ApiResourceScope>({
@@ -718,7 +718,7 @@ export class ResourcesController {
   }
 
   /** Removes an allowed scope from api Resource */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-resources-allowed-scope/:apiResourceName/:scopeName')
   async removeApiResourceAllowedScope(
     @Param('apiResourceName') apiResourceName: string,
@@ -746,7 +746,7 @@ export class ResourcesController {
   }
 
   /** Get api Resource from Api Resource Scope by Scope Name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scope-resource/:scopeName')
   @Audit<ApiResourceScope>({
     resources: (scope) => scope?.scopeName,
@@ -762,7 +762,7 @@ export class ResourcesController {
   }
 
   /** Removes api scope from Api Resource Scope */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-scope-resource/:scopeName')
   async removeApiScopeFromApiResourceScope(
     @Param('scopeName') scopeName: string,

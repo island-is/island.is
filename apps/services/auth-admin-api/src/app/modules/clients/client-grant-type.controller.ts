@@ -20,7 +20,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -37,7 +37,7 @@ export class ClientGrantTypeController {
   ) {}
 
   /** Adds new Grant type to client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientGrantType })
   @Audit<ClientGrantType>({
@@ -51,7 +51,7 @@ export class ClientGrantTypeController {
   }
 
   /** Removes a grant type from client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:grantType')
   @ApiCreatedResponse()
   async delete(

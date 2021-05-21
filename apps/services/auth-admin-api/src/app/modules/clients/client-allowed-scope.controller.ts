@@ -22,7 +22,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -39,7 +39,7 @@ export class ClientAllowedScopeController {
   ) {}
 
   /** Gets all scopes for client to select from */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @Audit<ApiScope[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
@@ -49,7 +49,7 @@ export class ClientAllowedScopeController {
   }
 
   /** Adds new scope to client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientAllowedScope })
   @Audit<ClientAllowedScope>({
@@ -63,7 +63,7 @@ export class ClientAllowedScopeController {
   }
 
   /** Removes a scope from client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:scopeName')
   @ApiCreatedResponse()
   async delete(

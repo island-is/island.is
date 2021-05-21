@@ -20,7 +20,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -37,7 +37,7 @@ export class CorsController {
   ) {}
 
   /** Adds new Cors address */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientAllowedCorsOrigin })
   @Audit<ClientAllowedCorsOrigin>({
@@ -51,7 +51,7 @@ export class CorsController {
   }
 
   /** Removes an cors origin from client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:origin')
   @ApiCreatedResponse()
   async delete(

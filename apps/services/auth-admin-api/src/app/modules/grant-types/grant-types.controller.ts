@@ -30,7 +30,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -47,7 +47,7 @@ export class GrantTypeController {
   ) {}
 
   /** Gets all Grant Types */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiOkResponse({ type: [GrantType] })
   @Audit<GrantType[]>({
@@ -58,7 +58,7 @@ export class GrantTypeController {
   }
 
   /** Gets all grant types and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('search')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -97,7 +97,7 @@ export class GrantTypeController {
   }
 
   /** Gets a grant type by name */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('type/:name')
   @ApiOkResponse({ type: GrantType })
   @Audit<GrantType>({
@@ -118,7 +118,7 @@ export class GrantTypeController {
   }
 
   /** Creates a new grant type */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiOkResponse({ type: GrantType })
   @Audit<GrantType>({
@@ -133,7 +133,7 @@ export class GrantTypeController {
   }
 
   /** Updates an existing grantType */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put(':name')
   @ApiOkResponse({ type: GrantType })
   async updateGrantType(
@@ -161,7 +161,7 @@ export class GrantTypeController {
   }
 
   /** Soft deletes a grant type */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':name')
   @ApiOkResponse({ type: Number })
   async deleteGrantType(

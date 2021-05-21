@@ -20,7 +20,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -36,7 +36,7 @@ export class ClientClaimController {
   ) {}
 
   /** Adds new claim to client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientClaim })
   @Audit<ClientClaim>({
@@ -48,7 +48,7 @@ export class ClientClaimController {
   }
 
   /** Removes a claim from client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:claimType/:claimValue')
   @ApiCreatedResponse()
   async delete(

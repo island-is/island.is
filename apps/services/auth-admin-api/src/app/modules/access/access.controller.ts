@@ -31,7 +31,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -48,7 +48,7 @@ export class AccessController {
   ) {}
 
   /** Gets admin's access rights by id */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get(':nationalId')
   @ApiOkResponse({ type: ApiScopeUser })
   @Audit<ApiScopeUser>({
@@ -65,7 +65,7 @@ export class AccessController {
   }
 
   /** Gets x many admins based on pagenumber and count variable */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
@@ -99,7 +99,7 @@ export class AccessController {
   }
 
   /** Creates a new Api Scope User */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ApiScopeUser })
   @Audit<ApiScopeUser>({
@@ -110,7 +110,7 @@ export class AccessController {
   }
 
   /** Updates an existing Api Scope User */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put(':nationalId')
   @ApiCreatedResponse({ type: ApiScopeUser })
   async update(
@@ -135,7 +135,7 @@ export class AccessController {
   }
 
   /** Deleting an admin by nationalId */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':nationalId')
   @ApiCreatedResponse({ type: Number })
   async delete(

@@ -22,7 +22,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
@@ -39,7 +39,7 @@ export class IdpRestrictionController {
   ) {}
 
   /** Adds new IDP restriction */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientIdpRestrictions })
   @Audit<ClientIdpRestrictions>({
@@ -53,7 +53,7 @@ export class IdpRestrictionController {
   }
 
   /** Removes a idp restriction */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:name')
   @ApiCreatedResponse()
   async delete(
@@ -78,7 +78,7 @@ export class IdpRestrictionController {
   }
 
   /** Finds available idp providers that can be restricted */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiOkResponse({ type: [IdpProvider] })
   @Audit<IdpProvider[]>({
