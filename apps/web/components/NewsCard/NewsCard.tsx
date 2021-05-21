@@ -37,11 +37,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   const [ref, { width }] = useMeasure()
   const { format } = useDateUtils()
 
-  let showImage = false
-
-  if (width > 600) {
-    showImage = true
-  }
+  const showImage = width > 600
 
   const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
 

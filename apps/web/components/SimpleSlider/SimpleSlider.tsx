@@ -75,11 +75,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
     const newSlideCount = breakpointOption.slideCount ?? slideCount
     const newGutterWidth = breakpointOption.gutterWidth ?? gutterWidth
-    let newSlideWidthOffset = 0
-
-    if (breakpointOption.slideWidthOffset) {
-      newSlideWidthOffset = breakpointOption.slideWidthOffset
-    }
+    const newSlideWidthOffset = breakpointOption.slideWidthOffset ?? 0
 
     const slideWidth = Math.abs(
       newSlideWidthOffset - (containerWidth + newGutterWidth) / newSlideCount,
