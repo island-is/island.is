@@ -82,7 +82,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           title={formatMessage(confirmation.contractOverview.accordionTitle)}
           id="id_1"
         >
-          {/* <ContractOverview application={application} /> */}
+          <ContractOverview application={application} />
         </BorderedAccordion>
       </Box>
       <Box className={confirmationIllustration}>
