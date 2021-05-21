@@ -772,13 +772,13 @@ export class ResourcesService {
   async findActorApiScopes(
     requestedScopes: string[],
   ): Promise<string[] | null> {
-    return this.apiScopeModel
-      .findAll({
-        where: {
-          alsoForDelegatedUser: true,
-          name: { [Op.in]: requestedScopes },
-        },
-      })
-      .map((s: ApiScope) => s.name)
+    const scopes: ApiScope[] = await this.apiScopeModel.findAll({
+      where: {
+        alsoForDelegatedUser: true,
+        name: { [Op.in]: requestedScopes },
+      },
+    })
+
+    return scopes.map((s: ApiScope): string => s.name)
   }
 }
