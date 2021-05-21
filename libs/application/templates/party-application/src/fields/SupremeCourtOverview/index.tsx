@@ -31,8 +31,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const { formatMessage } = useLocale()
-  const { answers, externalData } = application // todo render correct answers
-  console.log(application)
+  const { answers, externalData } = application
   const [endorsements, setEndorsements] = useState<Endorsement[]>()
 
   const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {

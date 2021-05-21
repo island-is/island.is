@@ -224,20 +224,16 @@ const PartyApplicationTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     // todo map to supreme court natioanl ids
     if (application.assignees.includes('3105913789')) {
-      console.log('assignee')
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list
     else if (application.applicant === nationalId) {
-      console.log('applicant')
       return Roles.APPLICANT
     } else if (application.state === States.COLLECT_SIGNATURES) {
       // TODO: Maybe display collection as closed in final state for signaturee
       // everyone can be signaturee if they are not the applicant
-      console.log('signaturee')
       return Roles.SIGNATUREE
     } else {
-      console.log('undefined')
       return undefined
     }
   },

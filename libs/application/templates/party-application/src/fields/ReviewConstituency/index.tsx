@@ -33,7 +33,6 @@ const ReviewConstituency: FC<FieldBaseProps> = ({ application }) => {
       },
     }).then((response) => {
       //temporary
-      console.log(response)
       setPartyLetter(response.data?.updateApplication?.answers.partyLetter)
       setPartyName(response.data?.updateApplication?.answers.partyName)
       application.answers = response.data?.updateApplication?.answers

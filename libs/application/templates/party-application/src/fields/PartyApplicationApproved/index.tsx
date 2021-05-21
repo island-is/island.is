@@ -7,7 +7,6 @@ import { m } from '../../lib/messages'
 
 const PartyApplicationApproved: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  console.log(application)
 
   return (
     <Box>
