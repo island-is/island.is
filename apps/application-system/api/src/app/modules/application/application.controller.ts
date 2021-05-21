@@ -63,7 +63,7 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { CreatePdfDto } from './dto/createPdf.dto'
+import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
@@ -858,7 +858,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @Put('applications/:id/createPdf')
+  @Put('applications/:id/generatePdf')
   @ApiParam({
     name: 'id',
     type: String,
@@ -867,23 +867,23 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async createPdf(
+  async generatePdf(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: CreatePdfDto,
+    @Body() input: GeneratePdfDto,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user.nationalId,
     )
-    const url = await this.fileService.createPdf(
+    const url = await this.fileService.generatePdf(
       existingApplication,
       input.type,
     )
 
     this.auditService.audit({
       user,
-      action: 'createPdf',
+      action: 'generatePdf',
       resources: existingApplication.id,
       meta: { type: input.type },
     })
