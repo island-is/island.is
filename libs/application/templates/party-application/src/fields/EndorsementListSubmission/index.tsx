@@ -101,7 +101,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     return tempEndorsements.slice(0, maxEndorsements)
   }
   const shuffled = () => {
-    const tempEndorsements = endorsements
+    const tempEndorsements = sortBy(endorsements, 'date')
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
 
@@ -175,7 +175,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
       firstMaxEndorsements()
       setAutoSelect(true)
     }
-  })
+  }, [])
 
   return (
     <Box marginBottom={8}>
