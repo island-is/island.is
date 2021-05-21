@@ -117,7 +117,7 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
   addSubheader('Gildistími samnings', doc)
   addValue(
     durationType === TEMPORARY && durationDate
-      ? `Samningurinn gildir til ${formatDate(durationDate)}`
+      ? `Samningurinn gildir til ${formatDate({ date: durationDate })}`
       : 'Samningurinn er varanlegur þar til barnið hefur náð 18 ára aldri.',
     doc,
     PdfConstants.NORMAL_FONT,
