@@ -3,6 +3,7 @@ import {
   Close,
   Heading,
   NotificationCard,
+  ViewPager,
   WelcomeCard,
 } from '@island.is/island-ui-native'
 import React from 'react'
@@ -15,7 +16,6 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
 import logo from '../../assets/logo/logo-64w.png'
 import { AppLoading } from '../../components/app-loading/app-loading'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { ViewPager } from '../../components/view-pager/view-pager'
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
@@ -51,10 +51,12 @@ const {
       ...({
         accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
       } as any),
-      selectedIconColor: (null as any),
+      selectedIconColor: null as any,
       iconColor: theme.shade.foreground,
       textColor: initialized ? theme.shade.foreground : theme.shade.background,
-      icon: initialized ? require('../../assets/icons/tabbar-home.png') : undefined,
+      icon: initialized
+        ? require('../../assets/icons/tabbar-home.png')
+        : undefined,
     },
   }),
   {
@@ -85,8 +87,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const intl = useIntl()
   const ui = useUiStore()
-  console.log('oki233', authStore.getState().authorizeResult)
-
 
   const notificationsRes = useQuery<ListNotificationsResponse>(
     LIST_NOTIFICATIONS_QUERY,
@@ -183,7 +183,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   )
 }
 
-MainHomeScreen.options = getNavigationOptions;
+MainHomeScreen.options = getNavigationOptions
 
 export const HomeScreen = CodePush({
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,

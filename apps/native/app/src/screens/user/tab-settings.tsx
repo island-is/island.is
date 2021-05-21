@@ -1,21 +1,21 @@
 import {
-  TableViewAccessory,
+  Alert,
   TableViewCell,
   TableViewGroup,
+  TableViewAccessory,
 } from '@island.is/island-ui-native'
 import {
   AuthenticationType,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
-import React, { useEffect, useState } from 'react'
-import { Platform, ScrollView, Switch, View } from 'react-native'
+import React, { useEffect, useState, useRef } from 'react'
+import { Platform, ScrollView, Switch, View, Animated } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
   LocalPackage,
 } from '../../../../node_modules/react-native-code-push'
-import { InfoMessage } from '../../components/info-message/info-message'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { useAuthStore } from '../../stores/auth-store'
 import {
@@ -56,6 +56,10 @@ export function TabSettings() {
   const [applicationsNotifications, setApplicationsNotifications] = useState(
     false,
   )
+
+  const viewRef = useRef<View>()
+  const [offset, setOffset] = useState(!dismissed.includes('userSettingsInformational') ?? true)
+  const offsetY = useRef(new Animated.Value(0)).current;
 
   const [
     supportedAuthenticationTypes,
@@ -112,11 +116,29 @@ export function TabSettings() {
 
   return (
     <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
-      {!dismissed.includes('userSettingsInformational') && (
-        <InfoMessage onClose={() => dismiss('userSettingsInformational')}>
-          {intl.formatMessage({ id: 'settings.infoBoxText' })}
-        </InfoMessage>
-      )}
+      <Alert
+        type="info"
+        visible={!dismissed.includes('userSettingsInformational')}
+        message={intl.formatMessage({ id: 'settings.infoBoxText' })}
+        onClose={() => {
+          dismiss('userSettingsInformational')
+        }}
+        onClosed={() => {
+          setOffset(false)
+        }}
+        hideIcon
+        sharedAnimatedValue={offsetY}
+      />
+
+      <Animated.View
+        ref={viewRef as any}
+        style={{
+          top: offset ? 72 : 0,
+          transform: [{
+            translateY: offsetY,
+          }],
+        }}
+      >
       <View style={{ height: 32 }} />
       <TableViewGroup
         header={intl.formatMessage({
@@ -384,6 +406,7 @@ export function TabSettings() {
           />
         </PressableHighlight>
       </TableViewGroup>
+      </Animated.View>
     </ScrollView>
   )
 }

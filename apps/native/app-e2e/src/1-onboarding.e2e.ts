@@ -83,7 +83,6 @@ describe('Authentication', () => {
     });
     await page.type('#phoneNumber', config.phoneNumber);
     await page.click('#submitPhoneNumber');
-    await page.screenshot({  path: './app-e2e/artifacts/pupp-login.png' })
 
     const appUrlRedirect: string = await new Promise(resolve => {
       page.on('response', (response: puppeteer.HTTPResponse) => {

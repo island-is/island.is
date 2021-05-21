@@ -25,7 +25,8 @@ const Icon = styled.View`
   justify-content: center;
 `;
 
-const Description = styled.Text`
+const Message = styled.Text`
+  font-family: 'IBMPlexSans';
   font-size: 13px;
   color: ${props => props.theme.shade.foreground};
   line-height: 17px;
@@ -79,30 +80,26 @@ const variantStyles: VariantStyles = {
 
 interface AlertProps {
   type: AlertType,
-  title?: string,
   message?: string,
   style?: any;
   onClose?(): void;
   onClosed?(): void;
   visible?: boolean;
   hideIcon?: boolean;
+  sharedAnimatedValue?: any;
 }
 
-const defaultOffsetY = {
-  current: new Animated.Value(0),
-};
-
-export function Alert({ title, message, type, hideIcon = false, visible = true, onClose, onClosed, ...rest }: AlertProps) {
-
-  const offsetY = useRef(new Animated.Value(0));
+export function Alert({ message, type, hideIcon = false, visible = true, onClose, onClosed, sharedAnimatedValue, ...rest }: AlertProps) {
+  const offsetY = sharedAnimatedValue ??
+    useRef(new Animated.Value(0)).current;
   const alertRef = useRef<View>(null);
   const variant = variantStyles[type];
   const [height, setHeight] = useState(0);
   const [isVisible, setIsVisible] = useState(visible);
 
   const animateOut = () => {
-    if (offsetY.current) {
-      Animated.spring(offsetY.current, {
+    if (offsetY) {
+      Animated.spring(offsetY, {
         toValue: -height,
         overshootClamping: true,
         useNativeDriver: true,
@@ -110,8 +107,8 @@ export function Alert({ title, message, type, hideIcon = false, visible = true, 
         if (finished) {
           setIsVisible(false);
           onClosed && onClosed();
-          if (offsetY.current) {
-            offsetY.current.setValue(1);
+          if (offsetY) {
+            offsetY.setValue(1);
           }
         }
       });
@@ -137,12 +134,12 @@ export function Alert({ title, message, type, hideIcon = false, visible = true, 
         borderColor={variant.borderColor}
         {...rest}
         style={{
-          opacity: offsetY.current?.interpolate({
+          opacity: offsetY?.interpolate({
             inputRange: [-height, 0],
             outputRange: [0, 1],
           }),
           transform: [{
-            translateY: offsetY.current,
+            translateY: offsetY,
           }],
         }}
       >
@@ -154,7 +151,7 @@ export function Alert({ title, message, type, hideIcon = false, visible = true, 
           }
           {message && (
             <Content>
-                <Description>{message}</Description>
+                <Message>{message}</Message>
             </Content>
           )}
           {onClose &&
