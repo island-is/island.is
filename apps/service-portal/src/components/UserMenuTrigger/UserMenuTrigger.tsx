@@ -45,6 +45,7 @@ const UserMenuTrigger: FC<{}> = () => {
           {userInfo?.profile.name}
         </Button>
       </Hidden>
+
       <Hidden above="sm">
         <Button
           variant="utility"
@@ -55,6 +56,7 @@ const UserMenuTrigger: FC<{}> = () => {
           iconType="outline"
         />
       </Hidden>
+
       {userInfo && (
         <UserMenu
           state={userMenuState}

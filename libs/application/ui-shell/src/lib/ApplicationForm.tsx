@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import { RefetchProvider } from '../context/RefetchContext'
@@ -30,7 +30,14 @@ function isOnProduction(): boolean {
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  setApplicationName: Dispatch<SetStateAction<string | undefined>>
+  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
+}> = ({
+  applicationId,
+  nationalRegistryId,
+  setApplicationName,
+  setInstitutionName,
+}) => {
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -64,6 +71,12 @@ const ApplicationLoader: FC<{
 
   if (!applicationId || error) {
     return <NotFound />
+  }
+
+  setApplicationName(application.name)
+
+  if (application.institution) {
+    setInstitutionName(application.institution)
   }
 
   return (
@@ -162,12 +175,21 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  setApplicationName: Dispatch<SetStateAction<string | undefined>>
+  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
+}> = ({
+  applicationId,
+  nationalRegistryId,
+  setApplicationName,
+  setInstitutionName,
+}) => {
   return (
     <FieldProvider>
       <ApplicationLoader
         applicationId={applicationId}
         nationalRegistryId={nationalRegistryId}
+        setApplicationName={setApplicationName}
+        setInstitutionName={setInstitutionName}
       />
     </FieldProvider>
   )

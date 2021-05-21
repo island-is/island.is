@@ -4,7 +4,7 @@ import { MessageDescriptor } from 'react-intl'
 import { GridColumn, GridRow, Text, Box } from '@island.is/island-ui/core'
 
 interface Props {
-  title: MessageDescriptor
+  title: MessageDescriptor | string
   intro?: MessageDescriptor
   img?: string
 }

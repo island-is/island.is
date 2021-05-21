@@ -19,6 +19,9 @@ import Base64 from 'crypto-js/enc-base64'
 import { ApiResourceSecretDTO } from '../entities/dto/api-resource-secret.dto'
 import { ApiResourceAllowedScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
 import { UserClaimDTO } from '../entities/dto/user-claim.dto'
+import { ApiScopeGroupDTO } from '../entities/dto/api-scope-group.dto'
+import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
+import { uuid } from 'uuidv4'
 
 @Injectable()
 export class ResourcesService {
@@ -29,6 +32,8 @@ export class ResourcesService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(ApiResource)
     private apiResourceModel: typeof ApiResource,
+    @InjectModel(ApiScopeGroup)
+    private apiScopeGroup: typeof ApiScopeGroup,
     @InjectModel(ApiResourceScope)
     private apiResourceScopeModel: typeof ApiResourceScope,
     @InjectModel(IdentityResourceUserClaim)
@@ -732,5 +737,46 @@ export class ResourcesService {
       apiScopeName: claim.resourceName,
       claimName: claim.claimName,
     })
+  }
+
+  // #region ApiScopeGroup
+
+  /** Creates a new Api Scope Group */
+  async createApiScopeGroup(
+    group: ApiScopeGroupDTO,
+  ): Promise<ApiScopeGroup | null> {
+    const id = uuid()
+    return this.apiScopeGroup.create({ id: id, ...group })
+  }
+
+  /** Updates an existing ApiScopeGroup */
+  async updateApiScopeGroup(
+    group: ApiScopeGroupDTO,
+    id: string,
+  ): Promise<[number, ApiScopeGroup[]] | null> {
+    return this.apiScopeGroup.update({ ...group }, { where: { id: id } })
+  }
+
+  /** Delete ApiScopeGroup */
+  async deleteApiScopeGroup(id: string): Promise<number | null> {
+    return this.apiScopeGroup.destroy({ where: { id: id } })
+  }
+
+  /** Returns all ApiScopeGroups */
+  async findAllApiScopeGroups(): Promise<ApiScopeGroup[] | null> {
+    return this.apiScopeGroup.findAll()
+  }
+
+  // #endregion ApiScopeGroup
+
+  async findActorApiScopes(requestedScopes: string[]): Promise<string[]> {
+    const scopes: ApiScope[] = await this.apiScopeModel.findAll({
+      where: {
+        alsoForDelegatedUser: true,
+        name: { [Op.in]: requestedScopes },
+      },
+    })
+
+    return scopes.map((s: ApiScope): string => s.name)
   }
 }
