@@ -180,9 +180,11 @@ export class ResourcesController {
   @Scopes(Scope.root, Scope.full)
   @Get('all-api-resources')
   @ApiOkResponse({ type: [ApiResource] })
+  @Audit<ApiResource[]>({
+    resources: (resources) => resources.map((resource) => resource.name),
+  })
   async findAllApiResources(): Promise<ApiResource[]> {
-    const apiResources = await this.resourcesService.findAllApiResources()
-    return apiResources
+    return this.resourcesService.findAllApiResources()
   }
 
   /** Gets Identity Resources by Scope Names */
@@ -733,7 +735,7 @@ export class ResourcesController {
       {
         user,
         action: 'removeApiResourceAllowedScope',
-        namespace: `${environment.audit.defaultNamespace}/resources`,
+        namespace,
         resources: `${apiResourceName}/${scopeName}`,
       },
       this.resourcesService.removeApiResourceAllowedScope(
@@ -746,16 +748,17 @@ export class ResourcesController {
   /** Get api Resource from Api Resource Scope by Scope Name */
   @Scopes(Scope.root, Scope.full)
   @Get('api-scope-resource/:scopeName')
+  @Audit<ApiResourceScope>({
+    resources: (scope) => scope?.scopeName,
+  })
   async findApiResourceScopeByScopeName(
     @Param('scopeName') scopeName: string,
-  ): Promise<ApiResourceScope | null> {
+  ): Promise<ApiResourceScope> {
     if (!scopeName) {
       throw new BadRequestException('scopeName must be provided')
     }
 
-    return await this.resourcesService.findApiResourceScopeByScopeName(
-      scopeName,
-    )
+    return this.resourcesService.findApiResourceScopeByScopeName(scopeName)
   }
 
   /** Removes api scope from Api Resource Scope */
@@ -763,13 +766,20 @@ export class ResourcesController {
   @Delete('api-scope-resource/:scopeName')
   async removeApiScopeFromApiResourceScope(
     @Param('scopeName') scopeName: string,
-  ): Promise<number | null> {
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!scopeName) {
       throw new BadRequestException('scopeName must be provided')
     }
 
-    return await this.resourcesService.removeApiScopeFromApiResourceScope(
-      scopeName,
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'removeApiScopeFromApiResourceScope',
+        namespace,
+        resources: scopeName,
+      },
+      this.resourcesService.removeApiScopeFromApiResourceScope(scopeName),
     )
   }
 
