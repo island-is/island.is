@@ -9,18 +9,18 @@ export class NationalRegistryPerson {
   @Field(() => String)
   fullName!: string
 
-  @Field(() => NationalRegistryAddress)
+  @Field(() => NationalRegistryAddress, { nullable: true })
   address?: NationalRegistryAddress
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   livesWithApplicant?: Boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   livesWithBothParents?: Boolean
 
-  @Field(() => [NationalRegistryPerson])
+  @Field(() => [NationalRegistryPerson], { nullable: true })
   children?: NationalRegistryPerson[]
 
-  @Field(() => [NationalRegistryPerson])
+  @Field(() => [NationalRegistryPerson], { nullable: true })
   parents?: NationalRegistryPerson[]
 }

@@ -1,4 +1,4 @@
-import { Resolver, Query, ResolveField } from '@nestjs/graphql'
+import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import {
   CurrentUser,
@@ -28,10 +28,11 @@ export class NationalRegistryXRoadResolver {
 
   @ResolveField('children', () => [NationalRegistryPerson])
   async resolveChildren(
-    @CurrentUser() user: User,
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
     return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
-      user.nationalId,
+      person.nationalId,
       user.authorization,
     )
   }
