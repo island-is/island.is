@@ -113,7 +113,6 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
-
         </Box>
         <Box marginBottom={3} width="half">
           <Text variant="h5">
