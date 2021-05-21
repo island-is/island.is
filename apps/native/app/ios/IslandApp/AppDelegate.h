@@ -1,5 +1,5 @@
-#import <React/RCTBridgeDelegate.h>
 #import <UIKit/UIKit.h>
+#import <React/RCTBridgeDelegate.h>
 #import <UMCore/UMAppDelegateWrapper.h>
 #import "RNAppAuthAuthorizationFlowManager.h"
 

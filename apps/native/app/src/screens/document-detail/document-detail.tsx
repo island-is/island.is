@@ -6,7 +6,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear
+  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import WebView from 'react-native-webview'
 import PDFReader from 'rn-pdf-reader-js'
@@ -14,15 +14,15 @@ import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
-  GET_DOCUMENT_QUERY
+  GET_DOCUMENT_QUERY,
 } from '../../graphql/queries/get-document.query'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY
+  LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
-import { authStore, useAuthStore } from '../../stores/auth-store'
+import { useAuthStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const Header = styled.SafeAreaView`
   margin-left: 16px;
@@ -73,23 +73,46 @@ const Message = styled.Text`
   padding-bottom: 8px;
 `
 
-const Bottom = styled.View`
-  position: absolute;
-  bottom: 32px;
-  left: 0;
-  right: 0;
-  align-items: center;
-`
-
-const { title, useNavigationTitle } = createNavigationTitle(
-  'documentDetail.screenTitle',
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl) => ({
+    topBar: {
+      background: {
+        color: theme.shade.background,
+      },
+      barStyle: theme.isDark ? 'black' : 'default',
+      title: {
+        color: theme.shade.foreground,
+        text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
+      },
+      noBorder: true,
+    },
+    layout: {
+      backgroundColor: theme.shade.background,
+      componentBackgroundColor: theme.shade.background,
+    },
+  }),
+  {
+    topBar: {
+      noBorder: true,
+      rightButtons: [
+        {
+          id: ButtonRegistry.ShareButton,
+          icon: require('../../assets/icons/navbar-share.png'),
+          accessibilityLabel: 'Share',
+        },
+      ],
+    },
+  },
 )
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
-  useNavigationTitle(componentId)
-  const { authorizeResult } = useAuthStore();
+  useNavigationOptions(componentId)
+  const { authorizeResult } = useAuthStore()
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -111,17 +134,21 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const [visible, setVisible] = useState(false)
 
-  useNavigationButtonPress((e) => {
-    Share.share(
-      {
-        title: Document.subject,
-        url: `data:application/pdf;base64,${Document?.content!}`,
-      },
-      {
-        subject: Document.subject,
-      },
-    )
-  }, componentId, ButtonRegistry.ShareButton);
+  useNavigationButtonPress(
+    (e) => {
+      Share.share(
+        {
+          title: Document.subject,
+          url: `data:application/pdf;base64,${Document?.content!}`,
+        },
+        {
+          subject: Document.subject,
+        },
+      )
+    },
+    componentId,
+    ButtonRegistry.ShareButton,
+  )
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
@@ -184,14 +211,4 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   )
 }
 
-DocumentDetailScreen.options = {
-  topBar: {
-    visible: true,
-    title,
-    rightButtons: [{
-      id: ButtonRegistry.ShareButton,
-      icon: require('../../assets/icons/navbar-share.png'),
-      accessibilityLabel: 'Share',
-    }],
-  },
-}
+DocumentDetailScreen.options = getNavigationOptions;

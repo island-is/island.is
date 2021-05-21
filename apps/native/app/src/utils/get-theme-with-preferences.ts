@@ -29,14 +29,13 @@ export const shades = {
 
 export function getThemeWithPreferences(
   { appearanceMode }: { appearanceMode: AppearanceMode },
-  scheme?: 'light' | 'dark',
+  systemScheme = Appearance.getColorScheme(),
 ) {
   // get color scheme from system if "automatic"
-  const colorScheme = scheme
-    ? scheme
-    : appearanceMode === 'automatic'
-    ? Appearance.getColorScheme()
+  const colorScheme = appearanceMode === 'automatic'
+    ? systemScheme
     : appearanceMode
+
   // find correct shades key ("light" | "dark")
   const shadesKey = typeof colorScheme === 'string' ? colorScheme : 'light'
 

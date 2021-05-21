@@ -1,82 +1,87 @@
 import { useQuery } from '@apollo/client'
 import { ListItem } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { FlatList, Image, Platform, RefreshControl, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import { uiStore } from '../../stores/ui-store'
+import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
-import { theme } from '../../utils/theme'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 interface IndexedDocument extends IDocument {
   fulltext: string
 }
 
-// Create title options and hook to sync translated title message
-const { title, useNavigationTitle } = createNavigationTitle('inbox.screenTitle')
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl, initialized) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({ id: 'inbox.screenTitle' }),
+      },
+      searchBar: {
+        tintColor: theme.color.blue400,
+      },
+    },
+    bottomTab: {
+      text: initialized
+        ? intl.formatMessage({ id: 'inbox.bottomTabText' })
+        : '',
+    },
+  }),
+  {
+    topBar: {
+      elevation: 0,
+      height: 120,
+      searchBar: {
+        visible: true,
+        placeholder: 'Leita að skjölum...',
+        hideTopBarOnFocus: true,
+      },
+      background: {
+        component:
+          Platform.OS === 'android'
+            ? {
+                name: ComponentRegistry.AndroidSearchBar,
+              }
+            : undefined,
+      },
+    },
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_INBOX,
+      iconInsets: {
+        bottom: -4,
+      },
+      icon: require('../../assets/icons/tabbar-inbox.png'),
+      selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
+    },
+  },
+)
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
+
   const theme = useTheme()
-  const intl = useIntl()
+  const ui = useUiStore()
   const [loading, setLoading] = useState(false)
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-
-  useNavigationTitle(componentId)
-  useScreenOptions(
-    () => ({
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_INBOX,
-        selectedIconColor: theme.color.blue400,
-        iconInsets: {
-          bottom: -4,
-        },
-        icon: require('../../assets/icons/tabbar-inbox.png'),
-        selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
-        iconColor: theme.isDark ? theme.color.white : theme.color.dark400,
-        text: intl.formatMessage({ id: 'inbox.bottomTabText' }),
-        textColor: theme.shade.foreground,
-        selectedTextColor: theme.shade.foreground,
-      },
-      topBar: {
-        elevation: 0,
-        height: 120,
-        background: {
-          component:
-            Platform.OS === 'android'
-              ? {
-                  name: ComponentRegistry.AndroidSearchBar,
-                }
-              : undefined,
-        },
-        searchBar: {
-          backgroundColor: '#fff',
-          visible: true,
-          placeholder: 'Leita að skjölum...',
-          hideTopBarOnFocus: true,
-        },
-      },
-    }),
-    [theme, intl],
-  )
-
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
@@ -130,16 +135,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     } else {
       setInboxItems(indexedItems)
     }
-  }, [query])
-
-  useEffect(() => {
-    uiStore.subscribe(
-      (q: string) => {
-        setQuery(q)
-      },
-      (store) => store.query,
-    )
-  }, [])
+  }, [ui.query])
 
   return (
     <View style={{ flex: 1 }}>
@@ -176,24 +172,4 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 }
 
-InboxScreen.options = {
-  topBar: {
-    title,
-    elevation: 0,
-    height: 120,
-    background: {
-      component:
-        Platform.OS === 'android'
-          ? {
-              name: ComponentRegistry.AndroidSearchBar,
-            }
-          : undefined,
-    },
-    searchBar: {
-      tintColor: theme.color.blue400,
-      visible: true,
-      placeholder: 'Leita að skjölum...',
-      hideTopBarOnFocus: true,
-    },
-  },
-}
+InboxScreen.options = getNavigationOptions;

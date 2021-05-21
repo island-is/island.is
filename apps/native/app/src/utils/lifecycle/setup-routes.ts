@@ -1,4 +1,4 @@
-import { Navigation } from 'react-native-navigation'
+import { Navigation, Options } from 'react-native-navigation'
 import { authStore } from '../../stores/auth-store'
 import { ComponentRegistry } from '../component-registry'
 import { config } from '../config'
@@ -6,6 +6,7 @@ import { addRoute, addScheme } from '../deep-linking'
 import { Base64 } from 'js-base64';
 import { preferencesStore } from '../../stores/preferences-store'
 import * as Sentry from '@sentry/react-native'
+import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 
 export function setupRoutes() {
   // Setup app scheme (is.island.app://)
@@ -100,6 +101,7 @@ export function setupRoutes() {
         passProps: {
           docId,
         },
+        options: DocumentDetailScreen.options as Options
       },
     })
   })

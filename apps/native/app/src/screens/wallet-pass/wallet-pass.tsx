@@ -1,4 +1,3 @@
-import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import {
   Field,
@@ -8,13 +7,14 @@ import {
   FieldRow,
   LicenceCard,
 } from '@island.is/island-ui-native'
+import React from 'react'
 import { Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { client } from '../../graphql/client'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -28,17 +28,36 @@ const Information = styled.ScrollView`
   padding-top: 70px;
   z-index: 10;
 `
-
-// Create title options and hook to sync translated title message
-const { title, useNavigationTitle } = createNavigationTitle(
-  'wallet.screenTitle',
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl) => ({
+    topBar: {
+      background: {
+        color: theme.shade.background,
+      },
+      barStyle: theme.isDark ? 'black' : 'default',
+      title: {
+        color: theme.shade.foreground,
+        text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
+      },
+      noBorder: true,
+    },
+  }),
+  {
+    topBar: {
+      rightButtons: [],
+    },
+  },
 )
 
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   item?: any
 }> = ({ id, item, componentId }) => {
-  useNavigationTitle(componentId)
+  useNavigationOptions(componentId)
+  const theme = useTheme()
 
   const res = useQuery(
     gql`
@@ -144,7 +163,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         >
           <AddPassButton
             style={{ height: 52 }}
-            addPassButtonStyle={PassKit.AddPassButtonStyle.black}
+            addPassButtonStyle={
+              theme.isDark
+                ? PassKit.AddPassButtonStyle.blackOutline
+                : PassKit.AddPassButtonStyle.black
+            }
             onPress={() => {
               alert('Not implemented yet')
             }}
@@ -155,9 +178,4 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   )
 }
 
-WalletPassScreen.options = {
-  topBar: {
-    title,
-    rightButtons: [],
-  },
-}
+WalletPassScreen.options = getNavigationOptions

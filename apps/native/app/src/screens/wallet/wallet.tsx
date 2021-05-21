@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/client'
-import { Alert, LicenceCard } from '@island.is/island-ui-native'
-import React, { useRef, useState } from 'react'
-import { Platform } from 'react-native'
+import { Alert, LicenceCard, Skeleton } from '@island.is/island-ui-native'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
   FlatList,
+  Platform,
+  RefreshControl,
   SafeAreaView,
   TouchableHighlight,
 } from 'react-native'
@@ -12,51 +13,67 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseType } from '../../types/license-type'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
 import { navigateTo } from '../../utils/deep-linking'
-import { useIntl } from '../../utils/intl'
 import { testIDs } from '../../utils/test-ids'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
-const { useNavigationTitle, title } = createNavigationTitle(
-  'wallet.screenTitle',
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl, initialized) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({ id: 'wallet.screenTitle' }),
+      },
+      background: {
+        color: theme.shade.background,
+      },
+    },
+    bottomTab: {
+      text: initialized
+        ? intl.formatMessage({ id: 'wallet.bottomTabText' })
+        : '',
+    },
+  }),
+  {
+    topBar: {},
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_WALLET,
+      iconInsets: {
+        bottom: -4,
+      },
+      icon: require('../../assets/icons/tabbar-wallet.png'),
+      selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
+    },
+  },
 )
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
+
   const theme = useTheme()
-  const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
   const res = useQuery(LIST_LICENSES_QUERY, { client })
   const licenseItems = res?.data?.listLicenses ?? []
-
-  useNavigationTitle(componentId)
-
-  useScreenOptions(
-    () => ({
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_WALLET,
-        iconInsets: {
-          bottom: -4,
-        },
-        selectedIconColor: theme.color.blue400,
-        icon: require('../../assets/icons/tabbar-wallet.png'),
-        selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
-        iconColor: theme.isDark ? theme.color.white : theme.color.dark400,
-        text: intl.formatMessage({ id: 'wallet.bottomTabText' }),
-        textColor: theme.shade.foreground,
-        selectedTextColor: theme.shade.foreground,
-      },
-    }),
-    [theme],
-  )
-
   const flRef = useRef<FlatList>()
-  const [alertVisible, setAlertVisible] = useState(true)
+  const alertVisible = !dismissed.includes('howToUseCertificates')
   const [offset, setOffset] = useState(alertVisible)
+  const [loading, setLoading] = useState(res.loading)
+  const isSkeleton = res.loading && !res.data
+  const loadingTimeout = useRef<number>()
+
+  useEffect(() => {
+    if (res.loading) {
+      setLoading(true)
+    } else {
+      setLoading(false)
+    }
+  }, [res])
 
   const renderLicenseItem = ({
     item,
@@ -93,11 +110,25 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     </TouchableHighlight>
   )
 
+  const renderSkeletonItem = () => (
+    <Skeleton
+      active
+      backgroundColor={theme.color.blue100}
+      overlayColor={theme.color.blue200}
+      overlayOpacity={1}
+      height={111}
+      style={{
+        borderRadius: 16,
+        marginBottom: 16,
+      }}
+    />
+  )
+
   return (
     <>
       {offset && Platform.OS === 'ios' && (
         <Alert
-          visible={!dismissed.includes('howToUseCertificates')}
+          visible={alertVisible}
           type="info"
           message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
           onClose={() => {
@@ -129,17 +160,35 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           paddingHorizontal: 16,
           zIndex: 9,
         }}
-        data={licenseItems}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => {
+              try {
+                clearTimeout(loadingTimeout.current)
+                setLoading(true)
+                res.refetch().then(() => {
+                  loadingTimeout.current = setTimeout(() => {
+                    setLoading(false)
+                  }, 331)
+                })
+              } catch (err) {
+                setLoading(false)
+              }
+            }}
+          />
+        }
+        data={
+          isSkeleton
+            ? Array.from({ length: 5 }).map((_, id) => ({ id }))
+            : licenseItems
+        }
         keyExtractor={(item: any) => item.id}
-        renderItem={renderLicenseItem}
+        renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
       />
       <BottomTabsIndicator index={2} total={3} />
     </>
   )
 }
 
-WalletScreen.options = {
-  topBar: {
-    title,
-  },
-}
+WalletScreen.options = getNavigationOptions

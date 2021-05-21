@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "com.google.gms.google-services"
 
 import com.android.build.OutputFile
 
@@ -216,10 +217,11 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-localize')
     implementation project(':react-native-navigation')
-    implementation project(':react-native-safe-area-context')
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-web-view')
     implementation project(':react-native-sentry')
+    implementation project(':@react-native-firebase_app')
+    implementation project(':@react-native-firebase_messaging')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],

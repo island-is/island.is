@@ -1,6 +1,6 @@
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Image, SafeAreaView, View } from 'react-native'
+import { Animated, Image, SafeAreaView, View, Keyboard } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
@@ -19,6 +19,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
+import { uiStore } from '../../stores/ui-store'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -111,6 +112,8 @@ export const AppLockScreen: NavigationFunctionComponent<{
       lockScreenActivatedAt: lockScreenActivatedAt ?? Date.now(),
       lockScreenComponentId: componentId,
     }))
+    uiStore.setState({ initializedApp: true });
+    Keyboard.dismiss();
   })
 
   useNavigationComponentDidDisappear(() => {

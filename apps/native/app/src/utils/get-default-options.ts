@@ -1,18 +1,21 @@
+import { StatusBar } from 'react-native'
+import { Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
-import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { preferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
   theme = getThemeWithPreferences(preferencesStore.getState()),
 ): Options {
-  // Set status bar style
-  // StatusBar.setBarStyle(theme.isDark ? 'light-content' : 'dark-content')
-
-  // if (Platform.OS === 'android') {
-  //   StatusBar.setBackgroundColor(theme.color.blue400);
-  // }
-
+  // const initialized = uiStore.getState().initializedApp
   return {
+    animations: {
+      setRoot: {
+        enabled: true,
+        alpha: { from: 0, to: 1, duration: 1000 },
+      },
+    },
     topBar: {
       background: theme.isDark
         ? {
@@ -31,25 +34,24 @@ export function getDefaultOptions(
       title: {
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
-        color: theme.isDark ? theme.color.white : theme.color.blue400,
       },
+      noBorder: true,
       animate: true,
       borderHeight: 0,
       borderColor: 'transparent',
+      rightButtonColor: theme.color.blue400,
     },
     statusBar: {
-      backgroundColor: theme.shade.background,
       animated: true,
       style: theme.isDark ? 'light' : 'dark',
-      visible: true,
-      hideWithTopBar: true,
+      backgroundColor: theme.shade.background,
     },
     window: {
       backgroundColor: '#222222',
     },
     layout: {
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-      componentBackgroundColor: theme.isDark ? '#000000' : '#ffffff',
+      backgroundColor: theme.shade.background,
+      componentBackgroundColor: theme.shade.background,
     },
     bottomTabs: {
       animateTabSelection: false,
@@ -58,12 +60,16 @@ export function getDefaultOptions(
       borderWidth: 0,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
+      backgroundColor: theme.shade.background,
     },
     bottomTab: {
       fontSize: 11,
-      textColor: theme.shade.foreground,
-      selectedTextColor: theme.shade.foreground,
+      // iconColor: !initialized
+      //   ? theme.shade.background
+      //   : theme.shade.foreground,
+      // selectedIconColor: theme.color.blue400,
+      // textColor: theme.shade.foreground,
+      // selectedTextColor: theme.shade.foreground,
     },
   }
 }

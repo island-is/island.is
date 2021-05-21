@@ -2,10 +2,6 @@ import { by, element, waitFor } from 'detox'
 import { testIDs } from '../../app/src/utils/test-ids'
 import { launchAsynchronizedApp } from './utils';
 
-// @todo CADisplayLink is causing synchronization to hang
-//       we can use device.disableSynchronization() but home screen starts inside launchApp
-//       so there is no way around it
-
 describe('Notifications', () => {
   beforeAll(async () => {
     await launchAsynchronizedApp();

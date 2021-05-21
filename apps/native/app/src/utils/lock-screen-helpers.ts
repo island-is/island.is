@@ -1,8 +1,22 @@
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../stores/auth-store'
 import { preferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
 import { ComponentRegistry } from './component-registry'
 import { isOnboarded } from './onboarding'
+
+export function skipAppLock() {
+  const { userInfo } = authStore.getState()
+  const { dev__useLockScreen } = preferencesStore.getState()
+
+  const skip = !userInfo || !isOnboarded() || dev__useLockScreen === false;
+
+  if (skip) {
+    uiStore.setState({ initializedApp: true });
+  }
+
+  return skip
+}
 
 export function showLockScreenOverlay({
   enforceActivated = false,
@@ -11,10 +25,7 @@ export function showLockScreenOverlay({
   enforceActivated?: boolean
   status?: string
 }) {
-  const { userInfo } = authStore.getState()
-  const { dev__useLockScreen } = preferencesStore.getState()
-
-  if (!userInfo || !isOnboarded() || dev__useLockScreen === false) {
+  if (skipAppLock()) {
     return Promise.resolve()
   }
 

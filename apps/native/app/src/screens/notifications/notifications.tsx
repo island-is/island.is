@@ -1,5 +1,8 @@
 import { useQuery } from '@apollo/client'
-import { NavigationBarSheet, NotificationCard } from '@island.is/island-ui-native'
+import {
+  NavigationBarSheet,
+  NotificationCard,
+} from '@island.is/island-ui-native'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -7,28 +10,38 @@ import {
   FlatList,
   SafeAreaView,
   Text,
-  TouchableHighlight
+  TouchableHighlight,
 } from 'react-native'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
 import logo from '../../assets/logo/logo-64w.png'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import { INotification } from '../../graphql/fragments/notification.fragment'
 import {
   ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY
+  LIST_NOTIFICATIONS_QUERY,
 } from '../../graphql/queries/list-notifications.query'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { navigateToNotification } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
+
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = useThemedNavigationOptions(() => ({
+  topBar: {
+    visible: false,
+  },
+}))
 
 export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
+  useNavigationOptions(componentId)
   const notificationsRes = useQuery<ListNotificationsResponse>(
     LIST_NOTIFICATIONS_QUERY,
     {
@@ -38,15 +51,6 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const notificationsStore = useNotificationsStore()
   const intl = useIntl()
   const theme = useTheme()
-
-  useScreenOptions(
-    () => ({
-      layout: {
-        componentBackgroundColor: theme.shade.background,
-      },
-    }),
-    [theme],
-  )
 
   if (notificationsRes.loading) {
     return <ActivityIndicator />
@@ -115,8 +119,4 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   )
 }
 
-NotificationsScreen.options = {
-  topBar: {
-    visible: false,
-  },
-}
+NotificationsScreen.options = getNavigationOptions

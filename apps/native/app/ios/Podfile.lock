@@ -38,6 +38,32 @@ PODS:
     - React-Core (= 0.64.1)
     - React-jsi (= 0.64.1)
     - ReactCommon/turbomodule/core (= 0.64.1)
+  - Firebase/CoreOnly (8.0.0):
+    - FirebaseCore (= 8.0.0)
+  - Firebase/Messaging (8.0.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 8.0.0)
+  - FirebaseCore (8.0.0):
+    - FirebaseCoreDiagnostics (~> 8.0)
+    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/Logger (~> 7.4)
+  - FirebaseCoreDiagnostics (8.0.0):
+    - GoogleDataTransport (~> 9.0)
+    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/Logger (~> 7.4)
+    - nanopb (~> 2.30908.0)
+  - FirebaseInstallations (8.0.0):
+    - FirebaseCore (~> 8.0)
+    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/UserDefaults (~> 7.4)
+    - PromisesObjC (~> 1.2)
+  - FirebaseMessaging (8.0.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/Reachability (~> 7.4)
+    - GoogleUtilities/UserDefaults (~> 7.4)
   - Flipper (0.87.0):
     - Flipper-Folly (~> 2.5)
     - Flipper-RSocket (~> 1.3)
@@ -96,12 +122,39 @@ PODS:
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
   - glog (0.3.5)
+  - GoogleDataTransport (9.0.0):
+    - GoogleUtilities/Environment (~> 7.2)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (~> 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.4.1):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.4.1):
+    - PromisesObjC (~> 1.2)
+  - GoogleUtilities/Logger (7.4.1):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/Network (7.4.1):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.4.1)"
+  - GoogleUtilities/Reachability (7.4.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (7.4.1):
+    - GoogleUtilities/Logger
   - hermes-engine (0.7.2)
   - IQKeyboardManagerSwift (6.5.4)
   - JWT (3.0.0-beta.12):
     - Base64 (~> 1.1.2)
   - libevent (2.1.12)
+  - nanopb (2.30908.0):
+    - nanopb/decode (= 2.30908.0)
+    - nanopb/encode (= 2.30908.0)
+  - nanopb/decode (2.30908.0)
+  - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.180)
+  - PromisesObjC (1.2.12)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -317,8 +370,6 @@ PODS:
     - React
   - react-native-passkit-wallet (0.1.4):
     - React
-  - react-native-safe-area-context (3.2.0):
-    - React-Core
   - react-native-segmented-control (2.3.0):
     - React-Core
   - react-native-ultimate-config (3.3.4):
@@ -404,6 +455,13 @@ PODS:
     - React-RCTText
   - RNCAsyncStorage (1.12.1):
     - React-Core
+  - RNFBApp (12.0.0):
+    - Firebase/CoreOnly (= 8.0.0)
+    - React-Core
+  - RNFBMessaging (12.0.0):
+    - Firebase/Messaging (= 8.0.0)
+    - React-Core
+    - RNFBApp
   - RNKeychain (7.0.0):
     - React-Core
   - RNLocalize (2.0.3):
@@ -510,7 +568,6 @@ DEPENDENCIES:
   - react-native-app-auth (from `../../node_modules/react-native-app-auth`)
   - "react-native-cookies (from `../../node_modules/@react-native-community/react-native-cookies/ios`)"
   - react-native-passkit-wallet (from `../../node_modules/react-native-passkit-wallet`)
-  - react-native-safe-area-context (from `../../node_modules/react-native-safe-area-context`)
   - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
   - react-native-ultimate-config (from `../../node_modules/react-native-ultimate-config`)
   - react-native-webview (from `../../node_modules/react-native-webview`)
@@ -529,6 +586,8 @@ DEPENDENCIES:
   - ReactNativeKeyboardManager (from `../../node_modules/react-native-keyboard-manager`)
   - ReactNativeNavigation (from `../../node_modules/react-native-navigation`)
   - "RNCAsyncStorage (from `../../node_modules/@react-native-community/async-storage`)"
+  - "RNFBApp (from `../../node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../node_modules/@react-native-firebase/messaging`)"
   - RNKeychain (from `../../node_modules/react-native-keychain`)
   - RNLocalize (from `../../node_modules/react-native-localize`)
   - RNReanimated (from `../../node_modules/react-native-reanimated`)
@@ -548,6 +607,11 @@ SPEC REPOS:
     - Base64
     - boost-for-react-native
     - CocoaAsyncSocket
+    - Firebase
+    - FirebaseCore
+    - FirebaseCoreDiagnostics
+    - FirebaseInstallations
+    - FirebaseMessaging
     - Flipper
     - Flipper-DoubleConversion
     - Flipper-Folly
@@ -555,11 +619,15 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
+    - GoogleDataTransport
+    - GoogleUtilities
     - hermes-engine
     - IQKeyboardManagerSwift
     - JWT
     - libevent
+    - nanopb
     - OpenSSL-Universal
+    - PromisesObjC
     - Sentry
     - SSZipArchive
     - YogaKit
@@ -615,8 +683,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@react-native-community/react-native-cookies/ios"
   react-native-passkit-wallet:
     :path: "../../node_modules/react-native-passkit-wallet"
-  react-native-safe-area-context:
-    :path: "../../node_modules/react-native-safe-area-context"
   react-native-segmented-control:
     :path: "../../node_modules/@react-native-segmented-control/segmented-control"
   react-native-ultimate-config:
@@ -653,6 +719,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-navigation"
   RNCAsyncStorage:
     :path: "../../node_modules/@react-native-community/async-storage"
+  RNFBApp:
+    :path: "../../node_modules/@react-native-firebase/app"
+  RNFBMessaging:
+    :path: "../../node_modules/@react-native-firebase/messaging"
   RNKeychain:
     :path: "../../node_modules/react-native-keychain"
   RNLocalize:
@@ -693,6 +763,11 @@ SPEC CHECKSUMS:
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
   FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
+  Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
+  FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
+  FirebaseCoreDiagnostics: a31d987ba0fe16d59886a5dbadc2f1de871f88c8
+  FirebaseInstallations: c4aab1005d6547b00a7529777fe52f5d4d45165b
+  FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
   Flipper: 1bd2db48dcc31e4b167b9a33ec1df01c2ded4893
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -701,11 +776,15 @@ SPEC CHECKSUMS:
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  GoogleDataTransport: 11e3a5f2c190327df1a4a5d7e7ae3d4d5b9c9e4c
+  GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
   hermes-engine: 7d97ba46a1e29bacf3e3c61ecb2804a5ddd02d4f
   IQKeyboardManagerSwift: 2dde0fc70110e8eac7ccce2a46fdbec6a850b414
   JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
+  PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: ec2ebc96b7bfba3ca5c32740f5a0c6a014a274d2
   RCTTypeSafety: 22567f31e67c3e088c7ac23ea46ab6d4779c0ea5
@@ -720,7 +799,6 @@ SPEC CHECKSUMS:
   react-native-app-auth: 65e59e33e956bd6d83599c22b8f9bea529a0ea5c
   react-native-cookies: 3a8a42a8703423669026731186b1765e40b81557
   react-native-passkit-wallet: 51e3babdaeec4c10b5736786ebd1bfb470fcaa36
-  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-segmented-control: 83a05d42acd1234ad5e061d603c145973a61b5ee
   react-native-ultimate-config: ce215b54420306a82821895649463b00d01b9b2f
   react-native-webview: 6d1d368c38edcc0a074bcc51a94ec8de700c241e
@@ -739,6 +817,8 @@ SPEC CHECKSUMS:
   ReactNativeKeyboardManager: 93ac3934a51f548c54ac02d61c90e33220bba086
   ReactNativeNavigation: ff4873e683e5f23822af097e4fe643c82469c3d2
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNFBApp: cc2ff3f925840c53f0117d92e0f5e269b356d0f7
+  RNFBMessaging: ba11538f4d76a5ef89dc8c97dad04fbf2fa6ebef
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: 99e59cad311ca1b6872b1764514009416ccba03d
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
@@ -755,6 +835,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 540cfa4994e2f0b116a1a4f8ea2e8d3c157932d9
+PODFILE CHECKSUM: 73bd737fe1070200ebe3ced91d1e3594b313113e
 
 COCOAPODS: 1.10.1

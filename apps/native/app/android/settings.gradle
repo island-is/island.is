@@ -40,9 +40,6 @@ project(':react-native-localize').projectDir = new File(rootProject.projectDir, 
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
 
-include ':react-native-safe-area-context'
-project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-safe-area-context/android')
-
 include ':react-native-ultimate-config'
 project(':react-native-ultimate-config').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-ultimate-config/android')
 
@@ -51,5 +48,11 @@ project(':react-native-web-view').projectDir = new File(rootProject.projectDir, 
 
 include ':react-native-sentry'
 project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '../../node_modules/@sentry/react-native/android')
+
+include ':@react-native-firebase_app'
+project(':@react-native-firebase_app').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-firebase/app/android')
+
+include ':@react-native-firebase_messaging'
+project(':@react-native-firebase_messaging').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-firebase/messaging/android')
 
 include ':app'

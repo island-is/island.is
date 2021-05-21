@@ -106,6 +106,9 @@ export const is = {
   "wallet.screenTitle": "Skírteini",
   "wallet.bottomTabText": "Skírteini",
 
+  // wallet pass
+  "walletPass.screenTitle": "Skírteini",
+
   // notifications
   "notifications.screenTitle": "Tilkynningar",
 

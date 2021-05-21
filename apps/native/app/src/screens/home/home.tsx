@@ -1,30 +1,26 @@
 import { useQuery } from '@apollo/client'
 import {
-  Badge,
   Close,
   Heading,
   NotificationCard,
-  StatusCard,
   WelcomeCard,
 } from '@island.is/island-ui-native'
 import React from 'react'
-import {
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-} from 'react-native'
+import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
-import timeOutlineIcon from '../../assets/icons/time-outline.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
 import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
 import logo from '../../assets/logo/logo-64w.png'
+import { AppLoading } from '../../components/app-loading/app-loading'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { ViewPager } from '../../components/view-pager/view-pager'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
+import {
+  ListApplicationsResponse,
+  LIST_APPLICATIONS_QUERY,
+} from '../../graphql/queries/list-applications.query'
 import {
   ListNotificationsResponse,
   LIST_NOTIFICATIONS_QUERY,
@@ -32,49 +28,65 @@ import {
 import { authStore } from '../../stores/auth-store'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
+import { useUiStore } from '../../stores/ui-store'
 import { navigateToNotification } from '../../utils/deep-linking'
 import { useIntl } from '../../utils/intl'
-import { openBrowser } from '../../utils/rn-island'
 import { testIDs } from '../../utils/test-ids'
-import { ListApplicationsResponse, LIST_APPLICATIONS_QUERY } from '../../graphql/queries/list-applications.query'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 import { ApplicationsModule } from './applications-module'
 
-const { title, useNavigationTitle } = createNavigationTitle('home.screenTitle')
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(
+  (theme, intl, initialized) => ({
+    topBar: {
+      visible: initialized,
+      animate: false,
+      title: {
+        text: intl.formatMessage({ id: 'home.screenTitle' }),
+      },
+    },
+    bottomTab: {
+      ...({
+        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
+      } as any),
+      selectedIconColor: (null as any),
+      iconColor: theme.shade.foreground,
+      textColor: initialized ? theme.shade.foreground : theme.shade.background,
+      icon: initialized ? require('../../assets/icons/tabbar-home.png') : undefined,
+    },
+  }),
+  {
+    topBar: {
+      animate: false,
+      visible: false,
+    },
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_HOME,
+      iconInsets: {
+        top: 16,
+        bottom: -4,
+      },
+      iconWidth: 42,
+      iconHeight: 42,
+      disableIconTint: false,
+      disableSelectedIconTint: true,
+    },
+  },
+)
 
 export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  const { width, height } = useWindowDimensions()
+  useNavigationOptions(componentId)
   const notificationsStore = useNotificationsStore()
   const { dismissed, dismiss } = usePreferencesStore()
   const theme = useTheme()
   const intl = useIntl()
+  const ui = useUiStore()
+  console.log('oki233', authStore.getState().authorizeResult)
 
-  useNavigationTitle(componentId)
-
-  useScreenOptions(
-    () => ({
-      bottomTab: {
-        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
-        testID: testIDs.TABBAR_TAB_HOME,
-        iconInsets: {
-          top: 14,
-          bottom: -4,
-        },
-        iconWidth: 42,
-        iconHeight: 42,
-        icon: require('../../assets/icons/tabbar-home.png'),
-        disableIconTint: false,
-        disableSelectedIconTint: true,
-        selectedIconColor: null as any,
-        iconColor: theme.shade.foreground,
-        textColor: theme.shade.foreground,
-        selectedTextColor: theme.shade.foreground,
-      },
-    }),
-    [theme, intl, width, height],
-  )
 
   const notificationsRes = useQuery<ListNotificationsResponse>(
     LIST_NOTIFICATIONS_QUERY,
@@ -83,8 +95,12 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useQuery<ListApplicationsResponse>(
     LIST_APPLICATIONS_QUERY,
-    { client }
-  );
+    { client },
+  )
+
+  if (!ui.initializedApp) {
+    return <AppLoading />
+  }
 
   return (
     <>
@@ -107,7 +123,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
                 number="1"
                 description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
                 imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-                backgroundColor={theme.isDark ? '#2A1240' : theme.color.purple100}
+                backgroundColor={
+                  theme.isDark ? '#2A1240' : theme.color.purple100
+                }
               />
               <WelcomeCard
                 key="card-2"
@@ -165,11 +183,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   )
 }
 
-MainHomeScreen.options = {
-  topBar: {
-    title,
-  },
-}
+MainHomeScreen.options = getNavigationOptions;
 
 export const HomeScreen = CodePush({
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,

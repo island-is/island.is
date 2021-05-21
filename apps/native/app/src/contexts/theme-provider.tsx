@@ -1,60 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { StatusBar } from 'react-native'
+import { Platform } from 'react-native'
 import { useColorScheme } from 'react-native'
-import { Navigation, Options } from 'react-native-navigation'
-import { useNavigation } from 'react-native-navigation-hooks/dist'
-import {
-  ThemeProvider as StyledThemeProvider,
-  useTheme,
-} from 'styled-components'
+import { Navigation } from 'react-native-navigation'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { usePreferencesStore } from '../stores/preferences-store'
 import { getDefaultOptions } from '../utils/get-default-options'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 import { overrideUserInterfaceStyle } from '../utils/rn-island'
 
-export function useScreenOptions(
-  callback: () => Options | null | void,
-  deps: any[] = [],
-) {
-  const theme = useTheme()
-  const { mergeOptions } = useNavigation()
-  useEffect(() => {
-    const optionsToUpdate = callback?.()
-    if (optionsToUpdate) {
-      mergeOptions(optionsToUpdate)
-    }
-  }, deps)
-
-  useEffect(() => {
-    mergeOptions({
-      topBar: {
-        background: {
-          color: theme.isDark ? '#000000' : '#ffffff',
-        },
-        barStyle: theme.isDark ? ('black' as any) : 'default',
-        title: {
-          color: theme.isDark ? theme.color.white : theme.color.blue400,
-        },
-        noBorder: true,
-      },
-      layout: {
-        backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-        componentBackgroundColor: theme.isDark ? '#000000' : '#ffffff',
-      },
-      bottomTabs: {
-        barStyle: theme.isDark ? 'black' : 'default',
-        backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-      },
-    })
-  }, [theme])
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // const scheme = useColorScheme()
+  const systemScheme = useColorScheme()
   const preferences = usePreferencesStore()
-  const selectedTheme = getThemeWithPreferences(preferences)
+  const selectedTheme = getThemeWithPreferences(
+    preferences,
+    systemScheme ?? 'light',
+  )
+  const [prevColorScheme, setPrevColorScheme] = useState(
+    selectedTheme.colorScheme,
+  )
 
   useEffect(() => {
-    Navigation.setDefaultOptions(getDefaultOptions(selectedTheme))
+    if (prevColorScheme !== selectedTheme.colorScheme) {
+      Navigation.setDefaultOptions(getDefaultOptions(selectedTheme))
+      setPrevColorScheme(selectedTheme.colorScheme)
+    }
+
+    // Set status bar style
+    StatusBar.setBarStyle(selectedTheme.isDark ? 'light-content' : 'dark-content', true);
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(selectedTheme.shade.background, true);
+    }
   }, [selectedTheme])
 
   useEffect(() => {

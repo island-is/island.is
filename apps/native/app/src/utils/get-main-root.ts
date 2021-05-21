@@ -48,9 +48,6 @@ export function getMainRoot(): Layout {
           testID: testIDs.TABBAR_MAIN,
           currentTabIndex: 1,
         },
-        topBar: {
-          rightButtonColor: theme.color.blue400,
-        },
       },
       children: [
         {
@@ -103,9 +100,6 @@ export function getMainRoot(): Layout {
             options: {
               topBar: {
                 rightButtons,
-              },
-              bottomTab: {
-                ...(theme.isDark ? { iconColor: theme.color.white } : {}),
               },
             },
           },
