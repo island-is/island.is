@@ -35,6 +35,7 @@ import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
 import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
+import { useRouter } from 'next/router'
 
 interface NavigationData {
   title: string
@@ -127,7 +128,13 @@ export const OrganizationChatPanel = ({
   ) : null
 }
 
-const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
+const SecondaryMenu = ({
+  title,
+  items,
+}: {
+  title: string
+  items: NavigationItem[]
+}) => (
   <Box
     background="purple100"
     borderRadius="large"
@@ -136,12 +143,16 @@ const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
   >
     <Stack space={[1, 1, 2]}>
       <Text variant="eyebrow" as="h2">
-        {linkGroup.name}
+        {title}
       </Text>
-      {linkGroup.childrenLinks.map((link) => (
-        <Link key={link.url} href={link.url} underline="normal">
-          <Text key={link.url} as="span">
-            {link.text}
+      {items.map((link) => (
+        <Link key={link.href} href={link.href} underline="normal">
+          <Text
+            key={link.href}
+            as="span"
+            variant={link.active ? 'h5' : 'default'}
+          >
+            {link.title}
           </Text>
         </Link>
       ))}
@@ -163,11 +174,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
 }) => {
+  const Router = useRouter()
+
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: text === pageTitle,
+      active: Router.asPath === url,
     })) ?? []
 
   const metaTitleSuffix =
@@ -209,7 +222,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
                 {organizationPage.secondaryMenu && (
-                  <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
+                  <SecondaryMenu
+                    title={organizationPage.secondaryMenu.name}
+                    items={secondaryNavList}
+                  />
                 )}
                 {organizationPage.sidebarCards.map((card) => (
                   <ProfileCard
