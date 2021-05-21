@@ -26,7 +26,7 @@ describe('findByTagEndorsementList', () => {
   it(`GET /endorsement-list?tag should return 200 and empty list when no data exists for given tag`, async () => {
     const response = await request(app.getHttpServer())
       .get(
-        `/endorsement-list?tag=${EndorsementTag.PARTY_LETTER_SUDVESTURKJORDAEMI_2021}`,
+        `/endorsement-list?tag=${EndorsementTag.PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021}`,
       )
       .send()
       .expect(200)
@@ -36,7 +36,7 @@ describe('findByTagEndorsementList', () => {
   it(`GET /endorsement-list?tag should return 200 and a list`, async () => {
     const response = await request(app.getHttpServer())
       .get(
-        `/endorsement-list?tag=${EndorsementTag.PARTY_LETTER_SUDURKJORDAEMI_2021}`,
+        `/endorsement-list?tag=${EndorsementTag.PARTY_APPLICATION_SUDURKJORDAEMI_2021}`,
       )
       .send()
       .expect(200)

@@ -57,8 +57,8 @@ export class PartyApplicationService {
     const CREATE_ENDORSEMENT_LIST_QUERY = `
       mutation {
         endorsementSystemCreateEndorsementList(input: {
-          title: "Sigg",
-          description: "B",
+          title: "${application.answers.partyName}",
+          description: "${application.answers.partyLetter}",
           endorsementMeta: [fullName, address, signedTags],
           tags: [${constituencyTag}],
           validationRules: [],

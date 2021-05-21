@@ -31,7 +31,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         {workingCase.courtEndTime ? (
           <Text>
             {`Þinghald frá kl. ${formatDate(
-              workingCase.courtStartTime,
+              workingCase.courtStartDate,
               TIME_FORMAT,
             )} til kl. ${formatDate(
               workingCase.courtEndTime,
@@ -42,7 +42,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <>
             <Text>
               {`Þinghald frá kl. ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 TIME_FORMAT,
               )}`}
             </Text>

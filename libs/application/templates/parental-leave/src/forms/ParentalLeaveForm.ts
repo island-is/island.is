@@ -12,6 +12,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  ExternalData,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -30,7 +31,7 @@ import {
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { NO, StartDateOptions, YES } from '../constants'
+import { MANUAL, NO, StartDateOptions, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -105,37 +106,36 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'otherParent',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
+          condition: (answers, externalData) => {
+            const selectedChild = getSelectedChild(answers, externalData)
+
+            if (selectedChild !== null) {
+              return selectedChild.parentalRelation === 'primary'
+            }
+
+            return true
+          },
           children: [
             buildMultiField({
               id: 'otherParent',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
-              condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
-
-                if (selectedChild !== null) {
-                  return selectedChild.parentalRelation === 'primary'
-                }
-
-                return true
-              },
               children: [
                 buildRadioField({
                   id: 'otherParent',
                   title: 'Other parent',
                   options: (application) => getOtherParentOptions(application),
-                  largeButtons: true,
                 }),
                 buildTextField({
                   id: 'otherParentName',
-                  condition: (answers) => answers.otherParent === 'manual',
+                  condition: (answers) => answers.otherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'otherParentId',
-                  condition: (answers) => answers.otherParent === 'manual',
+                  condition: (answers) => answers.otherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -145,9 +145,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              largeButtons: true,
-              emphasize: true,
-              condition: (answers) => answers.otherParent === 'manual',
+              condition: (answers) => answers.otherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
@@ -217,14 +215,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  emphasize: true,
-                  largeButtons: false,
                   id: 'usePrivatePensionFund',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
+                  width: 'half',
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -279,7 +276,6 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowance',
               title: parentalLeaveFormMessages.personalAllowance.useYours,
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -305,7 +301,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
                   width: 'half',
-                  largeButtons: true,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -341,7 +336,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 // TODO add check if this person has a spouse...
                 return true
               },
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -368,7 +362,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
                   width: 'half',
-                  largeButtons: true,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -409,7 +402,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
-              largeButtons: true,
               width: 'half',
               options: [
                 {
@@ -510,13 +502,24 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers) =>
-                (answers as {
-                  requestRights: {
-                    isRequestingRights: string
-                  }
-                })?.requestRights?.isRequestingRights === NO,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
 
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
@@ -579,7 +582,6 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.periodAllAtOnce,
               description:
                 parentalLeaveFormMessages.shared.periodAllAtOnceDescription,
-              largeButtons: true,
               options: [
                 {
                   label: parentalLeaveFormMessages.shared.periodAllAtOnceYes,
@@ -615,7 +617,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'confirmLeaveDuration',
               title: parentalLeaveFormMessages.duration.title,
               description: parentalLeaveFormMessages.duration.description,
-              largeButtons: true,
               options: [
                 {
                   label: parentalLeaveFormMessages.duration.monthsOption,
@@ -761,8 +762,6 @@ export const ParentalLeaveForm: Form = buildForm({
         //       title: parentalLeaveFormMessages.shareInformation.title,
         //       description:
         //         parentalLeaveFormMessages.shareInformation.description,
-        //       emphasize: false,
-        //       largeButtons: true,
         //       options: [
         //         {
         //           label: parentalLeaveFormMessages.shareInformation.yesOption,

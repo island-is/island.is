@@ -9,7 +9,6 @@ import {
   TransitionCase,
   CaseState,
   CaseType,
-  Feature,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -44,7 +43,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 
@@ -52,7 +50,6 @@ export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-  const { features } = useContext(FeatureContext)
 
   const router = useRouter()
   const id = router.query.id
@@ -93,11 +90,13 @@ export const Overview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
-      return false
+      return
     }
 
-    if (workingCase.state === CaseState.DRAFT) {
-      try {
+    try {
+      const isDraft = workingCase.state === CaseState.DRAFT
+
+      if (isDraft) {
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
@@ -108,29 +107,40 @@ export const Overview: React.FC = () => {
         const resCase = await transitionCase(workingCase.id, transitionRequest)
 
         if (!resCase) {
-          return false
+          // TDOO: Handle error
+          return
         }
 
         setWorkingCase({
           ...workingCase,
           state: resCase.state,
         })
+      }
 
-        const notificationSent = await sendNotification(workingCase.id)
+      const notificationSent = await sendNotification(workingCase.id)
 
+      if (isDraft) {
+        // An SMS should have been sent
         if (notificationSent) {
           setModalText(
             'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
           )
         } else {
-          // TODO: Handle error
+          setModalText(
+            'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+          )
         }
-      } catch (e) {
-        // TODO: Handle error
+      } else {
+        // No SMS
+        setModalText(
+          'Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        )
       }
-    }
 
-    setModalVisible(true)
+      setModalVisible(true)
+    } catch (e) {
+      // TODO: Handle error
+    }
   }
 
   useEffect(() => {
@@ -154,6 +164,7 @@ export const Overview: React.FC = () => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -353,43 +364,40 @@ export const Overview: React.FC = () => {
                         </Text>
                       </Box>
                     )}
-                    {features.includes(Feature.CASE_FILES) &&
-                      Boolean(workingCase.caseFilesComments) && (
-                        <>
-                          <Text variant="h4" as="h4">
-                            Athugasemdir vegna rannsóknargagna
-                          </Text>
-                          <Text>
-                            <span className={styles.breakSpaces}>
-                              {workingCase.caseFilesComments}
-                            </span>
-                          </Text>
-                        </>
-                      )}
+                    {Boolean(workingCase.caseFilesComments) && (
+                      <>
+                        <Text variant="h4" as="h4">
+                          Athugasemdir vegna rannsóknargagna
+                        </Text>
+                        <Text>
+                          <span className={styles.breakSpaces}>
+                            {workingCase.caseFilesComments}
+                          </span>
+                        </Text>
+                      </>
+                    )}
                   </AccordionItem>
                 )}
-                {features.includes(Feature.CASE_FILES) && (
-                  <AccordionItem
-                    id="id_6"
-                    label={`Rannsóknargögn ${`(${
-                      workingCase.files ? workingCase.files.length : 0
-                    })`}`}
-                    labelVariant="h3"
-                  >
-                    <Box marginY={3}>
-                      <CaseFileList
-                        caseId={workingCase.id}
-                        files={workingCase.files || []}
-                      />
-                    </Box>
-                  </AccordionItem>
-                )}
+                <AccordionItem
+                  id="id_6"
+                  label={`Rannsóknargögn ${`(${
+                    workingCase.files ? workingCase.files.length : 0
+                  })`}`}
+                  labelVariant="h3"
+                >
+                  <Box marginY={3}>
+                    <CaseFileList
+                      caseId={workingCase.id}
+                      files={workingCase.files || []}
+                    />
+                  </Box>
+                </AccordionItem>
               </Accordion>
             </Box>
             <Box className={styles.prosecutorContainer}>
               <Text variant="h3">
                 {workingCase.prosecutor
-                  ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
+                  ? `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
                   : `${user?.name} ${user?.title}`}
               </Text>
             </Box>
@@ -403,11 +411,7 @@ export const Overview: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={
-                features.includes(Feature.CASE_FILES)
-                  ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
-                  : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
-              }
+              previousUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
               nextButtonText={
                 workingCase.state === CaseState.NEW ||
                 workingCase.state === CaseState.DRAFT

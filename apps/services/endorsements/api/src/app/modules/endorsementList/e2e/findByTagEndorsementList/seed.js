@@ -6,11 +6,11 @@ module.exports = {
   endorsementLists: [
     {
       ...getGenericEndorsementList(),
-      tags: ['partyLetterSudurkjordaemi2021'],
+      tags: ['partyApplicationSudurkjordaemi2021'],
     },
     {
       ...getGenericEndorsementList(),
-      tags: ['partyLetterSudurkjordaemi2021'],
+      tags: ['partyApplicationSudurkjordaemi2021'],
     },
   ],
 }

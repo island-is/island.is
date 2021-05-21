@@ -1,2 +1,6 @@
 export * from './lib/directorate-of-labour.module'
 export * from './lib/directorate-of-labour.service'
+export * from './models/parentalLeaves.model'
+export * from './models/pregnancyStatus.model'
+export * from './models/parentalLeaveEntitlement.model'
+export * from './models/parentalLeavePeriod.model'

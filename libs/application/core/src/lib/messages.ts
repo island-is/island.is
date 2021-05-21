@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  buttonEdit: {
+    id: 'application.system:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit button for review screen and so on',
+  },
   externalDataTitle: {
     id: 'application.system:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
@@ -134,6 +139,16 @@ export const coreMessages = defineMessages({
     description:
       'To continue the application process, you will need to sign in.',
   },
+  radioYes: {
+    id: 'application.system:radio.option.yes',
+    defaultMessage: 'Já',
+    description: 'Yes option value',
+  },
+  radioNo: {
+    id: 'application.system:radio.option.no',
+    defaultMessage: 'Nei',
+    description: 'No option value',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -141,5 +156,10 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.default.error',
     defaultMessage: 'Ógilt gildi',
     description: 'Generic invalid value error message',
+  },
+  errorDataProvider: {
+    id: 'application.system:core.error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+    description: 'Oops! Something went wrong when fetching your data',
   },
 })

@@ -1,10 +1,10 @@
 import React, { FC, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
+
 import {
   ApplicationConfigurations,
   FieldBaseProps,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldDescription,
@@ -12,7 +12,9 @@ import {
 } from '@island.is/shared/form-fields'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useApplicationAnswers } from '../../hooks/use-application-answers'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
@@ -20,6 +22,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const { selectedChild } = useApplicationAnswers(application)
 
   const { children, existingApplications } = get(
     application,
@@ -58,17 +61,14 @@ const ChildSelector: FC<FieldBaseProps> = ({
               parentalLeaveFormMessages.selectChild.title,
             )}
           />
+
           <Box marginY={3}>
             <RadioController
               id="selectedChild"
               disabled={false}
               name="selectedChild"
-              defaultValue={
-                getValueViaPath(
-                  application.answers,
-                  'selectedChild',
-                ) as string[]
-              }
+              largeButtons={true}
+              defaultValue={selectedChild}
               options={children.map((child, index) => ({
                 value: `${index}`,
                 label: child.expectedDateOfBirth,
@@ -77,6 +77,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
           </Box>
         </>
       )}
+
       {existingApplications.length > 0 && (
         <>
           <FieldDescription
@@ -84,14 +85,17 @@ const ChildSelector: FC<FieldBaseProps> = ({
               parentalLeaveFormMessages.selectChild.activeApplications,
             )}
           />
+
           <Box marginY={3}>
             {existingApplications.map(
               ({ applicationId, expectedDateOfBirth }) => (
                 <Button
                   key={applicationId}
-                  icon="arrowForward"
                   onClick={() => selectExistingApplication(applicationId)}
-                  variant="text"
+                  icon="arrowForward"
+                  variant="primary"
+                  colorScheme="light"
+                  size="small"
                 >
                   {expectedDateOfBirth}
                 </Button>

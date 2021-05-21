@@ -1,6 +1,15 @@
 import * as z from 'zod'
 import { m } from './messages'
 
+const EndorsementSchema = z.object({
+  id: z.number(),
+  date: z.string(),
+  name: z.string(),
+  nationalId: z.string(),
+  address: z.string(),
+  hasWarning: z.boolean(),
+})
+
 export const dataSchema = z.object({
   constituency: z
     .string()
@@ -14,7 +23,9 @@ export const dataSchema = z.object({
   partyLetter: z.string().nonempty(),
   partyName: z.string().nonempty(),
   reasonForReject: z.string().optional(),
-  endorsements: z.array(z.string()), // todo validate
+  endorsements: z.array(EndorsementSchema).optional(), //todo: validate
+  endorsementsWithWarning: z.array(EndorsementSchema).optional(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
+export type Endorsement = z.TypeOf<typeof EndorsementSchema>

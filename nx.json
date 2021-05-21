@@ -170,6 +170,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-family-matters-core": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -228,6 +231,12 @@
     "auth-nest-tools": {
       "tags": []
     },
+    "auth-react": {
+      "tags": []
+    },
+    "auth-scopes": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -271,6 +280,12 @@
       "tags": []
     },
     "content-search-toolkit": {
+      "tags": []
+    },
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -480,13 +495,19 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
       "tags": []
     },
     "services-auth-api": {
+      "tags": []
+    },
+    "services-auth-public-api": {
       "tags": []
     },
     "services-documents": {
@@ -545,6 +566,9 @@
       "tags": []
     },
     "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {
