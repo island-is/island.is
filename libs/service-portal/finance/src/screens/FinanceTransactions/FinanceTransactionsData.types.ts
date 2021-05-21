@@ -1,13 +1,5 @@
-export type FinanceStatus = {
-  foo: string
-}
-
-export type FinanceStatusDetails = {
-  foo: string
-}
-
 export type CustomerChargeType = {
-  chargeType: CustomerChargeTypeItem[]
+  chargeType?: CustomerChargeTypeItem[]
 }
 
 export type CustomerChargeTypeItem = {
@@ -16,7 +8,7 @@ export type CustomerChargeTypeItem = {
 }
 
 export type CustomerRecords = {
-  records: CustomerRecordsDetails[]
+  records?: CustomerRecordsDetails[]
 }
 
 export type CustomerRecordsDetails = {

@@ -2,7 +2,12 @@ import { Inject } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { FinanceStatus, FinanceStatusDetails } from './finance.types'
+import {
+  FinanceStatus,
+  FinanceStatusDetails,
+  CustomerChargeType,
+  CustomerRecords,
+} from './finance.types'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
@@ -48,12 +53,39 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
     OrgID: string,
     chargeTypeID: string,
-  ): Promise<FinanceStatus | null> {
+  ): Promise<FinanceStatusDetails | null> {
     const response = await this.get<FinanceStatusDetails | null>(
       // `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
       `/customerStatusByOrganizationDetails?nationalID=${
         process.env.FINANCE_TEST_USER
       }&OrgID=${'RIKI'}&chargeTypeID=${'AX'}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
+  async getCustomerChargeType(
+    nationalID: string,
+  ): Promise<CustomerChargeType | null> {
+    const response = await this.get<CustomerChargeType | null>(
+      `/customerChargeType?nationalID=${process.env.FINANCE_TEST_USER}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
+  async getCustomerRecords(
+    nationalID: string,
+    chargeTypeID: string,
+    dayFrom: string,
+    dayTo: string,
+  ): Promise<CustomerRecords | null> {
+    const response = await this.get<CustomerRecords | null>(
+      `/customerRecords?nationalID=${process.env.FINANCE_TEST_USER}&chargeTypeID=${chargeTypeID}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

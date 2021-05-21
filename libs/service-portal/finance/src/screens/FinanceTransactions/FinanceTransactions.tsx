@@ -1,7 +1,13 @@
 import React from 'react'
+import { gql, useQuery, useLazyQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { Table as T } from '@island.is/island-ui/core'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
 import FinanceTransactionsDetail from '../../components/FinanceTransactionsDetail/FinanceTransactionsDetail'
+import {
+  CustomerChargeType,
+  CustomerRecords,
+} from './FinanceTransactionsData.types'
 import {
   Box,
   Text,
@@ -15,9 +21,66 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
+const GetCustomerChargeTypeQuery = gql`
+  query GetCustomerChargeTypeQuery {
+    getCustomerChargeType {
+      chargeType {
+        id
+        name
+      }
+    }
+  }
+`
+const GetCustomerRecordsQuery = gql`
+  query GetCustomerRecordsQuery($input: GetCustomerRecordsInput!) {
+    getCustomerRecords(input: $input) {
+      records {
+        createDate
+        createTime
+        valueDate
+        performingOrganization
+        collectingOrganization
+        chargeType
+        itemCode
+        chargeItemSubject
+        periodType
+        period
+        amount
+        category
+        subCategory
+        actionCategory
+        reference
+        referenceToLevy
+        accountReference
+      }
+    }
+  }
+`
+
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
+
+  const { loading, ...queryData } = useQuery<Query>(GetCustomerChargeTypeQuery)
+  const chargeTypeData: CustomerChargeType =
+    queryData.data?.getCustomerChargeType || {}
+  console.log({ chargeTypeData, loading })
+
+  const { loading: cLoading, ...customerRecordsData } = useQuery<Query>(
+    GetCustomerRecordsQuery,
+    {
+      variables: {
+        input: {
+          chargeTypeID: 'AB',
+          dayFrom: '2021-01-01',
+          dayTo: '2021-03-31',
+        },
+      },
+    },
+  )
+  const custRecordsData: CustomerRecords =
+    customerRecordsData.data?.getCustomerRecords || {}
+  console.log({ custRecordsData, cLoading })
 
   return (
     <Box marginBottom={[6, 6, 10]}>

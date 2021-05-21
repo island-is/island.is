@@ -1,7 +1,10 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
+import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
+import { CustomerChargeType } from './models/customerChargeType.model'
+import { CustomerRecords } from './models/customerRecords.model'
 
 import {
   IdsUserGuard,
@@ -30,6 +33,24 @@ export class FinanceResolver {
       user.nationalId,
       input.OrgID,
       input.chargeTypeID,
+    )
+  }
+
+  @Query(() => CustomerChargeType, { nullable: true })
+  async getCustomerChargeType(@CurrentUser() user: User) {
+    return this.FinanceService.getCustomerChargeType(user.nationalId)
+  }
+
+  @Query(() => CustomerRecords, { nullable: true })
+  async getCustomerRecords(
+    @CurrentUser() user: User,
+    @Args('input') input: GetCustomerRecordsInput,
+  ) {
+    return this.FinanceService.getCustomerRecords(
+      user.nationalId,
+      input.chargeTypeID,
+      input.dayFrom,
+      input.dayTo,
     )
   }
 }

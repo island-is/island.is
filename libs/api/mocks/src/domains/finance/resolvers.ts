@@ -15,5 +15,11 @@ export const resolvers: Resolvers = {
     getFinanceStatusDetails: () => {
       return store.financeStatusDetails
     },
+    getCustomerChargeType: () => {
+      return store.customerChargeType
+    },
+    getCustomerRecords: () => {
+      return store.customerRecords
+    },
   },
 }
