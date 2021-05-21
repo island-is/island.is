@@ -769,9 +769,7 @@ export class ResourcesService {
 
   // #endregion ApiScopeGroup
 
-  async findActorApiScopes(
-    requestedScopes: string[],
-  ): Promise<string[] | null> {
+  async findActorApiScopes(requestedScopes: string[]): Promise<string[]> {
     const scopes: ApiScope[] = await this.apiScopeModel.findAll({
       where: {
         alsoForDelegatedUser: true,
