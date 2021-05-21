@@ -12,7 +12,7 @@ import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { YES, NO } from './constants'
+import { YES, NO, MANUAL } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
@@ -58,6 +58,7 @@ export function formatPeriods(
   otherParentPeriods?: Period[],
 ): TimelinePeriod[] {
   const timelinePeriods: TimelinePeriod[] = []
+
   periods?.forEach((period, index) => {
     if (period.startDate && period.endDate) {
       timelinePeriods.push({
@@ -68,6 +69,7 @@ export function formatPeriods(
       })
     }
   })
+
   otherParentPeriods?.forEach((period) => {
     timelinePeriods.push({
       startDate: period.startDate,
@@ -153,7 +155,7 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.noOtherParent,
     },
     {
-      value: 'manual',
+      value: MANUAL,
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]

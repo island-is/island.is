@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, defineMessage } from 'react-intl'
 
 // Contract
 export const contract = {
@@ -59,7 +59,22 @@ export const contract = {
       description: 'Text for child benefit',
     },
   }),
-  pdfButton: defineMessages({
+  duration: defineMessage({
+    text: {
+      id: 'crc.application:section.contract.overview.duration.text',
+      defaultMessage: 'Samningurinn er tímabundinn og gildir til {date}',
+      description: 'Duration contract text',
+    },
+  }),
+  checkbox: defineMessage({
+    label: {
+      id: 'crc.application:section.contract.overview.checkbox.label',
+      defaultMessage:
+        'Ég hef lesið yfir samningsskjalið og er tilbúin/n að undirrita samninginn',
+      description: 'Label for confirm checkbox',
+    },
+  }),
+  pdfButton: defineMessage({
     label: {
       id: 'crc.application:section.contract.overview.pdfButton.label',
       defaultMessage: 'Sjá samning á PDF skjali',

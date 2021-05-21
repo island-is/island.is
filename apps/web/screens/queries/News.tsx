@@ -21,6 +21,7 @@ export const GET_NEWS_QUERY = gql`
         genericTags {
           id
           title
+          slug
         }
       }
     }
@@ -57,6 +58,7 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
       genericTags {
         id
         title
+        slug
       }
     }
   }

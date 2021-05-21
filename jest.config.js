@@ -90,7 +90,9 @@ module.exports = {
     '<rootDir>/libs/content-search-indexer/types',
     '<rootDir>/libs/content-search-metrics',
     '<rootDir>/libs/content-search-toolkit',
-    '<rootDir>/libs/contentful-translation-extension',
+    '<rootDir>/libs/contentful-extensions/mideind-translation',
+    '<rootDir>/libs/contentful-extensions/parent-slug',
+    '<rootDir>/libs/contentful-extensions/translation',
     '<rootDir>/libs/dokobit-signing',
     '<rootDir>/libs/email-service',
     '<rootDir>/libs/feature-flags',
@@ -157,5 +159,6 @@ module.exports = {
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
     '<rootDir>/apps/services/auth-public-api',
     '<rootDir>/libs/service-portal/settings/access-control',
+    '<rootDir>/libs/auth/scopes',
   ],
 }

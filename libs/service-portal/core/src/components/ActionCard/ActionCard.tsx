@@ -4,7 +4,7 @@ import {
   Button,
   Text,
   Link,
-  LoadingIcon,
+  LoadingDots,
   FocusableBox,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
@@ -96,7 +96,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
           borderRadius="large"
           background="blue100"
         >
-          <LoadingIcon animate size={30} />
+          <LoadingDots />
         </Box>
       )}
     </Box>

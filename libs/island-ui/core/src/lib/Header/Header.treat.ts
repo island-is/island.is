@@ -1,6 +1,6 @@
 import { style } from 'treat'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
@@ -9,17 +9,25 @@ export const container = responsiveStyleMap({
 })
 
 export const infoContainer = style({
-  display: 'none',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'flex',
-
+  ...themeUtils.responsiveStyle({
+    md: {
       borderLeftWidth: '1px',
       borderStyle: 'solid',
       borderColor: theme.color.dark100,
     },
-  },
+  }),
+})
+
+export const infoDescription = style({
+  fontWeight: 300,
+  lineHeight: 1.5,
+  fontSize: 14,
+
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: 18,
+    },
+  }),
 })
 
 export const userNameContainer = style({
