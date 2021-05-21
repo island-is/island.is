@@ -373,7 +373,7 @@ export class ResourcesService extends BaseService {
   }
 
   /** Returns all ApiScopeGroups with Paging */
-  static async findAndCountAllApiScopeGroups(
+  static async findAllApiScopeGroups(
     page: number = null,
     count: number = null,
   ): Promise<
@@ -384,7 +384,10 @@ export class ResourcesService extends BaseService {
     | ApiScopeGroup[]
     | null
   > {
-    return BaseService.GET(`api-scope-group?page=${page}&count=${count}`)
+    if (page && count) {
+      return BaseService.GET(`api-scope-group?page=${page}&count=${count}`)
+    }
+    return BaseService.GET(`api-scope-group`)
   }
   // #endregion ApiScopeGroup
 }

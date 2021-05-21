@@ -1295,6 +1295,11 @@
           "helpText": "The description value will be used e.g. on the consent screen.",
           "errorMessage": "Description needs to be in the right format"
         },
+        "groupId": {
+          "label": "Group",
+          "helpText": "Assign this Api Scope to a group",
+          "selectAnItem": "Select a group if needed"
+        },
         "enabled": {
           "label": "Enabled",
           "placeholder": "",

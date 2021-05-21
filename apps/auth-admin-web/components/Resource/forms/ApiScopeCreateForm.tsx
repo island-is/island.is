@@ -8,6 +8,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -20,6 +21,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
+  const [groups, setGroups] = useState<ApiScopeGroup[]>([])
   const [nameLength, setNameLength] = useState(0)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
@@ -30,7 +32,16 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
       setIsEditing(true)
       setAvailable(true)
     }
+    getGroups()
   }, [props.apiScope])
+
+  const getGroups = async () => {
+    const response = await ResourcesService.findAllApiScopeGroups()
+    console.log(response)
+    if (response) {
+      setGroups(response as ApiScopeGroup[])
+    }
+  }
 
   const checkAvailability = async (name: string) => {
     setNameLength(name.length)
@@ -180,7 +191,25 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   >
                     {localization.fields['groupId'].label}
                   </label>
-                  <select id="groupId" name="groupId" ref={register()}></select>
+                  <select id="groupId" name="groupId" ref={register()}>
+                    <option
+                      value={'null'}
+                      selected={props.apiScope.groupId === null}
+                    >
+                      {localization.fields['groupId'].selectAnItem}
+                    </option>
+                    {groups.map((group: ApiScopeGroup) => {
+                      return (
+                        <option
+                          value={group.id}
+                          key={group.id}
+                          selected={group.id === props.apiScope.groupId}
+                        >
+                          {group.name} - {group.description}
+                        </option>
+                      )
+                    })}
+                  </select>
                   <HelpBox helpText={localization.fields['groupId'].helpText} />
                 </div>
 
