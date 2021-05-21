@@ -63,11 +63,11 @@ export const routesTemplate = {
   },
   apicataloguedetailpage: {
     is: '/stofnanir/stafraent-island/vefthjonustur/[slug]',
-    en: '/en/developers/webservices/[slug]',
+    en: '',
   },
   apicataloguepage: {
     is: '/stofnanir/stafraent-island/vefthjonustur',
-    en: '/en/developers/webservices',
+    en: '',
   },
   organizationsubpage: {
     is: '/stofnanir/[slug]/[subSlug]',
