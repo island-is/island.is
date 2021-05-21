@@ -33,7 +33,6 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
     .data as any).id
   const { formatMessage } = useLocale()
   const { answers, externalData } = application // todo render correct answers
-  console.log(application)
   const [endorsements, setEndorsements] = useState<Endorsement[]>()
 
   const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {
