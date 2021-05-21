@@ -13,23 +13,41 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/environment'
+
+const namespace = `${environment.audit.defaultNamespace}/client-post-logout-redirect-uri`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-post-logout-redirect-uri')
 @Controller('backend/client-post-logout-redirect-uri')
+@Audit({ namespace })
 export class ClientPostLogoutRedirectUriController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new Grant type to client */
   @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientPostLogoutRedirectUri })
+  @Audit<ClientPostLogoutRedirectUri>({
+    resources: (uri) => uri.clientId,
+    meta: ({ redirectUri }) => ({ redirectUri }),
+  })
   async create(
     @Body() postLogoutUri: ClientPostLogoutRedirectUriDTO,
   ): Promise<ClientPostLogoutRedirectUri> {
-    return await this.clientsService.addPostLogoutRedirectUri(postLogoutUri)
+    return this.clientsService.addPostLogoutRedirectUri(postLogoutUri)
   }
 
   /** Removes a grant type from client */
@@ -39,14 +57,21 @@ export class ClientPostLogoutRedirectUriController {
   async delete(
     @Param('clientId') clientId: string,
     @Param('redirectUri') redirectUri: string,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!clientId || !redirectUri) {
       throw new BadRequestException('clientId and redirectUri must be provided')
     }
 
-    return await this.clientsService.removePostLogoutRedirectUri(
-      clientId,
-      redirectUri,
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: clientId,
+        meta: { redirectUri },
+      },
+      this.clientsService.removePostLogoutRedirectUri(clientId, redirectUri),
     )
   }
 }

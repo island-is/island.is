@@ -12,36 +12,64 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/environment'
+
+const namespace = `${environment.audit.defaultNamespace}/client-secret`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-secret')
 @Controller('backend/client-secret')
+@Audit({ namespace })
 export class ClientSecretController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new secret to client */
   @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientSecret })
+  @Audit<ClientSecret>({
+    resources: (secret) => secret.clientId,
+  })
   async create(@Body() clientSecret: ClientSecretDTO): Promise<ClientSecret> {
     if (!clientSecret) {
       throw new BadRequestException('Client Secret object is required')
     }
 
-    return await this.clientsService.addClientSecret(clientSecret)
+    return this.clientsService.addClientSecret(clientSecret)
   }
 
   /** Removes a secret from client */
   @Scopes(Scope.root, Scope.full)
   @Delete()
   @ApiCreatedResponse()
-  async delete(@Body() clientSecret: ClientSecretDTO): Promise<number> {
+  async delete(
+    @Body() clientSecret: ClientSecretDTO,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!clientSecret) {
       throw new BadRequestException('The Client Secret object is required')
     }
 
-    return await this.clientsService.removeClientSecret(clientSecret)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: clientSecret.clientId,
+      },
+      this.clientsService.removeClientSecret(clientSecret),
+    )
   }
 }

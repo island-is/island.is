@@ -3,6 +3,7 @@ import {
   ApiScopeUserDTO,
   ApiScopeUser,
   ApiScopeUserUpdateDTO,
+  PagedRowsDto,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -34,12 +35,12 @@ import { Scope } from '../access/scope.constants'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/environment'
 
+const namespace = `${environment.audit.defaultNamespace}/access`
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-access')
 @Controller('backend/api-access')
-@Audit({
-  namespace: environment.audit.defaultNamespace + '/access',
-})
+@Audit({ namespace })
 export class AccessController {
   constructor(
     private readonly accessService: AccessService,
@@ -51,17 +52,16 @@ export class AccessController {
   @Get(':nationalId')
   @ApiOkResponse({ type: ApiScopeUser })
   @Audit<ApiScopeUser>({
-    resources: (user) => user?.nationalId ?? '',
+    resources: (user) => user?.nationalId,
   })
   async findOne(
     @Param('nationalId') nationalId: string,
-  ): Promise<ApiScopeUser | null> {
+  ): Promise<ApiScopeUser> {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
     }
 
-    const apiScopeUser = await this.accessService.findOne(nationalId)
-    return apiScopeUser
+    return this.accessService.findOne(nationalId)
   }
 
   /** Gets x many admins based on pagenumber and count variable */
@@ -87,38 +87,26 @@ export class AccessController {
       ],
     },
   })
-  @Audit()
+  @Audit<PagedRowsDto<ApiScopeUser>>({
+    resources: (result) => result.rows.map((user) => user.nationalId),
+  })
   async findAndCountAll(
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
-    const admins = await this.accessService.findAndCountAll(
-      searchString,
-      page,
-      count,
-    )
-    return admins
+  ): Promise<PagedRowsDto<ApiScopeUser>> {
+    return this.accessService.findAndCountAll(searchString, page, count)
   }
 
   /** Creates a new Api Scope User */
   @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ApiScopeUser })
-  async create(
-    @Body() apiScopeUser: ApiScopeUserDTO,
-    @CurrentUser() user: User,
-  ): Promise<ApiScopeUser | null> {
-    const response = await this.auditService.auditPromise(
-      {
-        user,
-        action: 'create',
-        resources: apiScopeUser.nationalId,
-        meta: { fields: Object.keys(apiScopeUser) },
-      },
-      this.accessService.create(apiScopeUser),
-    )
-    return response
+  @Audit<ApiScopeUser>({
+    resources: (user) => user?.nationalId,
+  })
+  async create(@Body() apiScopeUser: ApiScopeUserDTO): Promise<ApiScopeUser> {
+    return this.accessService.create(apiScopeUser)
   }
 
   /** Updates an existing Api Scope User */
@@ -129,15 +117,16 @@ export class AccessController {
     @Body() admin: ApiScopeUserUpdateDTO,
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
-  ): Promise<ApiScopeUser | null> {
+  ): Promise<ApiScopeUser> {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
     }
 
-    return await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'udpate',
+        namespace,
         resources: nationalId,
         meta: { fields: Object.keys(admin) },
       },
@@ -157,10 +146,11 @@ export class AccessController {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    return await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         user,
         action: 'delete',
+        namespace,
         resources: nationalId,
       },
       this.accessService.delete(nationalId),

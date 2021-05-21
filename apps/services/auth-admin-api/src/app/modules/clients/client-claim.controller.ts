@@ -13,21 +13,38 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import { Scope } from '../access/scope.constants'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/environment'
 
+const namespace = `${environment.audit.defaultNamespace}/client-claim`
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-claim')
 @Controller('backend/client-claim')
+@Audit({ namespace })
 export class ClientClaimController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new claim to client */
   @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientClaim })
+  @Audit<ClientClaim>({
+    resources: (claim) => claim.clientId,
+    meta: (claim) => ({ type: claim.type, value: claim.value }),
+  })
   async create(@Body() claim: ClientClaimDTO): Promise<ClientClaim> {
-    return await this.clientsService.addClaim(claim)
+    return this.clientsService.addClaim(claim)
   }
 
   /** Removes a claim from client */
@@ -38,6 +55,7 @@ export class ClientClaimController {
     @Param('clientId') clientId: string,
     @Param('claimType') claimType: string,
     @Param('claimValue') claimValue: string,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!clientId || !claimType || !claimValue) {
       throw new BadRequestException(
@@ -45,10 +63,14 @@ export class ClientClaimController {
       )
     }
 
-    return await this.clientsService.removeClaim(
-      clientId,
-      claimType,
-      claimValue,
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: `${clientId}/${claimType}/${claimValue}`,
+      },
+      this.clientsService.removeClaim(clientId, claimType, claimValue),
     )
   }
 }
