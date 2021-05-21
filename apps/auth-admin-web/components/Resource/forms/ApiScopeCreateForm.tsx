@@ -173,6 +173,16 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     id={props.apiScope.name}
                   />
                 </div>
+                <div className="api-scope-form__container__field">
+                  <label
+                    htmlFor="description"
+                    className="api-scope-form__label"
+                  >
+                    {localization.fields['groupId'].label}
+                  </label>
+                  <select id="groupId" name="groupId" ref={register()}></select>
+                  <HelpBox helpText={localization.fields['groupId'].helpText} />
+                </div>
 
                 <div className="api-scope-form__container__checkbox__field">
                   <label htmlFor="enabled" className="api-scope-form__label">
