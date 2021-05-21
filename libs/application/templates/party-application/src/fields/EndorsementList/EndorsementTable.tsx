@@ -25,25 +25,25 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const renderRow = (endorsement: Endorsement) => {
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.date}>
-          {formatDate(endorsement.date)}
+        <T.Data key={endorsement.id + endorsement.created}>
+          {formatDate(endorsement.created)}
         </T.Data>
-        <T.Data key={endorsement.id + endorsement.name}>
-          {endorsement.name}
+        <T.Data key={endorsement.id + endorsement.meta.fullName}>
+          {endorsement.meta.fullName}
         </T.Data>
-        <T.Data key={endorsement.id + endorsement.nationalId}>
-          {formatKennitala(endorsement.nationalId)}
+        <T.Data key={endorsement.id + endorsement.endorser}>
+          {formatKennitala(endorsement.endorser)}
         </T.Data>
         <T.Data
           key={endorsement.id}
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: endorsement.meta.invalidated ? 'yellow200' : 'white',
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning ? (
+          {endorsement.meta.invalidated ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address.streetAddress}
+              {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
                 <Tooltip
                   color="blue400"
@@ -53,7 +53,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            endorsement.address.streetAddress
+            endorsement.meta.address.streetAddress
           )}
         </T.Data>
       </T.Row>

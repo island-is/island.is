@@ -99,7 +99,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 ? setEndorsements(endorsements)
                 : setEndorsements(
                     endorsements
-                      ? endorsements.filter((x) => x.hasWarning)
+                      ? endorsements.filter((x) => x.meta.invalidated)
                       : endorsements,
                   )
             }}
@@ -117,7 +117,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setEndorsements(
                 endorsements
                   ? endorsements.filter((x) =>
-                      x.name.startsWith(e.target.value),
+                      (x.meta.fullName ?? '').startsWith(e.target.value),
                     )
                   : endorsements,
               )
