@@ -519,10 +519,10 @@
     "services-party-letter-registry-api": {
       "tags": []
     },
-    "services-temporary-voter-registry-api": {
+    "services-search-indexer": {
       "tags": []
     },
-    "services-search-indexer": {
+    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {
