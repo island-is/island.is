@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-import { CSVLink } from 'react-csv'
 import { Endorsement } from '../../types'
 
 const GET_ENDORSEMENT_LIST = gql`
@@ -114,17 +113,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
-          <CSVLink
-            data={
-              endorsements ??
-              formatMessage(m.supremeCourt.noEndorsementsMessage)
-            }
-            filename={filename()}
-          >
-            <Button variant="text" icon="download" iconType="outline">
-              {formatMessage(m.supremeCourt.csvButton)}
-            </Button>
-          </CSVLink>
+
         </Box>
         <Box marginBottom={3} width="half">
           <Text variant="h5">
