@@ -12,10 +12,8 @@ import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 import { theme } from '@island.is/island-ui/theme'
-import { SimpleSlider } from '@island.is/web/components'
+import { NewsCardNew, SimpleSlider } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-
-import { NewsCardNew } from '../NewsCardNew'
 
 interface LatestNewsProps {
   label: string

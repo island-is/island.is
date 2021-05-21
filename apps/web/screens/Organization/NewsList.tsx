@@ -279,7 +279,6 @@ const NewsList: Screen<NewsListProps> = ({
             key={index}
             title={newsItem.title}
             introduction={newsItem.intro}
-            slug={newsItem.slug}
             image={newsItem.image}
             titleAs="h2"
             href={

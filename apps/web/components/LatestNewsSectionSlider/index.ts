@@ -1,1 +1,1 @@
-export * from './LatestNewsSectionNew'
+export * from './LatestNewsSectionSlider'

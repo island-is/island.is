@@ -8,19 +8,19 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
+import { NewsCardNew } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   AllSlicesImageFragment as Image,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
-
-import * as styles from './AboutLatestNews.treat'
-import NewsCard from '../NewsCard/NewsCard'
 import {
   useLinkResolver,
   LinkResolverResponse,
 } from '@island.is/web/hooks/useLinkResolver'
+
+import * as styles from './AboutLatestNews.treat'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
@@ -76,12 +76,10 @@ export const AboutLatestNews = ({
             span={['1/1', '1/1', '1/2']}
             paddingTop={[7, 7, 15]}
           >
-            <NewsCard
+            <NewsCardNew
               key={index}
               title={newsItem.title}
-              subtitle={newsItem.subtitle}
               introduction={newsItem.intro}
-              slug={newsItem.slug}
               image={newsItem.image}
               {...linkResolver('news', [newsItem.slug])}
               readMoreText={n('readMore', 'Lesa nánar')}
