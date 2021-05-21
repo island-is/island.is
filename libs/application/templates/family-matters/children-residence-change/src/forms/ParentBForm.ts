@@ -135,7 +135,7 @@ export const ParentBForm: Form = buildForm({
                 {
                   event: DefaultEvents.REJECT,
                   name: m.rejectContract.general.rejectButton,
-                  type: 'primary',
+                  type: 'reject',
                 },
               ],
             }),
