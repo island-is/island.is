@@ -5,7 +5,7 @@ import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import {
-  CREATE_PDF_PRESIGNED_URL,
+  GENERATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
   UPLOAD_SIGNED_FILE,
   GET_PRESIGNED_URL,
@@ -48,9 +48,9 @@ const Overview = ({
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
   const [
-    createPdfPresignedUrl,
+    generatePdfPresignedUrl,
     { loading: createLoadingUrl, data: createResponse },
-  ] = useMutation(CREATE_PDF_PRESIGNED_URL)
+  ] = useMutation(GENERATE_PDF_PRESIGNED_URL)
 
   const [
     getPresignedUrl,
@@ -75,18 +75,18 @@ const Overview = ({
     }
 
     application.state === ApplicationStates.DRAFT
-      ? createPdfPresignedUrl(input)
+      ? generatePdfPresignedUrl(input)
       : getPresignedUrl(input)
   }, [
     application.id,
-    createPdfPresignedUrl,
+    generatePdfPresignedUrl,
     getPresignedUrl,
     application.state,
     pdfType,
   ])
 
   const pdfUrl =
-    createResponse?.createPdfPresignedUrl?.url ||
+    createResponse?.generatePdfPresignedUrl?.url ||
     getResponse?.getPresignedUrl?.url
 
   setBeforeSubmitCallback &&

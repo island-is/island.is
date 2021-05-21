@@ -140,7 +140,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async createPdfPresignedUrl(input: CreatePdfInput, auth: Auth) {
+  async generatePdfPresignedUrl(input: CreatePdfInput, auth: Auth) {
     const { id, ...createPdfDto } = input
     return await this.applicationApiWithAuth(auth)
       .applicationControllerCreatePdf({

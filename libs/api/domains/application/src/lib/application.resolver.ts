@@ -113,11 +113,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async createPdfPresignedUrl(
+  async generatePdfPresignedUrl(
     @Args('input') input: CreatePdfInput,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
-    return this.applicationService.createPdfPresignedUrl(input, user)
+    return this.applicationService.generatePdfPresignedUrl(input, user)
   }
 
   @Mutation(() => RequestFileSignatureResponse, { nullable: true })
