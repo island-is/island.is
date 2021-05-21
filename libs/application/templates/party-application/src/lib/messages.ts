@@ -247,7 +247,7 @@ export const m: MessageDir = {
     },
     warningMessageTitleLow: {
       id: 'pa.application:endorsementListSubmission.warningMessageTitleLow',
-      defaultMessage: 'Leyfilegur fjöldi meðmæla of litill',
+      defaultMessage: 'Leyfilegur fjöldi meðmæla of lítill',
       description: 'Warning message title when nr of endorsements is too low',
     },
     warningMessagePt1: {
