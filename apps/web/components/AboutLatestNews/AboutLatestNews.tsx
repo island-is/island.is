@@ -8,7 +8,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
-import { NewsCardNew } from '@island.is/web/components'
+import { NewsCard } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useNamespace } from '@island.is/web/hooks'
 import {
@@ -76,7 +76,7 @@ export const AboutLatestNews = ({
             span={['1/1', '1/1', '1/2']}
             paddingTop={[7, 7, 15]}
           >
-            <NewsCardNew
+            <NewsCard
               key={index}
               title={newsItem.title}
               introduction={newsItem.intro}

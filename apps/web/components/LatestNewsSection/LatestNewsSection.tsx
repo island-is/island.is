@@ -8,7 +8,7 @@ import {
   Button,
   Box,
 } from '@island.is/island-ui/core'
-import { NewsCardNew } from '@island.is/web/components'
+import { NewsCard } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
@@ -96,7 +96,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
               key={newsItem.slug}
               paddingBottom={2}
             >
-              <NewsCardNew
+              <NewsCard
                 title={newsItem.title}
                 introduction={newsItem.intro}
                 readMoreText={t.readMore}

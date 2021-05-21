@@ -1,12 +1,11 @@
 import React from 'react'
+import { useMeasure } from 'react-use'
 import {
   Text,
-  Link,
   Box,
   Button,
-  TagProps,
-  Tag,
-  Inline,
+  FocusableBox,
+  Stack,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -14,104 +13,130 @@ import { Image } from '@island.is/web/graphql/schema'
 
 import * as styles from './NewsCard.treat'
 
-type TagsProps = {
-  tagProps?: Omit<TagProps, 'children'>
-  title: string
-}
-
 interface NewsCardProps {
   title: string
-  subtitle?: string
   introduction: string
-  slug: string
   image?: Partial<Image>
   readMoreText?: string
   href: string
   date?: string
-  imagePosition?: 'top' | 'right'
   titleAs?: 'h2' | 'h3' | 'h4'
-  tags?: Array<TagsProps>
+  mini?: boolean
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
   title,
-  subtitle,
   introduction,
   image,
   readMoreText = 'Lesa nánar',
   href,
   date,
   titleAs = 'h3',
-  tags = [],
+  mini,
 }) => {
+  const [ref, { width }] = useMeasure()
   const { format } = useDateUtils()
+
+  let showImage = false
+
+  if (width > 600) {
+    showImage = true
+  }
+
+  const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
+
+  if (mini) {
+    return (
+      <FocusableBox
+        ref={ref}
+        href={href}
+        paddingX={[0, 2, 5]}
+        paddingY={[2, 2, 3]}
+        className={styles.mini}
+      >
+        <Box
+          ref={ref}
+          display="flex"
+          flexGrow={1}
+          width="full"
+          height="full"
+          paddingX={[3, 3, 0]}
+        >
+          <Stack space={2}>
+            {!!formattedDate && <Text variant="eyebrow">{formattedDate}</Text>}
+            <Text variant="h2" as={titleAs}>
+              {title}
+            </Text>
+          </Stack>
+        </Box>
+      </FocusableBox>
+    )
+  }
+
   return (
-    <Box
-      component={Link}
+    <FocusableBox
+      ref={ref}
       href={href}
-      className={styles.root}
-      boxShadow="subtle"
-      overflow="hidden"
-      borderRadius="large"
+      paddingX={[2, 2, 5, 5]}
+      paddingY={[3, 3, 5, 5]}
       display="flex"
-      flexDirection="column"
       height="full"
       background="white"
+      borderRadius="large"
+      borderColor="blue200"
+      borderWidth="standard"
     >
-      <div className={styles.image}>
-        <BackgroundImage
-          width={600}
-          image={{
-            url: image.url,
-            title: image.title,
-          }}
-        />
-      </div>
       <Box
-        className={styles.content}
+        ref={ref}
         display="flex"
-        flexDirection="column"
-        padding={3}
-        paddingBottom={5}
-        height="full"
+        flexDirection="row"
+        background="white"
+        justifyContent="spaceBetween"
       >
-        <Text variant="eyebrow" color="purple400" paddingBottom={2}>
-          {subtitle}
-        </Text>
-        {date && (
-          <Text variant="eyebrow" as="p" color="purple400" paddingBottom={2}>
-            {format(new Date(date), 'do MMMM yyyy')}
-          </Text>
-        )}
-        <Text variant="h3" as={titleAs} paddingBottom={1}>
-          {title}
-        </Text>
-        {!!tags.length && (
-          <Box paddingTop={2} paddingBottom={3}>
-            <Inline space={2}>
-              {tags.map(({ title }, index) => {
-                return (
-                  <Tag key={index} variant="blue" outlined disabled>
-                    {title}
-                  </Tag>
-                )
-              })}
-            </Inline>
+        <Box
+          display="flex"
+          flexDirection="column"
+          flexGrow={1}
+          width="full"
+          justifyContent="spaceBetween"
+        >
+          <Stack space={2}>
+            <Text variant="eyebrow">{formattedDate}</Text>
+            <Text variant="h2" as={titleAs}>
+              {title}
+            </Text>
+            <Text>{introduction}</Text>
+          </Stack>
+          <Box marginTop={2}>
+            <Button
+              icon="arrowForward"
+              iconType="filled"
+              variant="text"
+              as="span"
+              disabled
+            >
+              {readMoreText}
+            </Button>
+          </Box>
+        </Box>
+        {!!showImage && (
+          <Box flexGrow={0} width="full" className={styles.image}>
+            <BackgroundImage
+              width={600}
+              quality={60}
+              positionX="left"
+              backgroundSize="cover"
+              ratio="1:1"
+              thumbnailColor="blue100"
+              image={{
+                url: image.url,
+                title: image.title,
+              }}
+            />
           </Box>
         )}
-        <Text paddingBottom={3}>{introduction}</Text>
-        <div className={styles.readMore}>
-          <Button
-            icon="arrowForward"
-            iconType="filled"
-            variant="text"
-            as="span"
-          >
-            {readMoreText}
-          </Button>
-        </div>
       </Box>
-    </Box>
+    </FocusableBox>
   )
 }
 

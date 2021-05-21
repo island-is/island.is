@@ -7,7 +7,7 @@ import {
   Select as NativeSelect,
   OrganizationWrapper,
   lightThemes,
-  NewsCardNew,
+  NewsCard,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -42,7 +42,6 @@ import {
   Query,
   QueryGetOrganizationPageArgs,
 } from '../../graphql/schema'
-import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 
@@ -275,7 +274,7 @@ const NewsList: Screen<NewsListProps> = ({
           </Text>
         )}
         {newsList.map((newsItem, index) => (
-          <NewsCardNew
+          <NewsCard
             key={index}
             title={newsItem.title}
             introduction={newsItem.intro}

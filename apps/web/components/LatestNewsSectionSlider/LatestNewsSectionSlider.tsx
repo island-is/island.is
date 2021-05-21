@@ -12,7 +12,7 @@ import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 import { theme } from '@island.is/island-ui/theme'
-import { NewsCardNew, SimpleSlider } from '@island.is/web/components'
+import { NewsCard, SimpleSlider } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LatestNewsProps {
@@ -68,7 +68,7 @@ export const LatestNewsSectionSlider: React.FC<LatestNewsProps> = ({
               .filter((x) => x.slug && x.title)
               .map(({ title, image, intro, slug, date }, index) => {
                 return (
-                  <NewsCardNew
+                  <NewsCard
                     key={index}
                     title={title}
                     introduction={intro}

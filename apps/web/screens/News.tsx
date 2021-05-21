@@ -46,7 +46,7 @@ import {
   GetSingleNewsItemQuery,
   QueryGetSingleNewsArgs,
 } from '../graphql/schema'
-import { NewsCardNew, HeadWithSocialSharing } from '@island.is/web/components'
+import { NewsCard, HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
@@ -345,7 +345,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
               return (
                 <Box marginBottom={mini ? spacingMini : spacing}>
-                  <NewsCardNew
+                  <NewsCard
                     key={index}
                     title={title}
                     introduction={intro}
