@@ -332,7 +332,7 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
-  console.log(workingCase?.courtEndTime)
+
   return (
     <PageLayout
       activeSection={

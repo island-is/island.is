@@ -368,7 +368,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       workingCase.prosecutor?.institution?.name || 'Ekki skráð'
                     }`,
                   },
-                  { title: 'Dómstóll', value: workingCase.court },
+                  { title: 'Dómstóll', value: workingCase.court?.name },
                   { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                   { title: 'Dómari', value: workingCase.judge?.name },
                 ]}

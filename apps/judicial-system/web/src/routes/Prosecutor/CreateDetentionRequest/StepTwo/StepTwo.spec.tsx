@@ -7,6 +7,7 @@ import formatISO from 'date-fns/formatISO'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
   mockUsersQuery,
@@ -37,6 +38,7 @@ describe('Create detention request, step two', () => {
           ...mockCaseQueries,
           ...mockProsecutorQuery,
           ...mockUsersQuery,
+          ...mockInstitutionsQuery,
           ...mockUpdateCaseMutation([
             {
               arrestDate: '2020-11-15',
@@ -115,7 +117,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -142,7 +149,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -165,7 +177,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>

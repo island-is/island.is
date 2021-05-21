@@ -40,12 +40,12 @@ describe('/domari-krafa/thingbok', () => {
             {
               id: 'test_id_9',
               policeDemands:
-                'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+                'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
               id: 'test_id_9',
               policeDemands:
-                'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+                'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
               id: 'test_id_9',
@@ -129,7 +129,7 @@ describe('/domari-krafa/thingbok', () => {
             {
               id: 'test_id_10',
               policeDemands:
-                'Þess er krafist að Jon Harring, kt. string, sæti farbanni með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+                'Þess er krafist að Jon Harring, kt. string, sæti farbanni með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
           ]),
         ]}

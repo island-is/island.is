@@ -30,6 +30,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import StepTwoForm from './StepTwoForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()
@@ -51,6 +52,8 @@ export const StepTwo: React.FC = () => {
     errorPolicy: 'all',
   })
 
+  const { courts, loading: institutionLoading } = useInstitution()
+
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
@@ -60,37 +63,6 @@ export const StepTwo: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  const courts = [
-    {
-      label: 'Héraðsdómur Reykjavíkur',
-      value: 0,
-    },
-    {
-      label: 'Héraðsdómur Vesturlands',
-      value: 1,
-    },
-    {
-      label: 'Héraðsdómur Vestfjarða',
-      value: 2,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands vestra',
-      value: 3,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands eystra',
-      value: 4,
-    },
-    {
-      label: 'Héraðsdómur Austurlands',
-      value: 5,
-    },
-    {
-      label: 'Héraðsdómur Reykjaness',
-      value: 6,
-    },
-  ]
 
   const prosecutors = userData?.users
     .filter(
@@ -177,14 +149,14 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={loading || userLoading}
+      isLoading={loading || userLoading || institutionLoading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase ? (
+      {workingCase && prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm
             workingCase={workingCase}

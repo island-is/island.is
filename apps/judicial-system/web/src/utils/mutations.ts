@@ -36,7 +36,11 @@ export const CreateCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
       leadInvestigator
       arrestDate
       requestedCourtDate
@@ -143,7 +147,11 @@ export const ExtendCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
       leadInvestigator
       arrestDate
       requestedCourtDate

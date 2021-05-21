@@ -166,6 +166,10 @@ export class CaseService {
       where: { id },
       include: [
         {
+          model: Institution,
+          as: 'court',
+        },
+        {
           model: User,
           as: 'prosecutor',
           include: [{ model: Institution, as: 'institution' }],
@@ -193,6 +197,10 @@ export class CaseService {
       order: [['created', 'DESC']],
       where: getCasesQueryFilter(user),
       include: [
+        {
+          model: Institution,
+          as: 'court',
+        },
         {
           model: User,
           as: 'prosecutor',
@@ -350,7 +358,7 @@ export class CaseService {
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
-      court: existingCase.court,
+      courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,

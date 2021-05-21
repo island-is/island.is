@@ -67,7 +67,7 @@ const prosecutorUpdateRule = {
     'defenderEmail',
     'defenderPhoneNumber',
     'sendRequestToDefender',
-    'court',
+    'courtId',
     'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',

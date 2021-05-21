@@ -8,6 +8,7 @@ import {
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+
 import { InstitutionType } from '@island.is/judicial-system/types'
 
 @Table({
