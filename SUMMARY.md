@@ -93,6 +93,7 @@
   - [Auth Admin API](apps/services/auth-admin-api/README.md)
   - [Auth API](apps/services/auth-api/README.md)
   - [Documents](apps/services/documents/README.md)
+  - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)

@@ -6343,6 +6343,106 @@
         "docker-express": {}
       }
     },
+    "services-party-letter-registry-api": {
+      "root": "apps/services/party-letter-registry-api",
+      "sourceRoot": "apps/services/party-letter-registry-api/src",
+      "projectType": "application",
+      "prefix": "services-party-letter-registry-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/party-letter-registry-api",
+            "main": "apps/services/party-letter-registry-api/src/main.ts",
+            "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json",
+            "webpackConfig": "apps/services/party-letter-registry-api/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/party-letter-registry-api/src/environments/environment.ts",
+                  "with": "apps/services/party-letter-registry-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-party-letter-registry-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/party-letter-registry-api/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/party-letter-registry-api"],
+          "options": {
+            "jestConfig": "apps/services/party-letter-registry-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
+            "commands": [
+              "nx run services-party-letter-registry-api:build",
+              "node dist/apps/services/party-letter-registry-api/buildOpenApi.js"
+            ],
+            "parallel": false
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "services-search-indexer": {
       "root": "apps/services/search-indexer",
       "sourceRoot": "apps/services/search-indexer/src",

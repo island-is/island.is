@@ -516,6 +516,9 @@
     "services-endorsements-api": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
