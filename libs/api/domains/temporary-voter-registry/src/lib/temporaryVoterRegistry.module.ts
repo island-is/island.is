@@ -1,9 +1,9 @@
 import { Module, DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
-import { TemporaryVoterRegistryResolver } from './TemporaryVoterRegistry.resolver'
-import { TemporaryVoterRegistryService } from './TemporaryVoterRegistry.service'
+import { TemporaryVoterRegistryResolver } from './temporaryVoterRegistry.resolver'
+import { TemporaryVoterRegistryService } from './temporaryVoterRegistry.service'
+import { TemporaryVoterRegistryApi } from '../../gen/fetch/apis/temporaryVoterRegistryApi'
 import { Configuration } from '../../gen/fetch'
-import { TemporaryVoterRegistryApi } from '../../gen/fetch/apis/TemporaryVoterRegistryApi'
 
 export interface Config {
   baseApiUrl: string
