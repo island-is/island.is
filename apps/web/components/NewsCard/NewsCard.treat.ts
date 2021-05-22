@@ -1,50 +1,24 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-
-export const root = style({
-  position: 'relative',
-  ':focus': {
-    outline: 0,
-  },
-  ':before': {
-    content: "''",
-    display: 'inline-block',
-    position: 'absolute',
-    pointerEvents: 'none',
-    borderStyle: 'solid',
-    borderWidth: 3,
-    borderColor: theme.color.transparent,
-    borderRadius: theme.border.radius.large,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    opacity: 0,
-    transition: 'border-color 150ms ease, opacity 150ms ease',
-  },
-  selectors: {
-    [`&:focus::before`]: {
-      borderWidth: 3,
-      borderStyle: 'solid',
-      borderColor: theme.color.mint400,
-      opacity: 1,
-      outline: 0,
-    },
-    [`&:focus:hover`]: {
-      borderColor: theme.color.white,
-    },
-  },
-})
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const image = style({
+  position: 'relative',
   display: 'inline-block',
   width: '100%',
-  position: 'relative',
-  paddingBottom: '55%',
+  marginLeft: theme.spacing[7],
+  maxWidth: 200,
 })
 
-export const content = style({})
-
-export const readMore = style({
-  marginTop: 'auto',
+export const mini = style({
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  marginLeft: -24,
+  marginRight: -24,
+  ...themeUtils.responsiveStyle({
+    md: {
+      borderLeft: `1px solid ${theme.color.blue200}`,
+      borderBottom: 'none',
+      marginLeft: 0,
+      marginRight: 0,
+    },
+  }),
 })

@@ -370,6 +370,7 @@
     "license-checker": "25.0.1",
     "next-secure-headers": "2.1.0",
     "next-transpile-modules": "4.1.0",
+    "node-xlsx": "0.16.1",
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",

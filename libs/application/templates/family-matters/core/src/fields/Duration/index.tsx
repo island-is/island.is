@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
+import addWeeks from 'date-fns/addWeeks'
 import { useLocale } from '@island.is/localization'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { Box } from '@island.is/island-ui/core'
@@ -81,7 +82,7 @@ const Duration = ({
               label={formatMessage(translations.dateInput.label)}
               placeholder={formatMessage(translations.dateInput.placeholder)}
               error={durationDateError}
-              minDate={addMonths(new Date(), 6)}
+              minDate={addMonths(addWeeks(new Date(), 2), 6)}
             />
           </Box>
         )}

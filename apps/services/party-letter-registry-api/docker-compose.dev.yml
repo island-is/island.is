@@ -1,0 +1,6 @@
+version: '3.3'
+
+services:
+  party_letter_registry:
+    ports:
+      - 5432:5432

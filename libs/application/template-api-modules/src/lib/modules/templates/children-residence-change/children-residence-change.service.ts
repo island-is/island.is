@@ -121,7 +121,7 @@ export class ChildrenResidenceChangeService {
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate
-          ? formatDate(durationDate)
+          ? formatDate({ date: durationDate, formatter: 'dd.MM.yyyy' })
           : durationType,
     }
 

@@ -18,6 +18,9 @@ export class MailingListSignupSlice {
 
   @Field()
   buttonText!: string
+
+  @Field()
+  signupUrl!: string
 }
 
 export const mapMailingListSignup = ({
@@ -30,4 +33,5 @@ export const mapMailingListSignup = ({
   description: fields.description ?? '',
   inputLabel: fields.inputLabel ?? '',
   buttonText: fields.buttonText ?? '',
+  signupUrl: fields.signupUrl ?? '',
 })
