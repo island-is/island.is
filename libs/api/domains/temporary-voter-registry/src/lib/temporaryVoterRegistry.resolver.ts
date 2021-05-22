@@ -6,9 +6,9 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { TemporaryVoterRegistryService } from './TemporaryVoterRegistry.service'
-import { VoterRegistry } from '../../gen/fetch'
 import { TemporaryVoterRegistry } from './models/temporaryVoterRegistry.model'
+import { TemporaryVoterRegistryService } from './temporaryVoterRegistry.service'
+import { VoterRegistry } from '../../gen/fetch'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('TemporaryVoterRegistryResolver')
