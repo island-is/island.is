@@ -6344,7 +6344,8 @@
             "commands": [
               "nx run services-temporary-voter-registry-api:schemas/build-openapi",
               "nx run services-endorsements-api:schemas/openapi-generator"
-            ]
+            ],
+            "parallel": false
           }
         },
         "schemas/build-openapi": {
