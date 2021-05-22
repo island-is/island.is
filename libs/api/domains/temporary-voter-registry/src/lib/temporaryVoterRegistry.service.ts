@@ -4,7 +4,7 @@ import { ApolloError } from 'apollo-server-express'
 import {
   TemporaryVoterRegistryApi,
   VoterRegistryControllerFindOneRequest,
-} from '../../gen/fetch/apis/TemporaryVoterRegistryApi'
+} from '../../gen/fetch/apis'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
