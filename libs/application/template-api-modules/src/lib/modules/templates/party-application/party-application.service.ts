@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
-import {
-  EndorsementListTagsEnum,
-  Constituencies,
-} from '@island.is/application/templates/party-application'
+import { Constituencies } from '@island.is/application/templates/party-application'
+import { EndorsementListTagsEnum } from '@island.is/api/domains/endorsement-system'
 
 interface CreateEndorsementListResponse {
   data: {
@@ -17,17 +15,17 @@ interface CreateEndorsementListResponse {
 
 const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
   [Constituencies.NORTH_EAST]:
-    EndorsementListTagsEnum.PartyApplicationNordausturkjordaemi2021,
+    EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
   [Constituencies.NORTH_WEST]:
-    EndorsementListTagsEnum.PartyApplicationNordvesturkjordaemi2021,
+    EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
   [Constituencies.RVK_NORTH]:
-    EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021,
+    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
   [Constituencies.RVK_SOUTH]:
-    EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021,
+    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
   [Constituencies.SOUTH]:
-    EndorsementListTagsEnum.PartyApplicationSudurkjordaemi2021,
+    EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
   [Constituencies.SOUTH_WEST]:
-    EndorsementListTagsEnum.PartyApplicationSudvesturkjordaemi2021,
+    EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
 }
 
 @Injectable()
