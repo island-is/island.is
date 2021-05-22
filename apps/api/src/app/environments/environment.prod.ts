@@ -84,4 +84,7 @@ export default {
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
+  temporaryVoterRegistry: {
+    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+  },
 }

@@ -6,6 +6,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { Exclude } from 'class-transformer'
 
 @Table({
   tableName: 'voter_registry',
@@ -33,7 +34,7 @@ export class VoterRegistry extends Model<VoterRegistry> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  regionNumber!: string
+  regionNumber!: number
 
   @Column({
     type: DataType.STRING,
@@ -41,15 +42,18 @@ export class VoterRegistry extends Model<VoterRegistry> {
   })
   regionName!: string
 
+  @Exclude()
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  version!: string
+  version!: number
 
+  @Exclude()
   @CreatedAt
   readonly created!: Date
 
+  @Exclude()
   @UpdatedAt
   readonly modified!: Date
 }

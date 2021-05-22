@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Endorsement } from '../../endorsement/endorsement.model'
+import { Endorsement } from '../../../endorsement/endorsement.model'
 import {
   EndorsementList,
   EndorsementTag,
-} from '../../endorsementList/endorsementList.model'
-import { MetadataProvider } from '../endorsementMetadata.service'
+} from '../../../endorsementList/endorsementList.model'
+import { MetadataProvider } from '../../endorsementMetadata.service'
 
 export interface EndorsementSystemSignedListsInput {
   nationalId: string
@@ -16,13 +16,13 @@ export interface EndorsementSystemSignedListsResponse {
 
 @Injectable()
 export class EndorsementSystemSignedListsService implements MetadataProvider {
-  constructor(
+  constructor (
     @InjectModel(Endorsement)
     private readonly endorsementModel: typeof Endorsement,
   ) {}
   metadataKey = 'endorsementListSignedTags'
 
-  async getData(input: EndorsementSystemSignedListsInput) {
+  async getData (input: EndorsementSystemSignedListsInput) {
     const endorsements = await this.endorsementModel.findAll({
       where: { endorser: input.nationalId },
       include: [{ model: EndorsementList, attributes: ['tags'] }],

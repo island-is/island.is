@@ -91,4 +91,7 @@ export default {
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
   },
+  temporaryVoterRegistry: {
+    baseApiUrl: 'http://localhost:4248',
+  },
 }

@@ -525,6 +525,9 @@
     "services-temporary-voter-registry-api": {
       "tags": []
     },
+    "api-domains-temporary-voter-registry": {
+      "tags": []
+    },
     "services-user-profile": {
       "tags": []
     },
