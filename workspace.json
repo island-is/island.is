@@ -6343,7 +6343,7 @@
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
             "commands": [
-              "nx run services-temporary-voter-registry-api:schema/build-openapi",
+              "nx run services-temporary-voter-registry-api:schemas/build-openapi ",
               "nx run services-endorsements-api:build",
               "node dist/apps/services/endorsements/api/buildOpenApi.js"
             ],
