@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import fetch from 'isomorphic-fetch'
 import { EndorsementMetadataService } from './endorsementMetadata.service'
 import {
   NationalRegistryApi,
