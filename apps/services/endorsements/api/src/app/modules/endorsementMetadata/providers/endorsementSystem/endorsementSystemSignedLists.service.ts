@@ -16,13 +16,13 @@ export interface EndorsementSystemSignedListsResponse {
 
 @Injectable()
 export class EndorsementSystemSignedListsService implements MetadataProvider {
-  constructor (
+  constructor(
     @InjectModel(Endorsement)
     private readonly endorsementModel: typeof Endorsement,
   ) {}
   metadataKey = 'endorsementListSignedTags'
 
-  async getData (input: EndorsementSystemSignedListsInput) {
+  async getData(input: EndorsementSystemSignedListsInput) {
     const endorsements = await this.endorsementModel.findAll({
       where: { endorser: input.nationalId },
       include: [{ model: EndorsementList, attributes: ['tags'] }],

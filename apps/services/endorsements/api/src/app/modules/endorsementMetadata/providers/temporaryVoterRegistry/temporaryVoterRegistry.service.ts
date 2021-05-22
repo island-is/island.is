@@ -12,12 +12,12 @@ export interface TemporaryVoterRegistryResponse {
 
 @Injectable()
 export class TemporaryVoterRegistryService implements MetadataProvider {
-  constructor (
+  constructor(
     private readonly temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
   ) {}
   metadataKey = 'temporaryVoterRegistry'
 
-  async getData ({ nationalId }: TemporaryVoterRegistryInput) {
+  async getData({ nationalId }: TemporaryVoterRegistryInput) {
     const results = await this.temporaryVoterRegistryApi.voterRegistryControllerFindOne(
       {
         nationalId,

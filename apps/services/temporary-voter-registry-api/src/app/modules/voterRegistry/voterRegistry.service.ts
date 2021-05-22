@@ -7,14 +7,14 @@ import environment from '../../../environments/environment'
 @Injectable()
 export class VoterRegistryService {
   private version?: number
-  constructor (
+  constructor(
     @InjectModel(VoterRegistry)
     private voterRegistryModel: typeof VoterRegistry,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  private async getVersion () {
+  private async getVersion() {
     // we don't need to ask database for version if we already got the version
     if (this.version) {
       return this.version
@@ -34,7 +34,7 @@ export class VoterRegistryService {
     return version
   }
 
-  async findByNationalId (nationalId: string): Promise<VoterRegistry | null> {
+  async findByNationalId(nationalId: string): Promise<VoterRegistry | null> {
     this.logger.debug(`Finding resource for nationalId - "${nationalId}"`)
     const currentVersion = await this.getVersion()
     return this.voterRegistryModel.findOne({

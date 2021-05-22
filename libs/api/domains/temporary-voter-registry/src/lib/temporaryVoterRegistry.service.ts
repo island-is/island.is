@@ -22,11 +22,11 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class TemporaryVoterRegistryService {
-  constructor (
+  constructor(
     private readonly temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
   ) {}
 
-  async temporaryVoterRegistryControllerFindOne (
+  async temporaryVoterRegistryControllerFindOne(
     input: VoterRegistryControllerFindOneRequest,
   ) {
     return await this.temporaryVoterRegistryApi

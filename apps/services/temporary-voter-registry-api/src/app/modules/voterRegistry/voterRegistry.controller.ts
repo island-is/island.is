@@ -7,10 +7,10 @@ import { VoterRegistryService } from './voterRegistry.service'
 @Controller('voter-registry')
 @ApiTags('temporaryVoterRegistry')
 export class VoterRegistryController {
-  constructor (private readonly voterRegistryService: VoterRegistryService) {}
+  constructor(private readonly voterRegistryService: VoterRegistryService) {}
 
   @Get()
-  async findOne (@Query() { nationalId }: FindOneDto): Promise<VoterRegistry> {
+  async findOne(@Query() { nationalId }: FindOneDto): Promise<VoterRegistry> {
     const resource = await this.voterRegistryService.findByNationalId(
       nationalId,
     )

@@ -11,7 +11,7 @@ export interface Config {
 
 @Module({})
 export class TemporaryVoterRegistryModule {
-  static register (config: Config): DynamicModule {
+  static register(config: Config): DynamicModule {
     return {
       module: TemporaryVoterRegistryModule,
       providers: [

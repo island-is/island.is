@@ -16,7 +16,7 @@ type TemporaryVoterRegistryResponse = {
 export class CurrentUserCompaniesProvider extends BasicDataProvider {
   type = 'TemporaryVoterRegistry'
 
-  async provide (): Promise<TemporaryVoterRegistryVoterRegion> {
+  async provide(): Promise<TemporaryVoterRegistryVoterRegion> {
     const query = `
       temporaryVoterRegistryGetVoterRegion {
         regionName
@@ -43,7 +43,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     )
   }
 
-  onProvideError (result: string): FailedDataProviderResult {
+  onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
       reason:
@@ -53,7 +53,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     }
   }
 
-  onProvideSuccess (result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(result: object): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

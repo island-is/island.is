@@ -118,6 +118,9 @@
     "api-domains-syslumenn": {
       "tags": []
     },
+    "api-domains-temporary-voter-registry": {
+      "tags": []
+    },
     "api-domains-translations": {
       "tags": []
     },
@@ -523,9 +526,6 @@
       "tags": []
     },
     "services-temporary-voter-registry-api": {
-      "tags": []
-    },
-    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "services-user-profile": {

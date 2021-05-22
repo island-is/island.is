@@ -13,12 +13,12 @@ import { TemporaryVoterRegistry } from './models/temporaryVoterRegistry.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('TemporaryVoterRegistryResolver')
 export class TemporaryVoterRegistryResolver {
-  constructor (
+  constructor(
     private temporaryVoterRegistryService: TemporaryVoterRegistryService,
   ) {}
 
   @Query(() => TemporaryVoterRegistry, { nullable: true })
-  async temporaryVoterRegistryGetVoterRegion (
+  async temporaryVoterRegistryGetVoterRegion(
     @CurrentUser() { nationalId }: User,
   ): Promise<VoterRegistry> {
     return this.temporaryVoterRegistryService.temporaryVoterRegistryControllerFindOne(
