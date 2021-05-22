@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../types'
+import { Endorsement } from '../../types/schema'
 import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'

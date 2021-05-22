@@ -1,4 +1,3 @@
-export * from './schema'
 export enum Constituencies {
   NORTH_EAST = 'Norðausturkjördæmi',
   NORTH_WEST = 'Norðvesturkjördæmi',

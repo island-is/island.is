@@ -7,7 +7,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import gql from 'graphql-tag'
 import { useLazyQuery } from '@apollo/client'
-import { Endorsement } from '../../types'
+import { Endorsement } from '../../types/schema'
 
 const GET_ENDORSEMENT_LIST = gql`
   query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
