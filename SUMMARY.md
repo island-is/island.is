@@ -116,6 +116,7 @@
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
+    - [API Domains Temporary Voter Registry](libs/api/domains/temporary-voter-registry/README.md)
     - [API Domains Translations](libs/api/domains/translations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
