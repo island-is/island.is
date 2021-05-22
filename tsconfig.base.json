@@ -157,6 +157,9 @@
       "@island.is/application/templates/party-application": [
         "libs/application/templates/party-application/src/index.ts"
       ],
+      "@island.is/application/templates/party-application/types": [
+        "libs/application/templates/party-application/src/types/index.ts"
+      ],
       "@island.is/application/templates/party-letter": [
         "libs/application/templates/party-letter/src/index.ts"
       ],

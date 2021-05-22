@@ -5,7 +5,7 @@ import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
 import {
   EndorsementListTagsEnum,
   Constituencies,
-} from '@island.is/application/templates/party-application'
+} from '@island.is/application/templates/party-application/types'
 
 interface CreateEndorsementListResponse {
   data: {
