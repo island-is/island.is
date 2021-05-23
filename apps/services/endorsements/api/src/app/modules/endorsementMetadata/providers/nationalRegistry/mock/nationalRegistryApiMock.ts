@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import * as faker from 'faker'
 
-/**
- * This exists as a quick solution to mocking the underlying soap endpoint
- * Please use msw to mock other endpoints
- */
-
 @Injectable()
 export class NationalRegistryApiMock {
   async getUser(input: string) {

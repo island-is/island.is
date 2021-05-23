@@ -1,5 +1,8 @@
 import { setup } from '../../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../../test/testHelpers'
+import {
+  emptyResponseExpectedStructure,
+  errorExpectedStructure,
+} from '../../../../../../test/testHelpers'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
@@ -22,16 +25,16 @@ describe('FindOneVoterRegistry', () => {
       statusCode: 400,
     })
   })
-  it('GET /voter-registry should return error when trying to fetch older version', async () => {
+  it('GET /voter-registry should return not on record response when trying to fetch older version', async () => {
     const nationalId = '0101303019'
     const response = await request(app.getHttpServer())
       .get(`/voter-registry?nationalId=${nationalId}`)
       .send()
-      .expect(404)
+      .expect(200)
 
     expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 404,
+      ...emptyResponseExpectedStructure,
+      nationalId,
     })
   })
   it('GET /voter-registry should return entry from current version', async () => {

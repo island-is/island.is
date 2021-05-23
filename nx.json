@@ -121,6 +121,9 @@
     "api-domains-syslumenn": {
       "tags": []
     },
+    "api-domains-temporary-voter-registry": {
+      "tags": []
+    },
     "api-domains-translations": {
       "tags": []
     },
