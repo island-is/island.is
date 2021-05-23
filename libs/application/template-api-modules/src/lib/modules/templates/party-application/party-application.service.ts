@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
+import {
+  generateAssignSupremeCourtApplicationEmail,
+  generateApplicationRejectedEmail,
+  generateApplicationApprovedEmail,
+} from './emailGenerators'
 import { Constituencies } from '@island.is/application/templates/party-application'
 import { EndorsementListTagsEnum } from './gen/fetch'
 
@@ -37,6 +41,20 @@ export class PartyApplicationService {
   async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignSupremeCourtApplicationEmail,
+      application,
+    )
+  }
+
+  async applicationRejected({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationRejectedEmail,
+      application,
+    )
+  }
+
+  async applicationApproved({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationApprovedEmail,
       application,
     )
   }

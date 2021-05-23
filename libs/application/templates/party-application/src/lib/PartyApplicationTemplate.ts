@@ -22,7 +22,7 @@ type Events =
 enum States {
   DRAFT = 'draft',
   COLLECT_SIGNATURES = 'collectSignatures',
-  DECLINED = 'declined',
+  REJECTED = 'rejected',
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
 }
@@ -166,7 +166,56 @@ const PartyApplicationTemplate: ApplicationTemplate<
               target: States.APPROVED,
             },
           ],
-          [DefaultEvents.REJECT]: { target: States.COLLECT_SIGNATURES },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: 'Safna meðmælum',
+          progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.ApplicationRejected,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/CollectEndorsementsForm').then((val) =>
+                  Promise.resolve(val.CollectEndorsementsForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementApplication),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+          },
         },
       },
       [States.APPROVED]: {
@@ -174,15 +223,10 @@ const PartyApplicationTemplate: ApplicationTemplate<
           name: States.APPROVED,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.AppliationApproved,
+          },
           roles: [
-            {
-              id: Roles.SIGNATUREE,
-              formLoader: () =>
-                import('../forms/EndorsementApproved').then((val) =>
-                  Promise.resolve(val.EndorsementApproved),
-                ),
-              read: 'all',
-            },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
