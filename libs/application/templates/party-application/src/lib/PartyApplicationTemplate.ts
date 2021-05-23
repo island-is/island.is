@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { assign } from 'xstate'
-import { API_MODULE_ACTIONS } from '../constants'
+import { API_MODULE_ACTIONS, States, Roles } from '../constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -18,20 +18,6 @@ type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.EDIT }
-
-enum States {
-  DRAFT = 'draft',
-  COLLECT_SIGNATURES = 'collectSignatures',
-  REJECTED = 'rejected',
-  IN_REVIEW = 'inReview',
-  APPROVED = 'approved',
-}
-
-enum Roles {
-  APPLICANT = 'applicant',
-  SIGNATUREE = 'signaturee',
-  ASSIGNEE = 'assignee',
-}
 
 const PartyApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -69,11 +55,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COLLECT_SIGNATURES,
+            target: States.COLLECT_ENDORSEMENTS,
           },
         },
       },
-      [States.COLLECT_SIGNATURES]: {
+      [States.COLLECT_ENDORSEMENTS]: {
         meta: {
           name: 'Safna meðmælum',
           progress: 0.75,
@@ -224,7 +210,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.AppliationApproved,
+            apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
           },
           roles: [
             {
@@ -273,7 +259,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
     // TODO: Applicant can recommend his own list
     else if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.COLLECT_SIGNATURES) {
+    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
       // TODO: Maybe display collection as closed in final state for signaturee
       // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE

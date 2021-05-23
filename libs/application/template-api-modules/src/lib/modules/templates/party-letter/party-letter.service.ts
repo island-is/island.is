@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+import {
+  generateAssignMinistryOfJusticeApplicationEmail,
+  generateApplicationRejectedEmail,
+  generateApplicationApprovedEmail,
+} from './emailGenerators'
 
 interface CreateEndorsementListResponse {
   data: {
@@ -15,6 +20,27 @@ export class PartyLetterService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      generateAssignMinistryOfJusticeApplicationEmail,
+      application,
+    )
+  }
+
+  async applicationRejected({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationRejectedEmail,
+      application,
+    )
+  }
+
+  async applicationApproved({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationApprovedEmail,
+      application,
+    )
+  }
 
   async createEndorsementList({
     application,
