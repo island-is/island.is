@@ -93,4 +93,7 @@ export default {
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
   },
+  partyLetterRegistry: {
+    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
 }

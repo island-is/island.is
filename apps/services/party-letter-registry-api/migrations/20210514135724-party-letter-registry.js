@@ -22,6 +22,7 @@ module.exports = {
         },
         managers: {
           type: Sequelize.ARRAY(Sequelize.STRING),
+          unique: true,
           allowNull: false,
         },
         created: {

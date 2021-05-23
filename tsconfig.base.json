@@ -89,6 +89,9 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/party-letter-registry": [
+        "libs/api/domains/party-letter-registry/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -343,6 +346,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/nestjs": ["libs/shared/nestjs/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],

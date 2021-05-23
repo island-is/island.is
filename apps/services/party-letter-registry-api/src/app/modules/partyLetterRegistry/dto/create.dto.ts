@@ -1,5 +1,5 @@
 import { IsArray, IsString, Length } from 'class-validator'
-import { IsNationalId } from '../validators/isNationalId.decorator'
+import { IsNationalId } from '@island.is/shared/nestjs'
 
 export class CreateDto {
   @IsNationalId()

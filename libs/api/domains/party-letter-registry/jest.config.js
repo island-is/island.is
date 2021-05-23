@@ -6,7 +6,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/temporary-voter-registry',
+    '../../../../coverage/libs/api/domains/party-letter-registry',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
-  displayName: 'api-domains-temporary-voter-registry',
+  displayName: 'api-domains-party-letter-registry',
 }
