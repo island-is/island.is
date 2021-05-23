@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString, IsArray } from 'class-validator'
-import { IsNationalId } from '../validators/isNationalId.decorator'
+import { IsNationalId } from '@island.is/shared/nestjs'
 
 export class BulkEndorsementDto {
   @ApiProperty()

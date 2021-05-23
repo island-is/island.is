@@ -100,6 +100,9 @@ const devConfig = {
   temporaryVoterRegistry: {
     baseApiUrl: 'http://localhost:4248',
   },
+  partyLetterRegistry: {
+    baseApiUrl: 'http://localhost:4251',
+  },
 }
 
 const prodConfig = {

@@ -1133,6 +1133,43 @@
         }
       }
     },
+    "api-domains-party-letter-registry": {
+      "root": "libs/api/domains/party-letter-registry",
+      "sourceRoot": "libs/api/domains/party-letter-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/party-letter-registry/tsconfig.lib.json",
+              "libs/api/domains/party-letter-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/party-letter-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/party-letter-registry/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/party-letter-registry"]
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/api/domains/party-letter-registry/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/party-letter-registry/gen/fetch -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -6934,6 +6971,33 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/mocking"]
+        }
+      }
+    },
+    "shared-nestjs": {
+      "root": "libs/shared/nestjs",
+      "sourceRoot": "libs/shared/nestjs/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/nestjs/tsconfig.lib.json",
+              "libs/shared/nestjs/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/nestjs/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/nestjs/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/shared/nestjs"]
         }
       }
     },

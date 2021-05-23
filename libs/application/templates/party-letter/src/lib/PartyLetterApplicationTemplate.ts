@@ -70,6 +70,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
@@ -104,6 +106,10 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           name: 'Approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.SubmitPartyLetter,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.SIGNATUREE,
