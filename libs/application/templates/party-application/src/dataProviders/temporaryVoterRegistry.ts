@@ -3,7 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { TemporaryVoterRegistry } from '@island.is/api/schema'
+import { TemporaryVoterRegistry } from '../types/schema'
 
 export type TemporaryVoterRegistryVoterRegion = Pick<
   TemporaryVoterRegistry,
