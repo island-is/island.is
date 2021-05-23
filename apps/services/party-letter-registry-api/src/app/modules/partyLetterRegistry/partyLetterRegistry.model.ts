@@ -17,20 +17,13 @@ import {
 })
 export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
   @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id!: string
-
-  @Column({
     type: DataType.CHAR(2),
-    allowNull: false,
-    get() {
+    primaryKey: true,
+    get () {
       // this adds a space cause of char 2 we remove added spaces here
-      const value: string = ((this as unknown) as Model<PartyLetterRegistry>).getDataValue(
-        'partyLetter' as any,
-      )
+      const value: string = ((this as unknown) as Model<
+        PartyLetterRegistry
+      >).getDataValue('partyLetter' as any)
       return value.trim()
     },
   })
