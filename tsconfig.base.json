@@ -97,6 +97,9 @@
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
+      "@island.is/api/domains/temporary-voter-registry": [
+        "libs/api/domains/temporary-voter-registry/src/index.ts"
+      ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
       ],
