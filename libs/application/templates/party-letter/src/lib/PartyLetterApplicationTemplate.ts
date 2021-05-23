@@ -12,17 +12,17 @@ import { API_MODULE_ACTIONS, States, Roles } from '../constants'
 import { PartyLetterSchema } from './dataSchema'
 import { assign } from 'xstate'
 
-type PartyLetterApplicationTemplateEvent =
+type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.REJECT }
-
+  | { type: DefaultEvents.EDIT }
 
 const PartyLetterApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<PartyLetterApplicationTemplateEvent>,
-  PartyLetterApplicationTemplateEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Listabókstafur',
@@ -43,21 +43,25 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(module.LetterApplicationForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.SUBMIT]: {
             target: States.COLLECT_ENDORSEMENTS,
           },
         },
       },
       [States.COLLECT_ENDORSEMENTS]: {
         meta: {
-          name: 'In Review',
+          name: 'Safna meðmælum',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
@@ -79,25 +83,68 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.CollectEndorsements),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          APPROVE: {
-            target: States.APPROVED,
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
           },
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: 'assignToMinistryOfJustice',
+        exit: 'clearAssignees',
+        meta: {
+          name: 'In Review',
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.AssingMinistryOfJustice,
+          },
+          roles: [
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
+              ],
+              write: 'all',
+            },
+            // todo: what does applicant see here?
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.APPROVED,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
       [States.REJECTED]: {
         meta: {
-          name: 'In Review',
+          name: 'Safna meðmælum',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
+            apiModuleAction: API_MODULE_ACTIONS.ApplicationRejected,
           },
           roles: [
             {
@@ -115,15 +162,19 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.CollectEndorsements),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          APPROVE: {
-            target: States.APPROVED,
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
           },
         },
       },
@@ -164,7 +215,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            // todo: get list of supreme court national ids
+            // todo: get list of ministry of justice national ids
             assignees: ['3105913789'],
           },
         }
@@ -182,7 +233,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // todo map to supreme court natioanl ids
+    // todo map to ministry of justice natioanl ids
+
     if (application.assignees.includes('3105913789')) {
       return Roles.ASSIGNEE
     }

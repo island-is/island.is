@@ -16,7 +16,7 @@ export const CollectEndorsements: Form = buildForm({
   id: 'Collect endorsements',
   title: m.endorsementForm.title,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'endorsementSection',
@@ -42,7 +42,7 @@ export const CollectEndorsements: Form = buildForm({
                   label: m.fileUpload.includePapers,
                 },
               ],
-              defaultValue: () => '',
+              defaultValue: '',
             }),
             buildCustomField({
               id: 'fileUploadDisclaimer',

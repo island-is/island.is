@@ -21,7 +21,7 @@ export class PartyLetterService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
+  async assignMinistryOfJustice({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignMinistryOfJusticeApplicationEmail,
       application,

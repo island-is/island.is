@@ -400,4 +400,99 @@ export const m: MessageDir = {
       description: 'Button to party list',
     },
   }),
+  ministryOfJustice: defineMessages({
+    title: {
+      id: 'ple.application:ministry.justicet.title',
+      defaultMessage: 'Yfirkjörstjórn',
+      description: 'Ministry of justiice review title',
+    },
+    description: {
+      id: 'ple.application:ministry.justice.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+      description: 'Ministry of justice review description',
+    },
+    subtitle: {
+      id: 'ple.application:ministry.justice.subtitle',
+      defaultMessage: 'Yfirlit yfir framboðslista',
+      description: 'Ministry of justice review subtitle',
+    },
+    steps: {
+      id: 'ple.application:ministry.justice.steps',
+      defaultMessage: 'Til skoðunar',
+      description: 'Title for steps',
+    },
+    step1: {
+      id: 'ple.application:ministry.justice.step.1',
+      defaultMessage: 'Yfirlit framboðs',
+      description: 'Step one',
+    },
+    partyNameLabel: {
+      id: 'ple.application:ministry.justice.partyname.label',
+      defaultMessage: 'Nafn flokks',
+      description: 'Label for party name',
+    },
+    partyLetterLabel: {
+      id: 'ple.application:ministry.justice.partyletter.label',
+      defaultMessage: 'Listabókstafur',
+      description: 'Label for party letter',
+    },
+    responsiblePersonLabel: {
+      id: 'ple.application:ministry.justice.responsibleperson.label',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Label for responsible person',
+    },
+    typeOfEndorsementLabel: {
+      id: 'ple.application:ministry.justice.endorsementtype.label',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Label for endorsement type',
+    },
+    numberOfEndorsementsLabel: {
+      id: 'ple.application:ministry.justice.no.endorsements.label',
+      defaultMessage: 'Fjöldi meðmæla',
+      description: 'Label for number of endorsements',
+    },
+    constituencyLabel: {
+      id: 'ple.application:ministry.justice.constituency.label',
+      defaultMessage: 'Kjördæmi',
+      description: 'Label for constituency',
+    },
+    commentsLabel: {
+      id: 'ple.application:ministry.justice.comments.label',
+      defaultMessage: 'Athugasemdir',
+      description: 'Label for comments',
+    },
+    csvButton: {
+      id: 'ple.application:ministry.justice.csv.button',
+      defaultMessage: 'Hlaða niður atkvæðum',
+      description: 'Download endorsements button',
+    },
+    noEndorsementsMessage: {
+      id: 'ple.application:ministry.justice.no.endorsements',
+      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
+      description:
+        'Message that will appear in the .csv file if there are no endorsements',
+    },
+    rejectButton: {
+      id: 'ple.application:ministry.justice.reject.button',
+      defaultMessage: 'Hafna',
+      description: 'Reject button',
+    },
+    approveButton: {
+      id: 'ple.application:ministry.justice.approve.button',
+      defaultMessage: 'Samþykkja lista',
+      description: 'Approve button',
+    },
+    approvedTitle: {
+      id: 'ple.application:ministry.justice.approved.title',
+      defaultMessage: 'Takk fyrir',
+      description: 'Title for approved screen',
+    },
+    approvedDescription: {
+      id: 'ple.application:ministry.justice.approved.description',
+      defaultMessage:
+        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      description: 'Text after MOJ has submitted',
+    },
+  }),
 }

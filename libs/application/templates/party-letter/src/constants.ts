@@ -1,6 +1,6 @@
 export enum API_MODULE_ACTIONS {
   CreateEndorsementList = 'createEndorsementList',
-  AssingToMinistryOfJustice = 'assignToMinistryOfJustice',
+  AssingMinistryOfJustice = 'assignMinistryOfJustice',
   ApplicationApproved = 'applicationApproved',
   ApplicationRejected = 'applicationRejected',
 }

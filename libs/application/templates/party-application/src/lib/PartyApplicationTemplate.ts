@@ -90,15 +90,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementApplication),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
               read: 'all',
-              write: 'all',
             },
           ],
         },
@@ -186,15 +178,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementApplication),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
               read: 'all',
-              write: 'all',
             },
           ],
         },
