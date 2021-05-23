@@ -1,4 +1,4 @@
-import { IsNationalId } from '../validators/isNationalId.decorator'
+import { IsNationalId } from '@island.is/shared/nestjs'
 
 export class FindByOwnerDto {
   @IsNationalId()

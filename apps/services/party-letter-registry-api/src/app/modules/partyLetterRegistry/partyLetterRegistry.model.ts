@@ -26,6 +26,13 @@ export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
       )
       return value.trim()
     },
+    set(value: string) {
+      // we want to ensure all inserted letters are uppercase
+      ;((this as unknown) as Model<PartyLetterRegistry>).setDataValue(
+        'partyLetter' as any,
+        value.toUpperCase(),
+      )
+    },
   })
   partyLetter!: string
 
