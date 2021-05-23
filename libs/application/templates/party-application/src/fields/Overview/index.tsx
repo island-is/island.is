@@ -4,7 +4,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Inline, Input, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { PartyApplicationAnswers } from '../../lib/PartyApplicationTemplate'
+import { SchemaFormValues } from '../../lib/dataSchema'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -13,7 +13,9 @@ export interface Props extends FieldBaseProps {
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyApplicationAnswers
+  const { externalData } = application
+  const answers = application.answers as SchemaFormValues
+
   const { register } = useFormContext()
 
   return (
@@ -25,7 +27,13 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.responsiblePerson)}
         </Text>
-        <Text>{'Örvar Þór Sigurðsson'}</Text>
+        <Text>
+          {
+            (externalData.nationalRegistry?.data as {
+              fullName?: string
+            })?.fullName
+          }
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">{formatMessage(m.overviewSection.partyType)}</Text>
@@ -62,16 +70,21 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
             : 0}
         </Text>
       </Box>
-      <Box marginBottom={3}>
+      <Box marginBottom={3} width="half">
         <Text variant="h5" marginBottom={2}>
           {formatMessage(m.overviewSection.emailLabel)}
         </Text>
         <Input
-          id="email"
-          name="email"
+          id="responsiblePersonEmail"
+          name="responsiblePersonEmail"
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}
+          defaultValue={
+            (externalData.userProfile?.data as {
+              email?: string
+            })?.email
+          }
         />
       </Box>
     </>

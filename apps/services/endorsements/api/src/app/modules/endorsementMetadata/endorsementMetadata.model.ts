@@ -9,4 +9,6 @@ export class EndorsementMetadata {
 
   @ApiProperty()
   bulkEndorsement!: boolean
+  invalidated!: boolean
+  signedTags!: string
 }

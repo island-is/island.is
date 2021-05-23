@@ -9,10 +9,7 @@ import {
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import {
-  Endorsement,
-  PartyApplicationAnswers,
-} from '../../../src/lib/PartyApplicationTemplate'
+import { Endorsement, SchemaFormValues } from '../../../src/lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
@@ -74,7 +71,7 @@ const ENDORSEMENTS: Endorsement[] = [
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyApplicationAnswers
+  const answers = application.answers as SchemaFormValues
   const [endorsements] = useState(sortBy(ENDORSEMENTS, 'date'))
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
