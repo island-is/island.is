@@ -2209,7 +2209,8 @@
             "commands": [
               "nx run services-endorsements-api:schemas/build-openapi",
               "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-            ]
+            ],
+            "parallel": false
           }
         }
       }
