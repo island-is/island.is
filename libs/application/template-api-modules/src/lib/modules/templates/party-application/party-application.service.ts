@@ -3,7 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
 import { Constituencies } from '@island.is/application/templates/party-application'
-import { EndorsementListTagsEnum } from '@island.is/api/domains/endorsement-system'
+import { EndorsementListTagsEnum } from './gen/fetch'
 
 interface CreateEndorsementListResponse {
   data: {
@@ -30,18 +30,18 @@ const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
 
 @Injectable()
 export class PartyApplicationService {
-  constructor(
+  constructor (
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
+  async assignSupremeCourt ({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignSupremeCourtApplicationEmail,
       application,
     )
   }
 
-  async createEndorsementList({
+  async createEndorsementList ({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
