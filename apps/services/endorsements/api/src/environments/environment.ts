@@ -1,10 +1,13 @@
 export const environment = {
-  metadataProviser: {
+  metadataProvider: {
     nationalRegistry: {
       baseSoapUrl: 'https://localhost:8443',
       user: process.env.SOFFIA_USER ?? '',
       password: process.env.SOFFIA_PASS ?? '',
       host: 'soffiaprufa.skra.is',
+    },
+    temporaryVoterRegistry: {
+      baseApiUrl: 'http://localhost:4248',
     },
   },
   auth: {

@@ -1,6 +1,6 @@
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { Injectable } from '@nestjs/common'
-import { MetadataProvider } from '../endorsementMetadata.service'
+import { MetadataProvider } from '../../endorsementMetadata.service'
 
 export interface NationalRegistryUserInput {
   nationalId: string

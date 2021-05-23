@@ -98,4 +98,7 @@ export default {
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
+  temporaryVoterRegistry: {
+    baseApiUrl: 'http://localhost:4248',
+  },
 }

@@ -13,4 +13,8 @@ export const metaDataResponse = {
   },
   bulkEndorsement: expect.any(Boolean),
   invalidated: expect.any(Boolean),
+  voterRegion: {
+    voterRegionNumber: expect.any(Number),
+    voterRegionName: expect.any(String),
+  },
 }

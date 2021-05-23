@@ -3,11 +3,15 @@ import { EndorsementMetadata } from './endorsementMetadata.model'
 import {
   EndorsementSystemSignedListsResponse,
   EndorsementSystemSignedListsService,
-} from './providers/endorsementSystemSignedLists.service'
+} from './providers/endorsementSystem/endorsementSystemSignedLists.service'
 import {
   NationalRegistryUserResponse,
   NationalRegistryUserService,
-} from './providers/nationalRegistryUser.service'
+} from './providers/nationalRegistry/nationalRegistryUser.service'
+import {
+  TemporaryVoterRegistryResponse,
+  TemporaryVoterRegistryService,
+} from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
 
 interface MetadataInput {
   fields: EndorsementMetaField[]
@@ -29,12 +33,12 @@ export interface MetadataProvider {
   ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
 }
 
-// TODO: Fix this type
 // add types for new metadata providers here
 type MetadataProviderResponse = {
   [key: string]:
     | NationalRegistryUserResponse
     | EndorsementSystemSignedListsResponse
+    | TemporaryVoterRegistryResponse
 }
 
 // add types for new metadata fields here
@@ -42,6 +46,7 @@ export enum EndorsementMetaField {
   FULL_NAME = 'fullName',
   ADDRESS = 'address',
   SIGNED_TAGS = 'signedTags',
+  VOTER_REGION = 'voterRegion',
 }
 
 @Injectable()
@@ -50,6 +55,7 @@ export class EndorsementMetadataService {
   constructor(
     private readonly nationalRegistryUserService: NationalRegistryUserService,
     private readonly endorsementSystemSignedListsService: EndorsementSystemSignedListsService,
+    private readonly temporaryVoterRegistryService: TemporaryVoterRegistryService,
   ) {
     /**
      * We should assign minimal data to each metadata field since they optionally get appended to endorsements
@@ -71,6 +77,11 @@ export class EndorsementMetadataService {
         dataResolver: ({ endorsementListSignedTags }) =>
           (endorsementListSignedTags as EndorsementSystemSignedListsResponse)
             .tags,
+      },
+      [EndorsementMetaField.VOTER_REGION]: {
+        provider: this.temporaryVoterRegistryService,
+        dataResolver: ({ temporaryVoterRegistry }) =>
+          temporaryVoterRegistry as TemporaryVoterRegistryResponse,
       },
     }
   }

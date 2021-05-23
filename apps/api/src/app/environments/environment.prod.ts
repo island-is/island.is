@@ -90,4 +90,7 @@ export default {
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.ROAD_CLIENT_ID,
   },
+  temporaryVoterRegistry: {
+    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+  },
 }
