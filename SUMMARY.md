@@ -114,6 +114,7 @@
     - [API Domains Education](libs/api/domains/education/README.md)
     - [API Domains Endorsement System](libs/api/domains/endorsement-system/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
+    - [API Domains Party Letter Registry](libs/api/domains/party-letter-registry/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
     - [API Domains Temporary Voter Registry](libs/api/domains/temporary-voter-registry/README.md)
