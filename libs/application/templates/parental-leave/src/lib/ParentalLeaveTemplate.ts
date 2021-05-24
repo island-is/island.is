@@ -245,6 +245,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: { answers: ['periods'], externalData: ['pregnancyStatus'] },
+              write: 'all',
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
