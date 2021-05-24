@@ -10,6 +10,7 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildDescriptionField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { Constituencies } from '../types'
@@ -100,7 +101,7 @@ export const ConstituencyForm: Form = buildForm({
     buildSection({
       id: 'overviewSection',
       title: m.constituencySection.confirmationTitle,
-      condition: (answers, externalData) => {
+      condition: (_answers, externalData) => {
         const partyLetter = externalData.partyLetterRegistry
           ?.data as PartyLetterRegistryPartyLetter
 
@@ -147,7 +148,7 @@ export const ConstituencyForm: Form = buildForm({
               placement: 'footer',
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitButton,
                   type: 'primary',
                 },

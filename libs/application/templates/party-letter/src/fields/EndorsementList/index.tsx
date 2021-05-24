@@ -36,7 +36,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [getEndorsementList, { loading, error }] = useLazyQuery(
     GET_ENDORSEMENT_LIST,
     {
-      pollInterval: 2000,
+      pollInterval: 20000,
       onCompleted: async ({ endorsementSystemGetEndorsements }) => {
         if (!loading && endorsementSystemGetEndorsements) {
           const hasEndorsements =

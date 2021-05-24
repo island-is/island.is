@@ -8,6 +8,7 @@ import {
   FormModes,
   buildCustomField,
   buildTextField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -49,12 +50,12 @@ export const InReview: Form = buildForm({
                 {
                   name: m.ministryOfJustice.rejectButton,
                   type: 'reject',
-                  event: 'REJECT',
+                  event: DefaultEvents.REJECT,
                 },
                 {
                   name: m.ministryOfJustice.approveButton,
                   type: 'primary',
-                  event: 'APPROVE',
+                  event: DefaultEvents.APPROVE,
                 },
               ],
             }),

@@ -403,7 +403,7 @@ export const m: MessageDir = {
   ministryOfJustice: defineMessages({
     title: {
       id: 'ple.application:ministry.justicet.title',
-      defaultMessage: 'Yfirkjörstjórn',
+      defaultMessage: 'Dómsmálaráðuneytið',
       description: 'Ministry of justiice review title',
     },
     description: {

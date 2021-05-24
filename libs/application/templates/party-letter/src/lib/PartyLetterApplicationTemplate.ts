@@ -71,14 +71,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.SIGNATUREE,
-              formLoader: () =>
-                import('../forms/EndorsementForm').then((val) =>
-                  Promise.resolve(val.EndorsementForm),
-                ),
-              read: 'all',
-            },
-            {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/CollectEndorsements').then((val) =>
@@ -87,10 +79,27 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Samþykkja',
+                  name: 'Submit',
                   type: 'primary',
                 },
               ],
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
               write: 'all',
             },
           ],
@@ -128,7 +137,15 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
               ],
               write: 'all',
             },
-            // todo: what does applicant see here?
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/LetterApplicationApproved').then((module) =>
+                  Promise.resolve(module.LetterApplicationApproved),
+                ),
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -186,8 +203,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
-            //apiModuleAction: API_MODULE_ACTIONS.SubmitPartyLetter,
+            //apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
+            apiModuleAction: API_MODULE_ACTIONS.SubmitPartyLetter,
             throwOnError: true,
           },
           roles: [
@@ -238,6 +255,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     // todo map to ministry of justice natioanl ids
+    console.log(application)
 
     if (application.assignees.includes('3105913789')) {
       return Roles.ASSIGNEE

@@ -8,7 +8,7 @@ import {
   buildFileUploadField,
   Form,
   FormModes,
-  buildTextField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -96,7 +96,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               placement: 'footer',
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitApplication,
                   type: 'primary',
                 },
