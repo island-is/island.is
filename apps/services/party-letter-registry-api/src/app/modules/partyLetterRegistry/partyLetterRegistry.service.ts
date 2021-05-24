@@ -22,15 +22,19 @@ export class PartyLetterRegistryService {
   }
 
   findByManager(manager: string) {
-    this.logger.debug(`Finding party letter for owner - "${manager}"`)
+    this.logger.debug(`Finding party letter for manager - "${manager}"`)
     return this.partyLetterRegistryModel.findOne({
-      where: { [Op.contains]: [manager] },
+      where: {
+        managers: {
+          [Op.contains]: [manager],
+        },
+      },
     })
   }
 
   create(input: CreateDto) {
     return this.partyLetterRegistryModel
-      .create(input)
+      .create({ ...input, managers: [...input.managers, input.owner] }) // the owner is always a manager
       .catch((error: UniqueConstraintError) => {
         switch (error.constructor) {
           // we want to relay this specific error type to the client

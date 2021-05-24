@@ -9,10 +9,12 @@ import {
   buildMultiField,
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { Constituencies } from '../types'
 import Logo from '../assets/Logo'
+import { PartyLetterRegistryPartyLetter } from '../dataProviders/partyLetterRegistry'
 
 export const ConstituencyForm: Form = buildForm({
   id: 'Constitunecy',
@@ -84,6 +86,42 @@ export const ConstituencyForm: Form = buildForm({
               type: 'NationalRegistryProvider',
               title: '',
               subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'partyLetterRegistry',
+              type: 'PartyLetterRegistryProvider',
+              title: 'Stafir',
+              subTitle: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overviewSection',
+      title: m.constituencySection.confirmationTitle,
+      condition: (answers, externalData) => {
+        const partyLetter = externalData.partyLetterRegistry
+          ?.data as PartyLetterRegistryPartyLetter
+
+        return !Boolean(partyLetter && partyLetter.partyLetter)
+      },
+      children: [
+        buildMultiField({
+          id: 'overviewSubmit',
+          title: 'Failed to find party letter',
+          description: 'Please apply for party letter',
+          children: [
+            buildDescriptionField({
+              id: 'intro',
+              title: '',
+              description: 'You need to apply for a party letter',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: '',
+              placement: 'footer',
+              actions: [],
             }),
           ],
         }),

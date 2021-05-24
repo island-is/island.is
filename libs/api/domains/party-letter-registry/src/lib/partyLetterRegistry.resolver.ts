@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -25,5 +25,16 @@ export class PartyLetterRegistryResolver {
       ...input,
       owner: nationalId,
     })
+  }
+
+  @Query(() => PartyLetterRegistry, { nullable: true })
+  async partyLetterRegistryFindLetter(
+    @CurrentUser() { nationalId }: User, // TODO: Make sure system token persists original user
+  ): Promise<PartyLetterRegistry> {
+    return this.partyLetterRegistryService.partyLetterRegistryControllerFindByManager(
+      {
+        manager: nationalId,
+      },
+    )
   }
 }

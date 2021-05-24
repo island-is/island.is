@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { PartyLetterRegistryApi } from '../../gen/fetch/apis'
+import {
+  PartyLetterRegistryApi,
+  PartyLetterRegistryControllerFindByManagerRequest,
+} from '../../gen/fetch/apis'
 import { CreateDto } from '../../gen/fetch'
 
 const handleError = async (error: any) => {
@@ -27,6 +30,14 @@ export class PartyLetterRegistryService {
   async partyLetterRegistryControllerCreate(input: CreateDto) {
     return await this.partyLetterRegistryApi
       .partyLetterRegistryControllerCreate({ createDto: input })
+      .catch(handleError)
+  }
+
+  async partyLetterRegistryControllerFindByManager(
+    input: PartyLetterRegistryControllerFindByManagerRequest,
+  ) {
+    return await this.partyLetterRegistryApi
+      .partyLetterRegistryControllerFindByManager(input)
       .catch(handleError)
   }
 }
