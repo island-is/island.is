@@ -12,8 +12,11 @@ export type UserEndorsements = Pick<
   Endorsement,
   'id' | 'created' | 'endorsementList'
 >
+interface UserEndorsementsResponse {
+  endorsementSystemUserEndorsements: UserEndorsements[]
+}
 
-const GET_ENDORSEMENTS = gql`
+const GET_USER_ENDORSEMENTS = gql`
   query endorsementSystemUserEndorsements {
     endorsementSystemUserEndorsements {
       id
@@ -34,18 +37,14 @@ const GET_ENDORSEMENTS = gql`
 `
 
 const Endorsements = () => {
-  const [endorsements, setEndorsements] = useState<UserEndorsements[]>()
   const { formatMessage } = useLocale()
 
-  const { loading, error } = useQuery(GET_ENDORSEMENTS, {
-    onCompleted: async ({ endorsementSystemUserEndorsements }) => {
-      if (!loading && endorsementSystemUserEndorsements) {
-        const organisationsPreview: UserEndorsements[] =
-          endorsementSystemUserEndorsements || []
-        setEndorsements(organisationsPreview)
-      }
-    },
-  })
+  const { data: endorsementResponse } = useQuery<UserEndorsementsResponse>(
+    GET_USER_ENDORSEMENTS,
+  )
+
+  const endorsements =
+    endorsementResponse?.endorsementSystemUserEndorsements ?? []
 
   return (
     <Box marginBottom={[6, 6, 10]}>
