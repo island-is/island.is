@@ -55,6 +55,7 @@ interface WrapperProps {
   fullWidthContent?: boolean
   stickySidebar?: boolean
   minimal?: boolean
+  showSecondaryMenu?: boolean
 }
 
 interface HeaderProps {
@@ -173,6 +174,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   stickySidebar = true,
   children,
   minimal = false,
+  showSecondaryMenu = true,
 }) => {
   const Router = useRouter()
 
@@ -221,21 +223,25 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
-                {organizationPage.secondaryMenu && (
-                  <SecondaryMenu
-                    title={organizationPage.secondaryMenu.name}
-                    items={secondaryNavList}
-                  />
+                {showSecondaryMenu && (
+                  <>
+                    {organizationPage.secondaryMenu && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
+                    {organizationPage.sidebarCards.map((card) => (
+                      <ProfileCard
+                        title={card.title}
+                        description={card.content}
+                        link={card.link}
+                        image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                        size="small"
+                      />
+                    ))}
+                  </>
                 )}
-                {organizationPage.sidebarCards.map((card) => (
-                  <ProfileCard
-                    title={card.title}
-                    description={card.content}
-                    link={card.link}
-                    image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
-                    size="small"
-                  />
-                ))}
                 {sidebarContent}
               </SidebarContainer>
             }

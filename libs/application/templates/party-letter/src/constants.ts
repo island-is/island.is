@@ -3,6 +3,7 @@ export enum API_MODULE_ACTIONS {
   AssingMinistryOfJustice = 'assignMinistryOfJustice',
   ApplicationApproved = 'applicationApproved',
   ApplicationRejected = 'applicationRejected',
+  SubmitPartyLetter = 'submitPartyLetter',
 }
 
 export enum States {

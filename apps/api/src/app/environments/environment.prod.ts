@@ -84,4 +84,16 @@ export default {
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
+  nationalRegistryXRoad: {
+    url: process.env.XROAD_BASE_PATH,
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
+    apiPath: process.env.XROAD_TJODSKRA_API_PATH,
+    clientId: process.env.ROAD_CLIENT_ID,
+  },
+  temporaryVoterRegistry: {
+    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+  },
+  partyLetterRegistry: {
+    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
 }

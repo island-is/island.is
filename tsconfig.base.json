@@ -86,12 +86,21 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
+      "@island.is/api/domains/national-registry-x-road": [
+        "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
+      "@island.is/api/domains/party-letter-registry": [
+        "libs/api/domains/party-letter-registry/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
+      ],
+      "@island.is/api/domains/temporary-voter-registry": [
+        "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
@@ -188,8 +197,11 @@
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
-      "@island.is/clients/national-registry": [
-        "libs/clients/national-registry/src/index.ts"
+      "@island.is/clients/national-registry-v1": [
+        "libs/clients/national-registry/v1/src/index.ts"
+      ],
+      "@island.is/clients/national-registry-v2": [
+        "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
@@ -306,6 +318,9 @@
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
       ],
+      "@island.is/service-portal/endorsements": [
+        "libs/service-portal/endorsements/src/index.ts"
+      ],
       "@island.is/service-portal/family": [
         "libs/service-portal/family/src/index.ts"
       ],
@@ -334,6 +349,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/nestjs": ["libs/shared/nestjs/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],

@@ -405,6 +405,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 expand={expand}
                 renderLink={renderLink}
                 menuState={menuState}
+                linkOnClick={linkOnClick}
               />
             ) : null}
           </li>

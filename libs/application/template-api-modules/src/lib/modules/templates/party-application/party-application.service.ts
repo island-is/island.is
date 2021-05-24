@@ -9,13 +9,22 @@ import {
 import { Constituencies } from '@island.is/application/templates/party-application'
 import { EndorsementListTagsEnum } from './gen/fetch'
 
-interface CreateEndorsementListResponse {
-  data: {
-    endorsementSystemCreateEndorsementList: {
-      id: string
-    }
+
+type ErrorResponse = {
+  errors: {
+    message: string
   }
 }
+
+type CreateEndorsementListResponse =
+  | {
+      data: {
+        endorsementSystemCreateEndorsementList: {
+          id: string
+        }
+      }
+    }
+  | ErrorResponse
 
 const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
   [Constituencies.NORTH_EAST]:
@@ -82,6 +91,10 @@ export class PartyApplicationService {
     const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
       .then((response) => response.json())
+
+    if ('errors' in endorsementList) {
+      throw new Error('Failed to create endorsement list')
+    }
 
     // This gets written to externalData under the key createEndorsementList
     return {

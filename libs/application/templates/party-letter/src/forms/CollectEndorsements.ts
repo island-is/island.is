@@ -84,7 +84,7 @@ export const CollectEndorsements: Form = buildForm({
               title: m.overview.title,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: 'APPROVE',
                   name: m.overview.submitButton,
                   type: 'primary',
                 },

@@ -6,6 +6,9 @@ export const environment = {
       password: process.env.SOFFIA_PASS,
       host: process.env.SOFFIA_HOST_URL,
     },
+    temporaryVoterRegistry: {
+      baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+    },
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,

@@ -5,6 +5,7 @@ export enum API_MODULE_ACTIONS {
   AssignSupremeCourt = 'assignSupremeCourt',
   ApplicationRejected = 'applicationRejected',
   ApplicationApproved = 'applicationApproved',
+  PartyLetter = 'partyLetter',
 }
 
 export const constituencyMapper: Record<
