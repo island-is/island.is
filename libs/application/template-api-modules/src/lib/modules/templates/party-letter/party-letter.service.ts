@@ -17,7 +17,7 @@ type CreateEndorsementListResponse =
     }
   | ErrorResponse
 
-type CreatePartyListResponse =
+type CreatePartyLetterResponse =
   | {
       data: {
         partyLetterRegistryCreate: {
@@ -83,7 +83,7 @@ export class PartyLetterService {
     }
     `
 
-    const partyLetter: CreatePartyListResponse = await this.sharedTemplateAPIService
+    const partyLetter: CreatePartyLetterResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_PARTY_LETTER_QUERY)
       .then((response) => response.json())
 

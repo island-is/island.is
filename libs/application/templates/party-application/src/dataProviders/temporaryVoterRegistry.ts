@@ -13,7 +13,7 @@ type TemporaryVoterRegistryResponse = {
   temporaryVoterRegistryGetVoterRegion: TemporaryVoterRegistryVoterRegion
 }
 
-export class CurrentUserCompaniesProvider extends BasicDataProvider {
+export class TemporaryVoterRegistryProvider extends BasicDataProvider {
   type = 'TemporaryVoterRegistry'
 
   async provide(): Promise<TemporaryVoterRegistryVoterRegion> {
