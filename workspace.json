@@ -1128,6 +1128,36 @@
         }
       }
     },
+    "api-domains-national-registry-x-road": {
+      "root": "libs/api/domains/national-registry-x-road",
+      "sourceRoot": "libs/api/domains/national-registry-x-road/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/national-registry-x-road/tsconfig.lib.json",
+              "libs/api/domains/national-registry-x-road/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/national-registry-x-road/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry-x-road/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -2742,23 +2772,50 @@
         }
       }
     },
-    "clients-national-registry": {
-      "root": "libs/clients/national-registry",
-      "sourceRoot": "libs/clients/national-registry/src",
+    "clients-national-registry-v1": {
+      "root": "libs/clients/national-registry/v1",
+      "sourceRoot": "libs/clients/national-registry/v1/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/clients/national-registry/**/*.ts"]
+            "lintFilePatterns": ["libs/clients/national-registry/v1/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/national-registry"],
+          "outputs": ["coverage/libs/clients/national-registry/v1"],
           "options": {
-            "jestConfig": "libs/clients/national-registry/jest.config.js",
+            "jestConfig": "libs/clients/national-registry/v1/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-national-registry-v2": {
+      "root": "libs/clients/national-registry/v2",
+      "sourceRoot": "libs/clients/national-registry/v2/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/national-registry/v2/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/national-registry/v2"],
+          "options": {
+            "jestConfig": "libs/clients/national-registry/v2/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
         }
       }
