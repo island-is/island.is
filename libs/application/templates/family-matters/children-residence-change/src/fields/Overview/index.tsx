@@ -1,6 +1,9 @@
 import React, { useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, ApolloError } from '@apollo/client'
+import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
+import { useFormContext } from 'react-hook-form'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
@@ -21,11 +24,8 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
-import * as style from '../Shared.treat'
-import { addDays } from 'date-fns'
-import format from 'date-fns/format'
-import { useFormContext } from 'react-hook-form'
 import { ContractOverview } from '../components'
+import * as style from '../Shared.treat'
 
 const confirmContractTerms = 'confirmContract.terms'
 const confirmContractTimestamp = 'confirmContract.timestamp'
@@ -46,7 +46,7 @@ const Overview = ({
     application.id,
     pdfType,
   )
-  const { id, disabled } = field
+  const { disabled } = field
   const { answers, externalData } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
