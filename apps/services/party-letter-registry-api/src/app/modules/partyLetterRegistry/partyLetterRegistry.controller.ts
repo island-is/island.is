@@ -20,7 +20,7 @@ export class PartyLetterRegistryController {
     private readonly partyLetterRegistryService: PartyLetterRegistryService,
   ) {}
 
-  @Get()
+  @Get('owner')
   async findByOwner(
     @Query() { owner }: FindByOwnerDto,
   ): Promise<PartyLetterRegistry> {
@@ -33,7 +33,7 @@ export class PartyLetterRegistryController {
     return resource
   }
 
-  @Get()
+  @Get('manager')
   async findByManager(
     @Query() { manager }: FindByManagerDto,
   ): Promise<PartyLetterRegistry> {

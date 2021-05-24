@@ -3,6 +3,7 @@ import { Constituencies } from './types'
 export enum API_MODULE_ACTIONS {
   CreateEndorsementList = 'createEndorsementList',
   AssignSupremeCourt = 'assignSupremeCourt',
+  PartyLetter = 'partyLetter',
 }
 
 export const constituencyMapper: Record<
