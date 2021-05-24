@@ -74,12 +74,6 @@ export const ConstituencyForm: Form = buildForm({
               id: 'disclaimer',
               type: undefined,
               title: '',
-              subTitle: m.disclaimerSection.descriptionPt2,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
@@ -91,7 +85,7 @@ export const ConstituencyForm: Form = buildForm({
             buildDataProviderItem({
               id: 'partyLetterRegistry',
               type: 'PartyLetterRegistryProvider',
-              title: 'Stafir',
+              title: '',
               subTitle: '',
             }),
           ],
@@ -99,9 +93,9 @@ export const ConstituencyForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overviewSection',
-      title: m.constituencySection.confirmationTitle,
-      condition: (_answers, externalData) => {
+      id: 'partyLetterFailed',
+      title: '',
+      condition: (_, externalData) => {
         const partyLetter = externalData.partyLetterRegistry
           ?.data as PartyLetterRegistryPartyLetter
 

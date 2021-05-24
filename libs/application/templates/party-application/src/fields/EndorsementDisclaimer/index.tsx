@@ -91,15 +91,13 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <>
-      {!loading && hasEndorsed ? (
+      {!loading && !hasEndorsed ? (
         <EndorsementApproved />
       ) : (
         <Box>
           <Box marginBottom={2}>
             <Text variant="h2" marginBottom={3}>
-              {`${formatMessage(
-                m.endorsementDisclaimer.title,
-              )} (${partyLetter})`}
+              {`${formatMessage(m.endorsementDisclaimer.title)} ${partyLetter}`}
             </Text>
             <Text marginBottom={2}>
               {`${formatMessage(

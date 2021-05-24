@@ -335,7 +335,7 @@ export const m: MessageDir = {
     },
     agreeTermsLabel: {
       id: 'ple.application:endorsement.form.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
     submitButton: {
