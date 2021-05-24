@@ -318,6 +318,9 @@
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
       ],
+      "@island.is/service-portal/endorsements": [
+        "libs/service-portal/endorsements/src/index.ts"
+      ],
       "@island.is/service-portal/family": [
         "libs/service-portal/family/src/index.ts"
       ],

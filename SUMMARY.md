@@ -191,6 +191,7 @@
   - [Service Portal Education License](libs/service-portal/education-license/README.md)
   - [Service Portal Education Student Assessment](libs/service-portal/education-student-assessment/README.md)
   - [Service Portal Eligibility](libs/service-portal/eligibility/README.md)
+  - [Service Portal Endorsements](libs/service-portal/endorsements/README.md)
   - [Icelandic Names Registry](libs/service-portal/icelandic-names-registry/README.md)
   - [Service Portal Settings](libs/service-portal/settings/README.md)
     - [Service Portal Settings Access Control](libs/service-portal/settings/access-control/README.md)
