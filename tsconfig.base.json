@@ -86,6 +86,9 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
+      "@island.is/api/domains/national-registry-x-road": [
+        "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -188,8 +191,11 @@
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
-      "@island.is/clients/national-registry": [
-        "libs/clients/national-registry/src/index.ts"
+      "@island.is/clients/national-registry-v1": [
+        "libs/clients/national-registry/v1/src/index.ts"
+      ],
+      "@island.is/clients/national-registry-v2": [
+        "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
