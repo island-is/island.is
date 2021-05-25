@@ -9,6 +9,7 @@ import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFor
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
+import ApiScopeGroupCreateForm from './ApiScopeGroupCreateForm'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -185,10 +186,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-scope-form__container__field">
-                  <label
-                    htmlFor="description"
-                    className="api-scope-form__label"
-                  >
+                  <label htmlFor="groupId" className="api-scope-form__label">
                     {localization.fields['groupId'].label}
                   </label>
                   <select id="groupId" name="groupId" ref={register()}>
@@ -211,6 +209,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     })}
                   </select>
                   <HelpBox helpText={localization.fields['groupId'].helpText} />
+                  <ApiScopeGroupCreateForm
+                    apiScopeGroup={new ApiScopeGroup()}
+                    handleNewGroupAdded={getGroups}
+                  ></ApiScopeGroupCreateForm>
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">

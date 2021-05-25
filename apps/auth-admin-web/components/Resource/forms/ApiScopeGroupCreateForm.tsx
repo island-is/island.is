@@ -31,7 +31,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),
   )
   useEffect(() => {
-    if (props.apiScopeGroup) {
+    if (props.apiScopeGroup && props.apiScopeGroup.id) {
       setIsEditing(true)
     }
   }, [props.apiScopeGroup])
@@ -53,7 +53,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     <div className="api-scope-group-create-form">
       <div className="api-scope-group-create-form__button__show">
         <a
-          className="api-scope-group-create-form__button__show"
+          className="api-scope-group-create-form__button__new"
           onClick={() => setVisible(!visible)}
           title={localization.buttons['new'].helpText}
         >
@@ -61,14 +61,18 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
           <span>{localization.buttons['new'].text}</span>
         </a>
       </div>
-      <div className="api-scope-group-create-form__wrapper">
+      <div
+        className={`api-scope-group-create-form__wrapper ${
+          visible ? 'show' : 'hidden'
+        }`}
+      >
         <div className="api-scope-group-create-form__container">
           <h1>{localization.title}</h1>
           <div className="api-scope-group-create-form__container__form">
             <div className="api-scope-group-create-form__help">
               {localization.help}
             </div>
-            <form onSubmit={handleSubmit(save)}>
+            <form>
               <div className="api-scope-group-create-form__container__fields">
                 <div className="api-scope-group-create-form__container__field">
                   <label
@@ -87,7 +91,6 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     defaultValue={props.apiScopeGroup.name}
                     className="api-resource-form__input"
                     placeholder={localization.fields['name'].placeholder}
-                    maxLength={10}
                     title={localization.fields['name'].helpText}
                   />
                   <HelpBox helpText={localization.fields['name'].helpText} />
@@ -115,7 +118,6 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     defaultValue={props.apiScopeGroup.description}
                     className="api-resource-form__input"
                     placeholder={localization.fields['description'].placeholder}
-                    maxLength={10}
                     title={localization.fields['description'].helpText}
                   />
                   <HelpBox
@@ -141,7 +143,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="api-scope-group-create-form__button__cancel"
-                  onClick={props.handleBack}
+                  onClick={() => setVisible(false)}
                   title={localization.buttons['cancel'].helpText}
                 >
                   {localization.buttons['cancel'].text}
@@ -151,7 +153,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="api-scope-group-create-form__button__save"
-                  onClick={props.handleNext}
+                  onClick={handleSubmit(save)}
                   title={localization.buttons['save'].helpText}
                 >
                   {localization.buttons['save'].text}

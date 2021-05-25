@@ -163,6 +163,24 @@
         margin: 8px 0;
       }
     }
+
+    div[class$='-form'] {
+      background-color: $color-bg-content;
+      h1 {
+        font-size: 1rem;
+      }
+      div[class$='-wrapper'] {
+        position: absolute;
+        z-index: 3;
+        border: solid 1px $color-border;
+        border-radius: $border-radius;
+      }
+      div[class$='button__new'] {
+        span {
+          color: $color-text-primary !important;
+        }
+      }
+    }
   }
 
   .field-with-details {
