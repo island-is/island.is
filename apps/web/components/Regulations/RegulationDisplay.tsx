@@ -154,9 +154,6 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
             </Hidden>
 
             <RegulationInfoBox regulation={regulation} texts={texts} />
-            <Hidden print={true}>
-              <RegulationEffectsBox regulation={regulation} texts={texts} />
-            </Hidden>
 
             <Hidden print={true}>
               {showTimeline ? (
@@ -176,6 +173,8 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
                 style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
               />
+
+              <RegulationEffectsBox regulation={regulation} texts={texts} />
             </Hidden>
           </Stack>
         </Sticky>
