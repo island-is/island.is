@@ -58,6 +58,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
         </ul>
       </Text>
 
+      {/*
       {lawChapters.length > 0 && (
         <Text marginBottom={2}>
           <strong>{txt('infoboxLawChapters')}:</strong>
@@ -74,6 +75,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
           </ul>
         </Text>
       )}
+      */}
 
       {regulation.effectiveDate && (
         <Text marginBottom={2}>
@@ -106,6 +108,10 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       <Hidden print={true}>
+        {/*
+          TODO: Add "download as PDF/Doc" link
+        */}
+
         <Text marginBottom={1}>
           <Button
             icon="print"
