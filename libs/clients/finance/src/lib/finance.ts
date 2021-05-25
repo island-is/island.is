@@ -80,12 +80,14 @@ export class FinanceService extends RESTDataSource {
 
   async getCustomerRecords(
     nationalID: string,
-    chargeTypeID: string,
+    chargeTypeID: string[],
     dayFrom: string,
     dayTo: string,
   ): Promise<CustomerRecords | null> {
+    const chargeTypeArray = chargeTypeID.map((item) => `&chargeTypeID=${item}`)
+    const chargeTypeString = chargeTypeArray.join('')
     const response = await this.get<CustomerRecords | null>(
-      `/customerRecords?nationalID=${process.env.FINANCE_TEST_USER}&chargeTypeID=${chargeTypeID}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
+      `/customerRecords?nationalID=${process.env.FINANCE_TEST_USER}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

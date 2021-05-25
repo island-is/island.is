@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsString, IsArray } from 'class-validator'
 
 @InputType()
 export class GetCustomerRecordsInput {
-  @Field()
-  @IsString()
-  chargeTypeID!: string
+  @Field((type) => [String], { nullable: true })
+  @IsArray()
+  chargeTypeID!: Array<string>
 
   @Field()
   @IsString()

@@ -71,7 +71,7 @@ const FinanceTransactions = () => {
     {
       variables: {
         input: {
-          chargeTypeID: 'AB',
+          chargeTypeID: ['AB'],
           dayFrom: '2021-01-01',
           dayTo: '2021-03-31',
         },
