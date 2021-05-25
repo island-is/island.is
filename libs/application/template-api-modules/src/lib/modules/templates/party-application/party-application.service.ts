@@ -3,7 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
 import { Constituencies } from '@island.is/application/templates/party-application'
-import { EndorsementListTagsEnum } from './gen/fetch'
+import { EndorsementListTagsEnum } from '@island.is/api/schema'
 
 type ErrorResponse = {
   errors: {
