@@ -49,10 +49,11 @@ export const UserDelegations = () => {
   if (data) {
     delegations.push(...data.authActorDelegations)
   }
-  if (isDelegation) {
+  if (isDelegation && actorNationalId !== null) {
     delegations = delegations.filter(
       (delegation) => delegation.fromNationalId !== currentNationalId,
     )
+    // Don't have the name yet. This is a temporary label until that is fixed.
     delegations.unshift({ fromName: 'Ég', fromNationalId: actorNationalId })
   }
 

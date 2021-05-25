@@ -1,5 +1,9 @@
 import { configure, configureMock } from '@island.is/auth/react'
-import { ApplicationScope, UserProfileScope } from '@island.is/auth/scopes'
+import {
+  ApplicationScope,
+  AuthScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
 
 import { environment } from './environments'
 

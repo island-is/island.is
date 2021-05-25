@@ -90,20 +90,7 @@ export class DelegationsService {
       include: [DelegationScope],
     })
 
-    return result.map(
-      (d) =>
-        <DelegationDTO>{
-          toNationalId: d.toNationalId,
-          fromNationalId: d.fromNationalId,
-          fromName: d.fromDisplayName,
-          type: DelegationType.Custom,
-          provider: DelegationProvider.Custom,
-          validFrom: d.validFrom,
-          validTo: d.validTo,
-          id: d.id,
-          scopes: d.delegationScopes!.map((scope) => scope.scopeName),
-        },
-    )
+    return result.map((d) => d.toDTO())
   }
 
   async create(

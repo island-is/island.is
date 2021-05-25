@@ -15,7 +15,7 @@ import { useAuth } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
-import { useFeatureFlag } from '@island.is/feature-flags'
+import { Features, useFeatureFlag } from '@island.is/feature-flags'
 
 import { MenuState } from '../../store/actions'
 import * as styles from './UserMenu.treat'
@@ -36,10 +36,7 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
   ])
   const { userInfo, signOut } = useAuth()
   const { data: userProfile } = useUserProfile()
-  const showDelegations = useFeatureFlag(
-    'identityserverDelegationsEnabled',
-    false,
-  )
+  const showDelegations = useFeatureFlag(Features.delegationsEnabled, false)
   const handleLanguageChange = (option: ValueType<Option>) =>
     changeLanguage((option as Option).value.toString() as Locale)
 

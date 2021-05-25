@@ -12,7 +12,7 @@ import { Locale } from '@island.is/shared/types'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useAuth } from '@island.is/auth/react'
-import { useFeatureFlag } from '@island.is/feature-flags'
+import { Features, useFeatureFlag } from '@island.is/feature-flags'
 
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
@@ -28,10 +28,7 @@ const MobileMenu: FC<{}> = () => {
   const navigation = useNavigation()
   const { changeLanguage } = useNamespaces()
   const { signOut } = useAuth()
-  const showDelegations = useFeatureFlag(
-    'identityserverDelegationsEnabled',
-    false,
-  )
+  const showDelegations = useFeatureFlag(Features.delegationsEnabled, false)
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
   const handleLogoutClick = () => signOut()
