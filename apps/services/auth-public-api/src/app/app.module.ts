@@ -8,7 +8,7 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
 @Module({
   imports: [
     AuthModule.register({
-      audience: '@island.is/auth/public',
+      audience: '@island.is',
       issuer: environment.auth.issuer,
       jwksUri: environment.auth.jwksUri,
     }),

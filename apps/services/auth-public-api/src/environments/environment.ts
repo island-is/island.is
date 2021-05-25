@@ -3,10 +3,11 @@ import { XRoadMemberClass } from '@island.is/utils/api'
 export default {
   production: false,
   auth: {
-    issuer: 'https://localhost:6001',
-    jwksUri: 'http://localhost:6002/.well-known/openid-configuration/jwks',
+    issuer: 'https://identity-server.dev01.devland.is',
+    jwksUri:
+      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
-  port: 3333,
+  port: 3370,
   rsk: {
     xroad: {
       basePath: process.env.XROAD_BASE_PATH_WITH_ENV,

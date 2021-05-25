@@ -1,4 +1,4 @@
-import { DelegationsService, IDelegation } from '@island.is/auth-api-lib'
+import { DelegationsService, DelegationDTO } from '@island.is/auth-api-lib'
 import {
   IdsUserGuard,
   Scopes,
@@ -18,7 +18,7 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
+  async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     return await this.delegationsService.findAllTo(user.nationalId)
   }
 }

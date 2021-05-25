@@ -4,7 +4,12 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
 import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
-import { DelegationDTO } from '../entities/dto/delegation.dto'
+import {
+  DelegationDTO,
+  DelegationProvider,
+  DelegationType,
+  UpdateDelegationDTO,
+} from '../entities/dto/delegation.dto'
 import { uuid } from 'uuidv4'
 import { DelegationScopeService } from './delegation-scope.service'
 import { DelegationScope } from '@island.is/auth-api-lib'
@@ -22,7 +27,7 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
-  async findAllTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllTo(toNationalId: string): Promise<DelegationDTO[]> {
     const wards = await this.findAllWardsTo(toNationalId)
 
     const companies = await this.findAllCompaniesTo(toNationalId)
@@ -32,11 +37,11 @@ export class DelegationsService {
     return [...wards, ...companies, ...custom]
   }
 
-  async findAllWardsTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllWardsTo(toNationalId: string): Promise<DelegationDTO[]> {
     return [] // TODO: national registry
   }
 
-  async findAllCompaniesTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllCompaniesTo(toNationalId: string): Promise<DelegationDTO[]> {
     try {
       const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
         { kennitala: toNationalId },
@@ -50,7 +55,7 @@ export class DelegationsService {
         if (Array.isArray(companies) && companies.length > 0) {
           return companies.map(
             (p) =>
-              <IDelegation>{
+              <DelegationDTO>{
                 toNationalId: toNationalId,
                 fromNationalId: p.kennitala,
                 fromName: p.nafn,
@@ -71,7 +76,7 @@ export class DelegationsService {
     return []
   }
 
-  async findAllValidCustomTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllValidCustomTo(toNationalId: string): Promise<DelegationDTO[]> {
     const now = new Date()
 
     const result = await this.delegationModel.findAll({
@@ -82,24 +87,29 @@ export class DelegationsService {
           { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
         ],
       },
+      include: [DelegationScope],
     })
 
     return result.map(
       (d) =>
-        <IDelegation>{
+        <DelegationDTO>{
           toNationalId: d.toNationalId,
           fromNationalId: d.fromNationalId,
           fromName: d.fromDisplayName,
           type: DelegationType.Custom,
           provider: DelegationProvider.Custom,
+          validFrom: d.validFrom,
+          validTo: d.validTo,
+          id: d.id,
+          scopes: d.delegationScopes!.map((scope) => scope.scopeName),
         },
     )
   }
 
   async create(
     nationalId: string,
-    delegation: DelegationDTO,
-  ): Promise<Delegation | null> {
+    delegation: UpdateDelegationDTO,
+  ): Promise<DelegationDTO | null> {
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
@@ -115,9 +125,9 @@ export class DelegationsService {
 
   async update(
     nationalId: string,
-    delegation: DelegationDTO,
+    delegation: UpdateDelegationDTO,
     id: string,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     this.logger.debug(`Updating a delegation with id ${id}`)
 
     const delCheck = await this.delegationModel.findByPk(id)
@@ -137,35 +147,38 @@ export class DelegationsService {
     return this.findOne(nationalId, id)
   }
 
-  async findOne(nationalId: string, id: string): Promise<Delegation | null> {
+  async findOne(nationalId: string, id: string): Promise<DelegationDTO | null> {
     this.logger.debug(`Finding a delegation with id ${id}`)
-    return await this.delegationModel.findOne({
+    const delegation = await this.delegationModel.findOne({
       where: {
         id: id,
         fromNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegation ? delegation.toDTO() : null
   }
 
-  async findAllCustomTo(nationalId: string): Promise<Delegation[] | null> {
+  async findAllCustomTo(nationalId: string): Promise<DelegationDTO[] | null> {
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
-    return await this.delegationModel.findAll({
+    const delegations = await await this.delegationModel.findAll({
       where: {
         toNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegations.map((delegation) => delegation.toDTO())
   }
 
-  async findAllCustomFrom(nationalId: string): Promise<Delegation[] | null> {
+  async findAllCustomFrom(nationalId: string): Promise<DelegationDTO[] | null> {
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
-    return await this.delegationModel.findAll({
+    const delegations = await this.delegationModel.findAll({
       where: {
         fromNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegations.map((delegation) => delegation.toDTO())
   }
 
   async deleteFrom(nationalId: string, id: string): Promise<number> {
@@ -200,24 +213,4 @@ export class DelegationsService {
       where: { id: id, toNationalId: nationalId },
     })
   }
-}
-
-export interface IDelegation {
-  toNationalId: string
-  fromNationalId: string
-  fromName: string
-  type: DelegationType
-  provider: DelegationProvider
-}
-
-enum DelegationType {
-  LegalGuardian = 'LegalGuardian',
-  ProcurationHolder = 'ProcurationHolder',
-  Custom = 'Custom',
-}
-
-enum DelegationProvider {
-  NationalRegistry = 'thjodskra',
-  CompanyRegistry = 'fyrirtaekjaskra',
-  Custom = 'delegationdb',
 }
