@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useMemo,
+  useCallback,
+} from 'react'
 import {
   Text,
   Divider,
@@ -9,11 +15,11 @@ import {
   LoadingIcon,
 } from '@island.is/island-ui/core'
 
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import {
   GetMunicipalityQuery,
-  GetApplicationQuery,
+  CreateApplicationQuery,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
@@ -36,6 +42,7 @@ import {
   HomeCircumstances,
   Employment,
   getEmploymentStatus,
+  CreateApplication,
 } from '@island.is/financial-aid/types'
 
 interface MunicipalityData {
@@ -54,6 +61,40 @@ const SummaryForm = () => {
       errorPolicy: 'all',
     },
   )
+
+  const [formError, setFormError] = useState({
+    status: false,
+    message: '',
+  })
+
+  const [creatApplicationMutation, { loading: isUpdating }] = useMutation(
+    CreateApplicationQuery,
+  )
+
+  console.log(form)
+
+  const createApplication = async () => {
+    const { data } = await creatApplicationMutation({
+      variables: {
+        input: {
+          nationalId: '33333333',
+          name: 'Nafn Nafnsson',
+          phoneNumber: '6973345',
+          email: form?.emailAddress,
+          homeCircumstances: form?.homeCircumstances,
+          student: form?.student === 'Yes' ? true : false,
+          hasIncome: Boolean(form?.hasIncome),
+          usePersonalTaxCredit: Boolean(form?.usePersonalTaxCredit),
+          bankNumber: form?.bankNumber,
+          ledger: form?.ledger,
+          accountNumber: form?.accountNumber,
+          interview: Boolean(form?.interview),
+          employment: form?.employment,
+        },
+      },
+    })
+    return data
+  }
 
   const aidCalculator = (
     homeCircumstances: HomeCircumstances,
@@ -115,7 +156,7 @@ const SummaryForm = () => {
   const overview = [
     {
       label: 'Heimili',
-      url: 'heimili',
+      // url: 'heimili',
       info: form?.customAddress
         ? form?.customHomeAddress + ', ' + form?.customPostalCode
         : 'Hafnargata 3, 220 Hafnarfjörður',
@@ -123,9 +164,10 @@ const SummaryForm = () => {
     {
       label: 'Búseta',
       url: 'buseta',
-      info: form?.homeCircumstancesCustom
-        ? form?.homeCircumstancesCustom
-        : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
+      info:
+        form?.homeCircumstances === 'Other'
+          ? form?.homeCircumstancesCustom
+          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
     {
       label: 'Tekjur',
@@ -250,25 +292,49 @@ const SummaryForm = () => {
                   <Text>{item.info}</Text>
                 </Box>
 
-                <Button
-                  icon="pencil"
-                  iconType="filled"
-                  variant="utility"
-                  onClick={() => {
-                    router.push(item.url)
-                  }}
-                >
-                  Breyta
-                </Button>
+                {item.url && (
+                  <Button
+                    icon="pencil"
+                    iconType="filled"
+                    variant="utility"
+                    onClick={() => {
+                      router.push(item.url)
+                    }}
+                  >
+                    Breyta
+                  </Button>
+                )}
               </Box>
             </>
           )
         })}
+
+        <div
+          className={cn({
+            [`errorMessage`]: true,
+            [`showErrorMessage`]: formError.status,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            {formError.message}
+          </Text>
+        </div>
       </FormContentContainer>
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
+        // nextUrl={navigation?.nextUrl ?? '/'}
+        nextButtonText="Senda umsókn"
+        onNextButtonClick={() => {
+          createApplication()
+            .then(() => router.push(navigation?.nextUrl ?? '/'))
+            .catch((err) =>
+              setFormError({
+                status: true,
+                message: 'Obobb einhvað fór úrskeiðis',
+              }),
+            )
+        }}
       />
     </FormLayout>
   )

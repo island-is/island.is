@@ -9,13 +9,13 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Application } from '@island.is/financial-aid/types'
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/types'
 
 @Table({
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<Application> {
+export class ApplicationModel extends Model<ApplicationModel> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -33,7 +33,6 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty()
   modified: Date
 
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -48,7 +47,6 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty()
   name: string
 
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -62,4 +60,69 @@ export class ApplicationModel extends Model<Application> {
   })
   @ApiProperty()
   email: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(HomeCircumstances),
+  })
+  @ApiProperty({ enum: HomeCircumstances })
+  homeCircumstances: HomeCircumstances
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(Employment),
+  })
+  @ApiProperty({ enum: Employment })
+  employment: Employment
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  student: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  usePersonalTaxCredit: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  hasIncome: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  bankNumber: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  ledger: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accountNumber: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  interview: boolean
 }

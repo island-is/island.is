@@ -1,3 +1,19 @@
+export enum HomeCircumstances {
+  UNKNOWN = 'Unknown',
+  WITHPARENTS = 'WithParents',
+  WITHOTHERS = 'WithOthers',
+  OWNPLACE = 'OwnPlace',
+  REGISTEREDLEASE = 'RegisteredLease',
+  OTHER = 'Other',
+}
+
+export enum Employment {
+  WORKING = 'Working',
+  UNEMPLOYED = 'Unemployed',
+  CANNOTWORK = 'CannotWork',
+  OTHER = 'Other',
+}
+
 export interface Application {
   id: string
   created: string
@@ -6,6 +22,15 @@ export interface Application {
   name: string
   phoneNumber: string
   email: string
+  homeCircumstances: HomeCircumstances
+  student: boolean
+  employment: Employment
+  hasIncome: boolean
+  usePersonalTaxCredit: boolean
+  bankNumber?: string
+  ledger?: string
+  accountNumber?: string
+  interview?: boolean
 }
 
 export interface CreateApplication {
@@ -13,6 +38,15 @@ export interface CreateApplication {
   name: string
   phoneNumber: string
   email: string
+  homeCircumstances: HomeCircumstances
+  student: boolean
+  employment: Employment
+  hasIncome: boolean
+  usePersonalTaxCredit: boolean
+  bankNumber?: string
+  ledger?: string
+  accountNumber?: string
+  interview?: boolean
 }
 
 export interface Municipality {
@@ -40,12 +74,12 @@ export interface NavigationProps {
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
 
-export type HomeCircumstances =
-  | 'Unknown'
-  | 'WithParents'
-  | 'WithOthers'
-  | 'OwnPlace'
-  | 'RegisteredLease'
-  | 'Other'
+// export type HomeCircumstances =
+//   | 'Unknown'
+//   | 'WithParents'
+//   | 'WithOthers'
+//   | 'OwnPlace'
+//   | 'RegisteredLease'
+//   | 'Other'
 
-export type Employment = 'Working' | 'Unemployed' | 'CannotWork' | 'Other'
+// export type Employment = 'Working' | 'Unemployed' | 'CannotWork' | 'Other'

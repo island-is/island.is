@@ -99,7 +99,6 @@ const EmploymentForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        nextIsDisabled={form?.employment === ''}
         onNextButtonClick={() => {
           if (form?.employment) {
             if (form?.employment !== 'Other') {
