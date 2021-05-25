@@ -6048,6 +6048,11 @@ react-native-safe-area-context@3.2.0:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.2.0.tgz#06113c6b208f982d68ab5c3cebd199ca93db6941"
   integrity sha512-k2Nty4PwSnrg9HwrYeeE+EYqViYJoOFwEy9LxL5RIRfoqxAq/uQXNGwpUg2/u4gnKpBbEPa9eRh15KKMe/VHkA==
 
+react-native-spotlight-search@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-spotlight-search/-/react-native-spotlight-search-2.0.0.tgz#91acc119247fdf9382e5b3833f762fb53a0d47b4"
+  integrity sha512-/afRQg6jrZ4w839U0ymOiHab4WPu+pIHe34BVOD153U/NQ0certtWLF9RgwtFDNCYn960mux5Xno0vVylPhPGg==
+
 react-native-ultimate-config@3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-3.3.4.tgz#0c0cf871d1f31ca6e13b1c969b08d057a95ddc04"

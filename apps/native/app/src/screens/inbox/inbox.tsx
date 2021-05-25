@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { ListItem } from '@island.is/island-ui-native'
+import { EmptyList, ListItem } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { FlatList, Image, Platform, RefreshControl, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -7,6 +7,7 @@ import {
   useNavigationSearchBarCancelPress,
   useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
+import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { useTheme } from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -143,37 +144,47 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [ui.query])
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        style={{ marginHorizontal: 0, flex: 1 }}
-        data={inboxItems}
-        keyExtractor={(item: any) => item.id}
-        renderItem={renderInboxItem}
-        keyboardDismissMode="on-drag"
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => {
-              setLoading(true)
-              try {
-                res
-                  ?.refetch?.()
-                  ?.then(() => {
+    <>
+      {inboxItems.length > 0 ? (
+        <View style={{ flex: 1 }}>
+          <FlatList
+            style={{ marginHorizontal: 0, flex: 1 }}
+            data={inboxItems}
+            keyExtractor={(item: any) => item.id}
+            renderItem={renderInboxItem}
+            keyboardDismissMode="on-drag"
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => {
+                  setLoading(true)
+                  try {
+                    res
+                      ?.refetch?.()
+                      ?.then(() => {
+                        setLoading(false)
+                      })
+                      .catch((err) => {
+                        setLoading(false)
+                      })
+                  } catch (err) {
+                    // noop
                     setLoading(false)
-                  })
-                  .catch((err) => {
-                    setLoading(false)
-                  })
-              } catch (err) {
-                // noop
-                setLoading(false)
-              }
-            }}
+                  }
+                }}
+              />
+            }
           />
-        }
-      />
-      <BottomTabsIndicator index={0} total={3} />
-    </View>
+          <BottomTabsIndicator index={0} total={3} />
+        </View>
+      ) : (
+        <EmptyList
+          title="Hér eru engin skjöl sem stendur"
+          description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
+          image={<Image source={illustrationSrc} height={176} width={134} />}
+        />
+      )}
+    </>
   )
 }
 

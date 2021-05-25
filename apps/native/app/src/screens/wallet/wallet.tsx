@@ -1,6 +1,12 @@
 import { useQuery } from '@apollo/client'
-import { Alert, LicenceCard, Skeleton } from '@island.is/island-ui-native'
+import {
+  Alert,
+  EmptyList,
+  LicenceCard,
+  Skeleton,
+} from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
+import { Image } from 'react-native'
 import {
   Animated,
   FlatList,
@@ -10,7 +16,9 @@ import {
   TouchableHighlight,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
@@ -66,6 +74,20 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [loading, setLoading] = useState(res.loading)
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
+
+  // indexing list for spotlight search IOS
+  useEffect(() => {
+    const indexItems = licenseItems.map((item: any) => {
+      return {
+        title: item.serviceProvider,
+        uniqueIdentifier: item.id,
+        contentDescription: 'geggjad nice',
+        domain: 'licence',
+      }
+    })
+
+    SpotlightSearch.indexItems(indexItems)
+  }, [licenseItems.length])
 
   useEffect(() => {
     if (res.loading) {
@@ -126,67 +148,77 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      {offset && Platform.OS === 'ios' && (
-        <Alert
-          visible={alertVisible}
-          type="info"
-          message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
-          onClose={() => {
-            dismiss('howToUseCertificates')
-            flRef.current?.scrollToOffset({
-              offset: 0,
-              animated: true,
-            })
-          }}
-          onClosed={() => {
-            setOffset(false)
-          }}
+      {licenseItems.length > 0 ? (
+        <>
+          {offset && Platform.OS === 'ios' && (
+            <Alert
+              visible={alertVisible}
+              type="info"
+              message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
+              onClose={() => {
+                dismiss('howToUseCertificates')
+                flRef.current?.scrollToOffset({
+                  offset: 0,
+                  animated: true,
+                })
+              }}
+              onClosed={() => {
+                setOffset(false)
+              }}
+            />
+          )}
+          <Animated.FlatList
+            ref={flRef as any}
+            testID={testIDs.SCREEN_HOME}
+            automaticallyAdjustContentInsets={false}
+            contentInsetAdjustmentBehavior="never"
+            contentInset={{
+              top: offset ? 70 : 0,
+            }}
+            contentOffset={{
+              x: 0,
+              y: offset ? -70 : 0,
+            }}
+            style={{
+              paddingTop: 16,
+              paddingHorizontal: 16,
+              zIndex: 9,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => {
+                  try {
+                    clearTimeout(loadingTimeout.current)
+                    setLoading(true)
+                    res.refetch().then(() => {
+                      loadingTimeout.current = setTimeout(() => {
+                        setLoading(false)
+                      }, 331)
+                    })
+                  } catch (err) {
+                    setLoading(false)
+                  }
+                }}
+              />
+            }
+            data={
+              isSkeleton
+                ? Array.from({ length: 5 }).map((_, id) => ({ id }))
+                : licenseItems
+            }
+            keyExtractor={(item: any) => item.id}
+            renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
+          />
+          <BottomTabsIndicator index={2} total={3} />
+        </>
+      ) : (
+        <EmptyList
+          title="Hér eru engin skírteini sem stendur"
+          description="Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera þá birtast þau hér."
+          image={<Image source={illustrationSrc} height={198} width={146} />}
         />
       )}
-      <Animated.FlatList
-        ref={flRef as any}
-        testID={testIDs.SCREEN_HOME}
-        automaticallyAdjustContentInsets={false}
-        contentInsetAdjustmentBehavior="never"
-        contentInset={{
-          top: offset ? 70 : 0,
-        }}
-        contentOffset={{
-          x: 0,
-          y: offset ? -70 : 0,
-        }}
-        style={{
-          paddingTop: 16,
-          paddingHorizontal: 16,
-          zIndex: 9,
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => {
-              try {
-                clearTimeout(loadingTimeout.current)
-                setLoading(true)
-                res.refetch().then(() => {
-                  loadingTimeout.current = setTimeout(() => {
-                    setLoading(false)
-                  }, 331)
-                })
-              } catch (err) {
-                setLoading(false)
-              }
-            }}
-          />
-        }
-        data={
-          isSkeleton
-            ? Array.from({ length: 5 }).map((_, id) => ({ id }))
-            : licenseItems
-        }
-        keyExtractor={(item: any) => item.id}
-        renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
-      />
-      <BottomTabsIndicator index={2} total={3} />
     </>
   )
 }

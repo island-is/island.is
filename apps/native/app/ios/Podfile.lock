@@ -374,6 +374,8 @@ PODS:
     - React
   - react-native-segmented-control (2.3.0):
     - React-Core
+  - react-native-spotlight-search (2.0.0):
+    - React
   - react-native-ultimate-config (3.3.4):
     - React
   - react-native-webview (11.4.5):
@@ -572,6 +574,7 @@ DEPENDENCIES:
   - "react-native-cookies (from `../../node_modules/@react-native-community/react-native-cookies/ios`)"
   - react-native-passkit-wallet (from `../../node_modules/react-native-passkit-wallet`)
   - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
+  - react-native-spotlight-search (from `../../node_modules/react-native-spotlight-search`)
   - react-native-ultimate-config (from `../../node_modules/react-native-ultimate-config`)
   - react-native-webview (from `../../node_modules/react-native-webview`)
   - React-perflogger (from `../../../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -690,6 +693,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-passkit-wallet"
   react-native-segmented-control:
     :path: "../../node_modules/@react-native-segmented-control/segmented-control"
+  react-native-spotlight-search:
+    :path: "../../node_modules/react-native-spotlight-search"
   react-native-ultimate-config:
     :path: "../../node_modules/react-native-ultimate-config"
   react-native-webview:
@@ -767,7 +772,7 @@ SPEC CHECKSUMS:
   EXNotifications: c13e078d83ce01c7aeb8e3f44a48c13f50099291
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
+  FBReactNativeSpec: 1d4fcc35d48f0cf39c436af5b555260e3848bf2c
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
   FirebaseCoreDiagnostics: a31d987ba0fe16d59886a5dbadc2f1de871f88c8
@@ -806,6 +811,7 @@ SPEC CHECKSUMS:
   react-native-cookies: 3a8a42a8703423669026731186b1765e40b81557
   react-native-passkit-wallet: 51e3babdaeec4c10b5736786ebd1bfb470fcaa36
   react-native-segmented-control: 83a05d42acd1234ad5e061d603c145973a61b5ee
+  react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
   react-native-ultimate-config: ce215b54420306a82821895649463b00d01b9b2f
   react-native-webview: 6d1d368c38edcc0a074bcc51a94ec8de700c241e
   React-perflogger: aad6d4b4a267936b3667260d1f649b6f6069a675
