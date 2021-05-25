@@ -45,7 +45,7 @@ export function TabPersonalInfo() {
       <Animated.View
         ref={viewRef as any}
         style={{
-          top: offset ? 72 : 0,
+          marginTop: offset ? 72 : 0,
           transform: [{
             translateY: offsetY,
           }],

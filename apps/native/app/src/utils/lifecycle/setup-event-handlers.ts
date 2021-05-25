@@ -7,6 +7,7 @@ import { ButtonRegistry } from '../component-registry'
 import { evaluateUrl, navigateTo } from '../deep-linking'
 import { showLockScreenOverlay } from '../lock-screen-helpers'
 import { isOnboarded } from '../onboarding'
+import SpotlightSearch from 'react-native-spotlight-search'
 
 let backgroundAppLockTimeout: number
 
