@@ -46,6 +46,7 @@
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
+      "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
       "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
@@ -186,6 +187,9 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/auth-public-api": [
+        "libs/clients/auth-public-api/src/index.ts"
+      ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],

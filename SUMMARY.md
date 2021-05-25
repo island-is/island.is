@@ -150,6 +150,7 @@
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
+  - [Auth Public API](libs/clients/auth-public-api/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
