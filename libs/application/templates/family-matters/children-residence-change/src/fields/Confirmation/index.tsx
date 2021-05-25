@@ -1,20 +1,26 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
+import { PdfTypes } from '@island.is/application/core'
 import {
   DescriptionText,
   BorderedAccordion,
   CopyUrl,
+  PdfLink,
 } from '@island.is/application/templates/family-matters-core/components'
 import { formatPhoneNumber } from '@island.is/application/templates/family-matters-core/utils'
-import { confirmation, copyUrl } from '../../lib/messages'
+import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
+import { confirmation, copyUrl, contract } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
+import { Roles } from '../../lib/constants'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
+  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
+  const { pdfUrl } = useGeneratePdfUrl(application.id, pdfType)
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+  const { answers } = application
 
   return (
     <Box marginTop={3} paddingBottom={5}>
@@ -52,9 +58,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
         <DescriptionText
           text={confirmation.nextSteps.description}
           format={{
-            parentBName:
-              externalData.nationalRegistry.data.children[0].otherParent
-                .fullName,
+            date: answers.confirmContract.timestamp,
           }}
         />
       </Box>
@@ -66,12 +70,21 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           successMessage={formatMessage(copyUrl.successMessage)}
         />
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={5}>
+        <Box marginBottom={3}>
+          <PdfLink
+            url={pdfUrl}
+            label={formatMessage(contract.pdfButton.label)}
+          />
+        </Box>
         <BorderedAccordion
           title={formatMessage(confirmation.contractOverview.accordionTitle)}
           id="id_1"
         >
-          <ContractOverview application={application} />
+          <ContractOverview
+            application={application}
+            parentKey={Roles.ParentA}
+          />
         </BorderedAccordion>
       </Box>
       <Box className={confirmationIllustration}>

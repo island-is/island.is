@@ -109,6 +109,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-national-registry-x-road": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -249,7 +252,10 @@
     "clients-mms": {
       "tags": []
     },
-    "clients-national-registry": {
+    "clients-national-registry-v1": {
+      "tags": []
+    },
+    "clients-national-registry-v2": {
       "tags": []
     },
     "clients-regulations": {
@@ -516,7 +522,13 @@
     "services-endorsements-api": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {

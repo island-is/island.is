@@ -1,7 +1,4 @@
-# Clients National Registry
+# National Registry Clients
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test clients-national-registry` to execute the unit tests via [Jest](https://jestjs.io).
+V1 is soap service from national registry
+V2 is x road connected service from national registry
