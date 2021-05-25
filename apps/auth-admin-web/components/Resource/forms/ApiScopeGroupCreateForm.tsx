@@ -44,9 +44,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
       : await ResourcesService.createApiScopeGroup(group)
 
     if (response) {
-      console.log(response)
       if (props.handleChanges) {
-        console.log('handling changes CREATE FORM')
         props.handleChanges()
       }
       if (props.handleNext) {
