@@ -1,3 +1,4 @@
+import React, { FC, useRef } from 'react'
 import {
   Box,
   Button,
@@ -11,12 +12,14 @@ import { Locale } from '@island.is/shared/types'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useAuth } from '@island.is/auth/react'
-import React, { FC, useRef } from 'react'
+import { useFeatureFlag } from '@island.is/feature-flags'
+
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.treat'
+import { UserDelegations } from '../UserDelegations/UserDelegations'
 
 const MobileMenu: FC<{}> = () => {
   const ref = useRef(null)
@@ -25,6 +28,10 @@ const MobileMenu: FC<{}> = () => {
   const navigation = useNavigation()
   const { changeLanguage } = useNamespaces()
   const { signOut } = useAuth()
+  const showDelegations = useFeatureFlag(
+    'identityserverDelegationsEnabled',
+    false,
+  )
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
   const handleLogoutClick = () => signOut()
@@ -88,6 +95,7 @@ const MobileMenu: FC<{}> = () => {
                   />
                 ),
             )}
+            {rootIndex === 0 && showDelegations.value && <UserDelegations />}
             {rootIndex === 0 && (
               <Box>
                 <Button
