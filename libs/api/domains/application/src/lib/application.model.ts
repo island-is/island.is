@@ -55,6 +55,9 @@ export class Application {
   @Field(() => String, { nullable: true })
   name?: string
 
+  @Field(() => String, { nullable: true })
+  institution?: string
+
   @Field(() => Number, { nullable: true })
   progress?: number
 

@@ -5,6 +5,7 @@ export type Icon =
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
+  | 'arrowDown'
   | 'attach'
   | 'business'
   | 'calendar'
@@ -51,11 +52,12 @@ export type Icon =
   | 'school'
   | 'search'
   | 'settings'
+  | 'time'
+  | 'trash'
   | 'wallet'
   | 'warning'
   | 'reload'
   | 'remove'
-  | 'time'
 
 export default {
   filled: {
@@ -111,6 +113,7 @@ export default {
     school: 'School',
     search: 'Search',
     settings: 'Settings',
+    trash: 'Trash',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
@@ -170,6 +173,7 @@ export default {
     school: 'SchoolOutline',
     search: 'SearchOutline',
     settings: 'SettingsOutline',
+    trash: 'TrashOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',

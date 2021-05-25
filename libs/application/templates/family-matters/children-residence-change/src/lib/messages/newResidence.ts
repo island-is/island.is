@@ -35,11 +35,4 @@ export const newResidence = {
       description: 'Label for new residence',
     },
   }),
-  checkbox: defineMessages({
-    label: {
-      id: 'crc.application:section.arrangement.newResidence.checkbox.label',
-      defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar',
-      description: 'Confirm new residence label',
-    },
-  }),
 }

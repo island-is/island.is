@@ -11,36 +11,39 @@ import { Authenticator } from '@island.is/auth/react'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
-import Header from '../components/Header'
+import { InfoProvider } from '../context/InfoProvider'
+import { Header } from '../components/Header'
 import { environment } from '../environments'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
-    <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <Router basename="/umsoknir">
-        <Authenticator>
-          <Box background="white">
-            <GridContainer>
-              <Header />
-            </GridContainer>
-          </Box>
-          <Switch>
-            <Route
-              exact
-              path="/tengjast-umsokn"
-              component={AssignApplication}
-            />
+    <InfoProvider>
+      <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <Router basename="/umsoknir">
+          <Authenticator>
+            <Box background="white">
+              <GridContainer>
+                <Header />
+              </GridContainer>
+            </Box>
+            <Switch>
+              <Route
+                exact
+                path="/tengjast-umsokn"
+                component={AssignApplication}
+              />
 
-            <Route exact path="/:slug" component={Applications} />
-            <Route exact path="/:slug/:id" component={Application} />
+              <Route exact path="/:slug" component={Applications} />
+              <Route exact path="/:slug/:id" component={Application} />
 
-            <Route path="*">
-              <NotFound />
-            </Route>
-          </Switch>
-        </Authenticator>
-      </Router>
-    </LocaleProvider>
+              <Route path="*">
+                <NotFound />
+              </Route>
+            </Switch>
+          </Authenticator>
+        </Router>
+      </LocaleProvider>
+    </InfoProvider>
   </ApolloProvider>
 )
 

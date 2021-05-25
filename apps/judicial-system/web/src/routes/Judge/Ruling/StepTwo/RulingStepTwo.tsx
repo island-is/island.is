@@ -188,7 +188,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -220,7 +220,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -257,7 +257,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -336,7 +336,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -365,7 +365,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -398,7 +398,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>

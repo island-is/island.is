@@ -36,7 +36,6 @@ import {
   ApplicationTemplateAPIAction,
   PdfTypes,
   ApplicationStatus,
-  ApplicationIdentityServerScope,
   CustomTemplateFindQuery,
 } from '@island.is/application/core'
 import { Unwrap, Locale } from '@island.is/shared/types'
@@ -47,6 +46,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -63,7 +63,7 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { CreatePdfDto } from './dto/createPdf.dto'
+import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
@@ -119,7 +119,7 @@ export class ApplicationController {
     private intlService: IntlService,
   ) {}
 
-  @Scopes(ApplicationIdentityServerScope.read)
+  @Scopes(ApplicationScope.read)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -140,7 +140,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.read)
+  @Scopes(ApplicationScope.read)
   @Get('users/:nationalId/applications')
   @ApiParam({
     name: 'nationalId',
@@ -213,7 +213,7 @@ export class ApplicationController {
     return filteredApplications
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -290,7 +290,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -369,7 +369,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -428,7 +428,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
@@ -495,7 +495,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
@@ -766,7 +766,7 @@ export class ApplicationController {
     }
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -816,7 +816,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -857,8 +857,8 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
-  @Put('applications/:id/createPdf')
+  @Scopes(ApplicationScope.write)
+  @Put('applications/:id/generatePdf')
   @ApiParam({
     name: 'id',
     type: String,
@@ -867,23 +867,23 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async createPdf(
+  async generatePdf(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: CreatePdfDto,
+    @Body() input: GeneratePdfDto,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user.nationalId,
     )
-    const url = await this.fileService.createPdf(
+    const url = await this.fileService.generatePdf(
       existingApplication,
       input.type,
     )
 
     this.auditService.audit({
       user,
-      action: 'createPdf',
+      action: 'generatePdf',
       resources: existingApplication.id,
       meta: { type: input.type },
     })
@@ -891,7 +891,7 @@ export class ApplicationController {
     return { url }
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
@@ -929,7 +929,7 @@ export class ApplicationController {
     return { controlCode, documentToken }
   }
 
-  @Scopes(ApplicationIdentityServerScope.write)
+  @Scopes(ApplicationScope.write)
   @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
@@ -967,7 +967,7 @@ export class ApplicationController {
     }
   }
 
-  @Scopes(ApplicationIdentityServerScope.read)
+  @Scopes(ApplicationScope.read)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',

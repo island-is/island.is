@@ -33,7 +33,7 @@ const Decision: React.FC<Props> = (props) => {
             )
           }}
           large
-          filled
+          backgroundColor="white"
         />
       </Box>
       <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}>
@@ -54,7 +54,7 @@ const Decision: React.FC<Props> = (props) => {
             )
           }}
           large
-          filled
+          backgroundColor="white"
         />
       </Box>
       {workingCase.type === CaseType.CUSTODY && (
@@ -76,7 +76,7 @@ const Decision: React.FC<Props> = (props) => {
             )
           }}
           large
-          filled
+          backgroundColor="white"
         />
       )}
     </BlueBox>

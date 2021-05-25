@@ -1,0 +1,6 @@
+{
+  "id": "parent-slug-dev",
+  "name": "parent-slug-dev",
+  "srcdoc": "./build/index.html",
+  "fieldTypes": ["Symbol"]
+}

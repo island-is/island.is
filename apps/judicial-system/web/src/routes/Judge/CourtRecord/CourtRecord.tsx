@@ -15,9 +15,7 @@ import {
   formatAccusedByGender,
   formatProsecutorDemands,
   NounCases,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
   Case,
@@ -39,7 +37,6 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -69,9 +66,6 @@ export const CourtRecord: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { isValidTime: isValidCourtStartTime } = useDateTime({
-    time: formatDate(workingCase?.courtStartDate, TIME_FORMAT),
-  })
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -80,10 +74,6 @@ export const CourtRecord: React.FC = () => {
   useEffect(() => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
-
-      if (wc.judge) {
-        attendees += `${wc.judge.name} ${wc.judge.title}\n`
-      }
 
       if (wc.registrar) {
         attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
@@ -334,7 +324,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                   <RadioButton
                     name="accusedPleaDecision"
@@ -356,7 +346,7 @@ export const CourtRecord: React.FC = () => {
                       )
                     }}
                     large
-                    filled
+                    backgroundColor="white"
                   />
                 </div>
                 <Input

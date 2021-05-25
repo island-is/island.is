@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { parentBIntro } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
@@ -16,50 +16,44 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
     <>
       <Text marginTop={3}>
         {formatMessage(parentBIntro.general.description, {
-          otherParentName: applicant.fullName,
+          otherParentName: (
+            <Text as="span" fontWeight="semiBold">
+              {applicant.fullName}
+            </Text>
+          ),
         })}
       </Text>
       <TransferOverview application={application} />
-      <Text marginTop={5} variant="h3">
-        {formatMessage(parentBIntro.disagreement.title)}
-      </Text>
-      <DescriptionText text={parentBIntro.disagreement.description} />
-      <Text marginTop={5} variant="h3">
-        {formatMessage(parentBIntro.interview.title)}
-      </Text>
-      <Text>{formatMessage(parentBIntro.interview.description)}</Text>
       <Box marginTop={5}>
-        <Button
-          colorScheme="default"
-          icon="open"
-          iconType="outline"
-          onClick={() =>
-            window.open('https://www.syslumenn.is/timabokanir', '_blank')
-          }
-          preTextIconType="filled"
-          size="default"
-          type="button"
-          variant="ghost"
-        >
-          {formatMessage(parentBIntro.interview.button)}
-        </Button>
-        <Box marginTop={4}>
-          <RadioController
-            id={field.id}
-            largeButtons
-            options={[
-              {
-                value: ApproveContract.Yes,
-                label: formatMessage(parentBIntro.contract.accept),
-              },
-              {
-                value: ApproveContract.No,
-                label: formatMessage(parentBIntro.contract.reject),
-              },
-            ]}
-            error={errors?.acceptContract}
-          />
-        </Box>
+        <Text marginBottom={1} variant="h3">
+          {formatMessage(parentBIntro.interview.title)}
+        </Text>
+        <DescriptionText text={parentBIntro.interview.description} />
+      </Box>
+      <Box marginTop={5}>
+        <Text marginBottom={1} variant="h3">
+          {formatMessage(parentBIntro.disagreement.title)}
+        </Text>
+        <DescriptionText text={parentBIntro.disagreement.description} />
+      </Box>
+
+      <Box marginTop={7}>
+        <RadioController
+          id={field.id}
+          largeButtons
+          backgroundColor="white"
+          options={[
+            {
+              value: ApproveContract.Yes,
+              label: formatMessage(parentBIntro.contract.accept),
+            },
+            {
+              value: ApproveContract.No,
+              label: formatMessage(parentBIntro.contract.reject),
+            },
+          ]}
+          error={errors?.acceptContract}
+        />
       </Box>
     </>
   )
