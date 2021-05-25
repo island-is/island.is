@@ -30,6 +30,9 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
             label={slice.title}
             readMoreText={slice.readMoreText}
             items={slice.news}
+            linkType="organizationnews"
+            overview="organizationnewsoverview"
+            parameters={[organizationPageSlug]}
           />
         ) : (
           <LatestNewsSection
