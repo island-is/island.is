@@ -118,11 +118,11 @@ export class MainResolver {
     })
 
     // service returns 1 for success - string with error message as failure..
-    const success = parseInt(response, 10) > 0
+    const success = parseInt(response as string, 10) > 0
 
     return {
       success,
-      errorMessage: success ? null : response,
+      errorMessage: success ? null : response as string,
     }
   }
 }
