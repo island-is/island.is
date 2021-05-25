@@ -16,6 +16,7 @@ import {
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
+import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
@@ -289,6 +290,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildCustomField({
               id: 'confirmContract',
               title: m.contract.general.pageTitle,
+              childInputIds: confirmContractIds,
               component: 'Overview',
             }),
             buildSubmitField({

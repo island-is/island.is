@@ -107,7 +107,7 @@ const MobileMenu: FC<{}> = () => {
           {rootIndex === 1 && (
             <Text variant="small" color="blueberry600" marginTop={3}>
               {formatMessage({
-                id: 'service.portal:incoming-services-footer',
+                id: 'service.portal:incoming-services-footer-mobile',
                 defaultMessage: `
                   Þessi virkni er enn í boði á eldri Mínum síðum.
                   Unnið er að því að færa þessar þjónustur.
