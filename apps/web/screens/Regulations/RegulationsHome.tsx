@@ -12,7 +12,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
-import { RegulationsHomeImg } from '../../components/Regulations/RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -20,9 +19,9 @@ import {
   Button,
   CategoryCard,
   GridColumn,
+  GridColumnProps,
   GridContainer,
   GridRow,
-  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -43,6 +42,8 @@ import {
   GetRegulationsMinistriesQuery,
   GetRegulationsLawChaptersQuery,
   QueryGetRegulationsLawChaptersArgs,
+  GetSubpageHeaderQuery,
+  QueryGetSubpageHeaderArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_REGULATIONS_SEARCH_QUERY,
@@ -50,15 +51,18 @@ import {
   GET_REGULATIONS_MINISTRIES_QUERY,
   GET_REGULATIONS_QUERY,
   GET_REGULATIONS_YEARS_QUERY,
+  GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
+import { RegulationsHomeIntro } from '../../components/Regulations/RegulationsHomeIntro'
 
 const { publicRuntimeConfig } = getConfig()
 
 // ---------------------------------------------------------------------------
 
-type RegulationsHomeProps = {
+export type RegulationsHomeProps = {
   regulations: RegulationSearchResults
   texts: RegulationHomeTexts
+  introText: GetSubpageHeaderQuery['getSubpageHeader']
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: RegulationMinistryList
@@ -72,8 +76,6 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
     throw new CustomNextError(404, 'Not found')
   }
 
-  const [showDetails, setShowDetails] = useState(false)
-
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const totalItems = props.regulations?.data?.length ?? 0
@@ -85,109 +87,39 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       {/* Show when NOT a device */}
       <Breadcrumbs
         items={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').href,
-          },
-          {
-            title: 'Reglugerðir',
-            href: linkResolver('regulationshome').href,
-          },
+          { title: 'Ísland.is', href: linkResolver('homepage').href },
+          { title: 'Reglugerðir', href: linkResolver('regulationshome').href },
         ]}
       />
     </Box>
   )
 
+  const resultTitleOffsets: GridColumnProps =
+    totalItems === 0
+      ? {
+          span: ['1/1', '1/1', '1/1', '10/12'],
+          offset: ['0', '0', '0', '1/12'],
+          paddingTop: [2, 2, 4],
+          paddingBottom: [4, 4, 8],
+        }
+      : {}
+
   return (
     <SubpageLayout
       main={
         <>
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '0', '1/12']}
-                span={['1/1', '1/1', '1/1', '9/12', '7/12']}
-                paddingTop={[0, 0, 0, 8]}
-                paddingBottom={[4, 4, 4, 4, 1]}
-              >
-                {breadCrumbs}
-                <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-                  {txt('homeIntroLegend', 'Reglugerðasafn')}
-                </Text>
-
-                <Text marginBottom={1}>
-                  Reglugerðir eru gefnar út í{' '}
-                  <Link href="https://www.stjornartidindi.is/">
-                    B-deild Stjórnartíðinda
-                  </Link>{' '}
-                  og miðast réttaráhrif við þá birtingu.
-                </Text>
-                <Button
-                  variant="text"
-                  icon={showDetails ? 'chevronUp' : 'chevronDown'}
-                  onClick={() => setShowDetails(!showDetails)}
-                >
-                  Sjá nánar um safnið og fyrirvara
-                </Button>
-                {showDetails && (
-                  <>
-                    <Text marginBottom={1} marginTop={2}>
-                      Reglugerðasafn er heildarsafn gildandi reglugerða.
-                      Reglugerðasafns&shy;vefurinn var opnaður í júní 2001,
-                      önnur útgáfa hans í apríl 2015 og þriðja útgáfa í ....
-                      2021.
-                    </Text>
-                    <Text marginBottom={1}>
-                      Við þriðju útgáfu verður sú nýbreytni að breytingar
-                      reglugerð verða felldar inn og hægt að nálgast samfelldan
-                      texta reglugerða eins og hann er á hverjum tíma. Gera
-                      verður ráð fyrir að það taki nokkurn tíma þar til allar
-                      reglugerðir verði komnar í þann búning.
-                    </Text>
-
-                    <Text marginTop={2} marginBottom={1}>
-                      <strong>Fyrirvari 2021</strong>
-                    </Text>
-                    <Text marginBottom={1}>
-                      Reglugerðir eru birtar í{' '}
-                      <Link href="https://www.stjornartidindi.is/">
-                        B-deild Stjórnartíðinda
-                      </Link>{' '}
-                      skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað,
-                      nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda{' '}
-                      <Link href="/reglugerdir/nr/0958-2005">nr. 958/2005</Link>
-                      .
-                    </Text>
-                    <Text marginBottom={1}>
-                      Sé misræmi milli þess texta sem birtist hér í safninu og
-                      þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal
-                      sá síðarnefndi ráða.
-                    </Text>
-                  </>
-                )}
-              </GridColumn>
-
-              <GridColumn
-                span="3/12"
-                hiddenBelow="lg"
-                paddingTop={[0, 0, 0, 2]}
-                paddingBottom={0}
-              >
-                <RegulationsHomeImg />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span="12/12" paddingTop={2} paddingBottom={[4, 4, 4]}>
-                <RegulationsSearchSection
-                  searchFilters={props.searchQuery}
-                  lawChapters={props.lawChapters}
-                  ministries={props.ministries}
-                  years={props.years}
-                  texts={props.texts}
-                />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          <RegulationsHomeIntro
+            document={props.introText}
+            breadCrumbs={breadCrumbs}
+            getText={txt}
+          />
+          <RegulationsSearchSection
+            searchFilters={props.searchQuery}
+            lawChapters={props.lawChapters}
+            ministries={props.ministries}
+            years={props.years}
+            texts={props.texts}
+          />
         </>
       }
       details={
@@ -279,6 +211,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
 
   const [
     texts,
+    introText,
     regulations,
     years,
     ministries,
@@ -289,6 +222,15 @@ RegulationsHome.getInitialProps = async (ctx) => {
       locale,
       'Regulations_Home',
     ),
+
+    apolloClient
+      .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
+        query: GET_SUBPAGE_HEADER_QUERY,
+        variables: {
+          input: { id: 'reglugerdir', lang: locale },
+        },
+      })
+      .then((res) => res.data?.getSubpageHeader),
 
     doSearch
       ? apolloClient
@@ -311,10 +253,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
           .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
             query: GET_REGULATIONS_QUERY,
             variables: {
-              input: {
-                type: 'newest',
-                page: 1,
-              },
+              input: { type: 'newest', page: 1 },
             },
           })
           .then((res) => res.data?.getRegulations as RegulationSearchResults),
@@ -354,6 +293,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
   return {
     regulations,
     texts,
+    introText,
     searchQuery,
     years,
     ministries,
