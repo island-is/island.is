@@ -195,6 +195,7 @@
     "pdfkit": "0.11.0",
     "pg": "8.1.0",
     "pg-hstore": "2.3.3",
+    "postcss": "npm:@island.is/postcss@107.0.37",
     "prom-client": "12.0.0",
     "pubsub-js": "1.8.0",
     "react": "17.0.1",
