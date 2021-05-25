@@ -1,6 +1,6 @@
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+import { Payment, Prerequisites } from '../dataProviders/tempAPITypes'
 import { NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
@@ -34,11 +34,24 @@ interface NatRegResult extends SuccessfulDataProviderResult {
   }
 }
 
+interface PaymentPlanListResult extends SuccessfulDataProviderResult {
+  data: Payment[]
+}
+
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
   nationalRegistry?: NatRegResult
   userProfile?: UserProfileResult
+  paymentPlanList?: PaymentPlanListResult
 }
+
+const paymentPlanSchema = z
+  .object({
+    id: z.string().nonempty(),
+    amountPerMonth: z.number().optional(),
+    numberOfMonths: z.number().optional(),
+  })
+  .optional()
 
 export const PublicDebtPaymentPlanSchema = z.object({
   // TODO: Applicant schema
@@ -50,15 +63,32 @@ export const PublicDebtPaymentPlanSchema = z.object({
     isFulfilled: z.boolean().refine((x) => x),
     activePayment: z.string().optional(),
   }),
-  paymentPlans: z.array(
-    z.object({
-      paymentPlan: z.object({
-        // id: z.string(),
-        // amount: z.string(),
-        monthsTest: z.string(),
-      }),
-    }),
-  ),
+  paymentPlans: z.object({
+    one: paymentPlanSchema,
+    two: paymentPlanSchema,
+    three: paymentPlanSchema,
+    four: paymentPlanSchema,
+    five: paymentPlanSchema,
+    six: paymentPlanSchema,
+  }),
 })
+
+export const paymentPlanIndexKeyMapper = {
+  0: 'one',
+  1: 'two',
+  2: 'three',
+  3: 'four',
+  4: 'five',
+  5: 'six',
+}
+
+export const paymentPlanEntryKeys = [
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+]
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>
