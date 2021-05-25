@@ -283,11 +283,21 @@ export const m = defineMessages({
     defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
     description: 'Will bring along data to the sheriff',
   },
-  overviewBringPhoneData: {
-    id: 'pl.application:overview.bringPhoneData',
-    defaultMessage: 'Ég kem með gæðamerkta ljósmynd',
-    description: 'I will bring a picture',
+  qualityPhotoAcknowledgement: {
+    id: 'dl.application:qualityPhoto.acknowledgement',
+    defaultMessage: 'Ég kem með nýja ljósmynd',
+    description: 'I will bring a new photo',
   },
+  qualityPhotoInstructions: {
+    id: 'dl.application:qualityPhoto.instructions',
+    defaultMessage: `
+      Ljósmynd af umsækjanda sem er tekin beint að framan og sýnir höfuð (án höfuðfats)
+      og herðar og lýsing andlits er jöfn. Athuga að glampi ekki á gleraugu og skyggi á
+      augu. Ljósmyndin þarf að ver á ljósmyndapappír, 35x45mm að stærð.
+    `,
+    description: 'Description of photo requirements',
+  },
+
   overviewBringCertificateData: {
     id: 'pl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',

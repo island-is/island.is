@@ -286,7 +286,7 @@ export const application: Form = buildForm({
                 const options = [
                   {
                     value: 'picture',
-                    label: m.overviewBringPhoneData,
+                    label: m.qualityPhotoAcknowledgement,
                   },
                 ]
                 if (
