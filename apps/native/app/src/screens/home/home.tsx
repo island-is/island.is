@@ -4,7 +4,7 @@ import {
   Heading,
   NotificationCard,
   ViewPager,
-  WelcomeCard,
+  WelcomeCard
 } from '@island.is/island-ui-native'
 import React from 'react'
 import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
@@ -19,11 +19,11 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
+  LIST_APPLICATIONS_QUERY
 } from '../../graphql/queries/list-applications.query'
 import {
   ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY,
+  LIST_NOTIFICATIONS_QUERY
 } from '../../graphql/queries/list-notifications.query'
 import { authStore } from '../../stores/auth-store'
 import { useNotificationsStore } from '../../stores/notifications-store'

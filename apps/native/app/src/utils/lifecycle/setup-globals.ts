@@ -45,7 +45,8 @@ Sentry.init({
 
 // ignore expo warnings
 LogBox.ignoreLogs([
-  /^Constants\.manifest is null/
+  /^Constants\.manifest is null/,
+  /RCTRootView cancelTouches/,
 ]);
 
 // set default timezone

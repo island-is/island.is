@@ -29,6 +29,7 @@
     "react-native-app-auth": "6.2.0",
     "react-native-code-push": "7.0.1",
     "react-native-dialogs": "1.1.1",
+    "react-native-interactable": "2.0.1",
     "react-native-keyboard-manager": "6.5.4-1",
     "react-native-keychain": "7.0.0",
     "react-native-localize": "2.0.3",

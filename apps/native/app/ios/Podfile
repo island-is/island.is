@@ -37,6 +37,7 @@ target 'IslandApp' do
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
   pod 'ReactNativeNavigation', :path => '../../node_modules/react-native-navigation'
+  pod 'Interactable', :path => '../../node_modules/react-native-interactable'
   pod 'react-native-cookies', :path => '../../node_modules/@react-native-community/react-native-cookies/ios'
   pod 'react-native-segmented-control', :path => '../../node_modules/@react-native-segmented-control/segmented-control'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'

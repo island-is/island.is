@@ -3,8 +3,6 @@ const { createMatchPath, loadConfig } = require('tsconfig-paths')
 const { fileExistsSync } = require('tsconfig-paths/lib/filesystem')
 const chalk = require('chalk')
 const path = require('path')
-const { createConsoleLogger } = require('configcat-js')
-const { attempt } = require('lodash')
 const DEBUG = false
 
 /*

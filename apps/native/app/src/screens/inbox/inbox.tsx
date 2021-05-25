@@ -5,7 +5,7 @@ import { FlatList, Image, Platform, RefreshControl, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate
+  useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
 import { useTheme } from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -14,7 +14,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY
+  LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -75,36 +75,41 @@ const {
   },
 )
 
+const PressableListItem = ({ item }: { item: IDocument }) => {
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  return (
+    <PressableHighlight
+      onPress={() => navigateTo(`/inbox/${item.id}`)}
+    >
+      <ListItem
+        title={item.senderName}
+        subtitle={item.subject}
+        date={new Date(item.date)}
+        swipable
+        icon={
+          <Image
+            source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
+            resizeMode="contain"
+            style={{ width: 25, height: 25 }}
+          />
+        }
+      />
+    </PressableHighlight>
+  );
+}
+
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   const theme = useTheme()
   const ui = useUiStore()
   const [loading, setLoading] = useState(false)
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
 
   const renderInboxItem = useCallback(
-    ({ item }: { item: IDocument }) => {
-      return (
-        <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`)}>
-          <ListItem
-            title={item.senderName}
-            subtitle={item.subject}
-            date={new Date(item.date)}
-            icon={
-              <Image
-                source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
-                resizeMode="contain"
-                style={{ width: 25, height: 25 }}
-              />
-            }
-          />
-        </PressableHighlight>
-      )
-    },
+    ({ item }: { item: IDocument }) => <PressableListItem item={item} />,
     [theme],
   )
 
@@ -172,4 +177,4 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 }
 
-InboxScreen.options = getNavigationOptions;
+InboxScreen.options = getNavigationOptions

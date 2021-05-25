@@ -144,6 +144,8 @@ PODS:
   - GoogleUtilities/UserDefaults (7.4.1):
     - GoogleUtilities/Logger
   - hermes-engine (0.7.2)
+  - Interactable (2.0.1):
+    - React
   - IQKeyboardManagerSwift (6.5.4)
   - JWT (3.0.0-beta.12):
     - Base64 (~> 1.1.2)
@@ -550,6 +552,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.87.0)
   - glog (from `../../../../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (~> 0.7.2)
+  - Interactable (from `../../node_modules/react-native-interactable`)
   - libevent (~> 2.1.12)
   - RCT-Folly (from `../../../../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../../../../node_modules/react-native/Libraries/RCTRequired`)
@@ -655,6 +658,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../../../../node_modules/react-native/third-party-podspecs/glog.podspec"
+  Interactable:
+    :path: "../../node_modules/react-native-interactable"
   RCT-Folly:
     :podspec: "../../../../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -779,6 +784,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 11e3a5f2c190327df1a4a5d7e7ae3d4d5b9c9e4c
   GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
   hermes-engine: 7d97ba46a1e29bacf3e3c61ecb2804a5ddd02d4f
+  Interactable: 411887c89fa16ac41f8e7898aca06dcad55e5f22
   IQKeyboardManagerSwift: 2dde0fc70110e8eac7ccce2a46fdbec6a850b414
   JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -835,6 +841,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 73bd737fe1070200ebe3ced91d1e3594b313113e
+PODFILE CHECKSUM: 70324fecf1dba22211b0f30c4ffee6d78633ddf8
 
 COCOAPODS: 1.10.1

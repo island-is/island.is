@@ -19,6 +19,7 @@ import com.reactnativecommunity.webview.RNCWebViewPackage;
 import io.sentry.react.RNSentryPackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import com.wix.interactable.Interactable;
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -65,6 +66,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNSentryPackage());
           packages.add(new ReactNativeFirebaseAppPackage());
           packages.add(new ReactNativeFirebaseMessagingPackage());
+          packages.add(new Interactable());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
