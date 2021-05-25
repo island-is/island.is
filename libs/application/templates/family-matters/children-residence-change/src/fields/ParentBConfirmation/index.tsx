@@ -12,6 +12,7 @@ import { parentBConfirmation, contract } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
+import { Roles } from '../../lib/constants'
 
 const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
@@ -40,7 +41,10 @@ const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
           )}
           id="id_1"
         >
-          <ContractOverview application={application} />
+          <ContractOverview
+            application={application}
+            parentKey={Roles.ParentB}
+          />
         </BorderedAccordion>
       </Box>
       <Box className={confirmationIllustration}>
