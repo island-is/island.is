@@ -13,7 +13,7 @@ export const Approved: Form = buildForm({
     buildDescriptionField({
       id: 'approved',
       title: 'Móttekið',
-      description: 'Akstursmat móttekið,
+      description: 'Akstursmat móttekið',
     }),
   ],
 })
