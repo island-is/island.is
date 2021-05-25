@@ -1,4 +1,4 @@
-# Auth Client
+# Auth Public API Client
 
 ## About
 
