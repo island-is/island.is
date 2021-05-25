@@ -3,9 +3,6 @@ import {
   Query,
   Mutation,
   Resolver,
-  ResolveField,
-  Parent,
-  Directive,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 

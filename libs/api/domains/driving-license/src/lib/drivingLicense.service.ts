@@ -11,14 +11,11 @@ import {
 import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 import {
   ApplicationEligibilityResponse,
-  DrivingAssessmentDto,
   NewDrivingAssessmentResponse,
   NewDrivingLicenseInput,
   NewDrivingLicenseResponse,
 } from './client/drivingLicense.type'
-import { DAYS, DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
-
-const DEV_ONLY_REMOVE_ME_SKIP_CHECKS = true
+import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -83,9 +80,7 @@ export class DrivingLicenseService {
     const expiryDate = new Date(activeDrivingLicense.gildirTil)
 
     if (!activeDrivingLicense.erBradabirgda || expiryDate < new Date()) {
-      if (!DEV_ONLY_REMOVE_ME_SKIP_CHECKS) {
-        return null
-      }
+      return null
     }
 
     return {
@@ -133,13 +128,6 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
     const status = await this.drivingLicenseApi.getTeachingRights(nationalId)
-
-    if (DEV_ONLY_REMOVE_ME_SKIP_CHECKS) {
-      return {
-        nationalId,
-        hasTeachingRights: true,
-      }
-    }
 
     return {
       nationalId,
@@ -189,8 +177,8 @@ export class DrivingLicenseService {
       },
     ]
 
+    // only eligible if we dont find an unmet requirement
     const isEligible =
-      DEV_ONLY_REMOVE_ME_SKIP_CHECKS ||
       !requirements.find(({ requirementMet }) => requirementMet === false)
 
     return {

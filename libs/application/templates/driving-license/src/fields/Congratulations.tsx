@@ -51,7 +51,7 @@ function Congratulations({
         </Box>
 
         <Box marginTop={4}>
-          <img src="/assets/images/movingTruck.svg" alt="Skrautmynd" />
+          <img role="presentation" src="/assets/images/movingTruck.svg" alt="Skrautmynd" />
         </Box>
       </Box>
     </Box>
