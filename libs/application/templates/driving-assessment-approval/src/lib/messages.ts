@@ -120,7 +120,13 @@ export const m = defineMessages({
   outroMessage: {
     id: 'dl.application:outro.message',
     defaultMessage:
-      'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
+      'Akstursmat komið áleiðis',
+    description: 'Some description',
+  },
+  error: {
+    id: 'dl.application:outro.message',
+    defaultMessage:
+      'Ekki er víst að akstursmat hafi borist',
     description: 'Some description',
   },
   dataSchemePhoneNumber: {

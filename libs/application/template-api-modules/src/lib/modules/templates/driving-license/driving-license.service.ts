@@ -79,7 +79,17 @@ export class DrivingLicenseService {
     const result = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, QUERY_NEW_DRIVING_ASSESSMENT)
       .then((response) => response.json())
-      .catch((e) => e)
+      .then((res) => {
+        if (res.errors) {
+          const {
+            errors: [ firstError ]
+          } = res
+
+          throw new Error(firstError)
+        }
+
+        return res.data.drivingLicenseNewDrivingAssessment
+      })
 
     if (result.success) {
       await this.sharedTemplateAPIService.sendEmail(
@@ -87,7 +97,6 @@ export class DrivingLicenseService {
         application,
       )
     } else {
-      console.log(result.errors[0].extensions)
       throw new Error('No success result from QUERY_NEW_DRIVING_ASSESSMENT')
     }
 

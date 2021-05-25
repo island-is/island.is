@@ -125,19 +125,9 @@ export const FormPrimary: Form = buildForm({
             const sendApplicationActionResult =
               application.externalData[ApiActions.submitAssessmentConfirmation]
 
-            let id = 'unknown'
-            if (sendApplicationActionResult) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              id = sendApplicationActionResult.data.id
-            }
+            const success = get(sendApplicationActionResult, 'success', false)
 
-            return {
-              ...m.outroMessage,
-              values: {
-                id,
-              },
-            }
+            return success ? m.outroMessage : m.errorMessage
           },
         }),
       ],
