@@ -25,6 +25,7 @@ import {
 import {
   CaseState,
   CaseTransition,
+  IntegratedCourts,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -259,6 +260,7 @@ export class CaseController {
     }
 
     if (
+      IntegratedCourts.includes(existingCase.courtId) &&
       Boolean(caseToUpdate.courtCaseNumber) &&
       caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
     ) {

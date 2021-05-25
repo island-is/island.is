@@ -15,6 +15,8 @@ export interface Institution {
   name: string
 }
 
+export const IntegratedCourts = ['d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf']
+
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',

@@ -9,6 +9,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  IntegratedCourts,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -279,7 +280,10 @@ export class NotificationService {
 
     // TODO: Find a better place for this
     // No need to wait
-    if (existingCase.courtCaseNumber) {
+    if (
+      IntegratedCourts.includes(existingCase.courtId) &&
+      existingCase.courtCaseNumber
+    ) {
       this.uploadRequestPdfToCourt(existingCase)
     }
 

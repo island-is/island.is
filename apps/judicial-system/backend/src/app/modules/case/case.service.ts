@@ -13,7 +13,10 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { User as TUser } from '@island.is/judicial-system/types'
+import {
+  IntegratedCourts,
+  User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
@@ -113,10 +116,9 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    const uploaded = await this.uploadSignedRulingPdfToCourt(
-      existingCase,
-      signedRulingPdf,
-    )
+    const uploaded = IntegratedCourts.includes(existingCase.courtId)
+      ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
+      : false
 
     await Promise.all([
       this.sendEmail(

@@ -28,6 +28,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  IntegratedCourts,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -163,17 +164,19 @@ export const JudgeOverview: React.FC = () => {
               <BlueBox>
                 <div className={styles.createCourtCaseContainer}>
                   <Box display="flex">
-                    <div className={styles.createCourtCaseButton}>
-                      <Button
-                        size="small"
-                        onClick={() => handleClick(workingCase)}
-                        loading={creatingCourtCase}
-                        disabled={Boolean(workingCase.courtCaseNumber)}
-                        fluid
-                      >
-                        Stofna nýtt mál
-                      </Button>
-                    </div>
+                    {IntegratedCourts.includes(workingCase.court?.id) && (
+                      <div className={styles.createCourtCaseButton}>
+                        <Button
+                          size="small"
+                          onClick={() => handleClick(workingCase)}
+                          loading={creatingCourtCase}
+                          disabled={Boolean(workingCase.courtCaseNumber)}
+                          fluid
+                        >
+                          Stofna nýtt mál
+                        </Button>
+                      </div>
+                    )}
                     <div className={styles.createCourtCaseInput}>
                       <Input
                         data-testid="courtCaseNumber"
