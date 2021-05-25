@@ -10,5 +10,5 @@ export class NewDrivingLicenseResult {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  errorMessage!: string|null
+  errorMessage!: string | null
 }

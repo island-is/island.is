@@ -26,7 +26,7 @@ export class DrivingLicenseService {
 
   async getDrivingLicense(
     nationalId: User['nationalId'],
-  ): Promise<DrivingLicense|null> {
+  ): Promise<DrivingLicense | null> {
     const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
       nationalId,
     )
@@ -61,7 +61,7 @@ export class DrivingLicenseService {
 
   async getStudentInformation(
     nationalId: string,
-  ): Promise<StudentInformation|null> {
+  ): Promise<StudentInformation | null> {
     const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
       nationalId,
     )
@@ -89,7 +89,7 @@ export class DrivingLicenseService {
     }
 
     return {
-      name: activeDrivingLicense.nafn
+      name: activeDrivingLicense.nafn,
     }
   }
 
@@ -132,9 +132,7 @@ export class DrivingLicenseService {
   async getTeachingRights(
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
-    const status = await this.drivingLicenseApi.getTeachingRights(
-      nationalId,
-    )
+    const status = await this.drivingLicenseApi.getTeachingRights(nationalId)
 
     if (DEV_ONLY_REMOVE_ME_SKIP_CHECKS) {
       return {
@@ -147,7 +145,6 @@ export class DrivingLicenseService {
       nationalId,
       hasTeachingRights: status.value > 0,
     }
-
   }
 
   async getListOfJuristictions(): Promise<Juristiction[]> {
@@ -164,14 +161,23 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseType['id'],
   ): Promise<ApplicationEligibilityResponse> {
-    const assessmentResult = await this.drivingLicenseApi.getDrivingAssessment(nationalId)
-    const hasFinishedSchoolResult = await this.drivingLicenseApi.hasFinishedSchool(nationalId)
-    const canApplyResult = await this.drivingLicenseApi.canApplyFor(nationalId, type)
+    const assessmentResult = await this.drivingLicenseApi.getDrivingAssessment(
+      nationalId,
+    )
+    const hasFinishedSchoolResult = await this.drivingLicenseApi.hasFinishedSchool(
+      nationalId,
+    )
+    const canApplyResult = await this.drivingLicenseApi.canApplyFor(
+      nationalId,
+      type,
+    )
 
     const requirements = [
       {
         key: 'Gilt akstursmat finnst ekki á skrá',
-        requirementMet: (assessmentResult?.dagsetningMats ?? 0) > (Date.now() - DRIVING_ASSESSMENT_MAX_AGE),
+        requirementMet:
+          (assessmentResult?.dagsetningMats ?? 0) >
+          Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
       },
       {
         key: 'Hefur ekki lokið ökugerði',
@@ -183,10 +189,9 @@ export class DrivingLicenseService {
       },
     ]
 
-
-    const isEligible = DEV_ONLY_REMOVE_ME_SKIP_CHECKS ||
-      !requirements
-        .find(({ requirementMet }) => requirementMet === false)
+    const isEligible =
+      DEV_ONLY_REMOVE_ME_SKIP_CHECKS ||
+      !requirements.find(({ requirementMet }) => requirementMet === false)
 
     return {
       requirements,

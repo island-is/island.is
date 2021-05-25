@@ -119,14 +119,12 @@ export const m = defineMessages({
   },
   outroMessage: {
     id: 'dl.application:outro.message',
-    defaultMessage:
-      'Akstursmat komið áleiðis',
+    defaultMessage: 'Akstursmat komið áleiðis',
     description: 'Some description',
   },
   error: {
     id: 'dl.application:outro.message',
-    defaultMessage:
-      'Ekki er víst að akstursmat hafi borist',
+    defaultMessage: 'Ekki er víst að akstursmat hafi borist',
     description: 'Some description',
   },
   dataSchemePhoneNumber: {
@@ -141,7 +139,8 @@ export const m = defineMessages({
   },
   dataSchemeDrivingAssmentApprovalCheck: {
     id: 'dl.application:dataSchema.drivingAssessmentConfirmation',
-    defaultMessage: 'Vinsamlegast staðfestu að viðkomandi hafi lokið akstursmati',
+    defaultMessage:
+      'Vinsamlegast staðfestu að viðkomandi hafi lokið akstursmati',
     description: 'Vinsamlegast staðfestu að viðkomandi hafi lokið akstursmati',
   },
   nationalRegistryTitle: {

@@ -2,10 +2,7 @@ import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { useWatch } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/core'
-import {
-  Box,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as kennitala from 'kennitala'
 
 const QUERY = gql`
@@ -24,11 +21,12 @@ interface Props extends FieldBaseProps {
 
 export const StudentLookupField: FC<Props> = ({ error }) => {
   const studentNationalId = useWatch({
-    name: 'student.nationalId'
+    name: 'student.nationalId',
   })
 
   const { data = {}, error: queryError, loading } = useQuery(QUERY, {
-    skip: !studentNationalId || !kennitala.isPerson(studentNationalId as string),
+    skip:
+      !studentNationalId || !kennitala.isPerson(studentNationalId as string),
     variables: {
       nationalId: studentNationalId,
     },
@@ -50,25 +48,20 @@ export const StudentLookupField: FC<Props> = ({ error }) => {
 
   return (
     <>
-      {error && (
-        {error}
-      )}
+      {error && { error }}
 
-      {result.student
-        ? (
-          <Box>
-            <Text variant="h4">Umsækjandi</Text>
-            <Text>{result.student.name}</Text>
-          </Box>
-        )
-        : (
-          <Box color="red400" padding={2}>
-            <Text color="red400">
-              Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini
-            </Text>
-          </Box>
-        )
-      }
+      {result.student ? (
+        <Box>
+          <Text variant="h4">Umsækjandi</Text>
+          <Text>{result.student.name}</Text>
+        </Box>
+      ) : (
+        <Box color="red400" padding={2}>
+          <Text color="red400">
+            Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini
+          </Text>
+        </Box>
+      )}
     </>
   )
 }

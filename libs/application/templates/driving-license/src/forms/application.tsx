@@ -16,10 +16,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import {
-  NationalRegistryUser,
-  UserProfile,
-} from '@island.is/api/schema'
+import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '@island.is/api/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -54,7 +51,8 @@ export const application: Form = buildForm({
               id: 'eligibility',
               type: 'EligibilityProvider',
               title: 'Upplýsingar úr ökuskírteinaskrá',
-              subTitle: 'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+              subTitle:
+                'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
             }),
             buildDataProviderItem({
               id: 'juristictions',
@@ -87,17 +85,22 @@ export const application: Form = buildForm({
               id: 'afhending',
               title: 'Afhending',
               titleVariant: 'h4',
-              description: 'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
+              description:
+                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
             }),
             buildSelectField({
               id: 'juristiction',
               title: 'Afhending',
               disabled: false,
-              options: ({ externalData: { juristictions: { data } } }) => {
+              options: ({
+                externalData: {
+                  juristictions: { data },
+                },
+              }) => {
                 return (data as Juristiction[]).map(({ id, name, zip }) => ({
                   value: id,
                   label: name,
-                  tooltip: `Póstnúmer ${zip}`
+                  tooltip: `Póstnúmer ${zip}`,
                 }))
               },
             }),
@@ -247,7 +250,9 @@ export const application: Form = buildForm({
               label: m.overviewNationalId,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
-                formatKennitala((nationalRegistry.data as NationalRegistryUser).nationalId),
+                formatKennitala(
+                  (nationalRegistry.data as NationalRegistryUser).nationalId,
+                ),
             }),
             buildKeyValueField({
               label: m.overviewPostalCode,

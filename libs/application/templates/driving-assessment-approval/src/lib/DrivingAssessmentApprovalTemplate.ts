@@ -21,8 +21,7 @@ const States = {
   approved: 'approved',
 }
 
-type Events =
-  | { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT }
 
 enum Roles {
   TEACHER = 'teacher',
@@ -31,16 +30,16 @@ enum Roles {
 const Schema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   student: z.object({
-    nationalId: z.string()
-      .refine((n) => n && kennitala.isValid(n), {
-        params: m.dataSchemeNationalId,
-      }),
+    nationalId: z.string().refine((n) => n && kennitala.isValid(n), {
+      params: m.dataSchemeNationalId,
+    }),
     email: z.string().email(),
   }),
-  drivingAssessmentConfirmationCheck: z.array(z.string())
+  drivingAssessmentConfirmationCheck: z
+    .array(z.string())
     .refine((v) => v.includes('confirmed'), {
       params: m.dataSchemeDrivingAssmentApprovalCheck,
-    })
+    }),
 })
 
 const ReferenceApplicationTemplate: ApplicationTemplate<
@@ -51,7 +50,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL,
   name: m.name,
   translationNamespaces: [
-    ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL].translation
+    ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]
+      .translation,
   ],
   dataSchema: Schema,
   stateMachineConfig: {

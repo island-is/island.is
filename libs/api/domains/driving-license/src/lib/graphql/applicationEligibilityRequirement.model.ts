@@ -8,4 +8,3 @@ export class ApplicationEligibilityRequirement {
   @Field()
   requirementMet!: boolean
 }
-

@@ -9,10 +9,7 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  CustomField,
-  FieldBaseProps,
-} from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/core'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -23,7 +20,6 @@ function Congratulations({
   field,
   application,
 }: PropTypes): JSX.Element {
-
   return (
     <Box paddingTop={2}>
       <Box marginTop={2}>
@@ -41,9 +37,14 @@ function Congratulations({
 
         <Box marginTop={4}>
           <Accordion singleExpand>
-            <AccordionItem id="id_1" label="Hvað gerist næst?" labelVariant='h3'>
+            <AccordionItem
+              id="id_1"
+              label="Hvað gerist næst?"
+              labelVariant="h3"
+            >
               <Text>
-                Næsta sem gerist er að við ákveðum hvað á að standa í þessu boxi.
+                Næsta sem gerist er að við ákveðum hvað á að standa í þessu
+                boxi.
               </Text>
             </AccordionItem>
           </Accordion>

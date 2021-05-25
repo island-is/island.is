@@ -70,7 +70,7 @@ export const FormPrimary: Form = buildForm({
               title: 'Uppfletting nemanda',
               component: 'StudentLookupField',
             }),
-          ]
+          ],
         }),
       ],
     }),
@@ -99,12 +99,16 @@ export const FormPrimary: Form = buildForm({
             buildKeyValueField({
               label: 'Kennitala umsækjanda',
               width: 'half',
-              value: ({ answers }) => formatKennitala(get(answers, 'student.nationalId', '') as string),
+              value: ({ answers }) =>
+                formatKennitala(
+                  get(answers, 'student.nationalId', '') as string,
+                ),
             }),
             buildKeyValueField({
               label: 'Tölvupóstfang umsækjanda',
               width: 'half',
-              value: ({ answers }) => get(answers, 'student.email', '') as string,
+              value: ({ answers }) =>
+                get(answers, 'student.email', '') as string,
             }),
             buildCheckboxField({
               title: '',
@@ -112,10 +116,10 @@ export const FormPrimary: Form = buildForm({
               options: [
                 {
                   label: 'Ég staðfesti að umsækjandi hafi staðist akstursmat',
-                  value: 'confirmed'
+                  value: 'confirmed',
                 },
               ],
-            })
+            }),
           ],
         }),
         buildDescriptionField({

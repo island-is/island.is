@@ -146,7 +146,7 @@ export function buildDescriptionField(data: {
     title,
     description,
     tooltip,
-    space
+    space,
   } = data
   return {
     children: undefined,

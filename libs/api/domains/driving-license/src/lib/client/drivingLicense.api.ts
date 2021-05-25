@@ -32,7 +32,7 @@ export class DrivingLicenseApi {
     this.secret = secret
   }
 
-  headers () {
+  headers() {
     return {
       'X-Road-Client': this.xroadClientId,
       SECRET: this.secret,
@@ -44,7 +44,7 @@ export class DrivingLicenseApi {
     const res = await fetch(`${this.xroadApiUrl}/${url}`, {
       headers: {
         ...this.headers(),
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       method: 'POST',
       body: JSON.stringify(body),
@@ -91,10 +91,9 @@ export class DrivingLicenseApi {
 
   getDrivingAssessment(
     nationalId: User['nationalId'],
-  ): Promise<GetDrivingAssessmentResponse|null> {
+  ): Promise<GetDrivingAssessmentResponse | null> {
     return this.requestApi(`api/Okuskirteini/saekjaakstursmat/${nationalId}`)
   }
-
 
   hasFinishedSchool(
     nationalId: User['nationalId'],
@@ -110,17 +109,19 @@ export class DrivingLicenseApi {
     nationalId: User['nationalId'],
     type: string,
   ): Promise<CanApplyForResponse> {
-    return this.requestApi(`api/Okuskirteini/${nationalId}/canapplyfor/${type}/full`)
+    return this.requestApi(
+      `api/Okuskirteini/${nationalId}/canapplyfor/${type}/full`,
+    )
   }
 
   newDrivingAssessment(
-    input: NewDrivingAssessmentInput
+    input: NewDrivingAssessmentInput,
   ): Promise<NewDrivingAssessmentResponse> {
     return this.postApi(`api/Okuskirteini/new/drivingassesment`, input)
   }
 
   newDrivingLicense(
-    input: NewDrivingLicenseInput
+    input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResponse> {
     // We are only implementing the B license ATM.
     const category = 'B'

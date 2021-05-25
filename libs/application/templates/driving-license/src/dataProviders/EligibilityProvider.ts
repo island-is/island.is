@@ -6,8 +6,11 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
-const extractReason = (requirements: ApplicationEligibilityRequirement[]): string => {
-  return requirements.filter(({ requirementMet } ) => !requirementMet)
+const extractReason = (
+  requirements: ApplicationEligibilityRequirement[],
+): string => {
+  return requirements
+    .filter(({ requirementMet }) => !requirementMet)
     .map(({ key }) => key)
     .join(', ')
 }
@@ -28,14 +31,13 @@ export class EligibilityProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(
-      query,
-      { drivingLicenseType: 'B' }
-    )
-      .then(async (res: Response) => {
+    return this.useGraphqlGateway(query, { drivingLicenseType: 'B' }).then(
+      async (res: Response) => {
         if (!res.ok) {
           console.error('failed http request', { res })
-          return Promise.reject({ reason: 'Náði ekki sambandi við vefþjónustu' })
+          return Promise.reject({
+            reason: 'Náði ekki sambandi við vefþjónustu',
+          })
         }
 
         const response = await res.json()
@@ -50,9 +52,12 @@ export class EligibilityProvider extends BasicDataProvider {
         if (eligibility.isEligible) {
           return Promise.resolve(eligibility.isEligible)
         } else {
-          return Promise.reject({ reason: extractReason(eligibility.requirements) })
+          return Promise.reject({
+            reason: extractReason(eligibility.requirements),
+          })
         }
-      })
+      },
+    )
   }
 
   onProvideError({ reason }: { reason: string }): FailedDataProviderResult {

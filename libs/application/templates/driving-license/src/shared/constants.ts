@@ -1,3 +1,3 @@
 export enum ApiActions {
-  submitApplication = 'submitApplication'
+  submitApplication = 'submitApplication',
 }

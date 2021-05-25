@@ -65,9 +65,7 @@ export class MainResolver {
   }
 
   @Query(() => StudentInformationResult)
-  drivingLicenseStudentInformation(
-    @Args('nationalId') nationalId: string,
-  ) {
+  drivingLicenseStudentInformation(@Args('nationalId') nationalId: string) {
     const student = this.drivingLicenseService.getStudentInformation(nationalId)
 
     return {
@@ -80,7 +78,10 @@ export class MainResolver {
     @CurrentUser() user: User,
     @Args('type') type: string,
   ) {
-    return this.drivingLicenseService.getApplicationEligibility(user.nationalId, type)
+    return this.drivingLicenseService.getApplicationEligibility(
+      user.nationalId,
+      type,
+    )
   }
 
   @Query(() => [Juristiction])
@@ -99,7 +100,7 @@ export class MainResolver {
     )
 
     return {
-      success: response.ok
+      success: response.ok,
     }
   }
 
@@ -110,7 +111,9 @@ export class MainResolver {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseService.newDrivingLicense({
       authorityNumber: input.juristictionId,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate ? 1 : 0,
+      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
+        ? 1
+        : 0,
       personIdNumber: user.nationalId,
     })
 

@@ -18,7 +18,7 @@ export class DrivingLicenseService {
 
   async submitApplication({
     authorization,
-    application
+    application,
   }: TemplateApiModuleActionProps) {
     const { answers } = application
 
@@ -43,7 +43,7 @@ export class DrivingLicenseService {
       .then((res) => {
         if (res.errors) {
           const {
-            errors: [ firstError ]
+            errors: [firstError],
           } = res
 
           throw new Error(firstError)
@@ -63,7 +63,7 @@ export class DrivingLicenseService {
 
   async submitAssessmentConfirmation({
     authorization,
-    application
+    application,
   }: TemplateApiModuleActionProps) {
     const studentNationalId = get(application.answers, 'student.nationalId')
     const QUERY_NEW_DRIVING_ASSESSMENT = `
@@ -82,7 +82,7 @@ export class DrivingLicenseService {
       .then((res) => {
         if (res.errors) {
           const {
-            errors: [ firstError ]
+            errors: [firstError],
           } = res
 
           throw new Error(firstError)

@@ -13,5 +13,5 @@ export class StudentInformation {
 export class StudentInformationResult {
   @Field(() => StudentInformation, { nullable: true })
   @IsOptional()
-  student!: StudentInformation|null
+  student!: StudentInformation | null
 }

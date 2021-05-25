@@ -1,3 +1,3 @@
 export enum ApiActions {
-  submitAssessmentConfirmation = 'submitAssessmentConfirmation'
+  submitAssessmentConfirmation = 'submitAssessmentConfirmation',
 }

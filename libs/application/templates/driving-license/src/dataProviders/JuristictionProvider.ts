@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import { Juristiction } from '@island.is/api/schema'
 
-
 export class JuristictionProvider extends BasicDataProvider {
   type = 'JuristictionProvider'
 
