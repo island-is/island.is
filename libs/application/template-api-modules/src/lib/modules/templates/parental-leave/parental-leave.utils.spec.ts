@@ -39,10 +39,10 @@ beforeEach(() => {
 })
 
 describe('getOtherParentId', () => {
-  it('should return empty string if no parent is selected', () => {
+  it('should return null if no parent is selected', () => {
     application.answers.otherParent = formConstants.spouseSelection.noSpouse
 
-    const expectedId = ''
+    const expectedId = null
 
     expect(getOtherParentId(application)).toBe(expectedId)
   })

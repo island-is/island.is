@@ -36,7 +36,7 @@ export class ParentalLeaveModule {
         ParentalLeaveService,
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
-          useValue: config.attachmentBucket,
+          useFactory: () => config.attachmentBucket,
         },
       ],
       exports: [ParentalLeaveService],
