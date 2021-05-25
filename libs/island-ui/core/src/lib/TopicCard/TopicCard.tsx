@@ -1,4 +1,6 @@
-import * as React from 'react'
+import React, { MouseEventHandler } from 'react'
+import { RequireAtLeastOne } from 'type-fest'
+
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Tag } from '../Tag/Tag'
@@ -6,11 +8,17 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 
 type ColorScheme = 'blue' | 'red'
 
-export interface TopicCardProps {
+interface TopicCardPropsBase {
   tag?: string
   colorScheme?: ColorScheme
-  href: string
+  href?: string
+  onClick?: MouseEventHandler
 }
+
+export type TopicCardProps = RequireAtLeastOne<
+  TopicCardPropsBase,
+  'href' | 'onClick'
+>
 
 const colorSchemes = {
   blue: {
@@ -30,8 +38,9 @@ const colorSchemes = {
 export const TopicCard: React.FC<TopicCardProps> = ({
   children,
   colorScheme = 'blue',
-  href = '/',
+  href,
   tag,
+  onClick,
 }) => {
   return (
     <FocusableBox
@@ -40,6 +49,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
       borderRadius="large"
       display="flex"
       href={href}
+      onClick={onClick}
       padding={[2, 2, 3]}
       position="relative"
       width="full"
