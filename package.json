@@ -424,6 +424,7 @@
     "next/postcss": "8.2.10",
     "treat/postcss": "8.2.10",
     "treat/**/postcss": "npm:@island.is/postcss@107.0.37",
-    "multicast-dns": "7.2.3"
+    "multicast-dns": "7.2.3",
+    "browserslist": "4.16.6"
   }
 }
