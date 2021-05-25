@@ -1,5 +1,5 @@
 import React from 'react'
-import { gql, useQuery, useLazyQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
@@ -18,23 +18,15 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
-  FinanceStatusDetailsType,
 } from './FinanceStatusData.types'
-import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
-import amountFormat from '../../utils/amountFormat'
+import { ExpandHeader } from '../../components/ExpandableTable'
 import { downloadCSV } from '../../utils/downloadCSV'
-import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import * as styles from './FinanceStatus.treat'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
     getFinanceStatus
-  }
-`
-
-const GetFinanceStatusDetailsQuery = gql`
-  query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
-    getFinanceStatusDetails(input: $input)
   }
 `
 
@@ -46,12 +38,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
   console.log({ financeStatusData, loading })
-
-  const [getDetailsQuery, { ...detailsQuery }] = useLazyQuery(
-    GetFinanceStatusDetailsQuery,
-  )
-  const financeStatusDetails: FinanceStatusDetailsType =
-    detailsQuery.data?.getFinanceStatusDetails || {}
 
   const exportCsv = async (data: any) => {
     const filename = `Testcsv, ${new Date().toISOString().split('T')[0]}.csv`
@@ -143,32 +129,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     {financeStatusData.organizations.map(
                       (org: FinanceStatusOrganizationType) =>
                         org.chargeTypes.map((chargeType) => (
-                          <ExpandRow
-                            key={chargeType.id}
-                            onExpandCallback={() =>
-                              getDetailsQuery({
-                                variables: {
-                                  input: {
-                                    OrgID: org.id,
-                                    chargeTypeID: chargeType.id,
-                                  },
-                                },
-                              })
-                            }
-                            data={[
-                              chargeType.name,
-                              org.name,
-                              amountFormat(chargeType.totals),
-                            ]}
-                          >
-                            {financeStatusDetails?.chargeItemSubjects?.length >
-                            0 ? (
-                              <FinanceStatusDetailTable
-                                organization={org}
-                                financeStatusDetails={financeStatusDetails}
-                              />
-                            ) : null}
-                          </ExpandRow>
+                          <FinanceStatusTableRow
+                            chargeType={chargeType}
+                            organization={org}
+                            key={`${org.id}-${chargeType.id}`}
+                          />
                         )),
                     )}
                   </T.Body>
