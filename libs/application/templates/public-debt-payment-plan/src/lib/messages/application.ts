@@ -5,12 +5,12 @@ const t = 'pdpp.application'
 // Global string for the application
 export const application = defineMessages({
   name: {
-    id: `${t}:application.name`,
+    id: `pdpp.application:application.name`,
     defaultMessage: 'Umsókn um greiðsludreifingu skulda',
     description: 'Name of the Login Service application',
   },
   description: {
-    id: `${t}:application.description`,
+    id: `pdpp.application:application.description`,
     defaultMessage: 'Lýsing á umsókn um greiðsludreifingu skulda',
     description: 'Description of the Login Service application',
   },
@@ -19,32 +19,32 @@ export const application = defineMessages({
 // All sections in the application
 export const section = defineMessages({
   externalData: {
-    id: `${t}:section.externalData`,
+    id: `pdpp.application:section.externalData`,
     defaultMessage: 'Gagnaöflun',
     description: 'External data section',
   },
   info: {
-    id: `${t}:section.info`,
+    id: `pdpp.application:section.info`,
     defaultMessage: 'Upplýsingar',
     description: 'Info section',
   },
   employer: {
-    id: `${t}:section.employer`,
+    id: `pdpp.application:section.employer`,
     defaultMessage: 'Launagreiðandi',
     description: 'Employer section',
   },
   paymentPlan: {
-    id: `${t}:section.paymentPlan`,
+    id: `pdpp.application:section.paymentPlan`,
     defaultMessage: 'Greiðsludreifing',
     description: 'Payment plan section',
   },
   overview: {
-    id: `${t}:section.overview`,
+    id: `pdpp.application:section.overview`,
     defaultMessage: 'Yfirlit og rafræn undirskrift',
     description: 'Overview and e-signature section',
   },
   confirmation: {
-    id: `${t}:section.confirmation`,
+    id: `pdpp.application:section.confirmation`,
     defaultMessage: 'Staðfesting',
     description: 'Confirmation section',
   },

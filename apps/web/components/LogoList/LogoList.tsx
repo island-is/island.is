@@ -1,5 +1,11 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+} from '@island.is/island-ui/core'
 import * as styles from './LogoList.treat'
 import cn from 'classnames'
 
@@ -24,15 +30,19 @@ export const LogoList = ({
     >
       {title}
     </Text>
-    <Box paddingTop={3} marginBottom={7}>
-      <Text
-        variant="intro"
-        as="p"
-        color={variant === 'light' ? 'white' : 'dark400'}
-      >
-        {body}
-      </Text>
-    </Box>
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          paddingTop={3}
+          paddingBottom={7}
+          span={['12/12', '12/12', '12/12', '6/12']}
+        >
+          <Text as="p" color={variant === 'light' ? 'white' : 'dark400'}>
+            {body}
+          </Text>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
     <Box
       display="flex"
       flexWrap="wrap"
