@@ -168,17 +168,28 @@
       background-color: $color-bg-content;
       h1 {
         font-size: 1rem;
+        margin-left: 47px;
       }
-      div[class$='-wrapper'] {
+
+      div[class$='button__show'] {
+        i {
+          font-size: 0.8rem !important;
+        }
+        span {
+          color: $color-text-primary !important;
+          display: none;
+        }
+      }
+
+      div[class$='wrapper'] {
+        // padding: 20px;
+        left: -480px;
         position: absolute;
         z-index: 3;
         border: solid 1px $color-border;
         border-radius: $border-radius;
-      }
-      div[class$='button__new'] {
-        span {
-          color: $color-text-primary !important;
-        }
+        background-color: $color-bg-content;
+        min-width: $width-content;
       }
     }
   }

@@ -15,7 +15,7 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
-  handleNewGroupAdded: () => void
+  isModal: false
 }
 
 const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
@@ -24,6 +24,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     handleSubmit,
     errors,
     formState,
+    reset,
   } = useForm<ApiScopeGroupDTO>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [visible, setVisible] = useState<boolean>(false)
@@ -45,7 +46,24 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
       : await ResourcesService.createApiScopeGroup(group)
 
     if (response) {
-      props.handleNewGroupAdded()
+      if (props.handleChanges) {
+        props.handleChanges()
+      }
+      if (props.handleNext) {
+        props.handleNext()
+      }
+      setVisible(false)
+      reset(new ApiScopeGroupDTO())
+    }
+  }
+
+  const handleCancelClick = () => {
+    if (props.isModal) {
+      setVisible(false)
+      return
+    }
+    if (props.handleBack) {
+      props.handleBack()
     }
   }
 
@@ -62,8 +80,8 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
         </a>
       </div>
       <div
-        className={`api-scope-group-create-form__wrapper ${
-          visible ? 'show' : 'hidden'
+        className={`api-scope-group-create-form__wrapper${
+          visible ? '' : ' hidden'
         }`}
       >
         <div className="api-scope-group-create-form__container">
@@ -143,7 +161,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="api-scope-group-create-form__button__cancel"
-                  onClick={() => setVisible(false)}
+                  onClick={handleCancelClick}
                   title={localization.buttons['cancel'].helpText}
                 >
                   {localization.buttons['cancel'].text}

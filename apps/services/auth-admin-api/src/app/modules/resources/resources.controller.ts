@@ -614,6 +614,7 @@ export class ResourcesController {
   @Scopes(Scope.root, Scope.full)
   @Get('api-scope-group')
   async findApiScopeGroups(
+    @Query('searchString') searchString?: string,
     @Query('page') page?: number,
     @Query('count') count?: number,
   ): Promise<
@@ -627,7 +628,19 @@ export class ResourcesController {
     if (!page || !count) {
       return this.resourcesService.findAllApiScopeGroups()
     }
-    return this.resourcesService.findAndCountAllApiScopeGroups(page, count)
+    return this.resourcesService.findAndCountAllApiScopeGroups(
+      searchString,
+      page,
+      count,
+    )
+  }
+
+  @Scopes(Scope.root, Scope.full)
+  @Get('api-scope-group/:id')
+  async findApiScopeGroup(
+    @Param('id') id: string,
+  ): Promise<ApiScopeGroup | null> {
+    return this.resourcesService.findApiScopeGroupByPk(id)
   }
 
   @Scopes(Scope.root, Scope.full)
@@ -638,7 +651,6 @@ export class ResourcesController {
     return await this.resourcesService.createApiScopeGroup(group)
   }
 
-  // #region ApiScopeGroup
   @Scopes(Scope.root, Scope.full)
   @Put('api-scope-group/:id')
   async updateApiScopeGroup(

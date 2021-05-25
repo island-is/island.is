@@ -372,8 +372,14 @@ export class ResourcesService extends BaseService {
     return BaseService.DELETE(`api-scope-group/${id}`)
   }
 
+  /** Returns a ApiScopeGroup by Id */
+  static async findApiScopeGroup(id: string): Promise<ApiScopeGroup> {
+    return BaseService.GET(`api-scope-group/${encodeURIComponent(id)}`)
+  }
+
   /** Returns all ApiScopeGroups with Paging */
   static async findAllApiScopeGroups(
+    searchString: string = null,
     page: number = null,
     count: number = null,
   ): Promise<
@@ -385,7 +391,9 @@ export class ResourcesService extends BaseService {
     | null
   > {
     if (page && count) {
-      return BaseService.GET(`api-scope-group?page=${page}&count=${count}`)
+      return BaseService.GET(
+        `api-scope-group?searchString=${searchString}&page=${page}&count=${count}`,
+      )
     }
     return BaseService.GET(`api-scope-group`)
   }

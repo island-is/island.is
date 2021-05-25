@@ -36,7 +36,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
       setIsAvailable(false)
     } else {
       setIsAvailable(true)
-    }
+    }@
   }
 
   return (

@@ -211,7 +211,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <HelpBox helpText={localization.fields['groupId'].helpText} />
                   <ApiScopeGroupCreateForm
                     apiScopeGroup={new ApiScopeGroup()}
-                    handleNewGroupAdded={getGroups}
+                    handleChanges={getGroups}
+                    isModal={true}
                   ></ApiScopeGroupCreateForm>
                 </div>
 

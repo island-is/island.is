@@ -244,6 +244,10 @@
           "text": "Api Scope Users",
           "title": "List of Api Scope Users"
         },
+        "apiScopeGroups": {
+          "text": "Api Scope Groups",
+          "title": "List of Api Scope Groups"
+        },
         "idpProviders": {
           "text": "Identity Providers",
           "title": "List of Identity Providers"
@@ -506,6 +510,43 @@
         },
         "clientType": {
           "headerText": "Type"
+        }
+      }
+    },
+    {
+      "id": "ApiScopeGroupList",
+      "removeConfirmation": "Are you sure want to delete this group",
+      "title": "Api Scope Groups",
+      "search": {
+        "label": "Group name"
+      },
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for a group"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Group"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Group"
+        },
+        "new": {
+          "text": "Create new Group",
+          "helpText": "Open Group Form"
+        }
+      },
+      "columns": {
+        "groupId": {
+          "headerText": "Id"
+        },
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
         }
       }
     },
