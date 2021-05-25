@@ -409,7 +409,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(11)
+        expect(response.body.length).toBe(4)
       })
   })
 })
@@ -710,7 +710,7 @@ describe('Case', () => {
       })
   })
 
-  it('Put /api/case/:id/state should transition case to a new state', async () => {
+  it('PUT /api/case/:id/state should transition case to a new state', async () => {
     let dbCase: CCase
     let apiCase: CCase
 

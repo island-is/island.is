@@ -2,32 +2,53 @@ import { Op } from 'sequelize'
 
 import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
 
-import {
-  getCasesQueryFilter,
-  isProsecutorInstitutionHiddenFromUser,
-  isStateHiddenFromRole,
-} from './case.filters'
+import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
+import { Case } from '../models'
 
-describe('isStateVisibleToRole', () => {
-  it('new should be visible to prosecutors', () => {
+describe('isCaseBlockedFromUser', () => {
+  it('deleted should be hidden from prosecutors', () => {
     // Arrange
-    const state = CaseState.NEW
-    const role = UserRole.PROSECUTOR
+    const theCase = { state: CaseState.DELETED } as Case
+    const user = { role: UserRole.PROSECUTOR } as User
 
     // Act
-    const res = isStateHiddenFromRole(state, role)
+    const res = isCaseBlockedFromUser(theCase, user)
 
     // Assert
-    expect(res).toBe(false)
+    expect(res).toBe(true)
+  })
+
+  it('deleted should be hidden from registrars', () => {
+    // Arrange
+    const theCase = { state: CaseState.DELETED } as Case
+    const user = { role: UserRole.REGISTRAR } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
   })
 
   it('new should be hidden from registrars', () => {
     // Arrange
-    const state = CaseState.NEW
-    const role = UserRole.REGISTRAR
+    const theCase = { state: CaseState.NEW } as Case
+    const user = { role: UserRole.REGISTRAR } as User
 
     // Act
-    const res = isStateHiddenFromRole(state, role)
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('deleted should be hidden from judges', () => {
+    // Arrange
+    const theCase = { state: CaseState.DELETED } as Case
+    const user = { role: UserRole.JUDGE } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
 
     // Assert
     expect(res).toBe(true)
@@ -35,49 +56,119 @@ describe('isStateVisibleToRole', () => {
 
   it('new should be hidden from judges', () => {
     // Arrange
-    const state = CaseState.NEW
-    const role = UserRole.JUDGE
+    const theCase = { state: CaseState.NEW } as Case
+    const user = { role: UserRole.JUDGE } as User
 
     // Act
-    const res = isStateHiddenFromRole(state, role)
-
-    // Assert
-    expect(res).toBe(true)
-  })
-})
-
-describe('isProsecutorInstitutionHiddenFromUser', () => {
-  it('other prosecutor institutions should be hidden from prosecutors', () => {
-    // Arrange
-    const prosecutorInstitutionId = 'Institution'
-    const user = {
-      role: UserRole.PROSECUTOR,
-      institution: { id: 'Another Institution' },
-    }
-
-    // Act
-    const res = isProsecutorInstitutionHiddenFromUser(
-      prosecutorInstitutionId,
-      user as User,
-    )
+    const res = isCaseBlockedFromUser(theCase, user)
 
     // Assert
     expect(res).toBe(true)
   })
 
-  it('own prosecutor institution should be visible to prosecutors', () => {
+  it('other prosecutors offices should be hidden from prosecutors', () => {
     // Arrange
-    const prosecutorInstitutionId = 'Institution'
+    const theCase = {
+      state: CaseState.NEW,
+      prosecutor: { institutionId: 'Prosecutors Office' },
+    } as Case
     const user = {
       role: UserRole.PROSECUTOR,
-      institution: { id: 'Institution' },
-    }
+      institution: { id: 'Another Prosecutors Office' },
+    } as User
 
     // Act
-    const res = isProsecutorInstitutionHiddenFromUser(
-      prosecutorInstitutionId,
-      user as User,
-    )
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('own prosecutors office should be visible to prosecutors', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.NEW,
+      prosecutor: { institutionId: 'Prosecutors Office' },
+    } as Case
+    const user = {
+      role: UserRole.PROSECUTOR,
+      institution: { id: 'Prosecutors Office' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(false)
+  })
+
+  it('other courts should be hidden from registrars', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.SUBMITTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'Another Court' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('own court should be visible to registrars', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.SUBMITTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'Court' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(false)
+  })
+
+  it('other courts should be hidden from judges', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.SUBMITTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'Another Court' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('own court should be visible to judges', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.SUBMITTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'Court' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
 
     // Assert
     expect(res).toBe(false)
@@ -90,7 +181,7 @@ describe('getCasesQueryFilter', () => {
     const user = {
       role: UserRole.PROSECUTOR,
       institution: {
-        id: 'Institution Id',
+        id: 'Prosecutors Office Id',
       },
     }
 
@@ -109,7 +200,7 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutor_id: { [Op.is]: null } },
             {
-              '$prosecutor.institution_id$': 'Institution Id',
+              '$prosecutor.institution_id$': 'Prosecutors Office Id',
             },
           ],
         },
@@ -117,10 +208,13 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  it('should get other role filter', () => {
+  it('should get registrar filter', () => {
     // Arrange
     const user = {
-      role: UserRole.JUDGE,
+      role: UserRole.REGISTRAR,
+      institution: {
+        id: 'Court Id',
+      },
     }
 
     // Act
@@ -128,9 +222,43 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.not]: {
-        state: [CaseState.DELETED, CaseState.NEW],
+      [Op.and]: [
+        {
+          [Op.not]: {
+            state: [CaseState.DELETED, CaseState.NEW],
+          },
+        },
+        {
+          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
+        },
+      ],
+    })
+  })
+
+  it('should get judge filter', () => {
+    // Arrange
+    const user = {
+      role: UserRole.JUDGE,
+      institution: {
+        id: 'Court Id',
       },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        {
+          [Op.not]: {
+            state: [CaseState.DELETED, CaseState.NEW],
+          },
+        },
+        {
+          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
+        },
+      ],
     })
   })
 })

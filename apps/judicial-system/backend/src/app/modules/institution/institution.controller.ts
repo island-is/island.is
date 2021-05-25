@@ -1,8 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { JwtAuthGuard, RolesRule } from '@island.is/judicial-system/auth'
-import { UserRole } from '@island.is/judicial-system/types'
+import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { InstitutionService } from './institution.service'
 import { Institution } from './institution.model'

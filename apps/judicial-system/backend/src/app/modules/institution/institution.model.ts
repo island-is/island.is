@@ -47,4 +47,11 @@ export class Institution extends Model<Institution> {
   })
   @ApiProperty()
   name: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  active: boolean
 }
