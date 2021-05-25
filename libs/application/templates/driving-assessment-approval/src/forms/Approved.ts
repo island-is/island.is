@@ -13,7 +13,7 @@ export const Approved: Form = buildForm({
     buildDescriptionField({
       id: 'approved',
       title: 'Móttekið',
-      description: 'Við höfum móttekið akstursmatið og sent tölvupóst á xxx@yyy.zz til að láta vita.',
+      description: 'Akstursmat móttekið,
     }),
   ],
 })

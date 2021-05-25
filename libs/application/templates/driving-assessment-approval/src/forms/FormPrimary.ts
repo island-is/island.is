@@ -127,7 +127,7 @@ export const FormPrimary: Form = buildForm({
 
             const success = get(sendApplicationActionResult, 'success', false)
 
-            return success ? m.outroMessage : m.errorMessage
+            return success ? m.outroMessage : m.error
           },
         }),
       ],
