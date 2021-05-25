@@ -25,7 +25,7 @@ const Index: React.FC = () => {
     }
     loadUser()
     document.title = LocalizationUtils.getPageTitle(
-      'admin.api-scope-user.[apiScopeUser]',
+      'admin.api-scope-group.[groupId]',
     )
   }, [groupId])
 
@@ -40,18 +40,16 @@ const Index: React.FC = () => {
     router.push(`/admin/?tab=${AdminTab.ApiScopeGroups}`)
   }
 
-  const handleGroupSaved = (userSaved: ApiScopeGroup) => {
-    if (userSaved) {
-      router.push(`/admin/?tab=${AdminTab.ApiScopeGroups}`)
-    }
+  const handleGroupSaved = () => {
+    router.push(`/admin/?tab=${AdminTab.ApiScopeGroups}`)
   }
 
   return (
     <ContentWrapper>
       <ApiScopeGroupCreateForm
         apiScopeGroup={apiScopeGroup}
-        handleCancel={handleCancel}
-        handleSaveButtonClicked={handleGroupSaved}
+        handleBack={handleCancel}
+        handleNext={handleGroupSaved}
       ></ApiScopeGroupCreateForm>
     </ContentWrapper>
   )

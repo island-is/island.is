@@ -9,7 +9,7 @@ import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFor
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
-import ApiScopeGroupCreateForm from './ApiScopeGroupCreateForm'
+import ApiScopeGroupCreateFormModal from './ApiScopeGroupCreateFormModal'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -38,9 +38,9 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
   const getGroups = async () => {
     const response = await ResourcesService.findAllApiScopeGroups()
-    console.log(response)
+
     if (response) {
-      setGroups(response as ApiScopeGroup[])
+      setGroups([...(response as ApiScopeGroup[])])
     }
   }
 
@@ -55,13 +55,9 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   }
 
   const save = async (data: ApiScopeDTO) => {
-    let response = null
-    if (!isEditing) {
-      response = await ResourcesService.createApiScope(data)
-    } else {
-      response = await ResourcesService.updateApiScope(data)
-    }
-
+    const response = isEditing
+      ? await ResourcesService.updateApiScope(data)
+      : await ResourcesService.createApiScope(data)
     if (response) {
       if (props.handleSave) {
         props.handleSave(data)
@@ -209,11 +205,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     })}
                   </select>
                   <HelpBox helpText={localization.fields['groupId'].helpText} />
-                  <ApiScopeGroupCreateForm
+                  <ApiScopeGroupCreateFormModal
                     apiScopeGroup={new ApiScopeGroup()}
                     handleChanges={getGroups}
-                    isModal={true}
-                  ></ApiScopeGroupCreateForm>
+                  ></ApiScopeGroupCreateFormModal>
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">

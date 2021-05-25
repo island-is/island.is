@@ -35,6 +35,12 @@
     "admin.api-scope-user.[apiScopeUser]": {
       "title": "Edit Api Scope User"
     },
+    "admin.api-scope-group.index": {
+      "title": "Create Api Scope Group"
+    },
+    "admin.api-scope-group.[groupId]": {
+      "title": "Edit Api Scope Group"
+    },
     "admin.api-scope-user.index": {
       "title": "Create Api Scope user"
     },
@@ -718,6 +724,10 @@
         "new": {
           "text": "Create a new group",
           "helpText": "Create a new Api Scope Group"
+        },
+        "list": {
+          "text": "Go to group page",
+          "helpText": "Go to group page to edit and list up groups"
         }
       },
       "fields": {

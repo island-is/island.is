@@ -15,7 +15,6 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
-  isModal: false
 }
 
 const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
@@ -27,7 +26,6 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
     reset,
   } = useForm<ApiScopeGroupDTO>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [visible, setVisible] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),
   )
@@ -46,22 +44,19 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
       : await ResourcesService.createApiScopeGroup(group)
 
     if (response) {
+      console.log(response)
       if (props.handleChanges) {
+        console.log('handling changes CREATE FORM')
         props.handleChanges()
       }
       if (props.handleNext) {
         props.handleNext()
       }
-      setVisible(false)
       reset(new ApiScopeGroupDTO())
     }
   }
 
   const handleCancelClick = () => {
-    if (props.isModal) {
-      setVisible(false)
-      return
-    }
     if (props.handleBack) {
       props.handleBack()
     }
@@ -69,21 +64,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="api-scope-group-create-form">
-      <div className="api-scope-group-create-form__button__show">
-        <a
-          className="api-scope-group-create-form__button__new"
-          onClick={() => setVisible(!visible)}
-          title={localization.buttons['new'].helpText}
-        >
-          <i className="icon__new"></i>
-          <span>{localization.buttons['new'].text}</span>
-        </a>
-      </div>
-      <div
-        className={`api-scope-group-create-form__wrapper${
-          visible ? '' : ' hidden'
-        }`}
-      >
+      <div className="api-scope-group-create-form__wrapper">
         <div className="api-scope-group-create-form__container">
           <h1>{localization.title}</h1>
           <div className="api-scope-group-create-form__container__form">
@@ -144,7 +125,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="name"
+                    name="description"
                     message={localization.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
