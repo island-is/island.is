@@ -147,14 +147,16 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = !!newsItem
     ?.genericTags?.length
-    ? newsItem.genericTags.map(({ title, slug }) => {
-        return {
-          isTag: true,
-          title: title,
-          typename: 'newsoverview',
-          href: slug,
-        }
-      })
+    ? newsItem.genericTags
+        .filter((t) => t.title && t.slug)
+        .map(({ title, slug }) => {
+          return {
+            isTag: true,
+            title: title,
+            typename: 'newsoverview',
+            href: slug,
+          }
+        })
     : !!selectedTag && {
         isTag: true,
         title: selectedTag.title,
