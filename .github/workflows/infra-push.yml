@@ -65,6 +65,11 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
+              if [[ "$deployFeature" == "true" ]]; then
+                echo "Pull request just labeled as feature-deploy"
+                echo "::set-output name=LABELED_FOR_DEPLOY::true"
+              fi
+              
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -128,7 +133,7 @@ jobs:
           PUBLISH: 'true'
 
       - name: Comment on PR
-        if: steps.changes.outputs.changed == 1
+        if: steps.should-run.outputs.LABELED_FOR_DEPLOY == 'true'
         uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
