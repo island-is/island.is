@@ -21,3 +21,34 @@ export type Prerequisites = {
   wageReturnsOk: boolean
   wageReturnsText: string
 }
+
+export enum PaymentType {
+  S = 'S',
+  O = 'O',
+  N = 'N',
+  M = 'M',
+}
+
+export enum PaymentChargeType {
+  AB = 'AB',
+  BK = 'BK',
+  DO = 'DO',
+  OH = 'OH',
+}
+
+export type Payment = {
+  id: string
+  ssn: string
+  type: PaymentType
+  paymentSchedule: string
+  organization: string
+  totalAmount: number
+  chargeTypes: {
+    id: PaymentChargeType
+    name: string
+    principal: number
+    interest: number
+    expense: number
+    total: number
+  }[]
+}

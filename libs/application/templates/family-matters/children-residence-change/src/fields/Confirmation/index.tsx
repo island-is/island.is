@@ -14,12 +14,13 @@ import { confirmation, copyUrl, contract } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
+import { Roles } from '../../lib/constants'
 
 const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
   const { pdfUrl } = useGeneratePdfUrl(application.id, pdfType)
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+  const { answers } = application
 
   return (
     <Box marginTop={3} paddingBottom={5}>
@@ -57,9 +58,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
         <DescriptionText
           text={confirmation.nextSteps.description}
           format={{
-            parentBName:
-              externalData.nationalRegistry.data.children[0].otherParent
-                .fullName,
+            date: answers.confirmContract.timestamp,
           }}
         />
       </Box>
@@ -82,7 +81,10 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
           title={formatMessage(confirmation.contractOverview.accordionTitle)}
           id="id_1"
         >
-          <ContractOverview application={application} />
+          <ContractOverview
+            application={application}
+            parentKey={Roles.ParentA}
+          />
         </BorderedAccordion>
       </Box>
       <Box className={confirmationIllustration}>
