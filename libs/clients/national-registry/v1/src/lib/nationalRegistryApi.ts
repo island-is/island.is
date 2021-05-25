@@ -69,10 +69,6 @@ export class NationalRegistryApi {
     return response.table.diffgram.DocumentElement.ISLEinstaklingur
   }
 
-  public async getResidency(nationalId: string): Promise<String> {
-    return 'test'
-  }
-
   public async getMyFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
     const response: GetViewISLFjolskyldanDto = await this.signal(
       'GetViewISLFjolskyldan',
