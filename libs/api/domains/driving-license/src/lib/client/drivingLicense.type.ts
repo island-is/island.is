@@ -1,4 +1,4 @@
-import { ApplicationEligibilityRequirement } from "../drivingLicense.type";
+import { ApplicationEligibilityRequirement } from '../drivingLicense.type'
 
 export interface DrivingLicenseResponse {
   id: number
@@ -120,4 +120,4 @@ export interface NewDrivingLicenseInput {
   needsToPresentHealthCertificate: number
 }
 
-export type NewDrivingLicenseResponse = string|object|number
+export type NewDrivingLicenseResponse = string | object | number

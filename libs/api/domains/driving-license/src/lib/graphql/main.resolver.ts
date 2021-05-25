@@ -1,9 +1,4 @@
-import {
-  Args,
-  Query,
-  Mutation,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
@@ -119,7 +114,7 @@ export class MainResolver {
 
     return {
       success,
-      errorMessage: success ? null : response as string,
+      errorMessage: success ? null : (response as string),
     }
   }
 }

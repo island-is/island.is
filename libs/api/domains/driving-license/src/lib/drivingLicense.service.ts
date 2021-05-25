@@ -179,8 +179,9 @@ export class DrivingLicenseService {
     ]
 
     // only eligible if we dont find an unmet requirement
-    const isEligible =
-      !requirements.find(({ requirementMet }) => requirementMet === false)
+    const isEligible = !requirements.find(
+      ({ requirementMet }) => requirementMet === false,
+    )
 
     return {
       requirements,

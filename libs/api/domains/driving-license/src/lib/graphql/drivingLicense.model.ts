@@ -17,7 +17,7 @@ export class DrivingLicense {
   expires!: string
 
   @Field(() => Boolean, { nullable: true })
-  isProvisional!: boolean|null
+  isProvisional!: boolean | null
 
   @Field(() => [Eligibility])
   eligibilities!: Eligibility[]

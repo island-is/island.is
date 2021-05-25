@@ -5,9 +5,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import {
-  RequirementKey
-} from '@island.is/api/domains/driving-license'
+import { RequirementKey } from '@island.is/api/domains/driving-license'
 import { m } from '../lib/messages'
 
 const extractReason = (
@@ -16,7 +14,7 @@ const extractReason = (
   return requirements
     .filter(({ requirementMet }) => !requirementMet)
     .map(({ key }) => key)
-    .map(key => requirementKeyToMessage(key))
+    .map((key) => requirementKeyToMessage(key))
     .join(', ')
 }
 
