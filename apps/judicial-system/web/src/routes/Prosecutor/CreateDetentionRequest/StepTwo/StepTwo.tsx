@@ -66,7 +66,7 @@ export const StepTwo: React.FC = () => {
 
   const prosecutors = userData?.users
     .filter(
-      (aUser: User, _: number) =>
+      (aUser: User) =>
         aUser.role === UserRole.PROSECUTOR &&
         aUser.institution?.id === user?.institution?.id,
     )
