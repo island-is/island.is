@@ -7,6 +7,7 @@ import {
   TeachingRightsStatus,
   StudentInformation,
   Juristiction,
+  RequirementKey,
 } from './drivingLicense.type'
 import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 import {
@@ -162,17 +163,17 @@ export class DrivingLicenseService {
 
     const requirements = [
       {
-        key: 'Gilt akstursmat finnst ekki á skrá',
+        key: RequirementKey.drivingAssessmentMissing,
         requirementMet:
           (assessmentResult?.dagsetningMats ?? 0) >
           Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
       },
       {
-        key: 'Hefur ekki lokið ökugerði',
+        key: RequirementKey.drivingSchoolMissing,
         requirementMet: !!hasFinishedSchoolResult.hefurLokidOkugerdi,
       },
       {
-        key: 'Má ekki sækja um valin réttindi skv ökuskírteinaskrá',
+        key: RequirementKey.deniedByService,
         requirementMet: !!canApplyResult.value,
       },
     ]

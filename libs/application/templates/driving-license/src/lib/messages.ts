@@ -303,4 +303,19 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesting',
     description: 'Glæsilegt',
   },
+  requirementUnmetDrivingAssessment: {
+    id: 'dl.application:requirementunmet.drivingassessment',
+    defaultMessage: 'Gilt akstursmat finnst ekki á skrá',
+    description: 'requirement unmet assessment',
+  },
+  requirementUnmetDrivingSchool: {
+    id: 'dl.application:requirementunmet.drivingschool',
+    defaultMessage: 'Hefur ekki lokið ökuskóla 3',
+    description: 'requirement unmet driving school',
+  },
+  requirementUnmetDeniedByService: {
+    id: 'dl.application:requirementunmet.deniedbyservice',
+    defaultMessage: 'Má ekki sækja um valin réttindi skv ökuskírteinaskrá',
+    description: 'requirement unmet api returned false',
+  },
 })

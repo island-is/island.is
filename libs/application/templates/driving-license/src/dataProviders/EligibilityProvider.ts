@@ -5,6 +5,10 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
+import {
+  RequirementKey
+} from '@island.is/api/domains/driving-license'
+import { m } from '../lib/messages'
 
 const extractReason = (
   requirements: ApplicationEligibilityRequirement[],
@@ -12,7 +16,21 @@ const extractReason = (
   return requirements
     .filter(({ requirementMet }) => !requirementMet)
     .map(({ key }) => key)
+    .map(key => requirementKeyToMessage(key))
     .join(', ')
+}
+
+const requirementKeyToMessage = (key: string) => {
+  switch (key) {
+    case RequirementKey.drivingSchoolMissing:
+      return m.requirementUnmetDrivingSchool
+    case RequirementKey.drivingAssessmentMissing:
+      return m.requirementUnmetDrivingAssessment
+    case RequirementKey.deniedByService:
+      return m.requirementUnmetDeniedByService
+    default:
+      return ''
+  }
 }
 
 export class EligibilityProvider extends BasicDataProvider {

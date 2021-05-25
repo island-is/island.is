@@ -1,3 +1,5 @@
+import { ApplicationEligibilityRequirement } from "../drivingLicense.type";
+
 export interface DrivingLicenseResponse {
   id: number
   nafn: string
@@ -99,11 +101,6 @@ export interface NewDrivingAssessmentInput extends DrivingAssessmentDto {}
 
 export interface NewDrivingAssessmentResponse {
   ok: boolean
-}
-
-export interface ApplicationEligibilityRequirement {
-  key: string
-  requirementMet: boolean
 }
 
 export interface ApplicationEligibilityResponse {
