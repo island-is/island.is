@@ -20,6 +20,11 @@ export class ReactNativeNavigationInstrumentation extends Sentry.RoutingInstrume
       this.onRouteWillChange({
         name: e.componentName,
         op: 'navigation',
+        tags: {
+          "routing.instrumentation":
+          ReactNativeNavigationInstrumentation.instrumentationName,
+          "routing.route.name": e.componentName,
+        },
         data: e.passProps,
       });
     }

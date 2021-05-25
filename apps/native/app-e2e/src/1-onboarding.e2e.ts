@@ -3,7 +3,7 @@ import { testIDs } from '../../app/src/utils/test-ids';
 import puppeteer from 'puppeteer';
 import { config } from './utils';
 
-console.log(config);
+config.debug && console.log(config);
 
 describe('Authentication', () => {
 
@@ -61,7 +61,7 @@ describe('Authentication', () => {
     const returnUrl = encodeURIComponent(`/connect/authorize/callback?${qs}`);
     const url = `${config.identityServer.issuer}/login?ReturnUrl=${returnUrl}`
 
-    console.log({
+    config.debug && console.log({
       params,
       returnUrl,
       url
@@ -76,9 +76,9 @@ describe('Authentication', () => {
     await page.goto(url);
     page.on('response', (response: puppeteer.HTTPResponse) => {
       const status = response.status();
-      console.log(status, response.url());
+      config.debug && console.log(status, response.url());
       if (status !== 200) {
-        console.log(response.headers())
+        config.debug && console.log(response.headers())
       }
     });
     await page.type('#phoneNumber', config.phoneNumber);

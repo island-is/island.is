@@ -3,30 +3,27 @@ import React, { useState } from 'react'
 import { View } from 'react-native'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useTheme } from 'styled-components'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { useIntl } from '../../utils/intl'
 import { testIDs } from '../../utils/test-ids'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 import { TabPersonalInfo } from './tab-personal-info'
 import { TabSettings } from './tab-settings'
 
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = useThemedNavigationOptions(() => ({
+  topBar: {
+    visible: false,
+  },
+}))
+
 export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
   const intl = useIntl()
-  const theme = useTheme()
   const [tab, setTab] = useState(0)
-
-  useScreenOptions(
-    () => ({
-      layout: {
-        backgroundColor: theme.shade.background,
-        componentBackgroundColor: theme.shade.background,
-      },
-    }),
-    [theme],
-  )
-
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_USER}>
       <NavigationBarSheet
@@ -38,11 +35,11 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
         values={[
           {
             testID: testIDs.USER_TABBAR_TAB_PROFILE_INFO,
-            label: intl.formatMessage({ id: 'user.tabs.personalInfo' })
+            label: intl.formatMessage({ id: 'user.tabs.personalInfo' }),
           },
           {
             testID: testIDs.USER_TABBAR_TAB_SETTINGS,
-            label: intl.formatMessage({ id: 'user.tabs.preferences' })
+            label: intl.formatMessage({ id: 'user.tabs.preferences' }),
           },
         ]}
         onChange={(selectedIndex) => setTab(selectedIndex)}
@@ -54,8 +51,4 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 }
 
-UserScreen.options = {
-  topBar: {
-    visible: false,
-  },
-}
+UserScreen.options = getNavigationOptions

@@ -101,6 +101,9 @@ export const en: TranslatedMessages = {
   "wallet.screenTitle": "Wallet",
   "wallet.bottomTabText": "Wallet",
 
+  // wallet pass
+  "walletPass.screenTitle": "Pass",
+
   // notifications
   "notifications.screenTitle": "Notifications",
 

@@ -13,11 +13,12 @@ import com.zoontek.rnlocalize.RNLocalizePackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationPackage;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
-import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.reactnativeultimateconfig.UltimateConfigPackage;
 import com.reactnativeultimateconfig.UltimateConfigModule;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import io.sentry.react.RNSentryPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -60,9 +61,10 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNAppAuthPackage());
           packages.add(new RNCWebViewPackage());
           packages.add(new RNLocalizePackage());
-          packages.add(new SafeAreaContextPackage());
           packages.add(new UltimateConfigPackage());
           packages.add(new RNSentryPackage());
+          packages.add(new ReactNativeFirebaseAppPackage());
+          packages.add(new ReactNativeFirebaseMessagingPackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

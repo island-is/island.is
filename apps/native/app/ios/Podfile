@@ -3,6 +3,8 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 require_relative '../../node_modules/react-native-unimodules/cocoapods.rb'
 
+$RNFirebaseAnalyticsWithoutAdIdSupport = true
+
 platform :ios, '11.0'
 
 target 'IslandApp' do
@@ -26,15 +28,16 @@ target 'IslandApp' do
   )
 
   pod 'CodePush', :path => '../../node_modules/react-native-code-push'
+  pod 'RNFBApp', :path => '../../node_modules/@react-native-firebase/app'
   pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
   pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
   pod 'RNReanimated', :path => '../../node_modules/react-native-reanimated'
+  pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
   pod 'ReactNativeNavigation', :path => '../../node_modules/react-native-navigation'
   pod 'react-native-cookies', :path => '../../node_modules/@react-native-community/react-native-cookies/ios'
-  pod 'react-native-safe-area-context', :path => '../../node_modules/react-native-safe-area-context'
   pod 'react-native-segmented-control', :path => '../../node_modules/@react-native-segmented-control/segmented-control'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
   pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'

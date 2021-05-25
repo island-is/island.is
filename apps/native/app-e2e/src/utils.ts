@@ -10,10 +10,17 @@ export const config = {
   apiEndpoint: 'https://beta.dev01.devland.is/api',
   bundleId: 'is.island.app-dev',
   phoneNumber: '010-7789',
+  debug: false,
 }
 
+// @todo CADisplayLink is causing synchronization to hang
+//       we can use device.disableSynchronization() but home screen starts inside launchApp
+//
+// This is an attempt to bypass synchronization and start the app at the same time.
+// You must use `waitFor` when checking for screens. `expect` will probably fail because
+// detox will not wait for screen load
 export const launchAsynchronizedApp = (
-  { timeout }: { timeout: number } = { timeout: 20000 },
+  { timeout }: { timeout: number } = { timeout: 15000 },
 ) =>
   new Promise((resolve) => {
     const done = () => {
@@ -28,11 +35,11 @@ export const launchAsynchronizedApp = (
         url: `${config.bundleId}://e2e/disable-applock`,
       })
       .then(() => {
-        console.log('launchAsynchronizedApp: complete')
+        config.debug && console.log('launchAsynchronizedApp: complete')
         done()
       })
     setTimeout(() => {
-      console.log('launchAsynchronizedApp: timeout')
+      config.debug && console.log('launchAsynchronizedApp: timeout')
       done()
     }, timeout)
   })

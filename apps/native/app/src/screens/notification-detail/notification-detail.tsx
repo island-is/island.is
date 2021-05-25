@@ -11,17 +11,16 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
-import { useScreenOptions } from '../../contexts/theme-provider'
 import { client } from '../../graphql/client'
 import {
   GetNotificationResponse,
   GET_NOTIFICATION_QUERY,
 } from '../../graphql/queries/get-notification.query'
-import { createNavigationTitle } from '../../utils/create-navigation-title'
 import { useIntl } from '../../utils/intl'
 import { testIDs } from '../../utils/test-ids'
+import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 interface NotificationDetailScreenProps {
   id: string
@@ -89,17 +88,21 @@ const Message = styled.Text`
   color: ${(props) => props.theme.shade.foreground};
 `
 
-// Create title options and hook to sync translated title message
-const { title, useNavigationTitle } = createNavigationTitle(
-  'notificationDetail.screenTitle',
-)
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = useThemedNavigationOptions(() => ({
+  topBar: {
+    visible: false,
+  },
+}))
 
 export const NotificationDetailScreen: NavigationFunctionComponent<NotificationDetailScreenProps> = ({
   componentId,
   id,
 }) => {
+  useNavigationOptions(componentId)
   const intl = useIntl()
-  const theme = useTheme()
   const notificationRes = useQuery<GetNotificationResponse>(
     GET_NOTIFICATION_QUERY,
     {
@@ -108,16 +111,6 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
         id,
       },
     },
-  )
-
-  useScreenOptions(
-    () => ({
-      layout: {
-        backgroundColor: theme.shade.background,
-        componentBackgroundColor: theme.shade.background,
-      },
-    }),
-    [theme],
   )
 
   if (notificationRes.loading) {
@@ -189,8 +182,4 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
   )
 }
 
-NotificationDetailScreen.options = {
-  topBar: {
-    visible: false,
-  },
-}
+NotificationDetailScreen.options = getNavigationOptions

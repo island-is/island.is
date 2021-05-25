@@ -7,7 +7,7 @@ import create, { State } from 'zustand/vanilla'
 export type Locale = 'en-US' | 'is-IS'
 export type AppearanceMode = 'light' | 'dark' | 'automatic'
 
-interface PreferencesStore extends State {
+export interface PreferencesStore extends State {
   dev__useLockScreen: boolean
   hasOnboardedPinCode: boolean
   hasOnboardedBiometrics: boolean

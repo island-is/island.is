@@ -42,7 +42,7 @@ declare class TypedFormattedMessage<
   render(): JSX.Element
 }
 
-interface TypedIntlShape extends IntlShape {
+export interface TypedIntlShape extends IntlShape {
   formatMessage(
     descriptor: TypedMessageDescriptor,
     values?: Record<string, PrimitiveType | FormatXMLElementFn<string, string>>,

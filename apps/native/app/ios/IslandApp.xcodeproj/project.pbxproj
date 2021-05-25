@@ -29,6 +29,7 @@
 		E305D82D260A34D8006565B4 /* IBMPlexSans-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E305D81F260A34D7006565B4 /* IBMPlexSans-ExtraLightItalic.ttf */; };
 		E305D82E260A34D8006565B4 /* IBMPlexSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E305D820260A34D8006565B4 /* IBMPlexSans-Bold.ttf */; };
 		E3364426262F21FA00A188B3 /* RNIsland.m in Sources */ = {isa = PBXBuildFile; fileRef = E3364425262F21FA00A188B3 /* RNIsland.m */; };
+		E37A1B002656927B001FE51D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E37A1AFF2656927A001FE51D /* GoogleService-Info.plist */; };
 		E3E51B1B261F586B005661DE /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3E51B1A261F586B005661DE /* PassKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		E305D820260A34D8006565B4 /* IBMPlexSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Bold.ttf"; sourceTree = "<group>"; };
 		E3364425262F21FA00A188B3 /* RNIsland.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNIsland.m; path = IslandApp/RNIsland.m; sourceTree = "<group>"; };
 		E3364428262F220800A188B3 /* RNIsland.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNIsland.h; path = IslandApp/RNIsland.h; sourceTree = "<group>"; };
+		E37A1AFF2656927A001FE51D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "IslandApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E3E51B1A261F586B005661DE /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
 		E3F7465026049856004AFBBB /* IslandApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandApp.entitlements; path = IslandApp/IslandApp.entitlements; sourceTree = "<group>"; };
 		E3F746B62604CF65004AFBBB /* rnuc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rnuc.xcconfig; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 		13B07FAE1A68108700A75B9A /* IslandApp */ = {
 			isa = PBXGroup;
 			children = (
+				E37A1AFF2656927A001FE51D /* GoogleService-Info.plist */,
 				E3F746B62604CF65004AFBBB /* rnuc.xcconfig */,
 				E3F7465026049856004AFBBB /* IslandApp.entitlements */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
@@ -256,6 +259,7 @@
 				E305D82E260A34D8006565B4 /* IBMPlexSans-Bold.ttf in Resources */,
 				E305D824260A34D8006565B4 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				E305D828260A34D8006565B4 /* IBMPlexSans-ThinItalic.ttf in Resources */,
+				E37A1B002656927B001FE51D /* GoogleService-Info.plist in Resources */,
 				E305D823260A34D8006565B4 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				E305D82B260A34D8006565B4 /* IBMPlexSans-Medium.ttf in Resources */,
 				E305D821260A34D8006565B4 /* IBMPlexSans-Regular.ttf in Resources */,

@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 // React libs
+#import <Firebase.h>
 #import <CodePush/CodePush.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTBridge.h>
@@ -44,6 +45,9 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
   [super application:application didFinishLaunchingWithOptions:launchOptions];
