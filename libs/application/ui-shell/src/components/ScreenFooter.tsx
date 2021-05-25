@@ -68,6 +68,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = activeScreenIndex > 0 && !isLastScreen
+
   if (
     (isLastScreen && !renderLastScreenButton) ||
     (mode !== FormModes.REVIEW &&
