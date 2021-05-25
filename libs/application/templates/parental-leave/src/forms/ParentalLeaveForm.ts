@@ -474,6 +474,7 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'requestRights.isRequestingRights',
               title: parentalLeaveFormMessages.shared.requestRightsName,
@@ -517,6 +518,7 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'giveRights.isGivingRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
@@ -566,8 +568,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
               condition: (answers, externalData: ExternalData) => {
-                return true
-
                 const selectedChild = getSelectedChild(answers, externalData)
 
                 if (
