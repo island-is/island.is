@@ -16,6 +16,7 @@
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
+/apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
@@ -60,6 +61,8 @@
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
+/libs/clients/national-registry/v2/                                                           @island-is/kolibri-modern-family
+/libs/api/domains/national-registry-x-road/                                                   @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                                                        @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                        @island-is/kolibri-justice-league
@@ -71,7 +74,7 @@
 /apps/services/user-profile/                                                                  @island-is/sendiradid
 /libs/api/domains/documents/                                                                  @island-is/sendiradid
 /libs/api/domains/national-registry/                                                          @island-is/sendiradid
-/libs/clients/national-registry/                                                              @island-is/sendiradid
+/libs/clients/national-registry/v1/                                                           @island-is/sendiradid
 /libs/service-portal/applications/                                                            @island-is/sendiradid
 /libs/service-portal/assets/                                                                  @island-is/sendiradid
 /libs/service-portal/constants/                                                               @island-is/sendiradid
