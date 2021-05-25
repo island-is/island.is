@@ -31,6 +31,8 @@ import {
   prettyName,
   RegulationSearchFilters,
   useRegulationLinkResolver,
+  isPlural,
+  interpolate,
 } from '../../components/Regulations/regulationUtils'
 import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
@@ -128,18 +130,25 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           content={
             <GridContainer>
               <GridRow>
-                <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
-                  {props.doSearch ? (
-                    <Text>
-                      {totalItems === 0
-                        ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
-                        : String(totalItems).substr(-1) === '1'
-                        ? totalItems + ' reglugerð fannst'
-                        : `${totalItems} reglugerðir fundust`}
-                    </Text>
-                  ) : (
-                    <Text>
+                <GridColumn span="1/1" {...resultTitleOffsets}>
+                  {!props.doSearch ? (
+                    <Text as="h2" variant="h3">
                       {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
+                    </Text>
+                  ) : totalItems === 0 ? (
+                    <p>
+                      <strong>{txt('searchResultCountZero')}</strong>
+                    </p>
+                  ) : (
+                    <Text as="h2">
+                      {interpolate(
+                        txt(
+                          isPlural(totalItems)
+                            ? 'searchResultCountPlural'
+                            : 'searchResultCountSingular',
+                        ),
+                        { count: totalItems.toLocaleString('is') },
+                      )}
                     </Text>
                   )}
                 </GridColumn>

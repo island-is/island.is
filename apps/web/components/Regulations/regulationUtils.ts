@@ -1,7 +1,7 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { ParsedUrlQuery } from 'querystring'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { ISODate, RegName, RegQueryName } from './Regulations.types'
 
 export const interpolateArray = (
@@ -26,6 +26,10 @@ export const interpolate = (
   text.replace(/\$\{([a-z0-9_$]+)\}/gi, (marker, name) =>
     values[name] != null ? values[name] + '' : marker,
   )
+
+// ---------------------------------------------------------------------------
+
+export const isPlural = (n: number) => n % 10 !== 1 || n % 100 === 11
 
 // ---------------------------------------------------------------------------
 
@@ -145,8 +149,57 @@ export default function domid() {
 
 // ---------------------------------------------------------------------------
 
-// Returns a stable, unique ID string
+/** Returns a stable, unique ID string
+ *
+ * NOTE: it triggers harmless SSR hydration warnings in the browser,
+ * but those can't be avoided beause of how React is currently designed.
+ */
 export const useDomid = (staticId?: string) => useState(staticId || domid)[0]
+
+// ---------------------------------------------------------------------------
+
+const DEFAULT_DURATION = 0
+// TODO: Add function signtures allowing either zero args, or 2.
+
+/** State variable that always snaps back to `undefined` after `duration` milliseconds. */
+export const useShortState = <S>(
+  /** Initial temporary state that then gets reverted back
+   * to `undefined` after `duration` milliseconds
+   * */
+  initialState?: S | (() => S),
+
+  /** Default duration, can be overridden on a case-by-case basis
+   * by passing a custom duration to the `setState` function
+   * */
+  defaultDuration = DEFAULT_DURATION,
+) => {
+  const [state, _setState] = useState<S | undefined>(initialState)
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>()
+
+  const cancelTimeout = () => {
+    timeout.current && clearTimeout(timeout.current)
+  }
+
+  const setState = useRef(
+    (newState: S | (() => S), duration = defaultDuration) => {
+      _setState(newState)
+      cancelTimeout()
+      timeout.current = setTimeout(() => {
+        timeout.current = null
+        _setState(undefined)
+      }, duration)
+    },
+  ).current
+
+  useEffect(() => {
+    if (initialState !== undefined) {
+      setState(initialState, defaultDuration)
+    }
+    return cancelTimeout
+  }, [])
+
+  return [state, setState] as const
+}
 
 // ---------------------------------------------------------------------------
 
