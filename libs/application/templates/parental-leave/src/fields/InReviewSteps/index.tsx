@@ -48,6 +48,7 @@ const statesMap: StatesMap = {
 
 const InReviewSteps: FC<FieldBaseProps> = ({
   application,
+  field,
   refetch,
   errors,
 }) => {
@@ -180,7 +181,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
         </Box>
       </Box>
 
-      {(screenState === 'steps' && (
+      {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => {
             return (
@@ -193,9 +194,14 @@ const InReviewSteps: FC<FieldBaseProps> = ({
             )
           })}
         </Box>
-      )) || (
+      ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review application={application} errors={errors} editable={false} />
+          <Review
+            application={application}
+            field={field}
+            errors={errors}
+            editable={false}
+          />
         </Box>
       )}
     </Box>

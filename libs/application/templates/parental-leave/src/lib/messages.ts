@@ -1084,6 +1084,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
     },
+    periodActualDob: {
+      id: 'pl.application:review.period.actual.dob',
+      defaultMessage: 'Raunverulegum fæðingardegi - {duration} mánuðir',
+      description: 'Actual DOB period copy',
+    },
     usePersonalAllowance: {
       id: 'pl.application:review.use.personal.allowance',
       defaultMessage: 'Nota allan persónuafsláttinn',

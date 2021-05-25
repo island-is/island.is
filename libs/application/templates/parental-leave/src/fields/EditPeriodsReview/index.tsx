@@ -7,7 +7,6 @@ import { useLocale } from '@island.is/localization'
 
 import Timeline from '../components/Timeline'
 import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { Period } from '../../types'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
@@ -19,7 +18,6 @@ interface ReviewScreenProps {
 
 const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
 
@@ -41,7 +39,7 @@ const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
               //   application.answers.periods as Period[],
               //   otherParentPeriods,
               // )}
-              periods={formatPeriods(application.answers.periods as Period[])}
+              periods={formatPeriods(application)}
             />
           )) || (
             <Text>

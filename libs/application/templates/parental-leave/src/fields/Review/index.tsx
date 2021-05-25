@@ -7,6 +7,7 @@ import {
   formatAndParseAsHTML,
   buildFieldOptions,
   RecordObject,
+  Field,
 } from '@island.is/application/core'
 import { GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import {
@@ -46,6 +47,7 @@ type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
 interface ReviewScreenProps {
   application: Application
+  field: Field
   goToScreen?: (id: string) => void
   errors?: RecordObject
   editable?: boolean
@@ -58,6 +60,7 @@ type selectOption = {
 
 const Review: FC<ReviewScreenProps> = ({
   application,
+  field,
   goToScreen,
   errors,
   editable,
@@ -95,7 +98,8 @@ const Review: FC<ReviewScreenProps> = ({
     )?.label
 
   const otherParentOptions = useMemo(
-    () => buildFieldOptions(getOtherParentOptions(application), application),
+    () =>
+      buildFieldOptions(getOtherParentOptions(application), application, field),
     [application],
   )
 
@@ -764,7 +768,7 @@ const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         {/* TODO: add otherParentPeriods once available */}
-        <SummaryTimeline periods={application.answers.periods as Period[]} />
+        <SummaryTimeline application={application} />
       </ReviewGroup>
 
       {/**

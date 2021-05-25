@@ -4,7 +4,6 @@ import { RepeaterProps } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Timeline from '../components/Timeline'
-import { Period } from '../../types'
 import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -16,11 +15,12 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
 }) => {
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage } = useLocale()
+
   if (!dob) {
     return null
   }
-  const dobDate = new Date(dob)
 
+  const dobDate = new Date(dob)
   const editable =
     application.state === 'draft' || application.state === 'editOrAddPeriods'
 
@@ -40,10 +40,10 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
           titleSmall={formatMessage(
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
-          periods={formatPeriods(application.answers.periods as Period[])}
+          periods={formatPeriods(application)}
           // TODO: Once we have the data, add the otherParentPeriods here.
           // periods={formatPeriods(
-          //   application.answers.periods as Period[],
+          //   application,
           //   editable ? otherParentPeriods : [],
           // )}
           onDeletePeriod={removeRepeaterItem}

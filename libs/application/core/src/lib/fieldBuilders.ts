@@ -25,10 +25,11 @@ import {
   SelectField,
   TextField,
   TextFieldVariant,
-  MaybeWithApplication,
+  MaybeWithApplicationAndField,
   AsyncSelectField,
   Context,
   RecordObject,
+  Field,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -43,13 +44,13 @@ export function buildCheckboxField(data: {
   id: string
   title: FormText
   description?: FormText
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   disabled?: boolean
   width?: FieldWidth
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
 }): CheckboxField {
   const {
     condition,
@@ -90,11 +91,11 @@ export function buildDateField(data: {
   description?: FormText
   maxDate?: Date
   minDate?: Date
-  excludeDates?: MaybeWithApplication<Date[]>
+  excludeDates?: MaybeWithApplicationAndField<Date[]>
   disabled?: boolean
   width?: FieldWidth
   backgroundColor?: DatePickerBackgroundColor
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
 }): DateField {
   const {
     condition,
@@ -156,11 +157,11 @@ export function buildRadioField(data: {
   id: string
   title: FormText
   description?: FormText
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
 }): RadioField {
   const {
@@ -198,11 +199,11 @@ export function buildSelectField(data: {
   title: FormText
   description?: FormText
   placeholder?: FormText
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   disabled?: boolean
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
 }): SelectField {
   const {
@@ -247,7 +248,7 @@ export function buildAsyncSelectField(data: {
   disabled?: boolean
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
@@ -295,7 +296,7 @@ export function buildTextField(data: {
   format?: string | FormatInputValueFunction
   backgroundColor?: InputBackgroundColor
   suffix?: string
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
   rows?: number
   required?: boolean
 }): TextField {
@@ -344,7 +345,7 @@ export function buildCustomField(
     title: FormText
     description?: FormText
     component: string
-    defaultValue?: MaybeWithApplication<unknown>
+    defaultValue?: MaybeWithApplicationAndField<unknown>
   },
   props?: RecordObject,
 ): CustomField {
@@ -478,11 +479,13 @@ export function buildSubmitField(data: {
 }
 
 export function buildFieldOptions(
-  maybeOptions: MaybeWithApplication<Option[]>,
+  maybeOptions: MaybeWithApplicationAndField<Option[]>,
   application: Application,
+  field: Field,
 ): Option[] {
   if (typeof maybeOptions === 'function') {
-    return maybeOptions(application)
+    return maybeOptions(application, field)
   }
+
   return maybeOptions
 }
