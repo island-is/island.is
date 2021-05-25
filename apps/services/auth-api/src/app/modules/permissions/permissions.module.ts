@@ -13,6 +13,7 @@ import {
   ApiResourceSecret,
   ApiScopeUser,
   ApiScopeUserAccess,
+  ApiScopeGroup,
 } from '@island.is/auth-api-lib'
 import { PermissionsController } from './permissions.controller'
 
@@ -29,6 +30,7 @@ import { PermissionsController } from './permissions.controller'
       ApiResourceSecret,
       ApiScopeUser,
       ApiScopeUserAccess,
+      ApiScopeGroup,
     ]),
   ],
   controllers: [PermissionsController],

@@ -2,8 +2,8 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import {
-  ApplicationIdentityServerScope,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
@@ -65,10 +65,7 @@ beforeAll(async () => {
         .useValue(
           new MockAuthGuard({
             nationalId,
-            scope: [
-              ApplicationIdentityServerScope.read,
-              ApplicationIdentityServerScope.write,
-            ],
+            scope: [ApplicationScope.read, ApplicationScope.write],
           }),
         )
         .compile()
@@ -538,13 +535,13 @@ describe('Application system API', () => {
     )
   })
 
-  it('PUT /applications/:id/createPdf should return a presigned url', async () => {
+  it('PUT /applications/:id/generatePdf should return a presigned url', async () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
     const fileService: FileService = app.get<FileService>(FileService)
     jest
-      .spyOn(fileService, 'createPdf')
+      .spyOn(fileService, 'generatePdf')
       .mockImplementation(() => Promise.resolve(expectPresignedUrl))
 
     const creationResponse = await server
@@ -555,7 +552,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const res = await server
-      .put(`/applications/${creationResponse.body.id}/createPdf`)
+      .put(`/applications/${creationResponse.body.id}/generatePdf`)
       .send({
         type: type,
       })

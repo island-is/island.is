@@ -47,6 +47,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
+  institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
@@ -134,6 +135,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+            throwOnError: true,
           },
           roles: [
             {
@@ -208,6 +210,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {
@@ -304,6 +307,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
             shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
@@ -422,6 +426,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            throwOnError: true,
           },
           roles: [
             {

@@ -332,7 +332,7 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
-
+  console.log(workingCase?.courtEndTime)
   return (
     <PageLayout
       activeSection={
@@ -547,7 +547,7 @@ export const Confirmation: React.FC = () => {
                       onChange={(evt) =>
                         validateAndSetTime(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -559,7 +559,7 @@ export const Confirmation: React.FC = () => {
                       onBlur={(evt) =>
                         validateAndSendTimeToServer(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -600,9 +600,9 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdatingCase}
+              nextIsDisabled={!isValidCourtEndTime?.isValid}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdatingCase}
+              nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id

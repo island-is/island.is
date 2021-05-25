@@ -44,7 +44,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
               },
               ...mapped.genericTags.map((tag) => ({
                 // add all tags as meta data to this document so we can query by it later
-                key: tag.id,
+                key: tag.slug,
                 type: 'genericTag',
                 value: tag.title,
               })),

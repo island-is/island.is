@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 // Confirmation
 export const confirmation = {
@@ -44,7 +44,7 @@ export const confirmation = {
       description: 'Confirmation next steps description',
     },
   }),
-  contractOverview: defineMessage({
+  contractOverview: defineMessages({
     accordionTitle: {
       id:
         'crc.application:section.confirmation.contractOverview.accordionTitle',

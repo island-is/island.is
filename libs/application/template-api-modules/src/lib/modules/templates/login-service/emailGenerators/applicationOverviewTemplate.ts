@@ -67,10 +67,6 @@ export const applicationOverviewTemplate = (
     application.answers,
     'technicalInfo.prodReturnUrl',
   )
-  const technicalInfoClientId = getValueViaPath(
-    application.answers,
-    'technicalInfo.clientId',
-  )
 
   return dedent(`
     <h3>${messages.applicant.general.pageTitle.defaultMessage}</h3>
@@ -185,15 +181,6 @@ export const applicationOverviewTemplate = (
       <b>${messages.technicalInfo.labels.prodReturnUrl.defaultMessage}</b> </br>
       ${technicalInfoProdReturnUrl}
     </p>
-    ${
-      technicalInfoClientId
-        ? `
-          <p>
-            <b>${messages.technicalInfo.labels.clientId.defaultMessage}</b> </br>
-            ${technicalInfoClientId}
-          </p>
-        `
-        : ''
-    }
+
   `)
 }
