@@ -123,4 +123,4 @@ export interface NewDrivingLicenseInput {
   needsToPresentHealthCertificate: number
 }
 
-export type NewDrivingLicenseResponse = string
+export type NewDrivingLicenseResponse = string|object|number
