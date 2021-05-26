@@ -12,7 +12,7 @@ import {
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByUserRequest,
-  EndorsementListControllerFindByTagRequest,
+  EndorsementListControllerFindByTagsRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
@@ -32,21 +32,21 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class EndorsementSystemService {
-  constructor(
+  constructor (
     private readonly _endorsementApi: EndorsementApi,
     private readonly _endorsementListApi: EndorsementListApi,
   ) {}
 
-  endorsementApiWithAuth(auth: Auth) {
+  endorsementApiWithAuth (auth: Auth) {
     return this._endorsementApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  endorsementListApiWithAuth(auth: Auth) {
+  endorsementListApiWithAuth (auth: Auth) {
     return this._endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   // Endorsement endpoints
-  async endorsementControllerFindAll(
+  async endorsementControllerFindAll (
     input: EndorsementControllerFindAllRequest,
     auth: Auth,
   ) {
@@ -55,7 +55,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementControllerFindByUser(
+  async endorsementControllerFindByUser (
     input: EndorsementControllerFindByUserRequest,
     auth: Auth,
   ) {
@@ -64,7 +64,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementControllerCreate(
+  async endorsementControllerCreate (
     input: EndorsementControllerCreateRequest,
     auth: Auth,
   ) {
@@ -73,7 +73,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementControllerBulkCreate(
+  async endorsementControllerBulkCreate (
     input: EndorsementControllerBulkCreateRequest,
     auth: Auth,
   ) {
@@ -82,7 +82,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementControllerDelete(
+  async endorsementControllerDelete (
     input: EndorsementControllerDeleteRequest,
     auth: Auth,
   ) {
@@ -93,22 +93,22 @@ export class EndorsementSystemService {
   }
 
   // Endorsement list endpoints
-  async endorsementListControllerFindLists(
-    input: EndorsementListControllerFindByTagRequest,
+  async endorsementListControllerFindLists (
+    input: EndorsementListControllerFindByTagsRequest,
     auth: Auth,
   ) {
     return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerFindByTag(input)
+      .endorsementListControllerFindByTags(input)
       .catch(handleError)
   }
 
-  async endorsementListControllerFindEndorsements(auth: Auth) {
+  async endorsementListControllerFindEndorsements (auth: Auth) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements()
       .catch(handleError)
   }
 
-  async endorsementListControllerFindOne(
+  async endorsementListControllerFindOne (
     input: EndorsementListControllerFindOneRequest,
     auth: Auth,
   ) {
@@ -117,7 +117,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementListControllerClose(
+  async endorsementListControllerClose (
     input: EndorsementListControllerCloseRequest,
     auth: Auth,
   ) {
@@ -126,7 +126,7 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementListControllerCreate(
+  async endorsementListControllerCreate (
     endorsementList: EndorsementListControllerCreateRequest,
     auth: Auth,
   ) {

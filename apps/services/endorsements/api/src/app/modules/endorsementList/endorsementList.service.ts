@@ -12,7 +12,7 @@ interface createInput extends EndorsementListDto {
 }
 @Injectable()
 export class EndorsementListService {
-  constructor(
+  constructor (
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
@@ -21,15 +21,15 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTag(tag: string) {
-    this.logger.debug(`Finding endorsement lists by tag "${tag}"`)
+  async findListsByTags (tags: string[]) {
+    this.logger.debug(`Finding endorsement lists by tag "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
     return this.endorsementListModel.findAll({
-      where: { tags: { [Op.contains]: [tag] } },
+      where: { tags: { [Op.contains]: tags } },
     })
   }
 
-  async findSingleList(listId: string) {
+  async findSingleList (listId: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: { id: listId },
@@ -42,7 +42,7 @@ export class EndorsementListService {
     return result
   }
 
-  async findAllEndorsementsByNationalId(nationalId: string) {
+  async findAllEndorsementsByNationalId (nationalId: string) {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
@@ -57,12 +57,12 @@ export class EndorsementListService {
     })
   }
 
-  async close(endorsementList: EndorsementList): Promise<EndorsementList> {
+  async close (endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.debug('Closing endorsement list', endorsementList.id)
     return await endorsementList.update({ closedDate: new Date() })
   }
 
-  async create(list: createInput) {
+  async create (list: createInput) {
     this.logger.debug('Creating endorsement list')
     return this.endorsementListModel.create({
       title: list.title,
