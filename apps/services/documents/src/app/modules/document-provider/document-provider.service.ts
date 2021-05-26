@@ -39,8 +39,8 @@ export class DocumentProviderService {
   ) {}
 
   // ORGANISATION
-  async getOrganisations(): Promise<Organisation[] | null> {
-    return await this.organisationModel.findAll()
+  async getOrganisations(): Promise<Organisation[]> {
+    return this.organisationModel.findAll()
   }
 
   async getOrganisationById(id: string): Promise<Organisation | null> {
@@ -330,15 +330,15 @@ export class DocumentProviderService {
   // CHANGELOGS
   async getChangelogsByOrganisationId(
     organisationId: string,
-  ): Promise<Changelog[] | null> {
-    return await this.changelogModel.findAll({ where: { organisationId } })
+  ): Promise<Changelog[]> {
+    return this.changelogModel.findAll({ where: { organisationId } })
   }
 
   async getChangelogsByOrganisationIdAndEntityId(
     organisationId: string,
     entityId: string,
-  ): Promise<Changelog[] | null> {
-    return await this.changelogModel.findAll({
+  ): Promise<Changelog[]> {
+    return this.changelogModel.findAll({
       where: { organisationId, entityId },
     })
   }
