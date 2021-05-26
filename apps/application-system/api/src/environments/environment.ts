@@ -43,7 +43,6 @@ export default {
       username: process.env.SYSLUMENN_USERNAME,
       password: process.env.SYSLUMENN_PASSWORD,
     },
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
@@ -54,6 +53,8 @@ export default {
       xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
       xroadBaseUrl: 'http://localhost:8081',
     },
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

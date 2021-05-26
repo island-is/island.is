@@ -46,6 +46,7 @@ export default {
       password: process.env.NOVA_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     drivingLicense: {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
