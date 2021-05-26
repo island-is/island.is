@@ -473,6 +473,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'requestRights.isRequestingRights',
               title: parentalLeaveFormMessages.shared.requestRightsName,
@@ -497,6 +499,26 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'requestRights.isRequestingRights',
+              title: parentalLeaveFormMessages.shared.requestRightsName,
+              description:
+                parentalLeaveFormMessages.shared.requestRightsDescription,
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'giveRights.isGivingRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
@@ -537,6 +559,42 @@ export const ParentalLeaveForm: Form = buildForm({
                     })?.giveRights?.isGivingRights === YES,
                   component: 'GiveDaysSlider',
                 }),
+              ],
+            }),
+            */
+            buildRadioField({
+              id: 'giveRights.isGivingRights',
+              title: parentalLeaveFormMessages.shared.giveRightsName,
+              description:
+                parentalLeaveFormMessages.shared.giveRightsDescription,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
               ],
             }),
           ],
