@@ -9,7 +9,6 @@ import {
 import { Constituencies } from '@island.is/application/templates/party-application'
 import { EndorsementListTagsEnum } from './gen/fetch'
 
-
 type ErrorResponse = {
   errors: {
     message: string

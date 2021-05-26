@@ -80,7 +80,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}
-          defaultValue=''
+          defaultValue=""
         />
       </Box>
     </>

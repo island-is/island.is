@@ -45,7 +45,7 @@ export const InReview: Form = buildForm({
               id: 'submit',
               title: 'Submit',
               placement: 'footer',
-              
+
               actions: [
                 {
                   name: m.ministryOfJustice.rejectButton,

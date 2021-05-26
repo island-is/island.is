@@ -6,8 +6,11 @@ import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import gql from 'graphql-tag'
-import { useLazyQuery } from '@apollo/client'
-import { Endorsement } from '../../types'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import { Endorsement, PartyLetter } from '../../lib/dataSchema'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import set from 'lodash/set'
+import cloneDeep from 'lodash/cloneDeep'
 
 const GET_ENDORSEMENT_LIST = gql`
   query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
@@ -25,12 +28,14 @@ const GET_ENDORSEMENT_LIST = gql`
 `
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
+  const { lang: locale, formatMessage } = useLocale()
+
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const { formatMessage } = useLocale()
+  const answers = application.answers as PartyLetter
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState<Endorsement[]>()
+  const [endorsements, setEndorsements] = useState<Endorsement[]>([])
   const [showWarning, setShowWarning] = useState(false)
 
   const [getEndorsementList, { loading, error }] = useLazyQuery(
@@ -48,8 +53,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 date: x.created,
                 name: x.meta.fullName,
                 nationalId: x.endorser,
-                address: x.meta.address ? x.meta.address : '',
-                hasWarning: false,
+                address: x.meta.address ? x.meta.address.streetAddress : '',
+                hasWarning: x.meta.invalidated,
                 id: x.id,
               }))
             : undefined
@@ -58,6 +63,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       },
     },
   )
+
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   useEffect(() => {
     getEndorsementList({
@@ -68,6 +75,35 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       },
     })
   }, [])
+
+  const updateApplicationWithEndorsements = async (
+    newEndorsements: Endorsement[],
+  ) => {
+    const updatedAnswers = {
+      ...answers,
+      endorsements: newEndorsements,
+      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
+    }
+
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...updatedAnswers,
+          },
+        },
+        locale,
+      },
+    }).then(() => {
+      set(answers, 'endorsements', cloneDeep(newEndorsements))
+    })
+  }
+
+  useEffect(() => {
+    if (endorsements && endorsements.length > 0)
+      updateApplicationWithEndorsements([...endorsements])
+  }, [endorsements])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
@@ -129,12 +165,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-        {endorsements && endorsements.length > 0 && (
-          <EndorsementTable
-            application={application}
-            endorsements={endorsements}
-          />
-        )}
+        <EndorsementTable
+          application={application}
+          endorsements={endorsements}
+        />
       </Box>
     </Box>
   )

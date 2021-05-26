@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../types/schema'
-import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Endorsement } from '../../lib/dataSchema'
+import { Box, Table as T, Tooltip, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -25,25 +25,18 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const renderRow = (endorsement: Endorsement) => {
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.created}>
-          {formatDate(endorsement.created)}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.meta.fullName}>
-          {endorsement.meta.fullName}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.endorser}>
-          {formatKennitala(endorsement.endorser)}
-        </T.Data>
+        <T.Data>{formatDate(endorsement.date)}</T.Data>
+        <T.Data>{endorsement.name}</T.Data>
+        <T.Data>{formatKennitala(endorsement.nationalId)}</T.Data>
         <T.Data
-          key={endorsement.id}
           box={{
-            background: endorsement.meta.invalidated ? 'yellow200' : 'white',
+            background: endorsement.hasWarning ? 'yellow200' : 'white',
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated ? (
+          {endorsement.hasWarning ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress}
+              {endorsement.address}
               <Box marginLeft={2}>
                 <Tooltip
                   color="blue400"
@@ -53,7 +46,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            endorsement.meta.address.streetAddress
+            <Text>{endorsement.address}</Text>
           )}
         </T.Data>
       </T.Row>

@@ -5,41 +5,26 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import gql from 'graphql-tag'
 import { useLazyQuery } from '@apollo/client'
-import { Endorsement } from '../../types/schema'
-
-const GET_ENDORSEMENT_LIST = gql`
-  query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
-    endorsementSystemGetEndorsements(input: $input) {
-      id
-      endorser
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`
+import { Endorsement } from '../../lib/dataSchema'
+import { GetEndorsements } from '../../graphql/queries'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState<Endorsement[]>()
+  const [endorsements, setEndorsements] = useState<Endorsement[]>([])
   const [showWarning, setShowWarning] = useState(false)
 
   const [getEndorsementList, { loading, error }] = useLazyQuery(
-    GET_ENDORSEMENT_LIST,
+    GetEndorsements,
     {
-      pollInterval: 2000,
+      pollInterval: 20000,
       onCompleted: async ({ endorsementSystemGetEndorsements }) => {
         if (!loading && endorsementSystemGetEndorsements) {
           const hasEndorsements =
-            !error && !loading && endorsementSystemGetEndorsements?.length
+            !error && !loading && endorsementSystemGetEndorsements.length
               ? endorsementSystemGetEndorsements.length > 0
               : false
           const mapToEndorsementList: Endorsement[] = hasEndorsements
@@ -47,11 +32,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 date: x.created,
                 name: x.meta.fullName,
                 nationalId: x.endorser,
-                address: x.meta.address ? x.meta.address : '',
-                hasWarning: false,
+                address: x.meta.address ? x.meta.address.streetAddress : '',
+                hasWarning: x.meta?.invalidated ?? false,
                 id: x.id,
               }))
-            : undefined
+            : []
           setEndorsements(mapToEndorsementList)
         }
       },
@@ -80,7 +65,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
       <Text variant="h3">{`${
-        endorsements?.length ?? 0
+        endorsements && endorsements.length > 0 ? endorsements.length : 0
       } ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
@@ -99,7 +84,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 ? setEndorsements(endorsements)
                 : setEndorsements(
                     endorsements
-                      ? endorsements.filter((x) => x.meta.invalidated)
+                      ? endorsements.filter((x) => x.hasWarning)
                       : endorsements,
                   )
             }}
@@ -115,9 +100,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             onChange={(e) => {
               setSearchTerm(e.target.value)
               setEndorsements(
-                endorsements
+                endorsements && endorsements.length > 0
                   ? endorsements.filter((x) =>
-                      (x.meta.fullName ?? '').startsWith(e.target.value),
+                      (x.name ?? '').startsWith(e.target.value),
                     )
                   : endorsements,
               )

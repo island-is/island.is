@@ -11,7 +11,6 @@ import {
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-import PartyLetterApplicationReview from '../PartyLetterApplicationReview'
 
 const GET_ENDORSEMENTS = gql`
   query endorsementSystemUserEndorsements {
@@ -94,7 +93,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <>
-      {!hasEndorsed ? (
+      {hasEndorsed ? (
         <EndorsementApproved />
       ) : (
         <Box>
@@ -109,7 +108,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               {formatMessage(m.endorsementDisclaimer.part1)}
               <strong>{` ${partyName} `}</strong>
               {formatMessage(m.endorsementDisclaimer.part2)}
-              <strong>{` ${PartyLetterApplicationReview}`}</strong>.
+              <strong>{` ${partyLetter}`}</strong>.
             </Text>
           </Box>
           <Box width="half" marginBottom={4}>

@@ -11,10 +11,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
     options: { email },
   } = props
 
-  const applicantEmail = get(
-    application.answers,
-    'responsiblePersonEmail',
-  )
+  const applicantEmail = get(application.answers, 'responsiblePersonEmail')
 
   const subject = 'Meðmæli með framboðslista uppfyllir skilyrði'
   const body = dedent(`
@@ -24,7 +21,9 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
         <b>Listabókstafur: </b>${application.answers.partyLetter}
         <b>Kjördæmi: </b>${application.answers.constituency}
 
-        <b>Athugasemd frá yfirkjörstjórn: </b>${application.answers.reasonForReject ?? 'Engin athugasemd'}
+        <b>Athugasemd frá yfirkjörstjórn: </b>${
+          application.answers.reasonForReject ?? 'Engin athugasemd'
+        }
       `)
 
   return {

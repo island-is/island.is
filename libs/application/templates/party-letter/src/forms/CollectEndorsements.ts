@@ -8,7 +8,7 @@ import {
   buildSubmitField,
   Form,
   FormModes,
-  DefaultEvents
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
