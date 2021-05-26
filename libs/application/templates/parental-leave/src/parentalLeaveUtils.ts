@@ -143,8 +143,6 @@ export const getAvailableRightsInMonths = (application: Application) => {
 }
 
 export const getOtherParentOptions = (application: Application) => {
-  console.log('-application.externalData', application.externalData)
-
   const family = getValueViaPath(
     application.externalData,
     'family.data',
