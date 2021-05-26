@@ -128,7 +128,7 @@
   - [Template Loader](libs/application/template-loader/README.md)
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
-    - [Reference Template](libs/application/templates/driving-assessment-approval/README.md)
+    - [Driver's License Approval](libs/application/templates/driving-assessment-approval/README.md)
     - [Family Matters Applications](libs/application/templates/family-matters/README.md)
       - [Children Residence Change Template](libs/application/templates/family-matters/children-residence-change/README.md)
       - [Family Matters Core](libs/application/templates/family-matters/core/README.md)
