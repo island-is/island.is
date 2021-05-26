@@ -7,7 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -28,6 +27,17 @@ enum TemplateApiActions {
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
 
+const oneYear = 24 * 3600 * 1000 * 365
+const twentyEightDays = 24 * 3600 * 1000 * 28
+
+const pruneAfter = (time: number) => {
+  return {
+    shouldBeListed: false,
+    shouldBePruned: true,
+    whenToPrune: time,
+  }
+}
+
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -44,7 +54,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(oneYear),
           roles: [
             {
               id: Roles.ParentA,
@@ -74,7 +84,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(twentyEightDays),
           onEntry: {
             apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
           },
@@ -122,7 +132,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.75,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -152,7 +162,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,
           },

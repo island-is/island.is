@@ -1,6 +1,9 @@
 import React, { useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, ApolloError } from '@apollo/client'
+import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
+import { useFormContext } from 'react-hook-form'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
@@ -12,7 +15,7 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import * as m from '../../lib/messages'
-import { ContractOverview } from '../components'
+import { Roles } from '../../lib/constants'
 import {
   fileSignatureReducer,
   initialFileSignatureState,
@@ -21,11 +24,21 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
+import { ContractOverview } from '../components'
 import * as style from '../Shared.treat'
+
+const confirmContractTerms = 'confirmContract.terms'
+const confirmContractTimestamp = 'confirmContract.timestamp'
+
+export const confirmContractIds = [
+  confirmContractTerms,
+  confirmContractTimestamp,
+]
 
 const Overview = ({
   field,
   error,
+  errors,
   application,
   setBeforeSubmitCallback,
 }: CRCFieldBaseProps) => {
@@ -55,6 +68,8 @@ const Overview = ({
   ] = useMutation(REQUEST_FILE_SIGNATURE)
 
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
+
+  const { register } = useFormContext()
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -112,6 +127,7 @@ const Overview = ({
 
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
+  const isDraft = application.state === 'draft'
   return (
     <Box className={style.descriptionOffset}>
       <SignatureModal
@@ -124,7 +140,7 @@ const Overview = ({
         fileSignatureState={fileSignatureState}
       />
       <Box>
-        {application.state === 'draft' ? (
+        {isDraft ? (
           <DescriptionText
             text={m.contract.general.description}
             format={{
@@ -141,7 +157,10 @@ const Overview = ({
         )}
       </Box>
       <Box marginTop={4}>
-        <ContractOverview application={application} />
+        <ContractOverview
+          application={application}
+          parentKey={isDraft ? Roles.ParentA : Roles.ParentB}
+        />
       </Box>
       <Box marginTop={5}>
         <Button
@@ -161,10 +180,9 @@ const Overview = ({
       </Box>
       <Box marginTop={5}>
         <CheckboxController
-          id={id}
+          id={isDraft ? confirmContractTerms : id}
           disabled={disabled || pdfLoading}
-          name={`${id}`}
-          error={error}
+          error={isDraft ? errors?.confirmContract?.terms : error}
           large={true}
           defaultValue={[]}
           options={[
@@ -175,6 +193,14 @@ const Overview = ({
           ]}
         />
       </Box>
+      {isDraft && (
+        <input
+          name={confirmContractTimestamp}
+          type="hidden"
+          value={format(addDays(new Date(), 28), 'dd.MM.yyyy')}
+          ref={register}
+        />
+      )}
     </Box>
   )
 }
