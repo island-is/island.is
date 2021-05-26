@@ -21,7 +21,7 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) =
       <Box marginTop={3} display="flex">
         <Box width="half">
           <Text variant="h5">
-            {'formatMessage(m.supremeCourt.responsiblePersonLabel)'}
+            {formatMessage(m.supremeCourt.responsiblePersonLabel)}
           </Text>
           <Text>
             {
@@ -33,7 +33,7 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) =
         </Box>
         <Box width="half">
           <Text variant="h5">
-            {'formatMessage(m.supremeCourt.typeOfEndorsementLabel)'}
+            {formatMessage(m.supremeCourt.typeOfEndorsementLabel)}
           </Text>
           <Text>{'Alþingi 2021'}</Text>
         </Box>

@@ -206,7 +206,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
@@ -214,11 +214,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: Roles.ASSIGNEE,
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApprovedOverview').then((val) =>
-                  Promise.resolve(val.Approved),
-                ),
+              import('../forms/InReview').then((module) =>
+                Promise.resolve(module.InReview),
+              ),
               read: 'all',
             },
           ],
