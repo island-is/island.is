@@ -37,6 +37,7 @@ export const confirmContractIds = [
 
 const Overview = ({
   field,
+  error,
   errors,
   application,
   setBeforeSubmitCallback,
@@ -46,7 +47,7 @@ const Overview = ({
     application.id,
     pdfType,
   )
-  const { disabled } = field
+  const { id, disabled } = field
   const { answers, externalData } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
@@ -126,6 +127,7 @@ const Overview = ({
 
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
+  const isDraft = application.state === 'draft'
   return (
     <Box className={style.descriptionOffset}>
       <SignatureModal
@@ -138,7 +140,7 @@ const Overview = ({
         fileSignatureState={fileSignatureState}
       />
       <Box>
-        {application.state === 'draft' ? (
+        {isDraft ? (
           <DescriptionText
             text={m.contract.general.description}
             format={{
@@ -157,9 +159,7 @@ const Overview = ({
       <Box marginTop={4}>
         <ContractOverview
           application={application}
-          parentKey={
-            application.state === 'draft' ? Roles.ParentA : Roles.ParentB
-          }
+          parentKey={isDraft ? Roles.ParentA : Roles.ParentB}
         />
       </Box>
       <Box marginTop={5}>
@@ -180,9 +180,9 @@ const Overview = ({
       </Box>
       <Box marginTop={5}>
         <CheckboxController
-          id={confirmContractTerms}
+          id={isDraft ? confirmContractTerms : id}
           disabled={disabled || pdfLoading}
-          error={errors?.confirmContract?.terms}
+          error={isDraft ? errors?.confirmContract?.terms : error}
           large={true}
           defaultValue={[]}
           options={[
@@ -193,7 +193,7 @@ const Overview = ({
           ]}
         />
       </Box>
-      {application.state === 'draft' && (
+      {isDraft && (
         <input
           name={confirmContractTimestamp}
           type="hidden"
