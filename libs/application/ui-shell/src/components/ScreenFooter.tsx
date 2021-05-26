@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   Application,
@@ -8,6 +8,7 @@ import {
   FormModes,
   SubmitField,
   coreMessages,
+  CallToAction,
 } from '@island.is/application/core'
 
 import * as styles from './ScreenFooter.treat'
@@ -21,6 +22,34 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+}
+
+interface SubmitButton {
+  colorScheme: ButtonTypes['colorScheme']
+  variant: ButtonTypes['variant']
+  icon?: 'checkmark' | 'close' | 'pencil'
+}
+
+const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
+  primary: {
+    icon: 'checkmark',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  sign: {
+    icon: 'pencil',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  subtle: {
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
+  reject: {
+    icon: 'close',
+    colorScheme: 'destructive',
+    variant: 'primary',
+  },
 }
 
 export const ScreenFooter: FC<FooterProps> = ({
@@ -39,6 +68,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = activeScreenIndex > 0 && !isLastScreen
+
   if (
     (isLastScreen && !renderLastScreenButton) ||
     (mode !== FormModes.REVIEW &&
@@ -62,27 +92,16 @@ export const ScreenFooter: FC<FooterProps> = ({
     return (
       <>
         {submitField?.actions.map(({ event, type, name }) => {
+          const buttonConfig = submitButtonConfig[type]
           return (
             <Box key={`cta-${event}`} marginX={1}>
               <Button
                 type="submit"
                 disabled={!canProceed || loading}
-                colorScheme={
-                  type === 'reject'
-                    ? 'destructive'
-                    : type === 'subtle'
-                    ? 'light'
-                    : 'default'
-                }
+                colorScheme={buttonConfig.colorScheme}
                 id={typeof event === 'object' ? event.type : event}
-                variant={type === 'subtle' ? 'ghost' : 'primary'}
-                icon={
-                  type === 'primary'
-                    ? 'checkmarkCircle'
-                    : type === 'reject'
-                    ? 'closeCircle'
-                    : undefined
-                }
+                variant={buttonConfig.variant}
+                icon={buttonConfig.icon}
               >
                 {formatText(name, application, formatMessage)}
               </Button>
