@@ -1963,8 +1963,8 @@
         }
       }
     },
-    "application-templates-driving-license-approvement": {
-      "root": "libs/application/templates/driving-license-approvement",
+    "application-templates-driving-license-approval": {
+      "root": "libs/application/templates/driving-license-approval",
       "sourceRoot": "libs/application/templates/driving-license-approvement/src",
       "projectType": "library",
       "architect": {

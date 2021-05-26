@@ -1,4 +1,7 @@
-import { ApplicationEligibilityRequirement, RequirementKey } from '@island.is/api/schema'
+import {
+  ApplicationEligibilityRequirement,
+  RequirementKey,
+} from '@island.is/api/schema'
 import {
   BasicDataProvider,
   Application,
