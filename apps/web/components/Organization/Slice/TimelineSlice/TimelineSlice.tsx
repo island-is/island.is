@@ -324,8 +324,9 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
           <ModalBase
             baseId="eventDetails"
             isVisible={true}
-            hideOnClickOutside={false}
-            hideOnEsc={false}
+            initialVisibility={true}
+            onVisibilityChange={(isVisible) => !isVisible && setVisible(false)}
+            hideOnEsc={true}
           >
             <EventModal event={event} onClose={() => setVisible(false)} />
           </ModalBase>,
