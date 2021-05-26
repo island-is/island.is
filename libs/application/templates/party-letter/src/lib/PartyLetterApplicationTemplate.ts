@@ -203,7 +203,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            //apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
             apiModuleAction: API_MODULE_ACTIONS.SubmitPartyLetter,
             throwOnError: true,
           },
@@ -237,7 +236,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           application: {
             ...context.application,
             // todo: get list of ministry of justice national ids
-            assignees: ['3105913789'],
+            assignees: ['0000000000'],
           },
         }
       }),
@@ -255,9 +254,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     // todo map to ministry of justice natioanl ids
-    console.log(application)
-
-    if (application.assignees.includes('3105913789')) {
+    if (application.assignees.includes('0000000000')) {
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list

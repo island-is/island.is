@@ -3,7 +3,6 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import gql from 'graphql-tag'
 
 export interface Props extends FieldBaseProps {
   title?: string

@@ -12,10 +12,7 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
     options: { email, clientLocationOrigin },
   } = props
 
-  const applicantEmail = get(
-    application.answers,
-    'responsiblePersonEmail',
-  )
+  const applicantEmail = get(application.answers, 'responsiblePersonEmail')
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
 
@@ -27,7 +24,9 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
         <b>Listabókstafur: </b>${application.answers.partyLetter}
         <b>Kjördæmi: </b>${application.answers.constituency}
 
-        <b>Athugasemd frá yfirkjörstjórn: </b>${application.answers.reasonForReject ?? 'Engin athugasemd'}
+        <b>Athugasemd frá yfirkjörstjórn: </b>${
+          application.answers.reasonForReject ?? 'Engin athugasemd'
+        }
 
         Þú getur <a href="${applicationLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
       `)

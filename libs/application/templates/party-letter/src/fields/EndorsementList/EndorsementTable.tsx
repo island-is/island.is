@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../types'
+import { Endorsement } from '../../lib/dataSchema'
 import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -17,7 +17,7 @@ const formatDate = (date: string) => {
 
 interface EndorsementTableProps {
   application: Application
-  endorsements?: Endorsement[]
+  endorsements: Endorsement[]
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
@@ -43,7 +43,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         >
           {endorsement.hasWarning ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address.streetAddress}
+              {endorsement.address}
               <Box marginLeft={2}>
                 <Tooltip
                   color="blue400"
@@ -53,7 +53,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            endorsement.address.streetAddress
+            endorsement.address
           )}
         </T.Data>
       </T.Row>

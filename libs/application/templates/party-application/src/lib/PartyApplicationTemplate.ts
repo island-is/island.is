@@ -227,7 +227,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           application: {
             ...context.application,
             // todo: get list of supreme court national ids
-            assignees: ['3105913789'],
+            assignees: ['0000000000'],
           },
         }
       }),
@@ -245,7 +245,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     // todo map to supreme court natioanl ids
-    if (application.assignees.includes('3105913789')) {
+    if (application.assignees.includes('0000000000')) {
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list
