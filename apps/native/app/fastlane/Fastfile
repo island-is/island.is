@@ -270,7 +270,12 @@ platform :android do
       project_dir: './android/',
       task: 'bundle',
       flavor: options[:flavor],
-      build_type: 'Release'
+      build_type: 'Release',
+      print_command: false,
+      properties: {
+        "MYAPP_UPLOAD_STORE_PASSWORD" => ENV['STORE_PASSWORD'],
+        "MYAPP_UPLOAD_KEY_PASSWORD" => ENV['KEY_PASSWORD']
+      }
      )
 
   end
