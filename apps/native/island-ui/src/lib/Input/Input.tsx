@@ -1,36 +1,35 @@
 import React from 'react'
-import styled from 'styled-components/native';
-import { Skeleton } from '../Skeleton/Skeleton';
+import styled from 'styled-components/native'
+import { font } from '../../utils/font'
+import { Skeleton } from '../Skeleton/Skeleton'
 
 const Host = styled.SafeAreaView`
   flex: 1;
-  border-bottom-width: 1px;
-  border-bottom-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blue100};
-  margin-left: 16px;
-  margin-right: 16px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) =>
+    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Content = styled.View`
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: ${({ theme }) => theme.spacing[3]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const Label = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
-  margin-bottom: 8px;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+
+  ${font({
+    fontSize: 13,
+    lineHeight: 17,
+  })}
 `
 
 const Value = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+  })}
 `
 
 interface InputProps {
@@ -46,8 +45,8 @@ export function Input({
   value,
   loading,
   error,
-  valueTestID
- }: InputProps) {
+  valueTestID,
+}: InputProps) {
   return (
     <Host>
       <Content>

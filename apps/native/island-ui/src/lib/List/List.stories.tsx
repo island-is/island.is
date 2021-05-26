@@ -1,20 +1,29 @@
+import { text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { withKnobs, text } from '@storybook/addon-knobs';
 import React from 'react'
-import { View, Image, ImageSourcePropType } from 'react-native';
-import { ListItem } from './ListItem';
+import { Image, ImageSourcePropType, View } from 'react-native'
 import agencyLogo from '../../assets/card/agency-logo.png'
+import { ListItem } from './ListItem'
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' }}>{children}</View>
+  <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+    }}
+  >
+    {children}
+  </View>
 )
 
 storiesOf('List', module)
-  .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('List Item', () => {
-    const title = text('List Item Title', 'Fjársýsla ríkisins');
-    const subTitle = text('List Item Sub Title', 'Tilkynning um inneign');
+    const title = text('List Item Title', 'Fjársýsla ríkisins')
+    const subTitle = text('List Item Sub Title', 'Tilkynning um inneign')
     return (
       <ListItem
         title={title}
@@ -28,6 +37,5 @@ storiesOf('List', module)
           />
         }
       />
-    );
+    )
   })
-

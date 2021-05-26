@@ -3,6 +3,7 @@ import { Pressable, TextInput, TextInputProps, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import searchIcon from '../../assets/icons/search.png'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   flex-direction: row;
@@ -13,26 +14,26 @@ const SearchIcon = styled.Image`
   z-index: 100;
   position: absolute;
   right: 12px;
-  top: 10px;
-  width: 24px;
-  height: 24px;
+  top: ${({ theme }) => theme.spacing[1]}px;;
+  width: ${({ theme }) => theme.spacing[3]}px;
+  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const Input = styled.TextInput`
   flex: 1;
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade100
-      : props.theme.color.blue100};
-  border-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade300
-      : props.theme.color.blue200};
-  border-width: 1px;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-family: 'IBMPlexSans';
-  font-size: 16px;
+  background-color: ${({ theme }) =>
+    theme.isDark
+      ? theme.shade.shade100
+      : theme.color.blue100};
+  border-color: ${({ theme }) =>
+    theme.isDark
+      ? theme.shade.shade300
+      : theme.color.blue200};
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-radius: ${({ theme }) => theme.spacing[1]}px;
+  padding: ${({ theme }) => theme.spacing[1]}px ${({ theme }) => theme.spacing[2]}px;
+
+  ${font()}
 `
 
 interface SearchBarProps extends TextInputProps {

@@ -1,34 +1,41 @@
 import React from 'react'
-import { View } from 'react-native'
 import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
-  border-width: 1px;
-  border-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade500
-      : props.theme.color.blue200};
-  border-radius: 16px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-color: ${({ theme }) =>
+    theme.isDark ? theme.shade.shade500 : theme.color.blue200};
+  border-radius: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Header = styled.View`
   flex-direction: row;
-  border-bottom-width: 1px;
-  border-bottom-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade500
-      : props.theme.color.blue200};
-  padding: 16px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) =>
+    theme.isDark ? theme.shade.shade500 : theme.color.blue200};
+  padding: ${({ theme }) => theme.spacing[2]}px;
+`
+const HeaderTextBold = styled.Text`
+  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  ${font({
+    fontWeight: '700',
+    lineHeight: 24,
+  })};
 `
 
 const HeaderText = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${(props) => props.theme.shade.foreground};
-  padding-right: 4px;
+  ${font({
+    fontWeight: '300',
+    lineHeight: 24,
+  })};
+`
+
+const ChildrenWrap = styled.View`
+  padding: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: 0;
 `
 
 interface FieldCardProps {
@@ -41,12 +48,10 @@ export function FieldCard(props: FieldCardProps) {
   return (
     <Host>
       <Header>
-        <HeaderText style={{ fontFamily: 'IBMPlexSans-Bold' }}>
-          {props.code}
-        </HeaderText>
+        <HeaderTextBold>{props.code}</HeaderTextBold>
         <HeaderText>{props.title}</HeaderText>
       </Header>
-      <View style={{ padding: 16, paddingBottom: 0 }}>{props.children}</View>
+      <ChildrenWrap>{props.children}</ChildrenWrap>
     </Host>
   )
 }

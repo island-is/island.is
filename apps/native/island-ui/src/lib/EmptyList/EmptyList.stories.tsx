@@ -1,16 +1,26 @@
+import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
-import { View, Image } from 'react-native';
-import { EmptyList } from './EmptyList';
+import { Image, View } from 'react-native'
 import illustrationSrc from '../../assets/empty-list/LE-Company-S3.png'
+import { EmptyList } from './EmptyList'
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingHorizontal: 16 }}>{children}</View>
+  <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      paddingHorizontal: 16,
+    }}
+  >
+    {children}
+  </View>
 )
 
 storiesOf('Empty List', module)
-  .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Deafult', () => {
     return (
@@ -19,5 +29,5 @@ storiesOf('Empty List', module)
         description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
         image={<Image source={illustrationSrc} height={198} width={146} />}
       />
-    );
+    )
   })

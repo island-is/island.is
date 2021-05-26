@@ -1,86 +1,81 @@
 import React from 'react'
-import styled, { useTheme } from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
-import { ImageSourcePropType } from 'react-native';
+import { ImageSourcePropType } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { font } from '../../utils/font'
 
 const Host = styled.View<{ color: string }>`
   padding: 0 0 32px;
   margin-bottom: 30px;
-  margin-left: 16px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
   width: 283px;
   min-height: 460px;
 
   background-color: ${(props) => props.color};
-  border-radius: ${theme.border.radius.large};
-`;
+  border-radius: ${({ theme }) => theme.border.radius.large};
+`
 
 const Image = styled.Image`
   width: 100%;
   margin-bottom: -35px;
-`;
+`
 
 const Number = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 20px;
-  font-weight: 600;
+  ${font({
+    fontWeight: '600',
+    fontSize: 20,
+    color: ({ theme }) => theme.color.purple400,
+  })}
   text-align: center;
-  color: ${theme.color.purple400};
-`;
+`
 
 const TextWrap = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
 
-  height: 32px;
-  width: 32px;
+  height: ${({ theme }) => theme.spacing[4]}px;
+  width: ${({ theme }) => theme.spacing[4]}px;
   margin: 0 auto;
-  border: 1px solid ${theme.color.purple300};;
-  border-radius: 50px;
-`;
+  border: ${({ theme }) => `1px solid ${theme.color.purple300}`};
+  border-radius: ${({ theme }) => theme.spacing[4]}px;
+`
 
 const Description = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-weight: 300;
-  padding: 15px 27px 0;
-  font-size: 16px;
-  line-height: 24px;
-  color: ${props => props.theme.shade.foreground};
+  padding: 16px 27px 0;
+
+  ${font({
+    fontWeight: '300',
+    lineHeight: 24,
+    color: ({ theme }) => theme.shade.foreground,
+  })}
 
   text-align: center;
-`;
-
-const Overlay = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-`;
+`
 
 interface CardProps {
-  number: string;
-  description?: string;
-  backgroundColor?: string;
-  imgSrc?: ImageSourcePropType;
-  style?: any;
+  number: string
+  description?: string
+  backgroundColor?: string
+  imgSrc?: ImageSourcePropType
+  style?: any
 }
 
-export function WelcomeCard({ number = '1', description, imgSrc, backgroundColor, style }: CardProps) {
-  const theme = useTheme();
-  const color = backgroundColor ?? theme.color.purple100;
+export function WelcomeCard({
+  number = '1',
+  description,
+  imgSrc,
+  backgroundColor,
+  style,
+}: CardProps) {
+  const theme = useTheme()
+  const color = backgroundColor ?? theme.color.purple100
   return (
     <Host color={color} style={style}>
       {imgSrc && <Image source={imgSrc} />}
       <TextWrap>
-        <Number>
-          {number}
-        </Number>
+        <Number>{number}</Number>
       </TextWrap>
-      <Description>
-        {description}
-      </Description>
+      <Description>{description}</Description>
     </Host>
   )
 }

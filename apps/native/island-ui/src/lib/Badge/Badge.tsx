@@ -1,27 +1,30 @@
 import React from 'react'
-import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
+import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   overflow: hidden;
-  border-radius: ${theme.border.radius.standard};
-  background-color: ${theme.color.roseTinted100};
+  border-radius: ${({ theme }) => theme.border.radius.standard};
+  background-color: ${({ theme }) => theme.color.roseTinted100};
   padding: 5px 7px;
-`;
+`
 
 const Text = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  color: ${theme.color.roseTinted400};
-
-`;
+  ${font({
+    fontSize: 13,
+    fontWeight: '600',
+    color: ({ theme }) => theme.color.roseTinted400,
+  })}
+`
 
 interface BadgeProps {
-  title: string;
+  title: string
 }
 
 export function Badge({ title }: BadgeProps) {
   return (
-    <Host><Text>{title}</Text></Host>
+    <Host>
+      <Text>{title}</Text>
+    </Host>
   )
 }

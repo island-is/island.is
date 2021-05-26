@@ -1,22 +1,20 @@
 import React from 'react'
-import styled from 'styled-components/native';
+import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 const Host = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
-  margin-bottom: 8px;
-`;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+
+  ${font({
+    fontSize: 13,
+    lineHeight: 17,
+  })}
+`
 
 interface FieldLabelProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function FieldLabel({ children }: FieldLabelProps) {
-  return (
-    <Host>
-      {children}
-    </Host>
-  )
+  return <Host>{children}</Host>
 }

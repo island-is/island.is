@@ -1,7 +1,7 @@
-
 import React from 'react'
-import styled from 'styled-components/native';
-import { Skeleton } from '../Skeleton/Skeleton';
+import styled from 'styled-components/native'
+import { font } from '../../utils/font'
+import { Skeleton } from '../Skeleton/Skeleton'
 
 const Host = styled.View<{ compact?: boolean }>`
   ${(props) => (props.compact ? '' : 'flex: 1;')}
@@ -12,18 +12,19 @@ const Content = styled.View`
 `
 
 const Label = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
-  margin-bottom: 8px;
+  ${font({
+    fontSize: 13,
+    lineHeight: 17,
+  })}
+
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Value = styled.Text<{ size?: 'large' | 'small' }>`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: ${(props) => (props.size === 'large' ? 20 : 16)}px;
-  line-height: ${(props) => (props.size === 'large' ? 26 : 20)}px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: (props) => (props.size === 'large' ? 20 : 16),
+  })}
 `
 
 interface FieldProps {
