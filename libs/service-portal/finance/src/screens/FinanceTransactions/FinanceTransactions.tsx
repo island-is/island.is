@@ -61,9 +61,11 @@ const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
-  const { loading, ...queryData } = useQuery<Query>(GetCustomerChargeTypeQuery)
+  const { loading, data: queryData } = useQuery<Query>(
+    GetCustomerChargeTypeQuery,
+  )
   const chargeTypeData: CustomerChargeType =
-    queryData.data?.getCustomerChargeType || {}
+    queryData?.getCustomerChargeType || {}
   console.log({ chargeTypeData, loading })
 
   const { loading: cLoading, ...customerRecordsData } = useQuery<Query>(
@@ -82,6 +84,11 @@ const FinanceTransactions = () => {
     customerRecordsData.data?.getCustomerRecords || {}
   console.log({ custRecordsData, cLoading })
 
+  const defaultChargeType = { label: 'Allar færslur', value: '' }
+  const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -111,20 +118,8 @@ const FinanceTransactions = () => {
                 placeholder="Allar færslur"
                 label="Veldu tegund færslu"
                 size="sm"
-                options={[
-                  {
-                    label: 'Færsla 1',
-                    value: '0',
-                  },
-                  {
-                    label: 'Færsla 2',
-                    value: '1',
-                  },
-                  {
-                    label: 'Færsla 3',
-                    value: '2',
-                  },
-                ]}
+                options={[defaultChargeType, ...chargeTypeSelect]}
+                defaultValue={defaultChargeType}
               />
             </GridColumn>
             <GridColumn span={['1/1', '3/8']}>
@@ -137,7 +132,6 @@ const FinanceTransactions = () => {
                 label="Dagsetning"
                 locale="is"
                 placeholderText="Veldu dagsetningu"
-                required
               />
             </GridColumn>
           </GridRow>
