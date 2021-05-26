@@ -177,7 +177,16 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box borderTopWidth="standard" borderColor="standard"></Box>
+                <Box
+                  borderTopWidth="standard"
+                  borderColor="standard"
+                  paddingTop={6}
+                >
+                  <Text variant="h2" paddingBottom={3}>
+                    {slice.title}
+                  </Text>
+                  <Text>{slice.intro}</Text>
+                </Box>
               </GridColumn>
             </GridRow>
           </GridContainer>
