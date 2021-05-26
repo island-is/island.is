@@ -1,7 +1,4 @@
-import {
-  Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 
 import { MANUAL, NO, YES } from '../constants'
 
