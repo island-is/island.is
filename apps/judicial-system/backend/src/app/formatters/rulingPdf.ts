@@ -16,6 +16,7 @@ import {
   NounCases,
   formatAccusedByGender,
   formatProsecutorDemands,
+  caseTypes,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -84,7 +85,7 @@ export async function getRulingPdfAsString(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Krafa lögreglu')
+    .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.policeDemands, {
@@ -98,7 +99,7 @@ export async function getRulingPdfAsString(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text('Krafa lögreglu þingmerkt nr. 1.', {
+    .text(`Krafa um ${caseTypes[existingCase.type]} þingmerkt nr. 1.`, {
       lineGap: 6,
       paragraphGap: 0,
     })
