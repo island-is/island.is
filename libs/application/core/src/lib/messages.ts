@@ -182,4 +182,14 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  fileUpload: {
+    id: 'application.system:core.error.file.upload',
+    defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
+    description: 'Error message when upload file fails',
+  },
+  fileRemove: {
+    id: 'application.system:core.error.file.remove',
+    defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
+    description: 'Error message when deleting a file fails',
+  },
 })
