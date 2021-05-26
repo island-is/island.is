@@ -444,6 +444,21 @@ export const store = createStore(() => {
         documentID: '',
         payID: '',
       },
+      {
+        chargeItemSubject: '2704685439',
+        timePeriod: '202003',
+        estimate: false,
+        dueDate: '15.01.2021',
+        finalDueDate: '15.01.2021',
+        principal: 100000,
+        interest: 13037,
+        cost: 0,
+        paid: -26800,
+        totals: 86237,
+        dueTotals: 86237,
+        documentID: '',
+        payID: 'ABC123',
+      },
     ],
   }
 
