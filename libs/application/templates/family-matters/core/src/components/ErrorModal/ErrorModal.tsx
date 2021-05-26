@@ -4,7 +4,6 @@ import {
   ModalBase,
   Text,
   Stack,
-  GridRow,
   ArrowLink,
 } from '@island.is/island-ui/core'
 import * as styles from './ErrorModal.treat'
@@ -44,10 +43,10 @@ const ErrorModal: FC<Props> = ({ title, ariaLabel, children, link }) => {
             </Text>
             {children}
           </Stack>
-          <GridRow align="flexStart">
-            <ArrowLink href={link.href}>{link.text}</ArrowLink>
-          </GridRow>
         </Stack>
+        <Box marginTop={4}>
+          <ArrowLink href={link.href}>{link.text}</ArrowLink>
+        </Box>
       </Box>
     </ModalBase>
   )
