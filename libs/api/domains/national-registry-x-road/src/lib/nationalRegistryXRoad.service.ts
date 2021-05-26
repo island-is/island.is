@@ -95,7 +95,7 @@ export class NationalRegistryXRoadService {
       return await Promise.all(
         children.map(async (child) => {
           const parents = await this.nationalRegistryFetch<string[]>(
-            `/${parentNationalId}/${child.kennitala}`,
+            `/${parentNationalId}/forsja/${child.kennitala}`,
             authToken,
           )
 
