@@ -789,12 +789,12 @@ export const mockCaseQueries = [
   },
 ]
 
-export const mockUpdateCaseMutation = (updateCases: UpdateCase[]) =>
+export const mockUpdateCaseMutation = (updateCases: UpdateCase[], id: string) =>
   updateCases.map((updateCase) => {
     return {
       request: {
         query: UpdateCaseMutation,
-        variables: { input: { id: 'test_id_2', ...updateCase } },
+        variables: { input: { id, ...updateCase } },
       },
       result: {
         data: {
