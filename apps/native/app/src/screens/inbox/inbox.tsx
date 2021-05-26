@@ -1,14 +1,21 @@
 import { useQuery } from '@apollo/client'
 import { EmptyList, ListItem } from '@island.is/island-ui-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { FlatList, Image, Platform, RefreshControl, View } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Platform,
+  RefreshControl,
+  View,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
   useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
+import styled, { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
-import { useTheme } from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { client } from '../../graphql/client'
@@ -79,9 +86,7 @@ const {
 const PressableListItem = ({ item }: { item: IDocument }) => {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   return (
-    <PressableHighlight
-      onPress={() => navigateTo(`/inbox/${item.id}`)}
-    >
+    <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`)}>
       <ListItem
         title={item.senderName}
         subtitle={item.subject}
@@ -96,7 +101,27 @@ const PressableListItem = ({ item }: { item: IDocument }) => {
         }
       />
     </PressableHighlight>
-  );
+  )
+}
+
+const SearchHeaderHost = styled.View`
+  height: 46px;
+  background-color: ${props => props.theme.color.blue100};
+  align-items: center;
+  justify-content: center;
+`
+const SearchHeaderText = styled.Text`
+  color: ${props => props.theme.shade.foreground};
+`
+
+function SearchHeader({ count, loading }: any) {
+  return (
+    <SearchHeaderHost>
+      <SearchHeaderText>
+        {loading ? 'Leita í skjölum...' : `${count} niðurstöður fundust`}
+      </SearchHeaderText>
+    </SearchHeaderHost>
+  )
 }
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
@@ -113,15 +138,16 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     ({ item }: { item: IDocument }) => <PressableListItem item={item} />,
     [theme],
   )
-
-  const [query, setQuery] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
 
   useNavigationSearchBarUpdate((e) => {
-    setQuery(e.text)
+    setSearchLoading(true)
+    ui.setQuery(e.text)
   })
 
   useNavigationSearchBarCancelPress(() => {
-    setQuery('')
+    setSearchLoading(true)
+    ui.setQuery('')
   })
 
   useEffect(() => {
@@ -135,7 +161,8 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [res.data])
 
   useEffect(() => {
-    const q = query.toLocaleLowerCase().trim()
+    setSearchLoading(false)
+    const q = ui.query.toLocaleLowerCase().trim()
     if (q !== '') {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
@@ -143,48 +170,60 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [ui.query])
 
+  const isSearch = ui.query.length > 0
+  const isLoading = res.loading
+  const isEmpty = (res?.data?.listDocuments ?? []).length === 0
+
+  if (isLoading) {
+    return <ActivityIndicator />
+  }
+
+  if (!isLoading && isEmpty) {
+    return (
+      <EmptyList
+        title="Hér eru engin skjöl sem stendur"
+        description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
+        image={<Image source={illustrationSrc} height={176} width={134} />}
+      />
+    )
+  }
+
   return (
-    <>
-      {inboxItems.length > 0 ? (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            style={{ marginHorizontal: 0, flex: 1 }}
-            data={inboxItems}
-            keyExtractor={(item: any) => item.id}
-            renderItem={renderInboxItem}
-            keyboardDismissMode="on-drag"
-            refreshControl={
-              <RefreshControl
-                refreshing={loading}
-                onRefresh={() => {
-                  setLoading(true)
-                  try {
-                    res
-                      ?.refetch?.()
-                      ?.then(() => {
-                        setLoading(false)
-                      })
-                      .catch((err) => {
-                        setLoading(false)
-                      })
-                  } catch (err) {
-                    // noop
-                    setLoading(false)
-                  }
-                }}
-              />
-            }
-          />
-          <BottomTabsIndicator index={0} total={3} />
-        </View>
-      ) : (
-        <EmptyList
-          title="Hér eru engin skjöl sem stendur"
-          description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
-          image={<Image source={illustrationSrc} height={176} width={134} />}
-        />
-      )}
-    </>
+    <View style={{ flex: 1 }}>
+      <FlatList
+        style={{ marginHorizontal: 0, flex: 1 }}
+        data={inboxItems}
+        keyExtractor={(item: any) => item.id}
+        renderItem={renderInboxItem}
+        keyboardDismissMode="on-drag"
+        stickyHeaderIndices={isSearch ? [0]: undefined}
+        ListHeaderComponent={isSearch ? <SearchHeader count={inboxItems.length} loading={searchLoading} /> : undefined}
+        refreshControl={
+          isSearch ? undefined : (
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() => {
+                setLoading(true)
+                try {
+                  res
+                    ?.refetch?.()
+                    ?.then(() => {
+                      setLoading(false)
+                    })
+                    .catch((err) => {
+                      setLoading(false)
+                    })
+                } catch (err) {
+                  // noop
+                  setLoading(false)
+                }
+              }}
+            />
+          )
+        }
+      />
+      <BottomTabsIndicator index={0} total={3} />
+    </View>
   )
 }
 

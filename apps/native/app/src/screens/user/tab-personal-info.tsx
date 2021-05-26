@@ -1,8 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { Alert, Input, InputRow } from '@island.is/island-ui-native'
 import React, { useRef, useState } from 'react'
-import { ScrollView, View, Animated } from 'react-native'
-import { InfoMessage } from '../../components/info-message/info-message'
+import { Animated, ScrollView, View } from 'react-native'
 import { client } from '../../graphql/client'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useAuthStore } from '../../stores/auth-store'
@@ -24,8 +23,10 @@ export function TabPersonalInfo() {
   const loadingNatReg = natRegRes.loading
 
   const viewRef = useRef<View>()
-  const [offset, setOffset] = useState(!dismissed.includes('userNatRegInformational'))
-  const offsetY = useRef(new Animated.Value(0)).current;
+  const [offset, setOffset] = useState(
+    !dismissed.includes('userNatRegInformational'),
+  )
+  const offsetY = useRef(new Animated.Value(0)).current
 
   return (
     <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_PROFILE_INFO}>
@@ -46,9 +47,11 @@ export function TabPersonalInfo() {
         ref={viewRef as any}
         style={{
           marginTop: offset ? 72 : 0,
-          transform: [{
-            translateY: offsetY,
-          }],
+          transform: [
+            {
+              translateY: offsetY,
+            },
+          ],
         }}
       >
         <View style={{ height: 8 }} />

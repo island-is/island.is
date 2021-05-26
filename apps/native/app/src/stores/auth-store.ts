@@ -11,6 +11,7 @@ import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { config } from '../utils/config'
 import { preferencesStore } from './preferences-store'
+import { client } from '../graphql/client'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
 
@@ -121,6 +122,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       includeBasicAuth: true,
       sendClientId: true,
     })
+    await client.cache.reset()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(
       (state) => ({

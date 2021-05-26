@@ -89,7 +89,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (err.message.indexOf('Connection error') >= 0) {
         Alert.alert(
           'Villa kom upp',
-          '\nInnskráningarþjónustan virðist liggja niðri í augnablikinu.\n\nVinsamlegast reynið aftur síðar.',
+          '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
         )
       } else {
         console.warn(err)

@@ -25,3 +25,4 @@ export * from './lib/ViewPager/ViewPager'
 export * from './lib/TabBar/TabBar'
 export * from './lib/SearchBar/SearchBar'
 export * from './lib/EmptyList/EmptyList'
+export * from './utils/index';

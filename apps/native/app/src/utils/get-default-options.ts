@@ -10,12 +10,6 @@ export function getDefaultOptions(
 ): Options {
   // const initialized = uiStore.getState().initializedApp
   return {
-    animations: {
-      setRoot: {
-        enabled: true,
-        alpha: { from: 0, to: 1, duration: 1000 },
-      },
-    },
     topBar: {
       background: theme.isDark
         ? {
@@ -61,15 +55,6 @@ export function getDefaultOptions(
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
       backgroundColor: theme.shade.background,
-    },
-    bottomTab: {
-      fontSize: 11,
-      // iconColor: !initialized
-      //   ? theme.shade.background
-      //   : theme.shade.foreground,
-      // selectedIconColor: theme.color.blue400,
-      // textColor: theme.shade.foreground,
-      // selectedTextColor: theme.shade.foreground,
     },
   }
 }

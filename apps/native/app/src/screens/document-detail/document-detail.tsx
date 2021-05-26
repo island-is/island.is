@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client'
 import React, { useState } from 'react'
 import { FormattedDate } from 'react-intl'
+import { StyleSheet } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import { Platform, Share, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
@@ -116,7 +118,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
-    // fetchPolicy: 'network-only',
   })
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
@@ -133,6 +134,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   }
 
   const [visible, setVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false);
 
   useNavigationButtonPress(
     (e) => {
@@ -156,6 +158,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationComponentDidDisappear(() => {
     setVisible(false)
+    setLoaded(false)
   })
 
   if (!Document.id) {
@@ -188,6 +191,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           Platform.select({
             android: (
               <PDFReader
+                onLoadEnd={() => {
+                  setLoaded(true);
+                }}
+                style={{
+                  opacity: loaded ? 1 : 0
+                }}
                 source={{
                   base64: `data:application/pdf;base64,${Document.content!}`,
                 }}
@@ -195,6 +204,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ),
             ios: (
               <WebView
+                onLoadEnd={() => {
+                  setLoaded(true);
+                }}
+                style={{
+                  opacity: loaded ? 1 : 0
+                }}
                 source={{
                   uri: Document.url!,
                   headers: {
@@ -206,6 +221,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ),
           })}
+          {!loaded && <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
+            <ActivityIndicator size="large" />
+          </View>}
       </View>
     </>
   )

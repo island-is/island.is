@@ -75,18 +75,20 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
 
+
   // indexing list for spotlight search IOS
   useEffect(() => {
     const indexItems = licenseItems.map((item: any) => {
       return {
-        title: item.serviceProvider,
-        uniqueIdentifier: item.id,
-        contentDescription: 'geggjad nice',
+        title: item.title,
+        uniqueIdentifier: `/wallet/${item.id}`,
+        contentDescription: item.serviceProvider,
         domain: 'licence',
       }
     })
-
-    SpotlightSearch.indexItems(indexItems)
+    if (Platform.OS === 'ios') {
+      SpotlightSearch.indexItems(indexItems)
+    }
   }, [licenseItems.length])
 
   useEffect(() => {

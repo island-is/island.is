@@ -1,49 +1,34 @@
-import React, { useRef, useState, useEffect } from 'react'
-import styled from 'styled-components/native';
-import { theme, Colors } from '@island.is/island-ui/theme';
-import info from '../../assets/alert/info-alert.png';
-import close from '../../assets/alert/close.png';
-import { View, Animated, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
-
-const Host = styled(Animated.View)<{ backgroundColor: Colors; borderColor: Colors; }>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  padding: 20px 18px;
-  background-color: ${(props) => {
-    const value = theme.color[props.backgroundColor];
-    if (props.theme.isDark && value === props.theme.color.blue100) {
-      return '#001333';
-    }
-    return value;
-  }};
-  z-index: 10;
-`;
-
-const Icon = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const Message = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 13px;
-  color: ${props => props.theme.shade.foreground};
-  line-height: 17px;
-`;
-
-const Content = styled.View`
-  padding-right: 48px;
-  flex: 1;
-`;
-
-const Close = styled.TouchableOpacity`
-  padding: 10px;
-  justify-content: center;
-  align-items: center;
-`;
+import { Colors, theme } from '@island.is/island-ui/theme'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Animated,
+  Image,
+  ImageSourcePropType,
+  SafeAreaView,
+  View,
+} from 'react-native'
+import styled from 'styled-components/native'
+import close from '../../assets/alert/close.png'
+import info from '../../assets/alert/info-alert.png'
+import { font } from '../../utils/font'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
+
+interface AlertProps {
+  type: AlertType
+  message?: string
+  style?: any
+  onClose?(): void
+  onClosed?(): void
+  visible?: boolean
+  hideIcon?: boolean
+  sharedAnimatedValue?: any
+}
+
+interface HostProps {
+  backgroundColor: Colors
+  borderColor: Colors
+}
 
 type VariantStyle = {
   background: Colors
@@ -54,6 +39,43 @@ type VariantStyle = {
 type VariantStyles = {
   [Type in AlertType]: VariantStyle
 }
+
+const Host = styled(Animated.View)<HostProps>`
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 20px 18px;
+  background-color: ${(props) => {
+    const value = theme.color[props.backgroundColor]
+    if (props.theme.isDark && value === props.theme.color.blue100) {
+      return '#001333'
+    }
+    return value
+  }};
+  z-index: 10;
+`
+
+const Icon = styled.View`
+  align-items: center;
+  justify-content: center;
+`
+
+const Message = styled.Text`
+  ${font({
+    fontSize: 13,
+  })}
+`
+
+const Content = styled.View`
+  padding-right: 48px;
+  flex: 1;
+`
+
+const Close = styled.TouchableOpacity`
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+`
 
 const variantStyles: VariantStyles = {
   error: {
@@ -78,24 +100,21 @@ const variantStyles: VariantStyles = {
   },
 }
 
-interface AlertProps {
-  type: AlertType,
-  message?: string,
-  style?: any;
-  onClose?(): void;
-  onClosed?(): void;
-  visible?: boolean;
-  hideIcon?: boolean;
-  sharedAnimatedValue?: any;
-}
-
-export function Alert({ message, type, hideIcon = false, visible = true, onClose, onClosed, sharedAnimatedValue, ...rest }: AlertProps) {
-  const offsetY = sharedAnimatedValue ??
-    useRef(new Animated.Value(0)).current;
-  const alertRef = useRef<View>(null);
-  const variant = variantStyles[type];
-  const [height, setHeight] = useState(0);
-  const [isVisible, setIsVisible] = useState(visible);
+export function Alert({
+  message,
+  type,
+  hideIcon = false,
+  visible = true,
+  onClose,
+  onClosed,
+  sharedAnimatedValue,
+  ...rest
+}: AlertProps) {
+  const offsetY = sharedAnimatedValue ?? useRef(new Animated.Value(0)).current
+  const alertRef = useRef<View>(null)
+  const variant = variantStyles[type]
+  const [height, setHeight] = useState(0)
+  const [isVisible, setIsVisible] = useState(visible)
 
   const animateOut = () => {
     if (offsetY) {
@@ -105,24 +124,24 @@ export function Alert({ message, type, hideIcon = false, visible = true, onClose
         useNativeDriver: true,
       }).start(({ finished }) => {
         if (finished) {
-          setIsVisible(false);
-          onClosed && onClosed();
+          setIsVisible(false)
+          onClosed && onClosed()
           if (offsetY) {
-            offsetY.setValue(1);
+            offsetY.setValue(1)
           }
         }
-      });
+      })
     }
   }
 
   useEffect(() => {
     if (!visible) {
-      animateOut();
+      animateOut()
     }
-  }, [visible]);
+  }, [visible])
 
   if (!isVisible) {
-    return null;
+    return null
   }
 
   return (
@@ -138,27 +157,35 @@ export function Alert({ message, type, hideIcon = false, visible = true, onClose
             inputRange: [-height, 0],
             outputRange: [0, 1],
           }),
-          transform: [{
-            translateY: offsetY,
-          }],
+          transform: [
+            {
+              translateY: offsetY,
+            },
+          ],
         }}
       >
         <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
-         {!hideIcon &&
+          {!hideIcon && (
             <Icon>
-              <Image source={variant.icon} style={{ width: 19, height: 19, marginRight: 19 }} />
+              <Image
+                source={variant.icon}
+                style={{ width: 19, height: 19, marginRight: 19 }}
+              />
             </Icon>
-          }
+          )}
           {message && (
             <Content>
-                <Message>{message}</Message>
+              <Message>{message}</Message>
             </Content>
           )}
-          {onClose &&
+          {onClose && (
             <Close onPress={onClose}>
-              <Image source={close as ImageSourcePropType} style={{ width: 12, height: 12 }} />
+              <Image
+                source={close as ImageSourcePropType}
+                style={{ width: 12, height: 12 }}
+              />
             </Close>
-          }
+          )}
         </SafeAreaView>
       </Host>
     </>

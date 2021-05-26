@@ -21,6 +21,18 @@ export function setupEventHandlers() {
     })
   })
 
+  if (Platform.OS === 'ios') {
+    SpotlightSearch.searchItemTapped((url) => {
+      console.log('tap', url)
+      navigateTo(url);
+    });
+
+    SpotlightSearch.getInitialSearchItem().then(url => {
+      console.log('init', url)
+      navigateTo(url);
+    });
+  }
+
   // Get initial url and pass to the opener
   Linking.getInitialURL()
     .then((url) => {
