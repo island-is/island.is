@@ -6,36 +6,17 @@ import {
   Child,
   Address,
 } from '@island.is/application/templates/family-matters-core/types'
-import { formatAddress } from '@island.is/application/templates/family-matters-core/utils'
 import {
   DescriptionText,
   InfoBanner,
 } from '@island.is/application/templates/family-matters-core/components'
 
-const allChildrenLiveWithBothParents = (
-  applicantAddress: Address,
-  children: Child[],
-) => {
-  const formattedApplicantAddress = formatAddress(applicantAddress)
-  return children.every(
-    (child) =>
-      formatAddress(child.otherParent.address) === formattedApplicantAddress,
-  )
-}
-
 const shouldBeDisabled = (
   children: Child[],
   childOption: Child,
-  applicantAddress: Address,
   selectedChildren?: string[],
 ) => {
-  // If the applicant and the other parent live together
-  // it should not be possible to request a transfer for the children
-  const formattedApplicantAddress = formatAddress(applicantAddress)
-  const formattedOtherParentAddress = formatAddress(
-    childOption.otherParent.address,
-  )
-  if (formattedApplicantAddress === formattedOtherParentAddress) {
+  if (childOption.livesWithBothParents) {
     return true
   }
   if (!selectedChildren || selectedChildren?.length === 0) {
@@ -58,7 +39,6 @@ const shouldBeDisabled = (
 interface Props {
   id: string
   children: Child[]
-  address: Address
   translations: {
     title: MessageDescriptor
     description: MessageDescriptor
@@ -72,7 +52,6 @@ interface Props {
 const SelectChildren = ({
   id,
   children,
-  address,
   translations,
   currentAnswer = [],
   error,
@@ -81,9 +60,8 @@ const SelectChildren = ({
   const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
     currentAnswer,
   )
-  const childrenNotEligibleForTransfer = allChildrenLiveWithBothParents(
-    address,
-    children,
+  const childrenNotEligibleForTransfer = children.every(
+    (child) => child.livesWithBothParents,
   )
   return (
     <>
@@ -112,12 +90,7 @@ const SelectChildren = ({
         options={children.map((child) => ({
           value: child.nationalId,
           label: child.fullName,
-          disabled: shouldBeDisabled(
-            children,
-            child,
-            address,
-            selectedChildrenState,
-          ),
+          disabled: shouldBeDisabled(children, child, selectedChildrenState),
           subLabel: formatMessage(translations.checkBoxSubLabel, {
             parentName: child.otherParent.fullName,
           }),
