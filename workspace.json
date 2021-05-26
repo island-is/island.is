@@ -6212,7 +6212,8 @@
             "jestConfig": "apps/services/auth-public-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}        
       }
     },
     "services-documents": {
