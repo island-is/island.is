@@ -59,7 +59,10 @@ export const dataSchema = z.object({
       params: error.validation.durationDate,
       path: ['date'],
     }),
-  confirmContract: validateTerms(approveTerms),
+  confirmContract: z.object({
+    terms: validateTerms(approveTerms),
+    timestamp: z.string(),
+  }),
   confirmContractParentB: validateTerms(approveTerms),
   acceptContract: z
     .enum([ApproveContract.Yes, ApproveContract.No])
