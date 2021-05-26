@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
-import { ApiScopeUserDTO as ApiScopeGroup } from './../../../entities/dtos/api-scope-user.dto'
 import { ResourcesService } from './../../../services/ResourcesService'
 import ApiScopeGroupCreateForm from './../../../components/Resource/forms/ApiScopeGroupCreateForm'
+import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
