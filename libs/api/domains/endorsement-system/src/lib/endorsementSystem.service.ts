@@ -86,9 +86,11 @@ export class EndorsementSystemService {
     input: EndorsementControllerDeleteRequest,
     auth: Auth,
   ) {
+    console.log('request', input)
     const result = await this.endorsementApiWithAuth(auth)
       .endorsementControllerDelete(input)
       .catch(handleError)
+    console.log('response', result)
     return Boolean(result)
   }
 

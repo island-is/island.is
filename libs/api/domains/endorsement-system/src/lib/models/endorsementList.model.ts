@@ -1,18 +1,8 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-import {
-  EndorsementListEndorsementMetaEnum,
-  EndorsementListTagsEnum,
-} from '../../../gen/fetch'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { EndorsementListEndorsementMetaEnum } from '../enums/endorsementListEndorsementMeta.enum'
+import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
 import { Endorsement } from './endorsement.model'
 import { ValidationRule } from './validationRule.model'
-
-registerEnumType(EndorsementListEndorsementMetaEnum, {
-  name: 'EndorsementListEndorsementMetaEnum',
-})
-
-registerEnumType(EndorsementListTagsEnum, {
-  name: 'EndorsementListTagsEnum',
-})
 
 @ObjectType()
 export class EndorsementList {
