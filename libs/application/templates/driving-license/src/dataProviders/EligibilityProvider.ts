@@ -1,3 +1,4 @@
+import { RequirementKey } from '../types/schema'
 import {
   BasicDataProvider,
   Application,
@@ -7,7 +8,7 @@ import {
 import { m } from '../lib/messages'
 
 const extractReason = (
-  requirements: { requirementMet: boolean, key: string }[],
+  requirements: { requirementMet: boolean; key: string }[],
 ): string => {
   return requirements
     .filter(({ requirementMet }) => !requirementMet)
@@ -18,11 +19,11 @@ const extractReason = (
 
 const requirementKeyToMessage = (key: string) => {
   switch (key) {
-    case 'drivingSchoolMissing':
+    case RequirementKey.DrivingSchoolMissing:
       return m.requirementUnmetDrivingSchool
-    case 'drivingAssessmentMissing':
+    case RequirementKey.DrivingAssessmentMissing:
       return m.requirementUnmetDrivingAssessment
-    case 'deniedByService':
+    case RequirementKey.DeniedByService:
       return m.requirementUnmetDeniedByService
     default:
       return ''

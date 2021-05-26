@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { NationalRegistryUser } from '../types/schema'
 
 export class RequiredResidenceProvider extends BasicDataProvider {
   type = 'RequiredResidenceProvider'

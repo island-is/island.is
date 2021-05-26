@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Juristiction } from '@island.is/api/schema'
+import { Juristiction } from '../types/schema'
 
 export class JuristictionProvider extends BasicDataProvider {
   type = 'JuristictionProvider'

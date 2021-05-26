@@ -13,7 +13,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { NationalRegistryUser } from '../types/schema'
 import { m } from '../lib/messages'
 
 export const done: Form = buildForm({

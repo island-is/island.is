@@ -1888,6 +1888,12 @@
               "!libs/application/templates/driving-assessment-approval/**/*"
             ]
           }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
+          }
         }
       }
     },
@@ -1959,6 +1965,12 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
           }
         }
       }
