@@ -146,6 +146,16 @@ android {
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
     }
+    flavorDimensions "internal"
+
+    productFlavors {
+        dev {
+            dimension "internal"
+            // resValue "string", "app_name", "Ísland Dev"
+            applicationId "is.island.appdev"
+            // resValue "string", "build_config_package", "is.island.appdev"
+        }
+    }
     splits {
         abi {
             reset()
@@ -179,6 +189,7 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+        
     }
 
     packagingOptions {

@@ -222,10 +222,10 @@ platform :android do
       file.write "Islandis"
     end
 
-    @apk = './android/app/build/outputs/apk//app-islandis-release.apk'
+    @apk = '.android/app/build/outputs/apk/release/app-release.apk'
 
     options.merge!(
-      flavor: 'islandis', 
+      flavor: 'dev', 
       app_identifier: @app_identifier,
     )
 
@@ -297,7 +297,7 @@ platform :android do
     add_git_tag(
       grouping: options[:app_identifier],
       build_number: @version_code
-    )
+    ) if !options[:bitrise]
 
     # Push the new commit and tag back to your git remote
     push_to_git_remote if !options[:bitrise]
