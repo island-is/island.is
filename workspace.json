@@ -6241,7 +6241,8 @@
             "outputPath": "apps/services/auth-public-api/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/auth-public-api/tsconfig.app.json apps/services/auth-public-api/src/buildOpenApi.ts"
           }
-        }
+        },
+        "docker-express": {}        
       }
     },
     "services-documents": {
