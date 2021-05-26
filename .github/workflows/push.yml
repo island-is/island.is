@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
-      - 'ncc-self-hosted'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -118,7 +117,6 @@ jobs:
           fetch-depth: 0
 
       - name: Cleanup disk space
-        if: false
         run: |
           df -h
           # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
@@ -198,7 +196,6 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        if: false
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
@@ -323,7 +320,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up Docker Buildx
-        if: false && steps.gather.outcome == 'success'
+        if: steps.gather.outcome == 'success'
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
