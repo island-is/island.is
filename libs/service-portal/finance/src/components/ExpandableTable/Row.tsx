@@ -50,6 +50,7 @@ const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
             alignItems: 'flexEnd',
             background: closed && !expanded ? 'transparent' : 'blue100',
             borderColor: closed && !expanded ? 'blue200' : 'blue100',
+            printHidden: true,
           }}
         >
           <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
