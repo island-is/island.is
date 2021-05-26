@@ -16,6 +16,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  buttonApprove: {
+    id: 'application.system:button.approve',
+    defaultMessage: 'Samþykkja',
+    description: 'Approve button copy',
+  },
+  buttonReject: {
+    id: 'application.system:button.reject',
+    defaultMessage: 'Hafna',
+    description: 'Reject button copy',
+  },
   buttonEdit: {
     id: 'application.system:button.edit',
     defaultMessage: 'Breyta',
