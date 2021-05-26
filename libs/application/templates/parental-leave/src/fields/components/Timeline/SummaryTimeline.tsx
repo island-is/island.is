@@ -14,7 +14,7 @@ interface SummaryTimelineProps {
 
 export const SummaryTimeline = ({ application }: SummaryTimelineProps) => {
   const { formatMessage, formatDateFns } = useLocale()
-  const periods = formatPeriods(application)
+  const periods = formatPeriods(application, formatMessage)
 
   return (
     <Box>

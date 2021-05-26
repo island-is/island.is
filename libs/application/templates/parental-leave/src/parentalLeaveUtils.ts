@@ -7,13 +7,12 @@ import {
   ExternalData,
   extractRepeaterIndexFromField,
   Field,
+  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
@@ -59,11 +58,11 @@ export function getEstimatedMonthlyPay(application: Application): number {
   return 384000
 }
 
+// TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
-  otherParentPeriods?: Period[],
+  formatMessage: FormatMessage,
 ): TimelinePeriod[] {
-  const { formatMessage } = useLocale()
   const periods = application.answers.periods as Period[]
   const timelinePeriods: TimelinePeriod[] = []
 
@@ -114,6 +113,7 @@ export function formatPeriods(
     }
   })
 
+  /*
   otherParentPeriods?.forEach((period) => {
     timelinePeriods.push({
       startDate: period.startDate,
@@ -128,6 +128,7 @@ export function formatPeriods(
       color: theme.color.red200,
     })
   })
+  */
 
   return timelinePeriods
 }

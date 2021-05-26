@@ -34,12 +34,7 @@ const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
               titleSmall={formatMessage(
                 parentalLeaveFormMessages.shared.dateOfBirthTitle,
               )}
-              // TODO: Once we have the data, add the otherParentPeriods here.
-              //  periods={formatPeriods(
-              //   application.answers.periods as Period[],
-              //   otherParentPeriods,
-              // )}
-              periods={formatPeriods(application)}
+              periods={formatPeriods(application, formatMessage)}
             />
           )) || (
             <Text>

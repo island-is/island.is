@@ -40,12 +40,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
           titleSmall={formatMessage(
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
-          periods={formatPeriods(application)}
-          // TODO: Once we have the data, add the otherParentPeriods here.
-          // periods={formatPeriods(
-          //   application,
-          //   editable ? otherParentPeriods : [],
-          // )}
+          periods={formatPeriods(application, formatMessage)}
           onDeletePeriod={removeRepeaterItem}
           editable={editable}
         />
