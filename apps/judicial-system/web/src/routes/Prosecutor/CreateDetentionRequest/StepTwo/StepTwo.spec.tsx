@@ -186,10 +186,19 @@ describe('Create detention request, step two', () => {
 
     const tomorrow = addDays(new Date(), 1).getDate().toString()
 
+    const candidateTomorrows = arrestWrapper.getAllByText(tomorrow)
+
+    expect(candidateTomorrows.length).toBeGreaterThan(0)
+
+    // Make sure we pick a date from the curent month
+    let tommorrowOfCurentMont: HTMLElement
+    if (tomorrow > '16') {
+      tommorrowOfCurentMont = candidateTomorrows[candidateTomorrows.length - 1]
+    } else {
+      tommorrowOfCurentMont = candidateTomorrows[0]
+    }
+
     // Assert
-    expect(arrestWrapper.getAllByText(tomorrow)[0]).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
+    expect(tommorrowOfCurentMont).toHaveAttribute('aria-disabled', 'true')
   })
 })
