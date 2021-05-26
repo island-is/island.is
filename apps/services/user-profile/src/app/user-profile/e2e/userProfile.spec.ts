@@ -5,13 +5,34 @@ import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../emailVerification.model'
 import { SmsVerification } from '../smsVerification.model'
 import { SmsService } from '@island.is/nova-sms'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
 
 let app: INestApplication
 let emailService: EmailService
 let smsService: SmsService
 
+const mockProfile = {
+  nationalId: '1234567890',
+  locale: 'en',
+  email: 'email@example.com',
+  mobilePhoneNumber: '9876543',
+}
+
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder
+        .overrideGuard(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId: mockProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        )
+        .compile()
+    },
+  })
 
   emailService = app.get<EmailService>(EmailService)
   jest
@@ -23,295 +44,441 @@ beforeAll(async () => {
 })
 
 describe('User profile API', () => {
-  it(`POST /userProfile should register userProfile with no phonenumber `, async () => {
-    // Act
-    const spy = jest
-      .spyOn(emailService, 'sendEmail')
-      .mockImplementation(() => Promise.resolve('user'))
-    const response = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-        email: 'email@example.com',
-      })
-      .expect(201)
-    expect(spy).toHaveBeenCalled()
-    expect(response.body.id).toBeTruthy()
-  })
+  describe('POST /userProfile', () => {
+    it('POST /userProfile should register userProfile with no phonenumber', async () => {
+      // Arrange
+      const { mobilePhoneNumber, ...sutProfile } = mockProfile
 
-  it(`POST /userProfile should register userProfile with no email`, async () => {
-    // Act
-    const spy = jest
-      .spyOn(emailService, 'sendEmail')
-      .mockImplementation(() => Promise.resolve('user'))
-    const response = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-      })
-      .expect(201)
-    expect(spy).toHaveBeenCalled()
-    expect(response.body.id).toBeTruthy()
-  })
-
-  it(`POST /userProfile should return 400 bad request on invalid locale`, async () => {
-    // Act
-    const response = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
-        locale: 'en123',
-        email: 'email@email.is',
-      })
-      .expect(400)
-
-    // Assert
-    expect(response.body.error).toBe('Bad Request')
-
-    expect(response.body.message).toEqual(
-      expect.arrayContaining(['locale must be a valid enum value']),
-    )
-  })
-
-  it(`GET /userProfile should return 404 not found error msg`, async () => {
-    const getResponse = await request(app.getHttpServer())
-      .get(`/userProfile/1231231231231`)
-      .expect(404)
-
-    // Assert
-    expect(getResponse.body.error).toBe('Not Found')
-    expect(getResponse.body.message).toBe(
-      'A user profile with nationalId 1231231231231 does not exist',
-    )
-  })
-
-  it(`GET /userProfile should return profile`, async () => {
-    //Arrange
-    const profile = {
-      nationalId: '1234567890',
-      locale: 'en',
-      email: 'email@email.is',
-    }
-
-    // Act
-    await request(app.getHttpServer()).post('/userProfile').send(profile)
-
-    const getResponse = await request(app.getHttpServer())
-      .get(`/userProfile/${profile.nationalId}`)
-      .expect(200)
-
-    // Assert
-    expect(getResponse.body).toEqual(
-      expect.objectContaining({ nationalId: profile.nationalId }),
-    )
-    expect(getResponse.body).toEqual(
-      expect.objectContaining({ locale: profile.locale }),
-    )
-    expect(getResponse.body).toEqual(
-      expect.objectContaining({ email: profile.email }),
-    )
-  })
-
-  it(`PUT /userProfile/ should return 404 not found error msg`, async () => {
-    const updatedProfile = {
-      mobilePhoneNumber: '987654331',
-      locale: 'is',
-      email: 'email@email.is',
-    }
-
-    // Act
-    const updateResponse = await request(app.getHttpServer())
-      .put(`/userProfile/12312312313`)
-      .send(updatedProfile)
-      .expect(404)
-
-    // Assert
-    expect(updateResponse.body.error).toBe('Not Found')
-    expect(updateResponse.body.message).toBe(
-      'A user profile with nationalId 12312312313 does not exist',
-    )
-  })
-
-  it(`PUT /userProfile should update profile`, async () => {
-    //Arrange
-    const profile = {
-      nationalId: '1234567890',
-      locale: 'en',
-    }
-    const updatedProfile = {
-      locale: 'is',
-    }
-
-    // Act
-    await request(app.getHttpServer()).post('/userProfile').send(profile)
-
-    const updateResponse = await request(app.getHttpServer())
-      .put(`/userProfile/${profile.nationalId}`)
-      .send(updatedProfile)
-      .expect(200)
-
-    // Assert
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({ nationalId: profile.nationalId }),
-    )
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({ locale: updatedProfile.locale }),
-    )
-  })
-
-  it(`POST /userProfile should return conflict on existing nationalId`, async () => {
-    // Act
-    await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-        email: 'email@email.is',
-      })
-      .expect(201)
-
-    const conflictResponse = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-        email: 'email@email.is',
-      })
-      .expect(409)
-
-    // Assert
-    expect(conflictResponse.body.error).toBe('Conflict')
-    expect(conflictResponse.body.message).toBe(
-      'A profile with nationalId - "1234567890" already exists',
-    )
-  })
-
-  it(`POST /userProfile creates an email verfication in Db`, async () => {
-    // Act
-    const spy = jest.spyOn(emailService, 'sendEmail')
-    const response = await request(app.getHttpServer())
-      .post('/userProfile/')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-        email: 'email@email.is',
-      })
-      .expect(201)
-    expect(spy).toHaveBeenCalled()
-    const verification = await EmailVerification.findOne({
-      where: { nationalId: response.body.nationalId },
+      // Act
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve('user'))
+      const response = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(sutProfile)
+        .expect(201)
+      expect(spy).toHaveBeenCalled()
+      expect(response.body.id).toBeTruthy()
     })
 
-    // Assert
-    expect(response.body).toEqual(
-      expect.objectContaining({ nationalId: verification.nationalId }),
-    )
-    expect(response.body).toEqual(
-      expect.objectContaining({ email: verification.email }),
-    )
-  })
+    it('POST /userProfile should register userProfile with no email', async () => {
+      // Arrange
+      const { email, ...sutProfile } = mockProfile
 
-  it(`POST /smsVerification/ creates an sms verfication in Db`, async () => {
-    // Act
-    const spy = jest.spyOn(smsService, 'sendSms')
-    const response = await request(app.getHttpServer())
-      .post('/smsVerification/')
-      .send({
-        nationalId: '123456789',
-        mobilePhoneNumber: '1111111',
-      })
-      .expect(201)
-    expect(spy).toHaveBeenCalled()
-    const verification = await SmsVerification.findOne({
-      where: { nationalId: response.body.nationalId },
+      // Act
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve('user'))
+      const response = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(sutProfile)
+        .expect(201)
+      expect(spy).toHaveBeenCalled()
+      expect(response.body.id).toBeTruthy()
     })
 
-    // Assert
-    expect(response.body).toEqual(
-      expect.objectContaining({ nationalId: verification.nationalId }),
-    )
-    expect(response.body).toEqual(
-      expect.objectContaining({ smsCode: verification.smsCode }),
-    )
-  })
+    it('POST /userProfile should register userProfile and create verification', async () => {
+      // Act
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve('user'))
+      const response = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+      expect(spy).toHaveBeenCalled()
+      expect(response.body.id).toBeTruthy()
 
-  it(`POST /confirmSms/ marks as verified`, async () => {
-    // Act
-
-    const verificationResponse = await request(app.getHttpServer())
-      .post('/smsVerification/')
-      .send({
-        nationalId: '123456789',
-        mobilePhoneNumber: '1111111',
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: response.body.nationalId },
       })
-      .expect(201)
 
-    const response = await request(app.getHttpServer())
-      .post('/confirmSms/123456789')
-      .send({
-        code: verificationResponse.body.smsCode,
-      })
-      .expect(201)
-
-    // Assert
-    expect(response.body).toEqual(expect.objectContaining({ confirmed: true }))
-  })
-
-  it(`POST /userProfile should register userProfile and create verification`, async () => {
-    // Act
-    const spy = jest
-      .spyOn(emailService, 'sendEmail')
-      .mockImplementation(() => Promise.resolve('user'))
-    const response = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        locale: 'en',
-        email: 'email@example.com',
-      })
-      .expect(201)
-    expect(spy).toHaveBeenCalled()
-    expect(response.body.id).toBeTruthy()
-
-    const verification = await EmailVerification.findOne({
-      where: { nationalId: response.body.nationalId },
+      // Assert
+      expect(verification.email).toEqual(mockProfile.email)
+      expect(verification.nationalId).toEqual(mockProfile.nationalId)
+      expect(response.body).toEqual(
+        expect.objectContaining({ nationalId: verification.nationalId }),
+      )
+      expect(response.body).toEqual(
+        expect.objectContaining({ email: verification.email }),
+      )
     })
 
-    expect(verification.email).toEqual('email@example.com')
-    expect(verification.nationalId).toEqual('1234567890')
-  })
+    it('POST /userProfile should return conflict on existing nationalId', async () => {
+      // Act
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
 
-  it(`PUT /userProfile with email should create verification`, async () => {
-    // Act
-    const spy = jest
-      .spyOn(emailService, 'sendEmail')
-      .mockImplementation(() => Promise.resolve('user'))
-    await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '11111111111',
-        locale: 'en',
-        email: 'email@example.com',
-      })
-      .expect(201)
-    const response = await request(app.getHttpServer())
-      .put(`/userProfile/11111111111`)
-      .send({
-        locale: 'en',
-        email: 'email@example2.com',
-      })
-      .expect(200)
-    expect(spy).toHaveBeenCalled()
-    expect(response.body.id).toBeTruthy()
+      const conflictResponse = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(409)
 
-    const verification = await EmailVerification.findOne({
-      where: { nationalId: response.body.nationalId },
+      // Assert
+      expect(conflictResponse.body.error).toBe('Conflict')
+      expect(conflictResponse.body.message).toBe(
+        `A profile with nationalId - "${mockProfile.nationalId}" already exists`,
+      )
     })
 
-    expect(verification.email).toEqual('email@example2.com')
-    expect(verification.nationalId).toEqual('11111111111')
+    it('POST /userProfile should return 400 bad request on invalid locale', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          ...mockProfile,
+          locale: 'en123',
+        })
+        .expect(400)
+
+      // Assert
+      expect(response.body.error).toBe('Bad Request')
+
+      expect(response.body.message).toEqual(
+        expect.arrayContaining(['locale must be a valid enum value']),
+      )
+    })
+
+    it('POST /userProrfile should return 403 forbidden on invalid authentication', async () => {
+      // Act
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          ...mockProfile,
+          nationalId: '0987654321',
+        })
+        // Assert
+        .expect(403)
+    })
+  })
+
+  describe('GET /userProfile', () => {
+    it('GET /userProfile should return 404 not found error msg', async () => {
+      // Act
+      const getResponse = await request(app.getHttpServer())
+        .get(`/userProfile/${mockProfile.nationalId}`)
+        .expect(404)
+
+      // Assert
+      expect(getResponse.body.error).toBe('Not Found')
+      expect(getResponse.body.message).toBe(
+        `A user profile with nationalId ${mockProfile.nationalId} does not exist`,
+      )
+    })
+
+    it('GET /userProfile should return profile', async () => {
+      // Arrange
+      await request(app.getHttpServer()).post('/userProfile').send(mockProfile)
+
+      // Act
+      const getResponse = await request(app.getHttpServer())
+        .get(`/userProfile/${mockProfile.nationalId}`)
+        .expect(200)
+
+      // Assert
+      expect(getResponse.body).toEqual(
+        expect.objectContaining({ nationalId: mockProfile.nationalId }),
+      )
+      expect(getResponse.body).toEqual(
+        expect.objectContaining({ locale: mockProfile.locale }),
+      )
+      expect(getResponse.body).toEqual(
+        expect.objectContaining({ email: mockProfile.email }),
+      )
+    })
+
+    it('GET /userProfile should return 403 forbidden on invalid authentication', async () => {
+      //Arrange
+      const invalidNationalId = '0987654321'
+
+      // Act
+      await request(app.getHttpServer())
+        .get(`/userProfile/${invalidNationalId}`)
+        // Assert
+        .expect(403)
+    })
+  })
+
+  describe('PUT /userProfile', () => {
+    it('PUT /userProfile/ should return 404 not found error msg', async () => {
+      // Arrange
+      const updatedProfile = {
+        mobilePhoneNumber: '9876543',
+        locale: 'is',
+        email: 'email@email.is',
+      }
+
+      // Act
+      const updateResponse = await request(app.getHttpServer())
+        .put(`/userProfile/${mockProfile.nationalId}`)
+        .send(updatedProfile)
+        .expect(404)
+
+      // Assert
+      expect(updateResponse.body.error).toBe('Not Found')
+      expect(updateResponse.body.message).toBe(
+        `A user profile with nationalId ${mockProfile.nationalId} does not exist`,
+      )
+    })
+
+    it('PUT /userProfile should update profile', async () => {
+      //Arrange
+      const updatedProfile = {
+        locale: 'is',
+      }
+      await request(app.getHttpServer()).post('/userProfile').send(mockProfile)
+
+      // Act
+      const updateResponse = await request(app.getHttpServer())
+        .put(`/userProfile/${mockProfile.nationalId}`)
+        .send(updatedProfile)
+        .expect(200)
+
+      // Assert
+      expect(updateResponse.body).toEqual(
+        expect.objectContaining({ nationalId: mockProfile.nationalId }),
+      )
+      expect(updateResponse.body).toEqual(
+        expect.objectContaining({ locale: updatedProfile.locale }),
+      )
+    })
+
+    it('PUT /userProfile with email should create verification', async () => {
+      // Arrange
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve('user'))
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          nationalId: mockProfile.nationalId,
+          locale: mockProfile.locale,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
+        .expect(201)
+
+      //Act
+      const response = await request(app.getHttpServer())
+        .put(`/userProfile/${mockProfile.nationalId}`)
+        .send({
+          email: mockProfile.email,
+        })
+        .expect(200)
+      expect(spy).toHaveBeenCalled()
+      expect(response.body.id).toBeTruthy()
+
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: response.body.nationalId },
+      })
+
+      expect(verification.email).toEqual(mockProfile.email)
+      expect(verification.nationalId).toEqual(mockProfile.nationalId)
+    })
+
+    it('PUT /userProfile/ should return 403 forbidden on invalid authentication', async () => {
+      // Arrange
+      const updatedProfile = {
+        mobilePhoneNumber: '987654321',
+        locale: 'is',
+        email: 'email@email.is',
+      }
+      const invalidNationalId = '0987654321'
+
+      // Act
+      await request(app.getHttpServer())
+        .put(`/userProfile/${invalidNationalId}`)
+        .send(updatedProfile)
+        // Assert
+        .expect(403)
+    })
+  })
+
+  describe('POST /emailVerification', () => {
+    it('POST /emailVerification/:nationalId creates an email verfication in db', async () => {
+      // Arrange
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve(''))
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/emailVerification/${mockProfile.nationalId}`)
+        .expect(201)
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: response.body.nationalId },
+        order: [['created', 'DESC']],
+      })
+
+      // Assert
+      expect(spy).toHaveBeenCalled()
+      expect(response.body).toEqual(
+        expect.objectContaining({ nationalId: verification.nationalId }),
+      )
+      expect(response.body).toEqual(
+        expect.objectContaining({ hash: verification.hash }),
+      )
+    })
+
+    it('POST /emailVerification/:nationalId returns 400 bad request on missing email', async () => {
+      // Arrange
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          nationalId: mockProfile.nationalId,
+          locale: mockProfile.locale,
+        })
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/emailVerification/${mockProfile.nationalId}`)
+        // Assert
+        .expect(400)
+
+      expect(response.body.message).toBe(
+        'Profile does not have a configured email address.',
+      )
+    })
+
+    it('POST /emailVerification/:nationalId returns 403 forbidden for invalid authentication', async () => {
+      // Arrange
+      const invalidNationalId = '0987654321'
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+
+      // Act
+      await request(app.getHttpServer())
+        .post(`/emailVerification/${invalidNationalId}`)
+        // Assert
+        .expect(403)
+    })
+  })
+
+  describe('POST /confirmEmail', () => {
+    it('POST /confirmEmail/ marks as confirmed', async () => {
+      //Arrange
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId },
+      })
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/confirmEmail/${mockProfile.nationalId}`)
+        .send({
+          hash: verification.hash,
+        })
+        .expect(201)
+
+      // Assert
+      expect(response.body).toEqual(
+        expect.objectContaining({ confirmed: true }),
+      )
+    })
+
+    it('POST /confirmEmail/ returns 403 forbidden for invalid authentication', async () => {
+      //Arrange
+      const invalidNationalId = '0987654321'
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfile)
+        .expect(201)
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId },
+      })
+
+      // Act
+      await request(app.getHttpServer())
+        .post(`/confirmEmail/${invalidNationalId}`)
+        .send({
+          hash: verification.hash,
+        })
+        // Assert
+        .expect(403)
+    })
+  })
+
+  describe('POST /smsVerification', () => {
+    it('POST /smsVerification/ creates a sms verfication in db', async () => {
+      // Act
+      const spy = jest.spyOn(smsService, 'sendSms')
+      const response = await request(app.getHttpServer())
+        .post('/smsVerification/')
+        .send({
+          nationalId: '1234567890',
+          mobilePhoneNumber: '1111111',
+        })
+        .expect(201)
+      expect(spy).toHaveBeenCalled()
+      const verification = await SmsVerification.findOne({
+        where: { nationalId: response.body.nationalId },
+      })
+
+      // Assert
+      expect(response.body).toEqual(
+        expect.objectContaining({ nationalId: verification.nationalId }),
+      )
+      expect(response.body).toEqual(
+        expect.objectContaining({ smsCode: verification.smsCode }),
+      )
+    })
+  })
+
+  describe('POST /confirmSms', () => {
+    it('POST /confirmSms/ marks as verified', async () => {
+      // Arrange
+      const verificationResponse = await request(app.getHttpServer())
+        .post('/smsVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/confirmSms/${mockProfile.nationalId}`)
+        .send({
+          code: verificationResponse.body.smsCode,
+        })
+        .expect(201)
+
+      // Assert
+      expect(response.body).toEqual(
+        expect.objectContaining({ confirmed: true }),
+      )
+    })
+
+    it('POST /confirmSms/ returns 403 forbidden for invalid authentication', async () => {
+      // Arrange
+      const invalidNationalId = '0987654321'
+      const verificationResponse = await request(app.getHttpServer())
+        .post('/smsVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
+        .expect(201)
+
+      // Act
+      await request(app.getHttpServer())
+        .post(`/confirmSms/${invalidNationalId}`)
+        .send({
+          code: verificationResponse.body.smsCode,
+        })
+        // Assert
+        .expect(403)
+    })
   })
 })

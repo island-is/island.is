@@ -5,6 +5,11 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 export const parentalLeaveFormMessages: MessageDir = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
+    institution: {
+      id: 'pl.application:institution.name',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'Name of the institution responsible of the application',
+    },
     name: {
       id: 'pl.application:name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -153,7 +158,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-
     rightsSection: {
       id: 'pl.application:rights.section',
       defaultMessage: 'Réttindi til fæðingarorlofs',
@@ -362,6 +366,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
+    pregnancyStatusAndRightsError: {
+      id: 'pl.application:pregnancyStatusAndRights.error',
+      defaultMessage:
+        'Ekki er hægt að ná fæðingardegi barnsins og ekki er hægt að reikna réttindin.',
+      description: 'Error message for pregnancy status and rights providers',
+    },
+    childrenError: {
+      id: 'pl.application:children.error',
+      defaultMessage:
+        'Engin börn fundust. Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
+      description: `When no children is found. Can be because the primary parent didn't assign the secondary parent yet or if it's not part of the system yet.`,
+    },
     childrenInformationTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
@@ -504,18 +520,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Velja',
       description: 'Choose',
     },
-    notEligibleTitle: {
-      id: 'pl.application:selectChild.notEligibleTitle',
-      defaultMessage: 'Engin börn fundust',
-      description: 'Not children were found',
-    },
-    notEligibleDescription: {
-      id: 'pl.application:selectChild.notEligibleDescription',
-      defaultMessage:
-        'Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
-      description:
-        'No expected date of birth was found or an active application for parental leave.',
-    },
   }),
 
   notEligible: defineMessages({
@@ -644,6 +648,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:personal.allowance.zeroToHundred',
       defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
       description: 'Type a number from 0 to 100',
+    },
+    allowanceUsage: {
+      id: 'pl.application:allowance.allowance.usage',
+      defaultMessage: 'Hlutfall af persónuafslættinum',
+      description: 'Review copy for the usage percentage',
     },
   }),
 
@@ -1049,6 +1058,43 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
     },
+    rightsTotal: {
+      id: 'pl.application:review.rights.total',
+      defaultMessage: 'Samtals: {months}',
+      description:
+        'Copy for the total of months for the parental leave on the review screen',
+    },
+    rightsPersonalMonths: {
+      id: 'pl.application:review.rights.personal.months',
+      defaultMessage: '{months} persónulegir mánuðir',
+      description: 'Copy for the number of personal months',
+    },
+    rightsAllowanceRequested: {
+      id: 'pl.application:review.rights.allowance.requested',
+      defaultMessage: '{requested} mánuður veittur af öðru foreldri',
+      description: 'Requested months from other parent',
+    },
+    rightsAllowanceGiven: {
+      id: 'pl.application:review.rights.allowance.given',
+      defaultMessage: '{given} mánuður gefinn hinu foreldrinu',
+      description: 'Given months to the other parent',
+    },
+    period: {
+      id: 'pl.application:review.period',
+      defaultMessage: 'Tímabilinu {index} - {ratio}%',
+      description: 'Period copy',
+    },
+    usePersonalAllowance: {
+      id: 'pl.application:review.use.personal.allowance',
+      defaultMessage: 'Nota allan persónuafsláttinn',
+      description: 'If parent decided to use all its personal discount',
+    },
+    useSpousePersonalAllowance: {
+      id: 'pl.application:review.use.spouse.personal.allowance',
+      defaultMessage: 'Fullnýta persónuafslátt maka',
+      description:
+        'If parent decided to use all the other parent personal discount',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1316,6 +1362,11 @@ export const errorMessages = defineMessages({
       'Nýtt tímabil getur ekki byrjað innan annars tímabils sem þegar er vistað.',
     description: 'Copy when start date overlaps other periods',
   },
+  periodsStartDateRequired: {
+    id: 'pl.application:answerValidators.periodsStartDateRequired',
+    defaultMessage: 'Vinsamlegast veldu upphafsdagsetningu',
+    description: 'Start date can not be empty',
+  },
   periodsEndDate: {
     id: 'pl.application:answerValidators.periodsEndDate',
     defaultMessage:
@@ -1337,6 +1388,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
     description: 'Copy when end date overlaps other period',
+  },
+  periodsEndDateRequired: {
+    id: 'pl.application:answerValidators.periodsEndDateRequired',
+    defaultMessage: 'Vinsamlegast veldu lokadagsetningu',
+    description: 'End date can not be empty',
   },
   periodsRatio: {
     id: 'pl.application:answerValidators.periodsRatio',

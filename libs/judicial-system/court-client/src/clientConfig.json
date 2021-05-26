@@ -385,58 +385,6 @@
           }
         }
       }
-    },
-    "/UploadStream": {
-      "post": {
-        "tags": ["UploadStream"],
-        "summary": "Uploads file stream and returns container identifier",
-        "operationId": "UploadStream",
-        "parameters": [
-          {
-            "name": "authenticationToken",
-            "in": "query",
-            "description": "Authentication token. Returned by Authenticate",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["File"],
-                "properties": {
-                  "File": {
-                    "type": "string",
-                    "description": "Upload file",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {

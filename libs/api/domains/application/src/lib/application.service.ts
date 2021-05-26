@@ -12,7 +12,7 @@ import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { CreatePdfInput } from './dto/createPdf.input'
+import { GeneratePdfInput } from './dto/generatePdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
@@ -109,6 +109,7 @@ export class ApplicationService {
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
     auth: Auth,
+    locale: Locale,
   ) {
     const { id, ...populateExternalDataDto } = input
 
@@ -116,6 +117,7 @@ export class ApplicationService {
       .applicationControllerUpdateExternalData({
         id,
         populateExternalDataDto,
+        locale,
       })
       .catch(handleError)
   }
@@ -138,12 +140,12 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async createPdfPresignedUrl(input: CreatePdfInput, auth: Auth) {
-    const { id, ...createPdfDto } = input
+  async generatePdfPresignedUrl(input: GeneratePdfInput, auth: Auth) {
+    const { id, ...generatePdfDto } = input
     return await this.applicationApiWithAuth(auth)
-      .applicationControllerCreatePdf({
+      .applicationControllerGeneratePdf({
         id,
-        createPdfDto,
+        generatePdfDto,
       })
       .catch(handleError)
   }

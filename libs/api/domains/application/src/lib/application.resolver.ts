@@ -17,7 +17,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { CreatePdfInput } from './dto/createPdf.input'
+import { GeneratePdfInput } from './dto/generatePdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
@@ -72,10 +72,12 @@ export class ApplicationResolver {
 
   @Mutation(() => Application, { nullable: true })
   updateApplicationExternalData(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input, user)
+    return this.applicationService.updateExternalData(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -111,11 +113,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async createPdfPresignedUrl(
-    @Args('input') input: CreatePdfInput,
+  async generatePdfPresignedUrl(
+    @Args('input') input: GeneratePdfInput,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
-    return this.applicationService.createPdfPresignedUrl(input, user)
+    return this.applicationService.generatePdfPresignedUrl(input, user)
   }
 
   @Mutation(() => RequestFileSignatureResponse, { nullable: true })

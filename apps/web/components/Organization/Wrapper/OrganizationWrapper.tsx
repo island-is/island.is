@@ -16,6 +16,7 @@ import {
   Link,
   Navigation,
   NavigationItem,
+  ProfileCard,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -28,9 +29,14 @@ import {
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { SjukratryggingarHeader } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
+import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
+import { useRouter } from 'next/router'
+import * as styles from './OrganizationWrapper.treat'
 
 interface NavigationData {
   title: string
@@ -50,18 +56,23 @@ interface WrapperProps {
   fullWidthContent?: boolean
   stickySidebar?: boolean
   minimal?: boolean
+  showSecondaryMenu?: boolean
 }
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
+    case 'sjukratryggingar':
+      return <SjukratryggingarHeader organizationPage={organizationPage} />
+    case 'utlendingastofnun':
+      return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
     default:
@@ -70,31 +81,36 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 }
 
 interface FooterProps {
-  theme: string
-  organization?: Organization
+  organizations: Array<Organization>
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
-  theme,
-  organization,
+  organizations,
 }) => {
+  const footerEnabled = ['syslumenn']
+
+  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
   if (!organization) return null
 
-  switch (theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
-      )
-    default:
-      return null
+  if (organization.slug === 'syslumenn') {
+    return (
+      <SyslumennFooter
+        title={organization.title}
+        logo={organization.logo?.url}
+        footerItems={organization.footerItems}
+      />
+    )
   }
+  return null
 }
 
-const OrganizationChatPanel = ({ slug }: { slug: string }) => {
+export const OrganizationChatPanel = ({
+  slugs,
+  pushUp = false,
+}: {
+  slugs: string[]
+  pushUp?: boolean
+}) => {
   // remove when organization chat-bot is ready for release
   const { publicRuntimeConfig } = getConfig()
   const { disableOrganizationChatbot } = publicRuntimeConfig
@@ -102,15 +118,25 @@ const OrganizationChatPanel = ({ slug }: { slug: string }) => {
     return null
   }
 
-  switch (slug) {
-    case 'syslumenn':
-      return <ChatPanel endpoint="syslumenn" />
-    default:
-      return null
-  }
+  const chatEnabled = ['syslumenn']
+
+  const slug = slugs.find((x) => chatEnabled.includes(x))
+
+  return slug ? (
+    <ChatPanel
+      endpoint={slug as keyof typeof chatPanelEndpoints}
+      pushUp={pushUp}
+    />
+  ) : null
 }
 
-const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
+const SecondaryMenu = ({
+  title,
+  items,
+}: {
+  title: string
+  items: NavigationItem[]
+}) => (
   <Box
     background="purple100"
     borderRadius="large"
@@ -119,12 +145,16 @@ const SecondaryMenu = ({ linkGroup }: { linkGroup: LinkGroup }) => (
   >
     <Stack space={[1, 1, 2]}>
       <Text variant="eyebrow" as="h2">
-        {linkGroup.name}
+        {title}
       </Text>
-      {linkGroup.childrenLinks.map((link) => (
-        <Link key={link.url} href={link.url} underline="normal">
-          <Text key={link.url} as="span">
-            {link.text}
+      {items.map((link) => (
+        <Link key={link.href} href={link.href} underline="normal">
+          <Text
+            key={link.href}
+            as="span"
+            variant={link.active ? 'h5' : 'default'}
+          >
+            {link.title}
           </Text>
         </Link>
       ))}
@@ -145,12 +175,15 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   stickySidebar = true,
   children,
   minimal = false,
+  showSecondaryMenu = true,
 }) => {
+  const Router = useRouter()
+
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: text === pageTitle,
+      active: Router.asPath === url,
     })) ?? []
 
   const metaTitleSuffix =
@@ -191,38 +224,38 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
-                {organizationPage.secondaryMenu && (
-                  <SecondaryMenu linkGroup={organizationPage.secondaryMenu} />
+                {showSecondaryMenu && (
+                  <>
+                    {organizationPage.secondaryMenu && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
+                    {organizationPage.sidebarCards.map((card) => (
+                      <ProfileCard
+                        title={card.title}
+                        description={card.content}
+                        link={card.link}
+                        image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                        size="small"
+                      />
+                    ))}
+                  </>
                 )}
                 {sidebarContent}
               </SidebarContainer>
             }
           >
             <Hidden above="sm">
-              <Box marginY={2}>
-                <Navigation
-                  baseId="pageNav"
-                  isMenuDialog={true}
-                  items={navigationData.items}
-                  title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
-              {organizationPage.secondaryMenu && (
+              <Box className={styles.menuStyle}>
                 <Box marginY={2}>
                   <Navigation
-                    colorScheme="purple"
-                    baseId="secondarynav"
+                    baseId="pageNav"
                     isMenuDialog={true}
-                    title={organizationPage.secondaryMenu.name}
-                    items={secondaryNavList}
+                    items={navigationData.items}
+                    title={navigationData.title}
+                    activeItemTitle={navigationData.activeItemTitle}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -232,7 +265,25 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     }}
                   />
                 </Box>
-              )}
+                {organizationPage.secondaryMenu && (
+                  <Box marginY={2}>
+                    <Navigation
+                      colorScheme="purple"
+                      baseId="secondarynav"
+                      isMenuDialog={true}
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Hidden>
             <GridContainer>
               <GridRow>
@@ -282,12 +333,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && (
-        <OrganizationFooter
-          theme={organizationPage.theme}
-          organization={organizationPage.organization}
-        />
+        <OrganizationFooter organizations={[organizationPage.organization]} />
       )}
-      <OrganizationChatPanel slug={organizationPage?.slug} />
+      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
   )
 }

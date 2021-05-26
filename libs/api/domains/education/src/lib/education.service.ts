@@ -15,7 +15,7 @@ import {
 import {
   NationalRegistryApi,
   ISLFjolskyldan,
-} from '@island.is/clients/national-registry'
+} from '@island.is/clients/national-registry-v1'
 
 import { Config } from './education.module'
 import { License, ExamFamilyOverview, ExamResult } from './education.type'
