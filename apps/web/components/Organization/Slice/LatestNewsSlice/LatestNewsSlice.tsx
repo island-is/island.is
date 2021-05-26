@@ -18,7 +18,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
   fullWidth,
 }) => {
   return (
-    <section key={slice.id}>
+    <div key={slice.id} style={{ overflow: 'hidden' }}>
       <Section
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
@@ -49,6 +49,6 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
           />
         )}
       </Section>
-    </section>
+    </div>
   )
 }
