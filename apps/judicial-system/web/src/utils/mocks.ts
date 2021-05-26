@@ -57,6 +57,7 @@ export const mockRegistrar = {
   role: UserRole.REGISTRAR,
   name: 'Alfred Thaddeus Crane Pennyworth',
   title: 'dómritari',
+  institution: mockCourt,
 } as User
 
 export const mockAdmin = {
