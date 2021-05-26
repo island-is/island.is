@@ -14,9 +14,10 @@ import { Roles } from '../../lib/constants'
 
 interface Props {
   application: CRCApplication
+  parentKey: Roles
 }
 
-const ContractOverview = ({ application }: Props) => {
+const ContractOverview = ({ application, parentKey }: Props) => {
   const { formatMessage, locale } = useIntl()
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
@@ -24,8 +25,6 @@ const ContractOverview = ({ application }: Props) => {
     applicant,
     answers.selectedChildren,
   )
-  const parentKey =
-    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
     <>

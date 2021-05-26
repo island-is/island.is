@@ -39,7 +39,7 @@ export class FileService {
     private readonly awsService: AwsService,
   ) {}
 
-  async createPdf(application: Application, pdfType: PdfTypes) {
+  async generatePdf(application: Application, pdfType: PdfTypes) {
     this.validateApplicationType(application.typeId)
 
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
