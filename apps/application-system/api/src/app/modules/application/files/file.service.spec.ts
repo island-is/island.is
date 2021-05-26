@@ -145,7 +145,7 @@ describe('FileService', () => {
   it('should generate pdf for children residence change and return a presigned url', async () => {
     const application = createApplication()
 
-    const response = await service.createPdf(
+    const response = await service.generatePdf(
       application,
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
@@ -243,20 +243,20 @@ describe('FileService', () => {
     expect(signingService.requestSignature).not.toHaveBeenCalled()
   })
 
-  it('should throw error for createPdf since application type is not supported', async () => {
+  it('should throw error for generatePdf since application type is not supported', async () => {
     const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
 
     const act = async () =>
-      await service.createPdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+      await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
     expect(act).rejects.toEqual(BadRequestException)
   })
 
-  it('should have an application type that is valid for createPdf', async () => {
+  it('should have an application type that is valid for generatePdf', async () => {
     const application = createApplication()
 
     const act = async () =>
-      await service.createPdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+      await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
     expect(act).not.toThrow()
   })

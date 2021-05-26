@@ -7,15 +7,13 @@ import {
   Link,
   Button,
   Box,
-  Swiper,
-  Hidden,
 } from '@island.is/island-ui/core'
+import { NewsCard } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
-import { NewsCard } from '../NewsCard'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
@@ -84,53 +82,33 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
           </Box>
         </GridColumn>
       </GridRow>
-      <Hidden below="lg">
-        <GridRow>
-          {newsItems.map((newsItem) => {
-            return (
-              <GridColumn
-                span={[
-                  '12/12',
-                  '12/12',
-                  '12/12',
-                  variant === 'default' ? '4/12' : '6/12',
-                ]}
-                key={newsItem.slug}
-                paddingBottom={2}
-              >
-                <NewsCard
-                  title={newsItem.title}
-                  subtitle={newsItem.subtitle}
-                  introduction={newsItem.intro}
-                  slug={newsItem.slug}
-                  readMoreText={t.readMore}
-                  image={newsItem.image}
-                  tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  href={
-                    linkResolver(linkType, [...parameters, newsItem.slug]).href
-                  }
-                />
-              </GridColumn>
-            )
-          })}
-        </GridRow>
-      </Hidden>
-      <Hidden above="md">
-        <Swiper>
-          {newsItems.map((newsItem) => (
-            <NewsCard
+      <GridRow>
+        {newsItems.map((newsItem) => {
+          return (
+            <GridColumn
+              span={[
+                '12/12',
+                '12/12',
+                '12/12',
+                '12/12',
+                variant === 'default' ? '4/12' : '6/12',
+              ]}
               key={newsItem.slug}
-              title={newsItem.title}
-              subtitle={newsItem.subtitle}
-              introduction={newsItem.intro}
-              slug={newsItem.slug}
-              image={newsItem.image}
-              tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              href={linkResolver(linkType, [...parameters, newsItem.slug]).href}
-            />
-          ))}
-        </Swiper>
-      </Hidden>
+              paddingBottom={2}
+            >
+              <NewsCard
+                title={newsItem.title}
+                introduction={newsItem.intro}
+                readMoreText={t.readMore}
+                image={newsItem.image}
+                href={
+                  linkResolver(linkType, [...parameters, newsItem.slug]).href
+                }
+              />
+            </GridColumn>
+          )
+        })}
+      </GridRow>
     </GridContainer>
   )
 }
