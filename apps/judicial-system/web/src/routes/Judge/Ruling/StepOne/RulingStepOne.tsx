@@ -96,28 +96,12 @@ export const RulingStepOne: React.FC = () => {
         )
       }
 
-      if (!theCase.custodyEndDate) {
-        theCase = {
-          ...theCase,
-          custodyEndDate: theCase.requestedCustodyEndDate,
-        }
-
-        updateCase(
-          theCase.id,
-          parseString('custodyEndDate', theCase.requestedCustodyEndDate || ''),
-        )
+      if (theCase.requestedCustodyEndDate) {
+        autofill('custodyEndDate', theCase.requestedCustodyEndDate, theCase)
       }
 
-      if (!theCase.isolationTo) {
-        theCase = {
-          ...theCase,
-          isolationTo: theCase.custodyEndDate,
-        }
-
-        updateCase(
-          theCase.id,
-          parseString('isolationTo', theCase.custodyEndDate || ''),
-        )
+      if (theCase.custodyEndDate) {
+        autofill('isolationTo', theCase.custodyEndDate, theCase)
       }
 
       if (theCase.caseFacts) {
