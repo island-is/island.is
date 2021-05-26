@@ -27,8 +27,6 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData as PaymentPlanExternalData
 
-  console.log(externalData)
-
   return (
     <Box>
       <Text marginBottom={3}>
