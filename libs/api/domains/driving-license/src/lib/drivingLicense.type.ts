@@ -38,6 +38,7 @@ export interface NewDrivingLicenseResult {
 
 export interface NewDrivingAssessmentResult {
   success: boolean
+  errorMessage: string | null
 }
 
 export interface TeachingRightsStatus {

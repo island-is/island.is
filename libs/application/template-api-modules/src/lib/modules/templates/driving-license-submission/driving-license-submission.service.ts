@@ -22,17 +22,23 @@ export class DrivingLicenseSubmissionService {
   async submitApplication({
     application,
   }: TemplateApiModuleActionProps) {
-    const { answers, externalData } = application
-    const { nationalRegistry } = externalData
-    const applicant = nationalRegistry.data
+    const { answers } = application
+    const nationalId = application.applicant
+
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 
     const result = await this.drivingLicenseService
-      .newDrivingLicense((applicant as User).nationalId, {
+      .newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
+      })
+      .catch(e => {
+        return {
+          success: false,
+          errorMessage: e.message
+        }
       })
 
     if (!result.success) {
@@ -47,13 +53,18 @@ export class DrivingLicenseSubmissionService {
   async submitAssessmentConfirmation({
     application,
   }: TemplateApiModuleActionProps) {
-    const { answers, externalData } = application
+    const { answers } = application
     const studentNationalId = get(answers, 'student.nationalId')
-    const { nationalRegistry } = externalData
-    const applicant = nationalRegistry.data
+    const teacherNationalId = application.applicant
 
     const result = await this.drivingLicenseService
-      .newDrivingAssessment(studentNationalId as string, (applicant as User).nationalId)
+      .newDrivingAssessment(studentNationalId as string, teacherNationalId)
+      .catch(e => {
+        return {
+          success: false,
+          errorMessage: e.message
+        }
+      })
 
     if (result.success) {
       await this.sharedTemplateAPIService.sendEmail(
@@ -61,7 +72,7 @@ export class DrivingLicenseSubmissionService {
         application,
       )
     } else {
-      throw new Error('No success result from QUERY_NEW_DRIVING_ASSESSMENT')
+      throw new Error(`Unexpected error (creating driver's license): '${result.errorMessage}'`)
     }
 
     return {

@@ -51,8 +51,8 @@ export default {
     },
     drivingLicense: {
       secret: process.env.DRIVING_LICENSE_SECRET,
-      xroadClientId: process.env.XROAD_CLIENT_ID,
-      xroadBaseUrl: process.env.XROAD_BASE_PATH,
+      xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadBaseUrl: 'http://localhost:8081',
     }
   },
   application: {

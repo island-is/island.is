@@ -191,14 +191,15 @@ export class DrivingLicenseService {
     studentNationalId: string,
     teacherNationalId: User['nationalId'],
   ): Promise<NewDrivingAssessmentResult> {
-    const response = await this.drivingLicenseApi.newDrivingAssessment({
+    await this.drivingLicenseApi.newDrivingAssessment({
       kennitala: studentNationalId,
       kennitalaOkukennara: teacherNationalId,
       dagsetningMats: new Date(),
     })
 
     return {
-      success: true
+      success: true,
+      errorMessage: null,
     }
   }
 
