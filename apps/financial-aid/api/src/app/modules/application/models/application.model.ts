@@ -32,11 +32,17 @@ export class ApplicationModel implements Application {
   @Field(() => String)
   readonly homeCircumstances!: HomeCircumstances
 
+  @Field({ nullable: true })
+  readonly homeCircumstancesCustom?: string
+
   @Field()
   readonly student!: boolean
 
   @Field(() => String)
   readonly employment!: Employment
+
+  @Field({ nullable: true })
+  readonly employmentCustom?: string
 
   @Field()
   readonly hasIncome!: boolean

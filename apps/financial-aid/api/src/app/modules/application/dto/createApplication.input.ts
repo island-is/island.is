@@ -31,12 +31,20 @@ export class CreateApplicationInput implements CreateApplication {
   readonly homeCircumstances!: HomeCircumstances
 
   @Allow()
+  @Field({ nullable: true })
+  readonly homeCircumstancesCustom?: string
+
+  @Allow()
   @Field()
   readonly student!: boolean
 
   @Allow()
   @Field(() => String)
   readonly employment!: Employment
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly employmentCustom?: string
 
   @Allow()
   @Field()

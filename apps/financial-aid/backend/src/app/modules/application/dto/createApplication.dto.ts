@@ -36,10 +36,20 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly homeCircumstances: HomeCircumstances
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly homeCircumstancesCustom: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly employment: Employment
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly employmentCustom: string
 
   @IsNotEmpty()
   @IsBoolean()

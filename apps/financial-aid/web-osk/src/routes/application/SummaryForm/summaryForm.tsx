@@ -71,17 +71,16 @@ const SummaryForm = () => {
     CreateApplicationQuery,
   )
 
-  console.log(form)
-
   const createApplication = async () => {
     const { data } = await creatApplicationMutation({
       variables: {
         input: {
-          nationalId: '33333333',
+          nationalId: '2305952249',
           name: 'Nafn Nafnsson',
           phoneNumber: '6973345',
           email: form?.emailAddress,
           homeCircumstances: form?.homeCircumstances,
+          homeCircumstancesCustom: form?.homeCircumstancesCustom,
           student: form?.student === 'Yes' ? true : false,
           hasIncome: Boolean(form?.hasIncome),
           usePersonalTaxCredit: Boolean(form?.usePersonalTaxCredit),
@@ -90,6 +89,7 @@ const SummaryForm = () => {
           accountNumber: form?.accountNumber,
           interview: Boolean(form?.interview),
           employment: form?.employment,
+          employmentCustom: form?.employmentCustom,
         },
       },
     })

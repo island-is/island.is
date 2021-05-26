@@ -70,12 +70,26 @@ export class ApplicationModel extends Model<ApplicationModel> {
   homeCircumstances: HomeCircumstances
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  homeCircumstancesCustom: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(Employment),
   })
   @ApiProperty({ enum: Employment })
   employment: Employment
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  employmentCustom: string
 
   @Column({
     type: DataType.BOOLEAN,
