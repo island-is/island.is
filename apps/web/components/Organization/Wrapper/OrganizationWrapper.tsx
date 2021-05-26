@@ -85,14 +85,18 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 
 interface FooterProps {
   organizations: Array<Organization>
+  force?: boolean
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
   organizations,
+  force = false,
 }) => {
-  const footerEnabled = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
+  const footerEnabled = ['syslumenn']
 
-  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
+  const organization = force
+    ? organizations[0]
+    : organizations.find((x) => footerEnabled.includes(x.slug))
   if (!organization) return null
 
   switch (organization.slug) {
@@ -353,7 +357,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && (
-        <OrganizationFooter organizations={[organizationPage.organization]} />
+        <OrganizationFooter
+          organizations={[organizationPage.organization]}
+          force={true}
+        />
       )}
       <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
