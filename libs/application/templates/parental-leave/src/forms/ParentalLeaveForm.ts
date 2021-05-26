@@ -3,6 +3,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -31,7 +32,13 @@ import {
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { MANUAL, NO, StartDateOptions, YES } from '../constants'
+import {
+  FILE_SIZE_LIMIT,
+  MANUAL,
+  NO,
+  StartDateOptions,
+  YES,
+} from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -412,6 +419,31 @@ export const ParentalLeaveForm: Form = buildForm({
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
                   value: NO,
                 },
+              ],
+            }),
+            buildMultiField({
+              id: 'employer.selfEmployed.attachment',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              condition: (answers) =>
+                (answers as {
+                  employer: {
+                    isSelfEmployed: string
+                  }
+                })?.employer?.isSelfEmployed === YES,
+              children: [
+                buildFileUploadField({
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
               ],
             }),
             buildMultiField({
