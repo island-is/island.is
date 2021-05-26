@@ -38,7 +38,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
-    translation: 'dl.application',
+    translation: 'dla.application',
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',

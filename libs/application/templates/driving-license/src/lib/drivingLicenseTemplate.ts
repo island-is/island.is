@@ -12,7 +12,7 @@ import {
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 
-type Events = { type: DefaultEvents.PAYMENT } | { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT }
 
 enum States {
   DRAFT = 'draft',
