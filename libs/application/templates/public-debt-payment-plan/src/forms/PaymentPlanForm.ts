@@ -11,10 +11,12 @@ import {
   buildTextField,
   buildRadioField,
   buildRepeater,
+  CustomField,
 } from '@island.is/application/core'
 import { Prerequisites } from '../dataProviders/tempAPITypes'
 import {
   PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../lib/dataSchema'
 import { section, application, employer } from '../lib/messages'
@@ -24,6 +26,41 @@ import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 
+// Builds a payment plan step that exists of two custom fields:
+// The overview step detailing a list of all payment plans and their status
+// The payment plan step where the user sets up this individual payment plan
+const buildPaymentPlanStep = (index: 0 | 1 | 2 | 3 | 4 | 5): CustomField[] => [
+  buildCustomField({
+    id: `payment-plan-list-${index}`,
+    title: paymentPlan.general.pageTitle,
+    component: 'PaymentPlanList',
+    condition: (_formValue, externalData) => {
+      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+    },
+  }),
+  buildCustomField({
+    id: `paymentPlans.${paymentPlanIndexKeyMapper[index]}`,
+    title: section.paymentPlan,
+    component: 'PaymentPlan',
+    defaultValue: index,
+    condition: (_formValue, externalData) => {
+      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+    },
+  }),
+]
+
+// Compose an array 6 predefined payment plan steps
+// Each step will only be rendered in if it's index corresponds to
+// an entry in the payment plan list received by the API
+const buildPaymentPlanSteps = (): CustomField[] =>
+  [...Array(6)].reduce((prev: CustomField[], _curr, index) => {
+    const step = buildPaymentPlanStep(index as 0 | 1 | 2 | 3 | 4 | 5)
+    return [...prev, step[0], step[1]] as CustomField[]
+  }, [] as CustomField[])
+
+// TODO: Data providers are not called by default on every session start
+// We need to add custom validators to ensure that the application does not
+// become stale
 export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
@@ -59,6 +96,12 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.paymentPlanTitle,
               type: 'PaymentPlanPrerequisites',
               subTitle: externalData.labels.paymentPlanSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'paymentPlanList',
+              title: 'Payment plan list',
+              type: 'PaymentPlanList',
+              subTitle: 'Payment plan list subtitle',
             }),
           ],
         }),
@@ -222,20 +265,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
-      children: [
-        buildRepeater({
-          id: 'paymentPlans',
-          title: paymentPlan.general.pageTitle,
-          component: 'PaymentPlanList',
-          children: [
-            buildCustomField({
-              id: 'paymentPlan',
-              title: 'Payment Plan',
-              component: 'PaymentPlan',
-            }),
-          ],
-        }),
-      ],
+      children: buildPaymentPlanSteps(),
     }),
     buildSection({
       id: 'overview',

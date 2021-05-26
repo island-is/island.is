@@ -11,7 +11,7 @@ import {
 import {
   NationalRegistryApi,
   ISLFjolskyldan,
-} from '@island.is/clients/national-registry'
+} from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class NationalRegistryService {
