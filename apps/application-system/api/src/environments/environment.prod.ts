@@ -46,6 +46,7 @@ export default {
       password: process.env.NOVA_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
