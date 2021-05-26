@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
+      - 'self-hosted-k8s'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -261,7 +262,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
