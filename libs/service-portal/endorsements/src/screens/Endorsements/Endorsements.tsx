@@ -48,7 +48,7 @@ const GET_USER_ENDORSEMENTS = gql`
 `
 const GET_REGION_ENDORSEMENTS = gql`
   query endorsementSystemFindEndorsementLists(
-    $input: FindEndorsementListByTagDto!
+    $input: FindEndorsementListByTagsDto!
   ) {
     endorsementSystemFindEndorsementLists(input: $input) {
       id
@@ -97,7 +97,7 @@ const Endorsements = () => {
     data: endorsementListsResponse,
     refetch: refetchRegionEndorsements,
   } = useQuery<EndorsementListResponse>(GET_REGION_ENDORSEMENTS, {
-    variables: { input: { tag: 'partyLetter2021' } },
+    variables: { input: { tags: ['partyLetter2021'] } },
   })
 
   const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
