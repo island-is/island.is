@@ -38,18 +38,18 @@ const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
 
 @Injectable()
 export class PartyApplicationService {
-  constructor (
+  constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async assignSupremeCourt ({ application }: TemplateApiModuleActionProps) {
+  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignSupremeCourtApplicationEmail,
       application,
     )
   }
 
-  async createEndorsementList ({
+  async createEndorsementList({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
