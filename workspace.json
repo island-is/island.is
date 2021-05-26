@@ -6179,7 +6179,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-express": {}        
+        "docker-express": {}
       }
     },
     "services-documents": {
