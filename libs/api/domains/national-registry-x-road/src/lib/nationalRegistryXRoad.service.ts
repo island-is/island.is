@@ -22,12 +22,18 @@ export class NationalRegistryXRoadService {
     authToken: string,
   ): Promise<GenericType> {
     try {
+      const {
+        xRoadBasePathWithEnv,
+        xRoadTjodskraMemberCode,
+        xRoadTjodskraApiPath,
+        xRoadClientId,
+      } = this.config
       return fetch(
-        `${this.config.xRoadBasePathWithEnv}/GOV/${this.config.xRoadTjodskraMemberCode}${this.config.xRoadTjodskraApiPath}/api/v1/einstaklingar${query}`,
+        `${xRoadBasePathWithEnv}/GOV/${xRoadTjodskraMemberCode}${xRoadTjodskraApiPath}/api/v1/einstaklingar${query}`,
         {
           headers: {
             Authorization: `${authToken}`,
-            'X-Road-Client': this.config.xRoadClientId,
+            'X-Road-Client': xRoadClientId,
           },
         },
       ).then((res) => res.json())
