@@ -94,7 +94,7 @@ export const ParentBForm: Form = buildForm({
                 {
                   event: DefaultEvents.SUBMIT,
                   name: m.application.signature,
-                  type: 'primary',
+                  type: 'sign',
                 },
               ],
             }),
@@ -135,7 +135,7 @@ export const ParentBForm: Form = buildForm({
                 {
                   event: DefaultEvents.REJECT,
                   name: m.rejectContract.general.rejectButton,
-                  type: 'primary',
+                  type: 'reject',
                 },
               ],
             }),
