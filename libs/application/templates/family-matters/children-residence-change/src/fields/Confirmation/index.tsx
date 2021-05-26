@@ -29,7 +29,6 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
     children,
     answers.selectedChildren,
   )
-
   return (
     <Box marginTop={3} paddingBottom={5}>
       <DescriptionText
