@@ -1,8 +1,4 @@
 import {
-  ApplicationEligibilityRequirement,
-  RequirementKey,
-} from '@island.is/api/schema'
-import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
@@ -11,7 +7,7 @@ import {
 import { m } from '../lib/messages'
 
 const extractReason = (
-  requirements: ApplicationEligibilityRequirement[],
+  requirements: { requirementMet: boolean, key: string }[],
 ): string => {
   return requirements
     .filter(({ requirementMet }) => !requirementMet)
@@ -22,11 +18,11 @@ const extractReason = (
 
 const requirementKeyToMessage = (key: string) => {
   switch (key) {
-    case RequirementKey.drivingSchoolMissing:
+    case 'drivingSchoolMissing':
       return m.requirementUnmetDrivingSchool
-    case RequirementKey.drivingAssessmentMissing:
+    case 'drivingAssessmentMissing':
       return m.requirementUnmetDrivingAssessment
-    case RequirementKey.deniedByService:
+    case 'deniedByService':
       return m.requirementUnmetDeniedByService
     default:
       return ''
