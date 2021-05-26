@@ -50,6 +50,7 @@ function Congratulations({
           </Accordion>
         </Box>
 
+        {/* not sure if we want this */}
         <Box marginTop={4}>
           <img role="presentation" src="/assets/images/movingTruck.svg" />
         </Box>
