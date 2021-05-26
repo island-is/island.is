@@ -118,17 +118,15 @@ export class NationalRegistryXRoadService {
               parentNationalId,
               parentB.kennitala,
             ].every((id) => parentLegalHomeNationalIds.includes(id)),
-            parents: [
-              {
-                nationalId: parentB.kennitala,
-                fullName: parentB.nafn,
-                address: {
-                  streetName: parentB.logheimili?.heiti || undefined,
-                  postalCode: parentB.logheimili?.postnumer || undefined,
-                  city: parentB.logheimili?.stadur || undefined,
-                },
+            otherParent: {
+              nationalId: parentB.kennitala,
+              fullName: parentB.nafn,
+              address: {
+                streetName: parentB.logheimili?.heiti || undefined,
+                postalCode: parentB.logheimili?.postnumer || undefined,
+                city: parentB.logheimili?.stadur || undefined,
               },
-            ],
+            },
           }
         }),
       )
