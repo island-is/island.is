@@ -44,6 +44,7 @@ interface Props {
     description: MessageDescriptor
     ineligible: MessageDescriptor
     checkBoxSubLabel: MessageDescriptor
+    livesWithBothParents?: MessageDescriptor
   }
   currentAnswer?: string[]
   error?: string
@@ -90,6 +91,12 @@ const SelectChildren = ({
         options={children.map((child) => ({
           value: child.nationalId,
           label: child.fullName,
+          tooltip:
+            child.livesWithBothParents &&
+            translations.livesWithBothParents &&
+            formatMessage(translations.livesWithBothParents, {
+              childName: child.fullName,
+            }),
           disabled: shouldBeDisabled(children, child, selectedChildrenState),
           subLabel: formatMessage(translations.checkBoxSubLabel, {
             parentName: child.otherParent.fullName,
