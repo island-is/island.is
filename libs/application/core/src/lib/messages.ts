@@ -31,6 +31,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Edit button for review screen and so on',
   },
+  cardButtonInProgress: {
+    id: 'application:card.button.inProgress',
+    defaultMessage: 'Opna umsókn',
+    description: 'Button label when application is in progress',
+  },
+  cardButtonComplete: {
+    id: 'application:card.button.complete',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is complete',
+  },
   externalDataTitle: {
     id: 'application.system:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
