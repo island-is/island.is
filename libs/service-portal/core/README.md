@@ -9,6 +9,13 @@ This library contains all the core functionality needed to build a library into 
 Service Portal libraries are designed to be dynamically loaded into view when a user has access to their functionality and
 has navigated to a part of it's feature.
 
+### When to create a new module
+
+As the service portal grows in size and complexity it can sometimes be hard to define if a feature belongs to a module or whether a new module should be created.
+In general, a module is created for each specific service within the Island.is organization and belongs to a specific team within the Island.is organization. Maintenance and code ownership falls to that team but for larger modules that is not always the case.
+The service portal application supports modules defining routes outside of their "domain" so fx a "Health" module can define routes such as `/stillingar/heilsa`.
+It can help to think about modules as API domains, a new domain should be created for each branch of the services like `health, education, finance etc`.
+
 ### Usage
 
 ```typescript
