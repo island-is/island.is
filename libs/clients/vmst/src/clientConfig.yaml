@@ -4,9 +4,9 @@ info:
   title: FOS - Parental Leaves API
   version: 1.0.0
 servers:
-  - url: https://vmst-paternity-leave.azurewebsites.net
+  - url: 'https://vmst-paternity-leave.azurewebsites.net'
 paths:
-  /users/{nationalRegistryId}/parental-leaves:
+  '/users/{nationalRegistryId}/parental-leaves':
     get:
       tags:
         - ParentalLeave
@@ -60,7 +60,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostParentalLeaveResponse'
-  /users/{nationalRegistryId}/parental-leaves/{applicationId}/periods:
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/periods':
     put:
       tags:
         - ParentalLeave
@@ -98,7 +98,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  /users/{nationalRegistryId}/parental-leaves/rights:
+  '/users/{nationalRegistryId}/parental-leaves/rights':
     get:
       tags:
         - ParentalLeave
@@ -125,7 +125,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Right'
-  /users/{nationalRegistryId}/parental-leaves/estimated-payment-plan:
+  '/users/{nationalRegistryId}/parental-leaves/estimated-payment-plan':
     get:
       tags:
         - ParentalLeave
@@ -152,7 +152,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EstimatedPaymentPlan'
-  /users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan:
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan':
     get:
       tags:
         - ParentalLeave
@@ -191,7 +191,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PensionFundsResponse'
-  /users/{nationalRegistryId}/pregnancy-status:
+  '/users/{nationalRegistryId}/pregnancy-status':
     get:
       tags:
         - Pregnancy
@@ -239,7 +239,6 @@ components:
       required:
         - applicationId
         - applicant
-        - otherParentId
         - expectedDateOfBirth
         - dateOfBirth
         - email
@@ -256,10 +255,10 @@ components:
         applicant:
           type: string
           minLength: 1
-          pattern: ^\d{10}$
+          pattern: '^\d{10}$'
         otherParentId:
           type: string
-          minLength: 1
+          nullable: true
         expectedDateOfBirth:
           type: string
           minLength: 1
@@ -288,6 +287,10 @@ components:
         rightsCode:
           type: string
           minLength: 1
+        attachment:
+          type: string
+          format: byte
+          nullable: true
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -330,7 +333,6 @@ components:
           minLength: 1
         name:
           type: string
-          minLength: 1
     PensionFund:
       type: object
       additionalProperties: false
@@ -343,7 +345,6 @@ components:
           minLength: 1
         name:
           type: string
-          minLength: 1
     Period:
       type: object
       additionalProperties: false
@@ -367,6 +368,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        rightsCodePeriod:
+          type: string
+          nullable: true
     Employer:
       type: object
       additionalProperties: false
@@ -427,6 +431,24 @@ components:
         employerPeriod:
           type: string
         employerWages:
+          type: number
+          format: float
+        employerJobRatio:
+          type: number
+          format: float
+        employerTaxAmount:
+          type: number
+          format: float
+        employerIncomeAmount:
+          type: number
+          format: float
+        employerIncomeAmountJobRatio:
+          type: number
+          format: float
+        employerSelfEmploymentAmount:
+          type: number
+          format: float
+        employerSelfEmploymentAmountJobRatio:
           type: number
           format: float
     PaymentPlansResponse:
