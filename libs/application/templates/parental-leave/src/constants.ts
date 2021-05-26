@@ -1,6 +1,7 @@
 export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
+export const SPOUSE = 'spouse'
 
 export enum API_MODULE_ACTIONS {
   assignOtherParent = 'assignOtherParent',

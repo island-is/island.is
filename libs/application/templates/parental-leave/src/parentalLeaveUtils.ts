@@ -12,7 +12,7 @@ import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { YES, NO, MANUAL } from './constants'
+import { YES, NO, MANUAL, SPOUSE } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
@@ -40,7 +40,7 @@ export function getNameAndIdOfSpouse(
   familyMembers?: FamilyMember[],
 ): [string?, string?] {
   const spouse = familyMembers?.find(
-    (member) => member.familyRelation === 'spouse',
+    (member) => member.familyRelation === SPOUSE,
   )
   if (!spouse) {
     return [undefined, undefined]
@@ -143,6 +143,8 @@ export const getAvailableRightsInMonths = (application: Application) => {
 }
 
 export const getOtherParentOptions = (application: Application) => {
+  console.log('-application.externalData', application.externalData)
+
   const family = getValueViaPath(
     application.externalData,
     'family.data',
@@ -161,11 +163,11 @@ export const getOtherParentOptions = (application: Application) => {
   ]
 
   if (family && family.length > 0) {
-    const spouse = family.find((member) => member.familyRelation === 'spouse')
+    const spouse = family.find((member) => member.familyRelation === SPOUSE)
 
     if (spouse) {
       options.unshift({
-        value: 'spouse',
+        value: SPOUSE,
         label: {
           ...parentalLeaveFormMessages.shared.otherParentSpouse,
           values: {
