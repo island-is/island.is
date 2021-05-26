@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import {
+  EinstaklingarApi,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
 import { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,82 +11,96 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
-    private personApi: EinstaklingarApi,
     @Inject('Config')
     private config: NationalRegistryXRoadConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async getNationalRegistryPerson(
-    nationalId: string,
-  ): Promise<NationalRegistryPerson | undefined> {
+  async nationalRegistryFetch<GenericType>(
+    query: string,
+    authToken: string,
+  ): Promise<GenericType> {
     try {
-      const person = await this.personApi.einstaklingarGetEinstaklingur({
-        id: nationalId,
-        xRoadClient: this.config.xRoadClientId,
-      })
-
-      return {
-        nationalId: nationalId,
-        fullName: person.nafn,
-        address: {
-          streetName: person.logheimili?.heiti || undefined,
-          postalCode: person.logheimili?.postnumer || undefined,
-          city: person.logheimili?.stadur || undefined,
+      return fetch(
+        `${this.config.xRoadBasePathWithEnv}/GOV/${this.config.xRoadTjodskraMemberCode}${this.config.xRoadTjodskraApiPath}/api/v1/einstaklingar${query}`,
+        {
+          headers: {
+            Authorization: `${authToken}`,
+            'X-Road-Client': this.config.xRoadClientId,
+          },
         },
-      }
+      ).then((res) => res.json())
     } catch (e) {
       this.handleError(e)
+      return e
+    }
+  }
+
+  async getNationalRegistryPerson(
+    nationalId: string,
+    authToken: string,
+  ): Promise<NationalRegistryPerson> {
+    const person = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
+      `/${nationalId}`,
+      authToken,
+    )
+    return {
+      nationalId: nationalId,
+      fullName: person.nafn,
+      address: {
+        streetName: person.logheimili?.heiti || undefined,
+        postalCode: person.logheimili?.postnumer || undefined,
+        city: person.logheimili?.stadur || undefined,
+      },
     }
   }
 
   private async getCustody(
     parentNationalId: string,
-    token: string,
+    authToken: string,
   ): Promise<string[]> {
-    return await fetch(
-      `${this.config.xRoadBasePathWithEnv}/GOV/${this.config.xRoadTjodskraMemberCode}${this.config.xRoadTjodskraApiPath}/api/v1/einstaklingar/${parentNationalId}/forsja`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-Road-Client': this.config.xRoadClientId,
-        },
-      },
-    ).then((res) => res.json())
+    return await this.nationalRegistryFetch<string[]>(
+      `/${parentNationalId}/forsja`,
+      authToken,
+    )
   }
 
   async getChildrenCustodyInformation(
     parentNationalId: string,
-    token: string,
+    authToken: string,
   ): Promise<NationalRegistryPerson[] | undefined> {
     try {
-      const childrenNationalIds = await this.getCustody(parentNationalId, token)
-
+      const childrenNationalIds = await this.getCustody(
+        parentNationalId,
+        authToken,
+      )
+      if (!childrenNationalIds) {
+        return
+      }
       const children = await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          return await this.personApi.einstaklingarGetEinstaklingur({
-            id: childNationalId,
-            xRoadClient: this.config.xRoadClientId,
-          })
+          return await this.nationalRegistryFetch<Einstaklingsupplysingar>(
+            `/${childNationalId}`,
+            authToken,
+          )
         }),
       )
       return await Promise.all(
         children.map(async (child) => {
-          const parents = await this.personApi.einstaklingarGetForsjaForeldri({
-            id: parentNationalId,
-            barn: child.kennitala,
-            xRoadClient: this.config.xRoadClientId,
-          })
-
-          const parentB = await this.personApi.einstaklingarGetEinstaklingur({
-            id: parents.find((id) => id !== parentNationalId) || null,
-            xRoadClient: this.config.xRoadClientId,
-          })
-
-          const parentLegalHomeNationalIds = await this.personApi.einstaklingarGetLogforeldrar(
-            { id: child.kennitala, xRoadClient: this.config.xRoadClientId },
+          const parents = await this.nationalRegistryFetch<string[]>(
+            `/${parentNationalId}/${child.kennitala}`,
+            authToken,
           )
+
+          const parentB = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
+            `/${parents.find((id) => id !== parentNationalId) || null}`,
+            authToken,
+          )
+
+          const parentLegalHomeNationalIds = await this.nationalRegistryFetch<
+            string[]
+          >(`/${child.kennitala}/logforeldrar`, authToken)
 
           return {
             nationalId: child.kennitala,
