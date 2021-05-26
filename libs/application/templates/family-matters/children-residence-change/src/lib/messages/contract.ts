@@ -65,6 +65,12 @@ export const contract = {
       defaultMessage: 'Samningurinn er tímabundinn og gildir til {date}',
       description: 'Duration contract text',
     },
+    permanentText: {
+      id: 'crc.application:section.contract.overview.duration.permanentText',
+      defaultMessage:
+        'Samningurinn er varanlegur þar til barn hefur náð 18 ára aldri',
+      description: 'Duration contract permanent text',
+    },
   }),
   checkbox: defineMessages({
     label: {

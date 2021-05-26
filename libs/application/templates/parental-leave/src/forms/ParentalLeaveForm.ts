@@ -599,6 +599,8 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        /*
+        TODO: add back once payment plan is implemented
         buildSubSection({
           id: 'rightsReview',
           title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
@@ -620,6 +622,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        */
       ],
     }),
     buildSection({
