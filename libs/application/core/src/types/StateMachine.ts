@@ -44,7 +44,7 @@ export interface ApplicationContext {
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
-  type: 'primary' | 'subtle' | 'reject' | string
+  type: 'primary' | 'subtle' | 'reject' | 'sign'
 }
 
 export interface ApplicationTemplateAPIAction {
