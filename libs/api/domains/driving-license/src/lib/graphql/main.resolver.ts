@@ -12,12 +12,8 @@ import { DrivingLicenseType } from './drivingLicenseType.model'
 import { PenaltyPointStatus } from './penaltyPointStatus.model'
 import { HasTeachingRights } from './hasTeachingRights.model'
 import { StudentInformationResult } from './studentInformationResult.model'
-import { NewDrivingAssessmentInput } from './newDrivingAssessment.input'
 import { ApplicationEligibility } from './applicationEligibility.model'
 import { Juristiction } from './juristiction.model'
-import { NewDrivingLicenseInput } from './newDrivingLicense.input'
-import { NewDrivingLicenseResult } from './newDrivingLicenseResult.model'
-import { NewDrivingAssessmentResult } from './newDrivingAssessmentResult.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -77,42 +73,5 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
-  }
-
-  @Mutation(() => NewDrivingAssessmentResult)
-  async drivingLicenseNewDrivingAssessment(
-    @Args('input') input: NewDrivingAssessmentInput,
-    @CurrentUser() user: User,
-  ): Promise<NewDrivingAssessmentResult> {
-    const response = await this.drivingLicenseService.newDrivingAssessment(
-      input.studentNationalId,
-      user.nationalId,
-    )
-
-    return {
-      success: response.ok,
-    }
-  }
-
-  @Mutation(() => NewDrivingLicenseResult)
-  async drivingLicenseNewDrivingLicense(
-    @Args('input') input: NewDrivingLicenseInput,
-    @CurrentUser() user: User,
-  ): Promise<NewDrivingLicenseResult> {
-    const response = await this.drivingLicenseService.newDrivingLicense({
-      authorityNumber: input.juristictionId,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
-        ? 1
-        : 0,
-      personIdNumber: user.nationalId,
-    })
-
-    // service returns 1 for success - string with error message as failure..
-    const success = parseInt(response as string, 10) > 0
-
-    return {
-      success,
-      errorMessage: success ? null : (response as string),
-    }
   }
 }

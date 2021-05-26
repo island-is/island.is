@@ -7,13 +7,11 @@ import {
   TeachingRightsStatus,
   StudentInformation,
   Juristiction,
+  NewDrivingLicenseInput,
+  NewDrivingLicenseResult,
+  NewDrivingAssessmentResult,
 } from './drivingLicense.type'
 import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
-import {
-  NewDrivingAssessmentResponse,
-  NewDrivingLicenseInput,
-  NewDrivingLicenseResponse,
-} from './client/drivingLicense.type'
 import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
 import { RequirementKey } from './graphql/applicationEligibilityRequirement.model'
 import { ApplicationEligibility } from './graphql/applicationEligibility.model'
@@ -192,21 +190,35 @@ export class DrivingLicenseService {
   async newDrivingAssessment(
     studentNationalId: string,
     teacherNationalId: User['nationalId'],
-  ): Promise<NewDrivingAssessmentResponse> {
-    return await this.drivingLicenseApi.newDrivingAssessment({
+  ): Promise<NewDrivingAssessmentResult> {
+    const response = await this.drivingLicenseApi.newDrivingAssessment({
       kennitala: studentNationalId,
       kennitalaOkukennara: teacherNationalId,
       dagsetningMats: new Date(),
     })
+
+    return {
+      success: true
+    }
   }
 
   async newDrivingLicense(
+    nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
-  ): Promise<NewDrivingLicenseResponse> {
-    return await this.drivingLicenseApi.newDrivingLicense({
-      authorityNumber: input.authorityNumber,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate,
-      personIdNumber: input.personIdNumber,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.newDrivingLicense({
+      authorityNumber: input.juristictionId,
+      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate ? 1 : 0,
+      personIdNumber: nationalId,
     })
+
+    // Service returns string on error, number on successful/not successful
+    const responseIsString = typeof response !== 'string'
+    const success = responseIsString && response === 1
+
+    return {
+      success,
+      errorMessage: responseIsString ? response as string : 'Result not 1 when creating license',
+    }
   }
 }

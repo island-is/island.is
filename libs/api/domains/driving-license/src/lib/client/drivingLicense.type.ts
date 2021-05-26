@@ -86,19 +86,18 @@ export interface CanApplyForResponse {
   value: number
 }
 
-export interface DrivingAssessmentDto {
+// These two are similar - hopefully this all goes away with the
+// opanapi generated client
+export interface NewDrivingAssessmentDto {
   kennitala: string
   kennitalaOkukennara: string
   dagsetningMats: Date
 }
 
-// TODO: these two are the same - should be refactored into containing rather than extending
-export interface GetDrivingAssessmentResponse extends DrivingAssessmentDto {}
-
-export interface NewDrivingAssessmentInput extends DrivingAssessmentDto {}
-
-export interface NewDrivingAssessmentResponse {
-  ok: boolean
+export interface GetDrivingAssessmentResponse {
+  kennitala: string
+  kennitalaOkukennara: string
+  dagsetningMats: Date
 }
 
 export interface EmbaettiDto {
@@ -107,10 +106,11 @@ export interface EmbaettiDto {
   postnumer: number
 }
 
-export interface NewDrivingLicenseInput {
+export interface NewDrivingLicenseDto {
   personIdNumber: string
   authorityNumber: number
   needsToPresentHealthCertificate: number
 }
 
 export type NewDrivingLicenseResponse = string | object | number
+export type NewDrivingAssessmentResponse = void

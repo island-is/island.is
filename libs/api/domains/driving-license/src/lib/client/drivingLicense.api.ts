@@ -9,14 +9,14 @@ import {
   RemarkTypesResponse,
   PenaltyPointStatusResponse,
   TeachingRightsResponse,
-  NewDrivingAssessmentInput,
-  NewDrivingAssessmentResponse,
   GetDrivingAssessmentResponse,
   FinishedSchoolResponse,
   CanApplyForResponse,
   EmbaettiDto,
   NewDrivingLicenseResponse,
-  NewDrivingLicenseInput,
+  NewDrivingAssessmentResponse,
+  NewDrivingLicenseDto,
+  NewDrivingAssessmentDto,
 } from './drivingLicense.type'
 
 export class DrivingLicenseApi {
@@ -115,13 +115,13 @@ export class DrivingLicenseApi {
   }
 
   newDrivingAssessment(
-    input: NewDrivingAssessmentInput,
+    input: NewDrivingAssessmentDto,
   ): Promise<NewDrivingAssessmentResponse> {
     return this.postApi(`api/Okuskirteini/new/drivingassesment`, input)
   }
 
   newDrivingLicense(
-    input: NewDrivingLicenseInput,
+    input: NewDrivingLicenseDto,
   ): Promise<NewDrivingLicenseResponse> {
     // We are only implementing the B license ATM.
     const category = 'B'

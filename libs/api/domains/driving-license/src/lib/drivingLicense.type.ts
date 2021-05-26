@@ -26,6 +26,20 @@ export interface PenaltyPointStatus {
   isPenaltyPointsOk: boolean
 }
 
+export interface NewDrivingLicenseInput {
+  juristictionId: number
+  needsToPresentHealthCertificate: boolean
+}
+
+export interface NewDrivingLicenseResult {
+  success: boolean
+  errorMessage: string | null
+}
+
+export interface NewDrivingAssessmentResult {
+  success: boolean
+}
+
 export interface TeachingRightsStatus {
   nationalId: string
   hasTeachingRights: boolean
