@@ -13,7 +13,7 @@ import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
-import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
+import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
 import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
@@ -26,17 +26,17 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
 @Controller('endorsement-list')
 @ApiOAuth2([])
 export class EndorsementListController {
-  constructor(
+  constructor (
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
   @Get()
   @BypassAuth()
-  async findByTag(
-    @Query() { tag }: FindEndorsementListByTagDto,
+  async findByTags (
+    @Query() { tags }: FindEndorsementListByTagsDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
-    return await this.endorsementListService.findListsByTag(tag)
+    return await this.endorsementListService.findListsByTags(tags)
   }
 
   /**
@@ -49,7 +49,7 @@ export class EndorsementListController {
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
-  async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
+  async findEndorsements (@CurrentUser() user: User): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
@@ -63,7 +63,7 @@ export class EndorsementListController {
     resources: (endorsementList) => endorsementList.id,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async findOne(
+  async findOne (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -81,7 +81,7 @@ export class EndorsementListController {
     resources: (endorsementList) => endorsementList.id,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  async close(
+  async close (
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -102,7 +102,7 @@ export class EndorsementListController {
       tags: endorsementList.tags,
     }),
   })
-  async create(
+  async create (
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
