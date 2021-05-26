@@ -7,16 +7,16 @@ import {
   TeachingRightsStatus,
   StudentInformation,
   Juristiction,
-  RequirementKey,
 } from './drivingLicense.type'
 import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 import {
-  ApplicationEligibilityResponse,
   NewDrivingAssessmentResponse,
   NewDrivingLicenseInput,
   NewDrivingLicenseResponse,
 } from './client/drivingLicense.type'
 import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
+import { RequirementKey } from './graphql/applicationEligibilityRequirement.model'
+import { ApplicationEligibility } from './graphql/applicationEligibility.model'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -149,7 +149,7 @@ export class DrivingLicenseService {
   async getApplicationEligibility(
     nationalId: string,
     type: DrivingLicenseType['id'],
-  ): Promise<ApplicationEligibilityResponse> {
+  ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.drivingLicenseApi.getDrivingAssessment(
       nationalId,
     )

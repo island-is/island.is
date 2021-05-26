@@ -1,5 +1,10 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-import { RequirementKey } from '../drivingLicense.type'
+
+export enum RequirementKey {
+  drivingAssessmentMissing = 'DrivingAssessmentMissing',
+  drivingSchoolMissing = 'DrivingSchoolMissing',
+  deniedByService = 'DeniedByService',
+}
 
 registerEnumType(RequirementKey, { name: 'RequirementKey' })
 

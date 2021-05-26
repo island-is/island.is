@@ -12,17 +12,6 @@ export interface DrivingLicense {
   }[]
 }
 
-export enum RequirementKey {
-  drivingAssessmentMissing = 'DrivingAssessmentMissing',
-  drivingSchoolMissing = 'DrivingSchoolMissing',
-  deniedByService = 'DeniedByService',
-}
-
-export interface ApplicationEligibilityRequirement {
-  key: RequirementKey
-  requirementMet: boolean
-}
-
 export interface StudentInformation {
   name: string
 }
