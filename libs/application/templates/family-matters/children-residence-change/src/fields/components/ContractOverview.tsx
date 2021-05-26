@@ -14,18 +14,17 @@ import { Roles } from '../../lib/constants'
 
 interface Props {
   application: CRCApplication
+  parentKey: Roles
 }
 
-const ContractOverview = ({ application }: Props) => {
-  const { formatMessage } = useIntl()
+const ContractOverview = ({ application, parentKey }: Props) => {
+  const { formatMessage, locale } = useIntl()
   const { externalData, answers } = application
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
     applicant,
     answers.selectedChildren,
   )
-  const parentKey =
-    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
     <>
@@ -47,7 +46,12 @@ const ContractOverview = ({ application }: Props) => {
       <Text marginTop={1}>
         {answers.selectDuration.type === 'temporary' &&
         answers.selectDuration.date
-          ? formatDate(answers.selectDuration.date)
+          ? formatMessage(m.contract.duration.text, {
+              date: formatDate({
+                date: answers.selectDuration.date,
+                localeKey: locale,
+              }),
+            })
           : formatMessage(m.duration.permanentInput.label)}
       </Text>
       <Box marginTop={4}>
