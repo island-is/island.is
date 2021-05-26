@@ -10,23 +10,23 @@ export interface Props extends FieldBaseProps {
   description?: string
 }
 
-const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
+const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers, externalData } = application
 
   return (
     <Box>
-      <Text variant="h3"> {formatMessage(m.supremeCourt.subtitle)}</Text>
+      <Text variant="h3"> {formatMessage(m.partyLetterApprovedOverview.subtitle)}</Text>
       <Box display="flex" marginTop={3} marginBottom={5}>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.partyNameLabel)}
+            {formatMessage(m.ministryOfJustice.partyNameLabel)}
           </Text>
           <Text>{answers.partyName}</Text>
         </Box>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.partyLetterLabel)}
+            {formatMessage(m.ministryOfJustice.partyLetterLabel)}
           </Text>
           <Text>{answers.partyLetter}</Text>
         </Box>
@@ -34,7 +34,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
       <Box display="flex" marginBottom={5}>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.responsiblePersonLabel)}
+            {formatMessage(m.ministryOfJustice.responsiblePersonLabel)}
           </Text>
           <Text>
             {
@@ -44,30 +44,19 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             }
           </Text>
         </Box>
-        <Box marginBottom={3} width="half">
+        <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.typeOfEndorsementLabel)}
+            {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text>{'Alþingi 2021'}</Text>
+          <Text>{'528'}</Text>
         </Box>
       </Box>
       <Box display="flex">
-        <Box marginBottom={3} width="half">
-          <Text variant="h5">
-            {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
-          </Text>
-          <Text marginBottom={1}>{'528'}</Text>
-          <ExportEndorsementsAsCSV application={application} />
-        </Box>
-        <Box marginBottom={3} width="half">
-          <Text variant="h5">
-            {formatMessage(m.supremeCourt.constituencyLabel)}
-          </Text>
-          <Text>{answers.constituency}</Text>
-        </Box>
+        <ExportEndorsementsAsCSV application={application} />
       </Box>
     </Box>
   )
 }
 
-export default SupremeCourtOverview
+export default PartyLetterApplicationApprovedOverview
+

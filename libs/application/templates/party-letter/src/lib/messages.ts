@@ -464,7 +464,7 @@ export const m: MessageDir = {
     },
     csvButton: {
       id: 'ple.application:ministry.justice.csv.button',
-      defaultMessage: 'Hlaða niður atkvæðum',
+      defaultMessage: 'Hlaða niður meðmælum',
       description: 'Download endorsements button',
     },
     noEndorsementsMessage: {
@@ -493,6 +493,13 @@ export const m: MessageDir = {
       defaultMessage:
         'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
       description: 'Text after MOJ has submitted',
+    },
+  }),
+  partyLetterApprovedOverview: defineMessages({
+    title: {
+      id: 'ple.application:letter.approved.overview.title',
+      defaultMessage: 'Umsókn samþykkt',
+      description: 'title',
     },
   }),
 }

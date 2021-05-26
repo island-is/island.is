@@ -6,3 +6,4 @@ export { default as PartyLetterApplicationApproved } from './PartyLetterApplicat
 export { default as EndorsementDisclaimer } from './EndorsementDisclaimer'
 export { default as FileUploadDisclaimer } from './FileUploadDisclaimer'
 export { default as MinistryOfJusticeOverview } from './MinistryOfJusticeOverview'
+export { default as PartyLetterApplicationApprovedOverview } from './PartyLetterApplicationApprovedOverview'

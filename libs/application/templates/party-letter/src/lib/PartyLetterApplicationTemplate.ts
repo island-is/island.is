@@ -112,7 +112,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToMinistryOfJustice',
-        exit: 'clearAssignees',
+        //exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
@@ -202,11 +202,11 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           name: 'Approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
+          /*onEntry: {
             //apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
             apiModuleAction: API_MODULE_ACTIONS.SubmitPartyLetter,
             throwOnError: true,
-          },
+          },*/
           roles: [
             {
               id: Roles.SIGNATUREE,
@@ -220,6 +220,14 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/LetterApplicationApproved').then((val) =>
                   Promise.resolve(val.LetterApplicationApproved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/LetterApplicationApprovedOverview').then((val) =>
+                  Promise.resolve(val.LetterApplicationApprovedOverview),
                 ),
               read: 'all',
             },

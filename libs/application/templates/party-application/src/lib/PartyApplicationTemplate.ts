@@ -110,7 +110,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToSupremeCourt',
-        exit: 'clearAssignees',
+        //exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
@@ -209,6 +209,14 @@ const PartyApplicationTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ApprovedOverview').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
               read: 'all',

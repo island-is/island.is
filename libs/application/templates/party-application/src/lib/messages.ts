@@ -300,6 +300,13 @@ export const m: MessageDir = {
       description: 'Link title',
     },
   }),
+  applicationApprovedOverview: defineMessages({
+    title: {
+      id: 'pa.application:application.approved.title',
+      defaultMessage: 'Umsokn samþykkt',
+      description: 'Title for overview',
+    },
+  }),
   collectEndorsements: defineMessages({
     applicationTitle: {
       id: 'pa.application:collect.applicationtitle',
@@ -547,7 +554,7 @@ export const m: MessageDir = {
     },
     csvButton: {
       id: 'pa.application:supreme.court.csv.button',
-      defaultMessage: 'Hlaða niður atkvæðum',
+      defaultMessage: 'Hlaða niður meðmælum',
       description: 'Download endorsements button',
     },
     noEndorsementsMessage: {
