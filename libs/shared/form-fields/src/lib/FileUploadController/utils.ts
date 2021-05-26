@@ -1,4 +1,5 @@
 import { UploadFile } from '@island.is/island-ui/core'
+
 import { S3UploadResponse, ActionTypes, Action } from './types'
 
 export const uploadFileToS3 = (
@@ -47,7 +48,9 @@ export const uploadFileToS3 = (
     req.upload.addEventListener('error', onError)
 
     const form = new FormData()
+
     Object.keys(fields).forEach((key) => form.append(key, fields[key]))
+
     if (file.originalFileObj) {
       form.append('file', file.originalFileObj)
     }

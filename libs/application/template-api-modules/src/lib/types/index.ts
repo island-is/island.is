@@ -1,4 +1,5 @@
 import { SendMailOptions } from 'nodemailer'
+
 import { Application } from '@island.is/application/core'
 
 export interface BaseTemplateAPIModuleConfig {
@@ -21,13 +22,15 @@ export interface BaseTemplateAPIModuleConfig {
     sender: string
     address: string
   }
-  presignBucket: string
   smsOptions: {
     url: string
     username: string
     password: string
   }
+  attachmentBucket: string
+  presignBucket: string
 }
+
 export interface TemplateApiModuleActionProps {
   application: Application
   authorization: string
