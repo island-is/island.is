@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IsString, IsOptional, IsBoolean } from 'class-validator'
 
 @ObjectType()
 export class NewDrivingLicenseResult {

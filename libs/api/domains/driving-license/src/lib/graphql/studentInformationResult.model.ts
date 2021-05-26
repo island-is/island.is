@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
 
 @ObjectType()
 export class StudentInformation {
