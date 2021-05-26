@@ -170,7 +170,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
-        <Box>
+        <Box paddingLeft={1}>
           <GridContainer>
             <GridRow>
               <GridColumn
