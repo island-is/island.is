@@ -1,3 +1,4 @@
+import { ApplicationEligibilityRequirement, RequirementKey } from '@island.is/api/schema'
 import {
   BasicDataProvider,
   Application,
@@ -7,7 +8,7 @@ import {
 import { m } from '../lib/messages'
 
 const extractReason = (
-  requirements: { key: string, requirementMet: boolean }[],
+  requirements: ApplicationEligibilityRequirement[],
 ): string => {
   return requirements
     .filter(({ requirementMet }) => !requirementMet)
@@ -16,20 +17,13 @@ const extractReason = (
     .join(', ')
 }
 
-// TODO find a way to use the same type
-export enum RequirementKey {
-  drivingAssessmentMissing = 'DrivingAssessmentMissing',
-  drivingSchoolMissing = 'DrivingSchoolMissing',
-  deniedByService = 'DeniedByService',
-}
-
 const requirementKeyToMessage = (key: string) => {
   switch (key) {
-    case 'drivingSchoolMissing':
+    case RequirementKey.drivingSchoolMissing:
       return m.requirementUnmetDrivingSchool
-    case 'drivingAssessmentMissing':
+    case RequirementKey.drivingAssessmentMissing:
       return m.requirementUnmetDrivingAssessment
-    case '':
+    case RequirementKey.deniedByService:
       return m.requirementUnmetDeniedByService
     default:
       return ''
