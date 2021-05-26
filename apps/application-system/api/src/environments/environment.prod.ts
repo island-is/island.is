@@ -50,7 +50,7 @@ export default {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
-    }
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

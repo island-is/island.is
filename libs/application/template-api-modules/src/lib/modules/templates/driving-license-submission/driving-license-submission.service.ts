@@ -19,12 +19,9 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async submitApplication({
-    application,
-  }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
-
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
@@ -34,10 +31,10 @@ export class DrivingLicenseSubmissionService {
         juristictionId: juristictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
       })
-      .catch(e => {
+      .catch((e) => {
         return {
           success: false,
-          errorMessage: e.message
+          errorMessage: e.message,
         }
       })
 
@@ -59,10 +56,10 @@ export class DrivingLicenseSubmissionService {
 
     const result = await this.drivingLicenseService
       .newDrivingAssessment(studentNationalId as string, teacherNationalId)
-      .catch(e => {
+      .catch((e) => {
         return {
           success: false,
-          errorMessage: e.message
+          errorMessage: e.message,
         }
       })
 
@@ -72,7 +69,9 @@ export class DrivingLicenseSubmissionService {
         application,
       )
     } else {
-      throw new Error(`Unexpected error (creating driver's license): '${result.errorMessage}'`)
+      throw new Error(
+        `Unexpected error (creating driver's license): '${result.errorMessage}'`,
+      )
     }
 
     return {

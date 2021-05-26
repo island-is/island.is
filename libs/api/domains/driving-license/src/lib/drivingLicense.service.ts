@@ -209,7 +209,9 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.newDrivingLicense({
       authorityNumber: input.juristictionId,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate ? 1 : 0,
+      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
+        ? 1
+        : 0,
       personIdNumber: nationalId,
     })
 
@@ -219,7 +221,9 @@ export class DrivingLicenseService {
 
     return {
       success,
-      errorMessage: responseIsString ? response as string : 'Result not 1 when creating license',
+      errorMessage: responseIsString
+        ? (response as string)
+        : 'Result not 1 when creating license',
     }
   }
 }

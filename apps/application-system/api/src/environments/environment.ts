@@ -53,7 +53,7 @@ export default {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
       xroadBaseUrl: 'http://localhost:8081',
-    }
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

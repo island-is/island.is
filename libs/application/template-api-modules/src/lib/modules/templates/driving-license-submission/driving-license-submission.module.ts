@@ -9,9 +9,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { DrivingLicenseSubmissionService } from './driving-license-submission.service'
-import {
-  DrivingLicenseModule,
-} from '@island.is/api/domains/driving-license'
+import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 
 export class DrivingLicenseSubmissionModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -19,7 +17,7 @@ export class DrivingLicenseSubmissionModule {
       module: DrivingLicenseSubmissionModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        DrivingLicenseModule.register(baseConfig.drivingLicense)
+        DrivingLicenseModule.register(baseConfig.drivingLicense),
       ],
       providers: [DrivingLicenseSubmissionService],
       exports: [DrivingLicenseSubmissionService],
