@@ -44,7 +44,7 @@ const ErrorModal: FC<Props> = ({ title, ariaLabel, children, link }) => {
             </Text>
             {children}
           </Stack>
-          <GridRow align="flexEnd">
+          <GridRow align="flexStart">
             <ArrowLink href={link.href}>{link.text}</ArrowLink>
           </GridRow>
         </Stack>
