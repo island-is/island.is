@@ -2,11 +2,13 @@
 import CSVStringify from 'csv-stringify'
 
 export const downloadCSV = async (
-  filename: string,
+  name: string,
   header: string[],
-  data: any,
+  data: Array<Array<string | number>>,
 ) => {
-  const csvData = [header, [data, 'body 2']]
+  const csvData = [header, ...data]
+
+  const filename = `${name}, ${new Date().toISOString().split('T')[0]}.csv`
   CSVStringify(csvData, (err, output) => {
     const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${output}`)
     const link = document.createElement('a')

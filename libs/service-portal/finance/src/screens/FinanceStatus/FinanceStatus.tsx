@@ -13,6 +13,7 @@ import {
   DropdownMenu,
   SkeletonLoader,
   AlertBanner,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -20,7 +21,7 @@ import {
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import { ExpandHeader } from '../../components/ExpandableTable'
-import { downloadCSV } from '../../utils/downloadCSV'
+import { exportGreidslustadaCSV } from '../../utils/csvGreidslustada'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import * as styles from './FinanceStatus.treat'
 
@@ -38,12 +39,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
   console.log({ financeStatusData, loading })
-
-  const exportCsv = async (data: any) => {
-    const filename = `Testcsv, ${new Date().toISOString().split('T')[0]}.csv`
-
-    await downloadCSV(filename, ['header 1', 'header 2'], data)
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -81,45 +76,48 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
           )}
           {financeStatusData?.organizations?.length > 0 ? (
             <>
-              <Columns space="p2" align="right">
-                <Column width="content">
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={function noRefCheck() {}}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    Prenta
-                  </Button>
-                </Column>
-                <Column width="content">
-                  <Box className={styles.buttonWrapper}>
-                    <DropdownMenu
-                      icon="ellipsisHorizontal"
-                      menuLabel="Fleiri möguleikar"
-                      items={[
-                        {
-                          href: '#',
-                          title: 'Staða í lok árs ...',
-                        },
-                        {
-                          onClick: () => exportCsv([financeStatusData]),
-                          title: 'Sækja sem CSV',
-                        },
-                        {
-                          onClick: function noRefCheck() {},
-                          title: 'Sækja sem Excel',
-                        },
-                      ]}
-                      title="Meira"
-                    />
-                  </Box>
-                </Column>
-              </Columns>
+              <Hidden print={true}>
+                <Columns space="p2" align="right">
+                  <Column width="content">
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      Prenta
+                    </Button>
+                  </Column>
+                  <Column width="content">
+                    <Box className={styles.buttonWrapper}>
+                      <DropdownMenu
+                        icon="ellipsisHorizontal"
+                        menuLabel="Fleiri möguleikar"
+                        items={[
+                          {
+                            href: '#',
+                            title: 'Staða í lok árs ...',
+                          },
+                          {
+                            onClick: () =>
+                              exportGreidslustadaCSV(financeStatusData),
+                            title: 'Sækja sem CSV',
+                          },
+                          {
+                            onClick: function noRefCheck() {},
+                            title: 'Sækja sem Excel',
+                          },
+                        ]}
+                        title="Meira"
+                      />
+                    </Box>
+                  </Column>
+                </Columns>
+              </Hidden>
               <Box marginTop={2}>
                 <T.Table>
                   <ExpandHeader

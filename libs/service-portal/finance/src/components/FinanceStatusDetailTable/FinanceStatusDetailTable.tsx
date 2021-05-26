@@ -5,7 +5,13 @@ import {
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import amountFormat from '../../utils/amountFormat'
-import { Box, Text, Columns, Column } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Columns,
+  Column,
+  ArrowLink,
+} from '@island.is/island-ui/core'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {
@@ -17,22 +23,23 @@ const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
 }) => {
+  const tableHeaderArray = [
+    'Gjaldgrunnur',
+    'Ár og tímabil',
+    'Gjalddagi',
+    'Eindagi',
+    'Höfuðstóll',
+    'Vextir',
+    'Kostnaður',
+    'Greiðslur',
+    'Staða',
+  ]
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
         <T.Head>
           <T.Row>
-            {[
-              'Gjaldgrunnur',
-              'Ár og tímabil',
-              'Gjalddagi',
-              'Eindagi',
-              'Höfuðstóll',
-              'Vextir',
-              'Kostnaður',
-              'Greiðslur',
-              'Staða',
-            ].map((item, i) => (
+            {tableHeaderArray.map((item, i) => (
               <T.HeadData key={i} text={{ truncate: true }}>
                 <Text fontWeight="semiBold" variant="small">
                   {item}
@@ -54,9 +61,24 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 amountFormat(row.cost),
                 amountFormat(row.dueTotals),
                 amountFormat(row.totals),
-              ].map((item, i) => (
-                <T.Data key={i}>
-                  <Text variant="small">{item}</Text>
+              ].map((item, ii) => (
+                <T.Data key={ii}>
+                  {ii === tableHeaderArray.length - 1 && row.payID ? (
+                    <Box className={styles.buttonTd} display="flex">
+                      <div className={styles.textWithButton}>
+                        <Text variant="small">{item}</Text>
+                      </div>
+                      <ArrowLink
+                        href={`https://TODO_PAYMENT_LINK/${row.payID}`}
+                      >
+                        Greiða
+                      </ArrowLink>
+                    </Box>
+                  ) : (
+                    <div className={styles.td}>
+                      <Text variant="small">{item}</Text>
+                    </div>
+                  )}
                 </T.Data>
               ))}
             </T.Row>
