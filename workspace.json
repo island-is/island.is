@@ -1963,9 +1963,9 @@
         }
       }
     },
-    "application-templates-driving-license-approval": {
-      "root": "libs/application/templates/driving-license-approval",
-      "sourceRoot": "libs/application/templates/driving-license-approval/src",
+    "application-templates-driving-assessment-approval": {
+      "root": "libs/application/templates/driving-assessment-approval",
+      "sourceRoot": "libs/application/templates/driving-assessment-approval/src",
       "projectType": "library",
       "architect": {
         "lint": {
@@ -1973,22 +1973,22 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/driving-license-approval/tsconfig.lib.json",
-              "libs/application/templates/driving-license-approval/tsconfig.spec.json"
+              "libs/application/templates/driving-assessment-approval/tsconfig.lib.json",
+              "libs/application/templates/driving-assessment-approval/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/driving-license-approval/**/*"
+              "!libs/application/templates/driving-assessment-approval/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "outputs": [
-            "coverage/libs/application/templates/driving-license-approval"
+            "coverage/libs/application/templates/driving-assessment-approval"
           ],
           "options": {
-            "jestConfig": "libs/application/templates/driving-license-approval/jest.config.js",
+            "jestConfig": "libs/application/templates/driving-assessment-approval/jest.config.js",
             "passWithNoTests": true
           }
         },
