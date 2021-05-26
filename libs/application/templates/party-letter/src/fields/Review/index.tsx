@@ -12,11 +12,11 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
-    'party.letter': formatMessage(m.overview.partyLetter),
-    'party.name': formatMessage(m.overview.partyName),
-    signatures: formatMessage(m.overview.signaturesCount),
+    partyLetter: formatMessage(m.overview.partyLetter),
+    partyName: formatMessage(m.overview.partyName),
+    endorsements: formatMessage(m.overview.endorsementsCount),
     warnings: formatMessage(m.overview.warningCount),
-    documents: formatMessage(m.overview.includePapers),
+    documents: formatMessage(m.overview.includedPapers),
   }
 
   const reviewItem = (label: string, answer: string) => {
@@ -45,12 +45,14 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
         labelMapper[IDS.PartyLetter],
         getValueViaPath(answers, IDS.PartyLetter) as string,
       )}
-      {reviewItem(labelMapper[IDS.Signatures], '305')}
+      {reviewItem(labelMapper[IDS.Endorsements], '305')}
       {reviewItem(labelMapper[IDS.Warnings], '18')}
-      {reviewItem(
-        labelMapper[IDS.Documents],
-        documentNames(getValueViaPath(answers, IDS.Documents) as File[]),
-      )}
+      {answers.documents
+        ? reviewItem(
+            labelMapper[IDS.Documents],
+            documentNames(getValueViaPath(answers, IDS.Documents) as File[]),
+          )
+        : null}
     </Box>
   )
 }

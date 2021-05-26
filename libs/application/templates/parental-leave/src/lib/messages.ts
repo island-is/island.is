@@ -5,6 +5,11 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 export const parentalLeaveFormMessages: MessageDir = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
+    institution: {
+      id: 'pl.application:institution.name',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'Name of the institution responsible of the application',
+    },
     name: {
       id: 'pl.application:name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -14,6 +19,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:form.title',
       defaultMessage: 'Fæðingarorlof',
       description: 'Parental Leave',
+    },
+    prerequisitesSection: {
+      id: 'pl.application:prerequisites.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
     },
     applicationName: {
       id: 'pl.application:application.name',
@@ -148,7 +158,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-
     rightsSection: {
       id: 'pl.application:rights.section',
       defaultMessage: 'Réttindi til fæðingarorlofs',
@@ -357,12 +366,24 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nafn, kennitala og tengsl',
       description: 'Name, national registry id and type of relation',
     },
-    expectedDateOfBirthTitle: {
+    pregnancyStatusAndRightsError: {
+      id: 'pl.application:pregnancyStatusAndRights.error',
+      defaultMessage:
+        'Ekki er hægt að ná fæðingardegi barnsins og ekki er hægt að reikna réttindin.',
+      description: 'Error message for pregnancy status and rights providers',
+    },
+    childrenError: {
+      id: 'pl.application:children.error',
+      defaultMessage:
+        'Engin börn fundust. Það fannst enginn áætlaður fæðingardagur né virk umsókn um fæðingarorlof.',
+      description: `When no children is found. Can be because the primary parent didn't assign the secondary parent yet or if it's not part of the system yet.`,
+    },
+    childrenInformationTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
       description: 'Expected birth date',
     },
-    expectedDateOfBirthSubtitle: {
+    childrenInformationSubTitle: {
       id: 'pl.application:expectedDateOfBirth.subtitle',
       defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
       description: 'Confirmation on date of birth',
@@ -468,6 +489,67 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
   }),
 
+  selectChild: defineMessages({
+    subSection: {
+      id: 'pl.application:selectChild.subSection',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenTitle: {
+      id: 'pl.application:selectChild.screenTitle',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenDescription: {
+      id: 'pl.application:selectChild.screenDescription',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+      description: 'Children you can apply for parental leave',
+    },
+    title: {
+      id: 'pl.application:selectChild.title',
+      defaultMessage: 'Börn sem þú getur sótt um fyrir',
+      description: 'Children you can apply for',
+    },
+    activeApplications: {
+      id: 'pl.application:selectChild.activeApplications',
+      defaultMessage: 'Virkar umsóknir',
+      description: 'Active applications',
+    },
+    choose: {
+      id: 'pl.application:selectChild.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
+    },
+  }),
+
+  notEligible: defineMessages({
+    subSection: {
+      id: 'pl.application:notEligible.subSection',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenTitle: {
+      id: 'pl.application:notEligible.screenTitle',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
+    },
+    screenDescription: {
+      id: 'pl.application:notEligible.screenDescription',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
+      description: 'Children you can apply for parental leave',
+    },
+    title: {
+      id: 'pl.application:notEligible.title',
+      defaultMessage: 'Börn sem þú getur sótt um fyrir',
+      description: 'Children you can apply for',
+    },
+    choose: {
+      id: 'pl.application:notEligible.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
+    },
+  }),
+
   applicant: defineMessages({
     subSection: {
       id: 'pl.application:applicant.subSection',
@@ -495,6 +577,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Phone number',
     },
   }),
+
   errors: defineMessages({
     loading: {
       id: 'pl.application:errors.loading',
@@ -544,6 +627,12 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Makinn þinn fær tilkynningu og þarf að samþykkja þessa beiðni. Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
       description: 'Translation needed',
     },
+    useAsMuchAsPossibleFromSpouse: {
+      id: 'pl.application:personal.allowance.useAsMuchAsPossibleFromSpouse',
+      defaultMessage: 'Viltu fullnýta persónuafslátt maka?',
+      description:
+        "We ask the user if they want to use as much of the spouse's personal allowance as they can.",
+    },
     useAsMuchAsPossible: {
       id: 'pl.application:personal.allowance.useAsMuchAsPossible',
       defaultMessage:
@@ -559,6 +648,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:personal.allowance.zeroToHundred',
       defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
       description: 'Type a number from 0 to 100',
+    },
+    allowanceUsage: {
+      id: 'pl.application:allowance.allowance.usage',
+      defaultMessage: 'Hlutfall af persónuafslættinum',
+      description: 'Review copy for the usage percentage',
     },
   }),
 
@@ -600,32 +694,33 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 24 months after the date of birth.`,
+    },
+    estimatedDateOfBirthOption: {
+      id: 'pl.application:periods.first.period.estimatedDateOfBirth',
+      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     dateOfBirthOption: {
-      id: 'pl.application:periods.first.period.dateOfBirth',
-      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
-      description: 'I will start from the date of birth',
-    },
-    dateOfBirthOptionTooltip: {
-      id: 'pl.application:periods.first.period.dateOfBirth.tooltip',
-      defaultMessage:
-        'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess aðlagast raunverulegum fæðingardegi barnsins.',
+      id: 'pl.application:periods.first.period.actualDateOfBirth',
+      defaultMessage: 'Ég vil byrja frá raunverulegum fæðingardegi',
       description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will adjust to the real date of birth',
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOption: {
       id: 'pl.application:periods.first.period.specificDate',
       defaultMessage: 'Ég vil byrja á ákveðinni dagsetningu',
-      description: 'I will start on a specific date',
+      description:
+        'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
     specificDateOptionTooltip: {
       id: 'pl.application:periods.first.period.specificDate.tooltip',
       defaultMessage:
         'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess EKKI aðlagast út frá raunverulegum fæðingardegi barnsins ef þessi valmöguleiki er valinn.',
       description:
-        'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
+        'If the child is born on another date than the expected date of birth, the parental leave and its duration will NOT adjust to the real date of birth',
     },
   }),
 
@@ -637,8 +732,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:end.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
     },
     label: {
       id: 'pl.application:end.date.label',
@@ -660,8 +755,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:start.date.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your parental leave rights end 18 months after the date of birth`,
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your parental leave rights end 24 months after the date of birth`,
     },
     label: {
       id: 'pl.application:start.date.label',
@@ -857,6 +952,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Add translation',
     },
   }),
+
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
@@ -962,6 +1058,43 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
     },
+    rightsTotal: {
+      id: 'pl.application:review.rights.total',
+      defaultMessage: 'Samtals: {months}',
+      description:
+        'Copy for the total of months for the parental leave on the review screen',
+    },
+    rightsPersonalMonths: {
+      id: 'pl.application:review.rights.personal.months',
+      defaultMessage: '{months} persónulegir mánuðir',
+      description: 'Copy for the number of personal months',
+    },
+    rightsAllowanceRequested: {
+      id: 'pl.application:review.rights.allowance.requested',
+      defaultMessage: '{requested} mánuður veittur af öðru foreldri',
+      description: 'Requested months from other parent',
+    },
+    rightsAllowanceGiven: {
+      id: 'pl.application:review.rights.allowance.given',
+      defaultMessage: '{given} mánuður gefinn hinu foreldrinu',
+      description: 'Given months to the other parent',
+    },
+    period: {
+      id: 'pl.application:review.period',
+      defaultMessage: 'Tímabilinu {index} - {ratio}%',
+      description: 'Period copy',
+    },
+    usePersonalAllowance: {
+      id: 'pl.application:review.use.personal.allowance',
+      defaultMessage: 'Nota allan persónuafsláttinn',
+      description: 'If parent decided to use all its personal discount',
+    },
+    useSpousePersonalAllowance: {
+      id: 'pl.application:review.use.spouse.personal.allowance',
+      defaultMessage: 'Fullnýta persónuafslátt maka',
+      description:
+        'If parent decided to use all the other parent personal discount',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -971,7 +1104,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Your application was not approved',
     },
     draftNotApprovedOtherParentDesc: {
-      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
       defaultMessage: 'The other parent did not approve your request.',
       description: 'The other parent did not approve your request.',
     },
@@ -1180,16 +1313,260 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-// TODO: Add the translations to the dataSchema.ts
-export const dataSchemaMessages = defineMessages({
+export const errorMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
+    description: 'Error message when phone number is invalid.',
   },
   otherParentId: {
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'ID number must be valid.',
+    description: 'Error message when the kennitala is invalid.',
+  },
+  email: {
+    id: 'pl.application:answerValidators.email',
+    defaultMessage: 'Þú þarft að skilgreina gilt netfang.',
+    description: 'Invalid email copy',
+  },
+  periodsPeriodRange: {
+    id: 'pl.application:answerValidators.periodsPeriodRange',
+    defaultMessage:
+      'Þú getur ekki sótt um í meira en {usageMaxMonths} mánuði frá fæðingardegi.',
+    description: 'Copy for invalid period',
+  },
+  employerEmail: {
+    id: 'pl.application:answerValidators.employerEmail',
+    defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
+    description: 'Invalid employer copy',
+  },
+  dateOfBirth: {
+    id: 'pl.application:answerValidators.dateOfBirth',
+    defaultMessage:
+      'Við höfum ekki getað sótt sjálfkrafa fæðingardag barnsins þíns. Vinsamlegast reyndu aftur síðar.',
+    description: `Can't retrieve the DOB copy`,
+  },
+  periodsStartDate: {
+    id: 'pl.application:answerValidators.periodsStartDate',
+    defaultMessage: 'Upphafsdagsetningin er ekki gild.',
+    description: 'Copy for invalid start date of the period',
+  },
+  periodsStartDateBeforeDob: {
+    id: 'pl.application:answerValidators.periodsStartDateBeforeDob',
+    defaultMessage: 'Upphafsdagur getur ekki verið fyrir áætlaðan fæðingardag.',
+    description: 'Copy for invalid start date before DOB',
+  },
+  periodsStartDateOverlaps: {
+    id: 'pl.application:answerValidators.periodsStartDateOverlaps',
+    defaultMessage:
+      'Nýtt tímabil getur ekki byrjað innan annars tímabils sem þegar er vistað.',
+    description: 'Copy when start date overlaps other periods',
+  },
+  periodsStartDateRequired: {
+    id: 'pl.application:answerValidators.periodsStartDateRequired',
+    defaultMessage: 'Vinsamlegast veldu upphafsdagsetningu',
+    description: 'Start date can not be empty',
+  },
+  periodsEndDate: {
+    id: 'pl.application:answerValidators.periodsEndDate',
+    defaultMessage:
+      'Lokadagur má ekki vera minni en {minPeriodDays} dagar frá fæðingardegi.',
+    description: 'Copy when end date is invalid',
+  },
+  periodsEndDateBeforeStartDate: {
+    id: 'pl.application:answerValidators.periodsEndDateBeforeStartDate',
+    defaultMessage: 'Lokadagur getur ekki verið fyrir upphafsdag.',
+    description: 'Copy when end date is before start date',
+  },
+  periodsEndDateMinimumPeriod: {
+    id: 'pl.application:answerValidators.periodsEndDateMinimumPeriod',
+    defaultMessage: 'Þú getur ekki sótt um skemur en {minPeriodDays} daga.',
+    description: 'Copy when period is less than minimum required',
+  },
+  periodsEndDateOverlapsPeriod: {
+    id: 'pl.application:answerValidators.periodsEndDateOverlapsPeriod',
+    defaultMessage:
+      'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
+    description: 'Copy when end date overlaps other period',
+  },
+  periodsEndDateRequired: {
+    id: 'pl.application:answerValidators.periodsEndDateRequired',
+    defaultMessage: 'Vinsamlegast veldu lokadagsetningu',
+    description: 'End date can not be empty',
+  },
+  periodsRatio: {
+    id: 'pl.application:answerValidators.periodsRatio',
+    defaultMessage:
+      'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
+    description: 'Copy when ratio is invalid',
+  },
+})
+
+export const statesMessages = defineMessages({
+  draftTitle: {
+    id: 'pl.application:draft.title',
+    defaultMessage: 'Drög',
+    description: 'Title of the state - draft',
+  },
+  draftDescription: {
+    id: 'pl.application:draft.description',
+    defaultMessage: 'Þú hefur verið búa til drög fyrir umsóknarinnar.',
+    description: 'Description of the state - draft',
+  },
+
+  otherParentApprovalTitle: {
+    id: 'pl.application:otherParentApproval.title',
+    defaultMessage: 'Annað foreldra samþykki',
+    description: 'Title of the state - otherParentApproval',
+  },
+  otherParentApprovalDescription: {
+    id: 'pl.application:otherParentApproval.description',
+    defaultMessage: 'Umsókn þín þarf samþykki frá annað foreldra.',
+    description: 'Description of the state - otherParentApproval',
+  },
+
+  otherParentActionTitle: {
+    id: 'pl.application:otherParentAction.title',
+    defaultMessage: 'Annað foreldra krefst aðgerða',
+    description: 'Title of the state - otherParentAction',
+  },
+  otherParentActionDescription: {
+    id: 'pl.application:otherParentAction.description',
+    defaultMessage: 'Annað foreldra krefst aðgerðarinnar.',
+    description: 'Description of the state - otherParentAction',
+  },
+
+  employerWaitingToAssignTitle: {
+    id: 'pl.application:employerWaitingToAssign.Title',
+    defaultMessage: 'Bið eftir vinnuveitandann',
+    description: 'Title of the state - employerWaitingToAssign',
+  },
+  employerWaitingToAssignDescription: {
+    id: 'pl.application:employerWaitingToAssign.description',
+    defaultMessage: 'Umsóknarinnar er ætla til vinnuteitanda',
+    description: 'Description of the state - employerWaitingToAssign',
+  },
+
+  employerApprovalTitle: {
+    id: 'pl.application:employerApproval.title',
+    defaultMessage: 'Samþykki vinnuveitanda',
+    description: 'Title of the state - employerApproval',
+  },
+  employerApprovalDescription: {
+    id: 'pl.application:employerApproval.description',
+    defaultMessage: 'Vinnuveitandi samþykkti umsóknarinna.',
+    description: 'Description of the state - employerApproval',
+  },
+
+  employerActionTitle: {
+    id: 'pl.application:employerAction.title',
+    defaultMessage: 'Vinnuveitandi krefst aðgerða.',
+    description: 'Title of the state - employerAction',
+  },
+  employerActionDescription: {
+    id: 'pl.application:employerAction.description',
+    defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
+    description: 'Description of the state - employerAction',
+  },
+
+  vinnumalastofnunApprovalTitle: {
+    id: 'pl.application:vinnumalastofnunApproval.title',
+    defaultMessage: 'Vinnumálastofnun samþykkti',
+    description: 'Title of the state - vinnumalastofnunApproval',
+  },
+  vinnumalastofnunApprovalDescription: {
+    id: 'pl.application:vinnumalastofnunApproval.description',
+    defaultMessage: 'Vinnumálastofnun samþykkti umsóknarinnar.',
+    description: 'Description of the state - vinnumalastofnunApproval',
+  },
+
+  vinnumalastofnunActionTitle: {
+    id: 'pl.application:vinnumalastofnunAction.title',
+    defaultMessage: 'Vinnumálastofnun krefst aðgerða',
+    description: 'Title of the state - vinnumalastofnunAction',
+  },
+  vinnumalastofnunActionDescription: {
+    id: 'pl.application:vinnumalastofnunAction.description',
+    defaultMessage: 'Vinnumálastofnun krefst aðgerðar vegna umsóknarinnar.',
+    description: 'Description of the state - vinnumalastofnunAction',
+  },
+
+  approvedTitle: {
+    id: 'pl.application:approved.title',
+    defaultMessage: 'Samþykkt',
+    description: 'Title of the state - approved',
+  },
+  approvedDescription: {
+    id: 'pl.application:approved.description',
+    defaultMessage: 'Umsóknin hefur verið samþykkt',
+    description: 'Description of the state - approved',
+  },
+
+  editOrAddPeriodsTitle: {
+    id: 'pl.application:editOrAddPeriods.title',
+    defaultMessage: 'Breyta eða bæta við tímabil',
+    description: 'Title of the state - editOrAddPeriods',
+  },
+  editOrAddPeriodsDescription: {
+    id: 'pl.application:editOrAddPeriods.description',
+    defaultMessage: 'Þú ert að breyta eða bæta tímabil við umsókn.',
+    description: 'Description of the state - editOrAddPeriods',
+  },
+
+  employerWaitingToAssignForEditsTitle: {
+    id: 'pl.application:employerWaitingToAssignForEdits.title',
+    defaultMessage:
+      'Bíður eftir vinnuveitanda að fara yfir breytingar á tímabilinu',
+    description: 'Title of the state - employerWaitingToAssignForEdits',
+  },
+  employerWaitingToAssignForEditsDescription: {
+    id: 'pl.application:employerWaitingToAssignForEdits.description',
+    defaultMessage:
+      'Umsókn þinni er sent til vinnuveitanda til að fara yfir breytingar þínar á tímabilinu.',
+    description: 'Description of the state - employerWaitingToAssignForEdits',
+  },
+
+  employerApproveEditsTitle: {
+    id: 'pl.application:employerApproveEdits.title',
+    defaultMessage: 'Vinnuveitandi er að fara yfir tímabilið',
+    description: 'Title of the state - employerApproveEdits',
+  },
+  employerApproveEditsDescription: {
+    id: 'pl.application:employerApproveEdits.description',
+    defaultMessage: 'Vinnuveitandi er að fara yfir tímabilbreytingar þínar.',
+    description: 'Description of the state - employerApproveEdits',
+  },
+
+  employerEditsActionTitle: {
+    id: 'pl.application:employerEditsAction.title',
+    defaultMessage: 'Vinnuveitandi hafnaði breytingum á tímabilinu',
+    description: 'Title of the state - employerEditsAction',
+  },
+  employerEditsActionDescription: {
+    id: 'pl.application:employerEditsAction.description',
+    defaultMessage: 'Vinnuveitandi þinn hafnaði tímabreytingum þínum.',
+    description: 'Description of the state - employerEditsAction',
+  },
+
+  vinnumalastofnunApproveEditsTitle: {
+    id: 'pl.application:vinnumalastofnunApproveEdits.title',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir breytingar á tímabilinu',
+    description: 'Title of the state - vinnumalastofnunApproveEdits',
+  },
+  vinnumalastofnunApproveEditsDescription: {
+    id: 'pl.application:vinnumalastofnunApproveEdits.description',
+    defaultMessage: 'Vinnumálastofnun er að fara yfir tímabilbreytingar þínar.',
+    description: 'Description of the state - vinnumalastofnunApproveEdits',
+  },
+
+  vinnumalastofnunEditsActionTitle: {
+    id: 'pl.application:vinnumalastofnunEditsAction.title',
+    defaultMessage: 'Vinnumálastofnun hafnaði breytingum á tímabilinu',
+    description: 'Title of the state - vinnumalastofnunEditsAction',
+  },
+  vinnumalastofnunEditsActionDescription: {
+    id: 'pl.application:vinnumalastofnunEditsAction.description',
+    defaultMessage: 'Vinnumálastofnun hafnaði tímabreytingum þínum.',
+    description: 'Description of the state - vinnumalastofnunEditsAction',
   },
 })

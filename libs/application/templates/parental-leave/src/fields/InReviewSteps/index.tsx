@@ -1,29 +1,29 @@
 import React, { FC, useState } from 'react'
+import format from 'date-fns/format'
+import { useMutation } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { dateFormat } from '@island.is/shared/constants'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
-
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES } from '../../constants'
-
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
-import { useMutation } from '@apollo/client'
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
-import { dateFormat } from '@island.is/shared/constants'
+import { States as ApplicationStates } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/use-application-answers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
+
 type StatesMap = {
   otherParent: StateMapEntry
   employer: StateMapEntry
   vinnumalastofnun: StateMapEntry
 }
+
 const statesMap: StatesMap = {
   otherParent: {
     [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
@@ -46,7 +46,12 @@ const statesMap: StatesMap = {
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+const InReviewSteps: FC<FieldBaseProps> = ({
+  application,
+  refetch,
+  errors,
+}) => {
+  const { isRequestingRights } = useApplicationAnswers(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -58,12 +63,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
-
-  const isRequestingRights =
-    (getValueViaPath(
-      application.answers,
-      'requestRights.isRequestingRights',
-    ) as string) === YES
 
   const steps = [
     {
@@ -93,7 +92,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
     },
   ]
 
-  if (!isRequestingRights) steps.shift()
+  if (!isRequestingRights) {
+    steps.shift()
+  }
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
@@ -194,7 +195,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
         </Box>
       )) || (
         <Box marginTop={7} marginBottom={8}>
-          <Review application={application} editable={false} />
+          <Review application={application} errors={errors} editable={false} />
         </Box>
       )}
     </Box>

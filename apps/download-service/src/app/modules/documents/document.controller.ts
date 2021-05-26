@@ -6,7 +6,6 @@ import {
   Post,
   Res,
   Param,
-  ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -14,13 +13,9 @@ import { GetDocumentDto } from './dto/getDocument.dto'
 import { Response } from 'express'
 import { ReadableStreamBuffer } from 'stream-buffers'
 import { DocumentClient } from '@island.is/clients/documents'
-import {
-  CurrentRestUser,
-  IdsAuthFromBodyGuard,
-  User,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsAuthFromBodyGuard)
+@UseGuards(IdsUserGuard)
 @ApiTags('documents')
 @Controller('electronic-documents')
 export class DocumentController {
@@ -37,7 +32,7 @@ export class DocumentController {
   })
   async getPdf(
     @Param('pdfId') pdfId: string,
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
@@ -46,6 +41,11 @@ export class DocumentController {
       messageId: pdfId,
       authenticationType: 'HIGH',
     })
+
+    if (!rawDocumentDTO) {
+      res.end()
+      return
+    }
 
     const pdf = rawDocumentDTO.content ?? ''
 
@@ -67,5 +67,6 @@ export class DocumentController {
 
     stream.pipe(res)
     stream.stop()
+    return
   }
 }

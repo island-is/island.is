@@ -170,10 +170,6 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
           href: linkResolver('homepage').href,
         },
         {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-        {
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
@@ -271,7 +267,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                   {format(auctionDate, 'd. MMMM yyyy')} | {auction.title}
                 </Text>
                 <Text paddingTop={1}>
-                  {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
+                  {n('updatedAt', 'Uppfært')}{' '}
+                  {format(updatedAt, 'd. MMMM HH:mm')}
                 </Text>
               </Box>
               <Box

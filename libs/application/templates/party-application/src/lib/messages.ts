@@ -109,6 +109,12 @@ export const m: MessageDir = {
       description: 'Signatures count',
     },
     signaturesInvalid: {
+      id: 'pa.application:endorsementListSubmission.signaturesInvalid',
+      defaultMessage:
+        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      description: 'Warning message for invalid endorsements',
+    },
+    signaturesInvalidTitle: {
       id: 'pa.application:overview.signatures.invalid',
       defaultMessage: 'Fjöldi meðmælenda í vafa',
       description: 'Invalid signatures count',
@@ -196,23 +202,108 @@ export const m: MessageDir = {
       description: 'Invalid signatures message',
     },
   }),
+  endorsementListSubmission: defineMessages({
+    title: {
+      id: 'pa.application:endorsementListSubmission.title',
+      defaultMessage: 'Veljið meðmæli til innsendingar',
+      description: 'Choose endorsements to be sent',
+    },
+    shortTitle: {
+      id: 'pa.application:endorsementListSubmission.title',
+      defaultMessage: 'Innsending',
+      description: 'Choose endorsements to be sent',
+    },
+    description: {
+      id: 'pa.application:endorsementListSubmission.description',
+      defaultMessage:
+        'Fjöldi meðmælenda skal vera margfeldi af þingsætatölu kjördæmisins og talnanna 30 að lágmarki og 40 að hámarki.',
+      description: 'Choose endorsements description',
+    },
+    invalidEndorsement: {
+      id: 'pa.application:endorsementListSubmission.invalidEndorsement',
+      defaultMessage:
+        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+      description: 'Warning message for invalid endorsements',
+    },
+    selectAuto: {
+      id: 'pa.application:endorsementListSubmission.selectAuto',
+      defaultMessage: 'Senda inn fyrstu ',
+      description: 'Radio button title for auto selecting endorsements',
+    },
+    selectRandom: {
+      id: 'pa.application:endorsementListSubmission.chooseRandom',
+      defaultMessage: 'Valið af handahófi',
+      description: 'Radio button title for selecting random endorsements',
+    },
+    chosenEndorsements: {
+      id: 'pa.application:endorsementListSubmission.chosenEndorsements',
+      defaultMessage: 'Fjöldi atkvæða valin:',
+      description: 'Chosen endorsements',
+    },
+    warningMessageTitleHigh: {
+      id: 'pa.application:endorsementListSubmission.warningMessageTitleHigh',
+      defaultMessage: 'Leyfilegur fjöldi meðmæla of mikill',
+      description: 'Warning message title when nr of endorsements is too high',
+    },
+    warningMessageTitleLow: {
+      id: 'pa.application:endorsementListSubmission.warningMessageTitleLow',
+      defaultMessage: 'Leyfilegur fjöldi meðmæla of lítill',
+      description: 'Warning message title when nr of endorsements is too low',
+    },
+    warningMessagePt1: {
+      id: 'pa.application:endorsementListSubmission.warningMessagePt1',
+      defaultMessage: 'Fjöldi í þessu kjördæmi þarf að vera á milli ',
+      description: 'Warning message',
+    },
+    warningMessagePt2: {
+      id: 'pa.application:endorsementListSubmission.warningMessagePt2',
+      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      description: 'Warning message',
+    },
+  }),
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Listi hefur verið sendur',
+      defaultMessage: 'Meðmælendalista hefur verið skilað.',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
       defaultMessage:
-        'Meðmælendalisti hefur verið sendur yfirkjörstjórn til yfirferðar.',
+        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
       defaultMessage:
-        'Þú munt fá skilaboð í pósthólf inni á mínum síðum Íslands.is með framhaldið.',
+        'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
+    },
+    bulletListTitle: {
+      id: 'pa.application:application.approved.card.bulletListTitle',
+      defaultMessage: 'Vert að skoða',
+      description: 'Title for bullet point list',
+    },
+    bulletLink1: {
+      id: 'pa.application:application.approved.card.bulletLink1',
+      defaultMessage:
+        'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
+      description: 'Link to Vefur dómsmálaráðuneytis',
+    },
+    bulletLink1Title: {
+      id: 'pa.application:application.approved.card.bulletLink1Title',
+      defaultMessage: 'Vefur dómsmálaráðuneytis',
+      description: 'Link title',
+    },
+    bulletLink2: {
+      id: 'pa.application:application.approved.card.bulletLink2',
+      defaultMessage: 'https://www.stjornarradid.is/verkefni/kosningar/',
+      description: 'Link to kosning.is',
+    },
+    bulletLink2Title: {
+      id: 'pa.application:application.approved.card.bulletLink2Title',
+      defaultMessage: 'kosning.is',
+      description: 'Link title',
     },
   }),
   collectEndorsements: defineMessages({

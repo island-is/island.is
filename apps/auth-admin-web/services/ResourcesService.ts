@@ -94,6 +94,11 @@ export class ResourcesService extends BaseService {
     )
   }
 
+  /** Finds all access controlled Api scopes */
+  static async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+    return BaseService.GET('access-controlled-scopes')
+  }
+
   /** Gets Identity resource by name */
   static async getIdentityResourceByName(
     name: string,
@@ -193,6 +198,11 @@ export class ResourcesService extends BaseService {
     )
   }
 
+  /** Get's all Api resources without count */
+  static async findAllApiResources(): Promise<ApiResource[] | null> {
+    return BaseService.GET(`all-api-resources`)
+  }
+
   /** Creates a new Api Scope */
   static async createApiScope(apiScope: ApiScopeDTO): Promise<ApiScope | null> {
     return BaseService.POST('api-scope', apiScope)
@@ -239,6 +249,24 @@ export class ResourcesService extends BaseService {
       `api-resource-claims/${encodeURIComponent(
         apiResourceName,
       )}/${encodeURIComponent(claimName)}`,
+    )
+  }
+
+  /** Get the api resource that is connected to a scope */
+  static async findApiResourceScopeByScopeName(
+    scopeName: string,
+  ): Promise<ApiResourceScope | null> {
+    return BaseService.GET(
+      `api-scope-resource/${encodeURIComponent(scopeName)}`,
+    )
+  }
+
+  /** Delete Api Scope from Api Resource Scope */
+  static async DeleteApiResourceScopeByScopeName(
+    scopeName: string,
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `api-scope-resource/${encodeURIComponent(scopeName)}`,
     )
   }
 

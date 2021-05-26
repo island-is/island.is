@@ -1,12 +1,10 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { NO, YES } from '../constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-/**
- * TODO: zod has a way to overwrite the default errors messages e.g. "Field is required" etc..
- * We might want to define it for all primitives and add localization to it
- */
+import { NO, YES, StartDateOptions, MANUAL } from '../constants'
+import { errorMessages } from './messages'
+
 const PersonalAllowance = z
   .object({
     usage: z
@@ -24,12 +22,16 @@ const PersonalAllowance = z
  */
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  selectedChild: z.string().nonempty(),
   applicant: z.object({
     email: z.string().email(),
-    phoneNumber: z.string().refine((p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    }, 'Símanúmerið þarf að vera gilt.'),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      { params: errorMessages.phoneNumber },
+    ),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
@@ -52,17 +54,20 @@ export const dataSchema = z.object({
     giveDays: z.number().optional(),
   }),
   singlePeriod: z.enum([YES, NO]),
-  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
+  firstPeriodStart: z.enum([
+    StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+    StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+    StartDateOptions.SPECIFIC_DATE,
+  ]),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  otherParent: z.enum(['spouse', NO, 'manual']).optional(),
+  otherParent: z.enum(['spouse', NO, MANUAL]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
     .string()
     .optional()
-    .refine(
-      (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
-      'Kennitala þarf að vera gild',
-    ),
+    .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+      params: errorMessages.otherParentId,
+    }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),

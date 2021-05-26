@@ -1,7 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-import fetchMock from 'fetch-mock'
 
 import {
   mockCaseQueries,
@@ -9,11 +8,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
-import userEvent from '@testing-library/user-event'
 
 describe('/domari-krafa with an ID', () => {
-  fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
-
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
@@ -59,8 +55,8 @@ describe('/domari-krafa with an ID', () => {
     )
 
     // Assert
-    expect(await screen.findByText('B - Einangrun.')).toBeInTheDocument()
-    expect(await screen.findByText('E - Fjölmiðlabann.')).toBeInTheDocument()
+    expect(await screen.findByText('B - Einangrun')).toBeInTheDocument()
+    expect(await screen.findByText('E - Fjölmiðlabann')).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
@@ -87,7 +83,7 @@ describe('/domari-krafa with an ID', () => {
     expect(await screen.findByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
   })
 
-  test('should not allow case files to be opened unless a judge has been set', async () => {
+  test('should not show the "Open file" button if a judge has not been set', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -105,11 +101,53 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Rannsóknargögn (5)' }),
+    // Assert
+    expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
+  })
+
+  test('should not show the "Open file" button if the currently logged in judge is not the judge that is assigned to the case', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_4' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
     )
 
     // Assert
     expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
+  })
+
+  test('should show the "Open file" button if the currently logged in judge is the same as is assigned to the case', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_5' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(await screen.findAllByRole('button', { name: 'Opna' })).toHaveLength(
+      2,
+    )
   })
 })

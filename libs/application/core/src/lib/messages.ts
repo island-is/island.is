@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  buttonEdit: {
+    id: 'application.system:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit button for review screen and so on',
+  },
   externalDataTitle: {
     id: 'application.system:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
@@ -93,13 +98,18 @@ export const coreMessages = defineMessages({
   },
   tagsInProgress: {
     id: 'application.system:tags.inProgress',
-    defaultMessage: 'Opin',
-    description: 'Open',
+    defaultMessage: 'Í ferli',
+    description: 'In progress status for an application',
   },
-  tagsInCompleted: {
+  tagsDone: {
     id: 'application.system:tags.completed',
-    defaultMessage: 'Afgreidd',
-    description: 'Completed',
+    defaultMessage: 'Lokið',
+    description: 'Done status for an application',
+  },
+  tagsRejected: {
+    id: 'application.system:tags.rejected',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected status for an application',
   },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',
@@ -128,5 +138,28 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Til að halda áfram umsóknarferli þarftu að skrá þig inn.',
     description:
       'To continue the application process, you will need to sign in.',
+  },
+  radioYes: {
+    id: 'application.system:radio.option.yes',
+    defaultMessage: 'Já',
+    description: 'Yes option value',
+  },
+  radioNo: {
+    id: 'application.system:radio.option.no',
+    defaultMessage: 'Nei',
+    description: 'No option value',
+  },
+})
+
+export const coreErrorMessages = defineMessages({
+  defaultError: {
+    id: 'application.system:core.default.error',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Generic invalid value error message',
+  },
+  errorDataProvider: {
+    id: 'application.system:core.error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+    description: 'Oops! Something went wrong when fetching your data',
   },
 })

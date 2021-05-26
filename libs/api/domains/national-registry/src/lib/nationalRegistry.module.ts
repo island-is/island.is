@@ -5,7 +5,7 @@ import { NationalRegistryService } from './nationalRegistry.service'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
-} from '@island.is/clients/national-registry'
+} from '@island.is/clients/national-registry-v1'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig

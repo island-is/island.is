@@ -15,22 +15,24 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-allowed-scope')
 @Controller('backend/client-allowed-scope')
 export class ClientAllowedScopeController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Gets all scopes for client to select from */
+  @Scopes(Scope.root, Scope.full)
   @Get()
   async findAvailabeScopes(): Promise<ApiScope[]> {
     return await this.clientsService.FindAvailabeScopes()
   }
 
   /** Adds new scope to client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientAllowedScope })
   async create(
@@ -40,6 +42,7 @@ export class ClientAllowedScopeController {
   }
 
   /** Removes a scope from client */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':clientId/:scopeName')
   @ApiCreatedResponse()
   async delete(

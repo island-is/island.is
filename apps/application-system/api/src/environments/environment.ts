@@ -17,6 +17,9 @@ export default {
       'localhost:7005',
     ],
   },
+  audit: {
+    defaultNamespace: '@island.is/applications',
+  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
@@ -28,6 +31,10 @@ export default {
     emailOptions: {
       useTestAccount: true,
     },
+    email: {
+      sender: 'Devland.is',
+      address: 'development@island.is',
+    },
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
@@ -37,6 +44,11 @@ export default {
       password: process.env.SYSLUMENN_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    smsOptions: {
+      url: 'https://smsapi.devnova.is',
+      username: 'IslandIs_User_Development',
+      password: process.env.NOVA_PASSWORD,
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -48,5 +60,8 @@ export default {
   signingOptions: {
     url: 'https://developers.dokobit.com',
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment

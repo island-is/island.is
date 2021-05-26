@@ -8,14 +8,14 @@ import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { UserProfileService } from './userProfile.service'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}
@@ -23,7 +23,7 @@ export class UserProfileResolver {
   getUserProfile(
     @CurrentUser() user: User,
   ): Promise<UserProfile | null | undefined> {
-    return this.userUserProfileService.getUser(user.nationalId)
+    return this.userUserProfileService.getUserProfile(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })
@@ -31,7 +31,7 @@ export class UserProfileResolver {
     @Args('input') input: CreateUserProfileInput,
     @CurrentUser() user: User,
   ): Promise<UserProfile | null> {
-    return this.userUserProfileService.createUser(input, user.nationalId)
+    return this.userUserProfileService.createUserProfile(input, user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })
@@ -39,7 +39,7 @@ export class UserProfileResolver {
     @Args('input') input: UpdateUserProfileInput,
     @CurrentUser() user: User,
   ): Promise<UserProfile | null> {
-    return this.userUserProfileService.updateUser(input, user.nationalId)
+    return this.userUserProfileService.updateUserProfile(input, user)
   }
 
   @Mutation(() => Response, { nullable: true })
@@ -47,17 +47,14 @@ export class UserProfileResolver {
     @Args('input') input: CreateSmsVerificationInput,
     @CurrentUser() user: User,
   ): Promise<Response> {
-    await this.userUserProfileService.createSmsVerification(
-      input,
-      user.nationalId,
-    )
+    await this.userUserProfileService.createSmsVerification(input, user)
     return Promise.resolve({ created: true })
   }
 
   @Mutation(() => Response, { nullable: true })
   async resendEmailVerification(@CurrentUser() user: User): Promise<Response> {
     const response = await this.userUserProfileService.resendEmailVerification(
-      user.nationalId,
+      user,
     )
     return Promise.resolve({ created: !!response })
   }
@@ -67,7 +64,7 @@ export class UserProfileResolver {
     @Args('input') input: ConfirmSmsVerificationInput,
     @CurrentUser() user: User,
   ): Promise<ConfirmResponse> {
-    return await this.userUserProfileService.confirmSms(input, user.nationalId)
+    return await this.userUserProfileService.confirmSms(input, user)
   }
 
   @Mutation(() => ConfirmResponse, { nullable: true })
@@ -75,9 +72,6 @@ export class UserProfileResolver {
     @Args('input') input: ConfirmEmailVerificationInput,
     @CurrentUser() user: User,
   ): Promise<ConfirmResponse | null> {
-    return await this.userUserProfileService.confirmEmail(
-      input,
-      user.nationalId,
-    )
+    return await this.userUserProfileService.confirmEmail(input, user)
   }
 }

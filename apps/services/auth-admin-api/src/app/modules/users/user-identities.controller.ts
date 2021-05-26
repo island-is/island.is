@@ -14,16 +14,17 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-identities')
 @Controller('backend/user-identities')
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
   /** Gets User Identity either by subject Id or National Id (kennitala) */
+  @Scopes(Scope.root, Scope.full)
   @Get(':id')
   @ApiOkResponse({ type: UserIdentity })
   async findByNationalIdOrSubjectId(
@@ -56,6 +57,7 @@ export class UserIdentitiesController {
     return [userIdentitiesBySubject]
   }
 
+  @Scopes(Scope.root, Scope.full)
   @Patch(':subjectId')
   @ApiCreatedResponse({ type: UserIdentity })
   async setActive(

@@ -10,8 +10,12 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
+  LOGIN_SERVICE = 'LoginService',
   PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
+  FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
+  PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
+  JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
 }
 
 export const ApplicationConfigurations = {
@@ -59,6 +63,10 @@ export const ApplicationConfigurations = {
     slug: 'listabokstafur',
     translation: 'ple.application',
   },
+  [ApplicationTypes.LOGIN_SERVICE]: {
+    slug: 'innskraningarthjonusta',
+    translation: 'ls.application',
+  },
   [ApplicationTypes.PARTY_APPLICATION]: {
     slug: 'frambod',
     translation: 'pa.application',
@@ -66,5 +74,17 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
+  },
+  [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
+    slug: 'fjarmognun-rikisverkefni',
+    translation: 'affgp.application',
+  },
+  [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
+    slug: 'greidsludreifing-skulda',
+    translation: 'pdpp.application',
+  },
+  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
+    slug: 'forsja-barns',
+    translation: 'jca.application',
   },
 }

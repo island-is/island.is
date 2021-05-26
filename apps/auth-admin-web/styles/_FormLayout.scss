@@ -21,14 +21,15 @@
 .api-resource-scope-form,
 .api-resource-user-claims,
 .client-basic,
-.admin-user-create-form,
+.api-scope-user-create-form,
 .idp-provider-create-form,
 .grant-type-create-form,
 .language-create-form,
 .translation-create-form,
 .user-claim-create-form,
 .translation-create-form,
-.translation-create-form-dropdown {
+.translation-create-form-dropdown,
+.api-scope-resource-form {
   position: relative;
 
   &__help {
@@ -175,6 +176,14 @@
     padding: 13px;
     font-size: 0.8rem;
     display: flex;
+    flex-wrap: wrap;
+
+    h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      flex: 0 0 100%;
+      color: $color-link;
+    }
 
     .selected-item-property {
       flex: 1;

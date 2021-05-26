@@ -75,4 +75,19 @@ export default {
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  icelandicNamesRegistry: {
+    backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
+  },
+  regulationsDomain: {
+    url: process.env.REGULATIONS_API_URL,
+  },
+  endorsementSystem: {
+    baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
+  },
+  nationalRegistryXRoad: {
+    url: process.env.XROAD_BASE_PATH,
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
+    apiPath: process.env.XROAD_TJODSKRA_API_PATH,
+    clientId: process.env.ROAD_CLIENT_ID,
+  },
 }

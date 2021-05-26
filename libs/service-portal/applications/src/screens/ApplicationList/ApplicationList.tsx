@@ -13,9 +13,14 @@ import {
   ActionCard,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
-import { Application, getSlugFromType } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  getSlugFromType,
+} from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
+import { dateFormat } from '@island.is/shared/constants'
 
 import { m } from '../../lib/messages'
 
@@ -36,9 +41,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { data: applications, loading, error } = useApplications()
-  const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
+  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   return (
     <>
@@ -69,8 +74,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
       )}
 
       <Stack space={2}>
-        {applications.map((application: Application) => {
-          const isComplete = application.progress === 1
+        {applications.map((application: Application, index: number) => {
+          const isCompleted = application.status === ApplicationStatus.COMPLETED
+          const isRejected = application.status === ApplicationStatus.REJECTED
           const slug = getSlugFromType(application.typeId)
 
           if (!slug) {
@@ -79,18 +85,24 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
           return (
             <ActionCard
-              key={application.id}
-              date={format(new Date(application.modified), dateFormat)}
+              key={`${application.id}-${index}`}
+              date={format(new Date(application.modified), formattedDate)}
               heading={application.name || application.typeId}
               tag={{
-                label: isComplete
+                label: isRejected
+                  ? formatMessage(m.cardStatusRejected)
+                  : isCompleted
                   ? formatMessage(m.cardStatusDone)
                   : formatMessage(m.cardStatusInProgress),
-                variant: isComplete ? 'mint' : 'blue',
+                variant: isRejected
+                  ? 'red'
+                  : isCompleted
+                  ? 'blueberry'
+                  : 'blue',
                 outlined: false,
               }}
               cta={{
-                label: isComplete
+                label: isCompleted
                   ? formatMessage(m.cardButtonComplete)
                   : formatMessage(m.cardButtonInProgress),
                 variant: 'ghost',
@@ -99,15 +111,11 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                 onClick: () =>
                   window.open(`${baseUrlForm}/${slug}/${application.id}`),
               }}
-              text={
-                isComplete
-                  ? formatMessage(m.cardStatusCopyDone)
-                  : formatMessage(m.cardStatusCopyInProgress)
-              }
+              text={application.stateDescription}
               progressMeter={{
-                active: !isComplete,
-                progress: application.progress ? application.progress : 0,
-                variant: isComplete ? 'mint' : 'blue',
+                active: true,
+                progress: application.progress,
+                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
               }}
             />
           )

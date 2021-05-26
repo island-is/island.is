@@ -34,13 +34,35 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.relatedArticles) {
               return undefined
             }
-            const { relatedArticles, ...prunedRelatedArticlesFields } = fields
+            const {
+              relatedArticles,
+              subArticles,
+              ...prunedRelatedArticlesFields
+            } = fields
             return {
               sys,
               fields: prunedRelatedArticlesFields,
             }
           })
           .filter((relatedArticle) => Boolean(relatedArticle))
+
+        const subArticles = (entry.fields.subArticles || [])
+          .map(({ sys, fields }) => {
+            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+            if (!fields?.parent || !fields?.title) {
+              return undefined
+            }
+            const { title, url, content } = fields
+            return {
+              sys,
+              fields: {
+                title,
+                slug: url,
+                content,
+              },
+            }
+          })
+          .filter((subArticle) => Boolean(subArticle))
 
         // relatedArticles can include nested articles that point back to this entry
         const processedEntry = {
@@ -50,10 +72,17 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             relatedArticles: (relatedArticles.length
               ? relatedArticles
               : undefined) as IArticleFields['relatedArticles'],
+            subArticles: (subArticles.length
+              ? subArticles
+              : undefined) as IArticleFields['subArticles'],
           },
         }
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
+        } else {
+          logger.warn('Circular reference found in article', {
+            id: entry.sys.id,
+          })
         }
       }
       return processedEntries

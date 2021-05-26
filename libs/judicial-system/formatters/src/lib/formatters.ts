@@ -5,7 +5,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
-  CaseTransition,
   CaseType,
 } from '@island.is/judicial-system/types'
 
@@ -267,9 +266,7 @@ export const formatRequestedCustodyRestrictions = (
     ? requestedCustodyRestrictions &&
       requestedCustodyRestrictions.reduce(
         (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(
-            restriction,
-          )}.`,
+          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
         '',
       )
     : ''

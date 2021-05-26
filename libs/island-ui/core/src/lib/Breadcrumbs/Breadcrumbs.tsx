@@ -13,6 +13,7 @@ export interface BreadCrumbItem {
   slug?: string[]
   typename?: string
   isTag?: boolean
+  isCurrentPage?: boolean
 }
 
 interface BreadcrumbsProps {
@@ -37,6 +38,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
       display={'inlineFlex'}
       alignItems={'center'}
       className="rs_skip"
+      component="nav"
     >
       {items.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
@@ -61,6 +63,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                   <a
                     href={item?.href}
                     tabIndex={item.isTag ? -1 : undefined}
+                    {...(item.isCurrentPage && { 'aria-current': 'page' })}
                     className={cn(
                       styles.breadcrumb[color],
                       styles.focusable[color],

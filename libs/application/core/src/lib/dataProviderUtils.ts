@@ -1,6 +1,10 @@
 import { Application } from '../types/Application'
 import { DataProviderResult } from '../types/DataProviderResult'
-import { BasicDataProvider } from '../types/BasicDataProvider'
+import {
+  BasicDataProvider,
+  CustomTemplateFindQuery,
+} from '../types/BasicDataProvider'
+import { FormatMessage } from '../types/Form'
 
 export interface FulfilledPromise<T> {
   status: 'fulfilled'
@@ -10,6 +14,8 @@ export interface FulfilledPromise<T> {
 function callProvider(
   provider: BasicDataProvider,
   application: Application,
+  customTemplateFindQuery: CustomTemplateFindQuery,
+  formatMessage: FormatMessage,
 ): Promise<DataProviderResult> {
   if (provider === null) {
     return Promise.resolve({
@@ -18,12 +24,22 @@ function callProvider(
       reason: 'unable to build provider',
     })
   }
-  return provider.provide(application).then(
+  return provider.provide(application, customTemplateFindQuery).then(
     (result) => {
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      return Promise.resolve(provider.onProvideError(error))
+      const reason =
+        typeof error.reason === 'object'
+          ? formatMessage(error.reason)
+          : error.reason
+
+      return Promise.resolve(
+        provider.onProvideError({
+          ...error,
+          reason,
+        }),
+      )
     },
   )
 }
@@ -31,10 +47,14 @@ function callProvider(
 export async function callDataProviders(
   dataProviders: BasicDataProvider[],
   application: Application,
+  customTemplateFindQuery: CustomTemplateFindQuery,
+  formatMessage: FormatMessage,
 ): Promise<DataProviderResult[]> {
   // TODO what about options to pass to each data provider?
   const promises = dataProviders.map((p) =>
-    Promise.resolve(callProvider(p, application)),
+    Promise.resolve(
+      callProvider(p, application, customTemplateFindQuery, formatMessage),
+    ),
   )
   return Promise.all(promises)
 }

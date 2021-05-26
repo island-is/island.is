@@ -2,13 +2,14 @@ import { uuid } from 'uuidv4'
 
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { NotFoundException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
 import { AwsS3Service } from './awsS3.service'
-import { File } from './models'
+import { CaseFile } from './models'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
 
@@ -44,26 +45,28 @@ describe('FileModule', () => {
         {
           provide: AwsS3Service,
           useClass: jest.fn(() => ({
-            createPresignedPost: jest.fn((key) => ({
-              url:
-                'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
-              fields: {
-                key,
-                bucket: 'island-is-dev-upload-judicial-system',
-                'X-Amz-Algorithm': 'Some Algorithm',
-                'X-Amz-Credential': 'Some Credentials',
-                'X-Amz-Date': 'Some Date',
-                'X-Amz-Security-Token': 'Some Token',
-                Policy: 'Some Policy',
-                'X-Amz-Signature': 'Some Signature',
-              },
-            })),
-            deleteObject: () => Promise.resolve({ success: true }),
-            getSignedUrl: () => ({}),
+            createPresignedPost: (key: string) =>
+              Promise.resolve({
+                url:
+                  'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+                fields: {
+                  key,
+                  bucket: 'island-is-dev-upload-judicial-system',
+                  'X-Amz-Algorithm': 'Some Algorithm',
+                  'X-Amz-Credential': 'Some Credentials',
+                  'X-Amz-Date': 'Some Date',
+                  'X-Amz-Security-Token': 'Some Token',
+                  Policy: 'Some Policy',
+                  'X-Amz-Signature': 'Some Signature',
+                },
+              }),
+            deleteObject: () => Promise.resolve(true),
+            getSignedUrl: () => Promise.resolve({}),
+            objectExists: () => Promise.resolve(true),
           })),
         },
         {
-          provide: getModelToken(File),
+          provide: getModelToken(CaseFile),
           useValue: fileModel,
         },
         FileService,
@@ -76,7 +79,7 @@ describe('FileModule', () => {
 
   describe('Given a case', () => {
     const caseId = uuid()
-    const user = {} as User
+    const user = { role: UserRole.PROSECUTOR } as User
     const fileName = 'test.txt'
 
     it('should create a presigned post', async () => {
@@ -111,13 +114,14 @@ describe('FileModule', () => {
       const timeStamp = new Date()
       const size = 99999
 
-      fileModel.create.mockImplementation((values: object) =>
-        Promise.resolve({
-          ...values,
-          id,
-          created: timeStamp,
-          modified: timeStamp,
-        }),
+      fileModel.create.mockImplementation(
+        (values: { key: string; size: number; caseId: string; name: string }) =>
+          Promise.resolve({
+            ...values,
+            id,
+            created: timeStamp,
+            modified: timeStamp,
+          }),
       )
 
       const presignedPost = await fileController.createCasePresignedPost(
@@ -211,6 +215,15 @@ describe('FileModule', () => {
 
         expect(mockGetSignedUrl).toHaveBeenCalledTimes(1)
         expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
+      })
+
+      it('should throw when getting a presigned url for a file that does not exist in AWS S3', async () => {
+        const mockObjectExists = jest.spyOn(awsS3Service, 'objectExists')
+        mockObjectExists.mockReturnValueOnce(Promise.resolve(false))
+
+        await expect(
+          fileController.getCaseFileSignedUrl(caseId, fileId, user),
+        ).rejects.toThrow(NotFoundException)
       })
     })
   })

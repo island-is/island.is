@@ -206,7 +206,7 @@ export const complaint = {
     complaintDocumentsTitle: {
       id: 'dpac.application:section.complaint.labels.complaintDocumentsTitle',
       defaultMessage: 'Fylgiskjöl',
-      description: '',
+      description: 'Complaint Documents Title',
     },
     complaintDocumentsIntroduction: {
       id:

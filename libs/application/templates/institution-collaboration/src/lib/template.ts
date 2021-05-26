@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
@@ -71,6 +72,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: 'Application Application',
+  readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -79,6 +81,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Umsókn um Umsokn',
           progress: 0.43,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -107,6 +110,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

@@ -65,8 +65,10 @@ const prosecutorUpdateRule = {
     'accusedGender',
     'defenderName',
     'defenderEmail',
+    'defenderPhoneNumber',
     'sendRequestToDefender',
     'court',
+    'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
     'requestedCustodyEndDate',
@@ -78,75 +80,55 @@ const prosecutorUpdateRule = {
     'caseFacts',
     'legalArguments',
     'comments',
+    'caseFilesComments',
     'prosecutorId',
   ],
 } as RolesRule
+
+const courtFields = [
+  'defenderName',
+  'defenderEmail',
+  'defenderPhoneNumber',
+  'courtCaseNumber',
+  'courtDate',
+  'courtRoom',
+  'courtStartDate',
+  'courtEndTime',
+  'courtAttendees',
+  'policeDemands',
+  'courtDocuments',
+  'accusedPleaDecision',
+  'accusedPleaAnnouncement',
+  'litigationPresentations',
+  'ruling',
+  'additionToConclusion',
+  'decision',
+  'custodyEndDate',
+  'custodyRestrictions',
+  'otherRestrictions',
+  'isolationTo',
+  'accusedAppealDecision',
+  'accusedAppealAnnouncement',
+  'prosecutorAppealDecision',
+  'prosecutorAppealAnnouncement',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
+  'judgeId',
+  'registrarId',
+]
 
 // Allows judges to update a specific set of fields
 const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
-  dtoFields: [
-    'defenderName',
-    'defenderEmail',
-    'setCourtCaseNumberManually',
-    'courtCaseNumber',
-    'courtDate',
-    'courtRoom',
-    'courtStartTime',
-    'courtEndTime',
-    'courtAttendees',
-    'policeDemands',
-    'courtDocuments',
-    'accusedPleaDecision',
-    'accusedPleaAnnouncement',
-    'litigationPresentations',
-    'ruling',
-    'additionToConclusion',
-    'decision',
-    'custodyEndDate',
-    'custodyRestrictions',
-    'otherRestrictions',
-    'isolationTo',
-    'accusedAppealDecision',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealDecision',
-    'prosecutorAppealAnnouncement',
-    'judgeId',
-    'registrarId',
-  ],
+  dtoFields: courtFields,
 } as RolesRule
 
 // Allows registrars to update a specific set of fields
 const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
-  dtoFields: [
-    'defenderName',
-    'defenderEmail',
-    'courtCaseNumber',
-    'courtDate',
-    'courtRoom',
-    'courtStartTime',
-    'courtEndTime',
-    'courtAttendees',
-    'policeDemands',
-    'courtDocuments',
-    'accusedPleaDecision',
-    'accusedPleaAnnouncement',
-    'litigationPresentations',
-    'ruling',
-    'decision',
-    'custodyEndDate',
-    'custodyRestrictions',
-    'otherRestrictions',
-    'accusedAppealDecision',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealDecision',
-    'prosecutorAppealAnnouncement',
-    'judgeId',
-    'registrarId',
-  ],
+  dtoFields: courtFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases
@@ -210,7 +192,7 @@ export class CaseController {
     }
   }
 
-  private async validateJudge(judgeId: string, existingCase: Case) {
+  private async validateJudge(judgeId: string) {
     const user = await this.userService.findById(judgeId)
 
     if (!user) {
@@ -222,7 +204,7 @@ export class CaseController {
     }
   }
 
-  private async validateRegistrar(registratId: string, existingCase: Case) {
+  private async validateRegistrar(registratId: string) {
     const user = await this.userService.findById(registratId)
 
     if (!user) {
@@ -270,10 +252,10 @@ export class CaseController {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
     }
     if (caseToUpdate.judgeId) {
-      await this.validateJudge(caseToUpdate.judgeId, existingCase)
+      await this.validateJudge(caseToUpdate.judgeId)
     }
     if (caseToUpdate.registrarId) {
-      await this.validateRegistrar(caseToUpdate.registrarId, existingCase)
+      await this.validateRegistrar(caseToUpdate.registrarId)
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -284,6 +266,15 @@ export class CaseController {
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase

@@ -1,5 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
   formatDate,
@@ -7,6 +14,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -23,16 +31,21 @@ import {
   RulingAccordionItem,
   CourtRecordAccordionItem,
   FormContentContainer,
+  CaseFileList,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import AppealSection from './Components/AppealSection/AppealSection'
 import { useRouter } from 'next/router'
-
-interface CaseData {
-  case?: Case
-}
+import {
+  parseNull,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import formatISO from 'date-fns/formatISO'
+import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -40,6 +53,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -164,6 +178,70 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleAccusedAppeal = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: formatISO(date),
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('accusedPostponedAppealDate', formatISO(date)),
+      )
+    }
+  }
+
+  const handleProsecutorAppeal = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('prosecutorPostponedAppealDate', formatISO(date)),
+      )
+    }
+  }
+
+  const handleAccusedAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+    }
+  }
+
+  const handleProsecutorAppealDismissal = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
+    }
+  }
+
+  const canCaseFilesBeOpened = () => {
+    if (
+      user?.role === UserRole.PROSECUTOR ||
+      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      Boolean(workingCase?.accusedPostponedAppealDate) ||
+      Boolean(workingCase?.prosecutorPostponedAppealDate)
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -247,7 +325,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     // Alternative travel ban restrictions
                     (workingCase.decision ===
                       CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                      (CaseType.TRAVEL_BAN &&
+                      (workingCase.type === CaseType.TRAVEL_BAN &&
                         workingCase.decision === CaseDecision.ACCEPTING)) &&
                       workingCase.custodyRestrictions
                         ?.filter((restriction) =>
@@ -273,7 +351,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            <Box marginBottom={5}>
+            <Box marginBottom={6}>
               <InfoCard
                 data={[
                   {
@@ -300,14 +378,56 @@ export const SignedVerdictOverview: React.FC = () => {
                 defender={{
                   name: workingCase.defenderName || '',
                   email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
                 }}
               />
             </Box>
+            {workingCase.isCaseAppealable &&
+              workingCase.rulingDate &&
+              workingCase.accusedGender &&
+              (user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR) && (
+                <Box marginBottom={7}>
+                  <AppealSection
+                    rulingDate={workingCase.rulingDate}
+                    accusedGender={workingCase.accusedGender}
+                    accusedAppealDecision={workingCase.accusedAppealDecision}
+                    prosecutorAppealDecision={
+                      workingCase.prosecutorAppealDecision
+                    }
+                    accusedPostponedAppealDate={
+                      workingCase.accusedPostponedAppealDate
+                    }
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    handleAccusedAppeal={handleAccusedAppeal}
+                    handleProsecutorAppeal={handleProsecutorAppeal}
+                    handleAccusedAppealDismissal={handleAccusedAppealDismissal}
+                    handleProsecutorAppealDismissal={
+                      handleProsecutorAppealDismissal
+                    }
+                  />
+                </Box>
+              )}
             <Box marginBottom={5}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
+                <AccordionItem
+                  id="id_4"
+                  label={`Rannsóknargögn (${
+                    workingCase.files ? workingCase.files.length : 0
+                  })`}
+                  labelVariant="h3"
+                >
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={canCaseFilesBeOpened()}
+                  />
+                </AccordionItem>
               </Accordion>
             </Box>
             <Box marginBottom={15}>
@@ -334,7 +454,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
                 workingCase.isCustodyEndDateInThePast ||
-                (workingCase.childCase && true)
+                Boolean(workingCase.childCase)
               }
               nextButtonText={`Framlengja ${
                 workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'

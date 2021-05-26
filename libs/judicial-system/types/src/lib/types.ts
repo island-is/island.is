@@ -1,6 +1,5 @@
 export enum Feature {
-  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
-  CASE_FILES = 'CASE_FILES',
+  NONE = 'NONE',
 }
 
 export enum UserRole {
@@ -76,6 +75,7 @@ export enum CaseTransition {
   DELETE = 'DELETE',
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum CaseCustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -86,6 +86,7 @@ export enum CaseCustodyProvisions {
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
   ISOLATION = 'ISOLATION',
@@ -134,8 +135,10 @@ export interface Case {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -149,12 +152,12 @@ export interface Case {
   investigationProgress?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutor?: User
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -174,13 +177,16 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string
+  prosecutorPostponedAppealDate?: string
+  isCaseAppealable?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: File[]
+  files?: CaseFile[]
 }
 
 export enum NotificationType {
@@ -209,8 +215,10 @@ export interface CreateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
 }
 
 export interface UpdateCase {
@@ -221,8 +229,10 @@ export interface UpdateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   court?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -232,12 +242,12 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutorId?: string
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -256,6 +266,8 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string | null
+  prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
 }
@@ -284,8 +296,10 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCustodyCourtCase {
+export interface CreateCourtCase {
+  type: CaseType
   policeCaseNumber: string
+  isExtension: boolean
 }
 
 export interface PresignedPost {
@@ -314,7 +328,7 @@ export interface SignedUrl {
   url: string
 }
 
-export interface File {
+export interface CaseFile {
   id: string
   created: string
   modified: string

@@ -44,7 +44,6 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
   const save = async (data: ApiScopeDTO) => {
     let response = null
-
     if (!isEditing) {
       response = await ResourcesService.createApiScope(data)
     } else {
@@ -235,6 +234,29 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
+                  <label
+                    htmlFor="isAccessControlled"
+                    className="api-scope-form__label"
+                  >
+                    {localization.fields['isAccessControlled'].label}
+                  </label>
+                  <input
+                    ref={register}
+                    id="isAccessControlled"
+                    name="isAccessControlled"
+                    type="checkbox"
+                    defaultChecked={props.apiScope.isAccessControlled}
+                    className="api-scope-form__checkbox"
+                    title={localization.fields['isAccessControlled'].helpText}
+                  />
+                  <HelpBox
+                    helpText={
+                      localization.fields['isAccessControlled'].helpText
+                    }
+                  />
+                </div>
+
+                <div className="api-scope-form__container__checkbox__field">
                   <label htmlFor="required" className="api-scope-form__label">
                     {localization.fields['required'].label}
                   </label>
@@ -253,7 +275,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <section className="api-scope__section">
-                  <h3>{localization.sectionTitle1}</h3>
+                  <h3>{localization.sections['delegations'].title}</h3>
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
@@ -392,8 +414,9 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       type="button"
                       className="api-scope-form__button__cancel"
                       onClick={props.handleCancel}
+                      title={localization.buttons['cancel'].helpText}
                     >
-                      {localization.cancelButton}
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="api-scope-form__button__container">
@@ -401,7 +424,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="api-scope-form__button__save"
                       disabled={isSubmitting || !available}
-                      value={localization.saveButton}
+                      title={localization.buttons['save'].helpText}
+                      value={localization.buttons['save'].text}
                     />
                   </div>
                 </div>

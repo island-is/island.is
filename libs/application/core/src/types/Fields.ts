@@ -1,9 +1,9 @@
 import { Colors } from '@island.is/island-ui/theme'
-import {
+import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -117,7 +117,7 @@ export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
+  backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
 }
 
@@ -172,6 +172,7 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
+  readonly refetchApplicationAfterSubmit?: boolean
 }
 
 export interface DividerField extends BaseField {

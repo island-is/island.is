@@ -1,0 +1,33 @@
+.environment {
+  padding: 0.5rem 2.6rem;
+  display: flex;
+  flex-direction: row;
+  border-bottom: solid $color-border 1px;
+  font-size: 0.7rem;
+  margin: 0 -40px;
+
+  &__title {
+    font-weight: $weight-semi-bold;
+  }
+
+  &__help__text {
+    font-weight: $weight-semi-bold;
+  }
+
+  div:not(:first-child) {
+    padding-left: 1rem;
+  }
+}
+
+.local {
+  background: $color-bg-content;
+}
+.development {
+  background-color: #1ae31a;
+}
+.staging {
+  background-color: yellow;
+}
+.production {
+  display: none;
+}

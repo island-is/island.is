@@ -97,4 +97,20 @@ export class Application extends Model<Application> {
   })
   @ApiProperty({ enum: ApplicationStatus })
   status!: ApplicationStatus
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  @ApiProperty()
+  isListed!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiPropertyOptional()
+  pruneAt?: Date
 }

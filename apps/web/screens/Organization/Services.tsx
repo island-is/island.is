@@ -108,7 +108,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const matches = services.filter(
     (x) =>
-      x.title.toLowerCase().includes(parameters.query) &&
+      x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
@@ -124,6 +124,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
+      stickySidebar={false}
       sidebarContent={
         <Box marginTop={[3, 3, 8]}>
           <Filter
@@ -187,10 +188,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
         },
         {
           title: organizationPage.title,
@@ -288,6 +285,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           organization: query.slug as string,
           lang: locale as ContentLanguage,
           sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
+          size: 500,
         },
       },
     }),

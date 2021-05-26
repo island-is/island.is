@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { DeleteFileResponse, PresignedPost, SignedUrl } from './models'
+import { PresignedPost, SignedUrl } from './models'
 
 @Injectable()
 export class AwsS3Service {
@@ -13,7 +13,7 @@ export class AwsS3Service {
     this.s3 = new S3({ region: environment.files.region })
   }
 
-  async createPresignedPost(key: string): Promise<PresignedPost> {
+  createPresignedPost(key: string): Promise<PresignedPost> {
     return new Promise((resolve, reject) => {
       this.s3.createPresignedPost(
         {
@@ -36,7 +36,7 @@ export class AwsS3Service {
     })
   }
 
-  async getSignedUrl(key: string): Promise<SignedUrl> {
+  getSignedUrl(key: string): Promise<SignedUrl> {
     return new Promise((resolve, reject) => {
       this.s3.getSignedUrl(
         'getObject',
@@ -56,21 +56,35 @@ export class AwsS3Service {
     })
   }
 
-  async deleteObject(key: string): Promise<DeleteFileResponse> {
-    return new Promise((resolve, reject) => {
-      this.s3.deleteObject(
-        {
-          Bucket: environment.files.bucket,
-          Key: key,
-        },
-        (err, data) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({ success: true })
-          }
+  deleteObject(key: string): Promise<boolean> {
+    return this.s3
+      .deleteObject({
+        Bucket: environment.files.bucket,
+        Key: key,
+      })
+      .promise()
+      .then(
+        () => true,
+        () => false,
+      )
+  }
+
+  objectExists(key: string): Promise<boolean> {
+    return this.s3
+      .headObject({
+        Bucket: environment.files.bucket,
+        Key: key,
+      })
+      .promise()
+      .then(
+        () => true,
+        () => {
+          // The error is either 404 Not Found or 403 Forbidden.
+          // Normally, we would check if the error is 404 Not Found.
+          // However, to avoid granting the service ListBucket permissions,
+          // we also allow 403 Forbidden.
+          return false
         },
       )
-    })
   }
 }

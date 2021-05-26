@@ -4,7 +4,6 @@ import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
-import { AuditModule } from '../audit'
 import { CourtResolver } from './court.resolver'
 import { CourtService } from './court.service'
 
@@ -21,8 +20,9 @@ import { CourtService } from './court.service'
       clientCert: environment.xRoad.clientCert,
       clientKey: environment.xRoad.clientKey,
       clientCa: environment.xRoad.clientCa,
+      username: environment.courtService.username,
+      password: environment.courtService.password,
     }),
-    AuditModule,
   ],
   providers: [CourtResolver, CourtService],
 })

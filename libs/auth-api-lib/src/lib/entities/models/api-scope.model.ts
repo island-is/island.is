@@ -7,9 +7,11 @@ import {
   UpdatedAt,
   HasMany,
   PrimaryKey,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
+import { ApiScopeGroup } from './api-scope-group.model'
 
 @Table({
   tableName: 'api_scope',
@@ -48,6 +50,14 @@ export class ApiScope extends Model<ApiScope> {
   })
   @ApiProperty()
   description!: string
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ForeignKey(() => ApiScopeGroup)
+  @ApiProperty()
+  groupId?: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -108,6 +118,16 @@ export class ApiScope extends Model<ApiScope> {
     example: true,
   })
   alsoForDelegatedUser!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  isAccessControlled?: boolean
 
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()

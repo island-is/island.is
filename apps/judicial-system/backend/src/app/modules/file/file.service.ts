@@ -1,25 +1,35 @@
 import { uuid } from 'uuidv4'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import { PresignedPost, File, DeleteFileResponse, SignedUrl } from './models'
+import {
+  PresignedPost,
+  CaseFile,
+  DeleteFileResponse,
+  SignedUrl,
+} from './models'
 
 @Injectable()
 export class FileService {
   constructor(
-    @InjectModel(File)
-    private readonly fileModel: typeof File,
+    @InjectModel(CaseFile)
+    private readonly fileModel: typeof CaseFile,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  findById(id: string): Promise<File> {
+  findById(id: string): Promise<CaseFile> {
     return this.fileModel.findByPk(id)
   }
 
@@ -34,7 +44,7 @@ export class FileService {
     )
   }
 
-  createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {
+  createCaseFile(caseId: string, createFile: CreateFileDto): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     const { key } = createFile
@@ -52,7 +62,7 @@ export class FileService {
     })
   }
 
-  getAllCaseFiles(caseId: string): Promise<File[]> {
+  getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
     this.logger.debug(`Getting all files for case ${caseId}`)
 
     return this.fileModel.findAll({
@@ -61,17 +71,28 @@ export class FileService {
     })
   }
 
-  getCaseFileSignedUrl(caseId: string, file: File): Promise<SignedUrl> {
+  async getCaseFileSignedUrl(
+    caseId: string,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
     this.logger.debug(
       `Getting a signed url for file ${file.id} of case ${caseId}`,
     )
+
+    const exists = await this.awsS3Service.objectExists(file.key)
+
+    if (!exists) {
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
+    }
 
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
   async deleteCaseFile(
     caseId: string,
-    file: File,
+    file: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${file.id} of case ${caseId}`)
 

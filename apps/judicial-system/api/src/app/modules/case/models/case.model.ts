@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
-import { File } from '../../file'
+import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
 
 @ObjectType()
@@ -55,10 +55,16 @@ export class Case implements TCase {
   readonly defenderEmail?: string
 
   @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Field({ nullable: true })
   sendRequestToDefender?: boolean
 
   @Field({ nullable: true })
   readonly court?: string
+
+  @Field({ nullable: true })
+  readonly leadInvestigator?: string
 
   @Field({ nullable: true })
   readonly arrestDate?: string
@@ -99,11 +105,11 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly comments?: string
 
+  @Field({ nullable: true })
+  readonly caseFilesComments?: string
+
   @Field(() => User, { nullable: true })
   readonly prosecutor?: User
-
-  @Field({ nullable: true })
-  readonly setCourtCaseNumberManually?: boolean
 
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
@@ -115,7 +121,7 @@ export class Case implements TCase {
   readonly courtRoom?: string
 
   @Field({ nullable: true })
-  readonly courtStartTime?: string
+  readonly courtStartDate?: string
 
   @Field({ nullable: true })
   readonly courtEndTime?: string
@@ -128,6 +134,9 @@ export class Case implements TCase {
 
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
+
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
 
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision
@@ -163,9 +172,6 @@ export class Case implements TCase {
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
-
-  @Field({ nullable: true })
   readonly accusedAppealAnnouncement?: string
 
   @Field(() => String, { nullable: true })
@@ -173,6 +179,15 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
+
+  @Field({ nullable: true })
+  readonly accusedPostponedAppealDate?: string
+
+  @Field({ nullable: true })
+  readonly prosecutorPostponedAppealDate?: string
+
+  @Field({ nullable: true })
+  isCaseAppealable?: boolean
 
   @Field({ nullable: true })
   readonly rulingDate?: string
@@ -192,6 +207,6 @@ export class Case implements TCase {
   @Field(() => [Notification], { nullable: true })
   readonly notifications?: Notification[]
 
-  @Field(() => [File], { nullable: true })
-  readonly files?: File[]
+  @Field(() => [CaseFile], { nullable: true })
+  readonly files?: CaseFile[]
 }

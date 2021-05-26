@@ -23,16 +23,17 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scope } from '../access/scope.constants'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('clients')
 @Controller('backend/clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Gets all clients and count of rows */
+  @Scopes(Scope.root, Scope.full)
   @Get()
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -74,6 +75,7 @@ export class ClientsController {
   }
 
   /** Gets client by id */
+  @Scopes(Scope.root, Scope.full)
   @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('id') id: string): Promise<Client> {
@@ -86,6 +88,7 @@ export class ClientsController {
   }
 
   /** Creates a new client */
+  @Scopes(Scope.root, Scope.full)
   @Post()
   @ApiCreatedResponse({ type: Client })
   async create(@Body() client: ClientDTO): Promise<Client> {
@@ -93,6 +96,7 @@ export class ClientsController {
   }
 
   /** Updates an existing client */
+  @Scopes(Scope.root, Scope.full)
   @Put(':id')
   @ApiCreatedResponse({ type: Client })
   async update(
@@ -107,6 +111,7 @@ export class ClientsController {
   }
 
   /** Soft deleting a client by Id */
+  @Scopes(Scope.root, Scope.full)
   @Delete(':id')
   @ApiCreatedResponse()
   async delete(@Param('id') id: string): Promise<number> {

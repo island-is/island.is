@@ -113,6 +113,13 @@ export class Case extends Model<Case> {
   defenderEmail: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderPhoneNumber: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
@@ -125,6 +132,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   court: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  leadInvestigator: string
 
   @Column({
     type: DataType.DATE,
@@ -205,6 +219,13 @@ export class Case extends Model<Case> {
   @ApiProperty()
   comments: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseFilesComments: string
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
@@ -216,13 +237,6 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'prosecutorId')
   @ApiProperty({ type: User })
   prosecutor: User
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  setCourtCaseNumberManually: boolean
 
   @Column({
     type: DataType.STRING,
@@ -250,7 +264,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtStartTime: Date
+  courtStartDate: Date
 
   @Column({
     type: DataType.DATE,
@@ -389,6 +403,20 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   rulingDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedPostponedAppealDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorPostponedAppealDate: Date
 
   @ForeignKey(() => User)
   @Column({

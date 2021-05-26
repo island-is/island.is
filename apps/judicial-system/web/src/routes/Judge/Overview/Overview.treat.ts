@@ -18,15 +18,9 @@ export const createCourtCaseContainer = style({
 export const createCourtCaseButton = style({
   display: 'flex',
   maxHeight: theme.spacing[8],
-  width: '144px',
   marginRight: theme.spacing[2],
 })
 
 export const createCourtCaseInput = style({
   flex: 1,
-})
-
-export const enterCaseNrManuallyButton = style({
-  alignSelf: 'flex-end',
-  marginTop: theme.spacing[2],
 })

@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
@@ -84,6 +84,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                         <Input
                           name="name"
                           label={labelName}
+                          placeholder={labelName}
                           required
                           errorMessage={errors.name?.message}
                           ref={register({
@@ -112,6 +113,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                     <Input
                       name="email"
                       label={labelEmail}
+                      placeholder={labelEmail}
                       required
                       errorMessage={errors.email?.message}
                       ref={register({
@@ -125,12 +127,14 @@ export const ContactUs: FC<ContactUsProps> = ({
                     <Input
                       name="subject"
                       label={labelSubject}
+                      placeholder={labelSubject}
                       errorMessage={errors.subject?.message}
                       ref={register({})}
                     />
                     <Input
                       name="message"
                       label={labelMessage}
+                      placeholder={labelMessage}
                       required
                       errorMessage={errors.message?.message}
                       textarea
@@ -141,21 +145,19 @@ export const ContactUs: FC<ContactUsProps> = ({
                     />
                   </Stack>
                 )}
-                <Box textAlign="right">
-                  <Stack space={3}>
-                    {state === 'success' ? (
-                      <Text color="blue400">{successMessage}</Text>
-                    ) : (
-                      <Button
-                        htmlType="submit"
-                        loading={state === 'submitting'}
-                        disabled={state === 'submitting'}
-                      >
-                        {submitButtonText}
-                      </Button>
-                    )}
-                  </Stack>
-                </Box>
+                {state === 'success' ? (
+                  <Text color="blue400">{successMessage}</Text>
+                ) : (
+                  <Box display="flex" width="full" justifyContent="flexEnd">
+                    <Button
+                      type="submit"
+                      loading={state === 'submitting'}
+                      disabled={state === 'submitting'}
+                    >
+                      {submitButtonText}
+                    </Button>
+                  </Box>
+                )}
               </Stack>
             </form>
           </GridColumn>

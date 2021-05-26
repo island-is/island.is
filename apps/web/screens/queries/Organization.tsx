@@ -64,28 +64,38 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        title
+        slug
         logo {
           url
+        }
+        footerItems {
+          title
+          content {
+            ...HtmlFields
+          }
+          link {
+            text
+            url
+          }
         }
       }
       slices {
         ...AllSlices
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      newsTag {
+        id
+        title
+        slug
       }
       featuredImage {
         url
         title
         width
         height
-      }
-      footerItems {
-        title
-        content {
-          ...HtmlFields
-        }
-        link {
-          text
-          url
-        }
       }
       sidebarCards {
         title
@@ -112,7 +122,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description {
-        ...HtmlFields
+        ...AllSlices
       }
       links {
         text

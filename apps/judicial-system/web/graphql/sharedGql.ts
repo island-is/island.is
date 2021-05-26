@@ -15,8 +15,10 @@ export const CaseQuery = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
       court
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -30,6 +32,7 @@ export const CaseQuery = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         id
         name
@@ -38,11 +41,10 @@ export const CaseQuery = gql`
           name
         }
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
@@ -62,6 +64,8 @@ export const CaseQuery = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       judge {
         id
@@ -92,6 +96,7 @@ export const CaseQuery = gql`
         size
         created
       }
+      isCaseAppealable
     }
   }
 `

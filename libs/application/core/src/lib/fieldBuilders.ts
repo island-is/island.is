@@ -4,7 +4,7 @@ import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/types'
 
 import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
@@ -157,11 +157,11 @@ export function buildRadioField(data: {
   title: FormText
   description?: FormText
   options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): RadioField {
   const {
     condition,
@@ -170,15 +170,14 @@ export function buildRadioField(data: {
     description,
     defaultValue,
     options,
-    emphasize = false,
-    largeButtons = false,
+    largeButtons = true,
     disabled = false,
     width = 'full',
+    backgroundColor,
   } = data
   return {
     children: undefined,
     defaultValue,
-    emphasize,
     largeButtons,
     disabled,
     width,
@@ -187,6 +186,7 @@ export function buildRadioField(data: {
     title,
     description,
     options,
+    backgroundColor,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -452,15 +452,26 @@ export function buildSubmitField(data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
+  refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField {
-  const { id, placement = 'footer', title, actions } = data
+  const {
+    id,
+    placement = 'footer',
+    title,
+    actions,
+    refetchApplicationAfterSubmit,
+  } = data
   return {
     children: undefined,
     id,
     title,
     actions,
     placement,
+    refetchApplicationAfterSubmit:
+      typeof refetchApplicationAfterSubmit !== 'undefined'
+        ? refetchApplicationAfterSubmit
+        : false,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }

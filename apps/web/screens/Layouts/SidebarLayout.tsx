@@ -17,6 +17,7 @@ interface SidebarLayoutProps {
   fullWidthContent?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  contentId?: string
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
@@ -26,6 +27,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   fullWidthContent = false,
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
+  contentId,
   children,
 }) => (
   <Box paddingTop={paddingTop}>
@@ -48,7 +50,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         >
           {sidebarContent}
         </Box>
-        <GridContainer id="main-content">
+        <GridContainer id={contentId || 'main-content'}>
           <GridRow>
             <GridColumn
               offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}

@@ -10,6 +10,11 @@ export default {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
   },
+  audit: {
+    defaultNamespace: '@island.is/applications',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'application-system-api',
+  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
@@ -23,6 +28,10 @@ export default {
         region: process.env.EMAIL_REGION,
       },
     },
+    email: {
+      sender: process.env.EMAIL_FROM_NAME,
+      address: process.env.EMAIL_FROM,
+    },
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
@@ -30,6 +39,11 @@ export default {
       url: process.env.SYSLUMENN_HOST,
       username: process.env.SYSLUMENN_USERNAME,
       password: process.env.SYSLUMENN_PASSWORD,
+    },
+    smsOptions: {
+      url: process.env.NOVA_URL,
+      username: process.env.NOVA_USERNAME,
+      password: process.env.NOVA_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
   },
@@ -43,5 +57,8 @@ export default {
   signingOptions: {
     url: process.env.DOKOBIT_URL,
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
+  contentful: {
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
 } as Environment

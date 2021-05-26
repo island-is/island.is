@@ -8,10 +8,12 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
 ) => {
   const {
     application,
-    options: { locale },
+    options: { email, locale },
   } = props
 
-  const applicantEmail = get(application.answers, 'applicant.email')
+  const applicantEmail =
+    get(application.answers, 'applicant.email') ||
+    get(application.externalData, 'userProfile.data.email')
 
   // TODO translate using locale
   const subject =
@@ -37,8 +39,8 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {

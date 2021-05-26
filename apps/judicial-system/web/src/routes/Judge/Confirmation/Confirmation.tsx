@@ -33,6 +33,7 @@ import {
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AppealDecisionRole,
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -46,13 +47,11 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -68,6 +67,7 @@ import {
 import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface SigningModalProps {
   workingCase: Case
@@ -235,7 +235,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -245,11 +245,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={
-        signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
-      }
+      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
-        router.push(Constants.FEEDBACK_FORM_ROUTE)
+        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
@@ -260,10 +259,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }}
     />
   )
-}
-
-interface CaseData {
-  case?: Case
 }
 
 export const Confirmation: React.FC = () => {
@@ -281,6 +276,7 @@ export const Confirmation: React.FC = () => {
   ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
+  const { updateCase, isUpdatingCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -288,25 +284,6 @@ export const Confirmation: React.FC = () => {
   const { isValidTime: isValidCourtEndTime } = useDateTime({
     time: getTimeFromDate(workingCase?.courtEndTime),
   })
-
-  const [updateCaseMutation, { loading: isUpdating }] = useMutation(
-    UpdateCaseMutation,
-  )
-
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -355,7 +332,7 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
-
+  console.log(workingCase?.courtEndTime)
   return (
     <PageLayout
       activeSection={
@@ -366,6 +343,7 @@ export const Confirmation: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -383,7 +361,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
@@ -569,7 +547,7 @@ export const Confirmation: React.FC = () => {
                       onChange={(evt) =>
                         validateAndSetTime(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -581,7 +559,7 @@ export const Confirmation: React.FC = () => {
                       onBlur={(evt) =>
                         validateAndSendTimeToServer(
                           'courtEndTime',
-                          new Date().toString(),
+                          workingCase.courtStartDate,
                           evt.target.value,
                           ['empty', 'time-format'],
                           workingCase,
@@ -612,7 +590,7 @@ export const Confirmation: React.FC = () => {
               <PdfButton
                 caseId={workingCase.id}
                 title="Opna PDF þingbók og úrskurð"
-                disabled={isUpdating}
+                disabled={isUpdatingCase}
                 pdfType="ruling"
               />
             </Box>
@@ -622,9 +600,9 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
+              nextIsDisabled={!isValidCourtEndTime?.isValid}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdating}
+              nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id

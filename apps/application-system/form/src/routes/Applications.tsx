@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
@@ -23,22 +23,25 @@ import {
   getTypeFromSlug,
 } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
-import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import {
+  useApplicationNamespaces,
+  useLocale,
+  useLocalizedQuery,
+} from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
-import useAuth from '../hooks/useAuth'
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { userInfo } = useAuth()
-  const { formatMessage } = useLocale()
-  const nationalRegistryId = userInfo?.profile?.nationalId
+  const { lang: locale, formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useQuery(
+  const { data, loading, error: applicationsError } = useLocalizedQuery(
     APPLICATION_APPLICATIONS,
     {
       variables: {
@@ -72,6 +75,10 @@ export const Applications: FC = () => {
       createApplication()
     }
   }, [type, data])
+
+  if (loading) {
+    return <ApplicationLoading />
+  }
 
   if (!type || applicationsError) {
     return (
@@ -108,26 +115,34 @@ export const Applications: FC = () => {
 
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
-                (application: Application) => {
-                  const isComplete =
+                (application: Application, index: number) => {
+                  const isCompleted =
                     application.status === ApplicationStatus.COMPLETED
+                  const isRejected =
+                    application.status === ApplicationStatus.REJECTED
 
                   return (
                     <ActionCard
-                      key={application.id}
+                      key={`${application.id}-${index}`}
                       date={format(
                         new Date(application.modified),
-                        dateFormat.is,
+                        formattedDate,
                       )}
                       tag={{
-                        label: isComplete
-                          ? formatMessage(coreMessages.tagsInCompleted)
+                        label: isRejected
+                          ? formatMessage(coreMessages.tagsRejected)
+                          : isCompleted
+                          ? formatMessage(coreMessages.tagsDone)
                           : formatMessage(coreMessages.tagsInProgress),
-                        variant: isComplete ? 'mint' : 'blue',
+                        variant: isRejected
+                          ? 'red'
+                          : isCompleted
+                          ? 'blueberry'
+                          : 'blue',
                         outlined: false,
                       }}
                       heading={application.name || application.typeId}
-                      text={application.applicant}
+                      text={application.stateDescription}
                       cta={{
                         label: formatMessage(coreMessages.buttonNext),
                         variant: 'ghost',
@@ -139,7 +154,11 @@ export const Applications: FC = () => {
                       progressMeter={{
                         active: true,
                         progress: application.progress,
-                        variant: isComplete ? 'mint' : 'blue',
+                        variant: isRejected
+                          ? 'red'
+                          : isCompleted
+                          ? 'mint'
+                          : 'blue',
                       }}
                     />
                   )
