@@ -98,7 +98,7 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
               event={event}
               offset={offset}
               index={i}
-              detailed={!!event.label}
+              detailed={!!event.body}
             />
             <BulletLine
               offset={offset}
@@ -243,7 +243,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.label}
+                    detailed={!!event.body}
                     mobile={true}
                   />
                 ))}
@@ -469,7 +469,7 @@ const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
           />
         </Box>
         <Stack space={2}>
-          <Text variant="h2" as="h3" color="purple400">
+          <Text variant="h2" as="h3">
             {event.title}
           </Text>
           {event.tags && (
