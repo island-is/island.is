@@ -31,9 +31,9 @@ export class NationalRegistryXRoadService {
           },
         },
       ).then((res) => res.json())
-    } catch (e) {
-      this.handleError(e)
-      return e
+    } catch (error) {
+      this.handleError(error)
+      throw error
     }
   }
 
