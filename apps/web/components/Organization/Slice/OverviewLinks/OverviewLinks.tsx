@@ -12,6 +12,7 @@ import {
 import { OverviewLinks } from '@island.is/web/graphql/schema'
 import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as style from './OverviewLinks.treat'
 
 interface SliceProps {
   slice: OverviewLinks
@@ -76,16 +77,17 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                               )}{' '}
                             </Box>
                           )}
-                          <Link
+                          <a
                             {...linkResolver(link.type as LinkType, [
                               link.slug,
                             ])}
-                            skipTab
+                            target="_blank"
+                            className={style.link}
                           >
                             <Button icon="arrowForward" variant="text">
                               {linkTitle}
                             </Button>
-                          </Link>
+                          </a>
                         </Box>
                       </Box>
                     </GridColumn>
