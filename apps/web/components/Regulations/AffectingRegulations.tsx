@@ -1,12 +1,5 @@
 import React, { Fragment, memo } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Bullet,
-  BulletList,
-  Link,
-} from '@island.is/island-ui/core'
+import { Box, Link } from '@island.is/island-ui/core'
 import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { uniqBy } from 'lodash'
@@ -48,43 +41,27 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
 
   return (
     <Box marginTop={3} marginBottom={3}>
-      {affectingRegulations.length === 1 ? (
-        affectingRegulations.map(({ name, title }, i) => (
+      {txt('affectingLinkPrefix')}{' '}
+      {affectingRegulations.map(({ name, title }, i) => {
+        const separator =
+          i === 0
+            ? undefined
+            : i === affectingRegulations.length - 1
+            ? ' og '
+            : ', '
+        return (
           <Fragment key={i}>
-            {txt('affectingLinkPrefix')}{' '}
+            {separator}
             <Link
-              key={i}
               href={linkToRegulation(name)}
               color="blue400"
               underline="small"
             >
-              {prettyName(name)} {title}
+              <span title={title}>{prettyName(name)}</span>
             </Link>
           </Fragment>
-        ))
-      ) : (
-        <Accordion>
-          <AccordionItem
-            id={domid}
-            label={txt('affectingListLegend')}
-            labelVariant="h5"
-          >
-            <BulletList>
-              {affectingRegulations.map(({ name, title }, i) => (
-                <Bullet key={i}>
-                  <Link
-                    href={linkToRegulation(name)}
-                    color="blue400"
-                    underline="small"
-                  >
-                    {prettyName(name)} {title}
-                  </Link>
-                </Bullet>
-              ))}
-            </BulletList>
-          </AccordionItem>
-        </Accordion>
-      )}
+        )
+      })}
     </Box>
   )
 })
