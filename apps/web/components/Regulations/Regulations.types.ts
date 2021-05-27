@@ -215,9 +215,9 @@ export type RegulationDiff = Omit<
 
   /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
   showingDiff: {
-    /** The date of the base version being compared against */
+    /** The date of the first change/diff being viewed */
     from: ISODate
-    /** The date of the version being viewed
+    /** The date of the last change/diff being viewed
      *
      * Generally the same as `timelineDate` defaulting to `lastAmendDate` */
     to: ISODate

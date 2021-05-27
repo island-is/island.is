@@ -2,7 +2,7 @@ import React, { Fragment, memo } from 'react'
 import { Box, Link } from '@island.is/island-ui/core'
 import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { uniqBy } from 'lodash'
+import uniqBy from 'lodash/uniqBy'
 import {
   interpolate,
   prettyName,

@@ -14,7 +14,8 @@ import {
   RegulationYears,
   Year,
 } from './regulations.types'
-import { pickBy, identity } from 'lodash'
+import pickBy from 'lodash/pickBy'
+import identity from 'lodash/identity'
 
 export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
