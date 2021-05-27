@@ -6,7 +6,11 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { m } from '../../lib/messages'
-import { Endorsement, EndorsementList } from '@island.is/api/schema'
+import {
+  Endorsement,
+  EndorsementList,
+  EndorsementListOpenTagsEnum,
+} from '../../types/schema'
 
 export type UserEndorsement = Pick<
   Endorsement,
@@ -15,7 +19,7 @@ export type UserEndorsement = Pick<
 export type RegionsEndorsementList = Pick<
   EndorsementList,
   'id' | 'title' | 'description'
-> & { tags: string }
+> & { tags: EndorsementListOpenTagsEnum[] }
 interface UserEndorsementsResponse {
   endorsementSystemUserEndorsements: UserEndorsement[]
 }
@@ -86,6 +90,25 @@ const UNENDORSE_LIST = gql`
   }
 `
 
+const endorsementListTagMap = {
+  [EndorsementListOpenTagsEnum.PartyLetter2021]: 'Listabókstafur',
+  [EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Norðausturkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationNordvesturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Norðvesturkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021]:
+    'Alþingiskosningar 2021 - Reykjavíkurkjördæmi Norður',
+  [EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021]:
+    'Alþingiskosningar 2021 - Reykjavíkurkjördæmi Suður',
+  [EndorsementListOpenTagsEnum.PartyApplicationSudurkjordaemi2021]:
+    'Alþingiskosningar 2021 - Suðurkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationSudvesturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Suðvesturkjördæmi',
+}
+
+const getEndorsementListTagNames = (tags: EndorsementListOpenTagsEnum[]) =>
+  tags.map((tag) => endorsementListTagMap[tag])
+
 const Endorsements = () => {
   const { formatMessage } = useLocale()
 
@@ -97,7 +120,9 @@ const Endorsements = () => {
     data: endorsementListsResponse,
     refetch: refetchRegionEndorsements,
   } = useQuery<EndorsementListResponse>(GET_REGION_ENDORSEMENTS, {
-    variables: { input: { tags: ['partyLetter2021'] } },
+    variables: {
+      input: { tags: [EndorsementListOpenTagsEnum.PartyLetter2021] },
+    },
   })
 
   const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
@@ -121,7 +146,6 @@ const Endorsements = () => {
   const endorsementLists = allEndorsementLists.filter(
     ({ id }) => !signedLists.includes(id),
   )
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -135,6 +159,10 @@ const Endorsements = () => {
           </Text>
           <Stack space={4}>
             {endorsements.map((endorsement) => {
+              console.log(
+                'endorsement.endorsementList?.tags',
+                endorsement.endorsementList?.tags,
+              )
               return (
                 <ActionCard
                   key={endorsement.id}
@@ -142,7 +170,9 @@ const Endorsements = () => {
                   eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
                   heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
-                    label: (endorsement.endorsementList?.tags ?? []).join(' '),
+                    label: getEndorsementListTagNames(
+                      endorsement.endorsementList?.tags ?? [],
+                    ).join(' '),
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
@@ -174,9 +204,9 @@ const Endorsements = () => {
           <ActionCard
             key={endorsementList.id}
             heading={endorsementList.title}
-            eyebrow={endorsementList.tags}
+            eyebrow={getEndorsementListTagNames(endorsementList.tags).join(' ')}
             tag={{
-              label: endorsementList.tags,
+              label: getEndorsementListTagNames(endorsementList.tags).join(' '),
               variant: 'blue',
               outlined: false,
             }}

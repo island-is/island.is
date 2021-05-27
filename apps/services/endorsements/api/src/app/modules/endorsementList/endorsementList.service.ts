@@ -11,7 +11,7 @@ interface createInput extends EndorsementListDto {
 }
 @Injectable()
 export class EndorsementListService {
-  constructor (
+  constructor(
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
@@ -20,7 +20,7 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTags (tags: string[]) {
+  async findListsByTags(tags: string[]) {
     this.logger.debug(`Finding endorsement lists by tag "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
     return this.endorsementListModel.findAll({
@@ -28,7 +28,7 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleList (listId: string) {
+  async findSingleList(listId: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: { id: listId },
@@ -41,7 +41,7 @@ export class EndorsementListService {
     return result
   }
 
-  async findAllEndorsementsByNationalId (nationalId: string) {
+  async findAllEndorsementsByNationalId(nationalId: string) {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
@@ -50,18 +50,18 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description'],
+          attributes: ['id', 'title', 'description', 'tags'],
         },
       ],
     })
   }
 
-  async close (endorsementList: EndorsementList): Promise<EndorsementList> {
+  async close(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.debug('Closing endorsement list', endorsementList.id)
     return await endorsementList.update({ closedDate: new Date() })
   }
 
-  async create (list: createInput) {
+  async create(list: createInput) {
     this.logger.debug('Creating endorsement list')
     return this.endorsementListModel.create({
       title: list.title,
