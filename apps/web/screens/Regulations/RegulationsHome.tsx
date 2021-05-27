@@ -7,7 +7,7 @@ import {
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState } from 'react'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
