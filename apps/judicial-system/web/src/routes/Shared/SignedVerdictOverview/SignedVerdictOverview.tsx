@@ -50,6 +50,7 @@ import {
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -58,6 +59,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const id = router.query.id
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
+  const { prosecutorsOffices } = useInstitution()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -467,7 +469,17 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Text>
               </Box>
               <BlueBox>
-                <Select name="sharedWithProsecutorsOfficeId" options={[]} />
+                <Select
+                  name="sharedWithProsecutorsOfficeId"
+                  label="Veldu embætti"
+                  placeholder="Velja embætti sem tekur við málinu"
+                  options={prosecutorsOffices
+                    .map((prosecutorsOffice) => ({
+                      label: prosecutorsOffice.name,
+                      value: prosecutorsOffice.id,
+                    }))
+                    .filter((t) => t.value !== user?.institution?.id)}
+                />
               </BlueBox>
             </Box>
           </FormContentContainer>
