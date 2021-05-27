@@ -90,6 +90,9 @@ const filterOrder: Record<RegulationSearchKeys, number> = {
   yearTo: 3,
   rn: 4,
   ch: 5,
+  iA: 6,
+  iR: 7,
+  page: 8,
   all: 6,
 }
 
