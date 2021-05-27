@@ -51,7 +51,7 @@ export const nameToSlug = (regulationName: RegName): RegQueryName =>
 
 // ---------------------------------------------------------------------------
 
-export type RegulationSearchKeys =
+export type RegulationSearchKey =
   | 'q'
   | 'rn'
   | 'year'
@@ -60,7 +60,7 @@ export type RegulationSearchKeys =
   | 'iA'
   | 'iR'
   | 'page'
-export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
+export type RegulationSearchFilters = Record<RegulationSearchKey, string>
 
 // ---------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ export const useRegulationLinkResolver = () => {
     //   return linkType === 'regulation'
     // },
 
-    linkToRegulationSearch: <Keys extends RegulationSearchKeys>(
+    linkToRegulationSearch: <Keys extends RegulationSearchKey>(
       filters: Record<Keys, string>,
     ) =>
       utils.linkResolver('regulationshome').href +

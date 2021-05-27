@@ -1,22 +1,12 @@
 import * as s from './RegulationStatus.treat'
 
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Hidden, Text } from '@island.is/island-ui/core'
-import cn from 'classnames'
 import { useDateUtils } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-
-// ---------------------------------------------------------------------------
-
-type BallProps = {
-  type?: 'green' | 'red'
-  children?: ReactNode
-}
-const Ball = ({ type, children }: BallProps) => (
-  <span className={cn(s.ball, type === 'red' && s.ballRed)}>{children}</span>
-)
+import { Ball } from './Ball'
 
 // ---------------------------------------------------------------------------
 
@@ -63,7 +53,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
               </>
             ) : viewingOriginal ? (
               <>
-                <Ball type="red" />
+                <Ball type="yellow" />
                 Upprunaleg útgáfa reglugerðar
                 {' – '}
                 <span className={s.metaDate}>
@@ -72,7 +62,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
               </>
             ) : regulation.timelineDate > today ? (
               <>
-                <Ball type="red" />
+                <Ball type="yellow" />
                 Væntanleg útgáfa reglugerðar
                 {' – '}
                 <span className={s.metaDate}>
@@ -81,7 +71,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
               </>
             ) : (
               <>
-                <Ball type="red" />
+                <Ball type="yellow" />
                 Úrelt útgáfa reglugerðar
                 {' – '}
                 {urlDate ? (
