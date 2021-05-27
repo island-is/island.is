@@ -58,7 +58,7 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly court?: string
+  readonly courtId?: string
 
   @IsOptional()
   @IsString()

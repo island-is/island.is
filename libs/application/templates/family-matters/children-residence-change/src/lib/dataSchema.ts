@@ -44,18 +44,10 @@ export const dataSchema = z.object({
     counterParty,
   }),
   parentB: parentContactInfo,
-  approveTerms: validateTerms(2, approveTerms),
-  approveTermsParentB: validateTerms(2, approveTerms),
-  approveChildSupportTerms: validateTerms(1, approveTerms),
-  approveChildSupportTermsParentB: validateTerms(
-    1,
-    error.validation.approveTerms,
-  ),
-  confirmResidenceChangeInfo: z
-    .array(z.string())
-    .refine((v) => v && v.length === 1, {
-      params: error.validation.approveChildrenResidenceChange,
-    }),
+  approveTerms: validateTerms(approveTerms),
+  approveTermsParentB: validateTerms(approveTerms),
+  approveChildSupportTerms: validateTerms(approveTerms),
+  approveChildSupportTermsParentB: validateTerms(approveTerms),
   selectDuration: z
     .object({
       type: z.enum([Duration.Permanent, Duration.Temporary]).refine((v) => v, {
@@ -67,6 +59,11 @@ export const dataSchema = z.object({
       params: error.validation.durationDate,
       path: ['date'],
     }),
+  confirmContract: z.object({
+    terms: validateTerms(approveTerms),
+    timestamp: z.string(),
+  }),
+  confirmContractParentB: validateTerms(approveTerms),
   acceptContract: z
     .enum([ApproveContract.Yes, ApproveContract.No])
     .refine((v) => v, {

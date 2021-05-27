@@ -13,11 +13,12 @@ import {
   StaticText,
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
+import has from 'lodash/has'
 
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
-import { NO } from '../constants'
+import { NO, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 
@@ -44,6 +45,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj.selfEmployed as { file: any[] }).file)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'selfEmployed.file')
+    }
+
     if (isSelfEmployed === NO && isEmpty(obj?.email)) {
       return buildError(errorMessages.employerEmail, 'email')
     }
@@ -67,10 +75,28 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PERIODS]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
     const newPeriodIndex = periods.length - 1
-    const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const period = periods[newPeriodIndex]
+    const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
     const dob = expectedDateOfBirth as string
+    const answeredPeriods = application.answers.periods as Period[]
+    const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
+
+    if (isEmpty(period)) {
+      let message = errorMessages.periodsStartDateRequired
+      let field = 'startDate'
+      if (
+        (!answeredPeriods &&
+          application.answers.firstPeriodStart &&
+          application.answers.firstPeriodStart !== 'specificDate') ||
+        (lastAnsweredPeriod?.startDate !== undefined &&
+          !lastAnsweredPeriod?.endDate)
+      ) {
+        field = 'endDate'
+        message = errorMessages.periodsEndDateRequired
+      }
+      return buildError(message, field)
+    }
 
     if (period?.startDate !== undefined) {
       const field = 'startDate'
@@ -112,6 +138,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ) {
         return buildError(errorMessages.periodsStartDateOverlaps, field)
       }
+    }
+
+    // The user already has already set one or more periods, and is now adding another.
+    // We check if the endDate of the new period is not undefined
+    if (
+      !period?.endDate &&
+      period?.startDate === lastAnsweredPeriod?.startDate &&
+      has(lastAnsweredPeriod, 'startDate') &&
+      !has(lastAnsweredPeriod, 'endDate')
+    ) {
+      const field = 'endDate'
+      return buildError(errorMessages.periodsEndDateRequired, field)
     }
 
     if (period?.endDate !== undefined) {

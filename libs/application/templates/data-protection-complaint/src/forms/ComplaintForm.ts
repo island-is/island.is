@@ -309,6 +309,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.name,
                   backgroundColor: 'blue',
                   disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.fullName,
                 }),
@@ -319,6 +320,7 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   backgroundColor: 'blue',
                   disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data
                       ?.nationalId,
@@ -328,6 +330,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.streetAddress,
@@ -337,6 +340,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.postalCode,
@@ -346,6 +350,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.city,
@@ -391,6 +396,7 @@ export const ComplaintForm: Form = buildForm({
                   id: 'organizationOrInstitution.name',
                   title: info.labels.organizationOrInstitutionName,
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.nationalId',
@@ -398,24 +404,28 @@ export const ComplaintForm: Form = buildForm({
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.email',

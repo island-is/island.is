@@ -8,7 +8,7 @@ interface Props {
 
 export const FieldDescription: FC<Props> = ({ description }) => {
   return (
-    <Text marginTop={2} marginBottom={1}>
+    <Text marginTop={1} marginBottom={1}>
       <Markdown>{description}</Markdown>
     </Text>
   )

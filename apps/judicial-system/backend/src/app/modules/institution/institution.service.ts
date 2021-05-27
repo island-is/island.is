@@ -19,6 +19,7 @@ export class InstitutionService {
 
     return this.institutionModel.findAll({
       order: ['name'],
+      where: { active: true },
     })
   }
 }

@@ -1,5 +1,7 @@
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import enGB from 'date-fns/locale/en-GB'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Address, Child, NationalRegistry, Person } from '../types'
 
@@ -65,10 +67,19 @@ export const childrenResidenceInfo = (
   }
 }
 
-export const formatDate = (date: string) => {
+export const formatDate = ({
+  date,
+  formatter = 'PPP',
+  localeKey = 'is',
+}: {
+  date: string
+  formatter?: string
+  localeKey?: string
+}) => {
   try {
+    const locale = localeKey === 'is' ? is : enGB
     const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
-    return format(parsedDate, 'dd.MM.yyyy')
+    return format(parsedDate, formatter, { locale })
   } catch {
     return date
   }

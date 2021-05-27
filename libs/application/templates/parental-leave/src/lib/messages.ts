@@ -158,7 +158,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-
     rightsSection: {
       id: 'pl.application:rights.section',
       defaultMessage: 'Réttindi til fæðingarorlofs',
@@ -650,6 +649,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
       description: 'Type a number from 0 to 100',
     },
+    allowanceUsage: {
+      id: 'pl.application:allowance.allowance.usage',
+      defaultMessage: 'Hlutfall af persónuafslættinum',
+      description: 'Review copy for the usage percentage',
+    },
   }),
 
   leavePlan: defineMessages({
@@ -845,6 +849,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
+    },
+    attachmentTitle: {
+      id: 'pl.application:selfEmployed.attachment.title',
+      defaultMessage: 'Reiknað endurgjald',
+      description: 'Title for the attachement required for self employed',
+    },
+    attachmentDescription: {
+      id: 'pl.application:selfEmployed.attachment.description',
+      defaultMessage:
+        'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
+      description: 'Description for the attachement required for self employed',
+    },
+    attachmentButton: {
+      id: 'pl.application:selfEmployed.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Button copy for the self employed attachement',
     },
   }),
 
@@ -1053,6 +1073,43 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
+    },
+    rightsTotal: {
+      id: 'pl.application:review.rights.total',
+      defaultMessage: 'Samtals: {months}',
+      description:
+        'Copy for the total of months for the parental leave on the review screen',
+    },
+    rightsPersonalMonths: {
+      id: 'pl.application:review.rights.personal.months',
+      defaultMessage: '{months} persónulegir mánuðir',
+      description: 'Copy for the number of personal months',
+    },
+    rightsAllowanceRequested: {
+      id: 'pl.application:review.rights.allowance.requested',
+      defaultMessage: '{requested} mánuður veittur af öðru foreldri',
+      description: 'Requested months from other parent',
+    },
+    rightsAllowanceGiven: {
+      id: 'pl.application:review.rights.allowance.given',
+      defaultMessage: '{given} mánuður gefinn hinu foreldrinu',
+      description: 'Given months to the other parent',
+    },
+    period: {
+      id: 'pl.application:review.period',
+      defaultMessage: 'Tímabilinu {index} - {ratio}%',
+      description: 'Period copy',
+    },
+    usePersonalAllowance: {
+      id: 'pl.application:review.use.personal.allowance',
+      defaultMessage: 'Nota allan persónuafsláttinn',
+      description: 'If parent decided to use all its personal discount',
+    },
+    useSpousePersonalAllowance: {
+      id: 'pl.application:review.use.spouse.personal.allowance',
+      defaultMessage: 'Fullnýta persónuafslátt maka',
+      description:
+        'If parent decided to use all the other parent personal discount',
     },
   }),
 
@@ -1321,6 +1378,11 @@ export const errorMessages = defineMessages({
       'Nýtt tímabil getur ekki byrjað innan annars tímabils sem þegar er vistað.',
     description: 'Copy when start date overlaps other periods',
   },
+  periodsStartDateRequired: {
+    id: 'pl.application:answerValidators.periodsStartDateRequired',
+    defaultMessage: 'Vinsamlegast veldu upphafsdagsetningu',
+    description: 'Start date can not be empty',
+  },
   periodsEndDate: {
     id: 'pl.application:answerValidators.periodsEndDate',
     defaultMessage:
@@ -1343,11 +1405,21 @@ export const errorMessages = defineMessages({
       'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
     description: 'Copy when end date overlaps other period',
   },
+  periodsEndDateRequired: {
+    id: 'pl.application:answerValidators.periodsEndDateRequired',
+    defaultMessage: 'Vinsamlegast veldu lokadagsetningu',
+    description: 'End date can not be empty',
+  },
   periodsRatio: {
     id: 'pl.application:answerValidators.periodsRatio',
     defaultMessage:
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
+  },
+  requiredAttachment: {
+    id: 'pl.application:errors.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
   },
 })
 

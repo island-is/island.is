@@ -7,7 +7,9 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
+  IntegratedCourts,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -26,6 +28,7 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   getRequestPdfAsBuffer,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -35,6 +38,12 @@ import { Notification, SendNotificationResponse } from './models'
 interface Recipient {
   address: string
   success: boolean
+}
+
+interface Attachment {
+  filename: string
+  content: string
+  encoding: string
 }
 
 @Injectable()
@@ -116,11 +125,7 @@ export class NotificationService {
     recipientEmail: string,
     subject: string,
     html: string,
-    attachments: {
-      filename: string
-      content: string
-      encoding: string
-    }[] = null,
+    attachments: Attachment[] = null,
   ): Promise<Recipient> {
     try {
       await this.emailService.sendEmail({
@@ -213,7 +218,7 @@ export class NotificationService {
     const smsText = formatCourtReadyForCourtSmsNotification(
       existingCase.type,
       existingCase.prosecutor?.name,
-      existingCase.court,
+      existingCase.court?.name,
     )
 
     return this.sendSms(smsText)
@@ -275,7 +280,10 @@ export class NotificationService {
 
     // TODO: Find a better place for this
     // No need to wait
-    if (existingCase.courtCaseNumber) {
+    if (
+      IntegratedCourts.includes(existingCase.courtId) &&
+      existingCase.courtCaseNumber
+    ) {
       this.uploadRequestPdfToCourt(existingCase)
     }
 
@@ -300,7 +308,7 @@ export class NotificationService {
     const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
     const html = formatProsecutorCourtDateEmailNotification(
       existingCase.type,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.courtRoom,
       existingCase.defenderName,
@@ -320,7 +328,7 @@ export class NotificationService {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
       existingCase.prosecutor?.institution?.name,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.accusedGender,
@@ -350,13 +358,13 @@ export class NotificationService {
 
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
     )
 
-    let attachments = null
+    let attachments: Attachment[]
 
     if (existingCase.sendRequestToDefender) {
       const pdf = await getRequestPdfAsString(existingCase)
@@ -431,7 +439,7 @@ export class NotificationService {
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.accusedGender,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.prosecutor?.name,
       existingCase.courtEndTime,
       existingCase.defenderName,
@@ -448,11 +456,26 @@ export class NotificationService {
       existingCase.additionToConclusion,
     )
 
+    let attachments: Attachment[]
+
+    if (existingCase.state === CaseState.ACCEPTED) {
+      const pdf = await getCustodyNoticePdfAsString(existingCase)
+      attachments = [
+        {
+          filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ]
+    }
+
+    // TODO: Consider adding the prosecutor as cc to the prison email
     await this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
       html,
+      attachments,
     )
 
     return this.sendEmail(
@@ -460,6 +483,7 @@ export class NotificationService {
       environment.notifications.prisonEmail,
       subject,
       html,
+      attachments,
     )
   }
 
@@ -502,7 +526,7 @@ export class NotificationService {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
       existingCase.prosecutor?.institution?.name,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.defenderName,
@@ -534,7 +558,7 @@ export class NotificationService {
       existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
     )
 
