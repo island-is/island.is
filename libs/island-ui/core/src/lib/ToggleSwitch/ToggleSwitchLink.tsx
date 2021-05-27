@@ -1,5 +1,6 @@
 import React, { MouseEvent, useEffect, useState } from 'react'
 import { Link } from '../Link/Link'
+import { LinkProps } from 'next/link'
 import {
   getContainerClass,
   getInteractiveProps,
@@ -10,30 +11,31 @@ import {
 export type ToggleSwitchLinkProps = Omit<
   ToggleSwitchBaseProps<HTMLAnchorElement>,
   'label' | 'onChange' | 'aria-controls' | 'role'
-> & {
-  href: string
+> &
+  LinkProps & {
+    href: string
 
-  /** The actual (accessible) label that indicates what clicking the link will accomplish
-   *
-   * Examples:
-   *  - "Show inline help"
-   *  - "Hide inline help"
-   */
-  linkText: string
+    /** The actual (accessible) label that indicates what clicking the link will accomplish
+     *
+     * Examples:
+     *  - "Show inline help"
+     *  - "Hide inline help"
+     */
+    linkText: string
 
-  /** The static visual-presentation label indicating the overall purpose of the toggler
-   *
-   * Example:
-   *  - "Inline help"
-   */
-  label?: ToggleSwitchBaseProps['label']
+    /** The static visual-presentation label indicating the overall purpose of the toggler
+     *
+     * Example:
+     *  - "Inline help"
+     */
+    label?: ToggleSwitchBaseProps['label']
 
-  /** Callback that triggers on user interaction.
-   *
-   * Calling `mouseEvent.preventDefault()` prevents the browser from following the link
-   */
-  onChange?: (newChecked: boolean, preventDefault: () => void) => void
-}
+    /** Callback that triggers on user interaction.
+     *
+     * Calling `mouseEvent.preventDefault()` prevents the browser from following the link
+     */
+    onChange?: (newChecked: boolean, preventDefault: () => void) => void
+  }
 
 export const ToggleSwitchLink = (props: ToggleSwitchLinkProps) => {
   const { checked, linkText } = props
@@ -59,6 +61,14 @@ export const ToggleSwitchLink = (props: ToggleSwitchLinkProps) => {
   return (
     <Link
       href={props.href}
+      as={props.as}
+      scroll={props.scroll}
+      replace={props.replace}
+      shallow={props.shallow}
+      passHref={props.passHref}
+      locale={props.locale}
+      prefetch={props.prefetch}
+      // END LinkProps
       aria-label={linkText}
       className={getContainerClass(props, localChecked)}
       // @ts-expect-error  (Link's onClick signature is incorrect)

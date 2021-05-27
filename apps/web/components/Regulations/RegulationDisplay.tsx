@@ -101,6 +101,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                     ? { d: timelineDate }
                     : undefined),
                 })}
+                scroll={false}
                 linkText={diffView ? txt('hideDiff') : txt('showDiff')}
                 label={txt('showDiff')}
               />
