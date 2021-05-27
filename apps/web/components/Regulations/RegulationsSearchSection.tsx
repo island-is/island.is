@@ -182,12 +182,12 @@ export const RegulationsSearchSection = (
     [props.lawChapters],
   )
 
-  const doSearch = (key: RegulationSearchKey, value: string) => {
+  const doSearch = (key: RegulationSearchKey, value?: string) => {
     router.replace({
       pathname: router.pathname,
       query: cleanQuery({
         ...filters,
-        [key]: value || undefined,
+        [key]: value,
       }),
     })
   }
@@ -312,7 +312,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(ministryOptions, filters.rn)}
                         options={ministryOptions}
                         onChange={(option) =>
-                          doSearch('rn', getRSValue(option) || '')
+                          doSearch('rn', getRSValue(option))
                         }
                         size="sm"
                       />
@@ -333,7 +333,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(lawChapterOptions, filters.ch)}
                         options={lawChapterOptions}
                         onChange={(option) =>
-                          doSearch('ch', getRSValue(option) || '')
+                          doSearch('ch', getRSValue(option))
                         }
                         size="sm"
                       />
@@ -354,7 +354,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(yearOptions, filters.year)}
                         options={yearOptions}
                         onChange={(option) =>
-                          doSearch('year', getRSValue(option) || '')
+                          doSearch('year', getRSValue(option))
                         }
                         size="sm"
                       />
