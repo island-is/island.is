@@ -1,10 +1,54 @@
 import { style, globalStyle } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-const { color, typography, border } = theme
+import { theme, spacing } from '@island.is/island-ui/theme'
+const { color, typography, border, shadows } = theme
+
+export const scrolled = style({})
+
+export const breadCrumbs = style({
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
+})
+
+globalStyle(`${scrolled} ${breadCrumbs} nav > div:not(:last-child)`, {
+  position: 'absolute',
+  zIndex: -1,
+  opacity: 0.000001,
+})
+
+export const statusHeader = style({
+  position: 'sticky',
+  top: 0,
+  marginTop: -spacing[3] - 4,
+  paddingTop: spacing[3] + 4,
+  paddingBottom: spacing[2],
+  backgroundColor: color.white,
+
+  selectors: {
+    [`${scrolled} &`]: {
+      transition: 'all 600ms 50ms ease-in',
+      marginLeft: -spacing[2],
+      marginRight: -spacing[2],
+      paddingLeft: spacing[2],
+      paddingRight: spacing[2],
+      borderBottom: '1px solid ' + color.dark200,
+      boxShadow: '0 20px 20px -20px  rgba(28, 28, 28, .15)',
+    },
+  },
+})
+
+export const diffInfo = style({
+  marginTop: spacing[1],
+  fontSize: '.75em',
+  // color: color.dark300,
+  opacity: 0.67,
+})
 
 export const diffToggler = style({
   float: 'right',
   color: color.blue400,
+  marginBottom: 0,
+
   ':hover': {
     textDecoration: 'underline',
   },

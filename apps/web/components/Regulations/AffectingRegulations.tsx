@@ -1,5 +1,7 @@
+import * as s from './RegulationDisplay.treat'
+
 import React, { Fragment, memo } from 'react'
-import { Box, Link } from '@island.is/island-ui/core'
+import { Link } from '@island.is/island-ui/core'
 import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import uniqBy from 'lodash/uniqBy'
@@ -52,7 +54,7 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
         })
 
   return (
-    <Box marginTop={3} marginBottom={3}>
+    <div className={s.diffInfo}>
       {interpolate(txt('affectingLinkPrefix'), { dates })}{' '}
       {affectingRegulations.map(({ name, title }, i) => {
         const separator =
@@ -74,6 +76,6 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
           </Fragment>
         )
       })}
-    </Box>
+    </div>
   )
 })

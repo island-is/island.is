@@ -88,29 +88,30 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
       texts={props.texts}
       main={
         <>
-          {isDiffable && (
-            <ToggleSwitchLink
-              className={s.diffToggler}
-              checked={diffView}
-              href={linkToRegulation(regulation.name, {
-                diff: !diffView,
-                ...(props.urlDate
-                  ? { on: props.urlDate }
-                  : timelineDate
-                  ? { d: timelineDate }
-                  : undefined),
-              })}
-              linkText={diffView ? txt('hideDiff') : txt('showDiff')}
-              label={txt('showDiff')}
+          <div className={s.statusHeader}>
+            {isDiffable && (
+              <ToggleSwitchLink
+                className={s.diffToggler}
+                checked={diffView}
+                href={linkToRegulation(regulation.name, {
+                  diff: !diffView,
+                  ...(props.urlDate
+                    ? { on: props.urlDate }
+                    : timelineDate
+                    ? { d: timelineDate }
+                    : undefined),
+                })}
+                linkText={diffView ? txt('hideDiff') : txt('showDiff')}
+                label={txt('showDiff')}
+              />
+            )}
+            <RegulationStatus
+              regulation={regulation}
+              urlDate={props.urlDate}
+              texts={texts}
             />
-          )}
-
-          <RegulationStatus
-            regulation={regulation}
-            urlDate={props.urlDate}
-            texts={texts}
-          />
-          <AffectingRegulations regulation={regulation} texts={texts} />
+            <AffectingRegulations regulation={regulation} texts={texts} />
+          </div>
           <MinistryTransfer regulation={regulation} texts={texts} />
 
           <div className={waterMarkClass}>
