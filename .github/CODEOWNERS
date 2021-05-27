@@ -147,4 +147,4 @@
 
 /libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
 /libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license              @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
