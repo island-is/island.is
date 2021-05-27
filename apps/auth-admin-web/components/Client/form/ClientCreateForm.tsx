@@ -37,7 +37,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
   const [client, setClient] = useState<ClientDTO>(props.client)
-  const [requireConsent, setRequireConsent] = useState(false)
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
@@ -81,12 +80,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setIsEditing(true)
       setAvailable(true)
       setClientTypeSelected(true)
-      setClientType(props.client.clientType)
-      if (props.client.requireConsent) {
-        setRequireConsent(true)
-      } else {
-        setRequireConsent(false)
-      }
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
@@ -360,7 +353,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientId"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateIdentifier,
+                        validate: ValidationUtils.validateScope,
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
@@ -555,7 +548,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.requireConsent"
                       ref={register}
                       title={localization.fields['requireConsent'].helpText}
-                      onChange={(e) => setRequireConsent(e.target.checked)}
                     />
                     <HelpBox
                       helpText={localization.fields['requireConsent'].helpText}

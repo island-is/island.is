@@ -1,4 +1,4 @@
-import { NationalRegistryApi } from '@island.is/clients/national-registry'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { Injectable } from '@nestjs/common'
 import { MetadataProvider } from '../endorsementMetadata.service'
 

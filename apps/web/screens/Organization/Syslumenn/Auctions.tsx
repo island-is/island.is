@@ -244,12 +244,10 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
           </Box>
         )}
         {data?.getAuctions.map((auction) => {
-          const currentDate = new Date()
           const auctionDate = new Date(auction.date)
           const updatedAt = new Date(auction.updatedAt)
 
-          return auctionDate <= currentDate &&
-            month === months[0].value ? null : (
+          return (
             <FocusableBox
               href={linkResolver('auction', [auction.id]).href}
               borderWidth="standard"

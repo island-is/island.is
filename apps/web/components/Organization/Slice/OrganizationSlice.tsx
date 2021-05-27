@@ -57,6 +57,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const OverviewLinksSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -64,10 +68,10 @@ interface OrganizationSliceProps {
   organizationPageSlug?: string
 }
 
-const fullWidthSlices = ['TimelineSlice']
+const fullWidthSlices = ['TimelineSlice', 'LogoListSlice']
 const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace, organizationPageSlug) => {
+const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -93,11 +97,14 @@ const renderSlice = (slice, namespace, organizationPageSlug) => {
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
       return <StorySlice slice={slice} />
+    case 'OverviewLinks':
+      return <OverviewLinksSlice slice={slice} />
     case 'LatestNewsSlice':
       return (
         <LatestNewsSlice
           slice={slice}
           organizationPageSlug={organizationPageSlug}
+          fullWidth={fullWidth}
         />
       )
     default:
@@ -127,11 +134,11 @@ export const OrganizationSlice = ({
               : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, organizationPageSlug)}
+          {renderSlice(slice, namespace, organizationPageSlug, fullWidth)}
         </GridColumn>
       </GridRow>
     </GridContainer>
   ) : (
-    renderSlice(slice, namespace, organizationPageSlug)
+    renderSlice(slice, namespace, organizationPageSlug, fullWidth)
   )
 }

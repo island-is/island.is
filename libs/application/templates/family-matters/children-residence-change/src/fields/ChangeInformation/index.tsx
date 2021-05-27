@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CheckboxController } from '@island.is/shared/form-fields'
 import {
   formatAddress,
   childrenResidenceInfo,
@@ -10,12 +9,7 @@ import { DescriptionText } from '@island.is/application/templates/family-matters
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 
-const ChangeInformation = ({
-  field,
-  application,
-  error,
-}: CRCFieldBaseProps) => {
-  const { id, disabled } = field
+const ChangeInformation = ({ application }: CRCFieldBaseProps) => {
   const { externalData, answers } = application
   const { formatMessage } = useIntl()
   const applicant = externalData.nationalRegistry.data
@@ -50,20 +44,6 @@ const ChangeInformation = ({
           {formatAddress(childResidenceInfo.future.address)}
         </Text>
       </Box>
-      <CheckboxController
-        id={id}
-        disabled={disabled}
-        name={`${id}`}
-        error={error}
-        large={true}
-        defaultValue={[]}
-        options={[
-          {
-            value: 'yes',
-            label: formatMessage(newResidence.checkbox.label),
-          },
-        ]}
-      />
     </>
   )
 }

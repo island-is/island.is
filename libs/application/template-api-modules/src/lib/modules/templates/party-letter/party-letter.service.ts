@@ -26,7 +26,7 @@ export class PartyLetterService {
           title: "${application.answers.partyName}",
           description: "${application.answers.partyLetter}",
           endorsementMeta: [fullName, address, signedTags],
-          tags: [partyLetterNordausturkjordaemi2021],
+          tags: [partyLetter2021],
           validationRules: [],
         }) {
           id

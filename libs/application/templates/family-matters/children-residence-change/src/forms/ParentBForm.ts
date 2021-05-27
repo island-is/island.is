@@ -79,11 +79,11 @@ export const ParentBForm: Form = buildForm({
       title: m.section.overview,
       children: [
         buildMultiField({
-          id: 'residenceChangeOverview',
+          id: 'confirmContractParentB',
           title: m.contract.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'residenceChangeReview',
+              id: 'confirmContractParentB',
               title: m.contract.general.pageTitle,
               component: 'Overview',
             }),
@@ -94,7 +94,7 @@ export const ParentBForm: Form = buildForm({
                 {
                   event: DefaultEvents.SUBMIT,
                   name: m.application.signature,
-                  type: 'primary',
+                  type: 'sign',
                 },
               ],
             }),
@@ -135,7 +135,7 @@ export const ParentBForm: Form = buildForm({
                 {
                   event: DefaultEvents.REJECT,
                   name: m.rejectContract.general.rejectButton,
-                  type: 'primary',
+                  type: 'reject',
                 },
               ],
             }),

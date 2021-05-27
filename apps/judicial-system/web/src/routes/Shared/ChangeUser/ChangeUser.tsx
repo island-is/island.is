@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Institution, User } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  InstitutionsQuery,
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 
@@ -18,10 +18,6 @@ interface UserData {
 
 interface SaveData {
   user: User
-}
-
-interface InstitutionData {
-  institutions: Institution[]
 }
 
 export const ChangeUser: React.FC = () => {
@@ -38,14 +34,13 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    data: institutionData,
+    courts,
+    prosecutorsOffices,
     loading: institutionLoading,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+    loaded: institutionLoaded,
+  } = useInstitution()
 
-  const [updateCaseMutation, { loading: saveLoading }] = useMutation<SaveData>(
+  const [updateUserMutation, { loading: saveLoading }] = useMutation<SaveData>(
     UpdateUserMutation,
   )
 
@@ -55,7 +50,7 @@ export const ChangeUser: React.FC = () => {
 
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {
-      await updateCaseMutation({
+      await updateUserMutation({
         variables: {
           input: {
             id: user.id,
@@ -78,12 +73,13 @@ export const ChangeUser: React.FC = () => {
     <PageLayout
       showSidepanel={false}
       isLoading={userLoading || institutionLoading}
-      notFound={!userData?.user || !institutionData?.institutions}
+      notFound={!userData?.user || !institutionLoaded}
     >
-      {userData?.user && institutionData?.institutions && (
+      {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}
-          institutions={institutionData?.institutions}
+          courts={courts}
+          prosecutorsOffices={prosecutorsOffices}
           onSave={saveUser}
           loading={saveLoading}
         />
