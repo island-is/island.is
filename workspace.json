@@ -2820,7 +2820,6 @@
         }
       }
     },
-<<<<<<< HEAD
     "clients-payment": {
       "root": "libs/clients/payment",
       "sourceRoot": "libs/clients/payment/src",
@@ -2836,7 +2835,18 @@
               "libs/clients/payment/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
-=======
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/payment"]
+        }
+      }
+    },
     "clients-national-registry-v2": {
       "root": "libs/clients/national-registry/v2",
       "sourceRoot": "libs/clients/national-registry/v2/src",
@@ -2846,18 +2856,10 @@
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["libs/clients/national-registry/v2/**/*.ts"]
->>>>>>> origin/main
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-<<<<<<< HEAD
-          "options": {
-            "jestConfig": "libs/clients/payment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/payment"]
-=======
           "outputs": ["coverage/libs/clients/national-registry/v2"],
           "options": {
             "jestConfig": "libs/clients/national-registry/v2/jest.config.js",
@@ -2869,7 +2871,6 @@
           "options": {
             "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
->>>>>>> origin/main
         }
       }
     },
