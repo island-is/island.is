@@ -2,11 +2,10 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import {
-  CompanyRegistryMember,
-  PaymentCompaniesResponse,
   PaymentService,
   PAYMENT_OPTIONS,
 } from './payment'
+import { Catalog, Item, Charge, ChargeResponse } from './payment.type'
 import { Base64 } from 'js-base64'
 
 // MOCK START
@@ -16,36 +15,48 @@ enum expectedResult {
   EMPTY = 'empty',
   SERVER_ERROR = 'serverError',
 }
-interface RSKRestResponse {
+interface CatalogRestResponse {
   status: 200 | 404 | 500
-  body?: PaymentCompaniesResponse
+  body?: Catalog
 }
 
 // we use ssn param to define success or error case here
-const createPaymentCompaniesResponse = (
+const createCatalogResponse = (
   condition: expectedResult,
-): RSKRestResponse => {
+): CatalogRestResponse => {
   switch (condition) {
     case expectedResult.SUCCESS: {
       return {
         status: 200,
         body: {
-          MemberCompanies: [
+          items: [
             {
-              ErProkuruhafi: '1',
-              ErStjorn: '1',
-              Kennitala: '0000000000',
-              Nafn: 'Test Testson',
-              Rekstarform: 'Kassi',
-              StadaAdila: 'Standandi',
+              performingOrgID: '6509142520',
+              chargeType: 'AY1',
+              chargeItemCode: 'AY101',
+              chargeItemName: 'Sakarvottorð',
+              priceAmount: 2500.0
             },
             {
-              ErProkuruhafi: '0',
-              ErStjorn: '1',
-              Kennitala: '0000000000',
-              Nafn: 'Test Testson',
-              Rekstarform: 'Kassi',
-              StadaAdila: 'Standandi',
+              performingOrgID: '6509142520',
+              chargeType: 'AY1',
+              chargeItemCode: 'AY120',
+              chargeItemName: 'Heimagisting',
+              priceAmount: 8500.0
+            },
+            {
+              performingOrgID: '5301694059',
+              chargeType: 'FO1',
+              chargeItemCode: 'FO141',
+              chargeItemName: 'Ferðaskrifstofuleyfi',
+              priceAmount: 30000.0
+            },
+            {
+              performingOrgID: '6702694779',
+              chargeType: 'L31',
+              chargeItemCode: 'L3101',
+              chargeItemName: 'Staðfesting áritana',
+              priceAmount: 2500.0
             },
           ],
         },
@@ -54,7 +65,9 @@ const createPaymentCompaniesResponse = (
     case expectedResult.EMPTY: {
       return {
         status: 200,
-        body: {},
+        body: {
+          items: []
+        },
       }
     }
     case expectedResult.SERVER_ERROR: {
@@ -77,8 +90,8 @@ const hasAuth = (authHeader: string) => {
   return username === expectedResult.SUCCESS
 }
 
-const rskDomain = 'http://testDomain.is'
-const rskUrl = (path: string) => new URL(path, rskDomain).toString()
+const domain = 'https://tbrws-s.hysing.is'
+const paymentUrl = (path: string) => new URL(path, domain).toString()
 
 const handlers = [
   // serve as an auth middleware
@@ -88,10 +101,10 @@ const handlers = [
     }
   }),
   rest.get(
-    rskUrl('/companyregistry/members/:condition/companies'),
+    paymentUrl('/catalog'),
     (req, res, ctx) => {
       const { params } = req
-      const response = createPaymentCompaniesResponse(params.condition)
+      const response = createCatalogResponse(params.condition)
       return res(ctx.status(response.status), ctx.json(response?.body ?? ''))
     },
   ),
@@ -109,7 +122,7 @@ const getNestModule = async (condition: expectedResult) => {
         useValue: {
           username: condition === 'empty' ? '' : condition, // this condition defines success or failure
           password: condition === 'empty' ? '' : 'pass123',
-          url: rskDomain,
+          url: domain,
         },
       },
     ],
@@ -118,51 +131,40 @@ const getNestModule = async (condition: expectedResult) => {
   return moduleRef.get<PaymentService>(PaymentService)
 }
 
-describe('getCompaniesByNationalId', () => {
+describe('getCatalog', () => {
   let paymentService: PaymentService
 
   beforeEach(async () => {
     paymentService = await getNestModule(expectedResult.SUCCESS)
   })
 
-  it('should return success in teh correct format', async () => {
-    const successResults: CompanyRegistryMember[] = [
+  it('should return success in the correct format', async () => {
+    const successResults: Item[] = [
       {
-        hasProcuration: true,
-        isPartOfBoardOfDirectors: true,
-        nationalId: '0000000000',
-        name: 'Test Testson',
-        operationalForm: 'Kassi',
-        companyStatus: 'Standandi',
+        performingOrgID: '6509142520',
+        chargeType: 'AY1',
+        chargeItemCode: 'AY101',
+        chargeItemName: 'Sakarvottorð',
+        priceAmount: 2500.0
       },
       {
-        hasProcuration: false,
-        isPartOfBoardOfDirectors: true,
-        nationalId: '0000000000',
-        name: 'Test Testson',
-        operationalForm: 'Kassi',
-        companyStatus: 'Standandi',
+        performingOrgID: '6509142520',
+        chargeType: 'AY1',
+        chargeItemCode: 'AY120',
+        chargeItemName: 'Heimagisting',
+        priceAmount: 8500.0
       },
     ]
-    const results = await paymentService.getCompaniesByNationalId(
-      expectedResult.SUCCESS,
-    )
+    const results = await paymentService.getCatalog()
     expect(results).toStrictEqual(successResults)
-  })
-
-  it('should return empty array when use has no company', async () => {
-    const results = await paymentService.getCompaniesByNationalId(
-      expectedResult.EMPTY,
-    )
-    expect(results).toEqual([])
   })
 
   it('should throw on error', async () => {
     await expect(
-      paymentService.getCompaniesByNationalId(expectedResult.NOT_FOUND),
+      paymentService.getCatalog(expectedResult.NOT_FOUND),
     ).rejects.toThrow()
     await expect(
-      paymentService.getCompaniesByNationalId(expectedResult.SERVER_ERROR),
+      paymentService.getCatalog(expectedResult.SERVER_ERROR),
     ).rejects.toThrow()
   })
 })
@@ -171,14 +173,14 @@ describe('rsk auth', () => {
   it('should return error on failed auth', async () => {
     const paymentService = await getNestModule(expectedResult.SERVER_ERROR)
     await expect(
-      paymentService.getCompaniesByNationalId(expectedResult.SUCCESS),
+      paymentService.getCatalog(),
     ).rejects.toThrow()
   })
 
   it('should return error on empty auth', async () => {
     const paymentService = await getNestModule(expectedResult.EMPTY)
     await expect(
-      paymentService.getCompaniesByNationalId(expectedResult.SUCCESS),
+      paymentService.getCatalog(),
     ).rejects.toThrow()
   })
 })

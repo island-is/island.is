@@ -46,7 +46,7 @@ export interface PaymentServiceOptions {
     //createdTimeStamp: Date
   }
   
-  interface Item {
+  export interface Item {
     performingOrgID: string,
     chargeType: string,
     chargeItemCode: string,

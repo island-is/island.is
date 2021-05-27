@@ -2780,8 +2780,8 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/clients/rsk/v1/tsconfig.lib.json",
-              "libs/clients/rsk/v1/tsconfig.spec.json"
+              "libs/clients/payment/tsconfig.lib.json",
+              "libs/clients/payment/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
           }
