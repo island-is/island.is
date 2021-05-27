@@ -3,6 +3,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -31,7 +32,13 @@ import {
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { MANUAL, NO, StartDateOptions, YES } from '../constants'
+import {
+  FILE_SIZE_LIMIT,
+  MANUAL,
+  NO,
+  StartDateOptions,
+  YES,
+} from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -415,6 +422,31 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
+              id: 'employer.selfEmployed.attachment',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              condition: (answers) =>
+                (answers as {
+                  employer: {
+                    isSelfEmployed: string
+                  }
+                })?.employer?.isSelfEmployed === YES,
+              children: [
+                buildFileUploadField({
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
+              ],
+            }),
+            buildMultiField({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
@@ -473,6 +505,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'requestRights.isRequestingRights',
               title: parentalLeaveFormMessages.shared.requestRightsName,
@@ -497,6 +531,26 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'requestRights.isRequestingRights',
+              title: parentalLeaveFormMessages.shared.requestRightsName,
+              description:
+                parentalLeaveFormMessages.shared.requestRightsDescription,
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'giveRights.isGivingRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
@@ -539,8 +593,46 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'giveRights.isGivingRights',
+              title: parentalLeaveFormMessages.shared.giveRightsName,
+              description:
+                parentalLeaveFormMessages.shared.giveRightsDescription,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
           ],
         }),
+        /*
+        TODO: add back once payment plan is implemented
         buildSubSection({
           id: 'rightsReview',
           title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
@@ -562,6 +654,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        */
       ],
     }),
     buildSection({
