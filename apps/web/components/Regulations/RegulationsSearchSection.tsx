@@ -307,6 +307,42 @@ export const RegulationsSearchSection = (
                   <GridRow>
                     <GridColumn
                       span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 3]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Checkbox
+                        id="regulations-search-amendments-checkbox"
+                        label={txt(
+                          'searchIncludeAmendingLabel',
+                          'Leita í breytingareglugerðum',
+                        )}
+                        checked={!!filters.iA}
+                        onChange={() =>
+                          doSearch('iA', !filters.iA ? 'true' : '')
+                        }
+                      />
+                    </GridColumn>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 3]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Checkbox
+                        id="regulations-search-repelled-checkbox"
+                        label={txt(
+                          'searchIncludeRepelledLabel',
+                          'Leita í brottföllnum reglugerðum',
+                        )}
+                        checked={!!filters.iR}
+                        onChange={() =>
+                          doSearch('iR', !filters.iR ? 'true' : '')
+                        }
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
                       paddingTop={[0, 0, 4]}
                       paddingBottom={[2, 2, 0]}
                     >
@@ -393,36 +429,6 @@ export const RegulationsSearchSection = (
                         />
                       </GridColumn>
                     )}
-                    <GridColumn
-                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
-                      paddingTop={[0, 0, 4]}
-                      paddingBottom={[2, 2, 0]}
-                    >
-                      <Box marginTop={0} marginBottom={1}>
-                        <Checkbox
-                          id="regulations-search-amendments-checkbox"
-                          label={txt(
-                            'searchIncludeAmendingLabel',
-                            'Leita í breytingareglugerðum',
-                          )}
-                          checked={!!filters.iA}
-                          onChange={() =>
-                            doSearch('iA', !filters.iA ? 'true' : '')
-                          }
-                        />
-                      </Box>
-                      <Checkbox
-                        id="regulations-search-repelled-checkbox"
-                        label={txt(
-                          'searchIncludeRepelledLabel',
-                          'Leita í brottföllnum reglugerðum',
-                        )}
-                        checked={!!filters.iR}
-                        onChange={() =>
-                          doSearch('iR', !filters.iR ? 'true' : '')
-                        }
-                      />
-                    </GridColumn>
                   </GridRow>
                 </>
               )}
