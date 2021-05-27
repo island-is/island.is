@@ -32,7 +32,7 @@ const twentyEightDays = 24 * 3600 * 1000 * 28
 
 const pruneAfter = (time: number) => {
   return {
-    shouldBeListed: false,
+    shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: time,
   }

@@ -96,15 +96,6 @@ export const Overview = ({ application }: FieldBaseProps) => {
           value={answers.technicalContact.phoneNumber}
         />
       )}
-      {answers.technicalContact.sameAsResponsibleParty?.includes('yes') && (
-        <ValueLine
-          value={formatText(
-            technicalContact.labels.sameAsResponsibleParty,
-            application,
-            formatMessage,
-          )}
-        />
-      )}
       <ValueLine
         title={technicalContact.labels.techAnnouncementsEmail}
         value={answers.technicalContact.techAnnouncementsEmail}

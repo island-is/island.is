@@ -1,21 +1,26 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
-import { getValueViaPath, Application } from '@island.is/application/core'
+import { useFormContext, Controller } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
+
+import {
+  getValueViaPath,
+  Application,
+  coreErrorMessages,
+} from '@island.is/application/core'
 import {
   InputFileUpload,
   UploadFile,
   fileToObject,
 } from '@island.is/island-ui/core'
-import { useFormContext, Controller } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
-
-import { uploadFileToS3 } from './utils'
-import { Action, ActionTypes } from './types'
-
+import { useLocale } from '@island.is/localization'
 import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+
+import { uploadFileToS3 } from './utils'
+import { Action, ActionTypes } from './types'
 
 type UploadFileAnswer = {
   name: string
@@ -80,19 +85,15 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   accept,
   maxSize,
 }) => {
+  const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
   const val = getValueViaPath(application.answers, id, []) as UploadFile[]
-
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
-
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
-
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
-
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
 
   useEffect(() => {
@@ -136,9 +137,9 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
       // Done!
       return Promise.resolve({ key: fields.key })
-    } catch {
-      // TODO: Translate
-      setUploadError('An error occurred uploading one or more files')
+    } catch (e) {
+      console.error(`Error with FileUploadController ${e}`)
+      setUploadError(formatMessage(coreErrorMessages.fileUpload))
       return Promise.reject()
     }
   }
@@ -185,8 +186,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           },
         })
       } catch {
-        // TODO: Translate
-        setUploadError('An error occurred uploading one or more files')
+        setUploadError(formatMessage(coreErrorMessages.fileUpload))
       }
     })
   }
@@ -204,8 +204,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           },
         })
       } catch {
-        // TODO: Translate
-        setUploadError('An error occurred removing the file.')
+        setUploadError(formatMessage(coreErrorMessages.fileRemove))
         return
       }
     }
@@ -225,24 +224,22 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
   return (
     <Controller
-      name={`${id}`}
+      name={id}
       defaultValue={initialUploadFiles}
-      render={() => {
-        return (
-          <InputFileUpload
-            fileList={state}
-            header={header}
-            description={description}
-            buttonLabel={buttonLabel}
-            onChange={onFileChange}
-            onRemove={onRemoveFile}
-            errorMessage={uploadError || error}
-            multiple={multiple}
-            accept={accept}
-            maxSize={maxSize}
-          />
-        )
-      }}
+      render={() => (
+        <InputFileUpload
+          fileList={state}
+          header={header}
+          description={description}
+          buttonLabel={buttonLabel}
+          onChange={onFileChange}
+          onRemove={onRemoveFile}
+          errorMessage={uploadError || error}
+          multiple={multiple}
+          accept={accept}
+          maxSize={maxSize}
+        />
+      )}
     />
   )
 }

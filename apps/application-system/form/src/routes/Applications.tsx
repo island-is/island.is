@@ -144,7 +144,9 @@ export const Applications: FC = () => {
                       heading={application.name || application.typeId}
                       text={application.stateDescription}
                       cta={{
-                        label: formatMessage(coreMessages.buttonNext),
+                        label: isCompleted
+                          ? formatMessage(coreMessages.cardButtonComplete)
+                          : formatMessage(coreMessages.cardButtonInProgress),
                         variant: 'ghost',
                         size: 'small',
                         icon: undefined,

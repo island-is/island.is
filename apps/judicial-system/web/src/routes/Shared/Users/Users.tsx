@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react'
 import cn from 'classnames'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import {
-  Loading,
-  DropdownMenu,
-} from '@island.is/judicial-system-web/src/shared-components'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import { User, UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
@@ -47,21 +44,14 @@ export const Users: React.FC = () => {
   return (
     <div className={styles.userControlContainer}>
       <div className={styles.logoContainer}>
-        <DropdownMenu
-          menuLabel="Bæta við"
+        <Button
           icon="add"
-          items={[
-            {
-              href: Constants.USER_NEW_ROUTE,
-              title: 'Notanda',
-            },
-            {
-              title: 'Stofnun',
-              onClick: () => alert('Ekki útfært'),
-            },
-          ]}
-          title="Bæta við"
-        />
+          onClick={() => {
+            router.push(Constants.USER_NEW_ROUTE)
+          }}
+        >
+          Nýr notandi
+        </Button>
       </div>
       <Box marginBottom={3}>
         <Text variant="h3" id="tableCaption">

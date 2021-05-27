@@ -46,6 +46,7 @@ function HealthDeclaration({
           <RadioController
             id={field.id}
             split="1/2"
+            largeButtons={false}
             defaultValue={
               (getValueViaPath(application.answers, field.id) as string[]) ??
               undefined
