@@ -71,7 +71,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.SIGNATUREE,
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/CollectEndorsements').then((val) =>
                   Promise.resolve(val.CollectEndorsements),
@@ -87,7 +87,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.APPLICANT,
+              id: Roles.SIGNATUREE,
               formLoader: () =>
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementForm),

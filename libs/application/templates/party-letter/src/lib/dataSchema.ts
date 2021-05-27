@@ -43,7 +43,6 @@ export const PartyLetterSchema = z.object({
   includePapers: z.array(z.string()).optional(),
   smu: z.string().optional(),
   endorsements: z.array(EndorsementSchema).optional(), //todo: validate
-  endorsementsWithWarning: z.array(EndorsementSchema).optional(),
   email: z
     .string()
     .email(m.validationMessages.emailInvalid.defaultMessage as string),
