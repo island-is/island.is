@@ -36,7 +36,7 @@ const getRSValue = (option: ValueType<OptionTypeBase>) => {
   const opt: OptionTypeBase | undefined | null = Array.isArray(option)
     ? (option as Array<OptionTypeBase>)[0]
     : option
-  return opt ? opt.value : undefined
+  return opt ? String(opt.value) : undefined
 }
 
 const emptyOption = (label?: string): Option => ({
