@@ -121,6 +121,7 @@ export type RegulationsSearchSectionProps = {
   ministries: ReadonlyArray<RegulationMinistry>
   lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
+  page?: number
 }
 
 export const RegulationsSearchSection = (
@@ -152,6 +153,10 @@ export const RegulationsSearchSection = (
       doSearch('yearTo', '')
     }
   }, [yearOptions, filters.year])
+
+  useEffect(() => {
+    doSearch('page', props.page && props.page > 1 ? String(props.page) : '')
+  }, [props.page])
 
   const ministryOptions = useMemo(() => {
     return [emptyOption(txt('searchMinistryEmptyOption'))].concat(

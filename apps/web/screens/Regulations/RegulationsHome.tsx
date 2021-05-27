@@ -6,7 +6,7 @@ import {
 } from '../../components/Regulations/Regulations.types'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -82,7 +82,12 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const totalItems = props.regulations?.totalItems ?? 0
   const stepSize = props.regulations?.perPage ?? 18
-  const [showCount, setShowCount] = useState(stepSize)
+  const totalPages = props.regulations?.totalPages ?? 0
+  const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [totalItems])
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -121,6 +126,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             ministries={props.ministries}
             years={props.years}
             texts={props.texts}
+            page={currentPage}
           />
         </>
       }
@@ -149,6 +155,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                         ),
                         { count: totalItems.toLocaleString('is') },
                       )}
+                      , birti {(currentPage - 1) * stepSize + 1} -{' '}
+                      {(currentPage - 1) * stepSize + stepSize}
                     </Text>
                   )}
                 </GridColumn>
@@ -156,7 +164,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
               <GridRow>
                 {props.regulations?.data?.length > 0 &&
-                  props.regulations.data.slice(0, showCount).map((reg, i) => (
+                  props.regulations.data.map((reg, i) => (
                     <GridColumn
                       key={reg.name}
                       span={['1/1', '1/2', '1/2', '1/3']}
@@ -177,18 +185,31 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                     </GridColumn>
                   ))}
               </GridRow>
-              <Box
-                display="flex"
-                justifyContent="center"
-                marginTop={3}
-                textAlign="center"
-              >
-                {showCount < totalItems && (
-                  <Button onClick={() => setShowCount(showCount + stepSize)}>
-                    Sjá fleiri ({totalItems - showCount})
-                  </Button>
-                )}
-              </Box>
+              {currentPage && totalItems > stepSize && (
+                <Box marginTop={3}>
+                  <Box marginTop={0} marginBottom={2} textAlign="center">
+                    Síða {currentPage} af {totalPages}
+                  </Box>
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    marginTop={3}
+                    textAlign="center"
+                  >
+                    {currentPage > 1 && (
+                      <Button onClick={() => setCurrentPage(currentPage - 1)}>
+                        {txt('homePrevPage', 'Fyrri síða')}
+                      </Button>
+                    )}
+                    &nbsp;&nbsp;
+                    {currentPage < totalPages && (
+                      <Button onClick={() => setCurrentPage(currentPage + 1)}>
+                        {txt('homeNextPage', 'Næsta síða')}
+                      </Button>
+                    )}
+                  </Box>
+                </Box>
+              )}
             </GridContainer>
           }
         />
