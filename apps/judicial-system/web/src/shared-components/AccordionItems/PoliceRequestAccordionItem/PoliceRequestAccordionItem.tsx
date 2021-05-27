@@ -14,7 +14,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.treat'
 interface Props {
   workingCase: Case
