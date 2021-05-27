@@ -80,9 +80,9 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
   const txt = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.data?.length ?? 0
-  const stepSize = 9
-  const [showCount, setShowCount] = useState(totalItems > 18 ? stepSize : 18)
+  const totalItems = props.regulations?.totalItems ?? 0
+  const stepSize = props.regulations?.perPage ?? 18
+  const [showCount, setShowCount] = useState(stepSize)
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
@@ -214,6 +214,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
     'year',
     'yearTo',
     'ch',
+    'iA',
+    'iR',
+    'page',
     'all',
   ])
   const doSearch = Object.values(searchQuery).some((value) => !!value)
@@ -252,6 +255,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
                 year: assertReasonableYear(searchQuery.year),
                 yearTo: assertReasonableYear(searchQuery.yearTo),
                 ch: searchQuery.ch,
+                iA: searchQuery.iA === 'true',
+                iR: searchQuery.iR === 'true',
+                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
               },
             },
           })

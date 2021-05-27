@@ -51,7 +51,15 @@ export const nameToSlug = (regulationName: RegName): RegQueryName =>
 
 // ---------------------------------------------------------------------------
 
-export type RegulationSearchKey = 'q' | 'rn' | 'year' | 'yearTo' | 'ch' | 'all'
+export type RegulationSearchKey =
+  | 'q'
+  | 'rn'
+  | 'year'
+  | 'yearTo'
+  | 'ch'
+  | 'iA'
+  | 'iR'
+  | 'page'
 export type RegulationSearchFilters = Record<RegulationSearchKey, string>
 
 // ---------------------------------------------------------------------------
