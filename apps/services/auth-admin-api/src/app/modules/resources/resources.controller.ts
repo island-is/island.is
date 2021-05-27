@@ -784,20 +784,19 @@ export class ResourcesController {
   }
 
   // #region ApiScopeGroup
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scope-group')
+  @Audit<ApiScopeGroup[] | PagedRowsDto<ApiScopeGroup>>({
+    resources: (result) => {
+      const groups = Array.isArray(result) ? result : result.rows
+      return groups.map((group) => group.id)
+    },
+  })
   async findApiScopeGroups(
     @Query('searchString') searchString?: string,
     @Query('page') page?: number,
     @Query('count') count?: number,
-  ): Promise<
-    | ApiScopeGroup[]
-    | {
-        rows: ApiScopeGroup[]
-        count: number
-      }
-    | null
-  > {
+  ): Promise<ApiScopeGroup[] | PagedRowsDto<ApiScopeGroup>> {
     if (!page || !count) {
       return this.resourcesService.findAllApiScopeGroups()
     }
@@ -808,39 +807,66 @@ export class ResourcesController {
     )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('api-scope-group/:id')
+  @Audit<ApiScopeGroup>({
+    resources: (group) => group?.id,
+  })
   async findApiScopeGroup(
     @Param('id') id: string,
   ): Promise<ApiScopeGroup | null> {
     return this.resourcesService.findApiScopeGroupByPk(id)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-scope-group')
+  @Audit<ApiScopeGroup>({
+    resources: (group) => group.id,
+  })
   async createApiScopeGroup(
     @Body() group: ApiScopeGroupDTO,
-  ): Promise<ApiScopeGroup | null> {
-    return await this.resourcesService.createApiScopeGroup(group)
+  ): Promise<ApiScopeGroup> {
+    return this.resourcesService.createApiScopeGroup(group)
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put('api-scope-group/:id')
   async updateApiScopeGroup(
     @Body() group: ApiScopeGroupDTO,
     @Param('id') id: string,
-  ): Promise<[number, ApiScopeGroup[]] | null> {
-    return await this.resourcesService.updateApiScopeGroup(group, id)
+    @CurrentUser() user: User,
+  ): Promise<[number, ApiScopeGroup[]]> {
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'updateApiScopeGroup',
+        resources: id,
+        meta: { fields: Object.keys(group) },
+      },
+      this.resourcesService.updateApiScopeGroup(group, id),
+    )
   }
 
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete('api-scope-group/:id')
-  async deleteApiScopeGroup(@Param('id') id: string): Promise<number | null> {
+  async deleteApiScopeGroup(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    return await this.resourcesService.deleteApiScopeGroup(id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'deleteApiScopeGroup',
+        resources: id,
+      },
+      this.resourcesService.deleteApiScopeGroup(id),
+    )
   }
 
   // #endregion ApiScopeGroup

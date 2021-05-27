@@ -740,9 +740,7 @@ export class ResourcesService {
   // #region ApiScopeGroup
 
   /** Creates a new Api Scope Group */
-  async createApiScopeGroup(
-    group: ApiScopeGroupDTO,
-  ): Promise<ApiScopeGroup | null> {
+  async createApiScopeGroup(group: ApiScopeGroupDTO): Promise<ApiScopeGroup> {
     const id = uuid()
     return this.apiScopeGroup.create({ id: id, ...group })
   }
@@ -751,17 +749,17 @@ export class ResourcesService {
   async updateApiScopeGroup(
     group: ApiScopeGroupDTO,
     id: string,
-  ): Promise<[number, ApiScopeGroup[]] | null> {
+  ): Promise<[number, ApiScopeGroup[]]> {
     return this.apiScopeGroup.update({ ...group }, { where: { id: id } })
   }
 
   /** Delete ApiScopeGroup */
-  async deleteApiScopeGroup(id: string): Promise<number | null> {
+  async deleteApiScopeGroup(id: string): Promise<number> {
     return this.apiScopeGroup.destroy({ where: { id: id } })
   }
 
   /** Returns all ApiScopeGroups */
-  async findAllApiScopeGroups(): Promise<ApiScopeGroup[] | null> {
+  async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
     return this.apiScopeGroup.findAll({ order: [['name', 'asc']] })
   }
 
@@ -773,7 +771,7 @@ export class ResourcesService {
   ): Promise<{
     rows: ApiScopeGroup[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     if (!searchString || searchString.length === 0) {
