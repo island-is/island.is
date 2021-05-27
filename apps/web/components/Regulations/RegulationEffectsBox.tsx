@@ -47,7 +47,7 @@ export const RegulationEffectsBox = (props: RegulationEffectsBoxProps) => {
             href={linkToRegulation(item.name)}
             aria-label={labelLong}
           >
-            <span className={s.smallText}>{label}</span>
+            {label}
           </RegulationsSidebarLink>
         )
       })}
