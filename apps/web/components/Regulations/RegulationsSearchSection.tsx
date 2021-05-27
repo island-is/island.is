@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   Button,
+  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -93,7 +94,6 @@ const filterOrder: Record<RegulationSearchKeys, number> = {
   iA: 6,
   iR: 7,
   page: 8,
-  all: 6,
 }
 
 /** Returns a copy of the original query with any falsy values filtered out  */
@@ -215,10 +215,11 @@ export const RegulationsSearchSection = (
   }, [filters.q])
 
   const hasAdvancedValues = !!(
-    filters.all ||
     filters.year ||
     filters.rn ||
-    filters.ch
+    filters.ch ||
+    filters.iA ||
+    filters.iR
   )
   const filterHasValues = !!filterValue || hasAdvancedValues
 
@@ -380,21 +381,41 @@ export const RegulationsSearchSection = (
                         size="sm"
                       />
                     </GridColumn>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 4]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Box marginTop={0} marginBottom={1}>
+                        <Checkbox
+                          id="regulations-search-amendments-checkbox"
+                          label={txt(
+                            'searchIncludeAmendingLabel',
+                            'Leita í breytingareglugerðum',
+                          )}
+                          checked={!!filters.iA}
+                          onChange={() =>
+                            doSearch('iA', !filters.iA ? 'true' : '')
+                          }
+                        />
+                      </Box>
+                      <Checkbox
+                        id="regulations-search-repelled-checkbox"
+                        label={txt(
+                          'searchIncludeRepelledLabel',
+                          'Leita í brottföllnum reglugerðum',
+                        )}
+                        checked={!!filters.iR}
+                        onChange={() =>
+                          doSearch('iR', !filters.iR ? 'true' : '')
+                        }
+                      />
+                    </GridColumn>
                   </GridRow>
                 </>
               )}
             </div>
           </GridContainer>
-
-          {/*
-      // TODO: awaiting feedback from client
-      <Checkbox
-        id="regulations-search-amendments-checkbox"
-        label={txt('searchIncludeAmendingLabel')}
-        checked={!!filters.all}
-        onChange={() => doSearch('all', !filters.all ? 'y' : '')}
-      />*/}
-
           <Box
             marginTop={2}
             className={s.clearSearch}
