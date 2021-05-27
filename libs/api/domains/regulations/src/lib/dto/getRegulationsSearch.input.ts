@@ -29,4 +29,18 @@ export class GetRegulationsSearchInput {
   @Min(1900)
   @Max(2150)
   yearTo?: Year
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  iA?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  iR?: boolean
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @Min(0)
+  @Max(1000)
+  page?: number
 }

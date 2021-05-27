@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   Button,
+  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -21,7 +22,7 @@ import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 import {
   RegulationSearchFilters,
-  RegulationSearchKeys,
+  RegulationSearchKey,
   useShortState,
 } from './regulationUtils'
 import cn from 'classnames'
@@ -36,7 +37,7 @@ const getRSValue = (option: ValueType<OptionTypeBase>) => {
   const opt: OptionTypeBase | undefined | null = Array.isArray(option)
     ? (option as Array<OptionTypeBase>)[0]
     : option
-  return opt ? opt.value : undefined
+  return opt ? String(opt.value) : undefined
 }
 
 const emptyOption = (label?: string): Option => ({
@@ -84,23 +85,25 @@ const yearToOption = (year: number | string): Option => {
   }
 }
 
-const filterOrder: Record<RegulationSearchKeys, number> = {
+const filterOrder: Record<RegulationSearchKey, number> = {
   q: 1,
   year: 2,
   yearTo: 3,
   rn: 4,
   ch: 5,
-  all: 6,
+  iA: 6,
+  iR: 7,
+  page: 8,
 }
 
 /** Returns a copy of the original query with any falsy values filtered out  */
 const cleanQuery = (
-  query: Record<RegulationSearchKeys, string | null | undefined>,
+  query: Record<RegulationSearchKey, string | null | undefined>,
 ) =>
   Object.entries(query)
     .sort((a, b) => {
-      const keyA = a[0] as RegulationSearchKeys
-      const keyB = b[0] as RegulationSearchKeys
+      const keyA = a[0] as RegulationSearchKey
+      const keyB = b[0] as RegulationSearchKey
       return (filterOrder[keyA] || 999) > (filterOrder[keyB] || 999) ? 1 : -1
     })
     .reduce<Record<string, string>>((newQuery, [key, value]) => {
@@ -118,6 +121,7 @@ export type RegulationsSearchSectionProps = {
   ministries: ReadonlyArray<RegulationMinistry>
   lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
+  page?: number
 }
 
 export const RegulationsSearchSection = (
@@ -150,12 +154,17 @@ export const RegulationsSearchSection = (
     }
   }, [yearOptions, filters.year])
 
+  useEffect(() => {
+    doSearch('page', props.page && props.page > 1 ? String(props.page) : '')
+    window.scrollTo(0, 0)
+  }, [props.page])
+
   const ministryOptions = useMemo(() => {
     return [emptyOption(txt('searchMinistryEmptyOption'))].concat(
       props.ministries.map(
         (m): Option => ({
           value: m.slug,
-          label: m.name, // + (m.current ? '' : ` ${txt('searchLegacyMinistrySuffix')}`),
+          label: m.name,
         }),
       ),
     ) as ReadonlyArray<Option>
@@ -182,13 +191,17 @@ export const RegulationsSearchSection = (
     [props.lawChapters],
   )
 
-  const doSearch = (key: RegulationSearchKeys, value: string) => {
+  const doSearch = (
+    keyOrFilters: RegulationSearchKey | Partial<RegulationSearchFilters>,
+    value?: string,
+  ) => {
+    const newFilters =
+      typeof keyOrFilters !== 'string'
+        ? { ...filters, ...keyOrFilters }
+        : { ...filters, [keyOrFilters]: value }
     router.replace({
       pathname: router.pathname,
-      query: cleanQuery({
-        ...filters,
-        [key]: value || undefined,
-      }),
+      query: cleanQuery(newFilters),
     })
   }
   const clearSearch = () => {
@@ -212,10 +225,11 @@ export const RegulationsSearchSection = (
   }, [filters.q])
 
   const hasAdvancedValues = !!(
-    filters.all ||
     filters.year ||
     filters.rn ||
-    filters.ch
+    filters.ch ||
+    filters.iA ||
+    filters.iR
   )
   const filterHasValues = !!filterValue || hasAdvancedValues
 
@@ -236,11 +250,6 @@ export const RegulationsSearchSection = (
           paddingTop={2}
           paddingBottom={[4, 4, 4]}
         >
-          {/*             labelClear={txt('searchClearLabel')}
-            labelResult={txt('searchResultLabel')}
-            labelTitle={txt('searchTitleLabel')}
-            onFilterClear={clearSearch}
- */}
           <GridContainer>
             <GridRow alignItems="center">
               <GridColumn
@@ -312,7 +321,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(ministryOptions, filters.rn)}
                         options={ministryOptions}
                         onChange={(option) =>
-                          doSearch('rn', getRSValue(option) || '')
+                          doSearch('rn', getRSValue(option))
                         }
                         size="sm"
                       />
@@ -333,7 +342,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(lawChapterOptions, filters.ch)}
                         options={lawChapterOptions}
                         onChange={(option) =>
-                          doSearch('ch', getRSValue(option) || '')
+                          doSearch('ch', getRSValue(option))
                         }
                         size="sm"
                       />
@@ -353,28 +362,65 @@ export const RegulationsSearchSection = (
                         placeholder={txt('searchYearPlaceholder', 'Veldu ár')}
                         value={findValueOption(yearOptions, filters.year)}
                         options={yearOptions}
-                        onChange={(option) =>
-                          doSearch('year', getRSValue(option) || '')
-                        }
+                        onChange={(option) => {
+                          const year = getRSValue(option)
+                          const yearTo = !year ? undefined : filters.yearTo // clear yearTo along with year
+                          doSearch({ year, yearTo })
+                        }}
                         size="sm"
                       />
                     </GridColumn>
+                    {filters.year && (
+                      <GridColumn
+                        span={['1/1', '1/1', '4/12', '3/12', '2/10']}
+                        paddingTop={[0, 0, 4]}
+                        paddingBottom={[2, 2, 0]}
+                      >
+                        <Select
+                          name="yearTo"
+                          isSearchable
+                          label={txt('searchYearToLabel', 'Tímabili til')}
+                          placeholder={txt(
+                            'searchYearToPlaceholder',
+                            'Veldu ár',
+                          )}
+                          value={findValueOption(yearToOptions, filters.yearTo)}
+                          options={yearToOptions}
+                          onChange={(option) =>
+                            doSearch('yearTo', getRSValue(option))
+                          }
+                          size="sm"
+                        />
+                      </GridColumn>
+                    )}
                     <GridColumn
-                      span={['1/1', '1/1', '4/12', '3/12', '2/10']}
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
                       paddingTop={[0, 0, 4]}
                       paddingBottom={[2, 2, 0]}
                     >
-                      <Select
-                        name="yearTo"
-                        isSearchable
-                        label={txt('searchYearToLabel', 'Tímabili til')}
-                        placeholder={txt('searchYearToPlaceholder', 'Veldu ár')}
-                        value={findValueOption(yearToOptions, filters.yearTo)}
-                        options={yearToOptions}
-                        onChange={(option) =>
-                          doSearch('yearTo', getRSValue(option) || '')
+                      <Box marginTop={0} marginBottom={1}>
+                        <Checkbox
+                          id="regulations-search-amendments-checkbox"
+                          label={txt(
+                            'searchIncludeAmendingLabel',
+                            'Leita í breytingareglugerðum',
+                          )}
+                          checked={!!filters.iA}
+                          onChange={() =>
+                            doSearch('iA', !filters.iA ? 'true' : '')
+                          }
+                        />
+                      </Box>
+                      <Checkbox
+                        id="regulations-search-repelled-checkbox"
+                        label={txt(
+                          'searchIncludeRepelledLabel',
+                          'Leita í brottföllnum reglugerðum',
+                        )}
+                        checked={!!filters.iR}
+                        onChange={() =>
+                          doSearch('iR', !filters.iR ? 'true' : '')
                         }
-                        size="sm"
                       />
                     </GridColumn>
                   </GridRow>
@@ -382,16 +428,6 @@ export const RegulationsSearchSection = (
               )}
             </div>
           </GridContainer>
-
-          {/*
-      // TODO: awaiting feedback from client
-      <Checkbox
-        id="regulations-search-amendments-checkbox"
-        label={txt('searchIncludeAmendingLabel')}
-        checked={!!filters.all}
-        onChange={() => doSearch('all', !filters.all ? 'y' : '')}
-      />*/}
-
           <Box
             marginTop={2}
             className={s.clearSearch}

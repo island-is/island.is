@@ -93,7 +93,11 @@ export const useRegulationEffectPrepper = (
         <strong>{formatDate(regulation.effectiveDate)}</strong>
         <br />
         <span className={cn(s.smallText, current && s.changelogCurrent)}>
-          {txt('historyStart')}
+          {txt(
+            regulation.type === 'base'
+              ? 'historyStart'
+              : 'historyStartAmending',
+          )}
         </span>
       </RegulationsSidebarLink>
     )
