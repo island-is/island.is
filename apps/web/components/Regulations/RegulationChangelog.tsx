@@ -126,19 +126,27 @@ export const useRegulationEffectPrepper = (
                   d: item.date,
                   diff: true,
                 })
-              : linkToRegulation(item.name)
+              : undefined
 
           const current = isItemCurrent(item.date)
           const className = cn(s.smallText, current && s.changelogCurrent)
 
-          return (
-            <RegulationsSidebarLink key={i} href={href} current={current}>
+          const Content = (
+            <>
               <strong>{formatDate(item.date)}</strong>
               <br />
               <span className={className} title={label + ' ' + item.title}>
                 {label}
               </span>
+            </>
+          )
+
+          return href ? (
+            <RegulationsSidebarLink key={i} href={href} current={current}>
+              {Content}
             </RegulationsSidebarLink>
+          ) : (
+            <span className={s.sidebarNonLink}>{Content}</span>
           )
         })}
         {collapse && !expanded && (
