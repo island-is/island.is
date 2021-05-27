@@ -20,11 +20,11 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTag(tag: string) {
-    this.logger.debug(`Finding endorsement lists by tag "${tag}"`)
+  async findListsByTags(tags: string[]) {
+    this.logger.debug(`Finding endorsement lists by tag "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
     return this.endorsementListModel.findAll({
-      where: { tags: { [Op.contains]: [tag] } },
+      where: { tags: { [Op.contains]: tags } },
     })
   }
 
@@ -50,7 +50,7 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description'],
+          attributes: ['id', 'title', 'description', 'tags'],
         },
       ],
     })

@@ -25,9 +25,14 @@ export const m: MessageDir = {
       defaultMessage: 'Meðmælendalistar sem þú getur stutt í þínu kjördæmi',
       description: 'Section title for available endorsements in your area',
     },
-    actionCardButton: {
+    actionCardButtonEndorse: {
       id: 'sp.service.portal:endorsements-button',
-      defaultMessage: 'Skoða nánar',
+      defaultMessage: 'Mæla með',
+      description: 'Button to navigate to the application system',
+    },
+    actionCardButtonUnendorse: {
+      id: 'sp.service.portal:endorsements-button',
+      defaultMessage: 'Afskrá meðmæli',
       description: 'Button to navigate to the application system',
     },
   }),

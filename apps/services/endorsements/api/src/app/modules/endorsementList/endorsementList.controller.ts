@@ -13,7 +13,7 @@ import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
-import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
+import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
 import { BypassAuth, CurrentUser, User } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
@@ -32,11 +32,11 @@ export class EndorsementListController {
 
   @Get()
   @BypassAuth()
-  async findByTag(
-    @Query() { tag }: FindEndorsementListByTagDto,
+  async findByTags(
+    @Query() { tags }: FindEndorsementListByTagsDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
-    return await this.endorsementListService.findListsByTag(tag)
+    return await this.endorsementListService.findListsByTags(tags)
   }
 
   /**

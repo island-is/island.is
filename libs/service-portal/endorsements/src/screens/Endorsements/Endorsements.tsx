@@ -3,17 +3,31 @@ import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { m } from '../../lib/messages'
-import { Endorsement } from '@island.is/api/schema'
+import {
+  Endorsement,
+  EndorsementList,
+  EndorsementListOpenTagsEnum,
+} from '../../types/schema'
 
-export type UserEndorsements = Pick<
+export type UserEndorsement = Pick<
   Endorsement,
   'id' | 'created' | 'endorsementList'
 >
+export type RegionsEndorsementList = Pick<
+  EndorsementList,
+  'id' | 'title' | 'description'
+> & { tags: EndorsementListOpenTagsEnum[] }
 interface UserEndorsementsResponse {
-  endorsementSystemUserEndorsements: UserEndorsements[]
+  endorsementSystemUserEndorsements: UserEndorsement[]
+}
+interface EndorsementListResponse {
+  endorsementSystemFindEndorsementLists: RegionsEndorsementList[]
+}
+interface EndorseListResponse {
+  endorsementSystemEndorseList: UserEndorsement
 }
 
 const GET_USER_ENDORSEMENTS = gql`
@@ -25,6 +39,40 @@ const GET_USER_ENDORSEMENTS = gql`
         id
         title
         description
+        tags
+      }
+      meta {
+        fullName
+        address
+      }
+      created
+      modified
+    }
+  }
+`
+const GET_REGION_ENDORSEMENTS = gql`
+  query endorsementSystemFindEndorsementLists(
+    $input: FindEndorsementListByTagsDto!
+  ) {
+    endorsementSystemFindEndorsementLists(input: $input) {
+      id
+      title
+      description
+      tags
+    }
+  }
+`
+
+const ENDORSE_LIST = gql`
+  mutation endorseList($input: FindEndorsementListInput!) {
+    endorsementSystemEndorseList(input: $input) {
+      id
+      endorser
+      endorsementList {
+        id
+        title
+        description
+        tags
       }
       meta {
         fullName
@@ -36,16 +84,68 @@ const GET_USER_ENDORSEMENTS = gql`
   }
 `
 
+const UNENDORSE_LIST = gql`
+  mutation unendorseList($input: FindEndorsementListInput!) {
+    endorsementSystemUnendorseList(input: $input)
+  }
+`
+
+const endorsementListTagMap = {
+  [EndorsementListOpenTagsEnum.PartyLetter2021]: 'Listabókstafur',
+  [EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Norðausturkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationNordvesturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Norðvesturkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021]:
+    'Alþingiskosningar 2021 - Reykjavíkurkjördæmi Norður',
+  [EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021]:
+    'Alþingiskosningar 2021 - Reykjavíkurkjördæmi Suður',
+  [EndorsementListOpenTagsEnum.PartyApplicationSudurkjordaemi2021]:
+    'Alþingiskosningar 2021 - Suðurkjördæmi',
+  [EndorsementListOpenTagsEnum.PartyApplicationSudvesturkjordaemi2021]:
+    'Alþingiskosningar 2021 - Suðvesturkjördæmi',
+}
+
+const getEndorsementListTagNames = (tags: EndorsementListOpenTagsEnum[]) =>
+  tags.map((tag) => endorsementListTagMap[tag])
+
 const Endorsements = () => {
   const { formatMessage } = useLocale()
 
-  const { data: endorsementResponse } = useQuery<UserEndorsementsResponse>(
-    GET_USER_ENDORSEMENTS,
-  )
+  const {
+    data: endorsementResponse,
+    refetch: refetchUserEndorsements,
+  } = useQuery<UserEndorsementsResponse>(GET_USER_ENDORSEMENTS)
+  const {
+    data: endorsementListsResponse,
+    refetch: refetchRegionEndorsements,
+  } = useQuery<EndorsementListResponse>(GET_REGION_ENDORSEMENTS, {
+    variables: {
+      input: { tags: [EndorsementListOpenTagsEnum.PartyLetter2021] },
+    },
+  })
 
+  const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
+    onCompleted: () => {
+      refetchUserEndorsements()
+    },
+  })
+  const [unendorseList] = useMutation<boolean>(UNENDORSE_LIST, {
+    onCompleted: () => {
+      refetchUserEndorsements()
+    },
+  })
+
+  const allEndorsementLists =
+    endorsementListsResponse?.endorsementSystemFindEndorsementLists ?? []
   const endorsements =
     endorsementResponse?.endorsementSystemUserEndorsements ?? []
-
+  const signedLists = endorsements.map(
+    ({ endorsementList }) => endorsementList?.id,
+  )
+  const endorsementLists = allEndorsementLists.filter(
+    ({ id }) => !signedLists.includes(id),
+  )
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -66,15 +166,25 @@ const Endorsements = () => {
                   eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
                   heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
-                    label: 'Alþingi 2021',
+                    label: getEndorsementListTagNames(
+                      endorsement.endorsementList?.tags ?? [],
+                    ).join(' '),
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
                   text="Kjördæmi"
                   cta={{
-                    label: formatMessage(m.endorsement.actionCardButton),
+                    label: formatMessage(
+                      m.endorsement.actionCardButtonUnendorse,
+                    ),
                     variant: 'text',
                     icon: undefined,
+                    onClick: () =>
+                      unendorseList({
+                        variables: {
+                          input: { listId: endorsement.endorsementList?.id },
+                        },
+                      }),
                   }}
                 />
               )
@@ -86,52 +196,30 @@ const Endorsements = () => {
         {formatMessage(m.endorsement.availableEndorsements)}
       </Text>
       <Stack space={4}>
-        <ActionCard
-          heading="Framboðslisti Sjálfstæðisflokksins (D)"
-          eyebrow="Forsetakosningar 2024"
-          tag={{
-            label: 'Forsetakosningar 2024',
-            variant: 'blue',
-            outlined: false,
-          }}
-          text="Reykjavík Norður"
-          cta={{
-            label: formatMessage(m.endorsement.actionCardButton),
-            variant: 'text',
-            icon: undefined,
-          }}
-        />
-
-        <ActionCard
-          heading="Framboðslisti Samfylkingarinnar (S)"
-          eyebrow="Forsetakosningar 2024"
-          text="Reykjavík Norður"
-          tag={{
-            label: 'Forsetakosningar 2024',
-            variant: 'blue',
-            outlined: false,
-          }}
-          cta={{
-            label: formatMessage(m.endorsement.actionCardButton),
-            variant: 'text',
-            icon: undefined,
-          }}
-        />
-        <ActionCard
-          heading="Framboðslisti Miðflokksins (M)"
-          eyebrow="Forsetakosningar 2024"
-          tag={{
-            label: 'Forsetakosningar 2024',
-            variant: 'blue',
-            outlined: false,
-          }}
-          text="Reykjavík Norður"
-          cta={{
-            label: formatMessage(m.endorsement.actionCardButton),
-            variant: 'text',
-            icon: undefined,
-          }}
-        />
+        {endorsementLists.map((endorsementList) => (
+          <ActionCard
+            key={endorsementList.id}
+            heading={endorsementList.title}
+            eyebrow={getEndorsementListTagNames(endorsementList.tags).join(' ')}
+            tag={{
+              label: getEndorsementListTagNames(endorsementList.tags).join(' '),
+              variant: 'blue',
+              outlined: false,
+            }}
+            text={endorsementList.description ?? ''}
+            cta={{
+              label: formatMessage(m.endorsement.actionCardButtonEndorse),
+              variant: 'text',
+              icon: undefined,
+              onClick: () =>
+                endorseList({
+                  variables: {
+                    input: { listId: endorsementList.id },
+                  },
+                }),
+            }}
+          />
+        ))}
       </Stack>
     </Box>
   )
