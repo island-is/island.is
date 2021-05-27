@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client'
 import { Skeleton } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { FormattedDate } from 'react-intl'
+import { Image } from 'react-native'
 import {
   ActivityIndicator,
   Platform,
@@ -28,6 +29,7 @@ import {
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { authStore, useAuthStore } from '../../stores/auth-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
@@ -36,6 +38,7 @@ const Header = styled.SafeAreaView`
   margin-right: 16px;
   margin-bottom: 16px;
   margin-top: 8px;
+  flex-direction: row;
 `
 
 const Row = styled.View`
@@ -80,6 +83,15 @@ const Message = styled.Text`
   padding-bottom: 8px;
 `
 
+const Icon = styled.View`
+  align-items: center;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  margin-right: 8px;
+`;
+
 const {
   useNavigationOptions,
   getNavigationOptions,
@@ -119,6 +131,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
   const { authorizeResult } = useAuthStore()
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
@@ -174,29 +187,38 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   return (
     <>
       <Header>
-        <Row>
+        <Icon>
+          {!loading && <Image
+            source={{ uri: getOrganizationLogoUrl(Document.senderName!, 75) }}
+            resizeMode="contain"
+            style={{ width: 25, height: 25 }}
+          />}
+        </Icon>
+        <View style={{ flex: 1 }}>
+          <Row>
+            {loading ? (
+              <Skeleton active style={{ borderRadius: 4 }} height={17} />
+            ) : (
+              <>
+                <Title>
+                  <TitleText numberOfLines={1} ellipsizeMode="tail">
+                    {Document.senderName}
+                  </TitleText>
+                </Title>
+                <Date>
+                  <DateText>
+                    <FormattedDate value={Document.date} />
+                  </DateText>
+                </Date>
+              </>
+            )}
+          </Row>
           {loading ? (
-            <Skeleton active style={{ borderRadius: 4 }} height={17} />
+            <Skeleton active style={{ borderRadius: 4 }} height={32} />
           ) : (
-            <>
-              <Title>
-                <TitleText numberOfLines={1} ellipsizeMode="tail">
-                  {Document.senderName}
-                </TitleText>
-              </Title>
-              <Date>
-                <DateText>
-                  <FormattedDate value={Document.date} />
-                </DateText>
-              </Date>
-            </>
+            <Message>{Document.subject}</Message>
           )}
-        </Row>
-        {loading ? (
-          <Skeleton active style={{ borderRadius: 4 }} height={32} />
-        ) : (
-          <Message>{Document.subject}</Message>
-        )}
+        </View>
       </Header>
       <View
         style={{

@@ -8,14 +8,14 @@ import { font } from '../../utils/font'
 const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  border-width: ${({ theme }) => theme.border.width.standard};
+  border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${({ theme }) =>
     theme.isDark ? theme.shade.shade300 : theme.color.blue200};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const ActionsContainer = styled.View`
-  border-top-width: ${({ theme }) => theme.border.width.standard};
+  border-top-width: ${({ theme }) => theme.border.width.standard}px;
   border-top-color: ${(props) =>
     props.theme.isDark
       ? props.theme.shade.shade300
@@ -28,7 +28,7 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   align-items: center;
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
-  border-left-width: ${({ theme }) => theme.border.width.standard};
+  border-left-width: ${({ theme }) => theme.border.width.standard}px;
   border-left-color: ${(props) =>
     props.border ? props.theme.color.blue200 : props.theme.color.transparent};
 `
