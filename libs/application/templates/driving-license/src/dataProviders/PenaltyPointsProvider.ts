@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { PenaltyPointStatus } from '@island.is/api/schema'
+import { PenaltyPointStatus } from '../types/schema'
 
 export class PenaltyPointsProvider extends BasicDataProvider {
   type = 'PenaltyPointsProvider'

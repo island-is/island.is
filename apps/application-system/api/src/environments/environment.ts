@@ -48,6 +48,11 @@ export default {
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
     },
+    drivingLicense: {
+      secret: process.env.DRIVING_LICENSE_SECRET,
+      xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadBaseUrl: 'http://localhost:8081',
+    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
   },
