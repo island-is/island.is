@@ -5,7 +5,7 @@ import { ApplicationStates } from '@island.is/gjafakort/consts'
 import cache from '../../extensions/cache'
 import { ApplicationAPI, NovaAPI } from '../../services'
 
-const APPLICATION_TYPE = 'gjafakort-user'
+const APPLICATION_TYPE = 'gjafakort-user-2'
 
 export const getApplication = (
   userSSN: string,

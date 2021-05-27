@@ -24,7 +24,7 @@ export interface Application {
   modified: string
 
   issuerSSN: string
-  type: 'gjafakort' | 'gjafakort-user'
+  type: 'gjafakort' | 'gjafakort-user' | 'gjafakort-user-2'
   state: ValueOf<ApplicationStates>
   data: object
   AuditLogs?: [
@@ -63,7 +63,7 @@ export interface CompanyApplication extends Application {
 }
 
 export interface UserApplication extends Application {
-  type: 'gjafakort-user'
+  type: 'gjafakort-user' | 'gjafakort-user-2'
   state: 'approved'
   data: {
     mobileNumber: string
