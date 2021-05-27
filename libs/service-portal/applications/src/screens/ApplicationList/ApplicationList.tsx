@@ -75,8 +75,8 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       <Stack space={2}>
         {applications.map((application: Application, index: number) => {
-          const isCompleted = application.status === ApplicationStatus.COMPLETED
-          const isRejected = application.status === ApplicationStatus.REJECTED
+          const isCompleted = application.state === ApplicationStatus.COMPLETED
+          const isRejected = application.state === ApplicationStatus.REJECTED
           const slug = getSlugFromType(application.typeId)
 
           if (!slug) {
@@ -113,7 +113,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               }}
               text={application.stateDescription}
               progressMeter={{
-                active: true,
+                active: Boolean(application.progress),
                 progress: application.progress,
                 variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
               }}

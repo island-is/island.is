@@ -117,10 +117,9 @@ export const Applications: FC = () => {
               {(data?.applicationApplications ?? []).map(
                 (application: Application, index: number) => {
                   const isCompleted =
-                    application.status === ApplicationStatus.COMPLETED
+                    application.state === ApplicationStatus.COMPLETED
                   const isRejected =
-                    application.status === ApplicationStatus.REJECTED
-
+                    application.state === ApplicationStatus.REJECTED
                   return (
                     <ActionCard
                       key={`${application.id}-${index}`}
@@ -154,7 +153,7 @@ export const Applications: FC = () => {
                           history.push(`../${slug}/${application.id}`),
                       }}
                       progressMeter={{
-                        active: true,
+                        active: Boolean(application.progress),
                         progress: application.progress,
                         variant: isRejected
                           ? 'red'
