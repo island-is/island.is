@@ -53,7 +53,7 @@ export class ApiScope extends Model<ApiScope> {
 
   @Column({
     type: DataType.UUID,
-    allowNull: false,
+    allowNull: true,
   })
   @ForeignKey(() => ApiScopeGroup)
   @ApiProperty()

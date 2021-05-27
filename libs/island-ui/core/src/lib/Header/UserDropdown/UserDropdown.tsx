@@ -38,6 +38,8 @@ export const UserDropdown = ({
       isVisible={isVisible}
       hideOnClickOutside={true}
       hideOnEsc={true}
+      removeOnClose={true}
+      preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           setDropdownState('closed')

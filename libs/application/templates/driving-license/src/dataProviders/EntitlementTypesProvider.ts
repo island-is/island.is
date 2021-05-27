@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { DrivingLicenseType } from '@island.is/api/schema'
+import { DrivingLicenseType } from '../types/schema'
 
 export class EntitlementTypesProvider extends BasicDataProvider {
   type = 'EntitlementTypesProvider'
