@@ -764,9 +764,35 @@ export class ResourcesService {
 
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[] | null> {
-    return this.apiScopeGroup.findAll()
+    return this.apiScopeGroup.findAll({ order: [['name', 'asc']] })
   }
 
+  /** Returns all ApiScopeGroups by name if specified with Paging */
+  async findAndCountAllApiScopeGroups(
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: ApiScopeGroup[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    if (!searchString || searchString.length === 0) {
+      searchString = '%'
+    }
+    return this.apiScopeGroup.findAndCountAll({
+      limit: count,
+      offset: offset,
+      where: { name: { [Op.like]: searchString } },
+      order: [['name', 'asc']],
+    })
+  }
+
+  /** Finds Api SCope Group by Id */
+  async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
+    return this.apiScopeGroup.findByPk(id)
+  }
   // #endregion ApiScopeGroup
 
   async findActorApiScopes(requestedScopes: string[]): Promise<string[]> {

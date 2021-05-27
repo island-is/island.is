@@ -26,36 +26,32 @@ describe('/domari-krafa/fyrirtokutimi', () => {
           ...mockCaseQueries,
           ...mockJudgeQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_2',
-              courtDate: '2020-09-12',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              courtDate: '2020-09-12T14:51:00.000Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              courtRoom: '999',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              defenderName: 'Saul Goodman',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              defenderEmail: 'saul@goodman.com',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              judgeId: 'judge_1',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              registrarId: 'registrar_1',
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtDate: '2020-09-12',
+              } as UpdateCase,
+              {
+                courtDate: '2020-09-12T14:51:00.000Z',
+              } as UpdateCase,
+              {
+                courtRoom: '999',
+              } as UpdateCase,
+              {
+                defenderName: 'Saul Goodman',
+              } as UpdateCase,
+              {
+                defenderEmail: 'saul@goodman.com',
+              } as UpdateCase,
+              {
+                judgeId: 'judge_1',
+              } as UpdateCase,
+              {
+                registrarId: 'registrar_1',
+              } as UpdateCase,
+            ],
+            'test_id_2',
+          ),
         ]}
         addTypename={false}
       >
@@ -95,28 +91,26 @@ describe('/domari-krafa/fyrirtokutimi', () => {
           ...mockCaseQueries,
           ...mockJudgeQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-12',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-12T14:51:00.000Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              courtRoom: '999',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderName: 'Saul Goodman',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderEmail: 'saul@goodman.com',
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtDate: '2020-09-12',
+              } as UpdateCase,
+              {
+                courtDate: '2020-09-12T14:51:00.000Z',
+              } as UpdateCase,
+              {
+                courtRoom: '999',
+              } as UpdateCase,
+              {
+                defenderName: 'Saul Goodman',
+              } as UpdateCase,
+              {
+                defenderEmail: 'saul@goodman.com',
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
         ]}
         addTypename={false}
       >
@@ -147,24 +141,23 @@ describe('/domari-krafa/fyrirtokutimi', () => {
           ...mockCaseQueries,
           ...mockJudgeQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-12',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-12T14:51:00.000Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderName: 'Saul Goodman',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderEmail: 'saul@goodman.com',
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtDate: '2020-09-12',
+              } as UpdateCase,
+              {
+                courtDate: '2020-09-12T14:51:00.000Z',
+              } as UpdateCase,
+              {
+                defenderName: 'Saul Goodman',
+              } as UpdateCase,
+              {
+                defenderEmail: 'saul@goodman.com',
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
         ]}
         addTypename={false}
       >
@@ -201,16 +194,17 @@ describe('/domari-krafa/fyrirtokutimi', () => {
           ...mockCaseQueries,
           ...mockJudgeQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-16',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              courtDate: '2020-09-16T19:51:00.000Z',
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtDate: '2020-09-16',
+              } as UpdateCase,
+              {
+                courtDate: '2020-09-16T19:51:00.000Z',
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
         ]}
         addTypename={false}
       >
