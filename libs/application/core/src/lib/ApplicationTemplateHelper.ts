@@ -75,11 +75,16 @@ export class ApplicationTemplateHelper<
 
   getApplicationStateInfo(
     stateKey: string = this.application.state,
-  ): { title?: StaticText; description?: StaticText } {
+  ): {
+    title?: StaticText
+    description?: StaticText
+    tag: { variant?: string; label?: StaticText }
+  } {
+    const metaData = this.template.stateMachineConfig.states[stateKey]?.meta
     return {
-      title: this.template.stateMachineConfig.states[stateKey]?.meta?.title,
-      description: this.template.stateMachineConfig.states[stateKey]?.meta
-        ?.description,
+      title: metaData?.title,
+      description: metaData?.description,
+      tag: { variant: metaData?.tag?.variant, label: metaData?.tag?.label },
     }
   }
 

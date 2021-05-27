@@ -1,6 +1,7 @@
 import {
   ApplicationStatus,
   ApplicationTypes,
+  TagVariant,
 } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
@@ -11,8 +12,36 @@ import {
   IsObject,
   IsString,
   IsArray,
-  IsBoolean,
 } from 'class-validator'
+
+class TagMetaData {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  label?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  variant?: string
+}
+
+class StateMetaData {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  title?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  description?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsObject()
+  tag?: TagMetaData
+}
 
 export class ApplicationResponseDto {
   @ApiProperty()
@@ -47,13 +76,8 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   @Expose()
-  @IsString()
-  stateTitle?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  stateDescription?: string
+  @IsObject()
+  stateMetaData?: StateMetaData
 
   @ApiPropertyOptional()
   @Expose()

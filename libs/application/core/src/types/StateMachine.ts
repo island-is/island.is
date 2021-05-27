@@ -8,7 +8,7 @@ import {
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { Form, FormText, StaticText } from './Form'
-import { Application } from './Application'
+import { Application, TagVariant } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -78,6 +78,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   lifecycle: StateLifeCycle
   title?: StaticText
   description?: StaticText
+  tag?: { label?: StaticText; variant?: TagVariant }
   progress?: number
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction

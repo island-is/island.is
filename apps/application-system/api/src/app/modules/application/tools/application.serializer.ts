@@ -68,17 +68,24 @@ export class ApplicationSerializer
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
       ),
-      stateTitle: stateInfo.title ? intl.formatMessage(stateInfo.title) : null,
-      stateDescription: stateInfo.description
-        ? intl.formatMessage(stateInfo.description)
-        : null,
+      stateMetaData: {
+        title: stateInfo.title ? intl.formatMessage(stateInfo.title) : null,
+        description: stateInfo.description
+          ? intl.formatMessage(stateInfo.description)
+          : null,
+        tag: {
+          variant: stateInfo.tag.variant || null,
+          label: stateInfo.tag.label
+            ? intl.formatMessage(stateInfo.tag.label)
+            : null,
+        },
+      },
       name: intl.formatMessage(template.name),
       institution: template.institution
         ? intl.formatMessage(template.institution)
         : null,
       progress: helper.getApplicationProgress(),
     })
-
     return classToPlain(dto)
   }
 }

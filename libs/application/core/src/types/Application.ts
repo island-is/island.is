@@ -17,11 +17,25 @@ export interface FormValue {
   [key: string]: Answer
 }
 
+export enum TagVariant {
+  RED = 'red',
+  BLUEBERRY = 'blueberry',
+  BLUE = 'blue',
+}
+
+export interface StateMetaData {
+  title?: string
+  description?: string
+  tag?: {
+    label?: string
+    variant?: TagVariant
+  }
+}
+
 export interface Application {
   id: string
   state: string
-  stateTitle?: string
-  stateDescription?: string
+  stateMetaData?: StateMetaData
   applicant: string
   assignees: string[]
   typeId: ApplicationTypes
