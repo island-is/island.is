@@ -7,6 +7,7 @@ import {
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState } from 'react'
+import { omit } from 'lodash'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -83,10 +84,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   const totalItems = props.regulations?.totalItems ?? 0
   const stepSize = props.regulations?.perPage ?? 18
   const totalPages = props.regulations?.totalPages ?? 0
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(props.regulations.page ?? 1)
 
   useEffect(() => {
-    setCurrentPage(1)
+    setCurrentPage(props.regulations.page ?? 1)
   }, [totalItems])
 
   const breadCrumbs = (
@@ -238,9 +239,10 @@ RegulationsHome.getInitialProps = async (ctx) => {
     'iA',
     'iR',
     'page',
-    'all',
   ])
-  const doSearch = Object.values(searchQuery).some((value) => !!value)
+  const doSearch = Object.values(omit(searchQuery, ['page'])).some(
+    (value) => !!value,
+  )
 
   const [
     texts,
@@ -289,7 +291,10 @@ RegulationsHome.getInitialProps = async (ctx) => {
           .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
             query: GET_REGULATIONS_QUERY,
             variables: {
-              input: { type: 'newest', page: 1 },
+              input: {
+                type: 'newest',
+                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
+              },
             },
           })
           .then((res) => res.data?.getRegulations as RegulationSearchResults),
