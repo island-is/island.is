@@ -122,6 +122,12 @@ describe('/domari-krafa/urskurdur', () => {
                   CaseCustodyRestrictions.MEDIA,
                 ],
               } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
             ],
             'test_id',
           ),
@@ -159,6 +165,12 @@ describe('/domari-krafa/urskurdur', () => {
             [
               {
                 decision: CaseDecision.REJECTING,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
               } as UpdateCase,
             ],
             'test_id',
@@ -204,6 +216,12 @@ describe('/domari-krafa/urskurdur', () => {
             [
               {
                 decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
               } as UpdateCase,
             ],
             'test_id',
