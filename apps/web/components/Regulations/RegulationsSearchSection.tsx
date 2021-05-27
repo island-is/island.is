@@ -21,7 +21,7 @@ import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 import {
   RegulationSearchFilters,
-  RegulationSearchKeys,
+  RegulationSearchKey,
   useShortState,
 } from './regulationUtils'
 import cn from 'classnames'
@@ -84,7 +84,7 @@ const yearToOption = (year: number | string): Option => {
   }
 }
 
-const filterOrder: Record<RegulationSearchKeys, number> = {
+const filterOrder: Record<RegulationSearchKey, number> = {
   q: 1,
   year: 2,
   yearTo: 3,
@@ -95,12 +95,12 @@ const filterOrder: Record<RegulationSearchKeys, number> = {
 
 /** Returns a copy of the original query with any falsy values filtered out  */
 const cleanQuery = (
-  query: Record<RegulationSearchKeys, string | null | undefined>,
+  query: Record<RegulationSearchKey, string | null | undefined>,
 ) =>
   Object.entries(query)
     .sort((a, b) => {
-      const keyA = a[0] as RegulationSearchKeys
-      const keyB = b[0] as RegulationSearchKeys
+      const keyA = a[0] as RegulationSearchKey
+      const keyB = b[0] as RegulationSearchKey
       return (filterOrder[keyA] || 999) > (filterOrder[keyB] || 999) ? 1 : -1
     })
     .reduce<Record<string, string>>((newQuery, [key, value]) => {
@@ -182,7 +182,7 @@ export const RegulationsSearchSection = (
     [props.lawChapters],
   )
 
-  const doSearch = (key: RegulationSearchKeys, value: string) => {
+  const doSearch = (key: RegulationSearchKey, value: string) => {
     router.replace({
       pathname: router.pathname,
       query: cleanQuery({
