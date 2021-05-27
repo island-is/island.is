@@ -12,9 +12,11 @@ import { environment } from '../environments/environment'
 import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
 import { TranslationModule } from './modules/translation/translation.module'
+import { AuditModule } from '@island.is/nest/audit'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register({
       audience: '@island.is/auth/admin',
       issuer: environment.auth.issuer,
