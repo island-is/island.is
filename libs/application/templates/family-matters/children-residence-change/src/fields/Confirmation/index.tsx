@@ -8,7 +8,10 @@ import {
   CopyUrl,
   PdfLink,
 } from '@island.is/application/templates/family-matters-core/components'
-import { formatPhoneNumber } from '@island.is/application/templates/family-matters-core/utils'
+import {
+  formatPhoneNumber,
+  getOtherParentInformation,
+} from '@island.is/application/templates/family-matters-core/utils'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import { confirmation, copyUrl, contract } from '../../lib/messages'
 import { confirmationIllustration } from '../Shared.treat'
@@ -20,8 +23,12 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
   const { pdfUrl } = useGeneratePdfUrl(application.id, pdfType)
   const { formatMessage } = useIntl()
-  const { answers } = application
-
+  const { answers, externalData } = application
+  const children = externalData.nationalRegistry.data.children
+  const otherParent = getOtherParentInformation(
+    children,
+    answers.selectedChildren,
+  )
   return (
     <Box marginTop={3} paddingBottom={5}>
       <DescriptionText
@@ -58,6 +65,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
         <DescriptionText
           text={confirmation.nextSteps.description}
           format={{
+            parentBName: otherParent.fullName,
             date: answers.confirmContract.timestamp,
           }}
         />

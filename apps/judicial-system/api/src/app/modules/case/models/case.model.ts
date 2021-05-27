@@ -187,7 +187,10 @@ export class Case implements TCase {
   readonly prosecutorPostponedAppealDate?: string
 
   @Field({ nullable: true })
-  isCaseAppealable?: boolean
+  isAppealDeadlineExpired?: boolean
+
+  @Field({ nullable: true })
+  isAppealGracePeriodExpired?: boolean
 
   @Field({ nullable: true })
   readonly rulingDate?: string
