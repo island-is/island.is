@@ -1,4 +1,5 @@
 export * from './paymentPlanPrerequisites'
+export * from './paymentPlanList'
 export {
   NationalRegistryProvider,
   UserProfileProvider,

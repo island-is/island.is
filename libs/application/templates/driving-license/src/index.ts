@@ -1,4 +1,4 @@
-import template from './lib/template'
+import template from './lib/drivingLicenseTemplate'
 
 export const getDataProviders = () => import('./dataProviders/')
 

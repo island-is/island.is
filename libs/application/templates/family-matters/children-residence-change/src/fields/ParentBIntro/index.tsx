@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { parentBIntro } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
@@ -41,6 +41,7 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
         <RadioController
           id={field.id}
           largeButtons
+          backgroundColor="white"
           options={[
             {
               value: ApproveContract.Yes,

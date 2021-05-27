@@ -26,6 +26,7 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -164,6 +165,12 @@ const autoSchemaFile = environment.production
       url: environment.fjarmalDomain.url,
       username: environment.fjarmalDomain.username,
       password: environment.fjarmalDomain.password,
+    }),
+    NationalRegistryXRoadModule.register({
+      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+      xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
   ],
 })

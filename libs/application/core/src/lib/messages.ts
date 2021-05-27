@@ -16,6 +16,31 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  buttonApprove: {
+    id: 'application.system:button.approve',
+    defaultMessage: 'Samþykkja',
+    description: 'Approve button copy',
+  },
+  buttonReject: {
+    id: 'application.system:button.reject',
+    defaultMessage: 'Hafna',
+    description: 'Reject button copy',
+  },
+  buttonEdit: {
+    id: 'application.system:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit button for review screen and so on',
+  },
+  cardButtonInProgress: {
+    id: 'application:card.button.inProgress',
+    defaultMessage: 'Opna umsókn',
+    description: 'Button label when application is in progress',
+  },
+  cardButtonComplete: {
+    id: 'application:card.button.complete',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is complete',
+  },
   externalDataTitle: {
     id: 'application.system:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
@@ -134,6 +159,16 @@ export const coreMessages = defineMessages({
     description:
       'To continue the application process, you will need to sign in.',
   },
+  radioYes: {
+    id: 'application.system:radio.option.yes',
+    defaultMessage: 'Já',
+    description: 'Yes option value',
+  },
+  radioNo: {
+    id: 'application.system:radio.option.no',
+    defaultMessage: 'Nei',
+    description: 'No option value',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -146,5 +181,15 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
     description: 'Oops! Something went wrong when fetching your data',
+  },
+  fileUpload: {
+    id: 'application.system:core.error.file.upload',
+    defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
+    description: 'Error message when upload file fails',
+  },
+  fileRemove: {
+    id: 'application.system:core.error.file.remove',
+    defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
+    description: 'Error message when deleting a file fails',
   },
 })

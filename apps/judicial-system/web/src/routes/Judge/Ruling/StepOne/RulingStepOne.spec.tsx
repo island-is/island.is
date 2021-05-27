@@ -30,25 +30,30 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_3',
-              ruling:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              custodyEndDate: '2020-10-24T12:31:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              decision: CaseDecision.ACCEPTING,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtCaseFacts: 'Court Case Facts',
+              } as UpdateCase,
+              {
+                courtLegalArguments: 'Court Legal Arguments',
+              } as UpdateCase,
+              {
+                ruling:
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
+              } as UpdateCase,
+              {
+                custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+              } as UpdateCase,
+              {
+                custodyEndDate: '2020-10-24T12:31:00Z',
+              } as UpdateCase,
+              {
+                decision: CaseDecision.ACCEPTING,
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
         ]}
         addTypename={false}
       >
@@ -56,6 +61,16 @@ describe('/domari-krafa/urskurdur', () => {
           <RulingStepOne />
         </UserProvider>
       </MockedProvider>,
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Málsatvik *'),
+      'Court Case Facts',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Lagarök *'),
+      'Court Legal Arguments',
     )
 
     userEvent.type(
@@ -99,15 +114,23 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              custodyRestrictions: [
-                CaseCustodyRestrictions.ISOLATION,
-                CaseCustodyRestrictions.MEDIA,
-              ],
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                custodyRestrictions: [
+                  CaseCustodyRestrictions.ISOLATION,
+                  CaseCustodyRestrictions.MEDIA,
+                ],
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
@@ -138,12 +161,20 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              decision: CaseDecision.REJECTING,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                decision: CaseDecision.REJECTING,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
@@ -181,12 +212,20 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >

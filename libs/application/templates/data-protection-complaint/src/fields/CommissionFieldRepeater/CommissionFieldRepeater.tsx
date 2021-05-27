@@ -78,6 +78,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
                     formatMessage,
                   )}
                   error={errors && getErrorViaPath(errors, nameField)}
+                  required
                   backgroundColor="blue"
                 />
               </GridColumn>
@@ -92,6 +93,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
                   )}
                   format="######-####"
                   error={errors && getErrorViaPath(errors, nationalIdField)}
+                  required
                   backgroundColor="blue"
                 />
               </GridColumn>
