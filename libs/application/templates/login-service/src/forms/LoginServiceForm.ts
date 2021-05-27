@@ -127,12 +127,14 @@ export const LoginServiceForm: Form = buildForm({
               id: 'technicalContact.name',
               title: technicalContact.labels.name,
               backgroundColor: 'blue',
+              required: true
             }),
             buildTextField({
               id: 'technicalContact.email',
               title: technicalContact.labels.email,
               variant: 'email',
               backgroundColor: 'blue',
+              required: true
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
@@ -140,16 +142,7 @@ export const LoginServiceForm: Form = buildForm({
               variant: 'tel',
               backgroundColor: 'blue',
               format: '###-####',
-            }),
-            buildCheckboxField({
-              id: 'technicalContact.sameAsResponsibleParty',
-              title: '',
-              options: [
-                {
-                  label: technicalContact.labels.sameAsResponsibleParty,
-                  value: 'yes',
-                },
-              ],
+              required: true
             }),
             buildCustomField(
               {
