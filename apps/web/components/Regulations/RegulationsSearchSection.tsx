@@ -156,6 +156,7 @@ export const RegulationsSearchSection = (
 
   useEffect(() => {
     doSearch('page', props.page && props.page > 1 ? String(props.page) : '')
+    window.scrollTo(0, 0)
   }, [props.page])
 
   const ministryOptions = useMemo(() => {
