@@ -14,35 +14,45 @@ function getBlockedStates(role: UserRole) {
   return blockedStates
 }
 
-function prosecutorInstitutionMustMatchUserInstitution(role: UserRole) {
+function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
   return role === UserRole.PROSECUTOR
 }
 
-export function isStateHiddenFromRole(
-  state: CaseState,
-  role: UserRole,
-): boolean {
+function courtMustMatchUserIInstitution(role: UserRole): boolean {
+  return role === UserRole.REGISTRAR || role === UserRole.JUDGE
+}
+
+function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
   return getBlockedStates(role).includes(state)
 }
 
-export function isProsecutorInstitutionHiddenFromUser(
+function isProsecutorsOfficeHiddenFromUser(
   prosecutorInstitutionId: string,
   user: User,
 ): boolean {
   return (
-    prosecutorInstitutionMustMatchUserInstitution(user?.role) &&
+    prosecutorsOfficeMustMatchUserInstitution(user?.role) &&
     prosecutorInstitutionId &&
     prosecutorInstitutionId !== user?.institution?.id
+  )
+}
+
+function isCourtHiddenFromUser(courtId: string, user: User): boolean {
+  return (
+    courtMustMatchUserIInstitution(user?.role) &&
+    courtId &&
+    courtId !== user?.institution?.id
   )
 }
 
 export function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
   return (
     isStateHiddenFromRole(theCase?.state, user?.role) ||
-    isProsecutorInstitutionHiddenFromUser(
+    isProsecutorsOfficeHiddenFromUser(
       theCase?.prosecutor?.institutionId,
       user,
-    )
+    ) ||
+    isCourtHiddenFromUser(theCase?.courtId, user)
   )
 }
 
@@ -53,19 +63,24 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     },
   }
 
-  return prosecutorInstitutionMustMatchUserInstitution(user?.role)
-    ? {
-        [Op.and]: [
-          blockStates,
-          {
-            [Op.or]: [
-              { prosecutor_id: { [Op.is]: null } },
-              {
-                '$prosecutor.institution_id$': user?.institution?.id,
-              },
-            ],
-          },
-        ],
-      }
-    : blockStates
+  const blockInstitutions =
+    user?.role === UserRole.PROSECUTOR
+      ? {
+          [Op.or]: [
+            { prosecutor_id: { [Op.is]: null } },
+            {
+              '$prosecutor.institution_id$': user?.institution?.id,
+            },
+          ],
+        }
+      : {
+          [Op.or]: [
+            { court_id: { [Op.is]: null } },
+            {
+              court_id: user?.institution?.id,
+            },
+          ],
+        }
+
+  return { [Op.and]: [blockStates, blockInstitutions] }
 }

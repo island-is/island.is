@@ -30,19 +30,12 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation(
             [
               {
-                courtStartDate: '2020-09-16T19:51:28.000Z',
-              } as UpdateCase,
-              {
                 courtAttendees:
                   'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
               } as UpdateCase,
               {
                 policeDemands:
-                  'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
-              } as UpdateCase,
-              {
-                policeDemands:
-                  'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+                  'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
               } as UpdateCase,
               {
                 accusedPleaDecision: AccusedPleaDecision.ACCEPT,
@@ -123,7 +116,7 @@ describe('/domari-krafa/thingbok', () => {
               } as UpdateCase,
               {
                 policeDemands:
-                  'Þess er krafist að Jon Harring, kt. string, sæti farbanni með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+                  'Þess er krafist að Jon Harring, kt. string, sæti farbanni með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
               } as UpdateCase,
             ],
             'test_id_10',

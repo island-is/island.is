@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, Institution } from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   newSetAndSendDateToServer,
@@ -20,7 +20,7 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
-  courts: ReactSelectOption[]
+  courts: Institution[]
   handleNextButtonClick: () => Promise<void>
   transitionLoading: boolean
 }
@@ -41,12 +41,17 @@ const StepTwoForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
 
-  const defaultProsecutor = prosecutors?.find(
-    (prosecutor: Option) => prosecutor.value === workingCase?.prosecutor?.id,
+  const selectCourts = courts.map((court) => ({
+    label: court.name,
+    value: court.id,
+  }))
+
+  const defaultProsecutor = prosecutors.find(
+    (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
   )
 
-  const defaultCourt = courts.find(
-    (court) => court.label === workingCase?.court,
+  const defaultCourt = selectCourts.find(
+    (court) => court.label === workingCase.court?.name,
   )
 
   return (
@@ -93,11 +98,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
             name="court"
             label="Veldu dómstól"
             defaultValue={defaultCourt}
-            options={courts}
+            options={selectCourts}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setAndSendToServer(
-                'court',
-                (selectedOption as ReactSelectOption).label,
+                'courtId',
+                (selectedOption as ReactSelectOption).value as string,
                 workingCase,
                 setWorkingCase,
                 updateCase,
