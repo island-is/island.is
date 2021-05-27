@@ -14,6 +14,7 @@ import {
   RegulationYears,
   Year,
 } from './regulations.types'
+import { pickBy, identity } from 'lodash'
 
 export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
@@ -101,7 +102,7 @@ export class RegulationsService extends RESTDataSource {
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(
       `search`,
-      { q, rn, year, yearTo, ch, iA, iR, page },
+      pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity),
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
