@@ -30,14 +30,16 @@ const InfoBox: React.FC<Props> = (props) => {
           </Box>
           <Text variant="small">{props.text}</Text>
         </Box>
-        <Box
-          component="button"
-          aria-label="Hætta við"
-          className={styles.trashButton}
-          onClick={props.onDismiss}
-        >
-          <Icon icon="trash" type="outline" color="blue400" />
-        </Box>
+        {props.onDismiss && (
+          <Box
+            component="button"
+            aria-label="Hætta við"
+            className={styles.trashButton}
+            onClick={props.onDismiss}
+          >
+            <Icon icon="trash" type="outline" color="blue400" />
+          </Box>
+        )}
       </Box>
     </div>
   )

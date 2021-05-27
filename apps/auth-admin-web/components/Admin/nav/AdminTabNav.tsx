@@ -49,6 +49,22 @@ const AdminTabNav: React.FC<Props> = ({
               {localization.navigations['adminTabNav'].items['users'].text}
             </button>
           </li>
+          <li className={activetab === AdminTab.ApiScopeGroups ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.ApiScopeGroups)}
+              className={activetab === AdminTab.ApiScopeGroups ? 'active' : ''}
+              title={
+                localization.navigations['adminTabNav'].items['apiScopeGroups']
+                  .title
+              }
+            >
+              {
+                localization.navigations['adminTabNav'].items['apiScopeGroups']
+                  .text
+              }
+            </button>
+          </li>
           <li className={activetab === AdminTab.IdpProviders ? 'active' : ''}>
             <button
               type="button"
@@ -76,6 +92,34 @@ const AdminTabNav: React.FC<Props> = ({
               }
             >
               {localization.navigations['adminTabNav'].items['grantTypes'].text}
+            </button>
+          </li>
+          <li className={activetab === AdminTab.Language ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.Language)}
+              className={activetab === AdminTab.Language ? 'active' : ''}
+              title={
+                localization.navigations['adminTabNav'].items['language'].title
+              }
+            >
+              {localization.navigations['adminTabNav'].items['language'].text}
+            </button>
+          </li>
+          <li className={activetab === AdminTab.Translation ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.Translation)}
+              className={activetab === AdminTab.Translation ? 'active' : ''}
+              title={
+                localization.navigations['adminTabNav'].items['translation']
+                  .title
+              }
+            >
+              {
+                localization.navigations['adminTabNav'].items['translation']
+                  .text
+              }
             </button>
           </li>
           <li
@@ -110,34 +154,6 @@ const AdminTabNav: React.FC<Props> = ({
               }
             >
               {localization.navigations['adminTabNav'].items['logs'].text}
-            </button>
-          </li>
-          <li className={activetab === AdminTab.Language ? 'active' : ''}>
-            <button
-              type="button"
-              onClick={() => handleTabChange(AdminTab.Language)}
-              className={activetab === AdminTab.Language ? 'active' : ''}
-              title={
-                localization.navigations['adminTabNav'].items['language'].title
-              }
-            >
-              {localization.navigations['adminTabNav'].items['language'].text}
-            </button>
-          </li>
-          <li className={activetab === AdminTab.Translation ? 'active' : ''}>
-            <button
-              type="button"
-              onClick={() => handleTabChange(AdminTab.Translation)}
-              className={activetab === AdminTab.Translation ? 'active' : ''}
-              title={
-                localization.navigations['adminTabNav'].items['translation']
-                  .title
-              }
-            >
-              {
-                localization.navigations['adminTabNav'].items['translation']
-                  .text
-              }
             </button>
           </li>
         </ul>

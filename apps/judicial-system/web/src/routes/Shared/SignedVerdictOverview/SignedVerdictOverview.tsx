@@ -17,6 +17,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseGender,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -230,11 +231,12 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const canCaseFilesBeOpened = () => {
     if (
-      user?.role === UserRole.PROSECUTOR ||
-      workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      Boolean(workingCase?.accusedPostponedAppealDate) ||
-      Boolean(workingCase?.prosecutorPostponedAppealDate)
+      !workingCase?.isAppealGracePeriodExpired &&
+      (user?.role === UserRole.PROSECUTOR ||
+        workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        Boolean(workingCase?.accusedPostponedAppealDate) ||
+        Boolean(workingCase?.prosecutorPostponedAppealDate))
     ) {
       return true
     } else {
@@ -368,7 +370,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       workingCase.prosecutor?.institution?.name || 'Ekki skráð'
                     }`,
                   },
-                  { title: 'Dómstóll', value: workingCase.court },
+                  { title: 'Dómstóll', value: workingCase.court?.name },
                   { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                   { title: 'Dómari', value: workingCase.judge?.name },
                 ]}
@@ -382,15 +384,20 @@ export const SignedVerdictOverview: React.FC = () => {
                 }}
               />
             </Box>
-            {workingCase.isCaseAppealable &&
+            {(workingCase.accusedAppealDecision ===
+              CaseAppealDecision.POSTPONE ||
+              workingCase.prosecutorAppealDecision ===
+                CaseAppealDecision.POSTPONE) &&
               workingCase.rulingDate &&
-              workingCase.accusedGender &&
               (user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR) && (
                 <Box marginBottom={7}>
                   <AppealSection
                     rulingDate={workingCase.rulingDate}
-                    accusedGender={workingCase.accusedGender}
+                    accusedGender={
+                      // Handle missing gender
+                      workingCase.accusedGender ?? CaseGender.OTHER
+                    }
                     accusedAppealDecision={workingCase.accusedAppealDecision}
                     prosecutorAppealDecision={
                       workingCase.prosecutorAppealDecision
@@ -406,6 +413,12 @@ export const SignedVerdictOverview: React.FC = () => {
                     handleAccusedAppealDismissal={handleAccusedAppealDismissal}
                     handleProsecutorAppealDismissal={
                       handleProsecutorAppealDismissal
+                    }
+                    isAppealDeadlineExpired={
+                      workingCase.isAppealDeadlineExpired ?? false
+                    }
+                    isAppealGracePeriodExpired={
+                      workingCase.isAppealGracePeriodExpired ?? false
                     }
                   />
                 </Box>

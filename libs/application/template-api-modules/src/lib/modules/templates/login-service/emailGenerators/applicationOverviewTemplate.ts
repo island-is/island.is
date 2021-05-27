@@ -41,10 +41,7 @@ export const applicationOverviewTemplate = (
     application.answers,
     'technicalContact.phoneNumber',
   )
-  const technicalContactSameAsResponsibleParty = getValueViaPath(
-    application.answers,
-    'technicalContact.sameAsResponsibleParty',
-  )
+
   const technicalContactTechAnnouncementsEmail = getValueViaPath(
     application.answers,
     'technicalContact.techAnnouncementsEmail',
@@ -129,17 +126,6 @@ export const applicationOverviewTemplate = (
           <p>
             <b>${messages.technicalContact.labels.tel.defaultMessage}</b> </br>
             ${technicalContactPhoneNumber}
-          </p>
-        `
-        : ''
-    }
-    ${
-      (technicalContactSameAsResponsibleParty as
-        | string[]
-        | undefined)?.includes('yes')
-        ? `
-          <p>
-            ${messages.technicalContact.labels.sameAsResponsibleParty.defaultMessage}
           </p>
         `
         : ''
