@@ -4,8 +4,10 @@ import {
   AccordionItem,
   Box,
   Button,
+  Select,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
@@ -33,6 +35,7 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   CaseFileList,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -47,6 +50,7 @@ import {
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -55,6 +59,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const id = router.query.id
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
+  const { prosecutorsOffices } = useInstitution()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -443,7 +448,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </AccordionItem>
               </Accordion>
             </Box>
-            <Box marginBottom={15}>
+            <Box marginBottom={7}>
               <Box marginBottom={3}>
                 <PdfButton
                   caseId={workingCase.id}
@@ -456,6 +461,27 @@ export const SignedVerdictOverview: React.FC = () => {
                 title="Opna PDF þingbók og úrskurð"
                 pdfType="ruling"
               />
+            </Box>
+            <Box marginBottom={9}>
+              <Box marginBottom={3}>
+                <Text variant="h3">
+                  Opna mál fyrir öðru embætti{' '}
+                  <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
+                </Text>
+              </Box>
+              <BlueBox>
+                <Select
+                  name="sharedWithProsecutorsOfficeId"
+                  label="Veldu embætti"
+                  placeholder="Velja embætti sem tekur við málinu"
+                  options={prosecutorsOffices
+                    .map((prosecutorsOffice) => ({
+                      label: prosecutorsOffice.name,
+                      value: prosecutorsOffice.id,
+                    }))
+                    .filter((t) => t.value !== user?.institution?.id)}
+                />
+              </BlueBox>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
