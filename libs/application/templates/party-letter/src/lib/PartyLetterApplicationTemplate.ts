@@ -71,7 +71,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.SIGNATUREE,
               formLoader: () =>
                 import('../forms/CollectEndorsements').then((val) =>
                   Promise.resolve(val.CollectEndorsements),
@@ -87,11 +87,12 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.SIGNATUREE,
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementForm),
                 ),
+              read: 'all',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -99,8 +100,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              read: 'all',
-              write: 'all',
             },
           ],
         },
@@ -225,7 +224,9 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/LetterApplicationApprovedOverview').then((val) =>
+                import(
+                  '../forms/LetterApplicationApprovedOverview'
+                ).then((val) =>
                   Promise.resolve(val.LetterApplicationApprovedOverview),
                 ),
               read: 'all',

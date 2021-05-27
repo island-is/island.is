@@ -90,15 +90,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementApplication),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
               read: 'all',
-              write: 'all',
             },
           ],
         },
@@ -110,7 +102,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToSupremeCourt',
-        //exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
@@ -138,11 +129,10 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConstituencyForm').then((module) =>
-                  Promise.resolve(module.ConstituencyForm),
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
                 ),
               read: 'all',
-              write: 'all',
             },
           ],
         },
@@ -208,7 +198,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
+                import('../forms/ApprovedOverview').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
               read: 'all',
@@ -216,9 +206,9 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-              import('../forms/InReview').then((module) =>
-                Promise.resolve(module.InReview),
-              ),
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
               read: 'all',
             },
           ],

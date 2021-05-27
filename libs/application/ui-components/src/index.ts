@@ -5,5 +5,4 @@ export { RadioValue } from './components/RadioValue/RadioValue'
 export { DataValue } from './components/DataValue/DataValue'
 export { ReviewGroup } from './components/ReviewGroup/ReviewGroup'
 export { Label } from './components/Label/Label'
-export { default as ExportAsCSV } from './components/ExportAsCSV/ExportAsCSV'
-
+export { ExportAsCSV } from './components/ExportAsCSV/ExportAsCSV'

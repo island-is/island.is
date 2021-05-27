@@ -12,29 +12,16 @@ import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 
-const GET_ENDORSEMENTS = gql`
-  query endorsementSystemUserEndorsements {
-    endorsementSystemUserEndorsements {
-      id
-      endorser
-      endorsementListId
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`
 const CREATE_ENDORSEMENT = gql`
   mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
     endorsementSystemEndorseList(input: $input) {
       id
       endorser
       endorsementListId
+
       meta {
         fullName
+        address
       }
       created
       modified
@@ -64,18 +51,6 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const partyName = answers.partyName
 
   const { data: userData } = useQuery(GET_FULLNAME)
-
-  const { loading, error } = useQuery(GET_ENDORSEMENTS, {
-    onCompleted: async ({ endorsementSystemUserEndorsements }) => {
-      if (!loading && endorsementSystemUserEndorsements) {
-        const hasEndorsements =
-          !error && !loading && endorsementSystemUserEndorsements?.length
-            ? endorsementSystemUserEndorsements.length > 0
-            : false
-        setHasEndorsed(hasEndorsements)
-      }
-    },
-  })
 
   const onEndorse = async () => {
     const success = await createEndorsement({

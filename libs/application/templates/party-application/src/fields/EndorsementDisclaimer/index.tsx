@@ -11,6 +11,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 import { GetFullName, GetEndorsements } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
+import { SchemaFormValues } from '../../lib/dataSchema'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -18,9 +19,10 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
+  const answers = application.answers as SchemaFormValues
 
-  const partyLetter = 'K'
-  const partyName = 'Flokkur'
+  const partyLetter = answers.partyLetter
+  const partyName = answers.partyName
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
 
