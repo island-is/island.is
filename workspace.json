@@ -6081,9 +6081,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            
-            
-            
             "config": "apps/services/auth-admin-api/.eslintrc",
             "tsConfig": [
               "apps/services/auth-admin-api/tsconfig.app.json",
