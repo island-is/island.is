@@ -1,117 +1,138 @@
-import React from 'react';
-import styled, { useTheme } from 'styled-components/native';
-import { Image, ImageSourcePropType } from 'react-native';
-import isVerifiedLogo from '../../assets/card/is-verified.png'
+import React from 'react'
+import { Image, ImageSourcePropType } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 import { LicenseType } from '../../../../app/src/types/license-type'
+import isVerifiedLogo from '../../assets/card/is-verified.png'
+import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
+import driverLicence from '../../assets/card/okuskyrteini.png'
+import fishingCard from '../../assets/card/veidikort.png'
+import ust from '../../assets/card/ust.png'
+import { font } from '../../utils/font'
 
-const Host = styled.View<{ backgroundColor?: string }>`
+
+const Host = styled.View`
   display: flex;
   width: 100%;
+  min-height: 112px;
   flex-flow: row nowrap;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 16px 24px;
   border-radius: 16px;
-  background-color: ${props => props.backgroundColor ?? props.theme.color.blueberry100};
+  overflow: hidden;
 `
+const BackgroundImage = styled.ImageBackground<{ backgroundColor?: string }>`
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  flex: 1;
+`;
 
 const Content = styled.View`
   justify-content: center;
-`;
+`
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
   margin-bottom: 8px;
-  font-size: 16px;
-  color: ${props => props.theme.shade.foreground};
-`;
+
+  ${font({
+    fontWeight: '600',
+  })}
+`
 
 const ValidationWrap = styled.View`
-  font-family: 'IBMPlexSans-SemiBold';
   display: flex;
   flex-flow: row;
-`;
+  margin-bottom: 4px;
+`
 
 const Validation = styled.Text`
-  margin-bottom: 4px;
-  font-size: 13px;
-  line-height: 17px;
-  font-weight: bold;
-  color: ${props => props.theme.shade.foreground};
-`;
+  ${font({
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 15,
+  })}
+`
 
 const TimeStamp = styled.Text`
-  font-size: 13px;
-  color: ${props => props.theme.shade.foreground};
-`;
+  ${font({
+    fontSize: 13,
+  })}
+  color: ${(props) => props.theme.shade.foreground};
+`
 
 const ImgWrap = styled.View`
-`;
-
-function mapLicenseColor(type: LicenseType) {
-  let backgroundColor = '#eeeeee'
-  if (type === LicenseType.DRIVERS_LICENSE) {
-    backgroundColor = '#f5e4ec'
-  }
-  if (type === LicenseType.IDENTIDY_CARD) {
-    backgroundColor = '#fff7e7'
-  }
-  if (type === LicenseType.PASSPORT) {
-    backgroundColor = '#ddefff'
-  }
-  if (type === LicenseType.WEAPON_LICENSE) {
-    backgroundColor = '#fffce0'
-  }
-  return backgroundColor
-}
-
+  display: flex;
+  align-content: center;
+  justify-content: center;
+`
 
 interface LicenceCardProps {
-  title: string;
-  status?: string;
-  date?: string;
-  agencyLogo: ImageSourcePropType;
-  type: LicenseType;
-  nativeID?: string;
-  style?: any;
+  title: string
+  status?: string
+  date?: string
+  agencyLogo: ImageSourcePropType
+  type: LicenseType
+  nativeID?: string
+  style?: any
 }
 
-export function LicenceCard({ title, type, agencyLogo, nativeID, style, date, status }: LicenceCardProps) {
-  const theme = useTheme();
-  let backgroundColor = theme.shade.shade400;
+export function LicenceCard({
+  title,
+  type,
+  agencyLogo,
+  nativeID,
+  style,
+  date,
+  status,
+}: LicenceCardProps) {
+  const theme = useTheme()
+  let backgroundColor = theme.shade.shade400
+  let backgroundImage = null;
+  let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />;
   switch (type) {
     case LicenseType.DRIVERS_LICENSE:
-      backgroundColor = theme.isDark ? '#5F414E' : '#f5e4ec';
-      break;
+      backgroundColor = theme.isDark ? '#5F414E' : '#f5e4ec'
+      backgroundImage = driverLicence
+      break
     case LicenseType.IDENTIDY_CARD:
-      backgroundColor = theme.isDark ? '#403E3B' : '#fff7e7';
-      break;
+      backgroundColor = theme.isDark ? '#403E3B' : '#fff7e7'
+      break
     case LicenseType.PASSPORT:
-      backgroundColor = theme.isDark ? '#283139' : '#ddefff';
-      break;
+      backgroundColor = theme.isDark ? '#283139' : '#ddefff'
+      break
+    case LicenseType.FISHING_CARD:
+      backgroundColor = theme.isDark ? '#283139' : '#ddefff'
+      backgroundImage = fishingCard
+      logo = <Image source={ust} style={{ width: 58, height: 41 }} />
+      break
     case LicenseType.WEAPON_LICENSE:
-      backgroundColor = theme.isDark ? '#474421' : '#fffce0';
-      break;
+      backgroundColor = theme.isDark ? '#474421' : '#fffce0'
+      backgroundImage = weaponLicense
+      break
   }
 
   return (
-    <Host backgroundColor={backgroundColor} nativeID={nativeID} style={style}>
+    <Host nativeID={nativeID} style={style}>
+      <BackgroundImage source={backgroundImage} backgroundColor={backgroundColor} />
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Title>
         <ValidationWrap>
-          <Image source={isVerifiedLogo as ImageSourcePropType} style={{ width: 13, height: 13, marginRight: 8 }} />
-          <Validation>
-            {status}
-          </Validation>
+          <Image
+            source={isVerifiedLogo as ImageSourcePropType}
+            style={{ width: 13, height: 13, marginRight: 8 }}
+          />
+          <Validation>{status}</Validation>
         </ValidationWrap>
-        <TimeStamp>
-          {date}
-        </TimeStamp>
+        <TimeStamp>{date}</TimeStamp>
       </Content>
       <ImgWrap>
-        <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
+        {logo}
       </ImgWrap>
     </Host>
-  );
+  )
 }

@@ -1,11 +1,12 @@
 import { theme } from '@island.is/island-ui/theme'
+import { impactAsync, ImpactFeedbackStyle, selectionAsync } from 'expo-haptics'
 import React, { useRef, useState } from 'react'
 import { FormattedDate } from 'react-intl'
 import { Animated, StyleSheet } from 'react-native'
 import Interactable from 'react-native-interactable'
 import styled from 'styled-components/native'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
-import { selectionAsync, impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { font } from '../../utils/font'
 
 const Host = styled.SafeAreaView<{ background: boolean }>`
   margin-right: 16px;
@@ -29,29 +30,31 @@ const Content = styled.View`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: 8px;
-  padding-top: 16px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: 8px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Title = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
-  padding-right: 8px;
+  padding-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const TitleText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
   flex: 1;
+  ${font({
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 17,
+    color: ({ theme }) => theme.color.dark400,
+  })}
 `
 
 const Date = styled.View`
@@ -60,32 +63,35 @@ const Date = styled.View`
 `
 
 const DateText = styled.Text<{ unread?: boolean }>`
-  font-family: ${(props) =>
-    props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: (props) => (props.unread ? '600' : '300'),
+    fontSize: 13,
+    lineHeight: 17,
+    color: ({ theme }) => theme.color.dark400,
+  })}
 `
 
 const Dot = styled.View`
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  background-color: ${(props) => props.theme.color.blueberry400};
-  margin-left: 8px;
+  width: ${({ theme }) => theme.spacing[1]}px;
+  height: ${({ theme }) => theme.spacing[1]}px;
+  border-radius: ${({ theme }) => theme.spacing[1]}px;
+  background-color: ${({ theme }) => theme.color.blueberry400};
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Message = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
-  padding-bottom: 8px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+
+  ${font({
+    fontWeight: '300',
+    lineHeight: 24,
+    color: ({ theme }) => theme.color.dark400,
+  })}
 `
 
 const Actions = styled.View`
   flex-direction: row;
-  padding-bottom: 8px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Button = styled.TouchableHighlight`
@@ -94,18 +100,19 @@ const Button = styled.TouchableHighlight`
   justify-content: center;
   align-items: center;
   padding: 10px 16px;
-  background-color: ${(props) => props.theme.color.blue400};
-  border-radius: 8px;
-  margin-right: 16px;
+  background-color: ${({ theme }) => theme.color.blue400};
+  border-radius: ${({ theme }) => theme.spacing[1]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const ButtonText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 12,
+    lineHeight: 16,
+    color: ({ theme }) => theme.color.white,
+  })}
 `
-
 const Action = styled(Animated.View)`
   position: absolute;
   background-color: ${(props) => props.theme.color.blue200};
@@ -273,10 +280,10 @@ export function ListItem({
             onAlert={(e) => {
               if (canMarkOnRelease.current) {
                 if (e.nativeEvent?.status === 'enter') {
-                  selectionAsync();
+                  selectionAsync()
                   markOnRelease.current = true
                 } else if (e.nativeEvent?.status === 'leave') {
-                  selectionAsync();
+                  selectionAsync()
                   markOnRelease.current = false
                 }
               }

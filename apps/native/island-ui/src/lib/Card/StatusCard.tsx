@@ -1,23 +1,21 @@
-import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   width: 100%;
-  border-radius: ${theme.border.radius.large};
-  border-width: 1px;
-  border-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade300
-      : props.theme.color.blue200};
-  margin-bottom: 16px;
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-width: ${({ theme }) => theme.border.width.standard};
+  border-color: ${({ theme }) =>
+    theme.isDark ? theme.shade.shade300 : theme.color.blue200};
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const ActionsContainer = styled.View`
-  border-top-width: 1px;
+  border-top-width: ${({ theme }) => theme.border.width.standard};
   border-top-color: ${(props) =>
     props.theme.isDark
       ? props.theme.shade.shade300
@@ -29,37 +27,41 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  border-left-width: 1px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
+  border-left-width: ${({ theme }) => theme.border.width.standard};
   border-left-color: ${(props) =>
-    props.border ? props.theme.color.blue200 : 'transparent'};
+    props.border ? props.theme.color.blue200 : props.theme.color.transparent};
 `
 
 const ActionText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${theme.color.blue400};
+  ${font({
+    fontWeight: '600',
+    color: ({ theme }) => theme.color.blue400,
+  })}
   text-align: center;
 `
 
 const Title = styled.Text`
-  margin-bottom: 8px;
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+
+  ${font({
+    fontWeight: '600',
+    fontSize: 13,
+    lineHeight: 17,
+    color: ({ theme }) => theme.shade.foreground,
+  })}
 `
 
 const Description = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '300',
+    lineHeight: 24,
+    color: ({ theme }) => theme.shade.foreground,
+  })}
 `
 
 const Content = styled.View`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
   padding-top: 0px;
 `
 
@@ -69,27 +71,29 @@ const Date = styled.View`
 `
 
 const DateText = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '300',
+    fontSize: 13,
+    lineHeight: 17,
+    color: ({ theme }) => theme.shade.foreground,
+  })}
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Bar = styled.View`
   height: 12px;
-  overflow: hidden;
-  background-color: ${(props) =>
-    props.theme.isDark ? theme.color.roseTinted600 : theme.color.roseTinted200};
-  border-radius: 6px;
   padding: 2px;
+  overflow: hidden;
+  background-color: ${({ theme }) =>
+    theme.isDark ? theme.color.roseTinted600 : theme.color.roseTinted200};
+  border-radius: 6px;
 
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Progress = styled.View<{ width?: number }>`
@@ -97,7 +101,7 @@ const Progress = styled.View<{ width?: number }>`
   width: ${(props: any) => props.width ?? 0}%;
   border-radius: 6px;
 
-  background-color: ${theme.color.roseTinted400};
+  background-color: ${(props) => props.theme.color.roseTinted400};
 `
 
 interface StatusCardProps {

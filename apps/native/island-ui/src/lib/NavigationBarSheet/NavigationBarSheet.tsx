@@ -3,26 +3,29 @@ import { ImageSourcePropType, Platform, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import { testIDs } from '../../../../app/src/utils/test-ids'
+import { font } from '../../utils/font'
 
 const Header = styled.View`
   padding-top: 20px;
-  padding-bottom: 16px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `
 
 const HeaderTitle = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 21px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 21,
+    color: (props) => props.theme.shade.foreground,
+  })}
 `
 
 const Handle = styled.View`
   position: absolute;
   width: 120px;
-  height: 4px;
-  border-radius: 4px;
+  height: ${({ theme }) => theme.spacing.smallGutter}px;
+  border-radius: ${({ theme }) => theme.spacing.smallGutter}px;
   background-color: ${(props) => props.theme.color.dark100};
   top: 5px;
   left: 50%;
@@ -31,18 +34,18 @@ const Handle = styled.View`
 `
 
 const CloseButton = styled.TouchableOpacity`
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
+  width: ${({ theme }) => theme.spacing[4]}px;
+  height: ${({ theme }) => theme.spacing[4]}px;
+  border-radius: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${(props) =>
-    props.theme.isDark ? '#080817' : props.theme.color.blue100};
+    props.theme.isDark ? props.theme.color.dark400 : props.theme.color.blue100};
   align-items: center;
   justify-content: center;
 `
 
 const CloseIcon = styled.Image`
-  width: 24px;
-  height: 24px;
+  width: ${({ theme }) => theme.spacing[3]}px;
+  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 export function NavigationBarSheet({

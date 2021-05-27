@@ -1,6 +1,7 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native'
 import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 interface TableViewCellProps {
   /**
@@ -49,9 +50,9 @@ const Cell = styled.View<{ border: boolean; disabled: boolean }>`
 
 const Left = styled.View`
   justify-content: center;
-  padding-left: 15px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-left: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Center = styled.View<{ accessory: boolean }>`
@@ -59,15 +60,15 @@ const Center = styled.View<{ accessory: boolean }>`
   justify-content: center;
   flex-direction: column;
   padding-right: ${(props) => (props.accessory ? 15 : 0)}px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Right = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  margin-right: 15px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Content = styled.View`
@@ -77,9 +78,7 @@ const Content = styled.View`
 const Title = styled.View``
 
 const TitleText = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 16px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font()}
 `
 
 const Subtitle = styled.View`
@@ -87,15 +86,17 @@ const Subtitle = styled.View`
 `
 
 const SubtitleText = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 15px;
-  color: ${(props) => props.theme.color.dark300};
+  ${font({
+    fontSize: 15,
+    color: (props) => props.theme.color.dark300,
+  })}
 `
 
 export const TableViewAccessory = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 14px;
-  color: ${(props) => props.theme.color.dark400};
+  ${font({
+    fontSize: 14,
+    color: (props) => props.theme.color.dark400,
+  })}
 `
 
 export function TableViewCell(props: TableViewCellProps) {

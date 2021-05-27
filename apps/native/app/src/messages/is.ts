@@ -126,5 +126,5 @@ export const is = {
     approved {Samþykkt}
     rejected {Hafnað}
   }`,
-  "applicationStatusCard.noActiveApplications": "Engar virkar umsóknir"
+  "applicationStatusCard.noActiveApplications": "Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér."
 }

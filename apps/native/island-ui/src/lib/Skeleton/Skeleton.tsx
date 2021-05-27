@@ -5,7 +5,7 @@ import {
   Dimensions,
   LayoutChangeEvent,
   Platform,
-  ViewStyle,
+  ViewStyle
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -22,14 +22,14 @@ interface SkeletonProps {
 const Host = styled.View<{ error?: boolean }>`
   height: 20px;
   width: 100%;
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.error
-        ? props.theme.color.red600
-        : props.theme.shade.shade100
-      : props.error
-      ? props.theme.color.red200
-      : props.theme.color.dark100};
+  background-color: ${({ theme, error }) =>
+    theme.isDark
+      ? error
+        ? theme.color.red600
+        : theme.shade.shade100
+      : error
+      ? theme.color.red200
+      : theme.color.dark100};
   opacity: 1;
   overflow: hidden;
 `
@@ -99,7 +99,7 @@ export function Skeleton(props: SkeletonProps) {
       <Swoosh
         style={{
           height,
-          top: -Math.floor(height + height*0.1),
+          top: -Math.floor(height + height * 0.1),
           shadowOffset: {
             width: 0,
             height: Math.floor(height),

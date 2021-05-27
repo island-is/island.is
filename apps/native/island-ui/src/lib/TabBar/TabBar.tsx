@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { selectionAsync } from 'expo-haptics'
+import { font } from '../../utils/font'
 
 interface TabBarValue {
   label: string
@@ -28,40 +29,33 @@ const Tab = styled.Pressable`
 `
 
 const TabTitle = styled(Animated.Text)`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 14px;
-  line-height: 19px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 14,
+    lineHeight: 19,
+  })}
 `
 
 const Line = styled.View`
   width: 100%;
-  height: 1px;
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blue200};
+  height: ${({ theme }) => theme.border.width.standard}px;
+  background-color: ${({ theme }) =>
+    theme.isDark
+      ? theme.shade.shade200
+      : theme.color.blue200};
 `
 
 const ActiveLine = styled(Animated.View)`
   width: 50%;
-  height: 1px;
+  height: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${(props) => props.theme.color.blue400};
 `
-
-function hexToRGB(hex: string) {
-  const r = parseInt(`0x${hex[1]}${hex[2]}`, 16)
-  const g = parseInt(`0x${hex[3]}${hex[4]}`, 16)
-  const b = parseInt(`0x${hex[5]}${hex[6]}`, 16)
-  return `rgb(${r},${g},${b})`
-}
 
 export function TabBar(props: TabBarProps) {
   const win = useWindowDimensions()
   const [width, setWidth] = useState(win.width)
   const { values, selectedIndex, onChange } = props
   const theme = useTheme()
-  // const animatedIndexNative = useRef(new Animated.Value(selectedIndex))
   const animatedIndex = useRef(new Animated.Value(selectedIndex))
   const indexes = useRef(new Map<number, Animated.Value>())
   const tabWidth = width / props.values.length

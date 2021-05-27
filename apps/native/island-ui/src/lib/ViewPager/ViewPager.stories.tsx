@@ -1,19 +1,28 @@
+import { theme } from '@island.is/island-ui/theme'
+import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
-import { View, Switch, Platform, ImageSourcePropType } from 'react-native';
-
-import { theme } from '@island.is/island-ui/theme';
-import { ViewPager } from './ViewPager';
-import { WelcomeCard } from '../Card/WelcomeCard';
+import { ImageSourcePropType, View } from 'react-native'
 import illustrationSrc from '../../assets/card/digital-services-m2.png'
+import { WelcomeCard } from '../Card/WelcomeCard'
+import { ViewPager } from './ViewPager'
+
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center' }}>{children}</View>
+  <View
+    style={{
+      flex: 1,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    {children}
+  </View>
 )
 
 storiesOf('View Pager', module)
-  .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
     return (
@@ -42,7 +51,5 @@ storiesOf('View Pager', module)
           />
         </ViewPager>
       </View>
-    );
+    )
   })
-
-

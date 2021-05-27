@@ -1,15 +1,24 @@
+import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { withKnobs, text } from '@storybook/addon-knobs';
 import React from 'react'
-import { View } from 'react-native';
-import { NavigationBarSheet } from './NavigationBarSheet';
+import { View } from 'react-native'
+import { NavigationBarSheet } from './NavigationBarSheet'
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' }}>{children}</View>
+  <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+    }}
+  >
+    {children}
+  </View>
 )
 
 storiesOf('Navigation Bar Sheet', module)
-  .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
     return (
@@ -20,6 +29,5 @@ storiesOf('Navigation Bar Sheet', module)
           style={{ marginHorizontal: 16 }}
         />
       </View>
-    );
+    )
   })
-

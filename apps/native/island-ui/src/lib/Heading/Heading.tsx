@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
   width: 100%;
   flex-direction: row;
-
-  padding-bottom: 16px;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const TextContainer = styled.View`
@@ -16,10 +16,10 @@ const TextContainer = styled.View`
 `
 
 const Text = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 20px;
-  line-height: 26px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 20,
+  })}
 `
 
 interface HeadingProps {

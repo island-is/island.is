@@ -4,16 +4,17 @@ import styled from 'styled-components/native'
 
 const Dots = styled.View`
   flex-direction: row;
-  width: 100%;
-  height: 24px;
   justify-content: center;
+  width: 100%;
+  height: ${({ theme }) => theme.spacing[6]}px;
 `
 
 const Dot = styled(Animated.View)<{ active?: boolean }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  margin-right: ${(props) => (props.active ? 0 : 4)}px;
+  width: ${({ theme }) => theme.spacing[1]}px;
+  height: ${({ theme }) => theme.spacing[1]}px;
+  border-radius: ${({ theme }) => theme.border.radius.standard};
+  margin-right: ${({ theme, active }) =>
+    active ? theme.spacing.none : theme.spacing.smallGutter}px;
   background-color: ${({ active, theme }) =>
     theme.isDark
       ? active
@@ -40,7 +41,7 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const x = useRef(new Animated.Value(0)).current
 
   if (pages === 0) {
-    return null;
+    return null
   }
 
   return (

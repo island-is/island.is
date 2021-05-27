@@ -1,15 +1,17 @@
+import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
-import { View } from 'react-native';
-import { SearchBar } from './SearchBar';
+import { View } from 'react-native'
+import { SearchBar } from './SearchBar'
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>{children}</View>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    {children}
+  </View>
 )
 
 storiesOf('Search Bar', module)
-  .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
     return (
@@ -20,5 +22,5 @@ storiesOf('Search Bar', module)
           returnKeyType="search"
         />
       </View>
-    );
+    )
   })
