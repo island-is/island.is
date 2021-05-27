@@ -17,11 +17,11 @@ import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('EndorsementSystemResolver')
 export class EndorsementSystemResolver {
-  constructor (private endorsementSystemService: EndorsementSystemService) {}
+  constructor(private endorsementSystemService: EndorsementSystemService) {}
 
   // endorsement
   @Query(() => Endorsement, { nullable: true })
-  async endorsementSystemGetSingleEndorsement (
+  async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
@@ -32,7 +32,7 @@ export class EndorsementSystemResolver {
   }
 
   @Query(() => [Endorsement], { nullable: true })
-  async endorsementSystemGetEndorsements (
+  async endorsementSystemGetEndorsements(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
@@ -43,7 +43,7 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => Endorsement)
-  async endorsementSystemEndorseList (
+  async endorsementSystemEndorseList(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
@@ -54,7 +54,7 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => [Endorsement])
-  async endorsementSystemBulkEndorseList (
+  async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
@@ -68,7 +68,7 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => Boolean)
-  async endorsementSystemUnendorseList (
+  async endorsementSystemUnendorseList(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
@@ -80,7 +80,7 @@ export class EndorsementSystemResolver {
 
   // Endorsement list
   @Query(() => [EndorsementList])
-  async endorsementSystemFindEndorsementLists (
+  async endorsementSystemFindEndorsementLists(
     @Args('input') input: FindEndorsementListByTagsDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList[]> {
@@ -91,7 +91,7 @@ export class EndorsementSystemResolver {
   }
 
   @Query(() => EndorsementList, { nullable: true })
-  async endorsementSystemGetSingleEndorsementList (
+  async endorsementSystemGetSingleEndorsementList(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
@@ -102,7 +102,7 @@ export class EndorsementSystemResolver {
   }
 
   @Query(() => [Endorsement])
-  async endorsementSystemUserEndorsements (
+  async endorsementSystemUserEndorsements(
     @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
     return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
@@ -111,7 +111,7 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => EndorsementList)
-  async endorsementSystemCloseEndorsementList (
+  async endorsementSystemCloseEndorsementList(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
@@ -122,7 +122,7 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => EndorsementList)
-  async endorsementSystemCreateEndorsementList (
+  async endorsementSystemCreateEndorsementList(
     @Args('input') input: CreateEndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
