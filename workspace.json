@@ -1869,6 +1869,34 @@
         }
       }
     },
+    "application-templates-driving-assessment-approval": {
+      "root": "libs/application/templates/driving-assessment-approval",
+      "sourceRoot": "libs/application/templates/driving-assessment-approval/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-assessment-approval/tsconfig.lib.json",
+              "libs/application/templates/driving-assessment-approval/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-assessment-approval/**/*"
+            ]
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
@@ -1937,6 +1965,12 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
           }
         }
       }
@@ -6178,7 +6212,8 @@
             "jestConfig": "apps/services/auth-public-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-documents": {

@@ -13,16 +13,24 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
+type ExtendedOption = ReactSelectOption & { institution: Institution }
+
 interface Props {
   user: User
-  institutions: Institution[]
+  courts: Institution[]
+  prosecutorsOffices: Institution[]
   onSave: (user: User) => void
   loading: boolean
 }
@@ -39,15 +47,19 @@ export const UserForm: React.FC<Props> = (props) => {
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const selectInstitutions = props.institutions.map((institution) => {
-    return {
-      label: institution.name,
-      value: institution.id,
-    }
-  })
+  const selectInstitutions = (user.role === UserRole.PROSECUTOR
+    ? props.prosecutorsOffices
+    : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+    ? props.courts
+    : []
+  ).map((institution) => ({
+    label: institution.name,
+    value: institution.id,
+    institution,
+  }))
 
   const usersInstitution = selectInstitutions.find(
-    (institution) => institution.label === user.institution?.name,
+    (institution) => institution.value === user.institution?.id,
   )
 
   const validations: FormSettings = {
@@ -96,7 +108,12 @@ export const UserForm: React.FC<Props> = (props) => {
       }
     }
 
-    return true
+    // TODO: Find a better way to validate the match between user role and institution type
+    return user.role === UserRole.PROSECUTOR
+      ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
+      : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
+      ? user.institution?.type === InstitutionType.COURT
+      : false
   }
 
   const storeAndRemoveErrorIfValid = (field: string, value: string) => {
@@ -189,7 +206,6 @@ export const UserForm: React.FC<Props> = (props) => {
                 checked={user.role === UserRole.PROSECUTOR}
                 onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
                 large
-                filled
               />
             </Box>
             <Box className={styles.roleColumn}>
@@ -200,7 +216,6 @@ export const UserForm: React.FC<Props> = (props) => {
                 checked={user.role === UserRole.JUDGE}
                 onChange={() => setUser({ ...user, role: UserRole.JUDGE })}
                 large
-                filled
               />
             </Box>
             <Box className={styles.roleColumn}>
@@ -211,7 +226,6 @@ export const UserForm: React.FC<Props> = (props) => {
                 checked={user.role === UserRole.REGISTRAR}
                 onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
                 large
-                filled
               />
             </Box>
           </Box>
@@ -225,11 +239,7 @@ export const UserForm: React.FC<Props> = (props) => {
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setUser({
                 ...user,
-                institution: props.institutions.find(
-                  (institution) =>
-                    institution.id ===
-                    ((selectedOption as ReactSelectOption).value as string),
-                ),
+                institution: (selectedOption as ExtendedOption).institution,
               })
             }
             required

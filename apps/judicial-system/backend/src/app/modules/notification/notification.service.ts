@@ -9,6 +9,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  IntegratedCourts,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -217,7 +218,7 @@ export class NotificationService {
     const smsText = formatCourtReadyForCourtSmsNotification(
       existingCase.type,
       existingCase.prosecutor?.name,
-      existingCase.court,
+      existingCase.court?.name,
     )
 
     return this.sendSms(smsText)
@@ -279,7 +280,10 @@ export class NotificationService {
 
     // TODO: Find a better place for this
     // No need to wait
-    if (existingCase.courtCaseNumber) {
+    if (
+      IntegratedCourts.includes(existingCase.courtId) &&
+      existingCase.courtCaseNumber
+    ) {
       this.uploadRequestPdfToCourt(existingCase)
     }
 
@@ -304,7 +308,7 @@ export class NotificationService {
     const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
     const html = formatProsecutorCourtDateEmailNotification(
       existingCase.type,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.courtRoom,
       existingCase.defenderName,
@@ -324,7 +328,7 @@ export class NotificationService {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
       existingCase.prosecutor?.institution?.name,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.accusedGender,
@@ -354,7 +358,7 @@ export class NotificationService {
 
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
@@ -435,7 +439,7 @@ export class NotificationService {
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.accusedGender,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.prosecutor?.name,
       existingCase.courtEndTime,
       existingCase.defenderName,
@@ -522,7 +526,7 @@ export class NotificationService {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
       existingCase.prosecutor?.institution?.name,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.defenderName,
@@ -554,7 +558,7 @@ export class NotificationService {
       existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
-      existingCase.court,
+      existingCase.court?.name,
       existingCase.courtDate,
     )
 

@@ -42,8 +42,16 @@ export const EmployerApproval: Form = buildForm({
               title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
-                { name: 'Reject', type: 'reject', event: 'REJECT' },
-                { name: 'Approve', type: 'primary', event: 'APPROVE' },
+                {
+                  name: coreMessages.buttonApprove,
+                  type: 'reject',
+                  event: 'REJECT',
+                },
+                {
+                  name: coreMessages.buttonReject,
+                  type: 'primary',
+                  event: 'APPROVE',
+                },
               ],
             }),
           ],
