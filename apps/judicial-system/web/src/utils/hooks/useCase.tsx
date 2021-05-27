@@ -64,8 +64,8 @@ const useCase = () => {
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
             sendRequestToDefender: theCase.sendRequestToDefender,
-            court: 'Héraðsdómur Reykjavíkur',
             leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.court?.id,
           },
         },
       })

@@ -50,7 +50,7 @@ export async function getRulingPdfAsString(
     .text('Þingbók', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(existingCase.court, { align: 'center' })
+    .text(existingCase.court?.name, { align: 'center' })
     .fontSize(12)
     .lineGap(30)
     .text(
@@ -186,7 +186,7 @@ export async function getRulingPdfAsString(
         existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.court,
+        existingCase.court?.name,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,

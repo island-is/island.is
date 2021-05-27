@@ -66,7 +66,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly court?: string
+  readonly courtId?: string
 
   @IsOptional()
   @IsString()

@@ -11,6 +11,7 @@ import TranslationList from './../../components/Admin/lists/TranslationList'
 import LocalizationUtils from '../../utils/localization.utils'
 import { RoleUtils } from './../../utils/role.utils'
 import UsersList from './../../components/Admin/lists/UsersList'
+import ApiScopeGroupList from './../../components/Resource/lists/ApiScopeGroupList'
 
 const Index: React.FC = () => {
   const router = useRouter()
@@ -122,6 +123,15 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
             <TranslationList />
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.ApiScopeGroups: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <ApiScopeGroupList />
           </AdminTabNav>
         </ContentWrapper>
       )

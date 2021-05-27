@@ -25,12 +25,15 @@ describe('Create detention request, step four', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockProsecutorQuery,
-          ...mockUpdateCaseMutation([
-            { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
-            {
-              legalArguments: 'Lorem ipsum dolor sit amet,',
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
+              {
+                legalArguments: 'Lorem ipsum dolor sit amet,',
+              } as UpdateCase,
+            ],
+            'test_id_2',
+          ),
         ]}
         addTypename={false}
       >

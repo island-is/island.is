@@ -1,6 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { Institution as TInstitution } from '@island.is/judicial-system/types'
+import {
+  Institution as TInstitution,
+  InstitutionType,
+} from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class Institution implements TInstitution {
@@ -12,6 +15,9 @@ export class Institution implements TInstitution {
 
   @Field()
   readonly modified!: string
+
+  @Field(() => String)
+  readonly type!: InstitutionType
 
   @Field()
   readonly name!: string

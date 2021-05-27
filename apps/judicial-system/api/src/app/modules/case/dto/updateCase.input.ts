@@ -56,7 +56,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly court?: string
+  readonly courtId?: string
 
   @Allow()
   @Field({ nullable: true })
