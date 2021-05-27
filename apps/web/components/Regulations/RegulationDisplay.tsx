@@ -49,21 +49,34 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const name = prettyName(regulation.name)
 
-  const diffView = !!regulation.showingDiff
+  const {
+    timelineDate,
+    effectiveDate,
+    lastAmendDate,
+    repealedDate,
+    showingDiff,
+  } = regulation
 
-  const timelineDate = regulation.timelineDate || ''
-  const effectiveDate = regulation.effectiveDate
-  const lastAmendDate = regulation.lastAmendDate || ''
+  const diffView = !!showingDiff
 
   const isDiffable =
     regulation.history.length > 0 && timelineDate !== effectiveDate
 
-  const isCurrent = !timelineDate || timelineDate === lastAmendDate
-  const isUpcoming = !isCurrent && timelineDate > lastAmendDate
+  const isRepealed = !!repealedDate
+  const isCurrent =
+    (!isRepealed && !timelineDate) || timelineDate === lastAmendDate
+  const isUpcoming =
+    !isRepealed &&
+    !isCurrent &&
+    timelineDate &&
+    lastAmendDate &&
+    timelineDate > lastAmendDate
 
-  const waterMarkClass = isCurrent
-    ? undefined
-    : s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
+  const waterMarkClass = isRepealed
+    ? s.repealedWarning
+    : !isCurrent
+    ? s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
+    : undefined
 
   const key = getKey(regulation)
 
@@ -91,13 +104,13 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               label={txt('showDiff')}
             />
           )}
+
           <RegulationStatus
             regulation={regulation}
             urlDate={props.urlDate}
             texts={texts}
           />
           <AffectingRegulations regulation={regulation} texts={texts} />
-
           <MinistryTransfer regulation={regulation} texts={texts} />
 
           <div className={waterMarkClass}>
