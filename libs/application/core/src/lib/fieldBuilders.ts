@@ -89,7 +89,7 @@ export function buildDateField(data: {
   placeholder?: FormText
   description?: FormText
   maxDate?: Date
-  minDate?: Date
+  minDate?: MaybeWithApplication<Date>
   excludeDates?: MaybeWithApplication<Date[]>
   disabled?: boolean
   width?: FieldWidth

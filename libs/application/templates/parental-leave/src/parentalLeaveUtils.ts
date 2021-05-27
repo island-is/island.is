@@ -1,3 +1,5 @@
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+
 import {
   Application,
   ExternalData,
@@ -7,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
@@ -191,6 +192,26 @@ export const getAllPeriodDates = (periods: Period[]) => {
   )
 
   return dates.map((d) => new Date(d))
+}
+
+export const getEndPeriodsDate = (periods: Period[]) => {
+  const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
+
+  return filledPeriods.reduce((acc, cur) => {
+    const date = new Date(cur.endDate)
+
+    if (date > acc) {
+      acc = date
+    }
+
+    return acc
+  }, new Date(0, 0, 0))
+}
+
+export const getStartDateOfLatestPeriod = (periods: Period[]) => {
+  const latestPeriod = periods[periods.length - 1]
+
+  return latestPeriod.startDate
 }
 
 export const createRange = <T>(
