@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ILinkUrl } from '../generated/contentfulTypes'
+import { ILinkUrl, IOrganizationSubpage } from '../generated/contentfulTypes'
 import { PageTypes } from '../unions/page.union'
 
 @ObjectType()
@@ -17,13 +17,27 @@ const typeMap: { [key: string]: string } = {
   'vidspyrna-frontpage': 'adgerdirfrontpage',
 }
 
-export const mapReferenceLink = ({
-  sys,
-  fields,
-}: PageTypes | ILinkUrl): ReferenceLink => ({
-  slug:
-    (fields as PageTypes['fields']).slug ??
-    (fields as ILinkUrl['fields']).url ??
-    '',
-  type: typeMap[sys.contentType.sys.id] ?? sys.contentType.sys.id,
+const mapPageSlug = (page: PageTypes | ILinkUrl): string => {
+  switch (page.sys.contentType.sys.id) {
+    case 'organizationSubpage':
+      return (
+        (page.fields as IOrganizationSubpage['fields']).organizationPage.fields
+          .slug +
+        '/' +
+        (page.fields as IOrganizationSubpage['fields']).slug
+      )
+
+    case 'linkUrl':
+      return (page.fields as ILinkUrl['fields']).url
+
+    default:
+      return (page.fields as PageTypes['fields']).slug ?? ''
+  }
+}
+
+export const mapReferenceLink = (
+  page: PageTypes | ILinkUrl,
+): ReferenceLink => ({
+  slug: mapPageSlug(page),
+  type: typeMap[page.sys.contentType.sys.id] ?? page.sys.contentType.sys.id,
 })

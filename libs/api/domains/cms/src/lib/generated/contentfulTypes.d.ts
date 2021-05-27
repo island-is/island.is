@@ -1501,6 +1501,8 @@ export interface IMenuLinkFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
+    | IOrganizationPage
+    | IOrganizationSubpage
     | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
@@ -1539,6 +1541,8 @@ export interface IMenuLinkWithChildrenFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
+    | IOrganizationPage
+    | IOrganizationSubpage
     | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
@@ -1885,7 +1889,7 @@ export interface IOrganizationPageFields {
   description?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'syslumenn' | 'digital_iceland'
+  theme: 'default' | 'default_with_image' | 'syslumenn' | 'digital_iceland'
 
   /** Slices */
   slices?:
@@ -1896,9 +1900,11 @@ export interface IOrganizationPageFields {
         | IFeaturedArticles
         | ISectionHeading
         | ILogoListSlice
+        | IOneColumnText
         | IStorySection
         | ITabSection
         | ITimeline
+        | ITwoColumnText
       )[]
     | undefined
 
@@ -1912,6 +1918,9 @@ export interface IOrganizationPageFields {
 
   /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
   menuLinks?: ILinkGroup[] | undefined
+
+  /** Menu Links (test) */
+  menuItems?: IMenuLinkWithChildren[] | undefined
 
   /** Secondary Menu */
   secondaryMenu?: ILinkGroup | undefined
