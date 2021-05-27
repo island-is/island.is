@@ -155,7 +155,7 @@ export const RegulationsSearchSection = (
       props.ministries.map(
         (m): Option => ({
           value: m.slug,
-          label: m.name, // + (m.current ? '' : ` ${txt('searchLegacyMinistrySuffix')}`),
+          label: m.name,
         }),
       ),
     ) as ReadonlyArray<Option>
@@ -240,11 +240,6 @@ export const RegulationsSearchSection = (
           paddingTop={2}
           paddingBottom={[4, 4, 4]}
         >
-          {/*             labelClear={txt('searchClearLabel')}
-            labelResult={txt('searchResultLabel')}
-            labelTitle={txt('searchTitleLabel')}
-            onFilterClear={clearSearch}
- */}
           <GridContainer>
             <GridRow alignItems="center">
               <GridColumn
