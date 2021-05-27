@@ -13,6 +13,7 @@ export class ApiScopeDTO {
     this.automaticDelegationGrant = false
     this.alsoForDelegatedUser = false
     this.isAccessControlled = false
+    this.groupId = null
   }
 
   enabled: boolean
@@ -28,4 +29,5 @@ export class ApiScopeDTO {
   automaticDelegationGrant: boolean
   alsoForDelegatedUser: boolean
   isAccessControlled: boolean
+  groupId?: string
 }
