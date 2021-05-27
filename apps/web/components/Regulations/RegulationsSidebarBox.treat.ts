@@ -61,6 +61,12 @@ const linkStyles = {
   },
 }
 
+export const sidebarNonLink = style({
+  marginBottom: spacing[2],
+  display: 'block',
+  // color: color.dark400,
+  opacity: 0.67,
+})
 export const sidebarLink = style(linkStyles)
 export const sidebarLinkCurrent = style({})
 

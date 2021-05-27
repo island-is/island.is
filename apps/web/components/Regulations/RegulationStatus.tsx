@@ -3,17 +3,21 @@ import * as s from './RegulationStatus.treat'
 import React from 'react'
 import { ISODate, RegulationMaybeDiff } from './Regulations.types'
 import { Hidden, Text } from '@island.is/island-ui/core'
-import { useDateUtils } from './regulationUtils'
+import { interpolate, useDateUtils } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { Ball } from './Ball'
+import { Ball, BallColor } from './Ball'
 
 // ---------------------------------------------------------------------------
 
 export type RegulationStatusProps = {
   regulation: Pick<
     RegulationMaybeDiff,
-    'repealedDate' | 'timelineDate' | 'lastAmendDate' | 'effectiveDate'
+    | 'repealedDate'
+    | 'timelineDate'
+    | 'lastAmendDate'
+    | 'effectiveDate'
+    | 'history'
   >
   urlDate?: ISODate
   texts: RegulationPageTexts
@@ -24,77 +28,105 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   const { formatDate } = useDateUtils()
   const txt = useNamespace(texts)
 
-  const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
+  const {
+    timelineDate,
+    lastAmendDate,
+    effectiveDate,
+    repealedDate,
+    history,
+  } = regulation
+
+  const untilDate = timelineDate || ''
   const today = new Date().toISOString().substr(0, 10) as ISODate
+
+  const color: BallColor = repealedDate
+    ? 'red'
+    : !timelineDate || timelineDate === lastAmendDate
+    ? 'green'
+    : 'yellow'
+
+  const onDateText = urlDate && (
+    <small className={s.metaDate}>
+      {interpolate(
+        txt(urlDate > today ? 'statusOnDate_future' : 'statusOnDate_past'),
+        { date: formatDate(urlDate) },
+      )}
+    </small>
+  )
+
+  const getNextHistoryDate = () => {
+    const idx = (history || []).findIndex(
+      (item, i) => item.date === timelineDate,
+    )
+    const nextItem = idx > -1 && history[idx + 1]
+    return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
+  }
 
   return (
     <>
       <div className={s.printText}>
-        <Text>Prentað {formatDate(today)}</Text>
+        <Text>
+          {txt('printedDate')} {formatDate(today)}
+        </Text>
       </div>
       <Hidden print={true}>
-        {!regulation.repealedDate ? (
-          <Text>
-            {!regulation.timelineDate ||
-            regulation.timelineDate === regulation.lastAmendDate ? (
+        <Text>
+          <Ball type={color} />
+
+          {!timelineDate || timelineDate === lastAmendDate ? (
+            repealedDate ? (
               <>
-                <Ball type="green" />
-                Núgildandi reglugerð
-                {regulation.lastAmendDate ? (
-                  <>
-                    {' – '}
-                    <span className={s.metaDate}>
-                      uppfærð {formatDate(regulation.lastAmendDate)}
-                    </span>
-                  </>
-                ) : (
-                  ''
+                {txt('statusRepealed') + ' '}
+                {onDateText || (
+                  <small className={s.metaDate}>
+                    {interpolate(txt('statusRepealed_on'), {
+                      date: formatDate(repealedDate),
+                    })}
+                  </small>
                 )}
-              </>
-            ) : viewingOriginal ? (
-              <>
-                <Ball type="yellow" />
-                Upprunaleg útgáfa reglugerðar
-                {' – '}
-                <span className={s.metaDate}>
-                  sem gók gildi þann {formatDate(regulation.timelineDate)}
-                </span>
-              </>
-            ) : regulation.timelineDate > today ? (
-              <>
-                <Ball type="yellow" />
-                Væntanleg útgáfa reglugerðar
-                {' – '}
-                <span className={s.metaDate}>
-                  sem mun taka gildi þann {formatDate(regulation.timelineDate)}
-                </span>
               </>
             ) : (
               <>
-                <Ball type="yellow" />
-                Úrelt útgáfa reglugerðar
-                {' – '}
-                {urlDate ? (
-                  <span className={s.metaDate}>
-                    eins og leit út þann {formatDate(urlDate)}
-                  </span>
-                ) : (
-                  <span className={s.metaDate}>
-                    sem tók gildi þann {formatDate(regulation.timelineDate)}
-                  </span>
-                )}
+                {txt('statusCurrent') + ' '}
+                {onDateText ||
+                  (lastAmendDate && (
+                    <small className={s.metaDate}>
+                      {interpolate(txt('statusCurrent_amended'), {
+                        date: formatDate(lastAmendDate),
+                      })}
+                    </small>
+                  ))}
               </>
-            )}
-          </Text>
-        ) : (
-          <Text>
-            <Ball type="red" />
-            Úrelt reglugerð{' – '}
-            <span className={s.metaDate}>
-              felld úr gildi {formatDate(regulation.repealedDate)}
-            </span>
-          </Text>
-        )}
+            )
+          ) : timelineDate > today ? (
+            <>
+              {txt('statusUpcoming') + ' '}
+              {onDateText || (
+                <small className={s.metaDate}>
+                  {interpolate(txt('statusUpcoming_on'), {
+                    date: formatDate(timelineDate),
+                  })}
+                </small>
+              )}
+            </>
+          ) : (
+            <>
+              {txt(
+                timelineDate === effectiveDate
+                  ? 'statusOriginal'
+                  : 'statusHistoric',
+              ) + ' '}
+              {onDateText || (
+                <small className={s.metaDate}>
+                  {interpolate(txt('statusHistoric_period'), {
+                    dateFrom: formatDate(timelineDate),
+                    dateTo: formatDate(getNextHistoryDate()),
+                  })}
+                </small>
+              )}
+            </>
+          )}
+        </Text>
       </Hidden>
     </>
   )

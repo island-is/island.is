@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme, spacing } from '@island.is/island-ui/theme'
 
 export const printText = style({
   '@media': {
@@ -13,4 +14,9 @@ export const printText = style({
 
 export const metaDate = style({
   display: 'inline-block',
+  fontSize: '.75em',
+
+  '::before': {
+    content: '" –  "',
+  },
 })
