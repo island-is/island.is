@@ -850,6 +850,22 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
     },
+    attachmentTitle: {
+      id: 'pl.application:selfEmployed.attachment.title',
+      defaultMessage: 'Reiknað endurgjald',
+      description: 'Title for the attachement required for self employed',
+    },
+    attachmentDescription: {
+      id: 'pl.application:selfEmployed.attachment.description',
+      defaultMessage:
+        'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
+      description: 'Description for the attachement required for self employed',
+    },
+    attachmentButton: {
+      id: 'pl.application:selfEmployed.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Button copy for the self employed attachement',
+    },
   }),
 
   ratio: defineMessages({
@@ -1399,6 +1415,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
+  },
+  requiredAttachment: {
+    id: 'pl.application:errors.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
   },
 })
 

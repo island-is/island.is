@@ -101,7 +101,7 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="nationalId"
-                    message={localization.fields['nationalId'].helpText}
+                    message={localization.fields['nationalId'].errorMessage}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
