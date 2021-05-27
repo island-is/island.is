@@ -21,6 +21,7 @@ import {
 import { validate } from './validate'
 
 import * as formatters from './formatters'
+import { mockCourt } from './mocks'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -624,7 +625,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         parentCase: {
           id: 'TEST_EXTENSION',
           decision: CaseDecision.ACCEPTING,
@@ -670,7 +671,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 
@@ -713,7 +714,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 

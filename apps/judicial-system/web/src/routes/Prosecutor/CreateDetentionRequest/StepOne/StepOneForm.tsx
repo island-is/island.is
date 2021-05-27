@@ -104,7 +104,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
     },
     sendRequestToDefender: {},
     leadInvestigator: {
-      validations: ['empty'],
+      validations: workingCase.type === CaseType.CUSTODY ? ['empty'] : [],
       errorMessage: leadInvestigatorErrorMessage,
       setErrorMessage: setLeadInvestigatorErrorMessage,
     },
@@ -180,7 +180,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   checked={workingCase.accusedGender === CaseGender.MALE}
                   onChange={(event) => setAndSendToServer(event.target)}
                   large
-                  filled
+                  backgroundColor="white"
                 />
               </Box>
               <Box className={styles.genderColumn}>
@@ -192,7 +192,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   checked={workingCase.accusedGender === CaseGender.FEMALE}
                   onChange={(event) => setAndSendToServer(event.target)}
                   large
-                  filled
+                  backgroundColor="white"
                 />
               </Box>
               <Box className={styles.genderColumn}>
@@ -204,7 +204,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   checked={workingCase.accusedGender === CaseGender.OTHER}
                   onChange={(event) => setAndSendToServer(event.target)}
                   large
-                  filled
+                  backgroundColor="white"
                 />
               </Box>
             </Box>
@@ -320,7 +320,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
-              filled
+              backgroundColor="white"
             />
           </BlueBox>
         </Box>

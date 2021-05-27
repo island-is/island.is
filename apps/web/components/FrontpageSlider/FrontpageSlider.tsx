@@ -217,75 +217,77 @@ export const FrontpageSlider = ({
                         [styles.tabPanelVisible]: visible,
                       })}
                     >
-                      <Box
-                        marginY={3}
-                        ref={(el) => (itemRefs.current[index] = el)}
-                        style={{ minHeight: `${minHeight}px` }}
-                      >
-                        <Stack space={3}>
-                          <Text variant="eyebrow" color="purple400">
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              {subtitle}
-                            </span>
-                          </Text>
-                          <Text variant="h1" as="h1" id={tabTitleId}>
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              {deorphanize(title)}
-                            </span>
-                          </Text>
-
-                          {intro ? (
-                            <Box marginBottom={4}>
-                              {richText(
-                                [
-                                  {
-                                    __typename: 'Html',
-                                    id: intro.id,
-                                    document: intro.document,
-                                  },
-                                ] as SliceType[],
-                                undefined,
-                              )}
-                            </Box>
-                          ) : (
-                            <Text>
+                      {visible && (
+                        <Box
+                          marginY={3}
+                          ref={(el) => (itemRefs.current[index] = el)}
+                          style={{ minHeight: `${minHeight}px` }}
+                        >
+                          <Stack space={3}>
+                            <Text variant="eyebrow" color="purple400">
                               <span
                                 className={cn(styles.textItem, {
                                   [styles.textItemVisible]: visible,
                                 })}
                               >
-                                {content}
+                                {subtitle}
                               </span>
                             </Text>
-                          )}
-                          {linkUrls?.href && visible ? (
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              <Link {...linkUrls} skipTab>
-                                <Button
-                                  variant="text"
-                                  icon="arrowForward"
-                                  aria-labelledby={tabTitleId}
-                                  as="span"
+                            <Text variant="h1" as="h1" id={tabTitleId}>
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
+                              >
+                                {deorphanize(title)}
+                              </span>
+                            </Text>
+
+                            {intro ? (
+                              <Box marginBottom={4}>
+                                {richText(
+                                  [
+                                    {
+                                      __typename: 'Html',
+                                      id: intro.id,
+                                      document: intro.document,
+                                    },
+                                  ] as SliceType[],
+                                  undefined,
+                                )}
+                              </Box>
+                            ) : (
+                              <Text>
+                                <span
+                                  className={cn(styles.textItem, {
+                                    [styles.textItemVisible]: visible,
+                                  })}
                                 >
-                                  {gn('seeMore')}
-                                </Button>
-                              </Link>
-                            </span>
-                          ) : null}
-                        </Stack>
-                      </Box>
+                                  {content}
+                                </span>
+                              </Text>
+                            )}
+                            {linkUrls?.href && visible ? (
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
+                              >
+                                <Link {...linkUrls} skipTab>
+                                  <Button
+                                    variant="text"
+                                    icon="arrowForward"
+                                    aria-labelledby={tabTitleId}
+                                    as="span"
+                                  >
+                                    {gn('seeMore')}
+                                  </Button>
+                                </Link>
+                              </span>
+                            ) : null}
+                          </Stack>
+                        </Box>
+                      )}
                     </TabPanel>
                   )
                 },

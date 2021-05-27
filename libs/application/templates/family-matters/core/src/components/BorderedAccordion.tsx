@@ -9,7 +9,7 @@ interface Props {
 
 const BorderedAccordion = ({ title, id, children }: Props) => {
   return (
-    <Box paddingX={4} paddingY={2} border="standard">
+    <Box paddingX={[2, 2, 2, 4]} paddingY={[0, 0, 0, 2]} border="standard">
       <Accordion dividerOnBottom={false} dividerOnTop={false}>
         <AccordionItem id={id} label={title}>
           {children}

@@ -7,6 +7,7 @@ import formatISO from 'date-fns/formatISO'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
   mockUsersQuery,
@@ -37,25 +38,15 @@ describe('Create detention request, step two', () => {
           ...mockCaseQueries,
           ...mockProsecutorQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              arrestDate: '2020-11-15',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              arrestDate: '2020-11-15T13:37:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth, {
-                representation: 'date',
-              }),
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth),
-            } as UpdateCase,
-          ]),
+          ...mockInstitutionsQuery,
+          ...mockUpdateCaseMutation(
+            [
+              {
+                requestedCourtDate: formatISO(lastDateOfTheMonth),
+              } as UpdateCase,
+            ],
+            'test_id_6',
+          ),
         ]}
         addTypename={false}
       >
@@ -115,7 +106,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -142,7 +138,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -165,7 +166,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -186,10 +192,19 @@ describe('Create detention request, step two', () => {
 
     const tomorrow = addDays(new Date(), 1).getDate().toString()
 
+    const candidateTomorrows = arrestWrapper.getAllByText(tomorrow)
+
+    expect(candidateTomorrows.length).toBeGreaterThan(0)
+
+    // Make sure we pick a date from the curent month
+    let tommorrowOfCurentMont: HTMLElement
+    if (tomorrow > '16') {
+      tommorrowOfCurentMont = candidateTomorrows[candidateTomorrows.length - 1]
+    } else {
+      tommorrowOfCurentMont = candidateTomorrows[0]
+    }
+
     // Assert
-    expect(arrestWrapper.getAllByText(tomorrow)[0]).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
+    expect(tommorrowOfCurentMont).toHaveAttribute('aria-disabled', 'true')
   })
 })

@@ -15,17 +15,18 @@
 
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
+/apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
+/apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
-libs/application/template-api-modules/src/lib/modules/templates/party-letter                  @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
-
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
 /libs/service-portal/education/                                                               @island-is/kosmos-kaos
 /libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
@@ -45,15 +46,23 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/application/templates/meta-application/                                                 @island-is/aranja
 /libs/application/templates/parental-leave/                                                   @island-is/aranja
 /libs/application/templates/reference-template/                                               @island-is/aranja
-/libs/contentful-translation-extension/                                                       @island-is/aranja
+/libs/contentful-extensions/                                                                  @island-is/aranja @island-is/kosmos-kaos
+/libs/contentful-extensions/translation/                                                      @island-is/aranja
+/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
+/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
+/libs/utils/shared/                                                                           @island-is/aranja
 /libs/clients/vmst/                                                                           @island-is/aranja
 /libs/shared/form-fields/                                                                     @island-is/aranja
+
+/libs/service-portal/settings/access-control                                                  @island-is/vice-versa @island-is/aranja
 
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
+/libs/clients/national-registry/v2/                                                           @island-is/kolibri-modern-family
+/libs/api/domains/national-registry-x-road/                                                   @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                                                        @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                        @island-is/kolibri-justice-league
@@ -65,7 +74,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /apps/services/user-profile/                                                                  @island-is/sendiradid
 /libs/api/domains/documents/                                                                  @island-is/sendiradid
 /libs/api/domains/national-registry/                                                          @island-is/sendiradid
-/libs/clients/national-registry/                                                              @island-is/sendiradid
+/libs/clients/national-registry/v1/                                                           @island-is/sendiradid
 /libs/service-portal/applications/                                                            @island-is/sendiradid
 /libs/service-portal/assets/                                                                  @island-is/sendiradid
 /libs/service-portal/constants/                                                               @island-is/sendiradid
@@ -75,8 +84,9 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/service-portal/finance/                                                                 @island-is/sendiradid
 /libs/service-portal/graphql/                                                                 @island-is/sendiradid
 /libs/service-portal/health/                                                                  @island-is/sendiradid
-/libs/service-portal/settings/                                                                @island-is/sendiradid
+/libs/service-portal/settings/personal-information                                            @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /apps/download-service/                                                                       @island-is/sendiradid
@@ -124,6 +134,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar
+/apps/services/auth-public-api/                                                               @island-is/fuglar
 /apps/auth-admin-web/                                                                         @island-is/fuglar
 /apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
 /libs/auth-api-lib/                                                                           @island-is/fuglar
@@ -133,3 +144,7 @@ libs/application/template-api-modules/src/lib/modules/templates/party-letter    
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
+
+/libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
+/libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos

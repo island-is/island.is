@@ -5,6 +5,7 @@ export class ApiScope {
   enabled!: boolean
   displayName!: string
   description!: string
+  groupId?: string
   showInDiscoveryDocument!: boolean
   archived!: Date
   public userClaims?: ApiScopeUserClaim[]

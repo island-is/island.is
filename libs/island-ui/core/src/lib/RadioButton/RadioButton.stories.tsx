@@ -30,8 +30,18 @@ WithSubLabel.args = {
 export const WithTooltip = Template.bind({})
 WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }
 
-export const Filled = () => (
-  <Box background={'blue100'} padding={3}>
-    <RadioButton label="Filled white background" filled large />
+export const FilledWhite = () => (
+  <Box background="blue100" padding={3}>
+    <RadioButton
+      label="Filled white background"
+      backgroundColor="white"
+      large
+    />
+  </Box>
+)
+
+export const FilledBlue = () => (
+  <Box background="white" padding={3}>
+    <RadioButton label="Filled blue background" backgroundColor="blue" large />
   </Box>
 )

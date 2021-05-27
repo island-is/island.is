@@ -22,7 +22,7 @@ import {
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
-import { syslumennEmailFromPostalCode } from './utils'
+import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
@@ -121,22 +121,22 @@ export class ChildrenResidenceChangeService {
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate
-          ? formatDate(durationDate)
+          ? formatDate({ date: durationDate, formatter: 'dd.MM.yyyy' })
           : durationType,
     }
+
+    const syslumennData = syslumennDataFromPostalCode(
+      childResidenceInfo.future.address.postalCode,
+    )
 
     const response = await this.syslumennService
       .uploadData(participants, attachment, extraData)
       .catch(async () => {
-        const syslumennEmail = syslumennEmailFromPostalCode(
-          childResidenceInfo.future.address.postalCode,
-        )
-
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           (application as unknown) as Application,
           fileContent.toString('binary'),
-          syslumennEmail,
+          syslumennData.email,
         )
         return undefined
       })
@@ -147,6 +147,7 @@ export class ChildrenResidenceChangeService {
           props,
           fileContent.toString('binary'),
           answers.parentA.email,
+          syslumennData.name,
           response?.malsnumer,
         ),
       (application as unknown) as Application,
@@ -158,6 +159,7 @@ export class ChildrenResidenceChangeService {
           props,
           fileContent.toString('binary'),
           answers.parentB.email,
+          syslumennData.name,
           response?.malsnumer,
         ),
       (application as unknown) as Application,

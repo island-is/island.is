@@ -1,5 +1,7 @@
+/** @deprecated LoadingIcon has been deprecated in favor of LoadingDots */
 import React, { forwardRef } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 import AnimatedLine from './AnimatedLine'
 
 interface LoadingIconProps {
@@ -10,6 +12,8 @@ interface LoadingIconProps {
 
 export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
   ({ animate = true, color, size }, ref) => {
+    useDeprecatedComponent('LoadingIcon', 'LoadingDots')
+
     const usedColor = color
       ? theme.color[color]
       : `url(#loading-icon-new-linear-gradient)`
@@ -50,3 +54,5 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
     )
   },
 )
+
+export default LoadingIcon

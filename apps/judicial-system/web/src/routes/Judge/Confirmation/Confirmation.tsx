@@ -1,19 +1,10 @@
-import {
-  Accordion,
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   Modal,
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
-  TimeInputField,
   PdfButton,
   CaseNumbers,
   PageLayout,
@@ -27,7 +18,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
-  TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -59,15 +49,8 @@ import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import {
-  getTimeFromDate,
-  validateAndSendTimeToServer,
-  validateAndSetTime,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface SigningModalProps {
   workingCase: Case
@@ -267,22 +250,14 @@ export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
-  const [
     requestSignatureResponse,
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
-  const { updateCase, isUpdatingCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
   useEffect(() => {
@@ -534,63 +509,10 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
             )}
-            <Box className={style.courtEndTimeContainer}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Þinghald
-                </Text>
-              </Box>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn>
-                    <TimeInputField
-                      onChange={(evt) =>
-                        validateAndSetTime(
-                          'courtEndTime',
-                          new Date().toString(),
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          setWorkingCase,
-                          courtDocumentEndErrorMessage,
-                          setCourtDocumentEndErrorMessage,
-                        )
-                      }
-                      onBlur={(evt) =>
-                        validateAndSendTimeToServer(
-                          'courtEndTime',
-                          new Date().toString(),
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          updateCase,
-                          setCourtDocumentEndErrorMessage,
-                        )
-                      }
-                    >
-                      <Input
-                        data-testid="courtEndTime"
-                        name="courtEndTime"
-                        label="Þinghaldi lauk (kk:mm)"
-                        placeholder="Veldu tíma"
-                        defaultValue={formatDate(
-                          workingCase.courtEndTime,
-                          TIME_FORMAT,
-                        )}
-                        errorMessage={courtDocumentEndErrorMessage}
-                        hasError={courtDocumentEndErrorMessage !== ''}
-                        required
-                      />
-                    </TimeInputField>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
                 title="Opna PDF þingbók og úrskurð"
-                disabled={isUpdatingCase}
                 pdfType="ruling"
               />
             </Box>
@@ -600,9 +522,8 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdatingCase}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdatingCase}
+              nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id

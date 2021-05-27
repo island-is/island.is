@@ -337,6 +337,7 @@
     "@types/react-html-parser": "2.0.1",
     "@types/react-router-dom": "5.1.6",
     "@types/react-select": "3.0.19",
+    "@types/request": "2.48.5",
     "@types/sequelize": "4.28.9",
     "@types/smoothscroll-polyfill": "0.3.1",
     "@types/supertest": "2.0.10",
@@ -369,6 +370,7 @@
     "license-checker": "25.0.1",
     "next-secure-headers": "2.1.0",
     "next-transpile-modules": "4.1.0",
+    "node-xlsx": "0.16.1",
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
@@ -421,6 +423,8 @@
     "@nrwl/web/rollup-plugin-postcss/**/postcss": "8.2.10",
     "next/postcss": "8.2.10",
     "treat/postcss": "8.2.10",
-    "treat/**/postcss": "npm:@island.is/postcss@107.0.37"
+    "treat/**/postcss": "npm:@island.is/postcss@107.0.37",
+    "multicast-dns": "7.2.3",
+    "browserslist": "4.16.6"
   }
 }
