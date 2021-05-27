@@ -353,7 +353,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientId"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateIdentifier,
+                        validate: ValidationUtils.validateScope,
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
