@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { font } from '../../utils/font'
 
 enum TableViewGroupType {
   PLAIN,
@@ -24,24 +25,27 @@ interface TableViewGroupProps {
 }
 
 const Host = styled.View`
-  margin-bottom: 32px;
+  margin-bottom: ${({ theme }) => theme.spacing[4]}px;
   width: 100%;
 `
 
 const Header = styled.SafeAreaView`
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-bottom: 16px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const HeaderText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+  })}
 `
 
 const Footer = styled.SafeAreaView``
-const FooterText = styled.Text``
+
+const FooterText = styled.Text`
+  ${font()}
+`
 
 export function TableViewGroup(props: TableViewGroupProps) {
   const { header, footer, children, type = TableViewGroupType.PLAIN } = props

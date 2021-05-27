@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { font } from '../../utils/font'
 
 interface TabBarValue {
   label: string
@@ -27,24 +28,25 @@ const Tab = styled.Pressable`
 `
 
 const TabTitle = styled(Animated.Text)`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 14px;
-  line-height: 19px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 14,
+    lineHeight: 19,
+  })}
 `
 
 const Line = styled.View`
   width: 100%;
-  height: 1px;
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blue200};
+  height: ${({ theme }) => theme.border.width.standard}px;
+  background-color: ${({ theme }) =>
+    theme.isDark
+      ? theme.shade.shade200
+      : theme.color.blue200};
 `
 
 const ActiveLine = styled(Animated.View)`
   width: 50%;
-  height: 1px;
+  height: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${(props) => props.theme.color.blue400};
 `
 
