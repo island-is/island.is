@@ -162,4 +162,7 @@ OnboardingBiometricsScreen.options = {
   topBar: {
     visible: false,
   },
+  layout: {
+    orientation: ['portrait'],
+  }
 }

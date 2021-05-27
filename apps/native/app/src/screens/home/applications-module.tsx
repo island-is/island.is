@@ -3,9 +3,10 @@ import {
   Heading,
   Skeleton,
   StatusCard,
-  ViewPager,
+  ViewPager
 } from '@island.is/island-ui-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { IApplication } from '../../graphql/fragments/application.fragment'
 import { config } from '../../utils/config'
@@ -37,11 +38,11 @@ const EmptyText = styled.Text`
   color: ${(props) => props.theme.shade.foreground};
 `
 
-export function ApplicationsModule({
+export const ApplicationsModule = React.memo(({
   applications,
   loading,
   componentId,
-}: ApplicationsModuleProps) {
+}: ApplicationsModuleProps) => {
   const intl = useIntl()
   const theme = useTheme()
   const count = applications.length
@@ -88,7 +89,7 @@ export function ApplicationsModule({
   ))
 
   return (
-    <>
+    <SafeAreaView style={{ marginHorizontal: 16 }}>
       <Heading>{intl.formatMessage({ id: 'home.applicationsStatus' })}</Heading>
       {loading ? (
         <Skeleton
@@ -123,6 +124,6 @@ export function ApplicationsModule({
           {count >= 2 && <ViewPager>{children}</ViewPager>}
         </>
       )}
-    </>
+    </SafeAreaView>
   )
-}
+})

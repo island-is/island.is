@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { selectionAsync } from 'expo-haptics'
 
 interface TabBarValue {
   label: string
@@ -110,6 +111,7 @@ export function TabBar(props: TabBarProps) {
               onPress={() => {
                 onChange(i)
                 animateIndex(i)
+                selectionAsync()
               }}
               testID={item.testID}
             >

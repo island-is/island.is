@@ -23,12 +23,10 @@ export function setupEventHandlers() {
 
   if (Platform.OS === 'ios') {
     SpotlightSearch.searchItemTapped((url) => {
-      console.log('tap', url)
       navigateTo(url);
     });
 
     SpotlightSearch.getInitialSearchItem().then(url => {
-      console.log('init', url)
       navigateTo(url);
     });
   }
@@ -53,11 +51,17 @@ export function setupEventHandlers() {
     const {
       lockScreenComponentId,
       lockScreenActivatedAt,
+      noLockScreenUntilNextAppStateActive,
       userInfo,
     } = authStore.getState()
     const { dev__useLockScreen, appLockTimeout } = preferencesStore.getState()
 
     if (!userInfo || !isOnboarded() || dev__useLockScreen === false) {
+      return
+    }
+
+    if (noLockScreenUntilNextAppStateActive) {
+      authStore.setState({ noLockScreenUntilNextAppStateActive: false });
       return
     }
 

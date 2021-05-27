@@ -1,9 +1,14 @@
 import { useQuery } from '@apollo/client'
+import { Skeleton } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { FormattedDate } from 'react-intl'
-import { StyleSheet } from 'react-native'
-import { ActivityIndicator } from 'react-native'
-import { Platform, Share, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Platform,
+  Share,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
@@ -22,7 +27,7 @@ import {
   ListDocumentsResponse,
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
-import { useAuthStore } from '../../stores/auth-store'
+import { authStore, useAuthStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
@@ -134,10 +139,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   }
 
   const [visible, setVisible] = useState(false)
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false)
 
   useNavigationButtonPress(
     (e) => {
+      if (Platform.OS === 'android') {
+        authStore.setState({ noLockScreenUntilNextAppStateActive: true });
+      }
       Share.share(
         {
           title: Document.subject,
@@ -161,26 +169,34 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setLoaded(false)
   })
 
-  if (!Document.id) {
-    return null
-  }
+  const loading = res.loading
 
   return (
     <>
       <Header>
         <Row>
-          <Title>
-            <TitleText numberOfLines={1} ellipsizeMode="tail">
-              {Document.senderName}
-            </TitleText>
-          </Title>
-          <Date>
-            <DateText>
-              <FormattedDate value={Document.date} />
-            </DateText>
-          </Date>
+          {loading ? (
+            <Skeleton active style={{ borderRadius: 4 }} height={17} />
+          ) : (
+            <>
+              <Title>
+                <TitleText numberOfLines={1} ellipsizeMode="tail">
+                  {Document.senderName}
+                </TitleText>
+              </Title>
+              <Date>
+                <DateText>
+                  <FormattedDate value={Document.date} />
+                </DateText>
+              </Date>
+            </>
+          )}
         </Row>
-        <Message>{Document.subject}</Message>
+        {loading ? (
+          <Skeleton active style={{ borderRadius: 4 }} height={32} />
+        ) : (
+          <Message>{Document.subject}</Message>
+        )}
       </Header>
       <View
         style={{
@@ -192,10 +208,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             android: (
               <PDFReader
                 onLoadEnd={() => {
-                  setLoaded(true);
+                  setLoaded(true)
                 }}
                 style={{
-                  opacity: loaded ? 1 : 0
+                  opacity: loaded ? 1 : 0,
                 }}
                 source={{
                   base64: `data:application/pdf;base64,${Document.content!}`,
@@ -205,10 +221,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ios: (
               <WebView
                 onLoadEnd={() => {
-                  setLoaded(true);
+                  setLoaded(true)
                 }}
                 style={{
-                  opacity: loaded ? 1 : 0
+                  opacity: loaded ? 1 : 0,
                 }}
                 source={{
                   uri: Document.url!,
@@ -221,12 +237,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ),
           })}
-          {!loaded && <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
+        {!loaded && (
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { alignItems: 'center', justifyContent: 'center' },
+            ]}
+          >
             <ActivityIndicator size="large" />
-          </View>}
+          </View>
+        )}
       </View>
     </>
   )
 }
 
-DocumentDetailScreen.options = getNavigationOptions;
+DocumentDetailScreen.options = getNavigationOptions

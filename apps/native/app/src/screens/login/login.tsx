@@ -177,5 +177,6 @@ LoginScreen.options = {
   layout: {
     backgroundColor: 'white',
     componentBackgroundColor: 'white',
+    orientation: ['portrait'],
   },
 }

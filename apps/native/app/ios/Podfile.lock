@@ -21,6 +21,8 @@ PODS:
   - EXFileSystem (11.0.2):
     - UMCore
     - UMFileSystemInterface
+  - EXHaptics (10.0.0):
+    - UMCore
   - EXLocalAuthentication (11.0.2):
     - UMConstantsInterface
     - UMCore
@@ -528,6 +530,7 @@ DEPENDENCIES:
   - EXApplication (from `../../node_modules/expo-application/ios`)
   - EXConstants (from `../../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../../node_modules/expo-file-system/ios`)
+  - EXHaptics (from `../../node_modules/expo-haptics/ios`)
   - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - EXNotifications (from `../../node_modules/expo-notifications/ios`)
   - EXPermissions (from `../../node_modules/expo-permissions/ios`)
@@ -649,6 +652,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-constants/ios"
   EXFileSystem:
     :path: "../../node_modules/expo-file-system/ios"
+  EXHaptics:
+    :path: "../../node_modules/expo-haptics/ios"
   EXLocalAuthentication:
     :path: "../../node_modules/expo-local-authentication/ios"
   EXNotifications:
@@ -768,6 +773,7 @@ SPEC CHECKSUMS:
   EXApplication: 4797b8b37f0b0470f587fdccf6407f44b50d18b5
   EXConstants: c4dd28acc12039c999612507a5f935556f2c86ce
   EXFileSystem: dcf2273f49431e5037347c733a2dc5d08e0d0a9e
+  EXHaptics: 2de40c5f50a9e78da92c209db06db5134d8cac0b
   EXLocalAuthentication: 4f625501ff104674734c3113fcb28e401f674ff2
   EXNotifications: c13e078d83ce01c7aeb8e3f44a48c13f50099291
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723

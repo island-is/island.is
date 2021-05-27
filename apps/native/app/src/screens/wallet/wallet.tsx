@@ -5,11 +5,11 @@ import {
   LicenceCard,
   Skeleton,
 } from '@island.is/island-ui-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { Image } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Animated,
   FlatList,
+  Image,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -27,6 +27,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseType } from '../../types/license-type'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const {
@@ -43,6 +44,7 @@ const {
       },
     },
     bottomTab: {
+      iconColor: theme.color.blue400,
       text: initialized
         ? intl.formatMessage({ id: 'wallet.bottomTabText' })
         : '',
@@ -61,45 +63,8 @@ const {
   },
 )
 
-export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
-  useNavigationOptions(componentId)
-
-  const theme = useTheme()
-  const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery(LIST_LICENSES_QUERY, { client })
-  const licenseItems = res?.data?.listLicenses ?? []
-  const flRef = useRef<FlatList>()
-  const alertVisible = !dismissed.includes('howToUseCertificates')
-  const [offset, setOffset] = useState(alertVisible)
-  const [loading, setLoading] = useState(res.loading)
-  const isSkeleton = res.loading && !res.data
-  const loadingTimeout = useRef<number>()
-
-
-  // indexing list for spotlight search IOS
-  useEffect(() => {
-    const indexItems = licenseItems.map((item: any) => {
-      return {
-        title: item.title,
-        uniqueIdentifier: `/wallet/${item.id}`,
-        contentDescription: item.serviceProvider,
-        domain: 'licence',
-      }
-    })
-    if (Platform.OS === 'ios') {
-      SpotlightSearch.indexItems(indexItems)
-    }
-  }, [licenseItems.length])
-
-  useEffect(() => {
-    if (res.loading) {
-      setLoading(true)
-    } else {
-      setLoading(false)
-    }
-  }, [res])
-
-  const renderLicenseItem = ({
+const WalletItem = React.memo(
+  ({
     item,
   }: {
     item: {
@@ -132,24 +97,80 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         />
       </SafeAreaView>
     </TouchableHighlight>
+  ),
+)
+
+export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
+
+  const theme = useTheme()
+  const { dismiss, dismissed } = usePreferencesStore()
+  const res = useQuery(LIST_LICENSES_QUERY, { client })
+  const licenseItems = res?.data?.listLicenses ?? []
+  const flatListRef = useRef<FlatList>(null)
+  const alertVisible = !dismissed.includes('howToUseCertificates')
+  const [offset, setOffset] = useState(alertVisible)
+  const [loading, setLoading] = useState(res.loading)
+  const isSkeleton = res.loading && !res.data
+  const loadingTimeout = useRef<number>()
+
+  useActiveTabItemPress(2, () => {
+    flatListRef.current?.scrollToOffset({
+      offset: -100,
+      animated: true,
+    })
+  })
+
+  // indexing list for spotlight search IOS
+  useEffect(() => {
+    const indexItems = licenseItems.map((item: any) => {
+      return {
+        title: item.title,
+        uniqueIdentifier: `/wallet/${item.id}`,
+        contentDescription: item.serviceProvider,
+        domain: 'licence',
+      }
+    })
+    if (Platform.OS === 'ios') {
+      SpotlightSearch.indexItems(indexItems)
+    }
+  }, [licenseItems.length])
+
+  useEffect(() => {
+    if (res.loading) {
+      setLoading(true)
+    } else {
+      setLoading(false)
+    }
+  }, [res])
+
+  const renderLicenseItem = useCallback(
+    ({ item }: any) => <WalletItem item={item} />,
+    [],
   )
 
-  const renderSkeletonItem = () => (
-    <Skeleton
-      active
-      backgroundColor={theme.color.blue100}
-      overlayColor={theme.color.blue200}
-      overlayOpacity={1}
-      height={111}
-      style={{
-        borderRadius: 16,
-        marginBottom: 16,
-      }}
-    />
+  const renderSkeletonItem = useCallback(
+    () => (
+      <Skeleton
+        active
+        backgroundColor={theme.color.blue100}
+        overlayColor={theme.color.blue200}
+        overlayOpacity={1}
+        height={111}
+        style={{
+          borderRadius: 16,
+          marginBottom: 16,
+        }}
+      />
+    ),
+    [],
   )
+
+  const keyExtractor = useCallback((item: any) => item.id, [])
 
   return (
     <>
+      <BottomTabsIndicator index={2} total={3} />
       {licenseItems.length > 0 ? (
         <>
           {offset && Platform.OS === 'ios' && (
@@ -159,7 +180,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
               message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
               onClose={() => {
                 dismiss('howToUseCertificates')
-                flRef.current?.scrollToOffset({
+                flatListRef.current?.scrollToOffset({
                   offset: 0,
                   animated: true,
                 })
@@ -170,7 +191,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             />
           )}
           <Animated.FlatList
-            ref={flRef as any}
+            ref={flatListRef}
             testID={testIDs.SCREEN_HOME}
             automaticallyAdjustContentInsets={false}
             contentInsetAdjustmentBehavior="never"
@@ -212,7 +233,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             keyExtractor={(item: any) => item.id}
             renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
           />
-          <BottomTabsIndicator index={2} total={3} />
         </>
       ) : (
         <EmptyList

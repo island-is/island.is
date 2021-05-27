@@ -53,7 +53,6 @@ export const preferencesStore = create<PreferencesStore>(
         set({ locale })
       },
       setAppearanceMode(appearanceMode: AppearanceMode) {
-        console.log('new appearance mode:', appearanceMode)
         set({ appearanceMode })
       },
       setUseBiometrics(useBiometrics: boolean) {
@@ -77,7 +76,5 @@ export const preferencesStore = create<PreferencesStore>(
     },
   ),
 )
-
-console.log(preferencesStore.getState())
 
 export const usePreferencesStore = createUse(preferencesStore)

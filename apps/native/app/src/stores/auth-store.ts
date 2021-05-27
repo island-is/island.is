@@ -27,6 +27,7 @@ interface AuthStore extends State {
   userInfo: UserInfo | undefined
   lockScreenActivatedAt: number | undefined
   lockScreenComponentId: string | undefined
+  noLockScreenUntilNextAppStateActive: boolean
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -49,6 +50,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
+  noLockScreenUntilNextAppStateActive: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,

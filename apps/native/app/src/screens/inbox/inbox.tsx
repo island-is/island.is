@@ -3,10 +3,12 @@ import { EmptyList, ListItem } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Image,
   Platform,
   RefreshControl,
+  StyleSheet,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -29,11 +31,20 @@ import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 interface IndexedDocument extends IDocument {
   fulltext: string
 }
+
+const TopLine = styled(Animated.View)`
+  background-color: ${(props) => props.theme.color.blue200};
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+`
 
 const {
   useNavigationOptions,
@@ -49,6 +60,7 @@ const {
       },
     },
     bottomTab: {
+      iconColor: theme.color.blue400,
       text: initialized
         ? intl.formatMessage({ id: 'inbox.bottomTabText' })
         : '',
@@ -83,15 +95,15 @@ const {
   },
 )
 
-const PressableListItem = ({ item }: { item: IDocument }) => {
+const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   return (
-    <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`)}>
+    <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`, { title: item.senderName })}>
       <ListItem
         title={item.senderName}
         subtitle={item.subject}
         date={new Date(item.date)}
-        swipable
+        swipable={false}
         icon={
           <Image
             source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
@@ -102,16 +114,16 @@ const PressableListItem = ({ item }: { item: IDocument }) => {
       />
     </PressableHighlight>
   )
-}
+});
 
 const SearchHeaderHost = styled.View`
   height: 46px;
-  background-color: ${props => props.theme.color.blue100};
+  background-color: ${(props) => props.theme.color.blue100};
   align-items: center;
   justify-content: center;
 `
 const SearchHeaderText = styled.Text`
-  color: ${props => props.theme.shade.foreground};
+  color: ${(props) => props.theme.shade.foreground};
 `
 
 function SearchHeader({ count, loading }: any) {
@@ -127,18 +139,22 @@ function SearchHeader({ count, loading }: any) {
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
-  const theme = useTheme()
   const ui = useUiStore()
+  const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
+  const scrollY = useRef(new Animated.Value(0)).current
 
-  const renderInboxItem = useCallback(
-    ({ item }: { item: IDocument }) => <PressableListItem item={item} />,
-    [theme],
-  )
   const [searchLoading, setSearchLoading] = useState(false)
+
+  useActiveTabItemPress(0, () => {
+    flatListRef.current?.scrollToOffset({
+      offset: -100,
+      animated: true,
+    })
+  })
 
   useNavigationSearchBarUpdate((e) => {
     setSearchLoading(true)
@@ -170,6 +186,15 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [ui.query])
 
+  const keyExtractor = useCallback((item) => {
+    return item.id
+  }, [])
+
+  const renderItem = useCallback(
+    ({ item }: { item: IDocument }) => <PressableListItem item={item} />,
+    [],
+  )
+
   const isSearch = ui.query.length > 0
   const isLoading = res.loading
   const isEmpty = (res?.data?.listDocuments ?? []).length === 0
@@ -190,14 +215,27 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <FlatList
+      <BottomTabsIndicator index={0} total={3} />
+      <Animated.FlatList
+        ref={flatListRef}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
         style={{ marginHorizontal: 0, flex: 1 }}
         data={inboxItems}
-        keyExtractor={(item: any) => item.id}
-        renderItem={renderInboxItem}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         keyboardDismissMode="on-drag"
-        stickyHeaderIndices={isSearch ? [0]: undefined}
-        ListHeaderComponent={isSearch ? <SearchHeader count={inboxItems.length} loading={searchLoading} /> : undefined}
+        stickyHeaderIndices={isSearch ? [0] : undefined}
+        ListHeaderComponent={
+          isSearch ? (
+            <SearchHeader count={inboxItems.length} loading={searchLoading} />
+          ) : undefined
+        }
         refreshControl={
           isSearch ? undefined : (
             <RefreshControl
@@ -222,7 +260,15 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           )
         }
       />
-      <BottomTabsIndicator index={0} total={3} />
+      <TopLine
+        style={{
+          height: StyleSheet.hairlineWidth,
+          opacity: scrollY.interpolate({
+            inputRange: [0, 32],
+            outputRange: [0, 1],
+          }),
+        }}
+      />
     </View>
   )
 }

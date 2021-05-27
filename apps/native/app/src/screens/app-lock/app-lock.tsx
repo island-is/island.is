@@ -1,6 +1,7 @@
+import { selectionAsync } from 'expo-haptics'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Image, SafeAreaView, View, Keyboard } from 'react-native'
+import { Animated, Image, Keyboard, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
@@ -30,7 +31,7 @@ const Host = styled(Animated.View)`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.theme.shade.background};
+  background-color: ${(props) => props.theme.shade.background};
 `
 
 const Title = styled.Text`
@@ -95,6 +96,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
     isPromptRef.current = true
     const response = await authenticateAsync()
     if (response.success === true) {
+      selectionAsync()
       unlockApp()
     }
   }, [isPromptRef])
@@ -112,8 +114,8 @@ export const AppLockScreen: NavigationFunctionComponent<{
       lockScreenActivatedAt: lockScreenActivatedAt ?? Date.now(),
       lockScreenComponentId: componentId,
     }))
-    uiStore.setState({ initializedApp: true });
-    Keyboard.dismiss();
+    uiStore.setState({ initializedApp: true })
+    Keyboard.dismiss()
   })
 
   useNavigationComponentDidDisappear(() => {

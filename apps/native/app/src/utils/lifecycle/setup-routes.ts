@@ -7,6 +7,19 @@ import { Base64 } from 'js-base64';
 import { preferencesStore } from '../../stores/preferences-store'
 import * as Sentry from '@sentry/react-native'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
+import { uiStore } from '../../stores/ui-store'
+
+const selectTab = (currentTabIndex: number) => {
+  // Selected Tab navigation event wont fire for this. Need to manually set in ui store.
+  const { selectedTab } = uiStore.getState();
+  uiStore.setState({ unselectedTab: selectedTab, selectedTab: currentTabIndex })
+  // switch tab
+  Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+    bottomTabs: {
+      currentTabIndex,
+    },
+  });
+}
 
 export function setupRoutes() {
   // Setup app scheme (is.island.app://)
@@ -15,29 +28,17 @@ export function setupRoutes() {
   // Routes
   addRoute('/', () => {
     Navigation.dismissAllModals()
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 1,
-      },
-    })
+    selectTab(1);
   })
 
   addRoute('/inbox', () => {
     Navigation.dismissAllModals()
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 0,
-      },
-    })
+    selectTab(0);
   })
 
   addRoute('/wallet', () => {
     Navigation.dismissAllModals()
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 2,
-      },
-    })
+    selectTab(2);
   })
 
   addRoute('/notification/:id', (passProps: any) => {
@@ -56,11 +57,7 @@ export function setupRoutes() {
   })
 
   addRoute('/wallet/:passId', async ({ passId, fromId, toId, item }: any) => {
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 2,
-      },
-    })
+    selectTab(2);
     await Navigation.popToRoot('WALLET_TAB')
     Navigation.push('WALLET_TAB', {
       component: {
@@ -86,12 +83,9 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/inbox/:docId', async ({ docId }: any) => {
-    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
-      bottomTabs: {
-        currentTabIndex: 0,
-      },
-    })
+  addRoute('/inbox/:docId', async ({ docId, title }: any) => {
+    selectTab(0);
+
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
     await Navigation.dismissAllModals();
     await Navigation.popToRoot('INBOX_SCREEN')
@@ -101,7 +95,14 @@ export function setupRoutes() {
         passProps: {
           docId,
         },
-        options: DocumentDetailScreen.options as Options
+        options: {
+          ...(DocumentDetailScreen.options as Options),
+          topBar: {
+            title: {
+              text: title,
+            }
+          }
+        },
       },
     })
   })

@@ -1,11 +1,7 @@
-import { theme } from '@island.is/island-ui/theme'
-import React, { useEffect, useRef } from 'react'
-import { useState } from 'react';
-import { useWindowDimensions } from 'react-native';
-import { SafeAreaView } from 'react-native';
-import { Animated, View } from 'react-native'
-import { useTheme } from 'styled-components';
-import { uiStore } from '../../stores/ui-store'
+import React, { useEffect, useRef, useState } from 'react'
+import { Animated, SafeAreaView, useWindowDimensions, View } from 'react-native'
+import { useTheme } from 'styled-components'
+import { useUiStore } from '../../stores/ui-store'
 
 export function BottomTabsIndicator({
   index,
@@ -14,49 +10,29 @@ export function BottomTabsIndicator({
   index: number
   total: number
 }) {
-  const theme = useTheme();
-  const win = useWindowDimensions();
-  const [first, setFirst] = useState(true);
-  const [{ selectedTab, unselectedTab }, set] = useState(uiStore.getState());
+  const theme = useTheme()
+  const win = useWindowDimensions()
+  const { selectedTab, unselectedTab } = useUiStore()
+  const [width, setWidth] = useState(win.width)
 
-  const [width, setWidth] = useState(win.width);
-
-  const p = 1.0;
-  const h = (1.0 - p) / 2;
-  const av = useRef(new Animated.Value(index)).current;
-  const landscape = win.width > win.height;
-  // const insetLeft = Math.max(insets.left, landscape ? 96 : 16);
-  // const insetRight = Math.max(insets.right, landscape ? 96 : 16);
-  // const frameWidth = (win.width);
-  const tabWidth = width / total;
+  const p = 1.0
+  const h = (1.0 - p) / 2
+  const av = useRef(new Animated.Value(index)).current
+  const tabWidth = width / total
+  const anim = useRef<Animated.CompositeAnimation>()
 
   useEffect(() => {
-    const cancel = uiStore.subscribe((state: any) => {
-      requestAnimationFrame(() => set(state));
-    }, state => state);
-    return () => {
-      cancel();
+    if (anim.current) {
+      anim.current.stop()
     }
-  }, []);
-
-  useEffect(() => {
-    if (first) {
-      setFirst(false);
-      if (index === selectedTab && unselectedTab === 0) {
-        av.setValue(selectedTab);
-        return;
-      }
-    }
-    av.setValue(unselectedTab);
-    Animated.spring(av, {
+    av.setValue(unselectedTab)
+    anim.current = Animated.spring(av, {
       overshootClamping: true,
       toValue: selectedTab,
       useNativeDriver: true,
-    }).start();
-  }, [selectedTab, unselectedTab]);
-
-  useEffect(() => {
-  }, []);
+    })
+    anim.current.start()
+  }, [selectedTab, unselectedTab])
 
   return (
     <View
@@ -79,24 +55,28 @@ export function BottomTabsIndicator({
     >
       <SafeAreaView>
         <View
-          onLayout={e => {
-            setWidth(e.nativeEvent.layout.width);
+          onLayout={(e) => {
+            setWidth(e.nativeEvent.layout.width)
           }}
         >
           <Animated.View
-            style={
-              {
-                width: tabWidth * p,
-                height: 1,
-                backgroundColor: theme.color.blue400,
-                transform: [{
+            style={{
+              width: tabWidth * p,
+              height: 1,
+              backgroundColor: theme.color.blue400,
+              transform: [
+                {
                   translateX: av.interpolate({
                     inputRange: [0, 1, 2],
-                    outputRange: [0, (tabWidth * 4 * h) + (tabWidth * p), (tabWidth * 8 * h) + (tabWidth * p * 2)]
-                  })
-                }]
-              }
-            }
+                    outputRange: [
+                      0,
+                      tabWidth * 4 * h + tabWidth * p,
+                      tabWidth * 8 * h + tabWidth * p * 2,
+                    ],
+                  }),
+                },
+              ],
+            }}
           />
         </View>
       </SafeAreaView>

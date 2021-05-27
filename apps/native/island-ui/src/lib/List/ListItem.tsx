@@ -5,6 +5,7 @@ import { Animated, StyleSheet } from 'react-native'
 import Interactable from 'react-native-interactable'
 import styled from 'styled-components/native'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
+import { selectionAsync, impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 
 const Host = styled.SafeAreaView<{ background: boolean }>`
   margin-right: 16px;
@@ -258,6 +259,7 @@ export function ListItem({
                 markOnRelease.current = false
               } else {
                 if (markOnRelease.current) {
+                  impactAsync(ImpactFeedbackStyle.Medium)
                   interactableRef.current.snapTo({ index: 0 })
                   onToggleUnread?.()
                 }
@@ -271,8 +273,10 @@ export function ListItem({
             onAlert={(e) => {
               if (canMarkOnRelease.current) {
                 if (e.nativeEvent?.status === 'enter') {
+                  selectionAsync();
                   markOnRelease.current = true
                 } else if (e.nativeEvent?.status === 'leave') {
+                  selectionAsync();
                   markOnRelease.current = false
                 }
               }

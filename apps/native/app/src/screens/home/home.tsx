@@ -1,39 +1,27 @@
 import { useQuery } from '@apollo/client'
-import {
-  Close,
-  Heading,
-  NotificationCard,
-  ViewPager,
-  WelcomeCard
-} from '@island.is/island-ui-native'
-import React from 'react'
-import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useCallback, useRef, useState } from 'react'
+import { FlatList, RefreshControl } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useTheme } from 'styled-components/native'
-import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
-import logo from '../../assets/logo/logo-64w.png'
 import { AppLoading } from '../../components/app-loading/app-loading'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY
+  LIST_APPLICATIONS_QUERY,
 } from '../../graphql/queries/list-applications.query'
 import {
   ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY
+  LIST_NOTIFICATIONS_QUERY,
 } from '../../graphql/queries/list-notifications.query'
-import { authStore } from '../../stores/auth-store'
-import { useNotificationsStore } from '../../stores/notifications-store'
-import { usePreferencesStore } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
-import { navigateToNotification } from '../../utils/deep-linking'
-import { useIntl } from '../../utils/intl'
+import { rightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 import { ApplicationsModule } from './applications-module'
+import { NotificationsModule } from './notifications-module'
+import { OnboardingModule } from './onboarding-module'
 
 const {
   useNavigationOptions,
@@ -41,28 +29,29 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl, initialized) => ({
     topBar: {
-      visible: initialized,
-      animate: false,
       title: {
-        text: intl.formatMessage({ id: 'home.screenTitle' }),
+        text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
       },
+      rightButtons: initialized ? rightButtons : [],
     },
     bottomTab: {
       ...({
         accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
       } as any),
       selectedIconColor: null as any,
-      iconColor: theme.shade.foreground,
+      iconColor: null as any,
       textColor: initialized ? theme.shade.foreground : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
         : undefined,
+      selectedIcon: initialized
+      ? require('../../assets/icons/tabbar-home-selected.png')
+      : undefined,
     },
   }),
   {
     topBar: {
-      animate: false,
-      visible: false,
+      rightButtons: [],
     },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_HOME,
@@ -82,11 +71,12 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const notificationsStore = useNotificationsStore()
-  const { dismissed, dismiss } = usePreferencesStore()
-  const theme = useTheme()
-  const intl = useIntl()
+  const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
+
+  useActiveTabItemPress(1, () => {
+    flatListRef.current?.scrollToOffset({ offset: -100, animated: true })
+  })
 
   const notificationsRes = useQuery<ListNotificationsResponse>(
     LIST_NOTIFICATIONS_QUERY,
@@ -98,87 +88,67 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     { client },
   )
 
+  const [loading, setLoading] = useState(false)
+
+  const renderItem = useCallback(({ item }: any) => item.component, []);
+
+  const keyExtractor = useCallback((item) => item.id, []);
+
+  const refetch = async () => {
+    setLoading(true)
+    try {
+      await notificationsRes.refetch()
+      await applicationsRes.refetch()
+    } catch (err) {
+      // noop
+    }
+    setLoading(false)
+  }
+
   if (!ui.initializedApp) {
     return <AppLoading />
   }
 
+  const data = [
+    {
+      id: 'onboarding',
+      component: <OnboardingModule />,
+    },
+    {
+      id: 'applications',
+      component: (
+        <ApplicationsModule
+          applications={applicationsRes.data?.applicationApplications ?? []}
+          loading={applicationsRes.loading}
+          componentId={componentId}
+        />
+      ),
+    },
+    {
+      id: 'notifications',
+      component: (
+        <NotificationsModule
+          items={notificationsRes.data?.listNotifications?.slice(0, 5)!}
+          componentId={componentId}
+        />
+      ),
+    },
+  ]
+
   return (
     <>
-      <ScrollView testID={testIDs.SCREEN_HOME}>
-        {!dismissed.includes('onboardingWidget') && (
-          <SafeAreaView style={{ marginHorizontal: 16, marginTop: 16 }}>
-            <Heading
-              button={
-                <TouchableOpacity onPress={() => dismiss('onboardingWidget')}>
-                  <Close />
-                </TouchableOpacity>
-              }
-            >
-              {intl.formatMessage({ id: 'home.welcomeText' })}{' '}
-              {authStore.getState().userInfo?.name.split(' ').shift()}
-            </Heading>
-            <ViewPager>
-              <WelcomeCard
-                key="card-1"
-                number="1"
-                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-                backgroundColor={
-                  theme.isDark ? '#2A1240' : theme.color.purple100
-                }
-              />
-              <WelcomeCard
-                key="card-2"
-                number="2"
-                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-                backgroundColor={theme.isDark ? '#1C1D53' : theme.color.blue100}
-              />
-              <WelcomeCard
-                key="card-3"
-                number="3"
-                description="Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna."
-                imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-                backgroundColor={theme.isDark ? '#3E002E' : theme.color.red100}
-              />
-            </ViewPager>
-          </SafeAreaView>
-        )}
-        <SafeAreaView style={{ marginHorizontal: 16 }}>
-          <ApplicationsModule
-            applications={applicationsRes.data?.applicationApplications ?? []}
-            loading={applicationsRes.loading}
-            componentId={componentId}
-          />
-          <Heading>{intl.formatMessage({ id: 'home.notifications' })}</Heading>
-          {notificationsRes.data?.listNotifications
-            .slice(0, 5)
-            .map((notification) => (
-              <NotificationCard
-                key={notification.id}
-                id={notification.id}
-                title={notification.serviceProvider}
-                message={notification.title}
-                date={new Date(notification.date)}
-                icon={logo}
-                unread={!notificationsStore.readItems.has(notification.id)}
-                onPress={() =>
-                  navigateToNotification(notification, componentId)
-                }
-                actions={notification.actions?.map((action) => ({
-                  text: action.text,
-                  onPress() {
-                    navigateToNotification(
-                      { id: notification.id, link: action.link },
-                      componentId,
-                    )
-                  },
-                }))}
-              />
-            ))}
-        </SafeAreaView>
-      </ScrollView>
       <BottomTabsIndicator index={1} total={3} />
+      <FlatList
+        ref={flatListRef}
+        testID={testIDs.SCREEN_HOME}
+        keyExtractor={keyExtractor}
+        data={data}
+        renderItem={renderItem}
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
+      />
     </>
   )
 }
