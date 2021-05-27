@@ -104,3 +104,16 @@ export const stateDescriptions = defineMessages({
     description: 'Accepted by the Commissioner',
   },
 })
+
+export const stateLabels = defineMessages({
+  rejectedByParentB: {
+    id: 'crc.application:stateLabels.rejectedByParentB',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected by parent B',
+  },
+  submitted: {
+    id: 'crc.application:stateLabels.submitted',
+    defaultMessage: 'Í afgreiðslu',
+    description: 'Submitted to the Commissioner',
+  },
+})

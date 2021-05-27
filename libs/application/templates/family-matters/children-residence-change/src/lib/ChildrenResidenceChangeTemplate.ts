@@ -7,12 +7,13 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  TagVariant,
 } from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import { application, stateDescriptions } from './messages'
+import { application, stateDescriptions, stateLabels } from './messages'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -133,6 +134,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           name: applicationName,
           description: stateDescriptions.submitted,
           lifecycle: pruneAfter(oneYear),
+          tag: { label: stateLabels.submitted },
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -163,6 +165,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           name: applicationName,
           description: stateDescriptions.rejectedByParentB,
           lifecycle: pruneAfter(oneYear),
+          tag: {
+            variant: TagVariant.RED,
+            label: stateLabels.rejectedByParentB,
+          },
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,
           },

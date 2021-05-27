@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
+import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -21,6 +22,7 @@ import {
   ApplicationStatus,
   coreMessages,
   getTypeFromSlug,
+  TagVariant,
 } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
 import {
@@ -31,6 +33,58 @@ import {
 import { dateFormat } from '@island.is/shared/constants'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+
+interface StateData {
+  tag: {
+    variant: TagVariant
+    label: MessageDescriptor
+  }
+  progress: {
+    variant: 'blue' | 'red' | 'rose' | 'mint'
+  }
+  cta: {
+    label: MessageDescriptor
+  }
+}
+
+const ApplicationStateDisplayedData: Record<ApplicationStatus, StateData> = {
+  [ApplicationStatus.REJECTED]: {
+    tag: {
+      variant: TagVariant.RED,
+      label: coreMessages.tagsRejected,
+    },
+    progress: {
+      variant: 'red',
+    },
+    cta: {
+      label: coreMessages.cardButtonInProgress,
+    },
+  },
+  [ApplicationStatus.COMPLETED]: {
+    tag: {
+      variant: TagVariant.BLUEBERRY,
+      label: coreMessages.tagsDone,
+    },
+    progress: {
+      variant: 'mint',
+    },
+    cta: {
+      label: coreMessages.cardButtonComplete,
+    },
+  },
+  [ApplicationStatus.IN_PROGRESS]: {
+    tag: {
+      variant: TagVariant.BLUE,
+      label: coreMessages.tagsInProgress,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: coreMessages.cardButtonInProgress,
+    },
+  },
+}
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -116,10 +170,11 @@ export const Applications: FC = () => {
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
                 (application: Application, index: number) => {
-                  const isCompleted =
-                    application.state === ApplicationStatus.COMPLETED
-                  const isRejected =
-                    application.state === ApplicationStatus.REJECTED
+                  console.log('appli', application)
+                  const stateMetaData = application.stateMetaData
+                  const stateDefaultData =
+                    ApplicationStateDisplayedData[application.status] ||
+                    ApplicationStateDisplayedData[ApplicationStatus.IN_PROGRESS]
                   return (
                     <ActionCard
                       key={`${application.id}-${index}`}
@@ -128,24 +183,18 @@ export const Applications: FC = () => {
                         formattedDate,
                       )}
                       tag={{
-                        label: isRejected
-                          ? formatMessage(coreMessages.tagsRejected)
-                          : isCompleted
-                          ? formatMessage(coreMessages.tagsDone)
-                          : formatMessage(coreMessages.tagsInProgress),
-                        variant: isRejected
-                          ? 'red'
-                          : isCompleted
-                          ? 'blueberry'
-                          : 'blue',
+                        label: stateMetaData?.tag?.label
+                          ? formatMessage(stateMetaData?.tag?.label)
+                          : formatMessage(stateDefaultData.tag.label),
+                        variant:
+                          stateMetaData?.tag?.variant ||
+                          stateDefaultData.tag.variant,
                         outlined: false,
                       }}
                       heading={application.name || application.typeId}
-                      text={application.stateDescription}
+                      text={application.stateMetaData?.description}
                       cta={{
-                        label: isCompleted
-                          ? formatMessage(coreMessages.cardButtonComplete)
-                          : formatMessage(coreMessages.cardButtonInProgress),
+                        label: formatMessage(stateDefaultData.cta.label),
                         variant: 'ghost',
                         size: 'small',
                         icon: undefined,
@@ -155,11 +204,7 @@ export const Applications: FC = () => {
                       progressMeter={{
                         active: Boolean(application.progress),
                         progress: application.progress,
-                        variant: isRejected
-                          ? 'red'
-                          : isCompleted
-                          ? 'mint'
-                          : 'blue',
+                        variant: stateDefaultData.progress.variant,
                       }}
                     />
                   )
