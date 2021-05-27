@@ -22,10 +22,13 @@ export class EndorsementListService {
   ) {}
 
   async findListsByTags(tags: string[]) {
-    this.logger.debug(`Finding endorsement lists by tag "${tags.join(', ')}"`)
+    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
+
     return this.endorsementListModel.findAll({
-      where: { tags: { [Op.contains]: tags } },
+      where: {
+        tags: { [Op.overlap]: tags },
+      },
     })
   }
 
