@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import {
-  EinstaklingarApi,
-  Einstaklingsupplysingar,
-} from '@island.is/clients/national-registry-v2'
+import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,10 +14,13 @@ export class NationalRegistryXRoadService {
     private logger: Logger,
   ) {}
 
-  async nationalRegistryFetch<GenericType>(
+  // This code is specifically set up for family-matter applications and might not suit everyone without changes
+  // Not using the generated code since it expects the 'Authorization' header to come from
+  // the NationalRegistryModule providers instead of a request parameter.
+  private async nationalRegistryFetch<T>(
     query: string,
     authToken: string,
-  ): Promise<GenericType> {
+  ): Promise<T> {
     try {
       const {
         xRoadBasePathWithEnv,
@@ -38,8 +38,7 @@ export class NationalRegistryXRoadService {
         },
       ).then((res) => res.json())
     } catch (error) {
-      this.handleError(error)
-      throw error
+      throw this.handleError(error)
     }
   }
 
@@ -131,14 +130,14 @@ export class NationalRegistryXRoadService {
         }),
       )
     } catch (e) {
-      this.handleError(e)
+      throw this.handleError(e)
     }
   }
 
   private handleError(error: any) {
     this.logger.error(error)
 
-    throw new ApolloError(
+    return new ApolloError(
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
