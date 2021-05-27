@@ -39,25 +39,14 @@ describe('Create detention request, step two', () => {
           ...mockProsecutorQuery,
           ...mockUsersQuery,
           ...mockInstitutionsQuery,
-          ...mockUpdateCaseMutation([
-            {
-              arrestDate: '2020-11-15',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              arrestDate: '2020-11-15T13:37:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth, {
-                representation: 'date',
-              }),
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth),
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                requestedCourtDate: formatISO(lastDateOfTheMonth),
+              } as UpdateCase,
+            ],
+            'test_id_6',
+          ),
         ]}
         addTypename={false}
       >

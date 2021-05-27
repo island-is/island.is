@@ -1,0 +1,50 @@
+.api-scope-group-create-form-modal {
+  h1 {
+    font-size: 1rem;
+    position: absolute;
+    top: -19px;
+    background: transparent;
+  }
+  div[class$='button__show'] {
+    i {
+      font-size: 0.8rem !important;
+      cursor: pointer;
+    }
+    span {
+      color: $color-text-primary !important;
+      display: none;
+    }
+  }
+
+  div[class$='modal-wrapper'] {
+    padding: 0px 20px;
+    position: absolute;
+    z-index: 3;
+    border: solid 1px $color-border;
+    border-radius: $border-radius;
+    background-color: $color-bg-content;
+    left: 0vw;
+  }
+
+  div[class$='field'] {
+    span {
+      position: absolute;
+      background-color: $color-bg-content;
+      border-radius: $border-radius;
+      z-index: 4;
+      border: solid 1px $color-error;
+      padding: 10px;
+      left: 300px;
+      width: 350px;
+    }
+  }
+
+  &__footer {
+    &__button {
+      i {
+        cursor: pointer;
+        margin-right: 20px;
+      }
+    }
+  }
+}

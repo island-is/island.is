@@ -187,7 +187,8 @@ export interface Case {
   prosecutorAppealAnnouncement?: string
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
-  isCaseAppealable?: boolean
+  isAppealDeadlineExpired?: boolean
+  isAppealGracePeriodExpired?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
