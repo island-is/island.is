@@ -140,7 +140,8 @@ export const RenderForm: React.FC<{
     <form onSubmit={formik.handleSubmit}>
       <NewsletterSignup
         id="email"
-        heading={headingByStatus}
+        name="email"
+        heading={heading}
         text={textByStatus}
         placeholder=""
         label={inputLabel}
@@ -149,6 +150,11 @@ export const RenderForm: React.FC<{
         onChange={formik.handleChange}
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
+        successTitle={n('formThankYou', 'Skráning tókst. Takk fyrir.')}
+        successMessage={n(
+          'formCheckYourEmail',
+          'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina',
+        )}
         errorMessage={formatMessage(status.message)}
         state={status.type || 'default'}
       />

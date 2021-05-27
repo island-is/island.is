@@ -60,6 +60,7 @@ export * from './lib/entities/dto/api-scope-user-access.dto'
 export * from './lib/entities/dto/api-scope-user-update.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
+export * from './lib/entities/dto/paged-rows.dto'
 
 // Services
 export * from './lib/services/clients.service'

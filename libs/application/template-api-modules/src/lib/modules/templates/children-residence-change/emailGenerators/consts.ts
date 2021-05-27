@@ -4,3 +4,5 @@ export const DistrictCommissionerLogo =
 export const fontStyles = 'font-size: 16px; line-height:22px;'
 
 export const ulStyles = `${fontStyles} margin: 0; margin-left: 25px; padding: 0;`
+
+export const liStyles = `margin-bottom: 0px; line-height: 26px; padding: 0;`
