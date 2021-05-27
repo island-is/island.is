@@ -215,7 +215,7 @@ export async function getRulingPdfAsString(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts, {
+    .text(existingCase.courtCaseFacts, {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -226,7 +226,7 @@ export async function getRulingPdfAsString(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments, {
+    .text(existingCase.courtLegalArguments, {
       lineGap: 6,
       paragraphGap: 0,
     })
