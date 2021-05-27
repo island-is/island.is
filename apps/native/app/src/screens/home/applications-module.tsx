@@ -6,11 +6,14 @@ import {
   ViewPager,
 } from '@island.is/island-ui-native'
 import React from 'react'
+import { Image } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { IApplication } from '../../graphql/fragments/application.fragment'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
 import { openBrowser } from '../../utils/rn-island'
+import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
+import { font } from 'apps/native/island-ui/src/utils/font'
 
 interface ApplicationsModuleProps {
   applications: IApplication[]
@@ -19,21 +22,23 @@ interface ApplicationsModuleProps {
 }
 
 const Empty = styled.View`
-  height: 183px;
+  display: flex;
+  flex-direction: row;
+  padding: 20px 70px 20px 24px;
   margin-bottom: 16px;
   border-radius: 8px;
   border: 1px solid
     ${({ theme }) =>
       theme.isDark ? theme.shade.shade300 : theme.color.blue200};
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `
 
 const EmptyText = styled.Text`
-  font-family: 'IBMPlexSans';
+  padding-right: 30px;
+  font-family: 'IBMPlexSans-Light';
   font-size: 16px;
   line-height: 24px;
-  text-align: center;
   color: ${(props) => props.theme.shade.foreground};
 `
 
@@ -117,6 +122,7 @@ export function ApplicationsModule({
                   id: 'applicationStatusCard.noActiveApplications',
                 })}
               </EmptyText>
+              <Image source={leJobss4} height={90} width={42} />
             </Empty>
           )}
           {count === 1 && children.slice(0, 1)}

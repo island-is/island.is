@@ -1,25 +1,9 @@
 [
   {
-    "id": "1",
-    "serviceProvider": "Þjóðskrá Íslands",
-    "title": "Nafnskírteini",
-    "type": "IDENTIDY_CARD",
-    "status": "Valid",
-    "dateTime": "16:24 - 14.03.2021"
-  },
-  {
     "id": "2",
     "serviceProvider": "Ríkislögreglustjóri",
-    "title": "Ökuskírteini",
+    "title": "Ökuskírteini (IS)",
     "type": "DRIVERS_LICENSE",
-    "status": "Valid",
-    "dateTime": "16:24 - 14.03.2021"
-  },
-  {
-    "id": "3",
-    "serviceProvider": "Þjóðskrá Íslands",
-    "title": "Vegabréf",
-    "type": "PASSPORT",
     "status": "Valid",
     "dateTime": "16:24 - 14.03.2021"
   },
@@ -32,18 +16,34 @@
     "dateTime": "16:24 - 14.03.2021"
   },
   {
-    "id": "5",
-    "serviceProvider": "Ríkissaksóknari",
-    "title": "Sakavottorð",
-    "type": "CRIMINAL_RECORD_CERTIFICATE",
-    "status": "Valid",
-    "dateTime": "16:24 - 14.03.2021"
-  },
-  {
     "id": "6",
     "serviceProvider": "Umhverfisstofnun",
     "title": "Veiðikort",
     "type": "FISHING_CARD",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
+  },
+  {
+    "id": "3",
+    "serviceProvider": "Þjóðskrá Íslands",
+    "title": "Vegabréf",
+    "type": "PASSPORT",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
+  },
+  {
+    "id": "1",
+    "serviceProvider": "Þjóðskrá Íslands",
+    "title": "Nafnskírteini",
+    "type": "IDENTIDY_CARD",
+    "status": "Valid",
+    "dateTime": "16:24 - 14.03.2021"
+  },
+  {
+    "id": "5",
+    "serviceProvider": "Ríkissaksóknari",
+    "title": "Sakavottorð",
+    "type": "CRIMINAL_RECORD_CERTIFICATE",
     "status": "Valid",
     "dateTime": "16:24 - 14.03.2021"
   },
