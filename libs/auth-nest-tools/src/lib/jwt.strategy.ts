@@ -31,14 +31,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
+  private parseScopes(scopes: undefined | string | string[]): string[] {
+    if (scopes === undefined) {
+      return []
+    }
+    if (typeof scopes === 'string') {
+      return scopes.split(' ')
+    }
+    return scopes
+  }
+
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     return {
       nationalId: payload.nationalId,
-      scope: payload.scope,
+      scope: this.parseScopes(payload.scope),
       client: payload.client_id,
       authorization: request.headers.authorization ?? '',
       actor: payload.act && {
         nationalId: payload.act.nationalId,
+        scope: this.parseScopes(payload.act.scope),
       },
       ip: String(request.headers['x-real-ip']) ?? request.ip,
       userAgent: request.headers['user-agent'],
