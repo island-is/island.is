@@ -243,6 +243,18 @@ export class Case extends Model<Case> {
   @ApiProperty({ type: User })
   prosecutor: User
 
+  @ForeignKey(() => Institution)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  sharedWithProsecutorsOfficeId: string
+
+  @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
+  @ApiProperty({ type: Institution })
+  sharedWithProsecutorsOffice: Institution
+
   @Column({
     type: DataType.STRING,
     allowNull: true,

@@ -45,6 +45,11 @@ export const CaseQuery = gql`
           name
         }
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
       courtRoom

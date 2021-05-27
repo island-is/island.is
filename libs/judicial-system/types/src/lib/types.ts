@@ -162,6 +162,7 @@ export interface Case {
   comments?: string
   caseFilesComments?: string
   prosecutor?: User
+  sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
@@ -253,6 +254,7 @@ export interface UpdateCase {
   comments?: string
   caseFilesComments?: string
   prosecutorId?: string
+  sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string

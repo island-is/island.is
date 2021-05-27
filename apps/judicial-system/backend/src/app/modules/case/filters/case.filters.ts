@@ -29,55 +29,67 @@ function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
 function isProsecutorsOfficeHiddenFromUser(
   prosecutorInstitutionId: string,
   user: User,
+  forUpdate: boolean,
+  sharedWithProsecutorsOfficeId: string,
 ): boolean {
   return (
-    prosecutorsOfficeMustMatchUserInstitution(user?.role) &&
+    prosecutorsOfficeMustMatchUserInstitution(user.role) &&
     prosecutorInstitutionId &&
-    prosecutorInstitutionId !== user?.institution?.id
+    prosecutorInstitutionId !== user.institution.id &&
+    (forUpdate ||
+      !sharedWithProsecutorsOfficeId ||
+      sharedWithProsecutorsOfficeId !== user.institution.id)
   )
 }
 
 function isCourtHiddenFromUser(courtId: string, user: User): boolean {
   return (
-    courtMustMatchUserIInstitution(user?.role) &&
+    courtMustMatchUserIInstitution(user.role) &&
     courtId &&
-    courtId !== user?.institution?.id
+    courtId !== user.institution.id
   )
 }
 
-export function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
+export function isCaseBlockedFromUser(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
   return (
-    isStateHiddenFromRole(theCase?.state, user?.role) ||
+    isStateHiddenFromRole(theCase.state, user.role) ||
     isProsecutorsOfficeHiddenFromUser(
-      theCase?.prosecutor?.institutionId,
+      theCase.prosecutor?.institutionId,
       user,
+      forUpdate,
+      theCase.sharedWithProsecutorsOfficeId,
     ) ||
-    isCourtHiddenFromUser(theCase?.courtId, user)
+    isCourtHiddenFromUser(theCase.courtId, user)
   )
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: {
-      state: getBlockedStates(user?.role),
+      state: getBlockedStates(user.role),
     },
   }
 
   const blockInstitutions =
-    user?.role === UserRole.PROSECUTOR
+    user.role === UserRole.PROSECUTOR
       ? {
           [Op.or]: [
             { prosecutor_id: { [Op.is]: null } },
             {
-              '$prosecutor.institution_id$': user?.institution?.id,
+              '$prosecutor.institution_id$': user.institution.id,
             },
+            { shared_with_prosecutors_office_id: user.institution.id },
           ],
         }
       : {
           [Op.or]: [
             { court_id: { [Op.is]: null } },
             {
-              court_id: user?.institution?.id,
+              court_id: user.institution.id,
             },
           ],
         }

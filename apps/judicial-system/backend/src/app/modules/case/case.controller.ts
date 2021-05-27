@@ -83,6 +83,7 @@ const prosecutorUpdateRule = {
     'comments',
     'caseFilesComments',
     'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
   ],
 } as RolesRule
 
@@ -335,7 +336,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     return existingCase
   }
@@ -353,7 +354,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
@@ -381,7 +382,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRulingPdf(existingCase)
 
@@ -469,12 +470,12 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     if (existingCase.childCase) {
       return existingCase.childCase
     }
 
-    return this.caseService.extend(existingCase)
+    return this.caseService.extend(existingCase, user)
   }
 }
