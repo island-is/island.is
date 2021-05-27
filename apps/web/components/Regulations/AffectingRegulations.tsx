@@ -4,11 +4,13 @@ import { RegulationMaybeDiff } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { uniqBy } from 'lodash'
 import {
+  interpolate,
   prettyName,
   useDomid,
   useRegulationLinkResolver,
 } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { useDateUtils } from './regulationUtils'
 
 export type AffectingRegulationsProps = {
   regulation: RegulationMaybeDiff
@@ -21,16 +23,18 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
 
   const domid = useDomid()
   const txt = useNamespace(texts)
+  const { formatDate } = useDateUtils()
   const { linkToRegulation } = useRegulationLinkResolver()
 
   if (!showingDiff) {
     return null
   }
 
+  const { from, to } = showingDiff
+
   const affectingRegulations = uniqBy(
     regulation.history.filter(
-      ({ effect, date }) =>
-        effect === 'amend' && showingDiff.from < date && date <= showingDiff.to,
+      ({ effect, date }) => effect === 'amend' && from < date && date <= to,
     ),
     'name',
   )
@@ -39,9 +43,17 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
     return null
   }
 
+  let dates: string =
+    from === to
+      ? formatDate(to)
+      : interpolate(txt('affectingLinkDateRange'), {
+          dateFrom: formatDate(from),
+          dateTo: formatDate(to),
+        })
+
   return (
     <Box marginTop={3} marginBottom={3}>
-      {txt('affectingLinkPrefix')}{' '}
+      {interpolate(txt('affectingLinkPrefix'), { dates })}{' '}
       {affectingRegulations.map(({ name, title }, i) => {
         const separator =
           i === 0
