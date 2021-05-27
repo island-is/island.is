@@ -1,4 +1,4 @@
-import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
