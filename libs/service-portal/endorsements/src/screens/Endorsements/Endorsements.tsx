@@ -159,10 +159,6 @@ const Endorsements = () => {
           </Text>
           <Stack space={4}>
             {endorsements.map((endorsement) => {
-              console.log(
-                'endorsement.endorsementList?.tags',
-                endorsement.endorsementList?.tags,
-              )
               return (
                 <ActionCard
                   key={endorsement.id}
