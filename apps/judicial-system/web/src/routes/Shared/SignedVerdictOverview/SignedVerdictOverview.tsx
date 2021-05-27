@@ -465,7 +465,8 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box marginBottom={9}>
               <Box marginBottom={3}>
                 <Text variant="h3">
-                  Opna mál fyrir öðru embætti <Tooltip text="" />
+                  Opna mál fyrir öðru embætti{' '}
+                  <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
                 </Text>
               </Box>
               <BlueBox>
