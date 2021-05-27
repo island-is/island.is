@@ -1,7 +1,6 @@
 import {
   ApplicationStatus,
   ApplicationTypes,
-  TagVariant,
 } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
