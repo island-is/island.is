@@ -55,11 +55,14 @@ export class PartyApplicationService {
   }: TemplateApiModuleActionProps) {
     const constituencyTag =
       constituencyMapper[application.answers.constituency as Constituencies]
+    const { partyLetter, partyName } = application.externalData
+      .partyLetterRegistry?.data as any
+
     const CREATE_ENDORSEMENT_LIST_QUERY = `
       mutation {
         endorsementSystemCreateEndorsementList(input: {
-          title: "${application.answers.partyName}",
-          description: "${application.answers.partyLetter}",
+          title: "${partyName}",
+          description: "${partyLetter}",
           endorsementMeta: [fullName, address, signedTags],
           tags: [${constituencyTag}],
           validationRules: [],

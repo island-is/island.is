@@ -145,6 +145,16 @@ const Endorsements = () => {
   const userVoterRegion =
     userVoterRegionResponse?.temporaryVoterRegistryGetVoterRegion
 
+  const endorsementListTags = [EndorsementListOpenTagsEnum.PartyLetter2021]
+
+  if (userVoterRegion && userVoterRegion.regionNumber > 0) {
+    endorsementListTags.push(
+      regionNumberEndorsementListTagMap[
+        userVoterRegion.regionNumber as keyof typeof regionNumberEndorsementListTagMap
+      ],
+    )
+  }
+
   // get all endorsement lists this user should see
   const {
     data: endorsementResponse,
@@ -155,10 +165,7 @@ const Endorsements = () => {
     {
       variables: {
         input: {
-          tags: [
-            EndorsementListOpenTagsEnum.PartyLetter2021,
-            'partyApplicationSudurkjordaemi2021',
-          ],
+          tags: endorsementListTags,
         },
       },
     },
