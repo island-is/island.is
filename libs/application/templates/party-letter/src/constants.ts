@@ -19,3 +19,9 @@ export enum Roles {
   SIGNATUREE = 'signaturee',
   ASSIGNEE = 'assignee',
 }
+
+export const csvFileName = (partyLetter: string, partyName: string): string => {
+  const strippedPartyName = partyName.toString().replace(/\s/g, '')
+  const strippedPartyLetter = partyLetter.toString().replace(/\s/g, '')
+  return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
+}

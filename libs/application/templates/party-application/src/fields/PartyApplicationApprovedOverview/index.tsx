@@ -4,14 +4,17 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SchemaFormValues } from '../../lib/dataSchema'
-import { ExportEndorsementsAsCSV } from '@island.is/application/ui-components'
+import { ExportAsCSV } from '@island.is/application/ui-components'
+import { csvFileName } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
   description?: string
 }
 
-const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) => {
+const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
@@ -38,7 +41,7 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) =
           <Text>{'Alþingi 2021'}</Text>
         </Box>
       </Box>
-      <Box marginTop={3} display='flex'>
+      <Box marginTop={3} display="flex">
         <Box width="half">
           <Text variant="h5">
             {formatMessage(m.overviewSection.constituency)}
@@ -52,8 +55,12 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({ application }) =
           <Text>{answers.endorsements ? answers.endorsements.length : 0}</Text>
         </Box>
       </Box>
-      <Box marginTop={3} display='flex'>
-        <ExportEndorsementsAsCSV application={application} />
+      <Box marginTop={3} display="flex">
+        <ExportAsCSV
+          data={answers.endorsements}
+          filename={csvFileName(answers.partyLetter, answers.partyName)}
+          title={formatMessage(m.supremeCourt.csvButton)}
+        />
       </Box>
     </>
   )

@@ -3,7 +3,9 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { ExportEndorsementsAsCSV } from '@island.is/application/ui-components'
+import { ExportAsCSV } from '@island.is/application/ui-components'
+import { SchemaFormValues } from '../../lib/dataSchema'
+import { csvFileName } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -12,7 +14,8 @@ export interface Props extends FieldBaseProps {
 
 const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { answers, externalData } = application
+  const { externalData } = application
+  const answers = application.answers as SchemaFormValues
 
   return (
     <Box>
@@ -57,7 +60,11 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
-          <ExportEndorsementsAsCSV application={application} />
+          <ExportAsCSV
+            data={answers.endorsements}
+            filename={csvFileName(answers.partyLetter, answers.partyName)}
+            title={formatMessage(m.supremeCourt.csvButton)}
+          />
         </Box>
         <Box marginBottom={3} width="half">
           <Text variant="h5">

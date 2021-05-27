@@ -3,6 +3,9 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { ExportAsCSV } from '@island.is/application/ui-components'
+import { csvFileName } from '../../constants'
+import { PartyLetter } from '../../lib/dataSchema'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -11,7 +14,8 @@ export interface Props extends FieldBaseProps {
 
 const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { answers, externalData } = application
+  const { externalData } = application
+  const answers = (application as any).answers as PartyLetter
 
   return (
     <Box>
@@ -49,6 +53,13 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
         </Box>
+      </Box>
+      <Box display="flex">
+        <ExportAsCSV
+          data={answers.endorsements}
+          filename={csvFileName(answers.partyLetter, answers.partyName)}
+          title={formatMessage(m.ministryOfJustice.csvButton)}
+        />
       </Box>
     </Box>
   )
