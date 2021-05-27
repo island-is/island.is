@@ -81,12 +81,17 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
       return { fixture: 'signatureConfirmationResponse' }
+    } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
+      graphqlRequest.alias = 'gqlInstitutionsQuery'
+
+      return { fixture: 'institutionsQueryResponse' }
     }
   }
 }
 
 Cypress.Commands.add('stubAPIResponses', () => {
   cy.intercept('POST', '**/api/graphql', (req) => {
+    console.log(getFixtureFor(req))
     req.reply(getFixtureFor(req))
   })
 })
