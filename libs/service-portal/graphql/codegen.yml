@@ -5,7 +5,7 @@ documents:
   - libs/service-portal/graphql/src/lib/queries/*.ts
   - libs/service-portal/graphql/src/lib/mutations/*.ts
 generates:
-  libs/service-portal/graphql/src/generated.ts:
+  libs/service-portal/graphql/src/schema.ts:
     plugins:
       - typescript
       - typescript-operations
