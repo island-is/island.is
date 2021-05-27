@@ -182,13 +182,17 @@ export const RegulationsSearchSection = (
     [props.lawChapters],
   )
 
-  const doSearch = (key: RegulationSearchKey, value?: string) => {
+  const doSearch = (
+    keyOrFilters: RegulationSearchKey | Partial<RegulationSearchFilters>,
+    value?: string,
+  ) => {
+    const newFilters =
+      typeof keyOrFilters !== 'string'
+        ? { ...filters, ...keyOrFilters }
+        : { ...filters, [keyOrFilters]: value }
     router.replace({
       pathname: router.pathname,
-      query: cleanQuery({
-        ...filters,
-        [key]: value,
-      }),
+      query: cleanQuery(newFilters),
     })
   }
   const clearSearch = () => {
@@ -353,30 +357,37 @@ export const RegulationsSearchSection = (
                         placeholder={txt('searchYearPlaceholder', 'Veldu ár')}
                         value={findValueOption(yearOptions, filters.year)}
                         options={yearOptions}
-                        onChange={(option) =>
-                          doSearch('year', getRSValue(option))
-                        }
+                        onChange={(option) => {
+                          const year = getRSValue(option)
+                          const yearTo = !year ? undefined : filters.yearTo // clear yearTo along with year
+                          doSearch({ year, yearTo })
+                        }}
                         size="sm"
                       />
                     </GridColumn>
-                    <GridColumn
-                      span={['1/1', '1/1', '4/12', '3/12', '2/10']}
-                      paddingTop={[0, 0, 4]}
-                      paddingBottom={[2, 2, 0]}
-                    >
-                      <Select
-                        name="yearTo"
-                        isSearchable
-                        label={txt('searchYearToLabel', 'Tímabili til')}
-                        placeholder={txt('searchYearToPlaceholder', 'Veldu ár')}
-                        value={findValueOption(yearToOptions, filters.yearTo)}
-                        options={yearToOptions}
-                        onChange={(option) =>
-                          doSearch('yearTo', getRSValue(option) || '')
-                        }
-                        size="sm"
-                      />
-                    </GridColumn>
+                    {filters.year && (
+                      <GridColumn
+                        span={['1/1', '1/1', '4/12', '3/12', '2/10']}
+                        paddingTop={[0, 0, 4]}
+                        paddingBottom={[2, 2, 0]}
+                      >
+                        <Select
+                          name="yearTo"
+                          isSearchable
+                          label={txt('searchYearToLabel', 'Tímabili til')}
+                          placeholder={txt(
+                            'searchYearToPlaceholder',
+                            'Veldu ár',
+                          )}
+                          value={findValueOption(yearToOptions, filters.yearTo)}
+                          options={yearToOptions}
+                          onChange={(option) =>
+                            doSearch('yearTo', getRSValue(option))
+                          }
+                          size="sm"
+                        />
+                      </GridColumn>
+                    )}
                   </GridRow>
                 </>
               )}
