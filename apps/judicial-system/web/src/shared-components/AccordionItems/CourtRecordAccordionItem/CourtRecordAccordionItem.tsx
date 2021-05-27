@@ -14,7 +14,7 @@ import {
   Case,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
