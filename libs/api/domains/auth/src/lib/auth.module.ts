@@ -1,4 +1,4 @@
-import { DynamicModule, HttpModule, Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import {
   AuthPublicApiClientModule,
   AuthPublicApiClientModuleConfig,
@@ -7,7 +7,7 @@ import {
 import { AuthResolver } from './auth.resolver'
 import { AuthService } from './auth.service'
 
-export interface Config extends AuthPublicApiClientModuleConfig {}
+export type Config = AuthPublicApiClientModuleConfig
 
 @Module({
   providers: [AuthResolver, AuthService],
