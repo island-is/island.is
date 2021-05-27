@@ -21,3 +21,7 @@ export const variants = styleMap({
     backgroundColor: theme.color.blue100,
   },
 })
+
+export const successBox = style({
+  maxWidth: 400,
+})
