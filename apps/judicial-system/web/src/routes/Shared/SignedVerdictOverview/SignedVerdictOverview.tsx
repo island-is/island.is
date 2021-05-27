@@ -4,8 +4,10 @@ import {
   AccordionItem,
   Box,
   Button,
+  Select,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
@@ -33,6 +35,7 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   CaseFileList,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -443,7 +446,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </AccordionItem>
               </Accordion>
             </Box>
-            <Box marginBottom={15}>
+            <Box marginBottom={7}>
               <Box marginBottom={3}>
                 <PdfButton
                   caseId={workingCase.id}
@@ -456,6 +459,16 @@ export const SignedVerdictOverview: React.FC = () => {
                 title="Opna PDF þingbók og úrskurð"
                 pdfType="ruling"
               />
+            </Box>
+            <Box marginBottom={9}>
+              <Box marginBottom={3}>
+                <Text variant="h3">
+                  Opna mál fyrir öðru embætti <Tooltip text="" />
+                </Text>
+              </Box>
+              <BlueBox>
+                <Select name="sharedWithProsecutorsOfficeId" options={[]} />
+              </BlueBox>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
