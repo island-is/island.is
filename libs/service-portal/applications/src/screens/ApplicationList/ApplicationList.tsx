@@ -1,5 +1,6 @@
 import React from 'react'
 import format from 'date-fns/format'
+import { MessageDescriptor } from 'react-intl'
 import {
   ActionCardLoader,
   ServicePortalModuleComponent,
@@ -17,6 +18,7 @@ import {
   Application,
   ApplicationStatus,
   getSlugFromType,
+  TagVariant,
 } from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
@@ -35,6 +37,58 @@ const baseUrlForm = isLocalhost
   : isStaging
   ? 'https://beta.staging01.devland.is/umsoknir'
   : 'https://island.is/umsoknir'
+
+interface StateData {
+  tag: {
+    variant: TagVariant
+    label: MessageDescriptor
+  }
+  progress: {
+    variant: 'blue' | 'red' | 'rose' | 'mint'
+  }
+  cta: {
+    label: MessageDescriptor
+  }
+}
+
+const ApplicationStateDisplayedData: Record<ApplicationStatus, StateData> = {
+  [ApplicationStatus.REJECTED]: {
+    tag: {
+      variant: TagVariant.RED,
+      label: m.cardStatusRejected,
+    },
+    progress: {
+      variant: 'red',
+    },
+    cta: {
+      label: m.cardButtonInProgress,
+    },
+  },
+  [ApplicationStatus.COMPLETED]: {
+    tag: {
+      variant: TagVariant.BLUEBERRY,
+      label: m.cardStatusDone,
+    },
+    progress: {
+      variant: 'mint',
+    },
+    cta: {
+      label: m.cardButtonComplete,
+    },
+  },
+  [ApplicationStatus.IN_PROGRESS]: {
+    tag: {
+      variant: TagVariant.BLUE,
+      label: m.cardStatusInProgress,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: m.cardButtonInProgress,
+    },
+  },
+}
 
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
@@ -75,8 +129,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       <Stack space={2}>
         {applications.map((application: Application, index: number) => {
-          const isCompleted = application.state === ApplicationStatus.COMPLETED
-          const isRejected = application.state === ApplicationStatus.REJECTED
+          const stateMetaData = application.stateMetaData
+          const stateDefaultData =
+            ApplicationStateDisplayedData[application.status] ||
+            ApplicationStateDisplayedData[ApplicationStatus.IN_PROGRESS]
           const slug = getSlugFromType(application.typeId)
 
           if (!slug) {
@@ -89,33 +145,26 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               date={format(new Date(application.modified), formattedDate)}
               heading={application.name || application.typeId}
               tag={{
-                label: isRejected
-                  ? formatMessage(m.cardStatusRejected)
-                  : isCompleted
-                  ? formatMessage(m.cardStatusDone)
-                  : formatMessage(m.cardStatusInProgress),
-                variant: isRejected
-                  ? 'red'
-                  : isCompleted
-                  ? 'blueberry'
-                  : 'blue',
+                label: stateMetaData?.tag?.label
+                  ? formatMessage(stateMetaData?.tag?.label)
+                  : formatMessage(stateDefaultData.tag.label),
+                variant:
+                  stateMetaData?.tag?.variant || stateDefaultData.tag.variant,
                 outlined: false,
               }}
               cta={{
-                label: isCompleted
-                  ? formatMessage(m.cardButtonComplete)
-                  : formatMessage(m.cardButtonInProgress),
+                label: formatMessage(stateDefaultData.cta.label),
                 variant: 'ghost',
                 size: 'small',
                 icon: undefined,
                 onClick: () =>
                   window.open(`${baseUrlForm}/${slug}/${application.id}`),
               }}
-              text={application.stateDescription}
+              text={application.stateMetaData?.description}
               progressMeter={{
                 active: Boolean(application.progress),
                 progress: application.progress,
-                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
+                variant: stateDefaultData.progress.variant,
               }}
             />
           )

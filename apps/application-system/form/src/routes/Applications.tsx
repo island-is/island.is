@@ -170,7 +170,6 @@ export const Applications: FC = () => {
             <Stack space={2}>
               {(data?.applicationApplications ?? []).map(
                 (application: Application, index: number) => {
-                  console.log('appli', application)
                   const stateMetaData = application.stateMetaData
                   const stateDefaultData =
                     ApplicationStateDisplayedData[application.status] ||
