@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -10,6 +10,7 @@ import {
   Endorsement,
   EndorsementList,
   EndorsementListOpenTagsEnum,
+  TemporaryVoterRegistry,
 } from '../../types/schema'
 
 export type UserEndorsement = Pick<
@@ -20,6 +21,11 @@ export type RegionsEndorsementList = Pick<
   EndorsementList,
   'id' | 'title' | 'description'
 > & { tags: EndorsementListOpenTagsEnum[] }
+
+export type UserVoterRegion = Pick<
+  TemporaryVoterRegistry,
+  'regionNumber' | 'regionName'
+>
 interface UserEndorsementsResponse {
   endorsementSystemUserEndorsements: UserEndorsement[]
 }
@@ -28,6 +34,9 @@ interface EndorsementListResponse {
 }
 interface EndorseListResponse {
   endorsementSystemEndorseList: UserEndorsement
+}
+interface UserVoterRegionResponse {
+  temporaryVoterRegistryGetVoterRegion: UserVoterRegion
 }
 
 const GET_USER_ENDORSEMENTS = gql`
@@ -90,7 +99,16 @@ const UNENDORSE_LIST = gql`
   }
 `
 
-const endorsementListTagMap = {
+const USER_VOTER_REGION = gql`
+  query getVoterRegion {
+    temporaryVoterRegistryGetVoterRegion {
+      regionNumber
+      regionName
+    }
+  }
+`
+
+const endorsementListTagNameMap = {
   [EndorsementListOpenTagsEnum.PartyLetter2021]: 'Listabókstafur',
   [EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021]:
     'Alþingiskosningar 2021 - Norðausturkjördæmi',
@@ -105,25 +123,46 @@ const endorsementListTagMap = {
   [EndorsementListOpenTagsEnum.PartyApplicationSudvesturkjordaemi2021]:
     'Alþingiskosningar 2021 - Suðvesturkjördæmi',
 }
-
 const getEndorsementListTagNames = (tags: EndorsementListOpenTagsEnum[]) =>
-  tags.map((tag) => endorsementListTagMap[tag])
+  tags.map((tag) => endorsementListTagNameMap[tag])
+
+const regionNumberEndorsementListTagMap = {
+  1: EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021,
+  2: EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021,
+  3: EndorsementListOpenTagsEnum.PartyApplicationSudvesturkjordaemi2021,
+  4: EndorsementListOpenTagsEnum.PartyApplicationNordvesturkjordaemi2021,
+  5: EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021,
+  6: EndorsementListOpenTagsEnum.PartyApplicationSudurkjordaemi2021,
+}
 
 const Endorsements = () => {
   const { formatMessage } = useLocale()
 
+  // get user voter region
+  const { data: userVoterRegionResponse } = useQuery<UserVoterRegionResponse>(
+    USER_VOTER_REGION,
+  )
+  const userVoterRegion =
+    userVoterRegionResponse?.temporaryVoterRegistryGetVoterRegion
+
+  // get all endorsement lists this user should see
   const {
     data: endorsementResponse,
     refetch: refetchUserEndorsements,
   } = useQuery<UserEndorsementsResponse>(GET_USER_ENDORSEMENTS)
-  const {
-    data: endorsementListsResponse,
-    refetch: refetchRegionEndorsements,
-  } = useQuery<EndorsementListResponse>(GET_REGION_ENDORSEMENTS, {
-    variables: {
-      input: { tags: [EndorsementListOpenTagsEnum.PartyLetter2021] },
+  const { data: endorsementListsResponse } = useQuery<EndorsementListResponse>(
+    GET_REGION_ENDORSEMENTS,
+    {
+      variables: {
+        input: {
+          tags: [
+            EndorsementListOpenTagsEnum.PartyLetter2021,
+            'partyApplicationSudurkjordaemi2021',
+          ],
+        },
+      },
     },
-  })
+  )
 
   const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
     onCompleted: () => {
@@ -146,6 +185,7 @@ const Endorsements = () => {
   const endorsementLists = allEndorsementLists.filter(
     ({ id }) => !signedLists.includes(id),
   )
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
