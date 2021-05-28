@@ -21,6 +21,7 @@ import {
   REDIRECT_COOKIE,
 } from './consts'
 import { environment } from '../../environments'
+import { getVersionConfiguration } from '../../services'
 
 const router = Router()
 
@@ -28,8 +29,6 @@ const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 const loginIS = new IslandisLogin({
   audienceUrl,
 })
-
-const YEAR_BORN_LIMIT = 2003
 
 router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   const errors = validationResult(req)
@@ -59,11 +58,13 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
     return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
   }
 
+  const { yearBornLimit } = await getVersionConfiguration(user.kennitala)
+
   const yearBorn = new Date(
     kennitala.info(user.kennitala).birthday,
   ).getFullYear()
-  if (yearBorn > YEAR_BORN_LIMIT) {
-    logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
+  if (yearBorn > yearBornLimit) {
+    logger.warn(`User born after ${yearBornLimit} logged in`)
     return res.redirect(`/error?errorType=${USER_NOT_OLD_ENOUGH}`)
   }
 
