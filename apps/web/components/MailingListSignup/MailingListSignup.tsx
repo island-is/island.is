@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import jsonp from 'jsonp'
-import { NewsletterSignup } from '@island.is/island-ui/core'
+import { Box, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -74,7 +74,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
           } else {
             const successMessage: string = n(
               'formSuccess',
-              'Skráning tókst. Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
+              'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
             )
             setStatus({
               type: 'success',
@@ -157,22 +157,26 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   }
 
   return (
-    <NewsletterSignup
-      id={id}
-      name="email"
-      heading={title}
-      text={description}
-      placeholder={placeholder}
-      label={inputLabel}
-      buttonText={buttonText}
-      onChange={formik.handleChange}
-      onSubmit={formik.handleSubmit}
-      value={formik.values.email}
-      errorMessage={parseErrorMessage(
-        status.type == 'error' ? status.message : '',
-      )}
-      successMessage={status.type == 'success' ? status.message : ''}
-      state={status.type}
-    />
+    <Box background="blue100" paddingX={[2, 2, 8]} paddingY={[2, 2, 6]}>
+      <NewsletterSignup
+        id={id}
+        name="email"
+        heading={title}
+        text={description}
+        placeholder={placeholder}
+        label={inputLabel}
+        buttonText={buttonText}
+        variant="blue"
+        onChange={formik.handleChange}
+        onSubmit={formik.handleSubmit}
+        value={formik.values.email}
+        errorMessage={parseErrorMessage(
+          status.type == 'error' ? status.message : '',
+        )}
+        successTitle={n('formSuccessTitle', 'Skráning tókst')}
+        successMessage={status.type == 'success' ? status.message : ''}
+        state={status.type}
+      />
+    </Box>
   )
 }

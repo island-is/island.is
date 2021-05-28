@@ -15,7 +15,7 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
 }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
+      <Box paddingBottom={6} marginLeft={[0, 0, 0, 0, 6]}>
         <MailingListSignup
           namespace={namespace}
           id={'mailingListSignupForm-' + slice.id}
