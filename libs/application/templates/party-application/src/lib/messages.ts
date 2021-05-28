@@ -258,13 +258,12 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
-      defaultMessage:
-        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
