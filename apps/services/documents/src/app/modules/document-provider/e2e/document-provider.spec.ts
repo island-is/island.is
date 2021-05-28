@@ -1,10 +1,13 @@
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
+import { DocumentProviderScope } from '../../../../../../../../libs/auth/scopes/src/lib/documents.scope'
 import { setup } from '../../../../../test/setup'
-import * as tokenUtils from '../utils/tokenUtils'
 
 let app: INestApplication
+let server: request.SuperTest<request.Test>
 
+const nationalId = '123456432x'
 const simpleOrg = {
   nationalId: '1234567890',
   name: 'Organisation ehf.',
@@ -43,29 +46,27 @@ const simpleOrg = {
 //   externalProviderId: 'b9fe843a1dea446a9c8497a3f1e8ad72',
 // }
 
-const authNationalId = '123456432x'
-
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder
+        .overrideGuard(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId,
+            scope: [DocumentProviderScope.read, DocumentProviderScope.write],
+          }),
+        )
+        .compile()
+    },
+  })
+
+  server = request(app.getHttpServer())
 })
 
 describe('Organisation API', () => {
-  let spy: jest.SpyInstance<
-    string | undefined,
-    [import('@nestjs/common').ExecutionContext]
-  >
-  beforeEach(() => {
-    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
-    spy.mockImplementation(() => {
-      return authNationalId
-    })
-  })
-  afterAll(() => {
-    spy.mockRestore()
-  })
-
   it('POST /organisations should register organisation with no related objects', async () => {
-    const response = await request(app.getHttpServer())
+    const response = await server
       .post('/organisations')
       .send(simpleOrg)
       .expect(201)
@@ -78,7 +79,7 @@ describe('Organisation API', () => {
     expect(body.phoneNumber).toEqual(simpleOrg.phoneNumber)
 
     // Check for changelogs
-    const changelogResponse = await request(app.getHttpServer())
+    const changelogResponse = await server
       .get(`/changelogs/organisations/${body.id}/entities/${body.id}`)
       .expect(200)
     const { body: changelogBody } = changelogResponse
@@ -92,7 +93,7 @@ describe('Organisation API', () => {
     expect((changelogData.id = body.id))
     expect(changelogData.name).toEqual(simpleOrg.name)
     expect(changelogData.email).toEqual(simpleOrg.email)
-    expect(changelogData.modifiedBy).toEqual(authNationalId)
+    expect(changelogData.modifiedBy).toEqual(nationalId)
   })
 
   // it('POST /organisations should register organisation with related objects', async () => {
@@ -132,7 +133,7 @@ describe('Organisation API', () => {
   //   const { body: changelogBody } = changelogResponse
   //   expect(changelogBody.length).toBe(4)
   //   changelogBody.forEach((entity: { data: { modifiedBy: string } }) => {
-  //     expect(entity.data.modifiedBy).toEqual(authNationalId)
+  //     expect(entity.data.modifiedBy).toEqual(nationalId)
   //   })
   // })
 
@@ -236,7 +237,7 @@ describe('Organisation API', () => {
   //   expect((changelogData.id = body.id))
   //   expect(changelogData.name).toEqual(updatedName)
   //   expect(changelogData.email).toEqual(simpleOrg.email)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('POST /organisations/{id}/administrativecontact should add to existing organisation', async () => {
@@ -281,7 +282,7 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.administrativeContact.id)
   //   expect(changelogData.email).toEqual('siggi@org.is')
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('PUT /organisations/{id}/administrativecontact{administrativeContactId} should update administrative contact', async () => {
@@ -320,7 +321,7 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.id)
   //   expect(changelogData.name).toEqual(updatedName)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('POST /organisations/{id}/technicalcontact should add to existing organisation', async () => {
@@ -365,7 +366,7 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.technicalContact.id)
   //   expect(changelogData.email).toEqual('siggi@org.is')
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('PUT /organisations/{id}/technicalcontact{technicalContactId} should update technical contact', async () => {
@@ -400,7 +401,7 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.id)
   //   expect(changelogData.name).toEqual(updatedName)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('POST /organisations/{id}/helpdesk should add to existing organisation', async () => {
@@ -441,7 +442,7 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.helpdesk.id)
   //   expect(changelogData.email).toEqual('help@org.is')
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('PUT /organisations/{id}/helpdesk{helpdeskId} should update helpdesk', async () => {
@@ -476,29 +477,13 @@ describe('Organisation API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.id)
   //   expect(changelogData.email).toEqual(updatedEmail)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 })
 
 describe('Provider API', () => {
-  let spy: jest.SpyInstance<
-    string | undefined,
-    [import('@nestjs/common').ExecutionContext]
-  >
-  beforeEach(() => {
-    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
-    spy.mockImplementation(() => {
-      return authNationalId
-    })
-  })
-  afterAll(() => {
-    spy.mockRestore()
-  })
-
   it('GET /providers should return empty array if no proviers exists', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/providers')
-      .expect(200)
+    const response = await server.get('/providers').expect(200)
     const { body } = response
     expect(body.length).toBe(0)
   })
@@ -578,7 +563,7 @@ describe('Provider API', () => {
   //   const changelogData = changelog.data
   //   expect(changelogData.id).toEqual(body.id)
   //   expect(changelogData.endpoint).toEqual(provider.endpoint)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('GET /providers/{id} should return 404 not found', async () => {
@@ -668,7 +653,7 @@ describe('Provider API', () => {
   //   expect(changelogData.id).toEqual(body.id)
   //   expect(changelogData.endpoint).toEqual(updatedEndpoint)
   //   expect(changelogData.apiScope).toEqual(updatedApiScope)
-  //   expect(changelogData.modifiedBy).toEqual(authNationalId)
+  //   expect(changelogData.modifiedBy).toEqual(nationalId)
   // })
 
   // it('POST /providers should allow xroad paths', async () => {
