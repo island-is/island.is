@@ -827,7 +827,7 @@ export class ResourcesController {
     @Body() group: ApiScopeGroupDTO,
     @CurrentUser() user: User,
   ): Promise<ApiScopeGroup> {
-    this.resourcesService.createApiScopeGroup(group)
+    return this.resourcesService.createApiScopeGroup(group)
   }
 
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
