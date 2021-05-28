@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseGender,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -59,6 +60,10 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
 
   const router = useRouter()
   const id = router.query.id
@@ -239,6 +244,42 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleShareCaseWithAnotherInstitution = (
+    selectedInstitution?: ValueType<ReactSelectOption>,
+  ) => {
+    if (workingCase) {
+      if (workingCase.sharedWithProsecutorsOffice) {
+        setWorkingCase({
+          ...workingCase,
+          sharedWithProsecutorsOffice: undefined,
+        })
+
+        setSelectedSharingInstitutionId(null)
+
+        updateCase(workingCase.id, parseNull('sharedWithProsecutorsOfficeId'))
+      } else {
+        setWorkingCase({
+          ...workingCase,
+          sharedWithProsecutorsOffice: {
+            id: (selectedInstitution as ReactSelectOption).value as string,
+            name: (selectedInstitution as ReactSelectOption).label,
+            type: InstitutionType.PROSECUTORS_OFFICE,
+            created: new Date().toString(),
+            modified: new Date().toString(),
+          },
+        })
+
+        updateCase(
+          workingCase.id,
+          parseString(
+            'sharedWithProsecutorsOfficeId',
+            (selectedInstitution as ReactSelectOption).value as string,
+          ),
+        )
+      }
+    }
+  }
+
   const canCaseFilesBeOpened = () => {
     if (
       !workingCase?.isAppealGracePeriodExpired &&
@@ -272,6 +313,7 @@ export const SignedVerdictOverview: React.FC = () => {
    * 3. Accepted and the custody end date is not in the past
    *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate > today
    */
+  console.log(workingCase?.sharedWithProsecutorsOffice)
   return (
     <PageLayout
       activeSection={2}
@@ -476,26 +518,51 @@ export const SignedVerdictOverview: React.FC = () => {
                   </Text>
                 </Box>
                 <BlueBox>
-                  <Select
-                    name="sharedWithProsecutorsOfficeId"
-                    label="Veldu embætti"
-                    placeholder="Velja embætti sem tekur við málinu"
-                    options={prosecutorsOffices
-                      .map((prosecutorsOffice) => ({
-                        label: prosecutorsOffice.name,
-                        value: prosecutorsOffice.id,
-                      }))
-                      .filter((t) => t.value !== user?.institution?.id)}
-                    onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                      setAndSendToServer(
-                        'sharedWithProsecutorsOfficeId',
-                        (selectedOption as ReactSelectOption).value as string,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
+                  <Box display="flex">
+                    <Box flexGrow={1} marginRight={2}>
+                      <Select
+                        name="sharedWithProsecutorsOfficeId"
+                        label="Veldu embætti"
+                        placeholder="Velja embætti sem tekur við málinu"
+                        size="sm"
+                        options={prosecutorsOffices
+                          .map((prosecutorsOffice) => ({
+                            label: prosecutorsOffice.name,
+                            value: prosecutorsOffice.id,
+                          }))
+                          .filter((t) => t.value !== user?.institution?.id)}
+                        value={
+                          selectedSharingInstitutionId
+                            ? {
+                                label: (selectedSharingInstitutionId as ReactSelectOption)
+                                  .label,
+                                value: (selectedSharingInstitutionId as ReactSelectOption)
+                                  .value as string,
+                              }
+                            : null
+                        }
+                        onChange={(so: ValueType<ReactSelectOption>) =>
+                          setSelectedSharingInstitutionId(so)
+                        }
+                      />
+                    </Box>
+                    <Button
+                      size="small"
+                      disabled={
+                        !selectedSharingInstitutionId &&
+                        !workingCase.sharedWithProsecutorsOffice
+                      }
+                      onClick={() =>
+                        handleShareCaseWithAnotherInstitution(
+                          selectedSharingInstitutionId,
+                        )
+                      }
+                    >
+                      {workingCase.sharedWithProsecutorsOffice
+                        ? 'Loka aðgangi'
+                        : 'Opna mál'}
+                    </Button>
+                  </Box>
                 </BlueBox>
               </Box>
             )}
