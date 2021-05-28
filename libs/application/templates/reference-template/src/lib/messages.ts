@@ -13,7 +13,7 @@ export const m = defineMessages({
   },
   name: {
     id: 'example.application:name',
-    defaultMessage: 'Umsókn um tilvísunar sniðmát',
+    defaultMessage: 'Umsókn',
     description: `Application's name`,
   },
   draftTitle: {

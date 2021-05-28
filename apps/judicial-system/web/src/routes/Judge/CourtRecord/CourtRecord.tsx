@@ -12,6 +12,7 @@ import {
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   capitalize,
+  caseTypes,
   formatAccusedByGender,
   formatProsecutorDemands,
   NounCases,
@@ -116,7 +117,7 @@ export const CourtRecord: React.FC = () => {
             theCase.type,
             theCase.accusedNationalId,
             theCase.accusedName,
-            theCase.court,
+            theCase.court.name,
             theCase.requestedCustodyEndDate,
             theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
@@ -232,7 +233,7 @@ export const CourtRecord: React.FC = () => {
               <Input
                 data-testid="policeDemands"
                 name="policeDemands"
-                label="Krafa lögreglu"
+                label="Krafa"
                 defaultValue={workingCase.policeDemands}
                 placeholder="Hvað hafði ákæruvaldið að segja?"
                 onChange={(event) =>
@@ -270,7 +271,7 @@ export const CourtRecord: React.FC = () => {
                 </Text>
               </Box>
               <CourtDocuments
-                title="Krafa lögreglu"
+                title={`Krafa um ${caseTypes[workingCase.type]}`}
                 tagText="Þingmerkt nr. 1"
                 tagVariant="darkerBlue"
                 text="Rannsóknargögn málsins liggja frammi."

@@ -79,6 +79,8 @@ export const Card = ({
       break
   }
 
+  const visibleTags = tags.filter((t) => t.title)
+
   const items = (
     <Box
       ref={ref}
@@ -112,22 +114,24 @@ export const Card = ({
             </Box>
           </Box>
           {description && <Text>{description}</Text>}
-          {tags.length > 0 && (
+          {visibleTags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
-                {tags.map(({ title, ...props }: CardTagsProps, index) => {
-                  const tagProps = {
-                    ...tagPropsDefaults,
-                    ...props.tagProps,
-                    variant: tagVariant,
-                  }
+                {visibleTags.map(
+                  ({ title, ...props }: CardTagsProps, index) => {
+                    const tagProps = {
+                      ...tagPropsDefaults,
+                      ...props.tagProps,
+                      variant: tagVariant,
+                    }
 
-                  return (
-                    <Tag key={index} {...tagProps} disabled>
-                      {title}
-                    </Tag>
-                  )
-                })}
+                    return (
+                      <Tag key={index} {...tagProps} disabled>
+                        {title}
+                      </Tag>
+                    )
+                  },
+                )}
               </Inline>
             </Box>
           )}

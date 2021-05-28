@@ -3,6 +3,7 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import {
   capitalize,
+  caseTypes,
   formatAccusedByGender,
   formatDate,
   NounCases,
@@ -13,7 +14,7 @@ import {
   Case,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
@@ -50,14 +51,16 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </>
         )}
       </Box>
-      <AccordionListItem title="Krafa lögreglu" breakSpaces>
+      <AccordionListItem title="Krafa" breakSpaces>
         <Text>{workingCase.policeDemands}</Text>
       </AccordionListItem>
       <AccordionListItem title="Viðstaddir" breakSpaces>
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
-        <Text>Krafa lögreglu þingmerkt nr. 1.</Text>
+        <Text>{`Krafa um ${
+          caseTypes[workingCase.type]
+        } þingmerkt nr. 1.`}</Text>
         <Text>
           Rannsóknargögn málsins liggja frammi.
           <br />
