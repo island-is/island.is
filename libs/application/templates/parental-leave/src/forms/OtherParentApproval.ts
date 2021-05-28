@@ -37,12 +37,12 @@ export const OtherParentApproval: Form = buildForm({
               placement: 'footer',
               actions: [
                 {
-                  name: coreMessages.buttonApprove,
+                  name: coreMessages.buttonReject,
                   type: 'reject',
                   event: 'REJECT',
                 },
                 {
-                  name: coreMessages.buttonReject,
+                  name: coreMessages.buttonApprove,
                   type: 'primary',
                   event: 'APPROVE',
                 },

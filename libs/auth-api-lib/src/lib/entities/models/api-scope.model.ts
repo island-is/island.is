@@ -8,8 +8,9 @@ import {
   HasMany,
   PrimaryKey,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 
@@ -134,7 +135,6 @@ export class ApiScope extends Model<ApiScope> {
   userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
-
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -172,4 +172,8 @@ export class ApiScope extends Model<ApiScope> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @ApiPropertyOptional()
+  @BelongsTo(() => ApiScopeGroup)
+  group?: ApiScopeGroup
 }

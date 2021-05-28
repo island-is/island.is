@@ -23,6 +23,8 @@ enum TemplateApiActions {
   submitApplication = 'submitApplication',
   sendNotificationToCounterParty = 'sendNotificationToCounterParty',
   rejectApplication = 'rejectApplication',
+  approveApplication = 'approveApplication',
+  rejectedApplication = 'rejectedApplication',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -172,7 +174,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.rejectedByParentB,
             tag: {
               variant: 'red',
-              label: stateLabels.rejectedByParentB,
+              label: stateLabels.rejected,
             },
           },
           lifecycle: pruneAfter(oneYear),
@@ -192,6 +194,68 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/ContractRejected').then((module) =>
                   Promise.resolve(module.ContractRejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.REJECTED]: {
+        meta: {
+          name: applicationName,
+          actionCard: {
+            description: stateDescriptions.rejected,
+            tag: { label: stateLabels.rejected, variant: 'red' },
+          },
+          lifecycle: pruneAfter(oneYear),
+          onEntry: {
+            apiModuleAction: TemplateApiActions.rejectedApplication,
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationRejected').then((module) =>
+                  Promise.resolve(module.ApplicationRejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ApplicationRejected').then((module) =>
+                  Promise.resolve(module.ApplicationRejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.COMPLETED]: {
+        meta: {
+          name: applicationName,
+          actionCard: {
+            description: stateDescriptions.approved,
+            tag: { label: stateLabels.approved, variant: 'blueberry' },
+          },
+          lifecycle: pruneAfter(oneYear),
+          onEntry: {
+            apiModuleAction: TemplateApiActions.approveApplication,
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationApproved').then((module) =>
+                  Promise.resolve(module.ApplicationApproved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ApplicationApproved').then((module) =>
+                  Promise.resolve(module.ApplicationApproved),
                 ),
               read: 'all',
             },
