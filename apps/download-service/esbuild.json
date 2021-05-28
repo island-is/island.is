@@ -15,6 +15,7 @@
     "@nestjs/mongoose",
     "@nestjs/typeorm",
     "dd-trace",
+    "atob",
     "logform",
     "pg-native",
     "form-data"
