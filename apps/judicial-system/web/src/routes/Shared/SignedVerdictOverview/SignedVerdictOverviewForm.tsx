@@ -344,7 +344,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     }))
                     .filter((t) => t.value !== user?.institution?.id)}
                   value={
-                    selectedSharingInstitutionId
+                    workingCase.sharedWithProsecutorsOffice
+                      ? {
+                          label: workingCase.sharedWithProsecutorsOffice.name,
+                          value: workingCase.sharedWithProsecutorsOffice.id,
+                        }
+                      : selectedSharingInstitutionId
                       ? {
                           label: (selectedSharingInstitutionId as ReactSelectOption)
                             .label,
