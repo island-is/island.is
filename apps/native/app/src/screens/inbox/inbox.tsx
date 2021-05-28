@@ -57,6 +57,7 @@ const {
         text: intl.formatMessage({ id: 'inbox.screenTitle' }),
       },
       searchBar: {
+        placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
       },
     },
@@ -73,7 +74,6 @@ const {
       height: 120,
       searchBar: {
         visible: true,
-        placeholder: 'Leita að skjölum...',
         hideTopBarOnFocus: true,
       },
       background: {
@@ -193,8 +193,8 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   if (!isLoading && isEmpty) {
     return (
       <EmptyList
-        title="Hér eru engin skjöl sem stendur"
-        description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
+        title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
+        description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
         image={<Image source={illustrationSrc} height={176} width={134} />}
       />
     )
