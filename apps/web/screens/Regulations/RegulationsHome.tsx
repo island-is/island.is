@@ -6,7 +6,7 @@ import {
 } from '../../components/Regulations/Regulations.types'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import omit from 'lodash/omit'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -80,6 +80,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   }
 
   const txt = useNamespace(props.texts)
+  const anchor = useRef<HTMLDivElement>(null)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const totalItems = props.regulations?.totalItems ?? 0
   const stepSize = props.regulations?.perPage ?? 18
@@ -128,92 +129,96 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             years={props.years}
             texts={props.texts}
             page={currentPage}
+            anchorRef={anchor}
           />
         </>
       }
       details={
-        <SubpageDetailsContent
-          header=""
-          content={
-            <GridContainer>
-              <GridRow>
-                <GridColumn span="1/1" {...resultTitleOffsets}>
-                  {!props.doSearch ? (
-                    <Text as="h2" variant="h3">
-                      {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
-                    </Text>
-                  ) : totalItems === 0 ? (
-                    <p>
-                      <strong>{txt('searchResultCountZero')}</strong>
-                    </p>
-                  ) : (
-                    <Text as="h2">
-                      {interpolate(
-                        txt(
-                          isPlural(totalItems)
-                            ? 'searchResultCountPlural'
-                            : 'searchResultCountSingular',
-                        ),
-                        { count: totalItems.toLocaleString('is') },
-                      )}
-                      , birti {(currentPage - 1) * stepSize + 1} -{' '}
-                      {(currentPage - 1) * stepSize + stepSize}
-                    </Text>
-                  )}
-                </GridColumn>
-              </GridRow>
+        <>
+          <div ref={anchor}></div>
+          <SubpageDetailsContent
+            header=""
+            content={
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span="1/1" {...resultTitleOffsets}>
+                    {!props.doSearch ? (
+                      <Text as="h2" variant="h3">
+                        {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
+                      </Text>
+                    ) : totalItems === 0 ? (
+                      <p>
+                        <strong>{txt('searchResultCountZero')}</strong>
+                      </p>
+                    ) : (
+                      <Text as="h2">
+                        {interpolate(
+                          txt(
+                            isPlural(totalItems)
+                              ? 'searchResultCountPlural'
+                              : 'searchResultCountSingular',
+                          ),
+                          { count: totalItems.toLocaleString('is') },
+                        )}
+                        , birti {(currentPage - 1) * stepSize + 1} -{' '}
+                        {(currentPage - 1) * stepSize + stepSize}
+                      </Text>
+                    )}
+                  </GridColumn>
+                </GridRow>
 
-              <GridRow>
-                {props.regulations?.data?.length > 0 &&
-                  props.regulations.data.map((reg, i) => (
-                    <GridColumn
-                      key={reg.name}
-                      span={['1/1', '1/2', '1/2', '1/3']}
-                      paddingTop={3}
-                      paddingBottom={4}
+                <GridRow>
+                  {props.regulations?.data?.length > 0 &&
+                    props.regulations.data.map((reg, i) => (
+                      <GridColumn
+                        key={reg.name}
+                        span={['1/1', '1/2', '1/2', '1/3']}
+                        paddingTop={3}
+                        paddingBottom={4}
+                      >
+                        <CategoryCard
+                          href={linkToRegulation(reg.name)}
+                          heading={prettyName(reg.name)}
+                          text={reg.title}
+                          tags={[
+                            {
+                              label: reg.ministry.name ?? reg.ministry,
+                              disabled: true,
+                            },
+                          ]}
+                        />
+                      </GridColumn>
+                    ))}
+                </GridRow>
+                {currentPage && totalItems > stepSize && (
+                  <Box marginTop={3}>
+                    <Box marginTop={0} marginBottom={2} textAlign="center">
+                      Síða {currentPage} af {totalPages}
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      marginTop={3}
+                      textAlign="center"
                     >
-                      <CategoryCard
-                        href={linkToRegulation(reg.name)}
-                        heading={prettyName(reg.name)}
-                        text={reg.title}
-                        tags={[
-                          {
-                            label: reg.ministry.name ?? reg.ministry,
-                            disabled: true,
-                          },
-                        ]}
-                      />
-                    </GridColumn>
-                  ))}
-              </GridRow>
-              {currentPage && totalItems > stepSize && (
-                <Box marginTop={3}>
-                  <Box marginTop={0} marginBottom={2} textAlign="center">
-                    Síða {currentPage} af {totalPages}
+                      {currentPage > 1 && (
+                        <Button onClick={() => setCurrentPage(currentPage - 1)}>
+                          {txt('homePrevPage', 'Fyrri síða')}
+                        </Button>
+                      )}
+                      &nbsp;&nbsp;
+                      {currentPage < totalPages && (
+                        <Button onClick={() => setCurrentPage(currentPage + 1)}>
+                          {txt('homeNextPage', 'Næsta síða')}
+                        </Button>
+                      )}
+                    </Box>
                   </Box>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    marginTop={3}
-                    textAlign="center"
-                  >
-                    {currentPage > 1 && (
-                      <Button onClick={() => setCurrentPage(currentPage - 1)}>
-                        {txt('homePrevPage', 'Fyrri síða')}
-                      </Button>
-                    )}
-                    &nbsp;&nbsp;
-                    {currentPage < totalPages && (
-                      <Button onClick={() => setCurrentPage(currentPage + 1)}>
-                        {txt('homeNextPage', 'Næsta síða')}
-                      </Button>
-                    )}
-                  </Box>
-                </Box>
-              )}
-            </GridContainer>
-          }
-        />
+                )}
+              </GridContainer>
+            }
+          />
+        </>
       }
     />
   )

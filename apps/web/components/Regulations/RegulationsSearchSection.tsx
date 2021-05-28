@@ -122,6 +122,7 @@ export type RegulationsSearchSectionProps = {
   lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
   page?: number
+  anchorRef: React.RefObject<HTMLDivElement>
 }
 
 export const RegulationsSearchSection = (
@@ -156,7 +157,15 @@ export const RegulationsSearchSection = (
 
   useEffect(() => {
     doSearch('page', props.page && props.page > 1 ? String(props.page) : '')
-    window.scrollTo(0, 0)
+    const anchorTop =
+      (props?.anchorRef?.current?.getBoundingClientRect()?.top || 0) +
+      window.scrollY
+    setTimeout(() => {
+      window.scrollTo({
+        top: props.page && props.page > 1 ? anchorTop - 30 : 0,
+        behavior: 'smooth',
+      })
+    }, 100)
   }, [props.page])
 
   const ministryOptions = useMemo(() => {
@@ -195,10 +204,15 @@ export const RegulationsSearchSection = (
     keyOrFilters: RegulationSearchKey | Partial<RegulationSearchFilters>,
     value?: string,
   ) => {
-    const newFilters =
+    let newFilters =
       typeof keyOrFilters !== 'string'
         ? { ...filters, ...keyOrFilters }
         : { ...filters, [keyOrFilters]: value }
+
+    // reset page to 1 if any search params change
+    if (keyOrFilters !== 'page') {
+      newFilters = { ...newFilters, page: '' }
+    }
     router.replace({
       pathname: router.pathname,
       query: cleanQuery(newFilters),
