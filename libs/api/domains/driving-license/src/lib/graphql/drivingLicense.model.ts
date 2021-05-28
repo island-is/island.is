@@ -7,14 +7,17 @@ export class DrivingLicense {
   @Field(() => ID)
   id!: string
 
-  @Field(() => String)
+  @Field()
+  name!: string
+
+  @Field()
   issued!: string
 
-  @Field(() => String)
+  @Field()
   expires!: string
 
-  @Field(() => Boolean)
-  isProvisional!: boolean
+  @Field({ nullable: true })
+  isProvisional!: boolean | null
 
   @Field(() => [Eligibility])
   eligibilities!: Eligibility[]

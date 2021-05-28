@@ -18,7 +18,7 @@ const DescriptionFormField: FC<{
   return (
     <Box paddingTop={field.space}>
       {showFieldName && (
-        <Text variant="h2">
+        <Text variant={field.titleVariant}>
           {formatText(field.title, application, formatMessage)}
         </Text>
       )}

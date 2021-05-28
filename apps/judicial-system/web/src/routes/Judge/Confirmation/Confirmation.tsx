@@ -9,6 +9,7 @@ import {
   CaseNumbers,
   PageLayout,
   FormContentContainer,
+  CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   getConclusion,
@@ -351,6 +352,9 @@ export const Confirmation: React.FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
+                <CourtCaseFactsAndLegalArgumentsAccordionItem
+                  workingCase={workingCase}
+                />
               </Accordion>
             </Box>
             <Box component="section" marginBottom={8}>
