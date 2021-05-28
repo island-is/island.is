@@ -8,7 +8,6 @@ import {
   HasMany,
   PrimaryKey,
   ForeignKey,
-  HasOne,
   BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'

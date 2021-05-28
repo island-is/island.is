@@ -20,5 +20,5 @@ export class ApiScope {
   isAccessControlled: boolean
   readonly created!: Date
   readonly modified?: Date
-  group: ApiScopeGroup
+  group?: ApiScopeGroup
 }
