@@ -11,7 +11,9 @@ import {
   Columns,
   Column,
   ArrowLink,
+  Button,
 } from '@island.is/island-ui/core'
+import { exportGjoldSundurlidunCSV } from '../../utils/csvGjoldSundurlidun'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {
@@ -46,6 +48,39 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 </Text>
               </T.HeadData>
             ))}
+            <T.HeadData>
+              <Box className={styles.buttonWrap}>
+                <Button
+                  circle
+                  colorScheme="default"
+                  icon="document"
+                  iconType="filled"
+                  onClick={function noRefCheck() {}}
+                  preTextIconType="filled"
+                  size="small"
+                  title="Sækja Excel"
+                  type="button"
+                  variant="primary"
+                />
+                <Button
+                  circle
+                  colorScheme="default"
+                  icon="reader"
+                  iconType="filled"
+                  onClick={() =>
+                    exportGjoldSundurlidunCSV(
+                      financeStatusDetails,
+                      organization?.chargeTypes?.[0].name || 'details',
+                    )
+                  }
+                  preTextIconType="filled"
+                  size="small"
+                  title="Sækja CSV"
+                  type="button"
+                  variant="primary"
+                />
+              </Box>
+            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -59,28 +94,24 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 amountFormat(row.principal),
                 amountFormat(row.interest),
                 amountFormat(row.cost),
-                amountFormat(row.dueTotals),
+                amountFormat(row.paid),
                 amountFormat(row.totals),
               ].map((item, ii) => (
                 <T.Data key={ii}>
-                  {ii === tableHeaderArray.length - 1 && row.payID ? (
-                    <Box className={styles.buttonTd} display="flex">
-                      <div className={styles.textWithButton}>
-                        <Text variant="small">{item}</Text>
-                      </div>
-                      <ArrowLink
-                        href={`https://TODO_PAYMENT_LINK/${row.payID}`}
-                      >
-                        Greiða
-                      </ArrowLink>
-                    </Box>
-                  ) : (
-                    <div className={styles.td}>
-                      <Text variant="small">{item}</Text>
-                    </div>
-                  )}
+                  <div className={styles.td}>
+                    <Text variant="small">{item}</Text>
+                  </div>
                 </T.Data>
               ))}
+              <T.Data>
+                {row.payID ? (
+                  <Box className={styles.buttonTd} display="flex">
+                    <ArrowLink href={`https://TODO_PAYMENT_LINK/${row.payID}`}>
+                      Greiða
+                    </ArrowLink>
+                  </Box>
+                ) : null}
+              </T.Data>
             </T.Row>
           ))}
         </T.Body>

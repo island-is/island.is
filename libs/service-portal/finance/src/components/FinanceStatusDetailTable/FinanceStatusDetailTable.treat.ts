@@ -15,6 +15,8 @@ export const buttonTd = style({
   alignItems: 'center',
 })
 
-export const textWithButton = style({
-  marginRight: theme.spacing[3],
+export const buttonWrap = style({
+  minWidth: theme.spacing[9],
+  justifyContent: 'space-around',
+  display: 'flex',
 })
