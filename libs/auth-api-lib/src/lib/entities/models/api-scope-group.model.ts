@@ -6,8 +6,10 @@ import {
   Table,
   UpdatedAt,
   PrimaryKey,
+  HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'api_scope_group',
@@ -51,4 +53,8 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @HasMany(() => ApiScope)
+  @ApiPropertyOptional()
+  scopes?: ApiScope[]
 }

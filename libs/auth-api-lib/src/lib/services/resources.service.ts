@@ -161,7 +161,7 @@ export class ResourcesService {
     return this.apiScopeModel.findAndCountAll({
       limit: count,
       offset: offset,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
     })
   }
@@ -175,6 +175,7 @@ export class ResourcesService {
           [Op.not]: '@island.is/auth/admin:root',
         },
       },
+      include: [ApiScopeGroup],
     })
   }
 
@@ -214,6 +215,7 @@ export class ResourcesService {
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
       raw: true,
+      include: [ApiScopeGroup],
     })
 
     if (apiScope) {
@@ -324,7 +326,7 @@ export class ResourcesService {
 
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
     })
   }
 
@@ -760,7 +762,10 @@ export class ResourcesService {
 
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
-    return this.apiScopeGroup.findAll({ order: [['name', 'asc']] })
+    return this.apiScopeGroup.findAll({
+      order: [['name', 'asc']],
+      include: [ApiScope],
+    })
   }
 
   /** Returns all ApiScopeGroups by name if specified with Paging */
@@ -782,12 +787,13 @@ export class ResourcesService {
       offset: offset,
       where: { name: { [Op.like]: searchString } },
       order: [['name', 'asc']],
+      include: [ApiScope],
     })
   }
 
   /** Finds Api SCope Group by Id */
   async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
-    return this.apiScopeGroup.findByPk(id)
+    return this.apiScopeGroup.findByPk(id, { include: [ApiScope] })
   }
   // #endregion ApiScopeGroup
 
@@ -797,6 +803,7 @@ export class ResourcesService {
         alsoForDelegatedUser: true,
         name: { [Op.in]: requestedScopes },
       },
+      include: [ApiScopeGroup],
     })
 
     return scopes.map((s: ApiScope): string => s.name)
