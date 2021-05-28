@@ -72,7 +72,11 @@ interface OrganizationSliceProps {
   organizationPageSlug?: string
 }
 
-const fullWidthSlices = ['TimelineSlice', 'LogoListSlice']
+const fullWidthSlices = [
+  'TimelineSlice',
+  'LogoListSlice',
+  'MailingListSignupSlice',
+]
 const slicesWithContainer = ['LatestNewsSlice']
 
 const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
@@ -124,18 +128,18 @@ export const OrganizationSlice = ({
   fullWidth = false,
   organizationPageSlug = '',
 }: OrganizationSliceProps) => {
-  return !slicesWithContainer.includes(slice.__typename) ? (
+  return !(fullWidth && slicesWithContainer.includes(slice.__typename)) ? (
     <GridContainer>
       <GridRow>
         <GridColumn
           paddingTop={6}
           span={
-            fullWidthSlices.includes(slice.__typename) || !fullWidth
+            fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
-            fullWidthSlices.includes(slice.__typename) || !fullWidth
+            fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '0'
               : ['0', '0', '1/9']
           }
