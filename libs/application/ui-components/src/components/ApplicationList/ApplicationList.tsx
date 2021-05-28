@@ -92,14 +92,12 @@ const ApplicationList = ({ applications, onClick }: Props) => {
             date={format(new Date(application.modified), formattedDate)}
             tag={{
               label: actionCard?.tag?.label
-                ? formatMessage(actionCard?.tag?.label)
+                ? formatMessage(actionCard.tag.label)
                 : formatMessage(stateDefaultData.tag.label),
               variant: actionCard?.tag?.variant || stateDefaultData.tag.variant,
               outlined: false,
             }}
-            heading={
-              actionCard?.title || application.name || application.typeId
-            }
+            heading={actionCard?.title ?? application.name}
             text={actionCard?.description}
             cta={{
               label: formatMessage(stateDefaultData.cta.label),
