@@ -15,7 +15,7 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
       : 0
   const endorsementsWarningCount =
     answers.endorsements && answers.endorsements.length > 0
-      ? answers.endorsements.filter(x => x.hasWarning === true).length
+      ? answers.endorsements.filter((x) => x.hasWarning === true).length
       : 0
 
   const labelMapper: Record<IDS, string> = {
@@ -54,7 +54,10 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
         getValueViaPath(answers, IDS.PartyLetter) as string,
       )}
       {reviewItem(labelMapper[IDS.Endorsements], endorsementsCount.toString())}
-      {reviewItem(labelMapper[IDS.Warnings], endorsementsWarningCount.toString())}
+      {reviewItem(
+        labelMapper[IDS.Warnings],
+        endorsementsWarningCount.toString(),
+      )}
       {answers.documents
         ? reviewItem(
             labelMapper[IDS.Documents],

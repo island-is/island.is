@@ -263,8 +263,7 @@ export const m: MessageDir = {
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
-      defaultMessage:
-        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
