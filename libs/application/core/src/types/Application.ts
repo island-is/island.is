@@ -17,11 +17,7 @@ export interface FormValue {
   [key: string]: Answer
 }
 
-export enum ActionCardTag {
-  RED = 'red',
-  BLUEBERRY = 'blueberry',
-  BLUE = 'blue',
-}
+export type ActionCardTag = 'red' | 'blueberry' | 'blue'
 
 export interface ActionCardMetaData {
   title?: string

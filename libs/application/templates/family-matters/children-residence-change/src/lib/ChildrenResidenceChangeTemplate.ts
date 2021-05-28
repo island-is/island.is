@@ -7,7 +7,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  ActionCardTag,
 } from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -172,7 +171,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
             tag: {
-              variant: ActionCardTag.RED,
+              variant: 'red',
               label: stateLabels.rejectedByParentB,
             },
           },

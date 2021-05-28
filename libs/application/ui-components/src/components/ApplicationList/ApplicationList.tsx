@@ -29,7 +29,7 @@ interface DefaultStateData {
 const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   [ApplicationStatus.REJECTED]: {
     tag: {
-      variant: ActionCardTag.RED,
+      variant: 'red',
       label: coreMessages.tagsRejected,
     },
     progress: {
@@ -41,7 +41,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.COMPLETED]: {
     tag: {
-      variant: ActionCardTag.BLUEBERRY,
+      variant: 'blueberry',
       label: coreMessages.tagsDone,
     },
     progress: {
@@ -53,7 +53,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.IN_PROGRESS]: {
     tag: {
-      variant: ActionCardTag.BLUE,
+      variant: 'blue',
       label: coreMessages.tagsInProgress,
     },
     progress: {
