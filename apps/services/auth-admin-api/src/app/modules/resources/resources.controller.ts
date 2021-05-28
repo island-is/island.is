@@ -821,12 +821,21 @@ export class ResourcesController {
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('api-scope-group')
   @Audit<ApiScopeGroup>({
-    resources: (group) => group.id,
+    resources: (group) => group?.name,
   })
   async createApiScopeGroup(
     @Body() group: ApiScopeGroupDTO,
+    @CurrentUser() user: User,
   ): Promise<ApiScopeGroup> {
-    return this.resourcesService.createApiScopeGroup(group)
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'createApiScopeGroup',
+        meta: { fields: Object.keys(group) },
+      },
+      this.resourcesService.createApiScopeGroup(group),
+    )
   }
 
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
