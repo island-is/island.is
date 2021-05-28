@@ -9,7 +9,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Charge } from '@island.is/clients/payment'
 import { PaymentService } from '@island.is/clients/payment'
-import { CreatingPaymentModel } from './models/creatingPayment.model'
+import { CreatingPaymentModel, GettingPaymentCatalogOrg, GettingPaymentCatalog } from './graphql-models/index'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -17,17 +17,17 @@ export class PaymentResolver {
   constructor(private PaymentService: PaymentService) {}
 
   @Query(() => [CreatingPaymentModel])
-  async createChargePayment(createChargeToClient: Charge) {
+  createChargePayment(createChargeToClient: Charge) {
     return this.PaymentService.createCharge(createChargeToClient)
   }
 
-  @Query(() => [])
-  async paymentCatalog() {
+  @Query(() => [GettingPaymentCatalog])
+  paymentCatalog() {
     return this.PaymentService.getCatalog()
   }
   
-  @Query(() => [])
-  async paymentCatalogPerformingOrg(thisOrganizationCatalog: string) {
+  @Query(() => GettingPaymentCatalogOrg)
+  paymentCatalogPerformingOrg(thisOrganizationCatalog: string) {
     return this.PaymentService.getCatalogByPerformingOrg(thisOrganizationCatalog)
   }
 }

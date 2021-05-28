@@ -1,7 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { ChargeResponse } from '@island.is/clients/payment'
 
 @ObjectType()
 export class CreatingPaymentModel {
   @Field()
-  performingOrgID!: string
+  user4!: string
+
+  @Field()
+  receptionID!: string
 }

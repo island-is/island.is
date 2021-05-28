@@ -12,7 +12,7 @@ export class PaymentService extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    this.baseURL = `https://tbrws-s.hysing.is` + `/chargeFJS/v1`
+    this.baseURL = `https://tbrws-s.hysing.is/chargeFJS/v1`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -25,40 +25,27 @@ export class PaymentService extends RESTDataSource {
       )}`,
     )
   }
-  async createCharge (
+
+  createCharge (
     upcomingPayment: Charge// CHARGE OBJECT,
   ): Promise<ChargeResponse> {
-    const response = await this.post<ChargeResponse>(
+    return this.post<ChargeResponse>(
       `/charge`,
       upcomingPayment
     ) 
-    return response
   }
 
-  async getCatalog(): Promise<Catalog> {
-    const response = await this.get<Catalog>(
+  getCatalog(): Promise<Catalog> {
+    return this.get<Catalog>(
       `/catalog`
     )
-    return response
   }
 
-  async getCatalogByPerformingOrg(
+  getCatalogByPerformingOrg(
       performingOrgID: string
     ): Promise<Catalog> {
-    const response = await this.get<Catalog>(
+      return this.get<Catalog>(
       `/catalog/performingOrg/${performingOrgID}`
     )
-    return response
-  }
-
-  /// Version 2!
-  /// If parameter performingOrgID then fetch catalog for respective organization, else get all catalogs.
-  async getCatalog2(performingOrgID?: string): Promise<Catalog> {
-    let path = `/catalog`
-    performingOrgID != undefined ? path = path + `/performingOrg/${performingOrgID}` : path
-    const response = await this.get<Catalog>(
-      path
-    )
-    return response
   }
 }
