@@ -49,8 +49,13 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import formatISO from 'date-fns/formatISO'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
+import {
+  CaseData,
+  ReactSelectOption,
+} from '@island.is/judicial-system-web/src/types'
 import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import { ValueType } from 'react-select/src/types'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -480,6 +485,15 @@ export const SignedVerdictOverview: React.FC = () => {
                       value: prosecutorsOffice.id,
                     }))
                     .filter((t) => t.value !== user?.institution?.id)}
+                  onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                    setAndSendToServer(
+                      'sharedWithProsecutorsOfficeId',
+                      (selectedOption as ReactSelectOption).value as string,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
                 />
               </BlueBox>
             </Box>
