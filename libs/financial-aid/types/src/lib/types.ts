@@ -8,9 +8,15 @@ export interface Application {
   email: string
 }
 
-export interface CreateApplication{
+export interface CreateApplication {
   nationalId: string
   name: string
   phoneNumber: string
   email: string
+}
+
+export interface User {
+  nationalId: string
+  name: string
+  mobile: string
 }

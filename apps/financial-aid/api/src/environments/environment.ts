@@ -4,6 +4,7 @@ export default {
     samlEntryPoint: 'https://innskraning.island.is/?id=financial-aid.local',
     audience: 'localhost:4200',
     allowAuthBypass: true,
+    allowFakeUsers: true,
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-token',
   },
