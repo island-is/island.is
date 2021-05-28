@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/types'
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
 
 @Table({
   tableName: 'applications',

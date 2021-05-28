@@ -14,7 +14,7 @@ import * as styles from './studentForm.treat'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
-import { NavigationProps } from '@island.is/financial-aid/types'
+import { NavigationProps } from '@island.is/financial-aid/shared'
 
 const StudentForm = () => {
   const router = useRouter()

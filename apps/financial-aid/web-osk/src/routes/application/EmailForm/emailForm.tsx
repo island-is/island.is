@@ -13,7 +13,7 @@ import * as styles from './emailForm.treat'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/types'
+import { NavigationProps } from '@island.is/financial-aid/shared'
 
 const EmailForm = () => {
   const router = useRouter()

@@ -17,16 +17,17 @@ import {
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  User,
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
-  SharedAuthService,
-} from '@island.is/financial-aid/auth'
+} from '@island.is/financial-aid/shared'
+
+import { SharedAuthService } from '@island.is/financial-aid/auth'
 
 import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
-import { User } from '@island.is/financial-aid/types'
 import { UnionDefinition } from '@nestjs/graphql/dist/schema-builder/factories/union-definition.factory'
 import { UniqueDirectiveNamesRule } from 'graphql'
 
@@ -139,7 +140,7 @@ export class AuthController {
     const user: User = {
       nationalId: islandUser.kennitala,
       name: islandUser.fullname,
-      mobile: islandUser.mobile,
+      phoneNumber: islandUser.mobile,
     }
 
     return this.logInUser(user, res, returnUrl)
@@ -160,12 +161,12 @@ export class AuthController {
       '0000000000': {
         nationalId: '0000000000',
         name: 'Lárus Árnasson',
-        mobile: '9999999',
+        phoneNumber: '9999999',
       },
       '1111111111': {
         nationalId: '1111111111',
         name: 'Lára Margrétardóttir',
-        mobile: '9999999',
+        phoneNumber: '9999999',
       },
     }
 
@@ -179,7 +180,7 @@ export class AuthController {
   private logInUser(user: User, res: Response, returnUrl: string) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
-    const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
+    const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

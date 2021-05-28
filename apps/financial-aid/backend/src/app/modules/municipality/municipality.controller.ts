@@ -15,7 +15,7 @@ import { MunicipalityModel } from './models'
 import {
   Municipality,
   MunicipalitySettings,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 import { MunicipalityQueryInput } from './dto'
 

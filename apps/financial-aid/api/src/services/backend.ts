@@ -2,7 +2,7 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
-import { Application, Municipality } from '@island.is/financial-aid/types'
+import { Application, Municipality } from '@island.is/financial-aid/shared'
 
 import { CreateApplicationInput } from '../app/modules/application/dto'
 

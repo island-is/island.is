@@ -4,7 +4,7 @@ import graphqlTypeJson from 'graphql-type-json'
 import {
   Municipality,
   MunicipalitySettings,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {

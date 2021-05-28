@@ -4,7 +4,7 @@ import {
   Application,
   HomeCircumstances,
   Employment,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 @ObjectType()
 export class ApplicationModel implements Application {

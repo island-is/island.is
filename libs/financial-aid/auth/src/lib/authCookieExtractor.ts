@@ -1,5 +1,5 @@
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/financial-aid/shared'
 import { Request } from 'express'
-import { ACCESS_TOKEN_COOKIE_NAME } from './const'
 
 export const authCookieExtractor = (req: Request) => {
   if (req && req.cookies) {

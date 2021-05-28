@@ -2,10 +2,12 @@ import { sign } from 'jsonwebtoken'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { User } from '@island.is/financial-aid/types'
+import {
+  COOKIE_EXPIRES_IN_SECONDS,
+  User,
+} from '@island.is/financial-aid/shared'
 
 import { Credentials } from './auth.types'
-import { COOKIE_EXPIRES_IN_SECONDS } from './const'
 
 @Injectable()
 export class SharedAuthService {

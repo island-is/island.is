@@ -1,4 +1,4 @@
-import { User } from '@island.is/financial-aid/types'
+import { User } from '@island.is/financial-aid/shared'
 
 export type Credentials = {
   user: User

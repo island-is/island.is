@@ -6,7 +6,7 @@ import {
   CreateApplication,
   HomeCircumstances,
   Employment,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 @InputType()
 export class CreateApplicationInput implements CreateApplication {

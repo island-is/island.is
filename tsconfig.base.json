@@ -308,8 +308,8 @@
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
-      "@island.is/financial-aid/types": [
-        "libs/financial-aid/types/src/index.ts"
+      "@island.is/financial-aid/shared": [
+        "libs/financial-aid/shared/src/index.ts"
       ],
       "@island.is/financial-aid/auth": [
         "libs/financial-aid/auth/src/index.ts"

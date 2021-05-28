@@ -43,7 +43,7 @@ import {
   Employment,
   getEmploymentStatus,
   CreateApplication,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 interface MunicipalityData {
   municipality: Municipality

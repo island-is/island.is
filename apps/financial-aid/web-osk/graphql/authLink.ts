@@ -1,15 +1,18 @@
 import { setContext } from '@apollo/client/link/context'
+import { CSRF_COOKIE_NAME } from '@island.is/financial-aid/shared'
 import Cookie from 'js-cookie'
-
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 export default setContext((_, { headers }) => {
   const token = Cookie.get(CSRF_COOKIE_NAME)
 
-  return {
-    headers: {
-      ...headers,
-      // authorization: token ? `Bearer ${token}` : '',
-    },
+  if (token) {
+    return {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${token}`,
+      },
+    }
   }
+
+  return headers
 })
