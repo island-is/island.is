@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'crc.application:application.name',
-    defaultMessage: 'Breytt lögheimili barna',
+    defaultMessage: 'Samningur um breytt lögheimili barns og meðlag',
     description: 'Name of the Children Residence Change application',
   },
   signature: {
@@ -63,5 +63,57 @@ export const section = defineMessages({
     id: 'crc.application:section.received',
     defaultMessage: 'Umsókn móttekin',
     description: 'Application Received',
+  },
+})
+
+export const stateDescriptions = defineMessages({
+  draft: {
+    id: 'crc.application:stateDescriptions.draft',
+    defaultMessage:
+      'Samningur um breytt lögheimili barna og meðlag er í vinnslu hjá þér og hefur ekki verið undirritaður.',
+    description: 'Draft',
+  },
+  inReview: {
+    id: 'crc.application:stateDescriptions.inReview',
+    defaultMessage:
+      'Foreldrið sem hóf málið hefur gert drög að samningi um breytt lögheimili barna og meðlag. Hitt forsjárforeldrið þarf nú að lesa yfir og samþykkja samninginn með rafrænni undirritun. Eftir að báðir foreldrar hafa undirritað samning fer hann í afgreiðslu hjá sýslumanni.',
+    description: 'In review for parent B',
+  },
+  submitted: {
+    id: 'crc.application:stateDescriptions.submitted',
+    defaultMessage:
+      'Samningur ykkar um breytt lögheimili og meðlag er í afgreiðsluferli hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband. Afgreiðsla sýslumanns getur tekið allt að tvær vikur.',
+    description: 'Submitted to the Commissioner',
+  },
+  rejectedByParentB: {
+    id: 'crc.application:stateDescriptions.rejectedByParentB',
+    defaultMessage:
+      'Samningi sem var útbúinn á Island.is var hafnað af seinna forsjárforeldrinu. Hægt er að hefja samningsferlið aftur, senda beiðni um breytingu á sýslumann eða óska eftir viðtali til að ræða næstu skref.',
+    description: 'Rejected by parent B',
+  },
+  rejected: {
+    id: 'crc.application:stateDescriptions.rejected',
+    defaultMessage:
+      'Umsókn ykkar um breytt lögheimili og meðlag var hafnað af sýslumanni. Ástæður höfnunar koma fram í bréfi sem er að finna undir Rafræn skjöl á Island.is.',
+    description: 'Rejected by the Commissioner',
+  },
+  accepted: {
+    id: 'crc.application:stateDescriptions.accepted',
+    defaultMessage:
+      'Samningur ykkar um breytt lögheimili og meðlag var staðfestur af sýslumanni. Formlega staðfestingu er að finna undir Rafræn skjöl á Island.is. Til að meðlag fari í innheimtu þarf nýtt lögheimilisforeldri að skila staðfestingunni rafrænt til Tryggingastofnunar.',
+    description: 'Accepted by the Commissioner',
+  },
+})
+
+export const stateLabels = defineMessages({
+  rejectedByParentB: {
+    id: 'crc.application:stateLabels.rejectedByParentB',
+    defaultMessage: 'Hafnað',
+    description: 'Rejected by parent B',
+  },
+  submitted: {
+    id: 'crc.application:stateLabels.submitted',
+    defaultMessage: 'Í afgreiðslu',
+    description: 'Submitted to the Commissioner',
   },
 })
