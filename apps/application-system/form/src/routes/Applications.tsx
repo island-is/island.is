@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
-import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
@@ -10,34 +9,26 @@ import {
 import {
   Text,
   Box,
-  Stack,
-  ActionCard,
   Page,
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
-import {
-  Application,
-  ApplicationStatus,
-  coreMessages,
-  getTypeFromSlug,
-} from '@island.is/application/core'
+import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import { ApplicationList } from '@island.is/application/ui-components'
 import { NotFound } from '@island.is/application/ui-shell'
 import {
   useApplicationNamespaces,
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   useApplicationNamespaces(type)
 
@@ -112,62 +103,14 @@ export const Applications: FC = () => {
                 {formatMessage(coreMessages.applications)}
               </Text>
             </Box>
-
-            <Stack space={2}>
-              {(data?.applicationApplications ?? []).map(
-                (application: Application, index: number) => {
-                  const isCompleted =
-                    application.status === ApplicationStatus.COMPLETED
-                  const isRejected =
-                    application.status === ApplicationStatus.REJECTED
-
-                  return (
-                    <ActionCard
-                      key={`${application.id}-${index}`}
-                      date={format(
-                        new Date(application.modified),
-                        formattedDate,
-                      )}
-                      tag={{
-                        label: isRejected
-                          ? formatMessage(coreMessages.tagsRejected)
-                          : isCompleted
-                          ? formatMessage(coreMessages.tagsDone)
-                          : formatMessage(coreMessages.tagsInProgress),
-                        variant: isRejected
-                          ? 'red'
-                          : isCompleted
-                          ? 'blueberry'
-                          : 'blue',
-                        outlined: false,
-                      }}
-                      heading={application.name || application.typeId}
-                      text={application.stateDescription}
-                      cta={{
-                        label: isCompleted
-                          ? formatMessage(coreMessages.cardButtonComplete)
-                          : formatMessage(coreMessages.cardButtonInProgress),
-                        variant: 'ghost',
-                        size: 'small',
-                        icon: undefined,
-                        onClick: () =>
-                          history.push(`../${slug}/${application.id}`),
-                      }}
-                      progressMeter={{
-                        active: true,
-                        progress: application.progress,
-                        variant: isRejected
-                          ? 'red'
-                          : isCompleted
-                          ? 'mint'
-                          : 'blue',
-                      }}
-                    />
-                  )
-                },
-              )}
-            </Stack>
-
+            {data?.applicationApplications && (
+              <ApplicationList
+                applications={data.applicationApplications}
+                onClick={(applicationUrl) =>
+                  history.push(`../${applicationUrl}`)
+                }
+              />
+            )}
             <Box
               marginTop={5}
               marginBottom={5}
