@@ -68,6 +68,7 @@ export const UserDelegations = () => {
       {delegations.map((delegation) => (
         <TopicCard
           key={delegation.fromNationalId}
+          size="small"
           onClick={() => switchUser(delegation.fromNationalId)}
         >
           {delegation.fromName}
