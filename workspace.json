@@ -6333,7 +6333,6 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js",
             "assets": [
               {
                 "glob": "*",
@@ -6397,11 +6396,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
-            "commands": [
-              "nx run services-endorsements-api:build",
-              "node dist/apps/services/endorsements/api/buildOpenApi.js"
-            ],
-            "parallel": false
+            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
           }
         },
         "migrate": {

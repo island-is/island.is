@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { IsArray, IsEnum } from 'class-validator'
 import { ValidatorService } from '../../endorsementValidator.service'
 import { EndorsementTag } from '../../../endorsementList/endorsementList.model'
-import { EndorsementMetaField } from '../../../endorsementMetadata/endorsementMetadata.service'
+import { EndorsementMetaField } from '../../../endorsementMetadata/types'
 
 export class UniqueWithinTagsInputType {
   @IsArray()
