@@ -37,11 +37,9 @@ export default {
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
   },
-  identityServer: {
+  auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,

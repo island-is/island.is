@@ -17,11 +17,7 @@ import { AuditModule } from '@island.is/nest/audit'
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
-    AuthModule.register({
-      audience: '@island.is/auth/admin',
-      issuer: environment.auth.issuer,
-      jwksUri: environment.auth.jwksUri,
-    }),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

@@ -6,7 +6,7 @@ export const environment = {
     serviceName: 'services-auth-admin-api',
   },
   auth: {
+    audience: '@island.is/auth/admin',
     issuer: process.env.IDS_ISSUER,
-    jwksUri: process.env.JWKS_URI,
   },
 }
