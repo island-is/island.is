@@ -18,7 +18,8 @@ const v2: Version = {
 }
 
 export const getVersionConfiguration = (): Version => {
-  const useV2 = new Date() >= new Date(versionCutoffTime) || environment.isFerdagjof2Enabled
+  const useV2 =
+    new Date() >= new Date(versionCutoffTime) || environment.isFerdagjof2Enabled
 
   return useV2 ? v2 : v1
 }

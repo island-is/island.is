@@ -2,7 +2,11 @@ import { logger } from '@island.is/logging'
 import { UserApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
 import cache from '../../extensions/cache'
-import { ApplicationAPI, getVersionConfiguration, NovaAPI } from '../../services'
+import {
+  ApplicationAPI,
+  getVersionConfiguration,
+  NovaAPI,
+} from '../../services'
 
 export const getApplication = (
   userSSN: string,

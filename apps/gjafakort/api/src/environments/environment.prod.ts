@@ -39,7 +39,7 @@ export default {
     password: process.env.NOVA_PASSWORD,
   },
   configCat: {
-    sdkKey: process.env.CONFIGCAT_SDK_KEY
+    sdkKey: process.env.CONFIGCAT_SDK_KEY,
   },
   isFerdagjof2Enabled: false,
 }

@@ -26,7 +26,7 @@ export const handler = async (
     message,
   )
 
-  if (routingKeys.find(key => routingKey === key)) {
+  if (routingKeys.find((key) => routingKey === key)) {
     await yayApi.createUser(message)
     await yayApi.createGiftCard(message)
   } else {
