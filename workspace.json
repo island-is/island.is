@@ -6487,17 +6487,6 @@
             "cwd": "apps/services/party-letter-registry-api"
           }
         },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-party-letter-registry-api:build",
-              "node dist/apps/services/party-letter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
-          }
-        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -6672,17 +6661,6 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/temporary-voter-registry-api"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-temporary-voter-registry-api:build",
-              "node dist/apps/services/temporary-voter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
           }
         },
         "migrate": {
