@@ -17,6 +17,7 @@ export type MaybeWithApplicationAndField<T> =
   | ((a: Application, f: Field) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
+export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 export type TextFieldVariant =
   | 'text'
   | 'email'
@@ -113,6 +114,7 @@ export interface DescriptionField extends BaseField {
   readonly description: FormText
   tooltip?: FormText
   space?: BoxProps['paddingTop']
+  titleVariant?: TitleVariants
 }
 
 export interface RadioField extends BaseField {

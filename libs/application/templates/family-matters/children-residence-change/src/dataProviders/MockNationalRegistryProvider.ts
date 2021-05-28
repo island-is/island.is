@@ -24,6 +24,8 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
     const childrenArray = children?.map((child) => ({
       ...child,
       livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
+      livesWithBothParents:
+        child?.livesWithBothParents?.includes('yes') || false,
       otherParent: parents[child.otherParent],
     }))
 

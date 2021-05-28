@@ -3,11 +3,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-
-import {
-  Person,
-  NationalRegistry,
-} from '@island.is/application/templates/family-matters-core/types'
+import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
 import { DataProviderTypes } from '../types'
 
 export class NationalRegistryProvider extends BasicDataProvider {
@@ -16,15 +12,28 @@ export class NationalRegistryProvider extends BasicDataProvider {
   async provide(): Promise<NationalRegistry> {
     const query = `
       query NationalRegistryUserQuery {
-        nationalRegistryUser {
+        nationalRegistryUserV2 {
           nationalId
           fullName
           address {
-            code
+            streetName
             postalCode
             city
-            streetAddress
-            lastUpdated
+          }
+          children {
+            nationalId
+            fullName
+            livesWithApplicant
+            livesWithBothParents
+            otherParent {
+              nationalId
+              fullName
+              address {
+                streetName
+                postalCode
+                city
+              }
+            }
           }
         }
       }
@@ -34,55 +43,19 @@ export class NationalRegistryProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          throw new Error('Error from NationalRegistry')
+          return this.handleError(response.errors)
         }
-
-        const returnObject: NationalRegistry = {
-          fullName: response.data.nationalRegistryUser.fullName,
-          nationalId: response.data.nationalRegistryUser.nationalId,
-          address: {
-            city: response.data.nationalRegistryUser.address.city,
-            postalCode: response.data.nationalRegistryUser.address.postalCode,
-            streetName:
-              response.data.nationalRegistryUser.address.streetAddress,
-          },
-          children: [
-            {
-              fullName: 'Barn 1',
-              nationalId: '8555210120',
-              otherParent: {
-                address: {
-                  city: 'Reykjavík',
-                  postalCode: '105',
-                  streetName: 'Bólstaðarhlíð',
-                },
-                fullName: 'Tester Testers',
-                nationalId: '1234567890',
-              },
-              livesWithApplicant: true,
-            },
-            {
-              fullName: 'Barn 2',
-              nationalId: '7112433408',
-              otherParent: {
-                address: {
-                  city: 'Reykjavík',
-                  postalCode: '105',
-                  streetName: 'Bólstaðarhlíð',
-                },
-                fullName: 'Tester Testers',
-                nationalId: '1234567890',
-              },
-              livesWithApplicant: true,
-            },
-          ],
-        }
-
+        const returnObject: NationalRegistry =
+          response.data.nationalRegistryUser
         return Promise.resolve(returnObject)
       })
-      .catch(() => {
-        throw new Error('Error from NationalRegistry')
+      .catch((error) => {
+        return this.handleError(error)
       })
+  }
+  handleError(error: Error | unknown) {
+    console.error('Provider.ParentalLeave.Children:', error)
+    return Promise.reject('Failed to fetch children')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
@@ -91,7 +64,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: Person): SuccessfulDataProviderResult {
+  onProvideSuccess(result: NationalRegistry): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

@@ -30,6 +30,7 @@ import {
   Context,
   RecordObject,
   Field,
+  TitleVariants,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -134,15 +135,25 @@ export function buildDescriptionField(data: {
   condition?: Condition
   id: string
   title: FormText
+  titleVariant?: TitleVariants
   description: FormText
   space?: BoxProps['paddingTop']
   tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description, tooltip, space } = data
+  const {
+    condition,
+    id,
+    titleVariant = 'h2',
+    title,
+    description,
+    tooltip,
+    space,
+  } = data
   return {
     children: undefined,
     condition,
     description,
+    titleVariant,
     tooltip,
     space,
     id,
@@ -346,6 +357,7 @@ export function buildCustomField(
     description?: FormText
     component: string
     defaultValue?: MaybeWithApplicationAndField<unknown>
+    width?: FieldWidth
   },
   props?: RecordObject,
 ): CustomField {
@@ -357,6 +369,7 @@ export function buildCustomField(
     description,
     component,
     childInputIds,
+    width = 'full',
   } = data
   return {
     children: undefined,
@@ -365,6 +378,7 @@ export function buildCustomField(
     id,
     childInputIds,
     title,
+    width,
     description,
     type: FieldTypes.CUSTOM,
     component,
