@@ -12,7 +12,7 @@ const {
 
 module.exports = withSourceMaps(
   withTreat({
-    redirects () {
+    redirects() {
       return [
         {
           source: '/',
