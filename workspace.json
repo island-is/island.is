@@ -5022,8 +5022,7 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2,
-            "webpackConfig": "apps/reference-backend/webpack.config.js"
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {

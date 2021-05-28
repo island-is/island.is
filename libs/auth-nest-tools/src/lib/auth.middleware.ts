@@ -30,6 +30,5 @@ export class AuthMiddleware implements Middleware {
       'User-Agent': this.auth.userAgent,
       'X-Real-IP': this.auth.ip,
     })
-    console.log('authorization', this.auth.authorization)
   }
 }
