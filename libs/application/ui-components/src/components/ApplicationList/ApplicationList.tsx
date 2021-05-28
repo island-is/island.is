@@ -97,7 +97,9 @@ const ApplicationList = ({ applications, onClick }: Props) => {
               variant: actionCard?.tag?.variant || stateDefaultData.tag.variant,
               outlined: false,
             }}
-            heading={application.name || application.typeId}
+            heading={
+              actionCard?.title || application.name || application.typeId
+            }
             text={actionCard?.description}
             cta={{
               label: formatMessage(stateDefaultData.cta.label),
