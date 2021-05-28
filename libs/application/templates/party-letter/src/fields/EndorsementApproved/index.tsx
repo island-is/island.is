@@ -17,14 +17,14 @@ const EndorsementApproved = () => {
       </Box>
       <Box display="flex" justifyContent="spaceBetween" alignItems="center">
         <Button variant="ghost">
-          <Link href="https://island.is/minarsidur/min-gogn/minar-upplysingar">
+          <Link href={formatMessage(m.endorsementApproved.myPagesUrl)}>
             {formatMessage(m.endorsementApproved.myPagesButton)}
           </Link>
         </Button>
 
         <Box>
           <Button variant="text" icon="arrowForward" iconType="filled">
-            <Link href="https://island.is/althingiskosningar2021/medmaeli-kjosenda">
+            <Link href={formatMessage(m.endorsementApproved.partyListUrl)}>
               {formatMessage(m.endorsementApproved.partyListButton)}
             </Link>
           </Button>

@@ -394,10 +394,20 @@ export const m: MessageDir = {
       defaultMessage: 'Til baka á mínar síður',
       description: 'Button back to my pages',
     },
+    myPagesUrl: {
+      id: 'ple.application:endorsement.approved.url.mypages',
+      defaultMessage: 'https://island.is/minarsidur/min-gogn/minar-upplysingar',
+      description: 'Url back to my pages',
+    },
     partyListButton: {
       id: 'ple.application:endorsement.approved.button.partylist',
       defaultMessage: 'Skoða lista',
       description: 'Button to party list',
+    },
+    partyListUrl: {
+      id: 'ple.application:endorsement.approved.url.partylist',
+      defaultMessage: 'https://island.is/althingiskosningar2021/medmaeli-kjosenda',
+      description: 'Url to party list',
     },
   }),
   ministryOfJustice: defineMessages({

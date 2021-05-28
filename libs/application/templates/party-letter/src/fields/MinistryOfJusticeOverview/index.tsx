@@ -34,7 +34,7 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text>{answers.partyLetter}</Text>
         </Box>
       </Box>
-      <Box display="flex" marginBottom={5}>
+      <Box display="flex" marginBottom={3}>
         <Box width="half">
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.responsiblePersonLabel)}
@@ -47,14 +47,14 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
             }
           </Text>
         </Box>
-        <Box marginBottom={3} width="half">
+        <Box width="half">
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
         </Box>
       </Box>
-      <Box display="flex">
+      <Box marginBottom={5}>
         <ExportAsCSV
           data={answers.endorsements as object[]}
           filename={csvFileName(answers.partyLetter, answers.partyName)}

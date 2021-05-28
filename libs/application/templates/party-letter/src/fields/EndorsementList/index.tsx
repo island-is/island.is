@@ -5,79 +5,23 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import gql from 'graphql-tag'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { Endorsement, PartyLetter } from '../../lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
-
-const GET_ENDORSEMENT_LIST = gql`
-  query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
-    endorsementSystemGetEndorsements(input: $input) {
-      id
-      endorser
-      meta {
-        fullName
-        address
-        invalidated
-      }
-      created
-      modified
-    }
-  }
-`
+import { useEndorsements } from '../../hooks/useFetchEndorsements'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
-
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const answers = application.answers as PartyLetter
-
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState<Endorsement[]>([])
+  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
-
-  const [getEndorsementList, { loading, error }] = useLazyQuery(
-    GET_ENDORSEMENT_LIST,
-    {
-      pollInterval: 20000,
-      onCompleted: async ({ endorsementSystemGetEndorsements }) => {
-        if (!loading && endorsementSystemGetEndorsements) {
-          const hasEndorsements =
-            !error && !loading && endorsementSystemGetEndorsements?.length
-              ? endorsementSystemGetEndorsements.length > 0
-              : false
-          const mapToEndorsementList: Endorsement[] = hasEndorsements
-            ? endorsementSystemGetEndorsements.map((x: any) => ({
-                date: x.created,
-                name: x.meta.fullName,
-                nationalId: x.endorser,
-                address: x.meta.address ? x.meta.address.streetAddress : '',
-                hasWarning: x.meta.invalidated,
-                id: x.id,
-              }))
-            : undefined
-          console.log(mapToEndorsementList)
-          setEndorsements(mapToEndorsementList)
-        }
-      },
-    },
-  )
-
+  const endorsementsHook = useEndorsements(endorsementListId, true)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-
-  useEffect(() => {
-    getEndorsementList({
-      variables: {
-        input: {
-          listId: endorsementListId,
-        },
-      },
-    })
-  }, [])
-
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
@@ -101,9 +45,23 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   }
 
   useEffect(() => {
-    if (endorsements && endorsements.length > 0)
-      updateApplicationWithEndorsements(endorsements)
-  }, [endorsements])
+    const mapToEndorsementList: Endorsement[] | undefined =
+      endorsementsHook && endorsementsHook.length > 0
+        ? endorsementsHook.map((x: any) => ({
+            date: x.created,
+            name: x.meta.fullName,
+            nationalId: x.endorser,
+            address: x.meta.address ? x.meta.address.streetAddress : '',
+            hasWarning: x.meta.invalidated ?? false,
+            id: x.id,
+          }))
+        : undefined
+    setEndorsements((_) => {
+      if (mapToEndorsementList && mapToEndorsementList.length > 0)
+        updateApplicationWithEndorsements(mapToEndorsementList)
+      return mapToEndorsementList
+    })
+  }, [endorsementsHook])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1

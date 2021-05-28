@@ -17,7 +17,7 @@ const formatDate = (date: string) => {
 
 interface EndorsementTableProps {
   application: Application
-  endorsements: Endorsement[]
+  endorsements?: Endorsement[]
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
