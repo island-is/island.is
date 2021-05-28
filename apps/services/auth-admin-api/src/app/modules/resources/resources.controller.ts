@@ -825,7 +825,6 @@ export class ResourcesController {
   })
   async createApiScopeGroup(
     @Body() group: ApiScopeGroupDTO,
-    @CurrentUser() user: User,
   ): Promise<ApiScopeGroup> {
     return this.resourcesService.createApiScopeGroup(group)
   }
