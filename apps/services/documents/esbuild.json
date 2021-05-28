@@ -15,6 +15,13 @@
     "@nestjs/mongoose",
     "@nestjs/typeorm",
     "dd-trace",
+    "express",
+    "http-errors",
+    "graphql",
+    "pg",
+    "winston",
+    "source-map-resolve",
+    "atob",
     "logform",
     "pg-native",
     "form-data"
