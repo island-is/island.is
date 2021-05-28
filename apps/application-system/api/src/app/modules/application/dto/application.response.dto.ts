@@ -13,7 +13,7 @@ import {
   IsArray,
 } from 'class-validator'
 
-class TagMetaData {
+class ActionCardTag {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
@@ -25,7 +25,7 @@ class TagMetaData {
   variant?: string
 }
 
-class StateMetaData {
+class ActionCardMetaData {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
@@ -39,7 +39,7 @@ class StateMetaData {
   @ApiPropertyOptional()
   @Expose()
   @IsObject()
-  tag?: TagMetaData
+  tag?: ActionCardTag
 }
 
 export class ApplicationResponseDto {
@@ -76,7 +76,7 @@ export class ApplicationResponseDto {
   @ApiPropertyOptional()
   @Expose()
   @IsObject()
-  stateMetaData?: StateMetaData
+  actionCard?: ActionCardMetaData
 
   @ApiPropertyOptional()
   @Expose()

@@ -8,7 +8,7 @@ export const ApplicationFragment = gql`
     applicant
     assignees
     state
-    stateMetaData {
+    actionCard {
       title
       description
       tag {

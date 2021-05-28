@@ -15,7 +15,7 @@ registerEnumType(ApplicationResponseDtoStatusEnum, {
 })
 
 @ObjectType()
-class TagMetaData {
+class ActionCardTag {
   @Field(() => String, { nullable: true })
   label?: string
 
@@ -24,15 +24,15 @@ class TagMetaData {
 }
 
 @ObjectType()
-class StateMetaData {
+class ActionCardMetaData {
   @Field(() => String, { nullable: true })
   title?: string
 
   @Field(() => String, { nullable: true })
   description?: string
 
-  @Field(() => TagMetaData, { nullable: true })
-  tag?: TagMetaData
+  @Field(() => ActionCardTag, { nullable: true })
+  tag?: ActionCardTag
 }
 
 @ObjectType()
@@ -55,8 +55,8 @@ export class Application {
   @Field(() => String)
   state!: string
 
-  @Field(() => StateMetaData, { nullable: true })
-  stateMetaData?: StateMetaData
+  @Field(() => ActionCardMetaData, { nullable: true })
+  actionCard?: ActionCardMetaData
 
   @Field(() => graphqlTypeJson, { nullable: true })
   attachments?: object

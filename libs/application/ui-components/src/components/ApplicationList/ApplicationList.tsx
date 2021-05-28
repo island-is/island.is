@@ -8,14 +8,14 @@ import {
   ApplicationStatus,
   coreMessages,
   getSlugFromType,
-  TagVariant,
+  ActionCardTag,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
 interface DefaultStateData {
   tag: {
-    variant: TagVariant
+    variant: ActionCardTag
     label: MessageDescriptor
   }
   progress: {
@@ -29,7 +29,7 @@ interface DefaultStateData {
 const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   [ApplicationStatus.REJECTED]: {
     tag: {
-      variant: TagVariant.RED,
+      variant: ActionCardTag.RED,
       label: coreMessages.tagsRejected,
     },
     progress: {
@@ -41,7 +41,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.COMPLETED]: {
     tag: {
-      variant: TagVariant.BLUEBERRY,
+      variant: ActionCardTag.BLUEBERRY,
       label: coreMessages.tagsDone,
     },
     progress: {
@@ -53,7 +53,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.IN_PROGRESS]: {
     tag: {
-      variant: TagVariant.BLUE,
+      variant: ActionCardTag.BLUE,
       label: coreMessages.tagsInProgress,
     },
     progress: {
@@ -77,7 +77,7 @@ const ApplicationList = ({ applications, onClick }: Props) => {
   return (
     <Stack space={2}>
       {applications.map((application, index: number) => {
-        const stateMetaData = application.stateMetaData
+        const actionCard = application.actionCard
         const stateDefaultData =
           DefaultData[application.status] ||
           DefaultData[ApplicationStatus.IN_PROGRESS]
@@ -91,15 +91,14 @@ const ApplicationList = ({ applications, onClick }: Props) => {
             key={`${application.id}-${index}`}
             date={format(new Date(application.modified), formattedDate)}
             tag={{
-              label: stateMetaData?.tag?.label
-                ? formatMessage(stateMetaData?.tag?.label)
+              label: actionCard?.tag?.label
+                ? formatMessage(actionCard?.tag?.label)
                 : formatMessage(stateDefaultData.tag.label),
-              variant:
-                stateMetaData?.tag?.variant || stateDefaultData.tag.variant,
+              variant: actionCard?.tag?.variant || stateDefaultData.tag.variant,
               outlined: false,
             }}
             heading={application.name || application.typeId}
-            text={application.stateMetaData?.description}
+            text={actionCard?.description}
             cta={{
               label: formatMessage(stateDefaultData.cta.label),
               variant: 'ghost',

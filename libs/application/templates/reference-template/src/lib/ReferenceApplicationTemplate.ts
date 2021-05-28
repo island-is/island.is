@@ -120,8 +120,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
-          title: m.draftTitle,
-          description: m.draftDescription,
+          actionCard: {
+            title: m.draftTitle,
+            description: m.draftDescription,
+          },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [

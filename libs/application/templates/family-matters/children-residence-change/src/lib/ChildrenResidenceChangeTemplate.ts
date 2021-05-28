@@ -7,7 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  TagVariant,
+  ActionCardTag,
 } from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -54,7 +54,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
-          description: stateDescriptions.draft,
+          actionCard: {
+            description: stateDescriptions.draft,
+          },
           lifecycle: pruneAfter(oneYear),
           roles: [
             {
@@ -84,7 +86,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         meta: {
           name: applicationName,
-          description: stateDescriptions.inReview,
+          actionCard: {
+            description: stateDescriptions.inReview,
+          },
           lifecycle: pruneAfter(twentyEightDays),
           onEntry: {
             apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
@@ -132,9 +136,11 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: applicationName,
-          description: stateDescriptions.submitted,
+          actionCard: {
+            description: stateDescriptions.submitted,
+            tag: { label: stateLabels.submitted },
+          },
           lifecycle: pruneAfter(oneYear),
-          tag: { label: stateLabels.submitted },
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -163,12 +169,14 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
-          description: stateDescriptions.rejectedByParentB,
-          lifecycle: pruneAfter(oneYear),
-          tag: {
-            variant: TagVariant.RED,
-            label: stateLabels.rejectedByParentB,
+          actionCard: {
+            description: stateDescriptions.rejectedByParentB,
+            tag: {
+              variant: ActionCardTag.RED,
+              label: stateLabels.rejectedByParentB,
+            },
           },
+          lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,
           },

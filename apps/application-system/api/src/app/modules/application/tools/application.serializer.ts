@@ -59,7 +59,7 @@ export class ApplicationSerializer
       application.typeId as ApplicationTypes,
     )
     const helper = new ApplicationTemplateHelper(application, template)
-    const stateInfo = helper.getApplicationStateInfo()
+    const actionCardMeta = helper.getApplicationActionCardMeta()
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
@@ -68,15 +68,17 @@ export class ApplicationSerializer
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
       ),
-      stateMetaData: {
-        title: stateInfo.title ? intl.formatMessage(stateInfo.title) : null,
-        description: stateInfo.description
-          ? intl.formatMessage(stateInfo.description)
+      actionCard: {
+        title: actionCardMeta.title
+          ? intl.formatMessage(actionCardMeta.title)
+          : null,
+        description: actionCardMeta.description
+          ? intl.formatMessage(actionCardMeta.description)
           : null,
         tag: {
-          variant: stateInfo.tag.variant || null,
-          label: stateInfo.tag.label
-            ? intl.formatMessage(stateInfo.tag.label)
+          variant: actionCardMeta.tag.variant || null,
+          label: actionCardMeta.tag.label
+            ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
       },
