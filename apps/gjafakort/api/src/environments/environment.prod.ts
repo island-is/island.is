@@ -41,4 +41,5 @@ export default {
   configCat: {
     sdkKey: process.env.CONFIGCAT_SDK_KEY
   },
+  isFerdagjof2Enabled: false,
 }

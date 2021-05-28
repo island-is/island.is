@@ -4,11 +4,11 @@ import { ApplicationStates } from '@island.is/gjafakort/consts'
 import cache from '../../extensions/cache'
 import { ApplicationAPI, getVersionConfiguration, NovaAPI } from '../../services'
 
-export const getApplication = async (
+export const getApplication = (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
-  const { type: applicationType } = await getVersionConfiguration()
+  const { type: applicationType } = getVersionConfiguration()
 
   return applicationApi.getApplicationByType<UserApplication>(
     applicationType,
@@ -16,25 +16,25 @@ export const getApplication = async (
   )
 }
 
-export const getApplications = async (applicationApi: ApplicationAPI) => {
-  const { type: applicationType } = await getVersionConfiguration()
+export const getApplications = (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = getVersionConfiguration()
 
   return applicationApi.getApplications<UserApplication>(applicationType)
 }
 
-export const getApplicationCount = async (applicationApi: ApplicationAPI) => {
-  const { type: applicationType } = await getVersionConfiguration()
+export const getApplicationCount = (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = getVersionConfiguration()
 
   return applicationApi.getApplicationCount<UserApplication>(applicationType)
 }
 
-export const createApplication = async (
+export const createApplication = (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
   applicationApi: ApplicationAPI,
 ) => {
-  const { type: applicationType } = await getVersionConfiguration()
+  const { type: applicationType } = getVersionConfiguration()
 
   return applicationApi.createApplication<UserApplication>({
     applicationType,

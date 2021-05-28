@@ -47,7 +47,5 @@ export default {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
   },
-  configCat: {
-    sdkKey: process.env.CONFIGCAT_SDK_KEY
-  },
+  isFerdagjof2Enabled: true,
 }

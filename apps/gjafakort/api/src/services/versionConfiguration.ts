@@ -1,9 +1,4 @@
-import { createClient } from '@island.is/feature-flags'
 import { environment } from '../environments'
-
-const featureFlagClient = createClient({
-  sdkKey: environment.configCat.sdkKey,
-})
 
 interface Version {
   yearBornLimit: number
@@ -20,10 +15,6 @@ const v2: Version = {
   type: 'gjafakort-user-2',
 }
 
-const CONFIGCAT_FEATURE_FLAG_KEY = 'IS_FERDAGJOF_2_ENABLED'
-
-export const getVersionConfiguration = async (): Promise<Version> => {
-  const isFerdagjof2Enabled = await featureFlagClient.getValue(CONFIGCAT_FEATURE_FLAG_KEY, false)
-
-  return isFerdagjof2Enabled ? v2 : v1
+export const getVersionConfiguration = (): Version => {
+  return environment.isFerdagjof2Enabled ? v2 : v1
 }
