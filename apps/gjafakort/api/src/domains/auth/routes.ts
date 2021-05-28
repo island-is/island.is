@@ -29,7 +29,7 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-const YEAR_BORN_LIMIT = 2002
+const YEAR_BORN_LIMIT = 2003
 
 router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   const errors = validationResult(req)
