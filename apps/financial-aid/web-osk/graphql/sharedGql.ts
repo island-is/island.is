@@ -12,6 +12,14 @@ export const GetApplicationQuery = gql`
   }
 `
 
+export const CreateApplicationQuery = gql`
+  mutation createApplication($input: CreateApplicationInput!) {
+    createApplication(input: $input) {
+      id
+    }
+  }
+`
+
 export const GetMunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {

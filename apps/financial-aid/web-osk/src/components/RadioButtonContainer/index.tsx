@@ -25,7 +25,7 @@ const RadioButtonContainer: React.FC<RadioContainerProps> = ({
     <>
       {options.map((item, index) => {
         return (
-          <Box marginBottom={[2, 2, 3]}>
+          <Box marginBottom={[2, 2, 3]} key={'radioButton-' + index}>
             <RadioButton
               name={'options-' + index}
               label={item.label}

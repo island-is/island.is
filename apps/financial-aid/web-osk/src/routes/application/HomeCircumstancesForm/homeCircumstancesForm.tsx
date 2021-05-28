@@ -13,7 +13,11 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 
 import * as styles from './homeCircumstancesForm.treat'
 import cn from 'classnames'
-import { NavigationProps } from '@island.is/financial-aid/types'
+import {
+  NavigationProps,
+  getHomeCircumstances,
+  HomeCircumstances,
+} from '@island.is/financial-aid/types'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()
@@ -26,27 +30,17 @@ const HomeCircumstancesForm = () => {
   ) as NavigationProps
 
   const options = [
-    {
-      label: 'Ég bý í eigin húsnæði',
-      value: 'ownPlace',
-    },
-    {
-      label: 'Ég leigi með þinglýstan leigusamning',
-      value: 'registeredLease',
-    },
-    {
-      label: 'Ég bý eða leigi hjá öðrum án leigusamnings',
-      value: 'registeredWithOutLease',
-    },
-    {
-      label: 'Ég bý hjá foreldrum',
-      value: 'withParents',
-    },
-    {
-      label: 'Ekkert að ofan lýsir mínum aðstæðum',
-      value: 'other',
-    },
-  ]
+    'WithParents',
+    'WithOthers',
+    'OwnPlace',
+    'RegisteredLease',
+    'Other',
+  ].map((item) => {
+    return {
+      label: getHomeCircumstances[item as HomeCircumstances],
+      value: item,
+    }
+  })
 
   return (
     <FormLayout
@@ -61,10 +55,10 @@ const HomeCircumstancesForm = () => {
         <RadioButtonContainer
           options={options}
           error={error && !form?.homeCircumstances}
-          isChecked={(value: string | number | boolean) => {
+          isChecked={(value: HomeCircumstances) => {
             return value === form?.homeCircumstances
           }}
-          onChange={(value: string | number | boolean) => {
+          onChange={(value: HomeCircumstances) => {
             updateForm({ ...form, homeCircumstances: value })
             if (error) {
               setError(false)
@@ -87,7 +81,7 @@ const HomeCircumstancesForm = () => {
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.homeCircumstances === 'other',
+            [`${styles.inputAppear}`]: form?.homeCircumstances === 'Other',
           })}
         >
           <Input
@@ -115,7 +109,7 @@ const HomeCircumstancesForm = () => {
           //Temperary error state
           //Check if any radio is checked
           if (form?.homeCircumstances && navigation?.nextUrl) {
-            if (form?.homeCircumstances !== 'other') {
+            if (form?.homeCircumstances !== 'Other') {
               //Validation
               updateForm({ ...form, homeCircumstancesCustom: '' })
               router.push(navigation?.nextUrl)

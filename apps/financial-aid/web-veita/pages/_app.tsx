@@ -14,7 +14,7 @@ class FinancialAidApplication extends App<AppProps> {
     // WIP Provider FormProvider
     return (
       <ApolloProvider client={client}>
-        <Header />
+        {/* <Header /> */}
         <Component {...pageProps} />
         <style jsx global>{`
           @font-face {

@@ -43,3 +43,8 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+}

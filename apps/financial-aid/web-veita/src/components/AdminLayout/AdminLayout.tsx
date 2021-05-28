@@ -1,21 +1,28 @@
-import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-} from '@island.is/island-ui/core'
+import React, { ReactNode, useContext } from 'react'
+import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
+import { Nav } from '../Nav'
+
 import * as styles from './AdminLayout.treat'
 
-const AdminLayout: React.FC = () => {
+interface PageProps {
+  children: ReactNode
+}
+
+const AdminLayout: React.FC<PageProps> = ({ children }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
-  return <div>layout</div>
+  return (
+    <>
+      <Nav />
+      <div className={` wrapper ${styles.gridWrapper}`}>
+        <div className={styles.childContainer}>{children}</div>
+      </div>
+    </>
+  )
 }
 
 export default AdminLayout

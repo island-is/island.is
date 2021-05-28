@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useMemo,
+  useCallback,
+} from 'react'
 import {
   Text,
   Divider,
@@ -9,11 +15,11 @@ import {
   LoadingIcon,
 } from '@island.is/island-ui/core'
 
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import {
   GetMunicipalityQuery,
-  GetApplicationQuery,
+  CreateApplicationQuery,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
@@ -29,7 +35,15 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { Municipality, NavigationProps } from '@island.is/financial-aid/types'
+import {
+  Municipality,
+  NavigationProps,
+  getHomeCircumstances,
+  HomeCircumstances,
+  Employment,
+  getEmploymentStatus,
+  CreateApplication,
+} from '@island.is/financial-aid/types'
 
 interface MunicipalityData {
   municipality: Municipality
@@ -48,8 +62,42 @@ const SummaryForm = () => {
     },
   )
 
+  const [formError, setFormError] = useState({
+    status: false,
+    message: '',
+  })
+
+  const [creatApplicationMutation, { loading: isUpdating }] = useMutation(
+    CreateApplicationQuery,
+  )
+
+  const createApplication = async () => {
+    const { data } = await creatApplicationMutation({
+      variables: {
+        input: {
+          nationalId: '2305952249',
+          name: 'Nafn Nafnsson',
+          phoneNumber: '6973345',
+          email: form?.emailAddress,
+          homeCircumstances: form?.homeCircumstances,
+          homeCircumstancesCustom: form?.homeCircumstancesCustom,
+          student: form?.student === 'Yes' ? true : false,
+          hasIncome: Boolean(form?.hasIncome),
+          usePersonalTaxCredit: Boolean(form?.usePersonalTaxCredit),
+          bankNumber: form?.bankNumber,
+          ledger: form?.ledger,
+          accountNumber: form?.accountNumber,
+          interview: Boolean(form?.interview),
+          employment: form?.employment,
+          employmentCustom: form?.employmentCustom,
+        },
+      },
+    })
+    return data
+  }
+
   const aidCalculator = (
-    homeCircumstances: string,
+    homeCircumstances: HomeCircumstances,
     aid: {
       ownApartmentOrLease: number
       withOthersOrUnknow: number
@@ -57,16 +105,16 @@ const SummaryForm = () => {
     },
   ): number => {
     switch (homeCircumstances) {
-      case 'ownPlace':
+      case 'OwnPlace':
         return aid.ownApartmentOrLease
-      case 'registeredLease':
+      case 'RegisteredLease':
         return aid.ownApartmentOrLease
-      case 'registeredWithOutLease':
+      case 'WithOthers':
         return aid.withOthersOrUnknow
-      case 'other':
+      case 'Other':
       case 'Unknown':
         return aid.withOthersOrUnknow
-      case 'withParents':
+      case 'WithParents':
         return aid.withParents
       default:
         return aid.withParents
@@ -87,28 +135,28 @@ const SummaryForm = () => {
   ) as NavigationProps
 
   const calculation = [
-    // {
-    //   label: 'Full upphæð aðstoðar',
-    //   sum: '+ 200.000 kr.',
-    // },
-    // {
-    //   label: 'Ofgreidd aðstoð í Feb 2021',
-    //   sum: '- 10.000 kr.',
-    // },
-    // {
-    //   label: 'Skattur',
-    //   sum: '- 24.900 kr.',
-    // },
-    // {
-    //   label: 'Persónuafsláttur',
-    //   sum: '+ 32.900 kr.',
-    // },
+    {
+      label: 'Full upphæð aðstoðar',
+      sum: '+ 200.000 kr.',
+    },
+    {
+      label: 'Ofgreidd aðstoð í Feb 2021',
+      sum: '- 10.000 kr.',
+    },
+    {
+      label: 'Skattur',
+      sum: '- 24.900 kr.',
+    },
+    {
+      label: 'Persónuafsláttur',
+      sum: '+ 32.900 kr.',
+    },
   ]
 
   const overview = [
     {
       label: 'Heimili',
-      url: 'heimili',
+      // url: 'heimili',
       info: form?.customAddress
         ? form?.customHomeAddress + ', ' + form?.customPostalCode
         : 'Hafnargata 3, 220 Hafnarfjörður',
@@ -116,21 +164,25 @@ const SummaryForm = () => {
     {
       label: 'Búseta',
       url: 'buseta',
-      info: form?.homeCircumstancesCustom
-        ? form?.homeCircumstancesCustom
-        : form?.homeCircumstances,
+      info:
+        form?.homeCircumstances === 'Other'
+          ? form?.homeCircumstancesCustom
+          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
     {
       label: 'Tekjur',
       url: 'tekjur',
-      info: form?.incomeFiles
-        ? 'Ég hef fengið tekjur í þessum mánuði eða síðasta'
-        : 'Ég hef ekki fengið tekjur í þessum mánuði eða síðasta',
+      info:
+        'Ég hef ' +
+        (form?.incomeFiles ? '' : 'ekki') +
+        'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       label: 'Staða',
-      url: 'stada',
-      info: form?.employmentCustom ? form?.employmentCustom : form?.employment,
+      url: 'atvinna',
+      info: form?.employmentCustom
+        ? form?.employmentCustom
+        : getEmploymentStatus[form?.employment as Employment],
     },
   ]
 
@@ -147,7 +199,6 @@ const SummaryForm = () => {
           <strong>Við eigum enn eftir að klára gagnaöflun</strong> en samkvæmt
           því sem við vitum um þig í dag getur þú miðað við:
         </Text>
-
         {data && (
           <ContentBlock>
             <Box marginBottom={[4, 4, 5]}>
@@ -191,8 +242,13 @@ const SummaryForm = () => {
           </ContentBlock>
         )}
 
-        <Divider />
+        {loading && (
+          <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
+            <LoadingIcon animate size={50} />
+          </Box>
+        )}
 
+        <Divider />
         <Box
           display="flex"
           alignItems="flexStart"
@@ -217,7 +273,6 @@ const SummaryForm = () => {
             <Text>{form?.emailAddress}</Text>
           </Box>
         </Box>
-
         {overview.map((item, index) => {
           return (
             <>
@@ -237,25 +292,49 @@ const SummaryForm = () => {
                   <Text>{item.info}</Text>
                 </Box>
 
-                <Button
-                  icon="pencil"
-                  iconType="filled"
-                  variant="utility"
-                  onClick={() => {
-                    router.push(item.url)
-                  }}
-                >
-                  Breyta
-                </Button>
+                {item.url && (
+                  <Button
+                    icon="pencil"
+                    iconType="filled"
+                    variant="utility"
+                    onClick={() => {
+                      router.push(item.url)
+                    }}
+                  >
+                    Breyta
+                  </Button>
+                )}
               </Box>
             </>
           )
         })}
+
+        <div
+          className={cn({
+            [`errorMessage`]: true,
+            [`showErrorMessage`]: formError.status,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            {formError.message}
+          </Text>
+        </div>
       </FormContentContainer>
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
+        // nextUrl={navigation?.nextUrl ?? '/'}
+        nextButtonText="Senda umsókn"
+        onNextButtonClick={() => {
+          createApplication()
+            .then(() => router.push(navigation?.nextUrl ?? '/'))
+            .catch((err) =>
+              setFormError({
+                status: true,
+                message: 'Obobb einhvað fór úrskeiðis',
+              }),
+            )
+        }}
       />
     </FormLayout>
   )

@@ -1,6 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Application } from '@island.is/financial-aid/types'
+import {
+  Application,
+  HomeCircumstances,
+  Employment,
+} from '@island.is/financial-aid/types'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -24,4 +28,37 @@ export class ApplicationModel implements Application {
 
   @Field()
   readonly email!: string
+
+  @Field(() => String)
+  readonly homeCircumstances!: HomeCircumstances
+
+  @Field({ nullable: true })
+  readonly homeCircumstancesCustom?: string
+
+  @Field()
+  readonly student!: boolean
+
+  @Field(() => String)
+  readonly employment!: Employment
+
+  @Field({ nullable: true })
+  readonly employmentCustom?: string
+
+  @Field()
+  readonly hasIncome!: boolean
+
+  @Field()
+  readonly usePersonalTaxCredit!: boolean
+
+  @Field({ nullable: true })
+  readonly bankNumber?: string
+
+  @Field({ nullable: true })
+  readonly ledger?: string
+
+  @Field({ nullable: true })
+  readonly accountNumber?: string
+
+  @Field({ nullable: true })
+  readonly interview?: boolean
 }

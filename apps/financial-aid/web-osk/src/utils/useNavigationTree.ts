@@ -9,7 +9,7 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
     {
       name: 'Persónuhagir',
       children: [
-        { type: 'SUB_SECTION', name: 'Heimili', url: '/umsokn/heimili' },
+        // { type: 'SUB_SECTION', name: 'Heimili', url: '/umsokn/heimili' },
         { type: 'SUB_SECTION', name: 'Búseta', url: '/umsokn/buseta' },
         { type: 'SUB_SECTION', name: 'Nám', url: '/umsokn/nam' },
         { type: 'SUB_SECTION', name: 'Atvinna', url: '/umsokn/atvinna' },
