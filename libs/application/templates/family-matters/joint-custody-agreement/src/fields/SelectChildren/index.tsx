@@ -12,11 +12,10 @@ const JCASelectChildren = ({
     externalData: { nationalRegistry },
     answers,
   } = application
-  const { address, children } = nationalRegistry.data
+  const { children } = nationalRegistry.data
   return (
     <SelectChildren
       id={field.id}
-      address={address}
       children={children}
       error={error}
       currentAnswer={answers.selectedChildren}

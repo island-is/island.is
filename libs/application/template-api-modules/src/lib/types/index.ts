@@ -1,6 +1,7 @@
 import { SendMailOptions } from 'nodemailer'
 
 import { Application } from '@island.is/application/core'
+import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -27,6 +28,7 @@ export interface BaseTemplateAPIModuleConfig {
     username: string
     password: string
   }
+  drivingLicense: DrivingLicenseApiConfig
   attachmentBucket: string
   presignBucket: string
 }

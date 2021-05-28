@@ -73,3 +73,44 @@ export interface RemarkTypesResponse {
 export interface PenaltyPointStatusResponse {
   iLagi: boolean
 }
+
+export interface TeachingRightsResponse {
+  value: number
+}
+
+export interface FinishedSchoolResponse {
+  hefurLokidOkugerdi: number
+}
+
+export interface CanApplyForResponse {
+  value: number
+}
+
+// These two are similar - hopefully this all goes away with the
+// opanapi generated client
+export interface NewDrivingAssessmentDto {
+  kennitala: string
+  kennitalaOkukennara: string
+  dagsetningMats: Date
+}
+
+export interface GetDrivingAssessmentResponse {
+  kennitala: string
+  kennitalaOkukennara: string
+  dagsetningMats: Date
+}
+
+export interface EmbaettiDto {
+  nr: number
+  nafn: string
+  postnumer: number
+}
+
+export interface NewDrivingLicenseDto {
+  personIdNumber: string
+  authorityNumber: number
+  needsToPresentHealthCertificate: number
+}
+
+export type NewDrivingLicenseResponse = string | object | number
+export type NewDrivingAssessmentResponse = void

@@ -46,5 +46,12 @@ export const selectChildren = {
       defaultMessage: 'Hitt forsjárforeldrið er {parentName}',
       description: 'Sublabel: displayed below a childs name',
     },
+    livesWithBothParents: {
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.checkboxes.livesWithBothParents',
+      defaultMessage:
+        'Samkvæmt gögnum frá Þjóðskrá Íslands er {childName} barn sem þú átt með núverandi sambýlismaka. Hægt er að breyta lögheimili þessa barns með flutningstilkynningu annars hvors foreldrisins til Þjóðskrár.',
+      description: 'Tooltip: displayed when a child lives with both parents',
+    },
   }),
 }
