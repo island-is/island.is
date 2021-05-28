@@ -124,8 +124,8 @@
     "title": "Gjöf til ferðalaga innanlands",
     "intro": "Búum til minningar á ferðalagi innanlands og styðjum við bakið á íslenskri ferðaþjónustu",
     "description": [
-      "Allir einstaklingar, með lögheimili á Íslandi, fæddir 2003 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
-      "Þegar ferðagjöf er sótt er kannað hvort aldur einstaklings sé amk. 18 ára og ferðagjöf er tengd við símanúmer notenda. Vinnsluaðilar hafa aðgang að þessum upplýsingum til að tryggja að aðeins rétthafar geti sér nýtt ferðagjöfina."
+      "Allir einstaklingar, með lögheimili á Íslandi, fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
+      "Þegar gjöf er sótt verður til Ferðagjöf sem er tengd við símanúmer eiganda."
     ],
     "privacyPolicyButton": "Persónuverndarstefna",
     "FAQ": {
@@ -134,19 +134,20 @@
         {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
-            "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2003 eða fyrr fá Ferðagjöf."
+            "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
           ]
         },
         {
           "label": "Hvernig nota ég Ferðagjöfina?",
           "contents": [
-            "Fyrsta skref er að sækja Ferðagjöfina hér á <a href='https://ferdagjof.island.is'>Ísland.is</a> með innskráningu. Til að nýta sér gjöfina er strikamerki skannað við kaup á þjónustu.  Strikamerki má nálgast hér á Ísland.is eða í smáforritunu Ferðagjöf sem hægt er að sækja í App og Play store."
+            "Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á <a href='https://ferdagjof.island.is'>Ísland.is</a> með innskráningu. Sótt er smáforritið Ferðagjöf í App eða Play store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inn á <a href='https://ferdagjof.island.is'>Ísland.is</a> fyrir þá sem ekki eru með snjallsíma."
           ]
         },
         {
           "label": "Hvað ef ég á ekki snjalltæki?",
           "contents": [
-            "Ferðagjöfina má nálgast á Ísland.is í tölvu, til að nýta Ferðagjöfina þarf annað hvort að panta þjónustu á vef hjá þeim fyrirtækjum sem bjóða upp á vefbókanir, hringja í ferðaþjónustufyrirtæki og lesa upp númer strikamerkis eða fá að innskrá sig á Ísland.is hjá ferðaþjónustufyrirtæki og framkalla strikamerki í tölvu á staðnum. Ekki er ráðlagt að prenta út strikamerkið þar sem hvert strikamerki er aðeins virkt í 15 mínútur."
+            "Ferðagjöfina má nálgast á Ísland.is í tölvu, til að nýta Ferðagjöfina þarf annað hvort að panta þjónustu á vef hjá þeim fyrirtæki sem bjóða upp á vefbókanir, hringja í ferðaþjónustufyrirtæki og lesa upp númer strikamerkis eða fá að innskrá sig á Ísland.is hjá ferðaþjónustufyrirtæki og framkalla strikamerki í tölvu á staðnum. Ekki er ráðlagt að prenta út strikamerkið þar sem hvert strikamerki er aðeins virkt í 15 mínútur."
           ]
         },
         {
@@ -158,26 +159,12 @@
         {
           "label": "Get ég gefið Ferðagjöfina?",
           "contents": [
-            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf, hver einstaklingur getur þó að hámarki nýtt 15 Ferðagjafir. Mögulegt er að gefa gjöfina áfram bæði í smáforritinu Ferðagjöf sem og beint af <a href='https://ferdagjof.island.is'>Ísland.is</a>.",
-            "Í smáforritinu þarf að ýta á uppæðina en þá kemur upp valmöguleikinn að \"Nota gjöf\" eða \"Gefa áfram\". Kjósi fólk að senda mynd eða myndband með Ferðagjöfinni þarf smáforritið aðgang að myndavél símans en einnig er mögulegt að senda skriflega kveðju.",
-            "Á <a href='https://ferdagjof.island.is'>Ísland.is</a> þarf að skrá sig inná með því að smella á \"Sækja Ferðagjöf\". Þá opnast gluggi með valmöguleikanum að nota ferðagjöfina eða \"Gefa áfram\"."
+            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf, hver einstaklingur getur þó að hámarki nýtt 15 Ferðagjafir. Mögulegt er að gefa gjöfina áfram bæði í smáforritinu Ferðagjöf sem og beint af <a href='https://ferdagjof.island.is'>Ísland.is</a>. Í smáforritinu þarf að ýta á uppæðina en þá kemur upp valmöguleikinn að \"Nota gjöf\" eða \"Gefa áfram\". Kjósi fólk að senda mynd eða myndband með Ferðagjöfinni þarf smáforritið aðgang að myndavél símans en einnig er mögulegt að senda skriflega kveðju. Á <a href='https://ferdagjof.island.is'>Ísland.is</a> þarf að skrá sig inná með því að smella á \"Sækja Ferðagjöf\". Þá opnast gluggi með valmöguleikanum að nota ferðagjöfina eða \"Gefa áfram\"."
           ]
         },
         {
           "label": "Hver er gildistími Ferðagjafarinnar?",
-          "contents": ["Gildistími er til og með 30. september 2021."]
-        },
-        {
-          "label": "Hvernig skrái ég mig inn?",
-          "contents": ["Tveir valmöguleikar eru í boði fyrir innskráningu, rafræn skilríki eða íslykill.  Nánari upplýsingar um innskráningu má finna á <a href='https://island.is/innskraningarthjonusta'>https://island.is/innskraningarthjonusta</a>."]
-        },
-        {
-          "label": "Get ég nýtt Ferðagjöf frá 2020?",
-          "contents": ["Við gildistöku á Ferðagjöf 2021 falla ónýttar eldri ferðagjafir úr gildi."]
-        },
-        {
-          "label": "Get ég haft samband?",
-          "contents": ["Ef þú ert í vandræðum með að sækja eða nýta ferðagjöfina er hægt að hafa samband við <a href='mailto:info@yay.is'>info@yay.is</a>"]
+          "contents": ["Gildistími er til og með 31. maí 2021."]
         }
       ]
     },
