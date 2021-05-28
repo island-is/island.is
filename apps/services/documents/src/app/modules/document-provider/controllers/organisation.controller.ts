@@ -24,12 +24,10 @@ import { TechnicalContact } from '../models/technicalContact.model'
 import { Helpdesk } from '../models/helpdesk.model'
 import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
-import { NationalId } from '../utils/nationalId.decorator'
 import { Provider } from '../models/provider.model'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../../environments'
 import { CurrentUser, User } from '@island.is/auth-nest-tools'
-import { audit } from 'rxjs/operators'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 

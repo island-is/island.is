@@ -1,3 +1,5 @@
+import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
@@ -13,11 +15,13 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { environment } from '../../../../environments'
 import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'
 import { UpdateProviderDto } from '../dto/updateProvider.dto'
 import { Provider } from '../models/provider.model'
-import { NationalId } from '../utils/nationalId.decorator'
+
+const namespace = `${environment.audit.defaultNamespace}/providers`
 
 @ApiTags('providers')
 @ApiHeader({
@@ -25,19 +29,27 @@ import { NationalId } from '../utils/nationalId.decorator'
   description: 'Bearer token authorization',
 })
 @Controller('providers')
+@Audit({ namespace })
 export class ProviderController {
   constructor(
     private readonly documentProviderService: DocumentProviderService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get()
   @ApiOkResponse({ type: [Provider] })
-  async getAllProviders(): Promise<Provider[] | null> {
-    return await this.documentProviderService.getProviders()
+  @Audit<Provider[]>({
+    resources: (providers) => providers.map((provider) => provider.id),
+  })
+  async getAllProviders(): Promise<Provider[]> {
+    return this.documentProviderService.getProviders()
   }
 
   @Get(':id')
   @ApiOkResponse({ type: Provider })
+  @Audit<Provider>({
+    resources: (provider) => provider?.id,
+  })
   async findById(@Param('id') id: string): Promise<Provider> {
     const provider = await this.documentProviderService.findProviderById(id)
 
@@ -50,6 +62,9 @@ export class ProviderController {
 
   @Get('/external/:id')
   @ApiOkResponse({ type: Provider })
+  @Audit<Provider>({
+    resources: (provider) => provider?.id,
+  })
   async findByExternalId(@Param('id') id: string): Promise<Provider> {
     const provider = await this.documentProviderService.findProviderByExternalProviderId(
       id,
@@ -66,13 +81,16 @@ export class ProviderController {
 
   @Post()
   @ApiCreatedResponse({ type: Provider })
+  @Audit<Provider>({
+    resources: (provider) => provider?.id,
+  })
   async createProvider(
     @Body() provider: CreateProviderDto,
-    @NationalId() nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<Provider> {
-    return await this.documentProviderService.createProvider(
+    return this.documentProviderService.createProvider(
       provider,
-      nationalId,
+      user.nationalId,
     )
   }
 
@@ -81,7 +99,7 @@ export class ProviderController {
   async updateProvider(
     @Param('id') id: string,
     @Body() provider: UpdateProviderDto,
-    @NationalId() nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<Provider> {
     const {
       numberOfAffectedRows,
@@ -89,13 +107,20 @@ export class ProviderController {
     } = await this.documentProviderService.updateProvider(
       id,
       provider,
-      nationalId,
+      user.nationalId,
     )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Provider ${id} does not exist.`)
     }
 
+    this.auditService.audit({
+      user,
+      namespace,
+      action: 'updateProvider',
+      resources: id,
+      meta: { fields: Object.keys(provider) },
+    })
     return updatedProvider
   }
 }

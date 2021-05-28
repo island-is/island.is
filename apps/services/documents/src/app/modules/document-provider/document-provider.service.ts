@@ -44,7 +44,7 @@ export class DocumentProviderService {
   }
 
   async getOrganisationById(id: string): Promise<Organisation | null> {
-    return await this.organisationModel.findOne({
+    return this.organisationModel.findOne({
       where: { id },
     })
   }
@@ -132,8 +132,8 @@ export class DocumentProviderService {
   }
 
   // PROVIDER
-  async getProviders(): Promise<Provider[] | null> {
-    return await this.providerModel.findAll({ include: [Organisation] })
+  async getProviders(): Promise<Provider[]> {
+    return this.providerModel.findAll({ include: [Organisation] })
   }
 
   async findProviderById(id: string): Promise<Provider | null> {
@@ -170,7 +170,7 @@ export class DocumentProviderService {
         `Organisation with id ${provider.organisationId} doesn't exist`,
       )
     }
-    return await this.providerModel.create({ ...provider, modifiedBy })
+    return this.providerModel.create({ ...provider, modifiedBy })
   }
 
   async updateProvider(
@@ -215,7 +215,7 @@ export class DocumentProviderService {
   ): Promise<AdministrativeContact> {
     this.logger.debug(`Creating administrative contact`)
 
-    return await this.administrativeContactModel.create({
+    return this.administrativeContactModel.create({
       organisationId,
       ...contact,
       modifiedBy,
@@ -255,7 +255,7 @@ export class DocumentProviderService {
   ): Promise<TechnicalContact> {
     this.logger.debug(`Creating technical contact`)
 
-    return await this.technicalContactModel.create({
+    return this.technicalContactModel.create({
       organisationId,
       ...contact,
       modifiedBy,
@@ -295,7 +295,7 @@ export class DocumentProviderService {
   ): Promise<Helpdesk> {
     this.logger.debug(`Creating helpdesk`)
 
-    return await this.helpdeskModel.create({
+    return this.helpdeskModel.create({
       organisationId,
       ...helpdesk,
       modifiedBy,
