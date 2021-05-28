@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "fsevents",
     "@nestjs/microservices",
     "class-transformer",
     "cache-manager",
