@@ -17,12 +17,15 @@ export class NationalRegistryXRoadResolver {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  @Query(() => NationalRegistryPerson)
+  @Query(() => NationalRegistryPerson, {
+    name: 'nationalRegistryUserV2',
+  })
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user.nationalId,
+      user.authorization,
     )
   }
 

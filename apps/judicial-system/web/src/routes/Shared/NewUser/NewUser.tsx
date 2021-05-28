@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CreateUserMutation,
-  InstitutionsQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import { useMutation } from '@apollo/client'
+import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 
@@ -24,10 +22,6 @@ const user: User = {
   active: true,
 }
 
-interface InstitutionData {
-  institutions: Institution[]
-}
-
 export const NewUser: React.FC = () => {
   const router = useRouter()
 
@@ -36,12 +30,11 @@ export const NewUser: React.FC = () => {
   }, [])
 
   const {
-    data: institutionData,
+    courts,
+    prosecutorsOffices,
     loading: institutionLoading,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+    loaded: institutionLoaded,
+  } = useInstitution()
 
   const [createUserMutation, { loading: createLoading }] = useMutation(
     CreateUserMutation,
@@ -74,10 +67,11 @@ export const NewUser: React.FC = () => {
       isLoading={institutionLoading}
       notFound={false}
     >
-      {institutionData?.institutions && (
+      {institutionLoaded && (
         <UserForm
           user={user}
-          institutions={institutionData?.institutions}
+          courts={courts}
+          prosecutorsOffices={prosecutorsOffices}
           onSave={createUser}
           loading={createLoading}
         />

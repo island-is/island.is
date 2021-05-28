@@ -27,7 +27,7 @@ export class TranslationService {
   ): Promise<{
     rows: Translation[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.translationModel.findAndCountAll({
@@ -56,12 +56,12 @@ export class TranslationService {
   }
 
   /** Get's all translations */
-  async findAllTranslations(): Promise<Translation[] | null> {
+  async findAllTranslations(): Promise<Translation[]> {
     return this.translationModel.findAll()
   }
 
   /** Get's all languages */
-  async findAllLanguages(): Promise<Language[] | null> {
+  async findAllLanguages(): Promise<Language[]> {
     return this.langugeModel.findAll()
   }
 
@@ -72,7 +72,7 @@ export class TranslationService {
   ): Promise<{
     rows: Language[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.langugeModel.findAndCountAll({
