@@ -60,6 +60,11 @@ export const application: Form = buildForm({
               title: '',
               subTitle: '',
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentProvider',
+              title: '',
+            }),
           ],
         }),
       ],

@@ -3,9 +3,9 @@ import { ChargeResponse } from '@island.is/clients/payment'
 
 @ObjectType()
 export class CreatingPaymentModel {
-  @Field()
+  @Field(() => String)
   user4!: string
 
-  @Field()
+  @Field(() => String)
   receptionID!: string
 }

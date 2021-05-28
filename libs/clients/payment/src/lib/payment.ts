@@ -20,8 +20,11 @@ export class PaymentService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',
+      // `Basic ${Base64.encode(
+      //   `${this.options.username}:${this.options.password}`,
+      // )}`,
       `Basic ${Base64.encode(
-        `${this.options.username}:${this.options.password}`,
+        'isl_aranja_p:vogur.123'
       )}`,
     )
   }
@@ -35,17 +38,17 @@ export class PaymentService extends RESTDataSource {
     ) 
   }
 
-  getCatalog(): Promise<Catalog> {
+  // could skip promise due to higher lvl graphql promise
+  getCatalog() {
     return this.get<Catalog>(
       `/catalog`
     )
   }
 
   getCatalogByPerformingOrg(
-      performingOrgID: string
-    ): Promise<Catalog> {
-      return this.get<Catalog>(
-      `/catalog/performingOrg/${performingOrgID}`
-    )
+      performingOrgID: string) {
+        return this.get<Catalog>(
+        `/catalog/performingOrg/${performingOrgID}`
+      )
   }
 }
