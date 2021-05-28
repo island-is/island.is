@@ -453,7 +453,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 </AccordionItem>
               </Accordion>
             </Box>
-            <Box marginBottom={7}>
+            <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
               <Box marginBottom={3}>
                 <PdfButton
                   caseId={workingCase.id}
@@ -467,36 +467,38 @@ export const SignedVerdictOverview: React.FC = () => {
                 pdfType="ruling"
               />
             </Box>
-            <Box marginBottom={9}>
-              <Box marginBottom={3}>
-                <Text variant="h3">
-                  Opna mál fyrir öðru embætti{' '}
-                  <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
-                </Text>
+            {user?.role === UserRole.PROSECUTOR && (
+              <Box marginBottom={9}>
+                <Box marginBottom={3}>
+                  <Text variant="h3">
+                    Opna mál fyrir öðru embætti{' '}
+                    <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
+                  </Text>
+                </Box>
+                <BlueBox>
+                  <Select
+                    name="sharedWithProsecutorsOfficeId"
+                    label="Veldu embætti"
+                    placeholder="Velja embætti sem tekur við málinu"
+                    options={prosecutorsOffices
+                      .map((prosecutorsOffice) => ({
+                        label: prosecutorsOffice.name,
+                        value: prosecutorsOffice.id,
+                      }))
+                      .filter((t) => t.value !== user?.institution?.id)}
+                    onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                      setAndSendToServer(
+                        'sharedWithProsecutorsOfficeId',
+                        (selectedOption as ReactSelectOption).value as string,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                  />
+                </BlueBox>
               </Box>
-              <BlueBox>
-                <Select
-                  name="sharedWithProsecutorsOfficeId"
-                  label="Veldu embætti"
-                  placeholder="Velja embætti sem tekur við málinu"
-                  options={prosecutorsOffices
-                    .map((prosecutorsOffice) => ({
-                      label: prosecutorsOffice.name,
-                      value: prosecutorsOffice.id,
-                    }))
-                    .filter((t) => t.value !== user?.institution?.id)}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                    setAndSendToServer(
-                      'sharedWithProsecutorsOfficeId',
-                      (selectedOption as ReactSelectOption).value as string,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                />
-              </BlueBox>
-            </Box>
+            )}
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter

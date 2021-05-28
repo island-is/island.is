@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
@@ -256,6 +257,32 @@ describe('Signed Verdict Overview route', () => {
       expect(
         await screen.findAllByRole('button', { name: 'Opna' }),
       ).toHaveLength(1)
+    })
+
+    test('should not allow judges to share case with another institution', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        screen.queryByText('Opna mál fyrir öðru embætti'),
+      ).not.toBeInTheDocument()
     })
   })
 
