@@ -35,10 +35,9 @@ export default {
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
   },
-  identityServer: {
+  auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',
-    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,

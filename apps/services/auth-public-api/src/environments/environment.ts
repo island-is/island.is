@@ -3,8 +3,8 @@ import { XRoadMemberClass } from '@island.is/utils/api'
 export default {
   production: false,
   auth: {
+    audience: '@island.is/auth/public',
     issuer: 'https://localhost:6001',
-    jwksUri: 'http://localhost:6002/.well-known/openid-configuration/jwks',
   },
   port: 3333,
   rsk: {

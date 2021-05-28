@@ -37,6 +37,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
           },
           custodyParents: ['0000000000'],
           livesWithApplicant: true,
+          livesWithBothParents: false,
         },
         {
           fullName: 'Barn 2',
@@ -52,6 +53,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
           },
           custodyParents: ['0000000000'],
           livesWithApplicant: true,
+          livesWithBothParents: false,
         },
       ],
     }

@@ -7,6 +7,7 @@ import {
   formatDate,
   TIME_FORMAT,
   laws,
+  caseTypes,
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -26,9 +27,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_1"
-      label={`Krafa um ${
-        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-      }`}
+      label={`Krafa um ${caseTypes[workingCase.type]}`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>
