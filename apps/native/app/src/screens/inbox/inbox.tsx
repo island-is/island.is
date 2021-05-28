@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
-import { EmptyList, ListItem } from '@island.is/island-ui-native'
+import { EmptyList, ListItem, SearchHeader } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Animated,
@@ -98,7 +99,11 @@ const {
 const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   return (
-    <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`, { title: item.senderName })}>
+    <PressableHighlight
+      onPress={() =>
+        navigateTo(`/inbox/${item.id}`, { title: item.senderName })
+      }
+    >
       <ListItem
         title={item.senderName}
         subtitle={item.subject}
@@ -114,27 +119,8 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
       />
     </PressableHighlight>
   )
-});
+})
 
-const SearchHeaderHost = styled.View`
-  height: 46px;
-  background-color: ${(props) => props.theme.color.blue100};
-  align-items: center;
-  justify-content: center;
-`
-const SearchHeaderText = styled.Text`
-  color: ${(props) => props.theme.shade.foreground};
-`
-
-function SearchHeader({ count, loading }: any) {
-  return (
-    <SearchHeaderHost>
-      <SearchHeaderText>
-        {loading ? 'Leita í skjölum...' : `${count} niðurstöður fundust`}
-      </SearchHeaderText>
-    </SearchHeaderHost>
-  )
-}
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -146,6 +132,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
   const scrollY = useRef(new Animated.Value(0)).current
+  const intl = useIntl()
 
   const [searchLoading, setSearchLoading] = useState(false)
 
@@ -233,7 +220,18 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         stickyHeaderIndices={isSearch ? [0] : undefined}
         ListHeaderComponent={
           isSearch ? (
-            <SearchHeader count={inboxItems.length} loading={searchLoading} />
+            <SearchHeader
+              loadingText={intl.formatMessage({ id: 'inbox.loadingText' })}
+              resultText={
+                inboxItems.length === 0
+                  ? intl.formatMessage({ id: 'inbox.noResultText' })
+                  : inboxItems.length === 1
+                  ? intl.formatMessage({ id: 'inbox.singleResultText' })
+                  : intl.formatMessage({ id: 'inbox.resultText' })
+              }
+              count={inboxItems.length}
+              loading={searchLoading}
+            />
           ) : undefined
         }
         refreshControl={

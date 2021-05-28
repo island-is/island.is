@@ -1,19 +1,19 @@
 import { useQuery } from '@apollo/client'
-import { Skeleton } from '@island.is/island-ui-native'
+import { Loader, Skeleton } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
-import { FormattedDate } from 'react-intl'
+import { FormattedDate, useIntl } from 'react-intl'
 import {
-  ActivityIndicator,
   Platform,
   Share,
   StyleSheet,
-  View,
+
+  View
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
+  useNavigationComponentDidDisappear
 } from 'react-native-navigation-hooks/dist'
 import WebView from 'react-native-webview'
 import PDFReader from 'rn-pdf-reader-js'
@@ -21,11 +21,11 @@ import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
-  GET_DOCUMENT_QUERY,
+  GET_DOCUMENT_QUERY
 } from '../../graphql/queries/get-document.query'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { authStore, useAuthStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
@@ -42,6 +42,12 @@ const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
   padding-bottom: 8px;
+`
+
+const Border = styled.View`
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) =>
+    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
 `
 
 const Title = styled.View`
@@ -120,6 +126,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
   const { authorizeResult } = useAuthStore()
+  const intl = useIntl()
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -144,7 +151,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationButtonPress(
     (e) => {
       if (Platform.OS === 'android') {
-        authStore.setState({ noLockScreenUntilNextAppStateActive: true });
+        authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.share(
         {
@@ -198,6 +205,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           <Message>{Document.subject}</Message>
         )}
       </Header>
+      <Border />
       <View
         style={{
           flex: 1,
@@ -241,10 +249,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           <View
             style={[
               StyleSheet.absoluteFill,
-              { alignItems: 'center', justifyContent: 'center' },
+              {
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: 300,
+              },
             ]}
           >
-            <ActivityIndicator size="large" />
+            <Loader
+              text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
+            />
           </View>
         )}
       </View>

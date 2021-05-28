@@ -96,6 +96,10 @@ export const en: TranslatedMessages = {
   // inbox
   "inbox.screenTitle": "Inbox",
   "inbox.bottomTabText": "Inbox",
+  "inbox.loadingText": "Searching...",
+  "inbox.resultText": "results",
+  "inbox.singleResultText": "result",
+  "inbox.noResultText": "No results",
 
   // wallet
   "wallet.screenTitle": "Wallet",
@@ -112,6 +116,7 @@ export const en: TranslatedMessages = {
 
   // document detail
   "documentDetail.screenTitle": "Document",
+  "documentDetail.loadingText": "Loading document",
 
   // cards
   "applicationStatusCard.openButtonLabel": "Open application",

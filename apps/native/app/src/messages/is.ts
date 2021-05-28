@@ -98,9 +98,14 @@ export const is = {
   // inbox
   "inbox.screenTitle": "Skjöl",
   "inbox.bottomTabText": "Skjöl",
+  "inbox.loadingText": "Leita í skjölum...",
+  "inbox.resultText": "niðurstöður fundust",
+  "inbox.singleResultText": "niðurstaða fannst",
+  "inbox.noResultText": "Engar niðurstöður fundust",
 
   // document detail
   "documentDetail.screenTitle": "Skjal",
+  "documentDetail.loadingText": "Sæki skjal",
 
   // wallet
   "wallet.screenTitle": "Skírteini",

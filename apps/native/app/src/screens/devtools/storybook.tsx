@@ -17,6 +17,8 @@ configure(() =>{
   require('../../../../island-ui/src/lib/TabBar/TabBar.stories');
   require('../../../../island-ui/src/lib/SearchBar/SearchBar.stories');
   require('../../../../island-ui/src/lib/EmptyList/EmptyList.stories');
+  require('../../../../island-ui/src/lib/Loader/Loader.stories');
+  require('../../../../island-ui/src/lib/SearchHeader/SearchHeader.stories');
 }, module);
 
 export const StorybookUI = getStorybookUI({
