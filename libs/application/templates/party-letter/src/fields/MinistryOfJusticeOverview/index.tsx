@@ -15,7 +15,7 @@ export interface Props extends FieldBaseProps {
 const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
-  const answers = (application as any).answers as PartyLetter
+  const answers = application.answers as PartyLetter
 
   return (
     <Box>
@@ -56,7 +56,7 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box display="flex">
         <ExportAsCSV
-          data={answers.endorsements}
+          data={answers.endorsements as object[]}
           filename={csvFileName(answers.partyLetter, answers.partyName)}
           title={formatMessage(m.ministryOfJustice.csvButton)}
         />

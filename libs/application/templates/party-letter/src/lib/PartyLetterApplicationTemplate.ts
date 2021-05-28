@@ -92,6 +92,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementForm),
                 ),
+              read: 'all',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -99,8 +100,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              read: 'all',
-              write: 'all',
             },
           ],
         },
@@ -225,7 +224,9 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/LetterApplicationApprovedOverview').then((val) =>
+                import(
+                  '../forms/LetterApplicationApprovedOverview'
+                ).then((val) =>
                   Promise.resolve(val.LetterApplicationApprovedOverview),
                 ),
               read: 'all',

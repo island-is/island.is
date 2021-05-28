@@ -20,6 +20,7 @@ const GET_ENDORSEMENT_LIST = gql`
       meta {
         fullName
         address
+        invalidated
       }
       created
       modified
@@ -58,6 +59,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 id: x.id,
               }))
             : undefined
+          console.log(mapToEndorsementList)
           setEndorsements(mapToEndorsementList)
         }
       },
@@ -81,10 +83,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   ) => {
     const updatedAnswers = {
       ...answers,
-      endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
+      endorsements: cloneDeep(newEndorsements),
     }
-
     await updateApplication({
       variables: {
         input: {
@@ -102,7 +102,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     if (endorsements && endorsements.length > 0)
-      updateApplicationWithEndorsements([...endorsements])
+      updateApplicationWithEndorsements(endorsements)
   }, [endorsements])
 
   const namesCountString = formatMessage(

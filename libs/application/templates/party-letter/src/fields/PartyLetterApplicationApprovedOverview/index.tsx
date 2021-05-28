@@ -4,6 +4,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { ExportAsCSV } from '@island.is/application/ui-components'
+import { csvFileName } from '../../constants'
+import { PartyLetter } from '../../lib/dataSchema'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -14,20 +16,12 @@ const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { answers, externalData } = application
-
-  const filename = (): string => {
-    const strippedPartyName = answers.partyName.toString().replace(/\s/g, '')
-    const strippedPartyLetter = answers.partyLetter
-      .toString()
-      .replace(/\s/g, '')
-    return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
-  }
+  const { externalData } = application
+  const answers = (application as any).answers as PartyLetter
 
   return (
     <Box>
       <Text variant="h3">
-        {' '}
         {formatMessage(m.partyLetterApprovedOverview.subtitle)}
       </Text>
       <Box display="flex" marginTop={3} marginBottom={5}>
@@ -66,8 +60,8 @@ const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({
       </Box>
       <Box display="flex">
         <ExportAsCSV
-          data={answers.endorsements}
-          filename={filename()}
+          data={answers.endorsements as object[]}
+          filename={csvFileName(answers.partyLetter, answers.partyName)}
           title={formatMessage(m.ministryOfJustice.csvButton)}
         />
       </Box>

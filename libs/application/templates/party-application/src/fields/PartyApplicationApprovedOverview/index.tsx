@@ -57,7 +57,7 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({
       </Box>
       <Box marginTop={3} display="flex">
         <ExportAsCSV
-          data={answers.endorsements}
+          data={answers.endorsements as object[]}
           filename={csvFileName(answers.partyLetter, answers.partyName)}
           title={formatMessage(m.supremeCourt.csvButton)}
         />

@@ -94,6 +94,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               id: 'submit',
               title: '',
               placement: 'footer',
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

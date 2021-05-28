@@ -3,12 +3,12 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { CSVLink } from 'react-csv'
 
 interface ExportCSVProps {
-  data: any
+  data: string | object[]
   filename: string
   title: string
 }
 
-const ExportAsCSV = ({
+export const ExportAsCSV = ({
   data,
   filename,
   title = 'Sækja niðurstöður',
@@ -26,5 +26,3 @@ const ExportAsCSV = ({
     </Box>
   )
 }
-
-export default ExportAsCSV
