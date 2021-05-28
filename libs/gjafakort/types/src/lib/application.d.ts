@@ -8,7 +8,7 @@ export type CompanyApplicationRoutingKey =
   | 'gjafakort:rejected'
   | 'gjafakort:manual-approved'
 
-export type UserApplicationRoutingKey = 'gjafakort-user:approved'
+export type UserApplicationRoutingKey = 'gjafakort-user:approved' | 'gjafakort-user-2:approved'
 
 export interface ApplicationStates {
   PENDING: 'pending'
