@@ -8,10 +8,13 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 
 type ColorScheme = 'blue' | 'red'
 
+export type TopicCardSize = 'default' | 'small'
+
 interface TopicCardPropsBase {
   tag?: string
   colorScheme?: ColorScheme
   href?: string
+  size?: TopicCardSize
   onClick?: MouseEventHandler
 }
 
@@ -40,6 +43,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
   colorScheme = 'blue',
   href,
   tag,
+  size = 'default',
   onClick,
 }) => {
   return (
@@ -50,7 +54,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
       display="flex"
       href={href}
       onClick={onClick}
-      padding={[2, 2, 3]}
+      padding={size === 'default' ? [2, 2, 3] : [2, 2, 2]}
       position="relative"
       width="full"
     >
