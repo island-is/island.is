@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
 import { getRequest } from './getRequest'
+import { SCOPES_KEY, ACTOR_SCOPES_KEY } from './scopes.decorator'
 
 @Injectable()
 export class ScopesGuard implements CanActivate {
@@ -10,25 +11,34 @@ export class ScopesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const allowedScopes = this.reflector.get<string[]>(
-      'scopes',
+    const scopes = this.reflector.get<string[]>(
+      SCOPES_KEY,
       context.getHandler(),
     )
+    const actorScopes = this.reflector.get<string[]>(
+      ACTOR_SCOPES_KEY,
+      context.getHandler(),
+    )
+    const request = getRequest(context)
 
-    if (!allowedScopes) {
-      return true
+    if (scopes && !this.hasScope(scopes, request.auth?.scope)) {
+      return false
     }
 
-    const authScopes = this.getScopes(context)
+    if (
+      actorScopes &&
+      !this.hasScope(actorScopes, request.user?.actor?.scope ?? request.user?.scope)
+    ) {
+      return false
+    }
 
-    const hasPermission = () =>
-      allowedScopes.some((scope) => authScopes.includes(scope))
-
-    return hasPermission()
+    return true
   }
 
-  private getScopes(context: ExecutionContext): string[] {
-    const request = getRequest(context)
-    return request.auth.scope
+  private hasScope(
+    needScopes: string[],
+    haveScopes: string[] = [],
+  ): boolean {
+    return needScopes.some((scope) => haveScopes.includes(scope))
   }
 }
