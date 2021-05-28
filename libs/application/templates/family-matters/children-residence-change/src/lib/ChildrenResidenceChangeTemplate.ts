@@ -12,7 +12,7 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import { application } from './messages'
+import { application, stateDescriptions, stateLabels } from './messages'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -53,7 +53,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
-          progress: 0.25,
+          actionCard: {
+            description: stateDescriptions.draft,
+          },
           lifecycle: pruneAfter(oneYear),
           roles: [
             {
@@ -83,7 +85,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         meta: {
           name: applicationName,
-          progress: 0.5,
+          actionCard: {
+            description: stateDescriptions.inReview,
+          },
           lifecycle: pruneAfter(twentyEightDays),
           onEntry: {
             apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
@@ -124,14 +128,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             target: ApplicationStates.SUBMITTED,
           },
           REJECT: {
-            target: ApplicationStates.REJECTED,
+            target: ApplicationStates.REJECTEDBYPARENTB,
           },
         },
       },
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: applicationName,
-          progress: 0.75,
+          actionCard: {
+            description: stateDescriptions.submitted,
+            tag: { label: stateLabels.submitted },
+          },
           lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
@@ -158,10 +165,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ],
         },
       },
-      [ApplicationStates.REJECTED]: {
+      [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
-          progress: 1,
+          actionCard: {
+            description: stateDescriptions.rejectedByParentB,
+            tag: {
+              variant: 'red',
+              label: stateLabels.rejectedByParentB,
+            },
+          },
           lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,

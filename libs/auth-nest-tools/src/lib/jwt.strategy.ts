@@ -8,6 +8,7 @@ import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
+const JWKS_URI = '/.well-known/openid-configuration/jwks'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKeyProvider: passportJwtSecret({
         cache: true,
         rateLimit: true,
-        jwksUri: config.jwksUri,
+        jwksUri: `${config.issuer}${JWKS_URI}`,
       }),
 
       jwtFromRequest: ExtractJwt.fromExtractors([

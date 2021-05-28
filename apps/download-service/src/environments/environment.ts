@@ -6,10 +6,8 @@ export default {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  identityServer: {
+  auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
 }
