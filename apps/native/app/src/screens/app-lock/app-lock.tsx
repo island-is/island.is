@@ -1,3 +1,5 @@
+import { dynamicColor, font } from '@island.is/island-ui-native'
+// import { font } from 'apps/native/island-ui/src/utils/font'
 import { selectionAsync } from 'expo-haptics'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -31,21 +33,21 @@ const Host = styled(Animated.View)`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => props.theme.shade.background};
+  background-color: ${dynamicColor('background')};
 `
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 20px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontSize: 20,
+  })}
   margin-bottom: 8px;
 `
 
 const Subtitle = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 14px;
+  ${font({
+    fontSize: 20
+  })}
   height: 20px;
-  color: ${(props) => props.theme.shade.foreground};
 `
 
 const Center = styled.View`

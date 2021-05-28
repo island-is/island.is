@@ -3,6 +3,7 @@ import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -16,10 +17,10 @@ const Host = styled.View`
 
 const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade300
-      : props.theme.color.blue200};
+  border-top-color: ${dynamicColor(props => ({
+    light: props.theme.color.blue200,
+    dark: 'shade300',
+  }))};
   flex-direction: row;
 `
 
@@ -51,6 +52,7 @@ const Title = styled.Text`
     color: ({ theme }) => theme.shade.foreground,
   })}
 `
+
 
 const Description = styled.Text`
   ${font({

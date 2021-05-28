@@ -1,5 +1,6 @@
 import { TextStyle } from 'react-native'
 import { css, DefaultTheme } from 'styled-components/native'
+import { dynamicColor, DynamicColorProps } from './dynamic-color'
 
 type ThemeProps = { [key: string]: any; theme: DefaultTheme }
 type ThemePropsFn<T> = (props: ThemeProps) => T
@@ -15,7 +16,7 @@ type FontFamily =
 
 interface FontSettings {
   fontWeight?: ThemePropsFnType<TextStyle['fontWeight']>
-  color?: ThemePropsFnType<string>
+  color?: DynamicColorProps<any>
   fontSize?: ThemePropsFnType<number>
   lineHeight?: ThemePropsFnType<number>
 }
@@ -72,15 +73,14 @@ const propOrValue = (props: ThemeProps) => (value: any) => {
 }
 
 export function font(settings: FontSettings = {}) {
-  const defaultColor = (props: ThemeProps) => props.theme.shade.foreground
   const fontWeight = settings.fontWeight ?? 'normal'
-  const color = settings.color ?? defaultColor
+  const color = settings.color ?? 'foreground'
   const fontSize = settings.fontSize ?? 16
   const lineHeight = settings.lineHeight
 
   return css`
     font-family: ${(props) => fontByWeight(propOrValue(props)(fontWeight))};
-    color: ${(props) => propOrValue(props)(color)};
+    color: ${dynamicColor(color)};
     font-size: ${(props) => propOrValue(props)(fontSize)}px;
     line-height: ${(props) =>
       typeof lineHeight === 'undefined'

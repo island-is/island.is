@@ -2,12 +2,15 @@ import React from 'react'
 import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade100 : theme.color.blueberry100};
+  background-color: ${dynamicColor(props => ({
+    dark: 'shade100',
+    light: props.theme.color.blueberry100
+  }))};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
@@ -24,10 +27,10 @@ const Title = styled.View`
 
 const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blueberry200};
+  border-top-color: ${dynamicColor(props => ({
+    dark: 'shade200',
+    light: props.theme.color.blueberry200
+  }))};
   flex-direction: row;
 `
 
@@ -37,12 +40,10 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${(props) =>
-    props.border
-      ? props.theme.isDark
-        ? props.theme.shade.shade200
-        : props.theme.color.blueberry200
-      : 'transparent'};
+  border-left-color: ${dynamicColor(props => ({
+    dark: !props.border ? 'transparent' : 'shade200',
+    light: !props.border ? 'transparent' : props.theme.color.blueberry200
+  }))};
 `
 
 const ActionText = styled.Text`
@@ -60,7 +61,7 @@ const TitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.shade.foreground,
+    color: 'foreground',
   })}
 `
 
@@ -82,7 +83,7 @@ const DateText = styled.Text<{ unread?: boolean }>`
     fontWeight: (props) => (props.unread ? '600' : '300'),
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.shade.foreground,
+    color: 'foreground',
   })}
 `
 
@@ -95,7 +96,7 @@ const Content = styled.View`
 const Message = styled.Text`
   ${font({
     fontWeight: '300',
-    color: ({ theme }) => theme.shade.foreground,
+    color: 'foreground',
     lineHeight: 24,
   })}
 `

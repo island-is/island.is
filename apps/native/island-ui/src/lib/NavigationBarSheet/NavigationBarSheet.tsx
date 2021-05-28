@@ -4,6 +4,7 @@ import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import { testIDs } from '../../../../app/src/utils/test-ids'
 import { font } from '../../utils/font'
+import { dynamicColor } from '../../utils/dynamic-color'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -17,7 +18,7 @@ const HeaderTitle = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 21,
-    color: (props) => props.theme.shade.foreground,
+    color: 'foreground',
   })}
 `
 
@@ -26,7 +27,7 @@ const Handle = styled.View`
   width: 120px;
   height: ${({ theme }) => theme.spacing.smallGutter}px;
   border-radius: ${({ theme }) => theme.spacing.smallGutter}px;
-  background-color: ${(props) => props.theme.color.dark100};
+  background-color: ${dynamicColor('shade300')};
   top: 5px;
   left: 50%;
   margin-left: -60px;
@@ -37,8 +38,10 @@ const CloseButton = styled.TouchableOpacity`
   width: ${({ theme }) => theme.spacing[4]}px;
   height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${(props) =>
-    props.theme.isDark ? props.theme.color.dark400 : props.theme.color.blue100};
+  background-color: ${dynamicColor(props => ({
+    dark: props.theme.color.dark400,
+    light: props.theme.color.blue100
+  }))};
   align-items: center;
   justify-content: center;
 `
@@ -61,11 +64,7 @@ export function NavigationBarSheet({
   return (
     <>
       {Platform.OS === 'ios' && !Platform.isPad && (
-        <Handle
-          style={{
-            backgroundColor: theme.shade.shade200,
-          }}
-        />
+        <Handle />
       )}
       <SafeAreaView>
         <Header style={style}>

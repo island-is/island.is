@@ -8,6 +8,7 @@ import driverLicence from '../../assets/card/okuskyrteini.png'
 import fishingCard from '../../assets/card/veidikort.png'
 import ust from '../../assets/card/ust.png'
 import { font } from '../../utils/font'
+import { dynamicColor } from '../../utils'
 
 
 const Host = styled.View`
@@ -20,7 +21,7 @@ const Host = styled.View`
   border-radius: 16px;
   overflow: hidden;
 `
-const BackgroundImage = styled.ImageBackground<{ backgroundColor?: string }>`
+const BackgroundImage = styled.ImageBackground<{ color: any }>`
   position: absolute;
   left: 0;
   top: 0;
@@ -28,17 +29,19 @@ const BackgroundImage = styled.ImageBackground<{ backgroundColor?: string }>`
   bottom: 0;
   z-index: 0;
   flex: 1;
+  background-color: ${dynamicColor(props => props.color)};
 `;
 
 const Content = styled.View`
   justify-content: center;
 `
 
-const Title = styled.Text`
+const Title = styled.Text<{ color: any }>`
   margin-bottom: 8px;
 
   ${font({
     fontWeight: '600',
+    color: props => props.color,
   })}
 `
 
@@ -48,19 +51,20 @@ const ValidationWrap = styled.View`
   margin-bottom: 4px;
 `
 
-const Validation = styled.Text`
+const Validation = styled.Text<{ color: any }>`
   ${font({
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
+    color: props => props.color,
   })}
 `
 
-const TimeStamp = styled.Text`
+const TimeStamp = styled.Text<{ color: any }>`
   ${font({
     fontSize: 13,
+    color: props => props.color,
   })}
-  color: ${(props) => props.theme.shade.foreground};
 `
 
 const ImgWrap = styled.View`
@@ -89,36 +93,46 @@ export function LicenceCard({
   status,
 }: LicenceCardProps) {
   const theme = useTheme()
-  let backgroundColor = theme.shade.shade400
+  let textColor = {
+    dark: theme.shades.dark.foreground,
+    light: theme.shades.light.foreground,
+  }
+  let backgroundColor = {
+    dark: theme.shades.dark.shade400,
+    light: theme.shades.light.shade400,
+  };
   let backgroundImage = null;
   let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />;
   switch (type) {
     case LicenseType.DRIVERS_LICENSE:
-      backgroundColor = theme.isDark ? '#5F414E' : '#f5e4ec'
+      textColor = { dark: '#000000', light: '#000000' };
+      backgroundColor = { dark: '#5F414E', light: '#f5e4ec' };
       backgroundImage = driverLicence
       break
     case LicenseType.IDENTIDY_CARD:
-      backgroundColor = theme.isDark ? '#403E3B' : '#fff7e7'
+      backgroundColor = { dark: '#403E3B', light: '#fff7e7' };
       break
     case LicenseType.PASSPORT:
-      backgroundColor = theme.isDark ? '#283139' : '#ddefff'
+      backgroundColor = { dark: '#283139', light: '#ddefff' };
       break
     case LicenseType.FISHING_CARD:
-      backgroundColor = theme.isDark ? '#283139' : '#ddefff'
+      textColor = { dark: '#000000', light: '#000000' };
+      backgroundColor = { dark: '#283139', light: '#ddefff' };
       backgroundImage = fishingCard
       logo = <Image source={ust} style={{ width: 58, height: 41 }} />
       break
     case LicenseType.WEAPON_LICENSE:
-      backgroundColor = theme.isDark ? '#474421' : '#fffce0'
+      textColor = { dark: '#000000', light: '#000000' };
+      backgroundColor = { dark: '#474421', light: '#fffce0' };
       backgroundImage = weaponLicense
       break
   }
 
   return (
     <Host nativeID={nativeID} style={style}>
-      <BackgroundImage source={backgroundImage} backgroundColor={backgroundColor} />
+      <BackgroundImage source={backgroundImage} color={backgroundColor} />
       <Content>
-        <Title numberOfLines={1} ellipsizeMode="tail">
+        <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
           {title}
         </Title>
         <ValidationWrap>
@@ -126,9 +140,9 @@ export function LicenceCard({
             source={isVerifiedLogo as ImageSourcePropType}
             style={{ width: 13, height: 13, marginRight: 8 }}
           />
-          <Validation>{status}</Validation>
+          <Validation color={textColor}>{status}</Validation>
         </ValidationWrap>
-        <TimeStamp>{date}</TimeStamp>
+        <TimeStamp color={textColor}>{date}</TimeStamp>
       </Content>
       <ImgWrap>
         {logo}

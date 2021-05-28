@@ -1,4 +1,4 @@
-import { Button } from '@island.is/island-ui-native'
+import { Button, font } from '@island.is/island-ui-native'
 import {
   AndroidImportance,
   getPermissionsAsync,
@@ -6,28 +6,22 @@ import {
   setNotificationChannelAsync,
 } from 'expo-notifications'
 import React from 'react'
-import { Image, Platform, SafeAreaView, View } from 'react-native'
+import { Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
-import image from '../../assets/illustrations/digital-services-m1.png'
 import { preferencesStore } from '../../stores/preferences-store'
 import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-
-const Illustration = styled.SafeAreaView`
-  background-color: ${(props) => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue100};
-  align-items: center;
-  max-height: 40%;
-  height: 300px;
-`
+import { Illustration } from './illustration'
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 20px;
-  line-height: 28px;
+  ${font({
+    fontWeight: '300',
+    fontSize: 20,
+    lineHeight: 28,
+  })}
   text-align: center;
-  color: ${(props) => props.theme.shade.foreground};
   margin-left: 32px;
   margin-right: 32px;
   margin-bottom: 64px;
@@ -43,10 +37,11 @@ const CancelButton = styled.TouchableOpacity`
 `
 
 const CancelText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${(props) => props.theme.color.blue400};
+  ${font({
+    fontWeight: '600',
+    fontSize: 16,
+    color: (props) => props.theme.color.blue400,
+  })}
 `
 
 enum PermissionStatus {
@@ -111,17 +106,7 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
 
   return (
     <View testID={testIDs.SCREEN_ONBOARDING_NOTIFICATIONS} style={{ flex: 1 }}>
-      <Illustration>
-        <Image
-          source={image}
-          style={{
-            marginTop: -20,
-            marginRight: -40,
-            height: '120%',
-          }}
-          resizeMode="contain"
-        />
-      </Illustration>
+      <Illustration />
       <SafeAreaView
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
       >
@@ -137,7 +122,10 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
             testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
           />
         </ButtonContainer>
-        <CancelButton onPress={onSkipPress} testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}>
+        <CancelButton
+          onPress={onSkipPress}
+          testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
+        >
           <CancelText>
             <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
           </CancelText>
@@ -154,5 +142,5 @@ OnboardingNotificationsScreen.options = {
   },
   layout: {
     orientation: ['portrait'],
-  }
+  },
 }

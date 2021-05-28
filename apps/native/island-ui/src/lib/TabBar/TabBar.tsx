@@ -3,6 +3,7 @@ import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { selectionAsync } from 'expo-haptics'
 import { font } from '../../utils/font'
+import { dynamicColor } from '../../utils'
 
 interface TabBarValue {
   label: string
@@ -39,10 +40,10 @@ const TabTitle = styled(Animated.Text)`
 const Line = styled.View`
   width: 100%;
   height: ${({ theme }) => theme.border.width.standard}px;
-  background-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.shade.shade200
-      : theme.color.blue200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade200,
+    light: theme.color.blue200
+  }))};
 `
 
 const ActiveLine = styled(Animated.View)`
@@ -88,6 +89,7 @@ export function TabBar(props: TabBarProps) {
       onLayout={(e) => {
         setWidth(e.nativeEvent.layout.width)
       }}
+      accessibilityRole="tablist"
     >
       <Tabs>
         {values.map((item, i) => {
@@ -108,6 +110,7 @@ export function TabBar(props: TabBarProps) {
                 selectionAsync()
               }}
               testID={item.testID}
+              accessibilityRole="tab"
             >
               <TabTitle
                 accessibilityLabel=""

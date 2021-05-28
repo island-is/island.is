@@ -44,5 +44,6 @@ export function getThemeWithPreferences(
     isDark: colorScheme !== 'light',
     colorScheme: shadesKey,
     shade: shades[shadesKey],
+    shades,
   }
 }

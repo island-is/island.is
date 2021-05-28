@@ -1,7 +1,24 @@
+import { dynamicColor } from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet } from 'react-native'
 import { Animated, SafeAreaView, useWindowDimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
+import styled from 'styled-components/native'
 import { useUiStore } from '../../stores/ui-store'
+
+const Host = styled.View`
+  position: absolute;
+  bottom: -29px;
+  left: 0px;
+  right: 0px;
+  height: 30px;
+  z-index: 1000;
+  background-color: ${dynamicColor('background')};
+`;
+
+const Active = styled(Animated.View)`
+  background-color: ${props => props.theme.color.blue400};
+`;
 
 export function BottomTabsIndicator({
   index,
@@ -35,35 +52,25 @@ export function BottomTabsIndicator({
   }, [selectedTab, unselectedTab])
 
   return (
-    <View
-      style={{
-        position: 'absolute',
-        bottom: -29,
-        left: 0,
-        right: 0,
-        height: 30,
-        zIndex: 1000,
-        shadowColor: theme.color.blue400,
-        shadowOffset: {
-          width: 0,
-          height: -26,
-        },
-        shadowOpacity: 0.08,
-        shadowRadius: 30.0,
-        backgroundColor: theme.shade.background,
-      }}
-    >
+    <Host style={{
+      shadowColor: theme.color.blue400,
+      shadowOffset: {
+        width: 0,
+        height: -26,
+      },
+      shadowOpacity: 0.08,
+      shadowRadius: 30.0,
+    }}>
       <SafeAreaView>
         <View
           onLayout={(e) => {
             setWidth(e.nativeEvent.layout.width)
           }}
         >
-          <Animated.View
+          <Active
             style={{
               width: tabWidth * p,
               height: 1,
-              backgroundColor: theme.color.blue400,
               transform: [
                 {
                   translateX: av.interpolate({
@@ -80,6 +87,6 @@ export function BottomTabsIndicator({
           />
         </View>
       </SafeAreaView>
-    </View>
+    </Host>
   )
 }

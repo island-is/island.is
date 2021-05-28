@@ -30,7 +30,7 @@ const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(
   availableLocales,
 )?.languageTag
 const defaultPreferences = {
-  appearanceMode: 'light',
+  appearanceMode: 'automatic',
   locale: bestAvailableLanguage || 'is-IS',
   useBiometrics: false,
   dev__useLockScreen: true,

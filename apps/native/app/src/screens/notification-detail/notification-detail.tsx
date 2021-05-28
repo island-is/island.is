@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { NavigationBarSheet } from '@island.is/island-ui-native'
+import { dynamicColor, font, NavigationBarSheet } from '@island.is/island-ui-native'
 import {
   scheduleNotificationAsync,
   setNotificationCategoryAsync,
@@ -30,7 +30,6 @@ const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
   flex: 1;
-  /* margin-top: 16px; */
 `
 
 const Logo = styled.Image`
@@ -43,10 +42,10 @@ const Header = styled.View`
   flex-direction: row;
   padding-bottom: 16px;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blue100};
+  border-bottom-color: ${dynamicColor(props => ({
+    dark: props.theme.shades.dark.shade200,
+    light: props.theme.color.blue100,
+  }))};
   margin-bottom: 16px;
 `
 
@@ -58,34 +57,32 @@ const ServiceProvider = styled.View`
 `
 
 const ServiceProviderText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontSize: 13,
+  })}
   flex: 1;
 `
 
 const DateText = styled.Text<{ unread?: boolean }>`
-  font-family: ${(props) =>
-    props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: props => props.unread ? '600' : '300',
+    fontSize: 13,
+  })}
 `
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 20px;
-  line-height: 26px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 20,
+  })}
   margin-bottom: 16px;
 `
 
 const Message = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '300',
+    fontSize: 16,
+  })}
 `
 
 const {

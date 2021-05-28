@@ -6,13 +6,14 @@ import { Animated, StyleSheet } from 'react-native'
 import Interactable from 'react-native-interactable'
 import styled from 'styled-components/native'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.SafeAreaView<{ background: boolean }>`
   margin-right: 16px;
   flex-direction: row;
-  background-color: ${(props) =>
-    props.background ? props.theme.shade.background : 'transparent'};
+  background-color: ${dynamicColor((props) =>
+    props.background ? 'background' : 'transparent')};
 `
 
 const Icon = styled.View`
@@ -53,7 +54,10 @@ const TitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.color.dark400,
+    color: ({ theme }) => ({
+      light: theme.color.dark400,
+      dark: theme.shades.dark.foreground,
+    })
   })}
 `
 
@@ -67,7 +71,10 @@ const DateText = styled.Text<{ unread?: boolean }>`
     fontWeight: (props) => (props.unread ? '600' : '300'),
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.color.dark400,
+    color: ({ theme }) => ({
+      light: theme.color.dark400,
+      dark: theme.shades.dark.foreground,
+    })
   })}
 `
 
@@ -85,7 +92,10 @@ const Message = styled.Text`
   ${font({
     fontWeight: '300',
     lineHeight: 24,
-    color: ({ theme }) => theme.color.dark400,
+    color: ({ theme }) => ({
+      light: theme.color.dark400,
+      dark: theme.shades.dark.foreground,
+    })
   })}
 `
 
@@ -115,7 +125,10 @@ const ButtonText = styled.Text`
 `
 const Action = styled(Animated.View)`
   position: absolute;
-  background-color: ${(props) => props.theme.color.blue200};
+  background-color: ${dynamicColor(props => ({
+    dark: '#001333',
+    light: props.theme.color.blue200
+  }))};
   top: 0;
   right: 100%;
   bottom: 0;
@@ -140,10 +153,10 @@ const ActionPress = styled.TouchableOpacity`
 const Cell = styled.View``
 
 const Divider = styled.View`
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade100
-      : props.theme.color.blue200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade100,
+    light: theme.color.blue200
+  }))};
 `
 
 interface ListItemAction {

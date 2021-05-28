@@ -40,21 +40,30 @@ export const OnboardingModule = React.memo(() => {
           number="1"
           description="Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna."
           imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-          backgroundColor={theme.isDark ? '#2A1240' : theme.color.purple100}
+          backgroundColor={{
+            dark: '#2A1240',
+            light: theme.color.purple100,
+          }}
         />
         <WelcomeCard
           key="card-2"
           number="2"
           description="Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera."
           imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-          backgroundColor={theme.isDark ? '#1C1D53' : theme.color.blue100}
+          backgroundColor={{
+            dark: '#1C1D53',
+            light: theme.color.blue100,
+          }}
         />
         <WelcomeCard
           key="card-3"
           number="3"
           description="Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is"
           imgSrc={theme.isDark ? illustrationDarkSrc : illustrationSrc}
-          backgroundColor={theme.isDark ? '#3E002E' : theme.color.red100}
+          backgroundColor={{
+            dark: '#3E002E',
+            light: theme.color.red100,
+          }}
         />
       </ViewPager>
     </SafeAreaView>

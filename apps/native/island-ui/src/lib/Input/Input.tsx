@@ -1,13 +1,16 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Skeleton } from '../Skeleton/Skeleton'
 
 const Host = styled.SafeAreaView`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue100,
+    dark: theme.shades.dark.shade200
+  }))};
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
 `

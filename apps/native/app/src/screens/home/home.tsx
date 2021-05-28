@@ -1,5 +1,7 @@
 import { useQuery } from '@apollo/client'
 import React, { useCallback, useRef, useState } from 'react'
+import { Platform } from 'react-native'
+import { DynamicColorIOS } from 'react-native'
 import { FlatList, RefreshControl } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -40,7 +42,10 @@ const {
       } as any),
       selectedIconColor: null as any,
       iconColor: null as any,
-      textColor: initialized ? theme.shade.foreground : theme.shade.background,
+      textColor: initialized ? Platform.select({
+        ios: DynamicColorIOS({ light: 'black', dark: 'white' }),
+        android: theme.shade.foreground as any,
+      }) : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
         : undefined,

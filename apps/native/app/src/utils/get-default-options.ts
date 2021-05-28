@@ -11,16 +11,19 @@ export function getDefaultOptions(
   // const initialized = uiStore.getState().initializedApp
   return {
     topBar: {
-      background: theme.isDark
-        ? {
-            translucent: false,
-            color: '#000000',
-          }
-        : {
-            translucent: false,
-            color: '#ffffff',
-          },
-      barStyle: theme.isDark ? ('black' as any) : 'default',
+      background: {
+        // translucent: true
+      },
+      // background: theme.isDark
+      //   ? {
+      //       translucent: false,
+      //       color: '#000000',
+      //     }
+      //   : {
+      //       translucent: false,
+      //       color: '#ffffff',
+      //     },
+      // barStyle: theme.isDark ? ('black' as any) : 'default',
       backButton: {
         color: theme.color.blue400,
       },
@@ -43,18 +46,19 @@ export function getDefaultOptions(
     window: {
       backgroundColor: '#222222',
     },
-    layout: {
-      backgroundColor: theme.shade.background,
-      componentBackgroundColor: theme.shade.background,
-    },
+    // layout: {
+    //   backgroundColor: theme.shade.background,
+    //   componentBackgroundColor: theme.shade.background,
+    // },
     bottomTabs: {
       animateTabSelection: false,
-      barStyle: theme.isDark ? 'black' : 'default',
+      // barStyle: theme.isDark ? 'black' : 'default',
       elevation: 0,
       borderWidth: 0,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
-      backgroundColor: theme.shade.background,
+      // translucent: true
+      // backgroundColor: theme.shade.background,
     },
   }
 }

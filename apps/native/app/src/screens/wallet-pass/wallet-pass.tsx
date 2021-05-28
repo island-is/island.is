@@ -34,9 +34,9 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl) => ({
     topBar: {
-      background: {
-        color: theme.shade.background,
-      },
+      // background: {
+      //   color: theme.shade.background,
+      // },
       barStyle: theme.isDark ? 'black' : 'default',
       title: {
         color: theme.shade.foreground,

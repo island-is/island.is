@@ -103,7 +103,7 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
         title={item.senderName}
         subtitle={item.subject}
         date={new Date(item.date)}
-        swipable={false}
+        swipable
         icon={
           <Image
             source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}

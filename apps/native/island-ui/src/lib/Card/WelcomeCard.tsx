@@ -1,16 +1,16 @@
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-const Host = styled.View<{ color: string }>`
+const Host = styled.View<{ color: any }>`
   padding: 0 0 32px;
   margin-bottom: 30px;
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   width: 283px;
   min-height: 460px;
-
-  background-color: ${(props) => props.color};
+  background-color: ${dynamicColor((props) => props.color)};
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
@@ -23,7 +23,6 @@ const Number = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 20,
-    color: ({ theme }) => theme.color.purple400,
   })}
   text-align: center;
 `
@@ -46,7 +45,6 @@ const Description = styled.Text`
   ${font({
     fontWeight: '300',
     lineHeight: 24,
-    color: ({ theme }) => theme.shade.foreground,
   })}
 
   text-align: center;
@@ -55,7 +53,7 @@ const Description = styled.Text`
 interface CardProps {
   number: string
   description?: string
-  backgroundColor?: string
+  backgroundColor: { light: string; dark: string }
   imgSrc?: ImageSourcePropType
   style?: any
 }
@@ -67,8 +65,7 @@ export function WelcomeCard({
   backgroundColor,
   style,
 }: CardProps) {
-  const theme = useTheme()
-  const color = backgroundColor ?? theme.color.purple100
+  const color = backgroundColor
   return (
     <Host color={color} style={style}>
       {imgSrc && <Image source={imgSrc} />}

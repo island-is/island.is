@@ -1,6 +1,13 @@
+import { dynamicColor, font } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
-import { Dimensions, useWindowDimensions } from 'react-native'
-import { Image, View } from 'react-native'
+import {
+  Dimensions,
+  DynamicColorIOS,
+  Image,
+  Platform,
+  useWindowDimensions,
+  View,
+} from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
@@ -27,27 +34,37 @@ interface NumButtonProps {
   onPressOut?(value: string): void
 }
 
-const NumButtonTouchable = styled.TouchableHighlight<{ size?: number; gutter?: number }>`
-  width: ${props => props.size ?? 64}px;
-  height: ${props => props.size ?? 64}px;
-  border-radius: ${props => (props.size ?? 64)/2}px;
+const NumButtonTouchable = styled.TouchableHighlight<{
+  size?: number
+  gutter?: number
+}>`
+  width: ${(props) => props.size ?? 64}px;
+  height: ${(props) => props.size ?? 64}px;
+  border-radius: ${(props) => (props.size ?? 64) / 2}px;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue100};
-  margin: ${props => props.gutter ?? 16}px;
+  background-color: ${dynamicColor((props) => ({
+    dark: 'shade300',
+    light: props.theme.color.blue100,
+  }))};
+  margin: ${(props) => props.gutter ?? 16}px;
 `
 
-const NumButtonText = styled.Text<{ color: string }>`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 32px;
-  line-height: 38px;
-  color: ${(props) => props.color};
+const NumButtonText = styled.Text<{ pressed: boolean }>`
+  ${font({
+    fontWeight: '500',
+    fontSize: 32,
+    color: (props) =>
+      props.pressed
+        ? '#ffffff'
+        : { dark: 'foreground', light: props.theme.color.blue400 },
+  })}
 `
 
 const Gap = styled.View<{ size?: number; gutter?: number }>`
-  width: ${props => props.size ?? 64}px;
-  height: ${props => props.size ?? 64}px;
-  margin: ${props => props.gutter ?? 16}px;
+  width: ${(props) => props.size ?? 64}px;
+  height: ${(props) => props.size ?? 64}px;
+  margin: ${(props) => props.gutter ?? 16}px;
 `
 
 function NumButton({
@@ -61,7 +78,7 @@ function NumButton({
   size,
   gutter,
 }: NumButtonProps) {
-  const { width } = Dimensions.get('window');
+  const { width } = Dimensions.get('window')
   const theme = useTheme()
   const [pressed, setPressed] = useState(false)
   useEffect(() => {
@@ -72,10 +89,6 @@ function NumButton({
       onPressOut(value)
     }
   }, [pressed])
-
-  const tintColor = pressed
-    ? theme.color.white
-    : theme.isDark ? theme.shade.foreground : theme.color.blue400
 
   return (
     <NumButtonTouchable
@@ -89,9 +102,24 @@ function NumButton({
       gutter={gutter}
     >
       {icon ? (
-        <Image source={icon} style={{ tintColor }} />
+        <Image
+          source={icon}
+          style={{
+            tintColor: pressed
+              ? theme.color.white
+              : Platform.select({
+                  ios: DynamicColorIOS({
+                    light: theme.color.blue400,
+                    dark: theme.shades.dark.foreground,
+                  }),
+                  android: theme.isDark
+                    ? theme.shade.foreground
+                    : (theme.color.blue400 as any),
+                }),
+          }}
+        />
       ) : (
-        <NumButtonText color={tintColor}>{value}</NumButtonText>
+        <NumButtonText pressed={pressed}>{value}</NumButtonText>
       )}
     </NumButtonTouchable>
   )
@@ -101,8 +129,8 @@ const Row = styled.View`
   flex-direction: row;
 `
 
-const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x));
+const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a))
+const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x))
 
 export function PinKeypad({
   faceId,
@@ -113,10 +141,10 @@ export function PinKeypad({
   onFaceIdPress,
   onBackPress,
 }: PinKeypadProps) {
-  const { height } = useWindowDimensions();
-  const r = invlerp(512, 1024, height);
-  const size = 50 + 32 * r;
-  const gutter = 8 + 8 * r;
+  const { height } = useWindowDimensions()
+  const r = invlerp(512, 1024, height)
+  const size = 50 + 32 * r
+  const gutter = 8 + 8 * r
 
   return (
     <View>

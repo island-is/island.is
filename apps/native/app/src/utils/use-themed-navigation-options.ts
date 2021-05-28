@@ -1,5 +1,7 @@
 import { defaultsDeep } from 'lodash'
 import { useEffect } from 'react'
+import { Platform } from 'react-native'
+import { DynamicColorIOS } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
@@ -22,35 +24,41 @@ const defaultOptions = (
   staticOptions: Options,
 ): Options => {
   const options: Options = {
-    layout: {
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-      componentBackgroundColor: theme.isDark ? '#000000' : '#ffffff',
-    },
+    // layout: {
+    //   backgroundColor: theme.isDark ? '#000000' : '#ffffff',
+    //   componentBackgroundColor: theme.isDark ? '#000000' : '#ffffff',
+    // },
   }
 
   if (staticOptions.bottomTab) {
     options.bottomTabs = {
-      barStyle: theme.isDark ? 'black' : 'default',
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
+      // barStyle: theme.isDark ? 'black' : 'default',
+      // backgroundColor: theme.isDark ? '#000000' : '#ffffff',
     }
     options.bottomTab = {
       iconColor: !initialized
         ? theme.shade.background
         : theme.shade.foreground,
       selectedIconColor: theme.color.blue400,
-      textColor: theme.shade.foreground,
-      selectedTextColor: theme.shade.foreground,
+      textColor: Platform.select({
+        ios: DynamicColorIOS({ light: 'black', dark: 'white' }),
+        android: theme.shade.foreground as any,
+      }),
+      selectedTextColor: Platform.select({
+        ios: DynamicColorIOS({ light: 'black', dark: 'white' }),
+        android: theme.shade.foreground as any,
+      }),
     }
   }
 
   if (staticOptions.topBar) {
     options.topBar = {
-      background: {
-        color: theme.shade.background,
-      },
-      barStyle: theme.isDark ? 'black' : 'default',
+      // background: {
+      //   color: theme.shade.background,
+      // },
+      // barStyle: theme.isDark ? 'black' : 'default',
       title: {
-        color: theme.shade.foreground
+        color: DynamicColorIOS({ light: 'black', dark: 'white' })
       },
       noBorder: true,
     }
