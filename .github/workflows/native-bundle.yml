@@ -1,0 +1,96 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Native App Bundle
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+  Bundle:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 5
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Prepare release tags
+        run: |
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          RELEASE_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+          RELEASE_TAG=${GITHUB_RUN_NUMBER}_${RELEASE_BRANCH_TAG}_${GITHUB_SHA:0:7}
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
+
+      - name: Calculate cache key for node_modules
+        id: calculate_node_modules_hash
+        run: |
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
+
+      - name: Restore node_modules from cache
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+
+      - name: Generate dotenv file
+        run: cp .env.example .env
+        working-directory: apps/native/app
+
+      - name: Install NPM dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lock
+
+      - name: Install native NPM dependencies
+        run: yarn install --frozen-lock
+        working-directory: apps/native
+
+      - name: Symlink Nx dependencies
+        run: |
+          rm -rf apps/native/app/node_modules
+          mkdir -p apps/native/app/node_modules/{@babel,@nrwl,@react-native-community}
+          ln -s "$(pwd)/node_modules/@babel/runtime" "$(pwd)/apps/native/app/node_modules/@babel/runtime"
+          ln -s "$(pwd)/node_modules/@react-native-community/cli-platform-ios" "$(pwd)/apps/native/app/node_modules/@react-native-community/cli-platform-ios"
+          ln -s "$(pwd)/node_modules/@react-native-community/cli-platform-android" "$(pwd)/apps/native/app/node_modules/@react-native-community/cli-platform-android"
+          ln -s "$(pwd)/node_modules/@nrwl/react-native" "$(pwd)/apps/native/app/node_modules/@nrwl/react-native"
+          ln -s "$(pwd)/node_modules/hermes-engine" "$(pwd)/apps/native/app/node_modules/hermes-engine"
+          ln -s "$(pwd)/node_modules/jsc-android" "$(pwd)/apps/native/app/node_modules/jsc-android"
+          ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
+          echo "ZGVmYXVsdHMudXJsPWh0dHBzOi8vc2VudHJ5LmlvLwpkZWZhdWx0cy5vcmc9c29saWQtbW9iaWxlLXJ6CmRlZmF1bHRzLnByb2plY3Q9aXNsYW5kLWFwcC1kZW1vCmF1dGgudG9rZW49Nzk4OGY3YmM3N2Y5NGZhNDlhYmU3ODZjOGY4MzdmNzg0MTJlMmY1NzJiY2M0NDkxODQ0ODFjMTI3OTFiYTE4Mgo=" | base64 --decode > "$(pwd)/apps/native/app/ios/sentry.properties"
+
+      - name: Setup AppCenter secret iOS
+        run: echo APPCENTER_ACCESS_TOKEN=${{ secrets.APPCENTER_ACCESS_TOKEN_IOS }} >> $GITHUB_ENV
+        if: ${{ matrix.build.platform == 'ios' }}
+
+      - name: Setup AppCenter secret Android
+        run: echo APPCENTER_ACCESS_TOKEN=${{ secrets.APPCENTER_ACCESS_TOKEN_ANDROID }} >> $GITHUB_ENV
+        if: ${{ matrix.build.platform == 'android' }}
+
+      - name: Preparing CodePush deployment
+        run: |
+          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo "Branch is ${GIT_BRANCH}"
+          export CODEPUSH_DEPLOYMENT=$(echo $GIT_BRANCH | rev | cut -f 1 -d / | rev)
+          echo "CodePush deployment is $CODEPUSH_DEPLOYMENT"
+          echo CODEPUSH_DEPLOYMENT=$CODEPUSH_DEPLOYMENT >> $GITHUB_ENV
+
+      - name: Build and publish bundle
+        run: |
+          ./codepush-release.sh ios
+          ./codepush-release.sh android
+        working-directory: apps/native/app
