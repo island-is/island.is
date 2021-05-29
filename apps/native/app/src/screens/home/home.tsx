@@ -42,10 +42,7 @@ const {
       } as any),
       selectedIconColor: null as any,
       iconColor: null as any,
-      textColor: initialized ? Platform.select({
-        ios: DynamicColorIOS({ light: 'black', dark: 'white' }),
-        android: theme.shade.foreground as any,
-      }) : theme.shade.background,
+      textColor: initialized ? Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }) : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
         : undefined,

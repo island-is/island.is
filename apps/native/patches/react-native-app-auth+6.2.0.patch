@@ -42,7 +42,7 @@ index 0000000..b25002d
 +
 +@end
 +
-+/*! @brief A special-case iOS external user-agent that always uses 
++/*! @brief A special-case iOS external user-agent that always uses
 +        \SFSafariViewController (on iOS 9+). Most applications should use
 +        the more generic @c OIDExternalUserAgentIOS to get the default
 +        AppAuth user-agent handling with the benefits of Single Sign-on (SSO)
@@ -265,12 +265,12 @@ index 9184a34..6795c19 100644
 @@ -1,6 +1,7 @@
  #import <React/RCTBridgeModule.h>
 +#import <React/RCTEventEmitter.h>
- 
+
 -@interface RNAppAuth : NSObject <RCTBridgeModule>
 +@interface RNAppAuth : RCTEventEmitter <RCTBridgeModule>
- 
+
  @end
- 
+
 diff --git a/node_modules/react-native-app-auth/ios/RNAppAuth.m b/node_modules/react-native-app-auth/ios/RNAppAuth.m
 index 6a72e1c..bae3a7a 100644
 --- a/node_modules/react-native-app-auth/ios/RNAppAuth.m
@@ -280,12 +280,12 @@ index 6a72e1c..bae3a7a 100644
  #import <React/RCTConvert.h>
  #import "RNAppAuthAuthorizationFlowManager.h"
 +#import "OIDExternalUserAgentIOSSafariViewController.h"
- 
+
  @interface RNAppAuth()<RNAppAuthAuthorizationFlowManagerDelegate> {
      id<OIDExternalUserAgentSession> _currentSession;
 @@ -14,6 +15,29 @@
  @end
- 
+
  @implementation RNAppAuth
 +{
 +  bool hasListeners;
@@ -310,7 +310,7 @@ index 6a72e1c..bae3a7a 100644
 +  }
 +}
 +
- 
+
  -(BOOL)resumeExternalUserAgentFlowWithURL:(NSURL *)url {
      return [_currentSession resumeExternalUserAgentFlowWithURL:url];
 @@ -280,6 +304,14 @@ RCT_REMAP_METHOD(refresh,
@@ -325,7 +325,7 @@ index 6a72e1c..bae3a7a 100644
 +        @"nonce": nonce,
 +        @"state": state
 +    }];
- 
+
      // builds authentication request
      OIDAuthorizationRequest *request =
 @@ -289,7 +321,7 @@ RCT_REMAP_METHOD(refresh,
@@ -373,4 +373,4 @@ index 6a72e1c..bae3a7a 100644
 +                                                    }]; // end [OIDAuthState authStateByPresentingAuthorizationRequest:request
      }
  }
- 
+

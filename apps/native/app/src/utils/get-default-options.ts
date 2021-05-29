@@ -1,33 +1,23 @@
-import { StatusBar } from 'react-native'
 import { Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
-import { uiStore } from '../stores/ui-store'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
   theme = getThemeWithPreferences(preferencesStore.getState()),
 ): Options {
-  // const initialized = uiStore.getState().initializedApp
   return {
     topBar: {
-      background: {
-        // translucent: true
-      },
-      // background: theme.isDark
-      //   ? {
-      //       translucent: false,
-      //       color: '#000000',
-      //     }
-      //   : {
-      //       translucent: false,
-      //       color: '#ffffff',
-      //     },
-      // barStyle: theme.isDark ? ('black' as any) : 'default',
+      background:
+        Platform.OS === 'android'
+          ? {
+              color: theme.shade.background,
+            }
+          : {},
       backButton: {
         color: theme.color.blue400,
       },
-      elevation: 4,
+      elevation: 0,
       title: {
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
@@ -46,19 +36,27 @@ export function getDefaultOptions(
     window: {
       backgroundColor: '#222222',
     },
-    // layout: {
-    //   backgroundColor: theme.shade.background,
-    //   componentBackgroundColor: theme.shade.background,
-    // },
+    layout:
+      Platform.OS === 'android'
+        ? {
+            backgroundColor: theme.shade.background,
+            componentBackgroundColor: theme.shade.background,
+            fitSystemWindows: true,
+            topMargin: 0,
+          }
+        : {
+        },
     bottomTabs: {
       animateTabSelection: false,
-      // barStyle: theme.isDark ? 'black' : 'default',
       elevation: 0,
       borderWidth: 0,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
-      // translucent: true
-      // backgroundColor: theme.shade.background,
+      ...(Platform.OS === 'android'
+        ? {
+            backgroundColor: theme.shade.background,
+          }
+        : {}),
     },
   }
 }

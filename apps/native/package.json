@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "nx": "cd .. && yarn nx",
-    "postinstall": "patch-package && cd app && yarn build:env .env",
+    "postinstall": "./scripts/postinstall.sh",
     "pod:install": "cd app/ios && pod install",
     "detox:build": "detox build -C ./app-e2e/.detoxrc.js -o app-e2e/config.json",
     "detox:test": "detox test -C ./app-e2e/.detoxrc.js -o app-e2e/config.json -r",

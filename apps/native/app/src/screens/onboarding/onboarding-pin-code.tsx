@@ -1,5 +1,5 @@
+import { dynamicColor, font } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
-import { Dimensions } from 'react-native'
 import { Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
@@ -20,13 +20,13 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.theme.shade.background};
+  background-color: ${dynamicColor('background')};
 `
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 20px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontSize: 20,
+  })}
   margin-bottom: 10px;
   max-width: 75%;
   min-width: 360px;
@@ -34,10 +34,10 @@ const Title = styled.Text`
 `
 
 const Subtitle = styled.Text`
-  font-family: 'IBMPlexSans';
-  font-size: 14px;
+  ${font({
+    fontSize: 14,
+  })}
   min-height: 20px;
-  color: ${(props) => props.theme.shade.foreground};
   max-width: 75%;
   text-align: center;
 `
@@ -51,14 +51,15 @@ const MAX_PIN_CHARS = 4
 
 const CancelButton = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.color.blue400};
+  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
 `
 
 const CancelText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${(props) => props.theme.color.blue400};
+  ${font({
+    fontWeight: '600',
+    fontSize: 16,
+    color: (props) => props.theme.color.blue400,
+  })}
 `
 
 export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
@@ -217,5 +218,5 @@ OnboardingPinCodeScreen.options = {
   },
   layout: {
     orientation: ['portrait'],
-  }
+  },
 }

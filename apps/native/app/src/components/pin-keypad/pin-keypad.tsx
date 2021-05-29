@@ -107,14 +107,13 @@ function NumButton({
           style={{
             tintColor: pressed
               ? theme.color.white
-              : Platform.select({
-                  ios: DynamicColorIOS({
-                    light: theme.color.blue400,
-                    dark: theme.shades.dark.foreground,
-                  }),
-                  android: theme.isDark
-                    ? theme.shade.foreground
-                    : (theme.color.blue400 as any),
+              : Platform.OS === 'android'
+              ? theme.isDark
+                ? theme.shade.foreground
+                : theme.color.blue400
+              : DynamicColorIOS({
+                  light: theme.color.blue400,
+                  dark: theme.shades.dark.foreground,
                 }),
           }}
         />

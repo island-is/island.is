@@ -25,12 +25,7 @@ const Container = styled.View`
 
 const SearchBarComponent = ({ query }: { query: string }) => (
   <Host>
-    <Container
-      style={{
-        shadowColor: '#000',
-        elevation: 4,
-      }}
-    >
+    <Container>
       <SearchBar
         value={query}
         onChangeText={(text) => uiStore.setState({ query: text })}

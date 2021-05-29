@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { EmptyList, ListItem } from '@island.is/island-ui-native'
+import { dynamicColor, EmptyList, font, ListItem } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -39,7 +39,10 @@ interface IndexedDocument extends IDocument {
 }
 
 const TopLine = styled(Animated.View)`
-  background-color: ${(props) => props.theme.color.blue200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue200,
+    dark: theme.shades.dark.shade600
+  }))};
   position: absolute;
   top: 0px;
   left: 0px;
@@ -118,19 +121,27 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
 
 const SearchHeaderHost = styled.View`
   height: 46px;
-  background-color: ${(props) => props.theme.color.blue100};
+  background-color: ${dynamicColor('background')};
   align-items: center;
   justify-content: center;
+  border-bottom-width: 1px;
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue200,
+    dark: theme.shades.dark.shade400
+  }))};
 `
 const SearchHeaderText = styled.Text`
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 14,
+  })}
 `
 
 function SearchHeader({ count, loading }: any) {
   return (
     <SearchHeaderHost>
       <SearchHeaderText>
-        {loading ? 'Leita í skjölum...' : `${count} niðurstöður fundust`}
+        {loading ? 'Leita í skjölum...' : `${count} niðurstöður`}
       </SearchHeaderText>
     </SearchHeaderHost>
   )
@@ -263,7 +274,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       <TopLine
         style={{
           height: StyleSheet.hairlineWidth,
-          opacity: scrollY.interpolate({
+          opacity: isSearch ? 0 : scrollY.interpolate({
             inputRange: [0, 32],
             outputRange: [0, 1],
           }),

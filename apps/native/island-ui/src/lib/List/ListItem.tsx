@@ -82,7 +82,7 @@ const Dot = styled.View`
   width: ${({ theme }) => theme.spacing[1]}px;
   height: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.spacing[1]}px;
-  background-color: ${({ theme }) => theme.color.blueberry400};
+  background-color: ${dynamicColor(({ theme }) => theme.color.blueberry400)};
   margin-left: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -110,7 +110,7 @@ const Button = styled.TouchableHighlight`
   justify-content: center;
   align-items: center;
   padding: 10px 16px;
-  background-color: ${({ theme }) => theme.color.blue400};
+  background-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
   border-radius: ${({ theme }) => theme.spacing[1]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
 `

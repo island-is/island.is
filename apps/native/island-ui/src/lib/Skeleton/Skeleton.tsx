@@ -5,9 +5,10 @@ import {
   Dimensions,
   LayoutChangeEvent,
   Platform,
-  ViewStyle
+  ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 
 interface SkeletonProps {
   active?: boolean
@@ -22,14 +23,10 @@ interface SkeletonProps {
 const Host = styled.View<{ error?: boolean }>`
   height: 20px;
   width: 100%;
-  background-color: ${({ theme, error }) =>
-    theme.isDark
-      ? error
-        ? theme.color.red600
-        : theme.shade.shade100
-      : error
-      ? theme.color.red200
-      : theme.color.dark100};
+  background-color: ${dynamicColor(({ theme, error }) => ({
+    dark: error ? theme.color.red600 : theme.shade.shade100,
+    light: error ? theme.color.red200 : theme.color.dark100,
+  }))};
   opacity: 1;
   overflow: hidden;
 `

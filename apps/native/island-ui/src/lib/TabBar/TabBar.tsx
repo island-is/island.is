@@ -49,7 +49,7 @@ const Line = styled.View`
 const ActiveLine = styled(Animated.View)`
   width: 50%;
   height: ${({ theme }) => theme.border.width.standard}px;
-  background-color: ${(props) => props.theme.color.blue400};
+  background-color: ${dynamicColor((props) => props.theme.color.blue400)};
 `
 
 export function TabBar(props: TabBarProps) {
@@ -101,7 +101,7 @@ export function TabBar(props: TabBarProps) {
           return (
             <Tab
               android_ripple={{
-                color: theme.color.blue200,
+                color: theme.isDark ? '#003790' : theme.color.blue200,
               }}
               key={item.label + i}
               onPress={() => {

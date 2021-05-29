@@ -42,7 +42,7 @@ const androidShape = (shape: SimpleColorShape, props: StyledProps<any>) => {
   return props.theme.isDark ? dark : light;
 }
 
-const FORCE_NORMAL = true;
+const FORCE_NORMAL = false;
 
 export function dynamicColor<T>(dynamicProps: DynamicColorProps<T>) {
 

@@ -1,4 +1,4 @@
-import { Button, font } from '@island.is/island-ui-native'
+import { Button, dynamicColor, font } from '@island.is/island-ui-native'
 import {
   AndroidImportance,
   getPermissionsAsync,
@@ -33,7 +33,7 @@ const ButtonContainer = styled.View`
 
 const CancelButton = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.color.blue400};
+  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
 `
 
 const CancelText = styled.Text`

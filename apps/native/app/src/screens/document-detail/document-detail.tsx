@@ -98,19 +98,10 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl) => ({
     topBar: {
-      background: {
-        color: theme.shade.background,
-      },
-      barStyle: theme.isDark ? 'black' : 'default',
       title: {
-        color: theme.shade.foreground,
         text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
       },
       noBorder: true,
-    },
-    layout: {
-      backgroundColor: theme.shade.background,
-      componentBackgroundColor: theme.shade.background,
     },
   }),
   {

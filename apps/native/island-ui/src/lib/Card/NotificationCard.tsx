@@ -105,7 +105,7 @@ const Dot = styled.View`
   width: ${({ theme }) => theme.spacing[1]}px;
   height: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${(props) => props.theme.color.blueberry400};
+  background-color: ${dynamicColor(({ theme }) => theme.color.blueberry400)};
   margin-left: ${({ theme }) => theme.spacing[1]}px;
 `
 

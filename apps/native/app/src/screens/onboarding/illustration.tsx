@@ -34,12 +34,9 @@ export function Illustration() {
           style={{
             width: '100%',
             height: '100%',
-            tintColor: Platform.select({
-              ios: DynamicColorIOS({
-                light: theme.color.blue200,
-                dark: 'rgba(204, 223, 255, 0.20)',
-              }),
-              android: theme.color.blue200 as any,
+            tintColor: Platform.OS === 'android' ? theme.color.blue200 : DynamicColorIOS({
+              light: theme.color.blue200,
+              dark: 'rgba(204, 223, 255, 0.20)',
             }),
           }}
           resizeMode="repeat"

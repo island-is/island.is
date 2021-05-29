@@ -5,7 +5,7 @@ index 7b86d08..daff2b9 100644
 @@ -79,17 +79,6 @@ extern const UIAccessibilityTraits SwitchAccessibilityTrait;
  @property (nonatomic, assign) CGFloat borderBottomStartRadius;
  @property (nonatomic, assign) CGFloat borderBottomEndRadius;
- 
+
 -/**
 - * Border colors (actually retained).
 - */
@@ -25,7 +25,7 @@ index 91e28ab..028a2c5 100644
 --- a/node_modules/react-native/React/Views/RCTView.m
 +++ b/node_modules/react-native/React/Views/RCTView.m
 @@ -100,6 +100,13 @@ static NSString *RCTRecursiveAccessibilityLabel(UIView *view)
- 
+
  @implementation RCTView {
    UIColor *_backgroundColor;
 +  UIColor *_borderTopColor;
@@ -40,7 +40,7 @@ index 91e28ab..028a2c5 100644
  }
 @@ -126,6 +133,13 @@ static NSString *RCTRecursiveAccessibilityLabel(UIView *view)
      _hitTestEdgeInsets = UIEdgeInsetsZero;
- 
+
      _backgroundColor = super.backgroundColor;
 +    _borderTopColor = nil;
 +    _borderRightColor = nil;
@@ -50,10 +50,10 @@ index 91e28ab..028a2c5 100644
 +    _borderEndColor = nil;
 +    _borderColor = nil;
    }
- 
+
    return self;
 @@ -726,31 +740,66 @@ static CGFloat RCTDefaultIfNegativeTo(CGFloat defaultValue, CGFloat x)
- 
+
  - (RCTBorderColors)borderColors
  {
 +  CGColorRef resolvedBorderTopColor;
@@ -92,16 +92,16 @@ index 91e28ab..028a2c5 100644
 +  #endif
 +
    const BOOL isRTL = _reactLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
- 
+
    if ([[RCTI18nUtil sharedInstance] doLeftAndRightSwapInRTL]) {
 -    const CGColorRef borderStartColor = _borderStartColor ?: _borderLeftColor;
 -    const CGColorRef borderEndColor = _borderEndColor ?: _borderRightColor;
 +    const CGColorRef borderStartColor = resolvedBorderStartColor ?: resolvedBorderLeftColor;
 +    const CGColorRef borderEndColor = resolvedBorderEndColor ?: resolvedBorderRightColor;
- 
+
      const CGColorRef directionAwareBorderLeftColor = isRTL ? borderEndColor : borderStartColor;
      const CGColorRef directionAwareBorderRightColor = isRTL ? borderStartColor : borderEndColor;
- 
+
      return (RCTBorderColors){
 -        _borderTopColor ?: _borderColor,
 -        directionAwareBorderLeftColor ?: _borderColor,
@@ -113,12 +113,12 @@ index 91e28ab..028a2c5 100644
 +          directionAwareBorderRightColor ?: resolvedBorderColor,
      };
    }
- 
+
 -  const CGColorRef directionAwareBorderLeftColor = isRTL ? _borderEndColor : _borderStartColor;
 -  const CGColorRef directionAwareBorderRightColor = isRTL ? _borderStartColor : _borderEndColor;
 +    const CGColorRef directionAwareBorderLeftColor = isRTL ? resolvedBorderEndColor : resolvedBorderStartColor;
 +    const CGColorRef directionAwareBorderRightColor = isRTL ? resolvedBorderStartColor : resolvedBorderEndColor;
- 
+
    return (RCTBorderColors){
 -      _borderTopColor ?: _borderColor,
 -      directionAwareBorderLeftColor ?: _borderLeftColor ?: _borderColor,
@@ -130,10 +130,10 @@ index 91e28ab..028a2c5 100644
 +      directionAwareBorderRightColor ?: resolvedBorderRightColor ?: resolvedBorderColor,
    };
  }
- 
+
 @@ -903,13 +952,12 @@ static void RCTUpdateShadowPathForView(RCTView *view)
  #pragma mark Border Color
- 
+
  #define setBorderColor(side)                                \
 -  -(void)setBorder##side##Color : (CGColorRef)color         \
 +  -(void)setBorder##side##Color : (UIColor*)color           \
@@ -147,11 +147,11 @@ index 91e28ab..028a2c5 100644
 +    _border##side##Color = color;                           \
      [self.layer setNeedsDisplay];                           \
    }
- 
+
 @@ -961,15 +1009,4 @@ setBorderColor() setBorderColor(Top) setBorderColor(Right) setBorderColor(Bottom
- 
+
                                  setBorderStyle()
- 
+
 -    - (void)dealloc
 -{
 -  CGColorRelease(_borderColor);
@@ -194,7 +194,7 @@ index 48dcd0a..d88f8bf 100644
 -    }                                                                                                \
 -  }
 +  RCT_EXPORT_VIEW_PROPERTY(border##SIDE##Color, UIColor)                                             \
- 
+
  RCT_VIEW_BORDER_PROPERTY(Top)
  RCT_VIEW_BORDER_PROPERTY(Right)
 @@ -313,6 +300,7 @@ RCT_VIEW_BORDER_PROPERTY(Bottom)
@@ -202,6 +202,6 @@ index 48dcd0a..d88f8bf 100644
  RCT_VIEW_BORDER_PROPERTY(Start)
  RCT_VIEW_BORDER_PROPERTY(End)
 +RCT_EXPORT_VIEW_PROPERTY(borderColor, UIColor)
- 
+
  #define RCT_VIEW_BORDER_RADIUS_PROPERTY(SIDE)                                                          \
    RCT_CUSTOM_VIEW_PROPERTY(border##SIDE##Radius, CGFloat, RCTView)                                     \

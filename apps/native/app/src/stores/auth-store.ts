@@ -9,9 +9,9 @@ import {
 import Keychain from 'react-native-keychain'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
+import { client } from '../graphql/client'
 import { config } from '../utils/config'
 import { preferencesStore } from './preferences-store'
-import { client } from '../graphql/client'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
 
