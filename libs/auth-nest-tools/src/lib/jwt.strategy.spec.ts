@@ -9,7 +9,6 @@ describe('JwtStrategy#validate', () => {
 
   beforeEach(() => {
     jwtStrategy = new JwtStrategy({
-      jwksUri: 'jwksUri',
       issuer: 'issuer',
       audience: 'audience',
     })
