@@ -3,8 +3,8 @@ import { XRoadMemberClass } from '@island.is/utils/api'
 export default {
   production: true,
   auth: {
+    audience: '@island.is/auth/public',
     issuer: process.env.IDS_ISSUER,
-    jwksUri: process.env.JWKS_URI,
   },
   rsk: {
     xroad: {

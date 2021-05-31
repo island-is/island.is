@@ -66,7 +66,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly court?: string
+  readonly courtId?: string
 
   @IsOptional()
   @IsString()
@@ -197,6 +197,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly litigationPresentations?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtCaseFacts?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtLegalArguments?: string
 
   @IsOptional()
   @IsString()

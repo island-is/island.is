@@ -10,8 +10,6 @@ export const environment = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   swagger: {
     authUrl: 'https://identity-server.dev01.devland.is/connect/authorize',

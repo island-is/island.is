@@ -6,5 +6,13 @@
     "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
   },
   "allowJs": true,
-  "include": []
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

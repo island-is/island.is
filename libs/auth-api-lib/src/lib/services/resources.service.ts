@@ -22,10 +22,16 @@ import { UserClaimDTO } from '../entities/dto/user-claim.dto'
 import { ApiScopeGroupDTO } from '../entities/dto/api-scope-group.dto'
 import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
 import { uuid } from 'uuidv4'
+import { Domain } from '../entities/models/domain.model'
+import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
+import { DomainDTO } from '../entities/dto/domain.dto'
+import { isNumber } from 'class-validator'
 
 @Injectable()
 export class ResourcesService {
   constructor(
+    @InjectModel(Domain)
+    private domainModel: typeof Domain,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
     @InjectModel(ApiScope)
@@ -161,13 +167,13 @@ export class ResourcesService {
     return this.apiScopeModel.findAndCountAll({
       limit: count,
       offset: offset,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
     })
   }
 
   /** Get's all Api scopes that are access controlled */
-  async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
+  async findAllAccessControlledApiScopes(): Promise<ApiScope[]> {
     return this.apiScopeModel.findAll({
       where: {
         isAccessControlled: true,
@@ -175,6 +181,7 @@ export class ResourcesService {
           [Op.not]: '@island.is/auth/admin:root',
         },
       },
+      include: [ApiScopeGroup],
     })
   }
 
@@ -214,6 +221,7 @@ export class ResourcesService {
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
       raw: true,
+      include: [ApiScopeGroup],
     })
 
     if (apiScope) {
@@ -324,7 +332,7 @@ export class ResourcesService {
 
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
     })
   }
 
@@ -680,7 +688,7 @@ export class ResourcesService {
 
   /** Gets all Identity Resource User Claims */
   async findAllIdentityResourceUserClaims(): Promise<
-    IdentityResourceUserClaim[] | undefined
+    IdentityResourceUserClaim[]
   > {
     return this.identityResourceUserClaimModel.findAll({
       attributes: [
@@ -690,7 +698,7 @@ export class ResourcesService {
   }
 
   /** Gets all Api Scope User Claims */
-  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[]> {
     return this.apiScopeUserClaimModel.findAll({
       attributes: [
         [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
@@ -699,9 +707,7 @@ export class ResourcesService {
   }
 
   /** Gets all Api Resource User Claims */
-  async findAllApiResourceUserClaims(): Promise<
-    ApiResourceUserClaim[] | undefined
-  > {
+  async findAllApiResourceUserClaims(): Promise<ApiResourceUserClaim[]> {
     return this.apiResourceUserClaim.findAll({
       attributes: [
         [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
@@ -712,7 +718,7 @@ export class ResourcesService {
   /** Creates a new user claim for Api Resource */
   async createApiResourceUserClaim(
     claim: UserClaimDTO,
-  ): Promise<ApiResourceUserClaim | null> {
+  ): Promise<ApiResourceUserClaim> {
     return this.apiResourceUserClaim.create({
       apiResourceName: claim.resourceName,
       claimName: claim.claimName,
@@ -722,7 +728,7 @@ export class ResourcesService {
   /** Creates a new user claim for Identity Resource */
   async createIdentityResourceUserClaim(
     claim: UserClaimDTO,
-  ): Promise<IdentityResourceUserClaim | null> {
+  ): Promise<IdentityResourceUserClaim> {
     return this.identityResourceUserClaimModel.create({
       identityResourceName: claim.resourceName,
       claimName: claim.claimName,
@@ -732,7 +738,7 @@ export class ResourcesService {
   /** Creates a new user claim for Api Scope */
   async createApiScopeUserClaim(
     claim: UserClaimDTO,
-  ): Promise<ApiScopeUserClaim | null> {
+  ): Promise<ApiScopeUserClaim> {
     return this.apiScopeUserClaimModel.create({
       apiScopeName: claim.resourceName,
       claimName: claim.claimName,
@@ -742,9 +748,7 @@ export class ResourcesService {
   // #region ApiScopeGroup
 
   /** Creates a new Api Scope Group */
-  async createApiScopeGroup(
-    group: ApiScopeGroupDTO,
-  ): Promise<ApiScopeGroup | null> {
+  async createApiScopeGroup(group: ApiScopeGroupDTO): Promise<ApiScopeGroup> {
     const id = uuid()
     return this.apiScopeGroup.create({ id: id, ...group })
   }
@@ -753,20 +757,50 @@ export class ResourcesService {
   async updateApiScopeGroup(
     group: ApiScopeGroupDTO,
     id: string,
-  ): Promise<[number, ApiScopeGroup[]] | null> {
+  ): Promise<[number, ApiScopeGroup[]]> {
     return this.apiScopeGroup.update({ ...group }, { where: { id: id } })
   }
 
   /** Delete ApiScopeGroup */
-  async deleteApiScopeGroup(id: string): Promise<number | null> {
+  async deleteApiScopeGroup(id: string): Promise<number> {
     return this.apiScopeGroup.destroy({ where: { id: id } })
   }
 
   /** Returns all ApiScopeGroups */
-  async findAllApiScopeGroups(): Promise<ApiScopeGroup[] | null> {
-    return this.apiScopeGroup.findAll()
+  async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
+    return this.apiScopeGroup.findAll({
+      order: [['name', 'asc']],
+      include: [ApiScope],
+    })
   }
 
+  /** Returns all ApiScopeGroups by name if specified with Paging */
+  async findAndCountAllApiScopeGroups(
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: ApiScopeGroup[]
+    count: number
+  }> {
+    page--
+    const offset = page * count
+    if (!searchString || searchString.length === 0) {
+      searchString = '%'
+    }
+    return this.apiScopeGroup.findAndCountAll({
+      limit: count,
+      offset: offset,
+      where: { name: { [Op.iLike]: `%${searchString}%` } },
+      order: [['name', 'asc']],
+      include: [ApiScope],
+    })
+  }
+
+  /** Finds Api SCope Group by Id */
+  async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
+    return this.apiScopeGroup.findByPk(id, { include: [ApiScope] })
+  }
   // #endregion ApiScopeGroup
 
   async findActorApiScopes(requestedScopes: string[]): Promise<string[]> {
@@ -775,8 +809,55 @@ export class ResourcesService {
         alsoForDelegatedUser: true,
         name: { [Op.in]: requestedScopes },
       },
+      include: [ApiScopeGroup],
     })
 
     return scopes.map((s: ApiScope): string => s.name)
   }
+
+  // #region Domain
+
+  /** Find all domains with or without paging */
+  async findAllDomains(
+    searchString: string | null = null,
+    page: number | null = null,
+    count: number | null = null,
+  ): Promise<Domain[] | PagedRowsDto<Domain>> {
+    if (page && count && isNumber(page) && isNumber(count)) {
+      page--
+      const offset = page * count
+      if (!searchString || searchString.length === 0) {
+        searchString = '%'
+      }
+
+      return this.domainModel.findAndCountAll({
+        limit: count,
+        offset: offset,
+        where: { name: { [Op.iLike]: `%${searchString}%` } },
+        order: [['name', 'asc']],
+        include: [ApiScopeGroup],
+      })
+    }
+    return this.domainModel.findAll({ order: [['name', 'asc']] })
+  }
+
+  /** Creates a new Domain */
+  async createDomain(domain: DomainDTO): Promise<Domain> {
+    return this.domainModel.create({ ...domain })
+  }
+
+  /** Updates an existing Domain */
+  async updateDomain(
+    domain: ApiScopeGroupDTO,
+    name: string,
+  ): Promise<[number, Domain[]]> {
+    return this.domainModel.update({ ...domain }, { where: { name: name } })
+  }
+
+  /** Delete Domain */
+  async deleteDomain(name: string): Promise<number> {
+    return this.domainModel.destroy({ where: { name: name } })
+  }
+
+  // #endregion ApiScopeGroup
 }

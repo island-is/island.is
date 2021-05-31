@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import AmazonS3URI from 'amazon-s3-uri'
+
 import {
   FILE_STORAGE_CONFIG,
   FileStorageConfig,
 } from './file-storage.configuration'
-import AmazonS3URI from 'amazon-s3-uri'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60

@@ -9,7 +9,7 @@ const userSeeds = `[
     "mobile_number": "0000000",
     "email": "aki@dmr.is",
     "role": "PROSECUTOR",
-    "institution_id": "7b261673-8990-46b4-a310-5412ad77686a"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
@@ -19,7 +19,7 @@ const userSeeds = `[
     "mobile_number": "1111111",
     "email": "dalli@dmr.is",
     "role": "REGISTRAR",
-    "institution_id": "a38666f3-0444-4e44-9654-b83f39f4db11"
+    "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
@@ -29,7 +29,7 @@ const userSeeds = `[
     "mobile_number": "2222222",
     "email": "dora@dmr.is",
     "role": "JUDGE",
-    "institution_id": "a38666f3-0444-4e44-9654-b83f39f4db11"
+    "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   }
 ]`
 
