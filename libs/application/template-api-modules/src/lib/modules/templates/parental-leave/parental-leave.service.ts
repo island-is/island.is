@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 
-import { ParentalLeaveApi } from '@island.is/clients/vmst'
+import { Attachment, ParentalLeaveApi } from '@island.is/clients/vmst'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { Application, getValueViaPath } from '@island.is/application/core'
 
@@ -13,6 +13,7 @@ import {
   generateApplicationApprovedEmail,
 } from './emailGenerators'
 import { transformApplicationToParentalLeaveDTO } from './parental-leave.utils'
+import { apiConstants, formConstants } from './constants'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -65,18 +66,32 @@ export class ParentalLeaveService {
     }
   }
 
+  async getAttachments(application: Application): Promise<Attachment[]> {
+    const attachments: Attachment[] = []
+    const isSelfEmployed =
+      getValueViaPath(application.answers, 'employer.isSelfEmployed') ===
+      formConstants.boolean.true
+
+    if (isSelfEmployed) {
+      const pdf = await this.getSelfEmployedPdf(application)
+
+      attachments.push({
+        attachmentType: apiConstants.attachments.selfEmployed,
+        attachmentBytes: pdf,
+      })
+    }
+
+    return attachments
+  }
+
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
-    const isSelfEmployed =
-      getValueViaPath(application.answers, 'employer.isSelfEmployed') === 'yes'
-    const attachment = isSelfEmployed
-      ? await this.getSelfEmployedPdf(application)
-      : undefined
+    const attachments = await this.getAttachments(application)
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
-        attachment,
+        attachments,
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
