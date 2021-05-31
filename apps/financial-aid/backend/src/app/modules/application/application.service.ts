@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ApplicationModel } from './models'
 
 import { CreateApplicationDto } from './dto'
+import { User } from '@island.is/financial-aid/shared'
 
 @Injectable()
 export class ApplicationService {
@@ -16,7 +17,10 @@ export class ApplicationService {
     return this.applicationModel.findAll()
   }
 
-  create(application: CreateApplicationDto): Promise<ApplicationModel> {
+  create(
+    application: CreateApplicationDto,
+    user: User,
+  ): Promise<ApplicationModel> {
     // this.logger.debug('Creating a new case')
     return this.applicationModel.create(application)
   }

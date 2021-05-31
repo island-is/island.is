@@ -1,6 +1,6 @@
-import { Query, Resolver, Context,Mutation, Args } from '@nestjs/graphql'
+import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
 
-import { Inject, UseInterceptors } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -8,7 +8,9 @@ import { BackendAPI } from '../../../services'
 
 import { ApplicationModel } from './models'
 import { CreateApplicationInput } from './dto'
+import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
+@UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
   constructor(
@@ -33,8 +35,6 @@ export class ApplicationResolver {
   ): Promise<ApplicationModel> {
     this.logger.debug('Creating case')
 
-    return   backendApi.createApplication(input)
+    return backendApi.createApplication(input)
   }
 }
-
-

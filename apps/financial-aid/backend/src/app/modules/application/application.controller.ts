@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
@@ -7,6 +7,10 @@ import { ApplicationModel } from './models'
 
 import { CreateApplicationDto } from './dto'
 
+import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
+import { User } from '@island.is/financial-aid/shared'
+
+@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
@@ -23,10 +27,14 @@ export class ApplicationController {
   }
 
   @Post('application')
-  @ApiCreatedResponse({ type: ApplicationModel, description: 'Creates a new application' })
+  @ApiCreatedResponse({
+    type: ApplicationModel,
+    description: 'Creates a new application',
+  })
   create(
+    @CurrentHttpUser() user: User,
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
-    return this.applicationService.create(application)
+    return this.applicationService.create(application, user)
   }
 }

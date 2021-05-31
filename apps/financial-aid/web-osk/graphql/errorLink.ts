@@ -15,7 +15,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach((err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return api.logOut('?villa=innskraning-utrunnin')
+          return // api.logOut('?villa=innskraning-utrunnin')
         case 'FORBIDDEN':
           return
         default:

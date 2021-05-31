@@ -1,3 +1,4 @@
+import { SharedAuthModule } from '@island.is/financial-aid/auth'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -9,6 +10,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
   imports: [
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
+    }),
+    SharedAuthModule.register({
+      jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
     }),
     ApplicationModule,
     MunicipalityModule,
