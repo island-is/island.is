@@ -23,6 +23,7 @@ import {
   AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
+import { Institution } from '../../institution'
 import { User } from '../../user'
 
 @Table({
@@ -131,7 +132,11 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  court: string
+  courtId: string
+
+  @BelongsTo(() => Institution, 'courtId')
+  @ApiProperty({ type: Institution })
+  court: Institution
 
   @Column({
     type: DataType.STRING,
@@ -322,6 +327,20 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   litigationPresentations: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtCaseFacts: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLegalArguments: string
 
   @Column({
     type: DataType.STRING,

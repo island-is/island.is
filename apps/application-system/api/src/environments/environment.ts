@@ -23,8 +23,6 @@ export default {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   templateApi: {
     clientLocationOrigin: 'http://localhost:4242',
@@ -47,6 +45,11 @@ export default {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
+    },
+    drivingLicense: {
+      secret: process.env.DRIVING_LICENSE_SECRET,
+      xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadBaseUrl: 'http://localhost:8081',
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

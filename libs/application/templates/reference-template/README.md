@@ -6,7 +6,7 @@ This library is a reference how all application template libraries can be.
 
 There are multiple requirements needed for a new template to be usable by the application system:
 
-1. Add a unique application type to `application/core/src/types/ApplicationType.ts`
+1. Add a unique application type to `application/core/src/types/ApplicationTypes.ts`
 2. Build a new library similar to this one under the folder `application/templates/`
 3. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.

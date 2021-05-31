@@ -37,11 +37,9 @@ export default {
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
   },
-  identityServer: {
+  auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -92,7 +90,8 @@ export default {
     baseApiUrl: 'http://localhost:4246',
   },
   nationalRegistryXRoad: {
-    url: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080/r1/IS-DEV',
+    url:
+      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
     apiPath:
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',

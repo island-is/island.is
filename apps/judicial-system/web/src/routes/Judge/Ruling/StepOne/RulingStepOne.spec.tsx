@@ -33,6 +33,12 @@ describe('/domari-krafa/urskurdur', () => {
           ...mockUpdateCaseMutation(
             [
               {
+                courtCaseFacts: 'Court Case Facts',
+              } as UpdateCase,
+              {
+                courtLegalArguments: 'Court Legal Arguments',
+              } as UpdateCase,
+              {
                 ruling:
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
               } as UpdateCase,
@@ -55,6 +61,16 @@ describe('/domari-krafa/urskurdur', () => {
           <RulingStepOne />
         </UserProvider>
       </MockedProvider>,
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Málsatvik *'),
+      'Court Case Facts',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Lagarök *'),
+      'Court Legal Arguments',
     )
 
     userEvent.type(
@@ -106,6 +122,12 @@ describe('/domari-krafa/urskurdur', () => {
                   CaseCustodyRestrictions.MEDIA,
                 ],
               } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
             ],
             'test_id',
           ),
@@ -143,6 +165,12 @@ describe('/domari-krafa/urskurdur', () => {
             [
               {
                 decision: CaseDecision.REJECTING,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
               } as UpdateCase,
             ],
             'test_id',
@@ -188,6 +216,12 @@ describe('/domari-krafa/urskurdur', () => {
             [
               {
                 decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
               } as UpdateCase,
             ],
             'test_id',

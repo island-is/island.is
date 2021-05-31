@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import transform from 'lodash/transform'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -26,6 +25,7 @@ import {
   Button,
   Tag,
   Divider,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -45,6 +45,7 @@ import {
   GetNamespaceQuery,
   GetSingleNewsItemQuery,
   QueryGetSingleNewsArgs,
+  GenericTag,
 } from '../graphql/schema'
 import { NewsCard, HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
@@ -120,27 +121,16 @@ const NewsListNew: Screen<NewsListProps> = ({
     })),
   ]
 
-  // Fish the selected tag name from existing news items
-  // instead of making a request for all tags
-  const selectedTag =
-    newsList.length &&
-    selectedTagSlug &&
-    transform(
-      newsList,
-      (tag, item) => {
-        const found = item.genericTags.find((t) => t.slug === selectedTagSlug)
+  let selectedTag: GenericTag | undefined
 
-        if (found) {
-          tag.slug = found.slug
-          tag.title = found.title
-          // exit early since we have what we need
-          return false
-        }
+  for (let item of newsList) {
+    const tag = item.genericTags.find((t) => t.slug === selectedTagSlug)
 
-        return true
-      },
-      { slug: '', title: '' },
-    )
+    if (tag) {
+      selectedTag = tag
+      break
+    }
+  }
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
@@ -157,14 +147,16 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = !!newsItem
     ?.genericTags?.length
-    ? newsItem.genericTags.map(({ title, slug }) => {
-        return {
-          isTag: true,
-          title: title,
-          typename: 'newsoverview',
-          href: slug,
-        }
-      })
+    ? newsItem.genericTags
+        .filter((t) => t.title && t.slug)
+        .map(({ title, slug }) => {
+          return {
+            isTag: true,
+            title: title,
+            typename: 'newsoverview',
+            href: slug,
+          }
+        })
     : !!selectedTag && {
         isTag: true,
         title: selectedTag.title,
@@ -180,17 +172,13 @@ const NewsListNew: Screen<NewsListProps> = ({
   const navTitle = n('newsTitle', 'Fréttir og tilkynningar')
   const navTitleMobile = `${navTitle}: ${selectedString}`
 
-  const backButton = (
-    <Button
-      preTextIcon="arrowBack"
-      preTextIconType="filled"
-      size="small"
-      type="button"
-      variant="text"
-      onClick={() => Router.back()}
-    >
-      {n('goBack')}
-    </Button>
+  const backButton = newsList.length ? (
+    <BackButton title="Ísland.is" href="/" />
+  ) : (
+    <BackButton
+      title={n('newsOverview')}
+      href={linkResolver('newsoverview').href}
+    />
   )
 
   const sidebar = (
@@ -303,16 +291,19 @@ const NewsListNew: Screen<NewsListProps> = ({
           marginBottom={spacing}
           justifyContent="spaceBetween"
           alignItems="center"
+          style={{ minHeight: 32 }}
           printHidden
         >
           <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-            <Text truncate>{backButton}</Text>
+            {backButton}
           </Box>
-          <Box minWidth={0}>
-            <Link href={`/frett?tag=${selectedTag.slug}`} skipTab>
-              <Tag truncate>{selectedTag.title}</Tag>
-            </Link>
-          </Box>
+          {selectedTag && (
+            <Box minWidth={0}>
+              <Link href={`/frett?tag=${selectedTag.slug}`} skipTab>
+                <Tag truncate>{selectedTag.title}</Tag>
+              </Link>
+            </Box>
+          )}
         </Box>
         {!newsItem && selectedYear && (
           <Hidden below="lg">
@@ -492,5 +483,32 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   }
 }
+
+const BackButton = ({ title, href }: { title: string; href: string }) => (
+  <LinkContext.Provider
+    value={{
+      linkRenderer: (href, children) => (
+        <Link href={href} skipTab>
+          {children}
+        </Link>
+      ),
+    }}
+  >
+    <Text truncate>
+      <a href={href}>
+        <Button
+          as="span"
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          {title}
+        </Button>
+      </a>
+    </Text>
+  </LinkContext.Provider>
+)
 
 export default withMainLayout(NewsListNew)
