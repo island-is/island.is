@@ -105,7 +105,7 @@ const assertDiff = (diff: string): true | undefined => {
 }
 
 const smellsLikeISODate = (maybeISODate: string): boolean =>
-  /\d{4}-\d{2}-\d{2}/.test(maybeISODate)
+  /^\d{4}-\d{2}-\d{2}$/.test(maybeISODate)
 
 const assertDate = (
   maybeISODate: string,
