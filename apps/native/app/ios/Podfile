@@ -45,8 +45,8 @@ target 'IslandApp' do
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
   pod 'react-native-passkit-wallet', path: '../../node_modules/react-native-passkit-wallet'
   pod 'react-native-spotlight-search', path: '../../node_modules/react-native-spotlight-search'
+  pod 'react-native-flipper', path: '../../node_modules/react-native-flipper'
 
-  # use_flipper!({ 'Flipper' => '0.87.0' })
   use_flipper!({
     'Flipper-Folly' => '2.5.3',
     'Flipper' => '0.87.0',

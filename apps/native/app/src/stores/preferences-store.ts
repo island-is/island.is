@@ -3,6 +3,7 @@ import RNLocalize from 'react-native-localize'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
+import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 
 export type Locale = 'en-US' | 'is-IS'
 export type AppearanceMode = 'light' | 'dark' | 'automatic'
@@ -78,3 +79,5 @@ export const preferencesStore = create<PreferencesStore>(
 )
 
 export const usePreferencesStore = createUse(preferencesStore)
+
+zustandFlipper(preferencesStore, 'PreferencesStore');

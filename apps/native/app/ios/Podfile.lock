@@ -372,6 +372,8 @@ PODS:
     - React-Core
   - react-native-cookies (1.1.1):
     - React
+  - react-native-flipper (0.91.2):
+    - React-Core
   - react-native-passkit-wallet (0.1.4):
     - React
   - react-native-segmented-control (2.3.0):
@@ -575,6 +577,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../../../../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-app-auth (from `../../node_modules/react-native-app-auth`)
   - "react-native-cookies (from `../../node_modules/@react-native-community/react-native-cookies/ios`)"
+  - react-native-flipper (from `../../node_modules/react-native-flipper`)
   - react-native-passkit-wallet (from `../../node_modules/react-native-passkit-wallet`)
   - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
   - react-native-spotlight-search (from `../../node_modules/react-native-spotlight-search`)
@@ -694,6 +697,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-app-auth"
   react-native-cookies:
     :path: "../../node_modules/@react-native-community/react-native-cookies/ios"
+  react-native-flipper:
+    :path: "../../node_modules/react-native-flipper"
   react-native-passkit-wallet:
     :path: "../../node_modules/react-native-passkit-wallet"
   react-native-segmented-control:
@@ -815,6 +820,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 500a59626037be5b3b3d89c5151bc3baa9abf1a9
   react-native-app-auth: 65e59e33e956bd6d83599c22b8f9bea529a0ea5c
   react-native-cookies: 3a8a42a8703423669026731186b1765e40b81557
+  react-native-flipper: d4e19fb1ffc5b69481efd46ab1fca275395bd569
   react-native-passkit-wallet: 51e3babdaeec4c10b5736786ebd1bfb470fcaa36
   react-native-segmented-control: 83a05d42acd1234ad5e061d603c145973a61b5ee
   react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
@@ -853,6 +859,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 3421d447742e757b0cf99b0fb480d15d734bfdeb
+PODFILE CHECKSUM: f101d7fcd7012b14f8a616f574b357eed29f977c
 
 COCOAPODS: 1.10.1

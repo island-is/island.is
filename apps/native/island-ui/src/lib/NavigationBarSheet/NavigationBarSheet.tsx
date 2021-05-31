@@ -1,10 +1,20 @@
-import React from 'react'
-import { ImageSourcePropType, Platform, SafeAreaView } from 'react-native'
+import React, { useEffect } from 'react'
+import { useRef } from 'react';
+import { StatusBarProps } from 'react-native';
+import {
+  ImageSourcePropType,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  useWindowDimensions,
+} from 'react-native'
+import { Navigation } from 'react-native-navigation';
+import { useNavigation, useNavigationComponentDidAppear, useNavigationComponentDidDisappear, useNavigationModalDismiss } from 'react-native-navigation-hooks';
 import styled, { useTheme } from 'styled-components/native'
-import closeIcon from '../../assets/icons/close.png'
 import { testIDs } from '../../../../app/src/utils/test-ids'
-import { font } from '../../utils/font'
+import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
+import { font } from '../../utils/font'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -38,9 +48,9 @@ const CloseButton = styled.TouchableOpacity`
   width: ${({ theme }) => theme.spacing[4]}px;
   height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: props.theme.color.dark400,
-    light: props.theme.color.blue100
+    light: props.theme.color.blue100,
   }))};
   align-items: center;
   justify-content: center;
@@ -53,23 +63,34 @@ const CloseIcon = styled.Image`
 
 export function NavigationBarSheet({
   title,
+  componentId,
   onClosePress,
   style,
 }: {
   title: string
+  componentId: string;
   onClosePress(): void
   style?: any
 }) {
+  const wd = useWindowDimensions()
   const theme = useTheme()
+  const isLandscape = wd.width > wd.height
+  const isHandle = Platform.OS === 'ios' && !Platform.isPad && !isLandscape
+
+  // @todo use a store to register if a modal is beeing shown.
+  // then do the same isHandle check there to toggle status-bar color
+
   return (
     <>
-      {Platform.OS === 'ios' && !Platform.isPad && (
-        <Handle />
-      )}
+      {isHandle && <Handle />}
       <SafeAreaView>
         <Header style={style}>
           <HeaderTitle>{title}</HeaderTitle>
-          <CloseButton onPress={onClosePress} testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON} accessibilityLabel="Close">
+          <CloseButton
+            onPress={onClosePress}
+            testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}
+            accessibilityLabel="Close"
+          >
             <CloseIcon
               style={{
                 tintColor: theme.color.blue400,

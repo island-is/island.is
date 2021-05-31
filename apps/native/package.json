@@ -54,7 +54,8 @@
     "jest-circus": "26.6.3",
     "patch-package": "6.4.7",
     "postinstall-postinstall": "2.1.0",
-    "puppeteer": "9.1.1"
+    "puppeteer": "9.1.1",
+    "react-native-flipper": "0.91.2"
   },
   "resolutions": {
     "@types/react-native": "0.64.5"

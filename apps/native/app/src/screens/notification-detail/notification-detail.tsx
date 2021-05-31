@@ -156,6 +156,7 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
   return (
     <Host testID={testIDs.SCREEN_NOTIFICATION_DETAIL}>
       <NavigationBarSheet
+        componentId={componentId}
         title={intl.formatMessage({ id: 'notificationDetail.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
       />
@@ -174,7 +175,6 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
         <Title>{notification.title}</Title>
         <Message>{notification.message}</Message>
       </ScrollView>
-      {/* <Button title="Send push notification" onPress={onSendPushNotification} /> */}
     </Host>
   )
 }

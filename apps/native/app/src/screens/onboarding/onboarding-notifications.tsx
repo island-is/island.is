@@ -87,23 +87,6 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
     return nextOnboardingStep()
   }
 
-  const actions = (
-    <View>
-      <Button
-        onPress={onAllowPress}
-        title="Leyfa tilkynningar"
-        testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
-      />
-      <View style={{ height: 8 }} />
-      <Button
-        onPress={onSkipPress}
-        title="Sleppa í bili"
-        isTransparent
-        testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
-      />
-    </View>
-  )
-
   return (
     <View testID={testIDs.SCREEN_ONBOARDING_NOTIFICATIONS} style={{ flex: 1 }}>
       <Illustration />

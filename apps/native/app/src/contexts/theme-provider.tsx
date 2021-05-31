@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'react-native'
-import { Platform } from 'react-native'
-import { useColorScheme } from 'react-native'
+import { Platform, StatusBar, Dimensions, useColorScheme } from 'react-native'
 import { Navigation } from 'react-native-navigation'
-import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import { DefaultTheme, ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { usePreferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
 import { getDefaultOptions } from '../utils/get-default-options'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 import { overrideUserInterfaceStyle } from '../utils/rn-island'
+
+export function setStatusBar(theme: DefaultTheme) {
+  const { modalsOpen } = uiStore.getState();
+  const win = Dimensions.get('window');
+  const isLandscape = win.width > win.height
+  const isHandle = modalsOpen > 0 && Platform.OS === 'ios' && !Platform.isPad && !isLandscape
+  StatusBar.setBarStyle(isHandle ? 'light-content' : theme.isDark ? 'light-content' : 'dark-content', true);
+  if (Platform.OS === 'android') {
+    StatusBar.setBackgroundColor(theme.shade.background, true)
+  }
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useColorScheme()
@@ -25,12 +35,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       Navigation.setDefaultOptions(getDefaultOptions(selectedTheme))
       setPrevColorScheme(selectedTheme.colorScheme)
     }
-
-    // Set status bar style
-    StatusBar.setBarStyle(selectedTheme.isDark ? 'light-content' : 'dark-content', true);
-    if (Platform.OS === 'android') {
-      StatusBar.setBackgroundColor(selectedTheme.shade.background, true);
-    }
+    setStatusBar(selectedTheme);
+    uiStore.setState({ theme: selectedTheme });
   }, [selectedTheme])
 
   useEffect(() => {

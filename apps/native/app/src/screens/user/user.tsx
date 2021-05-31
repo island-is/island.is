@@ -27,6 +27,7 @@ export const UserScreen: NavigationFunctionComponent = ({ componentId }) => {
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_USER}>
       <NavigationBarSheet
+        componentId={componentId}
         title={intl.formatMessage({ id: 'user.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}

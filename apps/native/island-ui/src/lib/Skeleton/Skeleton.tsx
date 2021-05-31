@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import {
   Animated,
   ColorValue,
@@ -42,6 +42,8 @@ export function Skeleton(props: SkeletonProps) {
   const ar = useRef<Animated.CompositeAnimation>()
   const aw = useRef(Dimensions.get('window').width)
   const av = useRef(new Animated.Value(0))
+  const mounted = useRef(true);
+
   const {
     active,
     error,
@@ -53,7 +55,10 @@ export function Skeleton(props: SkeletonProps) {
   const { overlayOpacity = height / aw.current } = props
 
   const offset = aw.current
-  const animate = () => {
+  const animate = useCallback(() => {
+    if (!mounted.current) {
+      return;
+    }
     ar.current = Animated.timing(av.current, {
       duration: 1660,
       toValue: aw.current + offset,
@@ -64,7 +69,7 @@ export function Skeleton(props: SkeletonProps) {
       av.current.setValue(-(aw.current + offset))
       animate()
     })
-  }
+  }, [ar.current, props.active]);
 
   const onLayout = (e: LayoutChangeEvent) => {
     aw.current = e.nativeEvent.layout.width
@@ -80,10 +85,10 @@ export function Skeleton(props: SkeletonProps) {
   }, [active])
 
   useEffect(() => {
+    mounted.current = true;
     return () => {
-      if (ar.current) {
-        ar.current.stop()
-      }
+      mounted.current = false;
+      ar.current?.reset();
     }
   }, [])
 
