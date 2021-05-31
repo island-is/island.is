@@ -16,6 +16,7 @@
     "@nestjs/typeorm",
     "dd-trace",
     "express",
+    "http-errors",
     "graphql",
     "pg",
     "winston",
