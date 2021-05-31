@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+
 import {
   Application,
   buildAsyncSelectField,
@@ -20,8 +22,6 @@ import {
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  formatIsk,
-  getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
@@ -36,12 +36,12 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  SPOUSE,
   StartDateOptions,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import { defaultMonths } from '../config'
-
+import { defaultMonths, minPeriodDays } from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
@@ -339,10 +339,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) => {
-                // TODO add check if this person has a spouse...
-                return true
-              },
+              condition: (answers) =>
+                answers.otherParent === SPOUSE ||
+                (answers.otherParent === MANUAL &&
+                  answers.otherParentRightOfAccess === YES),
               width: 'half',
               options: [
                 {
@@ -777,13 +777,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  excludeDates: (application) => {
-                    const {
-                      answers: { periods },
-                    } = application
-
-                    return getAllPeriodDates(periods as Period[])
-                  },
+                  excludeDates: (application) =>
+                    getAllPeriodDates(application.answers.periods as Period[]),
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -795,6 +790,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
+                      minDate: (application) => {
+                        const periods = application.answers.periods as Period[]
+                        const latestStartDate =
+                          periods[periods.length - 1].startDate
+
+                        return addDays(new Date(latestStartDate), minPeriodDays)
+                      },
                       excludeDates: (application) => {
                         const {
                           answers: { periods },

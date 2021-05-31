@@ -179,7 +179,7 @@ export async function getRulingPdfAsString(
     .text('Úrskurður', { align: 'center' })
     .fontSize(14)
     .lineGap(8)
-    .text('Krafa lögreglu')
+    .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
     .text(

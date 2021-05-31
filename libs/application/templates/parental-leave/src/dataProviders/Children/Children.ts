@@ -35,6 +35,8 @@ export interface PregnancyStatusAndRightsResults {
   hasActivePregnancy: boolean
 }
 
+const isRunningOnProduction = isRunningOnEnvironment('production')
+
 const parentalLeavesAndPregnancyStatus = `
   query GetParentalLeavesAndPregnancyStatus {
     getParentalLeaves {
@@ -55,7 +57,6 @@ const parentalLeavesAndPregnancyStatus = `
   }
 `
 
-const isRunningOnProduction = isRunningOnEnvironment('production')
 const parentalLeavesEntitlements = `
   query GetParentalLeavesEntitlements($input: GetParentalLeavesEntitlementsInput!) {
     getParentalLeavesEntitlements(input: $input) {
