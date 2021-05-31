@@ -113,7 +113,7 @@ const Form = () => {
           Greiðsla fjárhagsaðstoðar
         </Text>
 
-        <Text marginBottom={[3, 3, 4]}>
+        <Text marginBottom={2}>
           Til að geta afgreitt umsóknina þurfum við að fá uppgefinn
           bankareikning í þínu nafni.
         </Text>
@@ -164,6 +164,11 @@ const Form = () => {
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         nextUrl={navigation?.nextUrl ?? '/'}
+        nextButtonText={
+          form?.bankNumber || form?.ledger || form?.accountNumber
+            ? 'Halda áfram'
+            : 'Gefa upp seinna'
+        }
       />
     </FormLayout>
   )

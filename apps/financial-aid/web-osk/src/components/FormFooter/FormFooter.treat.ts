@@ -16,15 +16,18 @@ export const dividerContainer = style({
 
 export const footerContainer = style({
   // borderTop: `${theme.border.width.large}px solid ${theme.color.purple100}`,
-  paddingTop: theme.spacing[5],
+  paddingTop: theme.spacing[3],
+  paddingBottom: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
   gridColumn: '1/-1',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      paddingTop: theme.spacing[5],
+      paddingBottom: theme.spacing[5],
       paddingLeft: `0px`,
       paddingRight: `0px`,
-      gridColumn: '2/9',
+      gridColumn: '2/10',
     },
   },
 })

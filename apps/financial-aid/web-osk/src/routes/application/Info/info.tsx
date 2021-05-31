@@ -54,14 +54,14 @@ const ApplicationInfo = () => {
           gögnum.
         </Text>
 
-        <Text as="h3" variant="h4" color="blue400">
+        <Text as="h3" variant="h5" color="blue400">
           Upplýsingar um styrki og bætur
         </Text>
         <Text marginBottom={2}>
           T.a.m. hjá Vinnumálastofnun, Sjúkratryggingum Íslands, o.fl.
         </Text>
 
-        <Text as="h3" variant="h4" color="blue400">
+        <Text as="h3" variant="h5" color="blue400">
           Upplýsingar um stöðu og eignir
         </Text>
         <Text marginBottom={[4, 4, 5]}>T.a.m. hjá þjóðskrá og Skattinum.</Text>

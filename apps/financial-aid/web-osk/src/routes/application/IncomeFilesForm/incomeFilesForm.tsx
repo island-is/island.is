@@ -33,7 +33,7 @@ const IncomeFilesForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Gögn
+          Tekjugögn
         </Text>
 
         <Text marginBottom={[3, 3, 4]}>
@@ -43,7 +43,7 @@ const IncomeFilesForm = () => {
         </Text>
 
         <div className={styles.fileContainer}>
-          <Box className={styles.files}>
+          <Box className={styles.files} marginBottom={2}>
             <InputFileUpload
               fileList={[]}
               header="Dragðu gögn hingað"
@@ -54,6 +54,16 @@ const IncomeFilesForm = () => {
               // errorMessage={state.length > 0 ? error : undefined}
             />
           </Box>
+          <div
+            className={cn({
+              [`errorMessage ${styles.files}`]: true,
+              [`showErrorMessage`]: false,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að hlaða upp gögnum
+            </Text>
+          </div>
         </div>
       </FormContentContainer>
 

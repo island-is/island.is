@@ -31,6 +31,8 @@ export interface Application {
   ledger?: string
   accountNumber?: string
   interview?: boolean
+  employmentCustom?: string
+  homeCircumstancesCustom?: string
 }
 
 export interface CreateApplication {
@@ -47,6 +49,8 @@ export interface CreateApplication {
   ledger?: string
   accountNumber?: string
   interview?: boolean
+  employmentCustom?: string
+  homeCircumstancesCustom?: string
 }
 
 export interface Municipality {

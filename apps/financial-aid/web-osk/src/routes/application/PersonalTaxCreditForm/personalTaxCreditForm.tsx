@@ -33,7 +33,7 @@ const PersonalTaxCreditForm = () => {
       value: 0,
     },
     {
-      label: 'Nei, vil nota persónuafslátt í annað',
+      label: 'Nei, nýti ekki persónuafslátt',
       value: 1,
     },
   ]
@@ -49,26 +49,25 @@ const PersonalTaxCreditForm = () => {
         </Text>
 
         <Text marginBottom={[3, 3, 4]}>
-          Lengflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn.
+          Langflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn.
           Almennt má segja að „Já“ sé besti kostur nema þú vitir sérstaklega um
           annað sem þú vilt nýta hann í.
         </Text>
 
-        <div className={styles.container}>
-          <RadioButtonContainer
-            options={options}
-            error={error && !form?.usePersonalTaxCredit}
-            isChecked={(value: string | number | boolean) => {
-              return value === form?.usePersonalTaxCredit
-            }}
-            onChange={(value: string | number | boolean) => {
-              updateForm({ ...form, usePersonalTaxCredit: value })
-              if (error) {
-                setError(false)
-              }
-            }}
-          />
-        </div>
+        <RadioButtonContainer
+          className={styles.container}
+          options={options}
+          error={error && !form?.usePersonalTaxCredit}
+          isChecked={(value: number | boolean) => {
+            return value === form?.usePersonalTaxCredit
+          }}
+          onChange={(value: number | boolean) => {
+            updateForm({ ...form, usePersonalTaxCredit: value })
+            if (error) {
+              setError(false)
+            }
+          }}
+        />
 
         <div
           className={cn({
@@ -81,6 +80,16 @@ const PersonalTaxCreditForm = () => {
             Þú þarft að svara
           </Text>
         </div>
+
+        <Text as="h2" variant="h3" marginBottom={2} marginTop={[2, 2, 3]}>
+          Nánar um persónuafslátt
+        </Text>
+        <Text marginBottom={[3, 3, 4]}>
+          Persónuafsláttur er skattaafsláttur sem veittur er öllum einstaklingum
+          eldri en 16 ára. Persónuafslætti má safna upp á milli mánaða og nýta
+          síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs
+          fellur niður við lok þess.
+        </Text>
       </FormContentContainer>
 
       <FormFooter

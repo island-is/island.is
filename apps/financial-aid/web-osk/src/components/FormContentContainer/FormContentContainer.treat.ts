@@ -12,7 +12,7 @@ export const formContainer = style({
   paddingRight: theme.spacing[3],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridColumn: '2/9',
+      gridColumn: '2/10',
       paddingLeft: `0px`,
       paddingRight: `0px`,
     },
