@@ -20,4 +20,11 @@ export default {
     dsn:
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
+  audit: {
+    defaultNamespace: '@island.is/user-profile',
+  },
+  auth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@island.is',
+  },
 }

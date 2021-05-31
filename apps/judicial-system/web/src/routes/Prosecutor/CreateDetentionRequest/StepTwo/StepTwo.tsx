@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 
-import { Option } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   User,
   UserRole,
@@ -15,7 +15,10 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  Modal,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -27,6 +30,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import StepTwoForm from './StepTwoForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()
@@ -34,11 +38,6 @@ export const StepTwo: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-
-  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
-  const [requestedCourtDateIsValid, setRequestedCourtDateIsValid] = useState(
-    false,
-  )
 
   const { user } = useContext(UserContext)
   const { sendNotification, isSendingNotification } = useCase()
@@ -53,66 +52,27 @@ export const StepTwo: React.FC = () => {
     errorPolicy: 'all',
   })
 
+  const { courts, loading: institutionLoading } = useInstitution()
+
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
     if (!workingCase && data) {
-      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
-
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
 
-  const courts = [
-    {
-      label: 'Héraðsdómur Reykjavíkur',
-      value: 0,
-    },
-    {
-      label: 'Héraðsdómur Vesturlands',
-      value: 1,
-    },
-    {
-      label: 'Héraðsdómur Vestfjarða',
-      value: 2,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands vestra',
-      value: 3,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands eystra',
-      value: 4,
-    },
-    {
-      label: 'Héraðsdómur Austurlands',
-      value: 5,
-    },
-    {
-      label: 'Héraðsdómur Reykjaness',
-      value: 6,
-    },
-  ]
-
   const prosecutors = userData?.users
     .filter(
-      (aUser: User, _: number) =>
+      (aUser: User) =>
         aUser.role === UserRole.PROSECUTOR &&
         aUser.institution?.id === user?.institution?.id,
     )
     .map((prosecutor: User, _: number) => {
       return { label: prosecutor.name, value: prosecutor.id }
     })
-
-  const defaultCourt = courts.filter(
-    (court) => court.label === workingCase?.court,
-  )
-
-  const defaultProsecutor = prosecutors?.filter(
-    (prosecutor: Option) => prosecutor.value === workingCase?.prosecutor?.id,
-  )
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -189,32 +149,51 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={loading || userLoading}
+      isLoading={loading || userLoading || institutionLoading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
-      {workingCase ? (
-        <StepTwoForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          prosecutors={prosecutors}
-          defaultProsecutor={defaultProsecutor}
-          courts={courts}
-          defaultCourt={defaultCourt}
-          arrestDateIsValid={arrestDateIsValid}
-          setArrestDateIsValid={setArrestDateIsValid}
-          requestedCourtDateIsValid={requestedCourtDateIsValid}
-          setRequestedCourtDateIsValid={setRequestedCourtDateIsValid}
-          handleNextButtonClick={handleNextButtonClick}
-          transitionLoading={transitionLoading}
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          router={router}
-          sendNotification={sendNotification}
-          isSendingNotification={isSendingNotification}
-        />
+      {workingCase && prosecutors && !institutionLoading ? (
+        <>
+          <StepTwoForm
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            prosecutors={prosecutors}
+            courts={courts}
+            handleNextButtonClick={handleNextButtonClick}
+            transitionLoading={transitionLoading}
+          />
+          {modalVisible && (
+            <Modal
+              title="Viltu senda tilkynningu?"
+              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann'
+              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
+              primaryButtonText="Senda tilkynningu"
+              secondaryButtonText="Halda áfram með kröfu"
+              handleClose={() => setModalVisible(false)}
+              handleSecondaryButtonClick={() =>
+                router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+              }
+              handlePrimaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                }
+              }}
+              isPrimaryButtonLoading={isSendingNotification}
+            />
+          )}
+        </>
       ) : null}
     </PageLayout>
   )

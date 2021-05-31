@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen } from '../types'
+import { useMutation } from '@apollo/client'
+import { Controller, useFormContext } from 'react-hook-form'
+import Markdown from 'markdown-to-jsx'
+
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Icon,
@@ -16,15 +20,13 @@ import {
   coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
-import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 
+import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
-import Markdown from 'markdown-to-jsx'
-import { ClassSerializerInterceptor } from '@nestjs/common'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -32,21 +34,31 @@ const ProviderItem: FC<{
 }> = ({ dataProviderResult = {}, provider }) => {
   const { subTitle, title } = provider
   const { formatMessage } = useLocale()
+
   return (
     <Box marginBottom={3}>
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
+
       {subTitle && (
         <Text>
           <Markdown>{formatMessage(subTitle)}</Markdown>
         </Text>
       )}
+
       {provider.type && dataProviderResult?.status === 'failure' && (
-        <InputError
-          errorMessage={dataProviderResult?.reason}
-          id={provider.id}
-        />
+        <Box marginTop={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            message={
+              typeof dataProviderResult?.reason === 'object'
+                ? formatMessage(dataProviderResult?.reason)
+                : dataProviderResult?.reason
+            }
+          />
+        </Box>
       )}
     </Box>
   )
@@ -80,7 +92,7 @@ const FormExternalDataProvider: FC<{
   formValue,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { setValue, clearErrors } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
@@ -114,6 +126,7 @@ const FormExternalDataProvider: FC<{
                 type,
               })),
             },
+            locale,
           },
         })
 
@@ -171,35 +184,29 @@ const FormExternalDataProvider: FC<{
         render={({ value, onChange }) => {
           return (
             <>
-              <Box
-                background="blue100"
-                display="flex"
-                padding={4}
-                borderRadius="large"
-                marginTop={1}
-                key={`${id}`}
-              >
-                <Checkbox
-                  onChange={(e) => {
-                    const isChecked = e.target.checked
-                    clearErrors(id)
-                    setValue(id as string, isChecked)
-                    onChange(isChecked)
-                    activateBeforeSubmitCallback(isChecked)
-                  }}
-                  checked={value}
-                  hasError={error !== undefined}
-                  name={`${id}`}
-                  label={
-                    <Markdown>
-                      {checkboxLabel
-                        ? formatMessage(checkboxLabel)
-                        : formatMessage(coreMessages.externalDataAgreement)}
-                    </Markdown>
-                  }
-                  value={id}
-                />
-              </Box>
+              <Checkbox
+                large={true}
+                onChange={(e) => {
+                  const isChecked = e.target.checked
+                  clearErrors(id)
+                  setValue(id as string, isChecked)
+                  onChange(isChecked)
+                  activateBeforeSubmitCallback(isChecked)
+                }}
+                checked={value}
+                hasError={error !== undefined}
+                backgroundColor="blue"
+                name={`${id}`}
+                label={
+                  <Markdown>
+                    {checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)}
+                  </Markdown>
+                }
+                value={id}
+              />
+
               {error !== undefined && <InputError errorMessage={error} />}
             </>
           )

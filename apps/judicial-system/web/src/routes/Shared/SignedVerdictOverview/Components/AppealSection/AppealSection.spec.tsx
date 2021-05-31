@@ -11,6 +11,8 @@ describe('Appeal section component', () => {
         accusedGender={CaseGender.MALE}
         handleAccusedAppeal={() => null}
         handleProsecutorAppeal={() => null}
+        isAppealDeadlineExpired={false}
+        isAppealGracePeriodExpired={false}
       />,
     )
 
@@ -29,6 +31,8 @@ describe('Appeal section component', () => {
         accusedPostponedAppealDate="2020-09-16T19:50:08.033Z"
         handleAccusedAppeal={() => null}
         handleProsecutorAppeal={() => null}
+        isAppealDeadlineExpired={false}
+        isAppealGracePeriodExpired={false}
       />,
     )
 
@@ -45,6 +49,8 @@ describe('Appeal section component', () => {
         prosecutorPostponedAppealDate="2020-09-16T19:50:08.033Z"
         handleAccusedAppeal={() => null}
         handleProsecutorAppeal={() => null}
+        isAppealDeadlineExpired={false}
+        isAppealGracePeriodExpired={false}
       />,
     )
 

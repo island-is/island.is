@@ -35,6 +35,12 @@
     "admin.api-scope-user.[apiScopeUser]": {
       "title": "Edit Api Scope User"
     },
+    "admin.api-scope-group.index": {
+      "title": "Create Api Scope Group"
+    },
+    "admin.api-scope-group.[groupId]": {
+      "title": "Edit Api Scope Group"
+    },
     "admin.api-scope-user.index": {
       "title": "Create Api Scope user"
     },
@@ -194,6 +200,9 @@
         },
         "claims": {
           "text": "Claims"
+        },
+        "apiResource": {
+          "text": "Connect Api Resource"
         }
       }
     },
@@ -240,6 +249,10 @@
         "apiScopeUsers": {
           "text": "Api Scope Users",
           "title": "List of Api Scope Users"
+        },
+        "apiScopeGroups": {
+          "text": "Api Scope Groups",
+          "title": "List of Api Scope Groups"
         },
         "idpProviders": {
           "text": "Identity Providers",
@@ -507,6 +520,43 @@
       }
     },
     {
+      "id": "ApiScopeGroupList",
+      "removeConfirmation": "Are you sure want to delete this group",
+      "title": "Api Scope Groups",
+      "search": {
+        "label": "Group name"
+      },
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for a group"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Group"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Group"
+        },
+        "new": {
+          "text": "Create new Group",
+          "helpText": "Open Group Form"
+        }
+      },
+      "columns": {
+        "groupId": {
+          "headerText": "Id"
+        },
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        }
+      }
+    },
+    {
       "id": "ApiResourcesList",
       "removeConfirmation": "Are you sure want to archive this Api resource",
       "title": "Api resources",
@@ -657,6 +707,44 @@
     }
   ],
   "formControls": [
+    {
+      "id": "ApiScopeGroupCreateForm",
+      "title": "Create a Api Scope Group",
+      "editTitle": "Edit Api Scope Group",
+      "help": "Create a group to organize Api Scopes",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        },
+        "new": {
+          "text": "Create a new group",
+          "helpText": "Create a new Api Scope Group"
+        },
+        "list": {
+          "text": "Go to group page",
+          "helpText": "Go to group page to edit and list up groups"
+        }
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "applications",
+          "helpText": "The name of the group",
+          "errorMessage": "The group is required and can not include invalid characters"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description of the group",
+          "helpText": "The default description of the group which the end user sees",
+          "errorMessage": "The group description is required and can not include invalid characters"
+        }
+      }
+    },
     {
       "id": "ApiScopeUserCreateForm",
       "title": "Create a new Api Scope User",
@@ -984,6 +1072,39 @@
       }
     },
     {
+      "id": "ApiScopeResourceForm",
+      "title": "Select an Api Resource",
+      "help": "An Api Scope can be associated with an Api Resource",
+      "buttons": {
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        }
+      },
+      "sections": {
+        "selectedItem": {
+          "title": "Info about this Api Resource",
+          "properties": {
+            "name": { "name": "Resource Name" },
+            "description": { "name": "Description" },
+            "displayName": { "name": "Display Name" }
+          }
+        }
+      },
+      "fields": {
+        "apiResourceName": {
+          "label": "Resource Name",
+          "helpText": "Select an Api Resource",
+          "errorMessage": "Api Resource is required",
+          "selectAnItem": "Select an Api Resource"
+        }
+      }
+    },
+    {
       "id": "ApiResourceScopeForm",
       "title": "Allowed scopes",
       "help": "An API must have at least one scope. Each scope can have different settings.",
@@ -1100,6 +1221,10 @@
         "cancel": {
           "text": "Cancel",
           "helpText": "Cancel changes"
+        },
+        "new": {
+          "text": "Create new claim",
+          "helpText": "Create a new claim"
         }
       },
       "fields": {
@@ -1220,6 +1345,11 @@
           "placeholder": "Description for this scope",
           "helpText": "The description value will be used e.g. on the consent screen.",
           "errorMessage": "Description needs to be in the right format"
+        },
+        "groupId": {
+          "label": "Group",
+          "helpText": "Assign this Api Scope to a group",
+          "selectAnItem": "Select a group if needed"
         },
         "enabled": {
           "label": "Enabled",

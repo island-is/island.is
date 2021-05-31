@@ -434,7 +434,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web"
+            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web -c"
           }
         },
         "lint": {
@@ -1128,6 +1128,36 @@
         }
       }
     },
+    "api-domains-national-registry-x-road": {
+      "root": "libs/api/domains/national-registry-x-road",
+      "sourceRoot": "libs/api/domains/national-registry-x-road/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/national-registry-x-road/tsconfig.lib.json",
+              "libs/api/domains/national-registry-x-road/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/national-registry-x-road/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry-x-road/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -1659,7 +1689,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form -c"
           }
         },
         "lint": {
@@ -1736,8 +1766,8 @@
       }
     },
     "application-templates-children-residence-change": {
-      "root": "libs/application/templates/children-residence-change",
-      "sourceRoot": "libs/application/templates/children-residence-change/src",
+      "root": "libs/application/templates/family-matters/children-residence-change",
+      "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1746,19 +1776,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/children-residence-change/tsconfig.lib.json",
-              "libs/application/templates/children-residence-change/tsconfig.spec.json"
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.lib.json",
+              "libs/application/templates/family-matters/children-residence-change/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/children-residence-change/**/*"
+              "!libs/application/templates/family-matters/children-residence-change/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/children-residence-change/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1839,6 +1869,34 @@
         }
       }
     },
+    "application-templates-driving-assessment-approval": {
+      "root": "libs/application/templates/driving-assessment-approval",
+      "sourceRoot": "libs/application/templates/driving-assessment-approval/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-assessment-approval/tsconfig.lib.json",
+              "libs/application/templates/driving-assessment-approval/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-assessment-approval/**/*"
+            ]
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
@@ -1907,6 +1965,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
+          }
+        }
+      }
+    },
+    "application-templates-family-matters-core": {
+      "root": "libs/application/templates/family-matters/core",
+      "sourceRoot": "libs/application/templates/family-matters/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/family-matters/core/tsconfig.lib.json",
+              "libs/application/templates/family-matters/core/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/family-matters/core/**/*"
+            ]
           }
         }
       }
@@ -2020,8 +2106,8 @@
       }
     },
     "application-templates-joint-custody-agreement": {
-      "root": "libs/application/templates/joint-custody-agreement",
-      "sourceRoot": "libs/application/templates/joint-custody-agreement/src",
+      "root": "libs/application/templates/family-matters/joint-custody-agreement",
+      "sourceRoot": "libs/application/templates/family-matters/joint-custody-agreement/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2030,13 +2116,19 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/joint-custody-agreement/tsconfig.lib.json",
-              "libs/application/templates/joint-custody-agreement/tsconfig.spec.json"
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.lib.json",
+              "libs/application/templates/family-matters/joint-custody-agreement/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/joint-custody-agreement/**/*"
+              "!libs/application/templates/family-matters/joint-custody-agreement/**/*"
             ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2508,7 +2600,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web"
+            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web -c"
           }
         },
         "lint": {
@@ -2573,6 +2665,48 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/auth-nest-tools"]
+        }
+      }
+    },
+    "auth-react": {
+      "root": "libs/auth/react",
+      "sourceRoot": "libs/auth/react/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/react"],
+          "options": {
+            "jestConfig": "libs/auth/react/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "auth-scopes": {
+      "root": "libs/auth/scopes",
+      "sourceRoot": "libs/auth/scopes/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/auth/scopes/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth/scopes"],
+          "options": {
+            "jestConfig": "libs/auth/scopes/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -2672,23 +2806,50 @@
         }
       }
     },
-    "clients-national-registry": {
-      "root": "libs/clients/national-registry",
-      "sourceRoot": "libs/clients/national-registry/src",
+    "clients-national-registry-v1": {
+      "root": "libs/clients/national-registry/v1",
+      "sourceRoot": "libs/clients/national-registry/v1/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/clients/national-registry/**/*.ts"]
+            "lintFilePatterns": ["libs/clients/national-registry/v1/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/national-registry"],
+          "outputs": ["coverage/libs/clients/national-registry/v1"],
           "options": {
-            "jestConfig": "libs/clients/national-registry/jest.config.js",
+            "jestConfig": "libs/clients/national-registry/v1/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-national-registry-v2": {
+      "root": "libs/clients/national-registry/v2",
+      "sourceRoot": "libs/clients/national-registry/v2/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/national-registry/v2/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/national-registry/v2"],
+          "options": {
+            "jestConfig": "libs/clients/national-registry/v2/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
         }
       }
@@ -2978,16 +3139,48 @@
         }
       }
     },
-    "contentful-translation-extension": {
-      "root": "libs/contentful-translation-extension",
-      "sourceRoot": "libs/contentful-translation-extension/src",
+    "contentful-mideind-extension": {
+      "root": "libs/contentful-extensions/mideind-translation",
+      "sourceRoot": "libs/contentful-extensions/mideind-translation/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/contentful-translation-extension/jest.config.js",
+            "jestConfig": "libs/contentful-extensions/mideind-translation/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-mideind-extension"]
+        }
+      }
+    },
+    "contentful-parent-slug-extension": {
+      "root": "libs/contentful-extensions/parent-slug",
+      "sourceRoot": "libs/contentful-extensions/parent-slug/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/parent-slug/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/contentful-parent-slug-extension"]
+        }
+      }
+    },
+    "contentful-translation-extension": {
+      "root": "libs/contentful-extensions/translation",
+      "sourceRoot": "libs/contentful-extensions/translation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-extensions/translation/jest.config.js",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/contentful-translation-extension"]
@@ -2995,14 +3188,14 @@
         "serve": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "contentful-extension-scripts start --input libs/contentful-translation-extension --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
+            "command": "contentful-extension-scripts start --input libs/contentful-extensions/translation --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
           }
         },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/contentful-translation-extension",
-            "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
+            "command": "contentful-extension-scripts build --input libs/contentful-extensions/translation --output dist/contentful-translation-extension"
           },
           "configurations": {
             "production": {}
@@ -3565,7 +3758,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web"
+            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web -c"
           }
         },
         "lint": {
@@ -4812,7 +5005,23 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": ["apps/reference-backend/src/assets"],
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/reference-backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/reference-backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/reference-backend",
+                "output": "./"
+              }
+            ],
             "maxWorkers": 2,
             "webpackConfig": "apps/reference-backend/webpack.config.js"
           },
@@ -5066,7 +5275,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
           }
         },
         "docker-static": {}
@@ -5140,7 +5349,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5203,7 +5412,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5275,7 +5484,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5332,7 +5541,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur"
+            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur -c"
           }
         },
         "lint": {
@@ -5376,7 +5585,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5564,7 +5773,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5600,7 +5809,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5666,7 +5875,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5714,9 +5923,32 @@
         }
       }
     },
-    "service-portal-settings": {
-      "root": "libs/service-portal/settings",
-      "sourceRoot": "libs/service-portal/settings/src",
+    "service-portal-settings-access-control": {
+      "root": "libs/service-portal/settings/access-control",
+      "sourceRoot": "libs/service-portal/settings/access-control/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/access-control/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/access-control"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-settings-personal-information": {
+      "root": "libs/service-portal/settings/personal-information",
+      "sourceRoot": "libs/service-portal/settings/personal-information/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -5725,27 +5957,29 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/service-portal/settings/tsconfig.lib.json",
-              "libs/service-portal/settings/tsconfig.spec.json"
+              "libs/service-portal/settings/personal-information/tsconfig.lib.json",
+              "libs/service-portal/settings/personal-information/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/service-portal/settings/**/*"
+              "!libs/service-portal/settings/personal-information/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/service-portal/settings/jest.config.js",
+            "jestConfig": "libs/service-portal/settings/personal-information/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/service-portal/settings"]
+          "outputs": [
+            "coverage/libs/service-portal/settings/personal-information"
+          ]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -5930,6 +6164,58 @@
         }
       }
     },
+    "services-auth-public-api": {
+      "root": "apps/services/auth-public-api",
+      "sourceRoot": "apps/services/auth-public-api/src",
+      "projectType": "application",
+      "prefix": "services-auth-public-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/auth-public-api",
+            "main": "apps/services/auth-public-api/src/main.ts",
+            "tsConfig": "apps/services/auth-public-api/tsconfig.app.json",
+            "assets": ["apps/services/auth-public-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/auth-public-api/src/environments/environment.ts",
+                  "with": "apps/services/auth-public-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-auth-public-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/auth-public-api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/auth-public-api"],
+          "options": {
+            "jestConfig": "apps/services/auth-public-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "services-documents": {
       "root": "apps/services/documents",
       "sourceRoot": "apps/services/documents/src",
@@ -6047,7 +6333,24 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
+            "webpackConfig": "apps/services/endorsements/api/webpack.config.js",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/services/endorsements/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/endorsements/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/endorsements/api",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -6127,6 +6430,106 @@
           "options": {
             "command": "../../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "services-party-letter-registry-api": {
+      "root": "apps/services/party-letter-registry-api",
+      "sourceRoot": "apps/services/party-letter-registry-api/src",
+      "projectType": "application",
+      "prefix": "services-party-letter-registry-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/party-letter-registry-api",
+            "main": "apps/services/party-letter-registry-api/src/main.ts",
+            "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json",
+            "webpackConfig": "apps/services/party-letter-registry-api/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/party-letter-registry-api/src/environments/environment.ts",
+                  "with": "apps/services/party-letter-registry-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-party-letter-registry-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/party-letter-registry-api/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/party-letter-registry-api"],
+          "options": {
+            "jestConfig": "apps/services/party-letter-registry-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
+            "commands": [
+              "nx run services-party-letter-registry-api:build",
+              "node dist/apps/services/party-letter-registry-api/buildOpenApi.js"
+            ],
+            "parallel": false
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo",
+            "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/party-letter-registry-api"
           }
         },
         "docker-express": {}
@@ -6215,6 +6618,106 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/services/search-indexer"]
+        },
+        "docker-express": {}
+      }
+    },
+    "services-temporary-voter-registry-api": {
+      "root": "apps/services/temporary-voter-registry-api",
+      "sourceRoot": "apps/services/temporary-voter-registry-api/src",
+      "projectType": "application",
+      "prefix": "services-temporary-voter-registry-api",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/temporary-voter-registry-api",
+            "main": "apps/services/temporary-voter-registry-api/src/main.ts",
+            "tsConfig": "apps/services/temporary-voter-registry-api/tsconfig.app.json",
+            "webpackConfig": "apps/services/temporary-voter-registry-api/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/temporary-voter-registry-api/src/environments/environment.ts",
+                  "with": "apps/services/temporary-voter-registry-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-temporary-voter-registry-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/temporary-voter-registry-api/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/temporary-voter-registry-api"],
+          "options": {
+            "jestConfig": "apps/services/temporary-voter-registry-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/services/temporary-voter-registry-api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
+            "commands": [
+              "nx run services-temporary-voter-registry-api:build",
+              "node dist/apps/services/temporary-voter-registry-api/buildOpenApi.js"
+            ],
+            "parallel": false
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/temporary-voter-registry-api"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "cwd": "apps/services/temporary-voter-registry-api"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo",
+            "cwd": "apps/services/temporary-voter-registry-api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/temporary-voter-registry-api"
+          }
         },
         "docker-express": {}
       }
@@ -6712,7 +7215,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web"
+            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web -c"
           }
         },
         "lint": {
@@ -6912,6 +7415,27 @@
         }
       }
     },
+    "utils-shared": {
+      "root": "libs/utils/shared",
+      "sourceRoot": "libs/utils/shared/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils/shared"],
+          "options": {
+            "jestConfig": "libs/utils/shared/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "web": {
       "root": "apps/web",
       "sourceRoot": "apps/web",
@@ -7028,7 +7552,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
+            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web -c"
           }
         },
         "lint": {

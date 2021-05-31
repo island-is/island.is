@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
+
 import { Box, Text } from '@island.is/island-ui/core'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
@@ -12,6 +13,7 @@ import {
   maxMonths,
 } from '../../config'
 import { YES } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface YourRightsBoxChartProps {
   application: Application
@@ -23,52 +25,31 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
   showDisclaimer = false,
 }) => {
   const { formatMessage } = useLocale()
-
+  const {
+    isRequestingRights,
+    requestDays,
+    isGivingRights,
+    giveDays,
+  } = useApplicationAnswers(application)
   const maxDays = maxDaysToGiveOrReceive
 
-  // Yes/No
-  const requestRightsAnswer = getValueViaPath(
-    application.answers,
-    'requestRights.isRequestingRights',
-    undefined,
-  )
-  // How many days requested?
-  const requestDaysAnswer = getValueViaPath(
-    application.answers,
-    'requestRights.requestDays',
-    undefined,
-  ) as number
-
-  // Yes/No
-  const giveRightsAnswer = getValueViaPath(
-    application.answers,
-    'giveRights.isGivingRights',
-    undefined,
-  )
-  // How many days given?
-  const giveDaysAnswer = getValueViaPath(
-    application.answers,
-    'giveRights.giveDays',
-    undefined,
-  ) as number
-
   const requestDaysStringKey =
-    requestDaysAnswer === 1
+    requestDays === 1
       ? parentalLeaveFormMessages.shared.requestRightsDay
       : parentalLeaveFormMessages.shared.requestRightsDays
 
   const yourRightsWithGivenDaysStringKey =
-    maxDays - giveDaysAnswer === 1
+    maxDays - giveDays === 1
       ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
       : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
 
   const giveDaysStringKey =
-    giveDaysAnswer === 1
+    giveDays === 1
       ? parentalLeaveFormMessages.shared.giveRightsDay
       : parentalLeaveFormMessages.shared.giveRightsDays
 
   const boxChartKeys =
-    requestRightsAnswer === YES
+    isRequestingRights === YES
       ? [
           {
             label: () => ({
@@ -80,19 +61,19 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           {
             label: () => ({
               ...requestDaysStringKey,
-              values: { day: requestDaysAnswer },
+              values: { day: requestDays },
             }),
             bulletStyle: 'greenWithLines',
           },
         ]
-      : giveRightsAnswer === YES
+      : isGivingRights === YES
       ? [
           {
             label: () => ({
               ...yourRightsWithGivenDaysStringKey,
               values: {
                 months: minMonths,
-                day: maxDays - giveDaysAnswer,
+                day: maxDays - giveDays,
               },
             }),
             bulletStyle: 'blue',
@@ -108,17 +89,17 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           },
         ]
 
-  if (giveRightsAnswer === YES) {
+  if (isGivingRights === YES) {
     boxChartKeys.push({
       label: () => ({
         ...giveDaysStringKey,
-        values: { day: giveDaysAnswer },
+        values: { day: giveDays },
       }),
       bulletStyle: 'grayWithLines',
     })
   }
 
-  const numberOfBoxes = requestRightsAnswer === YES ? maxMonths : defaultMonths
+  const numberOfBoxes = isRequestingRights === YES ? maxMonths : defaultMonths
 
   return (
     <Box marginY={3} key={'YourRightsBoxChart'}>
@@ -130,10 +111,10 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
         })}
         boxes={numberOfBoxes}
         calculateBoxStyle={(index) => {
-          if (index === minMonths && giveRightsAnswer === YES) {
+          if (index === minMonths && isGivingRights === YES) {
             return 'grayWithLines'
           }
-          if (index === defaultMonths && requestRightsAnswer === 'yes') {
+          if (index === defaultMonths && isRequestingRights === YES) {
             return 'greenWithLines'
           }
           return 'blue'

@@ -5,16 +5,22 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
+  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
+import { NO, YES } from '../constants'
+
+const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
@@ -26,6 +32,71 @@ export const PrerequisitesForm: Form = buildForm({
       id: 'prerequisites',
       title: parentalLeaveFormMessages.shared.prerequisitesSection,
       children: [
+        ...(shouldRenderMockDataSubSection
+          ? [
+              buildSubSection({
+                id: 'mockData',
+                title: 'Gervigögn',
+                children: [
+                  buildMultiField({
+                    id: 'shouldMock',
+                    title: 'Gervigögn',
+                    children: [
+                      buildRadioField({
+                        id: 'useMockData',
+                        title: 'Viltu nota gervigögn?',
+                        width: 'half',
+                        options: [
+                          {
+                            value: YES,
+                            label: 'Já',
+                          },
+                          {
+                            value: NO,
+                            label: 'Nei',
+                          },
+                        ],
+                      }),
+                      buildRadioField({
+                        id: 'useMockedParentalRelation',
+                        title: 'Tengsl við barn:',
+                        width: 'half',
+                        condition: (answers) => answers.useMockData === YES,
+                        options: [
+                          {
+                            value: 'primary',
+                            label: 'Móðir',
+                          },
+                          {
+                            value: 'secondary',
+                            label: 'Hitt foreldri',
+                          },
+                        ],
+                      }),
+                      buildTextField({
+                        id: 'useMockedDateOfBirth',
+                        title: 'Áætlaður fæðingardagur:',
+                        condition: (answers) =>
+                          answers.useMockData === YES &&
+                          !!answers.useMockedParentalRelation,
+                        placeholder: 'YYYY-MM-DD',
+                        format: '####-##-##',
+                      }),
+                      buildTextField({
+                        id: 'useMockedPrimaryParentNationalRegistryId',
+                        title: 'Kennitala móður:',
+                        condition: (answers) =>
+                          answers.useMockData === YES &&
+                          answers.useMockedParentalRelation === 'secondary',
+                        placeholder: '1234567-7890',
+                        format: '######-####',
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ]
+          : []),
         buildSubSection({
           id: 'externalData',
           title: parentalLeaveFormMessages.shared.externalDataSubSection,
@@ -78,38 +149,37 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'selectedChild',
-                  title: 'Veldu barn',
+                  title: parentalLeaveFormMessages.selectChild.subSection,
                   component: 'ChildSelector',
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  placement: 'footer',
                   title: parentalLeaveFormMessages.confirmation.title,
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
                       event: 'SUBMIT',
-                      name: 'Velja',
+                      name: parentalLeaveFormMessages.selectChild.choose,
                       type: 'primary',
                     },
                   ],
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'thankYou',
-              title: 'Nú getur þú byrjað umsóknina',
-              component: 'Conclusion',
-              condition: (_, externalData) =>
-                isEligibleForParentalLeave(externalData),
+            // Has to be here so that the submit button appears (does not appear if no screen is left).
+            // Tackle that as AS task.
+            buildDescriptionField({
+              id: 'unused',
+              title: '',
+              description: '',
             }),
             // TODO: Custom component with a lot more explanation of why you may not see any children
-            buildDescriptionField({
-              id: 'notEligible',
-              title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
-              description:
-                parentalLeaveFormMessages.selectChild.notEligibleDescription,
-            }),
+            // buildDescriptionField({
+            //   id: 'notEligible',
+            //   title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
+            //   description:
+            //     parentalLeaveFormMessages.selectChild.notEligibleDescription,
+            // }),
           ],
         }),
       ],

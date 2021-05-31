@@ -2,7 +2,6 @@ import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import {
   Application,
-  DataProviderResult,
   ExternalData,
   FormValue,
   getValueViaPath,
@@ -12,18 +11,16 @@ import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from './lib/messages'
-
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
+import { YES, NO, MANUAL, SPOUSE } from './constants'
+import { SchemaFormValues } from './lib/dataSchema'
+import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
+import { daysToMonths } from './lib/directorateOfLabour.utils'
 import {
-  ParentalLeave,
-  PregnancyStatus,
   ChildInformation,
   ChildrenAndExistingApplications,
-} from './dataProviders/APIDataTypes'
-import { daysInMonth, defaultMonths } from './config'
-import { YES, NO } from './constants'
-import { SchemaFormValues } from './lib/dataSchema'
+} from './dataProviders/Children/types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -44,7 +41,7 @@ export function getNameAndIdOfSpouse(
   familyMembers?: FamilyMember[],
 ): [string?, string?] {
   const spouse = familyMembers?.find(
-    (member) => member.familyRelation === 'spouse',
+    (member) => member.familyRelation === SPOUSE,
   )
   if (!spouse) {
     return [undefined, undefined]
@@ -62,6 +59,7 @@ export function formatPeriods(
   otherParentPeriods?: Period[],
 ): TimelinePeriod[] {
   const timelinePeriods: TimelinePeriod[] = []
+
   periods?.forEach((period, index) => {
     if (period.startDate && period.endDate) {
       timelinePeriods.push({
@@ -72,6 +70,7 @@ export function formatPeriods(
       })
     }
   })
+
   otherParentPeriods?.forEach((period) => {
     timelinePeriods.push({
       startDate: period.startDate,
@@ -91,16 +90,10 @@ export function formatPeriods(
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-/**
- * Uses `daysInMonth`: 30 as the number of days in a month on average
- */
-const daysToMonths = (n: number) => n / daysInMonth
-
-/**
- * Returns the maximum number of months available for the applicant.
- * Returns as well the days given or requested by the applicant.
- */
-export const getAvailableRights = (application: Application) => {
+export const getTransferredDays = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => {
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
@@ -110,29 +103,44 @@ export const getAvailableRights = (application: Application) => {
     'giveRights',
   ) as SchemaFormValues['giveRights']
 
-  let requestedDays = 0
-  let givenDays = 0
-  let days = defaultMonths * daysInMonth
-  let months = defaultMonths
+  let days = 0
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    requestedDays = requestRights.requestDays
-    days = days + requestedDays
-    months = months + daysToMonths(requestedDays)
+    const requestedDays = requestRights.requestDays
+
+    days = requestedDays
   }
 
-  if (giveRights?.isGivingRights === YES && giveRights.giveDays) {
-    givenDays = giveRights.giveDays
-    days = days + givenDays
-    months = months + daysToMonths(givenDays)
+  if (
+    selectedChild.hasRights &&
+    giveRights?.isGivingRights === YES &&
+    giveRights.giveDays
+  ) {
+    const givenDays = giveRights.giveDays
+
+    days = -givenDays
   }
 
-  return {
-    requestedDays,
-    givenDays,
-    days,
-    months: Number(months.toFixed(1)), // TODO: do we want to truncate decimals?
+  return days
+}
+
+/**
+ * Returns the number of months available for the applicant.
+ */
+export const getAvailableRightsInMonths = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
   }
+
+  return daysToMonths(
+    selectedChild.remainingDays +
+      getTransferredDays(application, selectedChild),
+  )
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -148,17 +156,17 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.noOtherParent,
     },
     {
-      value: 'manual',
+      value: MANUAL,
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]
 
   if (family && family.length > 0) {
-    const spouse = family.find((member) => member.familyRelation === 'spouse')
+    const spouse = family.find((member) => member.familyRelation === SPOUSE)
 
     if (spouse) {
       options.unshift({
-        value: 'spouse',
+        value: SPOUSE,
         label: {
           ...parentalLeaveFormMessages.shared.otherParentSpouse,
           values: {
@@ -212,16 +220,26 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
+  const dataProvider = getValueViaPath(
+    externalData,
+    'children.data',
+  ) as PregnancyStatusAndRightsResults
+
   const children = getValueViaPath(
     externalData,
     'children.data.children',
     [],
   ) as ChildrenAndExistingApplications['children']
+
   const existingApplications = getValueViaPath(
     externalData,
     'children.data.existingApplications',
     [],
   ) as ChildrenAndExistingApplications['existingApplications']
 
-  return children.length > 0 || existingApplications.length > 0
+  return (
+    dataProvider?.hasActivePregnancy &&
+    (children.length > 0 || existingApplications.length > 0) &&
+    dataProvider?.remainingDays > 0
+  )
 }

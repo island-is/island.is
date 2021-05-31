@@ -48,7 +48,6 @@ export const ComplaintForm: Form = buildForm({
           title: externalData.general.pageTitle,
           id: 'approveExternalData',
           subTitle: externalData.general.subTitle,
-          description: externalData.general.description,
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
@@ -62,6 +61,12 @@ export const ComplaintForm: Form = buildForm({
               type: 'UserProfileProvider',
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfileDescription',
+              type: 'UserProfileDescription',
+              title: '',
+              subTitle: externalData.general.description,
             }),
           ],
         }),
@@ -304,6 +309,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.name,
                   backgroundColor: 'blue',
                   disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.fullName,
                 }),
@@ -314,6 +320,7 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   backgroundColor: 'blue',
                   disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data
                       ?.nationalId,
@@ -323,7 +330,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.streetAddress,
@@ -333,7 +340,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.postalCode,
@@ -343,7 +350,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
-                  disabled: true,
+                  required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
                       ?.city,
@@ -389,6 +396,7 @@ export const ComplaintForm: Form = buildForm({
                   id: 'organizationOrInstitution.name',
                   title: info.labels.organizationOrInstitutionName,
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.nationalId',
@@ -396,24 +404,28 @@ export const ComplaintForm: Form = buildForm({
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'organizationOrInstitution.email',
@@ -448,10 +460,12 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'comissionsSection',
               title: info.general.commissionsPageTitle,
-              // TODO: We probably need a custom component for the description
-              // so we can include the document link
-              description: info.general.commissionsPageDescription,
               children: [
+                buildCustomField({
+                  id: 'commissions.commissionDocument',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionDocument',
+                }),
                 buildFileUploadField({
                   id: 'commissions.documents',
                   title: '',
@@ -578,10 +592,15 @@ export const ComplaintForm: Form = buildForm({
                   title: complaint.labels.complaintDescription,
                   component: 'ComplaintDescription',
                 }),
+                buildCustomField({
+                  id: 'complaint.documentHeading',
+                  title: complaint.labels.complaintDescription,
+                  component: 'ComplaintDocumentHeading',
+                }),
                 buildFileUploadField({
                   id: 'complaint.documents',
-                  title: complaint.labels.complaintDocumentsTitle,
-                  introduction: complaint.labels.complaintDocumentsIntroduction,
+                  title: '',
+                  introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
                   uploadHeader: complaint.labels.complaintDocumentsHeader,
                   uploadDescription:

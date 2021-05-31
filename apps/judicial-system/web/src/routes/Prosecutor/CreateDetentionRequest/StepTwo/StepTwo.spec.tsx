@@ -7,13 +7,13 @@ import formatISO from 'date-fns/formatISO'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
   mockUsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import StepTwo from './StepTwo'
-import addDays from 'date-fns/addDays'
 
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -37,25 +37,15 @@ describe('Create detention request, step two', () => {
           ...mockCaseQueries,
           ...mockProsecutorQuery,
           ...mockUsersQuery,
-          ...mockUpdateCaseMutation([
-            {
-              arrestDate: '2020-11-15',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              arrestDate: '2020-11-15T13:37:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth, {
-                representation: 'date',
-              }),
-            } as UpdateCase,
-            {
-              id: 'test_id_6',
-              requestedCourtDate: formatISO(lastDateOfTheMonth),
-            } as UpdateCase,
-          ]),
+          ...mockInstitutionsQuery,
+          ...mockUpdateCaseMutation(
+            [
+              {
+                requestedCourtDate: formatISO(lastDateOfTheMonth),
+              } as UpdateCase,
+            ],
+            'test_id_6',
+          ),
         ]}
         addTypename={false}
       >
@@ -115,7 +105,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -142,7 +137,12 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUsersQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -153,43 +153,5 @@ describe('Create detention request, step two', () => {
 
     // Assert
     expect(await screen.findByLabelText('Veldu dagsetningu *')).toBeDisabled()
-  })
-
-  test('should not allow users to select an arrest date in the future', async () => {
-    // Arrange
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_3' },
-    }))
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
-        addTypename={false}
-      >
-        <UserProvider>
-          <StepTwo />
-        </UserProvider>
-      </MockedProvider>,
-    )
-
-    const datePickerWrappers = await screen.findAllByTestId('datepicker')
-
-    expect(datePickerWrappers.length).toEqual(2)
-
-    const arrestWrapper = within(datePickerWrappers[0])
-
-    const arrestDatePicker = arrestWrapper.getAllByText('Veldu dagsetningu')
-
-    userEvent.click(arrestDatePicker[0])
-
-    const tomorrow = addDays(new Date(), 1).getDate().toString()
-
-    // Assert
-    expect(arrestWrapper.getAllByText(tomorrow)[0]).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
   })
 })

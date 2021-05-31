@@ -3,12 +3,14 @@ import { ApiResourceScopeDTO } from '../entities/dtos/api-resource-allowed-scope
 import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
 import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
+import { ApiScopeGroupDTO } from '../entities/dtos/api-scope-group.dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
 import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
 import { ApiResource } from '../entities/models/api-resource.model'
+import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
 import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
@@ -198,6 +200,11 @@ export class ResourcesService extends BaseService {
     )
   }
 
+  /** Get's all Api resources without count */
+  static async findAllApiResources(): Promise<ApiResource[] | null> {
+    return BaseService.GET(`all-api-resources`)
+  }
+
   /** Creates a new Api Scope */
   static async createApiScope(apiScope: ApiScopeDTO): Promise<ApiScope | null> {
     return BaseService.POST('api-scope', apiScope)
@@ -244,6 +251,24 @@ export class ResourcesService extends BaseService {
       `api-resource-claims/${encodeURIComponent(
         apiResourceName,
       )}/${encodeURIComponent(claimName)}`,
+    )
+  }
+
+  /** Get the api resource that is connected to a scope */
+  static async findApiResourceScopeByScopeName(
+    scopeName: string,
+  ): Promise<ApiResourceScope | null> {
+    return BaseService.GET(
+      `api-scope-resource/${encodeURIComponent(scopeName)}`,
+    )
+  }
+
+  /** Delete Api Scope from Api Resource Scope */
+  static async DeleteApiResourceScopeByScopeName(
+    scopeName: string,
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `api-scope-resource/${encodeURIComponent(scopeName)}`,
     )
   }
 
@@ -324,4 +349,53 @@ export class ResourcesService extends BaseService {
       'Archived',
     ]
   }
+
+  // #region ApiScopeGroup
+
+  /** Creates a new Api Scope Group */
+  static async createApiScopeGroup(
+    group: ApiScopeGroupDTO,
+  ): Promise<ApiScopeGroup | null> {
+    return BaseService.POST(`api-scope-group`, group)
+  }
+
+  /** Updates an existing ApiScopeGroup */
+  static async updateApiScopeGroup(
+    group: ApiScopeGroupDTO,
+    id: string,
+  ): Promise<[number, ApiScopeGroup[]] | null> {
+    return BaseService.PUT(`api-scope-group/${id}`, group)
+  }
+
+  /** Delete ApiScopeGroup */
+  static async deleteApiScopeGroup(id: string): Promise<number | null> {
+    return BaseService.DELETE(`api-scope-group/${id}`)
+  }
+
+  /** Returns a ApiScopeGroup by Id */
+  static async findApiScopeGroup(id: string): Promise<ApiScopeGroup> {
+    return BaseService.GET(`api-scope-group/${encodeURIComponent(id)}`)
+  }
+
+  /** Returns all ApiScopeGroups with Paging */
+  static async findAllApiScopeGroups(
+    searchString: string = null,
+    page: number = null,
+    count: number = null,
+  ): Promise<
+    | {
+        rows: ApiScopeGroup[]
+        count: number
+      }
+    | ApiScopeGroup[]
+    | null
+  > {
+    if (page && count) {
+      return BaseService.GET(
+        `api-scope-group?searchString=${searchString}&page=${page}&count=${count}`,
+      )
+    }
+    return BaseService.GET(`api-scope-group`)
+  }
+  // #endregion ApiScopeGroup
 }

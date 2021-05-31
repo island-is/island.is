@@ -104,6 +104,7 @@ export class FormItem {
   selectItems: Record<string, SelectField>
   popUpTitle?: string
   popUpDescription?: string
+  selectAnItem?: string
 }
 
 export class SelectField {

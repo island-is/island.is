@@ -29,7 +29,6 @@ interface Category {
     | 'white'
     | 'red'
     | 'mint'
-    | 'darkerMint'
     | 'rose'
     | 'blueberry'
   name: string

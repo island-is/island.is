@@ -102,13 +102,21 @@ export const HearingArrangements: React.FC = () => {
   }
 
   const judges = (userData?.users || [])
-    .filter((user: User) => user.role === UserRole.JUDGE)
+    .filter(
+      (user: User) =>
+        user.role === UserRole.JUDGE &&
+        user.institution?.id === workingCase?.court?.id,
+    )
     .map((judge: User) => {
       return { label: judge.name, value: judge.id }
     })
 
   const registrars = (userData?.users || [])
-    .filter((user: User) => user.role === UserRole.REGISTRAR)
+    .filter(
+      (user: User) =>
+        user.role === UserRole.REGISTRAR &&
+        user.institution?.id === workingCase?.court?.id,
+    )
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
@@ -203,6 +211,7 @@ export const HearingArrangements: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>

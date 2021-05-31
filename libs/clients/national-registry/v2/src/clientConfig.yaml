@@ -1,0 +1,1715 @@
+x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v9.0.0.0))
+openapi: 3.0.0
+info:
+  title: Einstaklingur
+  description:
+    The API retrieves information about individuals stored in the Icelandic
+    registry.
+  contact:
+    name: Skra.is
+    url: https://www.skra.is/
+    email: skra@skra.is
+  version: v1
+  x-category:
+    - personal
+    - official
+  x-pricing:
+    - free
+    - paid
+  x-links:
+    documentation: https://www.skra.is/um-okkur/utgafur-og-skjol/taknmal-thjodskrar/
+    responsibleParty: https://www.skra.is/um-okkur
+servers:
+  - url: https://api-dev.skra.is/business/einstaklingar
+paths:
+  '/api/v1/einstaklingar/{id}':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the basic information for an individual.
+      operationId: Einstaklingar_GetEinstaklingur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual being fetched.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The basic information for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Einstaklingsupplysingar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/faedingarstadur':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the registered birthplace for an individual.
+      operationId: Einstaklingar_GetFaedingarstadur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The birthplace information for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Faedingarstadur'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/rikisfang':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the citizenship for an individual.
+      operationId: Einstaklingar_GetRikisfang
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The citizenship information for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Rikisfang'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/trufelag':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the religion registration for an individual.
+      operationId: Einstaklingar_GetTrufelag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The religion registration information for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Trufelagsskraning'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/logheimili':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the legal domicile for an individual.
+      operationId: Einstaklingar_GetLogheimili
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The legal domicile registered for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Heimili'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/adsetur':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the residence information for an individual.
+      operationId: Einstaklingar_GetAdsetur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The residence information registered for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Adsetur'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/buseta':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the residence history for an individual.
+      operationId: Einstaklingar_GetBuseta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The residence history registered for the individual.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Heimili'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/lograda':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Is the individual of legal age.
+      operationId: Einstaklingar_GetLograda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description:
+            Yes or no answer depending on if the individual is of legal
+            age.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Lograda'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/hjuskapur':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the cohabitation information for an individual.
+      operationId: Einstaklingar_GetHjuskapur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The registered cohabitation details for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Hjuskapur'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/fjolskylda':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get a list of family members for an individual.
+      operationId: Einstaklingar_GetFjolskylda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of family members for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Fjolskylda'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/fjolskyldumedlimir':
+    get:
+      tags:
+        - Einstaklingar
+      summary:
+        Get a list of family members with detailed information for each family
+        member.
+      operationId: Einstaklingar_GetFjolskyldumedlimir
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of family members for the individual.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Fjolskyldumedlimir'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/logborn':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get all the children the individual is a legal parent of.
+      operationId: Einstaklingar_GetLogborn
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all the children the individual is a legal parent of.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/logforeldrar':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the legal parents of an individual.
+      operationId: Einstaklingar_GetLogforeldrar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of the individuals legal parents.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/forsja':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the list of childrens the individual has custody of.
+      operationId: Einstaklingar_GetForsja
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all the children the individual has custody of.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/forsja/{barn}':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the parents that have custody of the child.
+      operationId: Einstaklingar_GetForsjaForeldri
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Kennitala einstaklings.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: barn
+          in: path
+          required: true
+          description: Kennitala einstaklings.
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of parents.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/einstaklingar/{id}/samibuar':
+    get:
+      tags:
+        - Einstaklingar
+      summary: Get the list of residents that live with the individual.
+      operationId: Einstaklingar_GetSamibuar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: National id of the individual.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of residents.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No individual exists with that national id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/fasteignir/{id}/ibuar':
+    get:
+      tags:
+        - Fasteignir
+      summary:
+        Get the list of residents living in the real estate with the specified
+        real estate id.
+      operationId: Fasteignir_GetIbuar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the real estate
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of residents.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No real estate exists with that id
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar':
+    get:
+      tags:
+        - Lyklar
+      summary: Get all available gender and cohabition codes.
+      operationId: Lyklar_GetLyklar
+      parameters:
+        - name: tungumal
+          in: query
+          description:
+            Text language. Not required. Defaults to IS(Icelandic). EN for
+            english.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of available gender and cohabition codes.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Lyklar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/hjuskaparkodar/{id}/{kyn}':
+    get:
+      tags:
+        - Lyklar
+      summary: Get details of cohabition code by id.
+      operationId: Lyklar_GetHjuskapar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of cohibition.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: kyn
+          in: path
+          required: true
+          description: Gender code.
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: tungumal
+          in: query
+          description:
+            Text language. Not required. Defaults to IS(Icelandic). EN for
+            english.
+          schema:
+            type: string
+            nullable: true
+          x-position: 3
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details for the cohabition code.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Kodar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No cohibition code exists with that id or gender code.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/kyn/{id}':
+    get:
+      tags:
+        - Lyklar
+      summary: Get details for gender code by id.
+      operationId: Lyklar_GetKyn
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of gender.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: tungumal
+          in: query
+          description:
+            Text language. Not required. Defaults to IS(Icelandic). EN for
+            english.
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details for the gender code.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Kodar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No gender code exists with that id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/trufelog':
+    get:
+      tags:
+        - Lyklar
+      summary: Get all available religion codes.
+      operationId: Lyklar_GetTrufelog
+      parameters:
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all available religion codes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Kodar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/trufelog/{id}':
+    get:
+      tags:
+        - Lyklar
+      summary: Get details for religion code by id.
+      operationId: Lyklar_GetTrufelag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of religion.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details for religion code.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Kodar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: No religion code exists with that id.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/sveitarfelog':
+    get:
+      tags:
+        - Lyklar
+      summary: Get all available municipality codes.
+      operationId: Lyklar_GetSveitarfelog
+      parameters:
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all available municipality codes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  '$ref': '#/components/schemas/Kodar'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+  '/api/v1/lyklar/sveitarfelog/{id}':
+    get:
+      tags:
+        - Lyklar
+      summary: Get the details for municipality by id.
+      operationId: Lyklar_GetSveitarfelag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of municipality.
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details for municipality.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Sveitarfelag'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '404':
+          description: Municipality does not exist.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+        '500':
+          description: There was an error on the server side.
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/Error'
+      security:
+        - auth: []
+components:
+  schemas:
+    Einstaklingsupplysingar:
+      type: object
+      example:
+        kennitala: '3311305959'
+        nafn: Ólafur pái Höskuldsson
+        eiginnafn: Ólafur
+        millinafn: pái
+        kenninafn: Höskuldsson
+        fulltnafn: Ólafur pái Höskuldsson Dala-Kollsson
+        kynkodi: '1'
+        bannmerking: false
+        faedingardagur: '2000-01-28T17:09:02.044Z'
+        logheimili:
+          heiti: Öskubakki 15
+          postnumer: 113
+          stadur: Reykjavík
+          sveitarfelagsnumer: '0000'
+        adsetur:
+          heiti: Heilsulind 18
+          postnumer: 213
+          stadur: Kópavogur
+          sveitarfelagsnumer: '1000'
+      additionalProperties: false
+      required:
+        - kennitala
+        - nafn
+        - kynkodi
+        - bannmerking
+        - faedingardagur
+      properties:
+        kennitala:
+          type: string
+          description: NationalId
+        nafn:
+          type: string
+          description: Legal name
+        eiginnafn:
+          type: string
+          description: First name
+          nullable: true
+        millinafn:
+          type: string
+          description: Middle name
+          nullable: true
+        kenninafn:
+          type: string
+          description: Surname
+          nullable: true
+        fulltNafn:
+          type: string
+          description: Full name
+          nullable: true
+        kynkodi:
+          type: string
+          description:
+            Gender code - definition can be looked up using resources in
+            "Lyklar"
+        bannmerking:
+          type: boolean
+          description: 'Details can be found at: https://www.skra.is/thjonusta/einstaklingar/eg-i-thjodskra/bannmerking-aetlad-einstaklingum/'
+        faedingardagur:
+          type: string
+          description: Date of birth
+          format: date-time
+        logheimili:
+          description: Information about legal domicile
+          nullable: true
+          oneOf:
+            - '$ref': '#/components/schemas/Heimilisfang'
+        adsetur:
+          description: Information about residence
+          nullable: true
+          oneOf:
+            - '$ref': '#/components/schemas/Heimilisfang'
+    Heimilisfang:
+      type: object
+      example:
+        heiti: Heilsulind 18
+        postnumer: '201'
+        stadur: Kópavogur
+        sveitarfelagsnumer: '0000'
+      additionalProperties: false
+      required:
+        - heiti
+        - postnumer
+      properties:
+        heiti:
+          type: string
+          description: Street name
+        postnumer:
+          type: string
+          description: Postal code
+        stadur:
+          type: string
+          description: Location
+          nullable: true
+        sveitarfelagsnumer:
+          type: string
+          description:
+            Municipality number - definition can be looked up using resources
+            in "Lyklar"
+          nullable: true
+    Error:
+      type: object
+      description: Error response
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+          format: int32
+        message:
+          type: string
+          description: Message describing the error
+        errors:
+          type: array
+          description: Detailed information of errors
+          nullable: true
+          items:
+            '$ref': '#/components/schemas/ErrorDetails'
+    ErrorDetails:
+      type: object
+      description: Detailed error message
+      additionalProperties: false
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+          format: int32
+        message:
+          type: string
+          description: Message describing the error
+          nullable: true
+        help:
+          type: string
+          description: URL to a page explaining the error and possible solutions
+          nullable: true
+        trackingId:
+          type: string
+          description: Identifier for mapping failures to service internal codes
+          nullable: true
+        param:
+          type: string
+          description: Name of the parameter which was incorrect
+          nullable: true
+    Faedingarstadur:
+      type: object
+      example:
+        sveitarfelagsnumer: '0000'
+        stadur: Reykjavík
+        faedingardagur: 33.11.0930
+      additionalProperties: false
+      required:
+        - faedingardagur
+      properties:
+        sveitarfelagsnumer:
+          type: string
+          description:
+            Municipality number - definition can be looked up using resources
+            in "Lyklar"
+          nullable: true
+        stadur:
+          type: string
+          description: Location
+          nullable: true
+        faedingardagur:
+          type: string
+          description: Date of birth
+          format: date-time
+    Rikisfang:
+      type: object
+      example:
+        kodi: IS
+        land: Ísland
+      additionalProperties: false
+      required:
+        - kodi
+      properties:
+        kodi:
+          type: string
+          description: The ISO Alpha-2 country code
+        land:
+          type: string
+          description: Country
+          nullable: true
+    Trufelagsskraning:
+      type: object
+      example:
+        trufelagskodi: '1'
+        breytt: '2021-01-28T17:09:02.044Z'
+      additionalProperties: false
+      required:
+        - trufelagskodi
+      properties:
+        trufelagskodi:
+          type: string
+          description:
+            Identification code - definition can be looked up using resources
+            in "Lyklar"
+        breytt:
+          type: string
+          description: Last modified date
+          format: date-time
+          nullable: true
+    Heimili:
+      type: object
+      example:
+        huskodi: '007007007007'
+        fasteignanumer: '1234567'
+        heimilisfang: Heilsulind 18
+        postnumer: '201'
+        stadur: Kópavogur
+        sveitarfelagsnumer: '0000'
+        landakodi: IS
+        Breytt: ''
+      additionalProperties: false
+      required:
+        - huskodi
+        - heimilisfang
+      properties:
+        huskodi:
+          type: string
+          description: House identification code
+        fasteignanumer:
+          type: string
+          description: Real estate number
+          nullable: true
+        heimilisfang:
+          type: string
+          description: Address
+        postnumer:
+          type: string
+          description: Postal code
+          nullable: true
+        stadur:
+          type: string
+          description: Location
+          nullable: true
+        sveitarfelagsnumer:
+          type: string
+          description:
+            Municipality number - definition can be looked up using resources
+            in "Lyklar"
+          nullable: true
+        landakodi:
+          type: string
+          description: The ISO Alpha-2 country code
+          nullable: true
+        breytt:
+          type: string
+          description: Last modified date
+          format: date-time
+          nullable: true
+    Adsetur:
+      type: object
+      example:
+        huskodi: '007000700700'
+        heimilisfang: Heilsulind 18
+        sveitarfelagsnumer: '1000'
+        postnumer: '213'
+        stadur: Kópavogur
+        landakodi:
+        breytt: 15.06.1550
+      additionalProperties: false
+      properties:
+        huskodi:
+          type: string
+          description: House identification code
+          nullable: true
+        heimilisfang:
+          type: string
+          description: Address
+          nullable: true
+        sveitarfelagsnumer:
+          type: string
+          description:
+            Municipality number - definition can be looked up using resources
+            in "Lyklar"
+          nullable: true
+        postnumer:
+          type: string
+          description: Postal code
+          nullable: true
+        stadur:
+          type: string
+          description: Location
+          nullable: true
+        landakodi:
+          type: string
+          description: The ISO Alpha-2 country code
+          nullable: true
+        breytt:
+          type: string
+          description: Last modified date
+          format: date-time
+          nullable: true
+    Lograda:
+      type: object
+      example:
+        erLograda: true
+      additionalProperties: false
+      required:
+        - erLograda
+      properties:
+        erLograda:
+          type: boolean
+          description: Is of legal age
+    Hjuskapur:
+      type: object
+      example:
+        kennitalaMaka: '3310286969'
+        nafnMaka: Þorgerður Egilsdóttir
+        hjuskaparkodi: '3'
+        breytt: 30.02.0955
+      additionalProperties: false
+      properties:
+        kennitalaMaka:
+          type: string
+          description: National id of spouse
+          nullable: true
+        nafnMaka:
+          type: string
+          description: Name of spouse
+          nullable: true
+        hjuskaparkodi:
+          type: string
+          description:
+            Cohabitation code - definition can be looked up using resources
+            in "Lyklar"
+          nullable: true
+        breytt:
+          type: string
+          description: Last modified date
+          nullable: true
+    Fjolskylda:
+      type: object
+      example:
+        fjolskyldunumer: '3311305959'
+        einstaklingar:
+          - nafn: Ólafur pái Höskuldsson
+            kennitala: '3311305959'
+          - nafn: Þorgerður Egilsdóttir
+            kennitala: '3310286969'
+          - kennitala: '3311616969'
+            nafn: Kjartan Ólafsson
+      additionalProperties: false
+      properties:
+        fjolskyldunumer:
+          type: string
+          description: 'Details can be found at: https://www.skra.is/thjonusta/einstaklingar/eg-i-thjodskra/um-fjolskyldunumer/'
+          nullable: true
+        einstaklingar:
+          type: array
+          description: List of individuals with the same family number
+          nullable: true
+          items:
+            '$ref': '#/components/schemas/Einstaklingur'
+    Einstaklingur:
+      type: object
+      example:
+        nafn: Ólafur pái Höskuldsson
+        kennitala: '3311305959'
+      additionalProperties: false
+      required:
+        - nafn
+        - kennitala
+        - kynkodi
+      properties:
+        nafn:
+          type: string
+          description: Full name
+        kennitala:
+          type: string
+          description: National id
+        kynkodi:
+          type: string
+          description:
+            Gender code - definition can be looked up using resources in
+            "Lyklar"
+    Fjolskyldumedlimir:
+      type: object
+      example:
+        fjolskyldunumer: '3311305959'
+        einstaklingar:
+          - kennitala: '3311305959'
+            nafn: Ólafur pái Höskuldsson
+            eiginnafn: Ólafur
+            millinafn: pái
+            kenninafn: Höskuldsson
+            fulltnafn: Ólafur pái Höskuldsson Dala-Kollsson
+            kynkodi: '1'
+            bannmerking: false
+            faedingardagur: '2000-01-28T17:09:02.044Z'
+            logheimili:
+              heiti: Öskubakki 15
+              postnumer: 113
+              stadur: Reykjavík
+              sveitarfelagsnumer: '0000'
+            adsetur:
+              heiti: Heilsulind 18
+              postnumer: 213
+              stadur: Kópavogur
+              sveitarfelagsnumer: '1000'
+      additionalProperties: false
+      properties:
+        fjolskyldunumer:
+          type: string
+          description: 'Details can be found at: https://www.skra.is/thjonusta/einstaklingar/eg-i-thjodskra/um-fjolskyldunumer/'
+          nullable: true
+        einstaklingar:
+          type: array
+          description: 'A detailed list of individuals with the same family number '
+          nullable: true
+          items:
+            '$ref': '#/components/schemas/Einstaklingsupplysingar'
+    Lyklar:
+      type: object
+      example:
+        kyn:
+          '1':
+            lysing: Karl
+          '2':
+            lysing: Kona
+        hjuskapur:
+          '0':
+            '1':
+              lysing:
+                Íslendingur með lögheimili erlendis; í hjúskap með útlendingi
+                sem ekki er á skrá
+            '2':
+              lysing:
+                Íslendingur með lögheimili erlendis; í hjúskap með útlendingi
+                sem ekki er á skrá
+            '7':
+              lysing:
+                Íslendingur með lögheimili erlendis; í hjúskap með útlendingi
+                sem ekki er á skrá
+      additionalProperties: false
+      required:
+        - kyn
+        - hjuskapur
+      properties:
+        kyn:
+          type: object
+          description: List of all available gender codes and description
+          additionalProperties:
+            '$ref': '#/components/schemas/Skilgreining'
+        hjuskapur:
+          type: object
+          description:
+            List of all available Cohabitation codes and descriptions for
+            each gender
+          additionalProperties:
+            type: object
+            additionalProperties:
+              '$ref': '#/components/schemas/Skilgreining'
+    Skilgreining:
+      type: object
+      example:
+        lysing: Kona
+      additionalProperties: false
+      properties:
+        lysing:
+          type: string
+          description: Description
+          nullable: true
+    Kodar:
+      type: object
+      example:
+        kodi: '1'
+        lysing: Karl
+      additionalProperties: false
+      required:
+        - kodi
+      properties:
+        kodi:
+          type: string
+          description: Identification code
+        lysing:
+          type: string
+          description: Description
+          nullable: true
+    Sveitarfelag:
+      type: object
+      example:
+        nafn: Reykjavík
+        nafnThgf: Reykjavík
+        postnumer: '101'
+      additionalProperties: false
+      required:
+        - nafn
+      properties:
+        nafn:
+          type: string
+          description: Municipality name
+        nafnThgf:
+          type: string
+          description: Municipality name in dative
+          nullable: true
+        postnumer:
+          type: string
+          description: Postal code
+          nullable: true
+  securitySchemes:
+    auth:
+      type: apiKey
+      description: Copy 'Bearer ' + valid JWT token into field
+      name: Authorization
+      in: header

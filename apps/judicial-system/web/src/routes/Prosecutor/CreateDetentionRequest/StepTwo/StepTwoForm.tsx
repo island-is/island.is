@@ -1,9 +1,5 @@
-import React from 'react'
-import {
-  Case,
-  CaseType,
-  NotificationType,
-} from '@island.is/judicial-system/types'
+import React, { useState } from 'react'
+import { Case, Institution } from '@island.is/judicial-system/types'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   newSetAndSendDateToServer,
@@ -16,32 +12,17 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
-  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { NextRouter } from 'next/router'
+import { Option } from '@island.is/island-ui/core'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
-  defaultProsecutor: ReactSelectOption
-  courts: ReactSelectOption[]
-  defaultCourt: ReactSelectOption[]
-  arrestDateIsValid: boolean
-  setArrestDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
-  requestedCourtDateIsValid: boolean
-  setRequestedCourtDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
+  courts: Institution[]
   handleNextButtonClick: () => Promise<void>
   transitionLoading: boolean
-  modalVisible: boolean
-  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
-  router: NextRouter
-  sendNotification: (
-    id: string,
-    notificationType: NotificationType,
-  ) => Promise<boolean | undefined>
-  isSendingNotification: boolean
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -49,23 +30,29 @@ const StepTwoForm: React.FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
     prosecutors,
-    defaultProsecutor,
     courts,
-    defaultCourt,
-    arrestDateIsValid,
-    setArrestDateIsValid,
-    requestedCourtDateIsValid,
-    setRequestedCourtDateIsValid,
     handleNextButtonClick,
     transitionLoading,
-    modalVisible,
-    setModalVisible,
-    router,
-    sendNotification,
-    isSendingNotification,
   } = props
+  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
+  const [requestedCourtDateIsValid, setRequestedCourtDateIsValid] = useState(
+    workingCase.requestedCourtDate !== null,
+  )
 
   const { updateCase } = useCase()
+
+  const selectCourts = courts.map((court) => ({
+    label: court.name,
+    value: court.id,
+  }))
+
+  const defaultProsecutor = prosecutors.find(
+    (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
+  )
+
+  const defaultCourt = selectCourts.find(
+    (court) => court.label === workingCase.court?.name,
+  )
 
   return (
     <>
@@ -110,21 +97,12 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Select
             name="court"
             label="Veldu dómstól"
-            defaultValue={{
-              label:
-                defaultCourt.length > 0
-                  ? defaultCourt[0].label
-                  : courts[0].label,
-              value:
-                defaultCourt.length > 0
-                  ? defaultCourt[0].value
-                  : courts[0].value,
-            }}
-            options={courts}
+            defaultValue={defaultCourt}
+            options={selectCourts}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setAndSendToServer(
-                'court',
-                (selectedOption as ReactSelectOption).label,
+                'courtId',
+                (selectedOption as ReactSelectOption).value as string,
                 workingCase,
                 setWorkingCase,
                 updateCase,
@@ -214,31 +192,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
           nextIsLoading={transitionLoading}
         />
       </FormContentContainer>
-      {modalVisible && (
-        <Modal
-          title="Viltu senda tilkynningu?"
-          text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
-            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-          } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
-          primaryButtonText="Senda tilkynningu"
-          secondaryButtonText="Halda áfram með kröfu"
-          handleClose={() => setModalVisible(false)}
-          handleSecondaryButtonClick={() =>
-            router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-          }
-          handlePrimaryButtonClick={async () => {
-            const notificationSent = await sendNotification(
-              workingCase.id,
-              NotificationType.HEADS_UP,
-            )
-
-            if (notificationSent) {
-              router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-            }
-          }}
-          isPrimaryButtonLoading={isSendingNotification}
-        />
-      )}
     </>
   )
 }

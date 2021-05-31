@@ -9,7 +9,7 @@ import * as styles from './SubSections.treat'
 
 export const SubSections: FC<{
   isActive: boolean
-  subSections: types.FormStepperSection[]
+  subSections: types.FormStepperChildSection[]
   activeSubSection: number
   showSubSectionIcon?: boolean
 }> = ({ isActive, subSections, activeSubSection, showSubSectionIcon }) => {
@@ -52,6 +52,7 @@ export const SubSections: FC<{
                   : 'next'
               }
               showIcon={showSubSectionIcon}
+              href={subSection.href}
             >
               {subSection.name}
             </SubSectionItem>

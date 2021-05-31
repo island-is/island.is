@@ -286,8 +286,9 @@ export class CmsContentfulService {
       year !== undefined && month !== undefined
         ? new Date(year, month, 1)
         : new Date()
-    const toDate = new Date(fromDate.getTime())
+    fromDate.setDate(fromDate.getDate() - 1)
 
+    const toDate = new Date(fromDate.getTime())
     toDate.setMonth(toDate.getMonth() + 1)
 
     const params = {

@@ -36,8 +36,8 @@ describe('answerValidators', () => {
     id: '',
     modified: new Date(),
     state: '',
-    status: ApplicationStatus.IN_PROGRESS,
     typeId: ApplicationTypes.EXAMPLE,
+    status: ApplicationStatus.IN_PROGRESS,
   }
 
   it('should return error when DOB is undefined', () => {
@@ -60,6 +60,83 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: errorMessages.dateOfBirth,
       path: 'firstPeriodStart',
+      values: undefined,
+    })
+  })
+
+  it('should return error for a period with undefined startDate and undefined endDate', () => {
+    const newAnswers = [{}]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: errorMessages.periodsStartDateRequired,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  })
+
+  it('should return error for a period with estimatedDateOfBirth startDate and undefined endDate', () => {
+    const newAnswers = [{}]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        firstPeriodStart: 'estimatedDateOfBirth',
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  })
+
+  it('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
+    const newAnswers = [
+      { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
+      {},
+    ]
+    const newApplication = {
+      ...application,
+      answers: {
+        periods: [
+          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+        ],
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsStartDateRequired,
+      path: 'periods[1].startDate',
+      values: undefined,
+    })
+  })
+
+  it('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
+    const newAnswers = [
+      { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+      { startDate: '2021-07-15' },
+    ]
+    const newApplication = {
+      ...application,
+      answers: {
+        periods: [
+          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
+          { startDate: '2021-07-15' },
+        ],
+        firstPeriodStart: 'estimatedDateOfBirth',
+      },
+    } as Application
+
+    expect(
+      answerValidators['periods'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[1].endDate',
       values: undefined,
     })
   })

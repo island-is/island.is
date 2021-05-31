@@ -12,6 +12,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
@@ -60,8 +61,11 @@ export class Case implements TCase {
   @Field({ nullable: true })
   sendRequestToDefender?: boolean
 
+  @Field(() => Institution, { nullable: true })
+  readonly court?: Institution
+
   @Field({ nullable: true })
-  readonly court?: string
+  readonly leadInvestigator?: string
 
   @Field({ nullable: true })
   readonly arrestDate?: string
@@ -118,7 +122,7 @@ export class Case implements TCase {
   readonly courtRoom?: string
 
   @Field({ nullable: true })
-  readonly courtStartTime?: string
+  readonly courtStartDate?: string
 
   @Field({ nullable: true })
   readonly courtEndTime?: string
@@ -143,6 +147,12 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly litigationPresentations?: string
+
+  @Field({ nullable: true })
+  readonly courtCaseFacts?: string
+
+  @Field({ nullable: true })
+  readonly courtLegalArguments?: string
 
   @Field({ nullable: true })
   readonly ruling?: string
@@ -184,7 +194,10 @@ export class Case implements TCase {
   readonly prosecutorPostponedAppealDate?: string
 
   @Field({ nullable: true })
-  isCaseAppealable?: boolean
+  isAppealDeadlineExpired?: boolean
+
+  @Field({ nullable: true })
+  isAppealGracePeriodExpired?: boolean
 
   @Field({ nullable: true })
   readonly rulingDate?: string

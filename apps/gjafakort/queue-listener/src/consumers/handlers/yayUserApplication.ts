@@ -12,6 +12,7 @@ export const exchangeName: ApplicationExchange = 'gjafakort-application-updates'
 
 export const routingKeys: UserApplicationRoutingKey[] = [
   'gjafakort-user:approved',
+  'gjafakort-user-2:approved',
 ]
 
 export const queueName = 'gjafakort-yay-user-application'
@@ -25,7 +26,7 @@ export const handler = async (
     message,
   )
 
-  if (routingKey === 'gjafakort-user:approved') {
+  if (routingKeys.find((key) => routingKey === key)) {
     await yayApi.createUser(message)
     await yayApi.createGiftCard(message)
   } else {

@@ -17,11 +17,21 @@ export interface FormValue {
   [key: string]: Answer
 }
 
+export type ActionCardTag = 'red' | 'blueberry' | 'blue'
+
+export interface ActionCardMetaData {
+  title?: string
+  description?: string
+  tag?: {
+    label?: string
+    variant?: ActionCardTag
+  }
+}
+
 export interface Application {
   id: string
   state: string
-  stateTitle?: string
-  stateDescription?: string
+  actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
   typeId: ApplicationTypes
@@ -33,9 +43,4 @@ export interface Application {
   name?: string
   progress?: number
   status: ApplicationStatus
-}
-
-export enum ApplicationIdentityServerScope {
-  read = '@island.is/applications:read',
-  write = '@island.is/applications:write',
 }

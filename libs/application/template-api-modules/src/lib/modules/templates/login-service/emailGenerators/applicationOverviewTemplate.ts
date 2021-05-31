@@ -41,10 +41,7 @@ export const applicationOverviewTemplate = (
     application.answers,
     'technicalContact.phoneNumber',
   )
-  const technicalContactSameAsResponsibleParty = getValueViaPath(
-    application.answers,
-    'technicalContact.sameAsResponsibleParty',
-  )
+
   const technicalContactTechAnnouncementsEmail = getValueViaPath(
     application.answers,
     'technicalContact.techAnnouncementsEmail',
@@ -66,10 +63,6 @@ export const applicationOverviewTemplate = (
   const technicalInfoProdReturnUrl = getValueViaPath(
     application.answers,
     'technicalInfo.prodReturnUrl',
-  )
-  const technicalInfoClientId = getValueViaPath(
-    application.answers,
-    'technicalInfo.clientId',
   )
 
   return dedent(`
@@ -137,17 +130,6 @@ export const applicationOverviewTemplate = (
         `
         : ''
     }
-    ${
-      (technicalContactSameAsResponsibleParty as
-        | string[]
-        | undefined)?.includes('yes')
-        ? `
-          <p>
-            ${messages.technicalContact.labels.sameAsResponsibleParty.defaultMessage}
-          </p>
-        `
-        : ''
-    }
     <p>
       <b>${
         messages.technicalContact.labels.techAnnouncementsEmail.defaultMessage
@@ -185,15 +167,6 @@ export const applicationOverviewTemplate = (
       <b>${messages.technicalInfo.labels.prodReturnUrl.defaultMessage}</b> </br>
       ${technicalInfoProdReturnUrl}
     </p>
-    ${
-      technicalInfoClientId
-        ? `
-          <p>
-            <b>${messages.technicalInfo.labels.clientId.defaultMessage}</b> </br>
-            ${technicalInfoClientId}
-          </p>
-        `
-        : ''
-    }
+
   `)
 }

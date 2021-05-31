@@ -109,6 +109,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-national-registry-x-road": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -164,10 +167,16 @@
     "application-templates-document-provider-onboarding": {
       "tags": []
     },
+    "application-templates-driving-assessment-approval": {
+      "tags": []
+    },
     "application-templates-driving-lessons": {
       "tags": []
     },
     "application-templates-driving-license": {
+      "tags": []
+    },
+    "application-templates-family-matters-core": {
       "tags": []
     },
     "application-templates-funding-government-projects": {
@@ -228,6 +237,12 @@
     "auth-nest-tools": {
       "tags": []
     },
+    "auth-react": {
+      "tags": []
+    },
+    "auth-scopes": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -240,7 +255,10 @@
     "clients-mms": {
       "tags": []
     },
-    "clients-national-registry": {
+    "clients-national-registry-v1": {
+      "tags": []
+    },
+    "clients-national-registry-v2": {
       "tags": []
     },
     "clients-regulations": {
@@ -271,6 +289,12 @@
       "tags": []
     },
     "content-search-toolkit": {
+      "tags": []
+    },
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -480,7 +504,10 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
@@ -489,13 +516,22 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-auth-public-api": {
+      "tags": []
+    },
     "services-documents": {
       "tags": []
     },
     "services-endorsements-api": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {
@@ -545,6 +581,9 @@
       "tags": []
     },
     "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {
