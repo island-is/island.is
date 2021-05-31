@@ -6,6 +6,7 @@ import {
   Employer,
   Union,
   PensionFund,
+  Attachment,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
@@ -44,8 +45,11 @@ export const getPersonalAllowance = (
     : 'personalAllowance.usage'
 
   const willUsePersonalAllowance =
-    extractAnswer(application.answers, usePersonalAllowanceGetter) ===
-    formConstants.boolean.true
+    get(
+      application.answers,
+      usePersonalAllowanceGetter,
+      formConstants.boolean.false,
+    ) === formConstants.boolean.true
 
   if (!willUsePersonalAllowance) {
     return 0
@@ -187,7 +191,7 @@ export const getApplicantContactInfo = (application: Application) => {
 
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
-  attachment?: string,
+  attachments?: Attachment[],
 ): ParentalLeave => {
   const periodsAnswer = extractAnswer<
     {
@@ -255,6 +259,6 @@ export const transformApplicationToParentalLeaveDTO = (
     // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
     // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
     rightsCode: 'M-L-GR',
-    attachment,
+    attachments,
   }
 }
