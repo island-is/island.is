@@ -14,7 +14,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { useApplicationAnswers } from '../../hooks/use-application-answers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,

@@ -14,6 +14,7 @@ interface SummaryTimelineProps {
 export const SummaryTimeline = ({ periods }: SummaryTimelineProps) => {
   const { formatMessage, formatDateFns } = useLocale()
 
+  // TODO: add otherParentPeriods once available
   return (
     <Box>
       {periods.map((period, index) => (
