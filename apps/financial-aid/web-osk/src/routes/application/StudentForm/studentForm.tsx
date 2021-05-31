@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Text, Input } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -25,6 +25,11 @@ const StudentForm = () => {
   ) as NavigationProps
 
   const [error, setError] = useState(false)
+  const [customEducation, setCustomEducation] = useState(
+    form?.student && form?.student.includes('Yes')
+      ? form?.student.replace('Yes', '')
+      : '',
+  )
 
   const options = [
     {
@@ -34,10 +39,6 @@ const StudentForm = () => {
     {
       label: 'Já',
       value: 'Yes',
-    },
-    {
-      label: 'Ekki viss',
-      value: 'Unsure',
     },
   ]
 
@@ -55,10 +56,10 @@ const StudentForm = () => {
           <RadioButtonContainer
             options={options}
             error={error && form?.student === undefined}
-            isChecked={(value: string | number | boolean) => {
-              return value === form?.student
+            isChecked={(value: string) => {
+              return form?.student && form?.student.includes(value)
             }}
-            onChange={(value: string | number | boolean) => {
+            onChange={(value: string) => {
               updateForm({ ...form, student: value })
               if (error) {
                 setError(false)
@@ -77,6 +78,26 @@ const StudentForm = () => {
             Þú þarft að svara
           </Text>
         </div>
+        <div
+          className={cn({
+            [`${styles.inputContainer}`]: true,
+            [`${styles.inputAppear}`]:
+              form?.student && form?.student.includes('Yes'),
+          })}
+        >
+          <Input
+            backgroundColor="blue"
+            label="Hvaða námi?"
+            name="education"
+            placeholder="Dæmi: Viðskiptafræði í HR"
+            value={customEducation}
+            hasError={error && form?.student === 'Yes'}
+            errorMessage="Þú þarft að fylla út"
+            onChange={(
+              event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+            ) => setCustomEducation(event.target.value)}
+          />
+        </div>
       </FormContentContainer>
 
       <FormFooter
@@ -84,7 +105,19 @@ const StudentForm = () => {
         nextUrl={navigation?.nextUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.student !== undefined) {
-            router.push(navigation?.nextUrl ?? '/')
+            if (form?.student === 'Yes') {
+              if (customEducation === '') {
+                setError(true)
+              } else {
+                router.push(navigation?.nextUrl ?? '/')
+                updateForm({
+                  ...form,
+                  student: 'Yes ' + customEducation,
+                })
+              }
+            } else {
+              router.push(navigation?.nextUrl ?? '/')
+            }
           } else {
             setError(true)
           }

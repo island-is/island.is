@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Text, BulletList, Bullet } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -36,29 +36,31 @@ const IncomeForm = () => {
     },
   ]
 
+  const examples = [
+    'Launaseðlar',
+    'Greiðslur frá Vinnumálastofnun',
+    'Greiðslur frá Tryggingastofnun',
+    'Styrkir frá lífeyrissjóðum',
+  ]
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
       <FormContentContainer>
-        <Text as="h1" variant="h2" marginBottom={2}>
+        <Text as="h1" variant="h2" marginBottom={[2, 2, 4]}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
-        </Text>
-
-        <Text marginBottom={[3, 3, 4]}>
-          Til dæmis launatekjur eða hvers konar greiðslur eða styrkir frá
-          stofnunum fyrir utan fjárhagsaðstoð Hafnarfjarðar.
         </Text>
 
         <RadioButtonContainer
           className={styles.container}
           options={incomeOptions}
           error={error && !form?.hasIncome}
-          isChecked={(value: string | number | boolean) => {
+          isChecked={(value: number | boolean) => {
             return value === form?.hasIncome
           }}
-          onChange={(value: string | number | boolean) => {
+          onChange={(value: number | boolean) => {
             updateForm({ ...form, hasIncome: value })
             if (error) {
               setError(false)
@@ -76,6 +78,15 @@ const IncomeForm = () => {
             Þú þarft að svara
           </Text>
         </div>
+
+        <Text as="h2" variant="h3" marginBottom={2} marginTop={[4, 4, 5]}>
+          Dæmi um tekjur
+        </Text>
+        <BulletList type={'ul'} space={2}>
+          {examples.map((item) => {
+            return <Bullet>{item}</Bullet>
+          })}
+        </BulletList>
       </FormContentContainer>
 
       <FormFooter

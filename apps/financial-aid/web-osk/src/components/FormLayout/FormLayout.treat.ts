@@ -45,8 +45,6 @@ export const formContainer = style({
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       minHeight: '880px',
       paddingTop: theme.spacing[10],
-      // paddingLeft: `0px`,
-      // paddingRight: `0px`,
       gridTemplateColumns: 'repeat(10, 1fr)',
       columnGap: theme.spacing[3],
     },
@@ -94,11 +92,3 @@ export const logo = style({
     },
   },
 })
-
-// export const processGridColumn = style({
-//   '@media': {
-//     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-//       order: 1,
-//     },
-//   },
-// })

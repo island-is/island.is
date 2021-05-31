@@ -14,11 +14,13 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import { NavigationProps } from '@island.is/financial-aid/shared'
+import cn from 'classnames'
 
 const EmailForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
+  const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -50,7 +52,7 @@ const EmailForm = () => {
           umsóknarferlinu.
         </Text>
 
-        <Box marginBottom={[4, 4, 5]}>
+        <Box marginBottom={[1, 1, 2]}>
           <Input
             name="email"
             label="Netfang"
@@ -65,6 +67,16 @@ const EmailForm = () => {
             // hasError={email === ''}
           />
         </Box>
+        <div
+          className={cn({
+            [`errorMessage`]: true,
+            [`showErrorMessage`]: error && !form?.emailAddress,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            Þú þarft að svara
+          </Text>
+        </div>
 
         {/* <Text as="h2" variant="h3" marginBottom={[3, 3]}>
           Má bjóða þér viðtal?
@@ -85,12 +97,11 @@ const EmailForm = () => {
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
-          // if (form?.emailAddress !== undefined) {
-          router.push(navigation?.nextUrl ?? '/')
-          // }
-          // } else {
-          //   setError(true)
-          // }
+          if (form?.emailAddress !== undefined) {
+            router.push(navigation?.nextUrl ?? '/')
+          } else {
+            setError(true)
+          }
         }}
         // nextUrl="/umsokn/heimili"
         // nextIsDisabled={form?.emailAddress === ''}

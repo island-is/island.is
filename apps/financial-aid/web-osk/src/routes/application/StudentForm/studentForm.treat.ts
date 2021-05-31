@@ -12,3 +12,28 @@ export const container = style({
     },
   },
 })
+
+export const inputContainer = style({
+  display: 'block',
+  maxHeight: '0',
+  overflow: 'hidden',
+  transition: 'max-height 150ms ease-in-out',
+  gridTemplateColumns: 'repeat(6, 1fr)',
+  alignItems: 'flex-start',
+  columnGap: theme.spacing[3],
+  // '@media': {
+  //   [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+  //     display: 'grid',
+  //     gridTemplateColumns: 'repeat(8, 1fr)',
+  //   },
+  // },
+})
+
+export const inputAppear = style({
+  maxHeight: '192px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      maxHeight: '80px',
+    },
+  },
+})

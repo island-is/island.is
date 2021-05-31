@@ -47,10 +47,6 @@ const AddressForm = () => {
       text: 'lífeyrissjóðir',
       url: 'https://www.lifeyrismal.is/is/sjodirnir',
     },
-    {
-      text: 'sjúkrasjóðir stéttarfélaga',
-      url: 'https://www.vr.is/styrkir-sjodir/sjukrasjodur-vr/',
-    },
   ]
   return (
     <FormLayout
@@ -59,7 +55,7 @@ const AddressForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Réttur til fjárhagsaðstoðar
+          Varðandi rétt til fjárhagsaðstoðar
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
@@ -78,8 +74,6 @@ const AddressForm = () => {
               {suggestedLinks.map((item, index) => {
                 return (
                   <>
-                    {index !== 0 &&
-                      (index !== suggestedLinks.length - 1 ? ', ' : ' og ')}
                     <Link
                       href={item.url}
                       color="blue400"
@@ -88,10 +82,11 @@ const AddressForm = () => {
                     >
                       {item.text}
                     </Link>
+                    {index !== suggestedLinks.length - 1 ? ', ' : ' '}
                   </>
                 )
               })}
-              .
+              og sjúkrasjóðir stéttarfélaga.
             </Bullet>
             <Bullet>
               Ef þú ert í lánshæfu námi gætir þú átt rétt á námsláni hjá{' '}

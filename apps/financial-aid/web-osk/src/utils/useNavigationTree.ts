@@ -7,7 +7,7 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
       url: '/umsokn',
     },
     {
-      name: 'Fjárhagsaðstoð',
+      name: 'Upplýsingar',
       url: '/umsokn/rettur',
     },
     {
