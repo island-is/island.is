@@ -56,6 +56,7 @@ import {
   SearchableContentTypes,
   SearchableTags,
   AdgerdirPage,
+  SubArticle,
   GetSearchResultsTotalQuery,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
@@ -194,15 +195,30 @@ const Search: Screen<CategoryProps> = ({
       labels.push(item.organization[0].title)
     }
 
+    if (item.parent) {
+      if (item.parent.group) {
+        labels.push(item.parent.group.title)
+      }
+
+      if (item.parent.organization?.length) {
+        labels.push(item.parent.organization[0].title)
+      }
+    }
+
     return labels
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News & AdgerdirPage
+    Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
   >).map((item) => ({
     title: item.title,
-    description: item.intro ?? item.seoDescription ?? item.description,
-    link: linkResolver(typenameResolver(item.__typename), [item.slug]),
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ??
+      item.seoDescription ??
+      item.description ??
+      item.parent.intro,
+    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -219,7 +235,7 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
-    Router.replace({
+    Router.push({
       pathname: linkResolver('search').href,
       query: { q, [type]: key },
     })
@@ -257,6 +273,9 @@ const Search: Screen<CategoryProps> = ({
       n('allCategories', 'Allir flokkar'),
     value: filters.category ?? '',
   }
+
+  const isServer = typeof window === 'undefined'
+  console.log('sidebarDataTypes', sidebarDataTypes)
 
   return (
     <>
@@ -360,7 +379,7 @@ const Search: Screen<CategoryProps> = ({
                 placeholder={n('sidebarHeader', 'Flokkar')}
                 defaultValue={defaultSelectedCategory}
                 options={categorySelectOptions}
-                name="content-overview"
+                name="results-by-category"
                 isSearchable={false}
                 onChange={({ value }: Option) => {
                   onSelectSidebarTag('category', value as string)
@@ -387,50 +406,55 @@ const Search: Screen<CategoryProps> = ({
               ) : null}
             </>
           ) : (
-            <Text variant="intro" as="p">
-              {totalSearchResults}{' '}
-              {totalSearchResults === 1
-                ? n('searchResult', 'leitarniðurstaða')
-                : n('searchResults', 'leitarniðurstöður')}{' '}
-              {(filters.category || filters.type) && (
-                <>
-                  {n('inCategory', 'í flokki')}
-                  {
-                    <>
-                      {': '}
-                      <strong>
-                        {sidebarData.tags[filters.category]?.title ??
-                          sidebarData.types[filters.type]?.title}
-                      </strong>
-                    </>
-                  }
-                </>
-              )}
-            </Text>
+            <Box marginBottom={2}>
+              <Text variant="intro" as="p">
+                {totalSearchResults}{' '}
+                {totalSearchResults === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}{' '}
+                {(filters.category || filters.type) && (
+                  <>
+                    {n('inCategory', 'í flokki')}
+                    {
+                      <>
+                        {': '}
+                        <strong>
+                          {sidebarData.tags[filters.category]?.title ??
+                            sidebarData.types[filters.type]?.title}
+                        </strong>
+                      </>
+                    }
+                  </>
+                )}
+              </Text>
+            </Box>
           )}
         </Stack>
         <Stack space={2}>
-          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
-            const tags: Array<CardTagsProps> = []
+          {filteredItems.map(
+            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+              const tags: Array<CardTagsProps> = []
 
-            labels.forEach((label) => {
-              tags.push({
-                title: label,
-                tagProps: {
-                  outlined: true,
-                },
+              labels.forEach((label) => {
+                tags.push({
+                  title: label,
+                  tagProps: {
+                    outlined: true,
+                  },
+                })
               })
-            })
 
-            return (
-              <Card
-                key={index}
-                tags={tags}
-                image={thumbnail ? thumbnail : image}
-                {...rest}
-              />
-            )
-          })}{' '}
+              return (
+                <Card
+                  key={index}
+                  tags={tags}
+                  image={thumbnail ? thumbnail : image}
+                  subTitle={parentTitle}
+                  {...rest}
+                />
+              )
+            },
+          )}{' '}
           {totalSearchResults > 0 && (
             <Box paddingTop={8}>
               <Pagination
@@ -449,6 +473,25 @@ const Search: Screen<CategoryProps> = ({
               />
             </Box>
           )}
+          <Hidden above="sm">
+            <Box paddingTop={4}>
+              <Sidebar title={n('otherCategories')}>
+                <Stack space={[1, 1, 2]}>
+                  {sidebarDataTypes.map(([key, { title, total }]) => (
+                    <Filter
+                      key={key}
+                      selected={filters.type === key}
+                      onClick={() => {
+                        onSelectSidebarTag('type', key)
+                        !isServer && window.scrollTo(0, 0)
+                      }}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
+                </Stack>
+              </Sidebar>
+            </Box>
+          </Hidden>
         </Stack>
       </SidebarLayout>
     </>
@@ -480,6 +523,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAboutPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
+      'webSubArticle' as SearchableContentTypes,
     ]
   }
 

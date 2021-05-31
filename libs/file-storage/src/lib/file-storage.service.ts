@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import AmazonS3URI from 'amazon-s3-uri'
+
 import {
   FILE_STORAGE_CONFIG,
   FileStorageConfig,
 } from './file-storage.configuration'
-import AmazonS3URI from 'amazon-s3-uri'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
@@ -47,11 +48,10 @@ export class FileStorageService {
     })
   }
 
-  public generateSignedUrl(url: string): string {
-    const { bucket, key } = AmazonS3URI(url)
+  public generateSignedUrl(url: string, key: string): Promise<string> {
+    const { bucket } = AmazonS3URI(url)
     const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
-
-    return this.s3.getSignedUrl('getObject', params)
+    return this.s3.getSignedUrlPromise('getObject', params)
   }
 
   async copyObjectFromUploadBucket(

@@ -170,10 +170,6 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
           href: linkResolver('homepage').href,
         },
         {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-        {
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
@@ -248,12 +244,10 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
           </Box>
         )}
         {data?.getAuctions.map((auction) => {
-          const currentDate = new Date()
           const auctionDate = new Date(auction.date)
           const updatedAt = new Date(auction.updatedAt)
 
-          return auctionDate <= currentDate &&
-            month === months[0].value ? null : (
+          return (
             <FocusableBox
               href={linkResolver('auction', [auction.id]).href}
               borderWidth="standard"

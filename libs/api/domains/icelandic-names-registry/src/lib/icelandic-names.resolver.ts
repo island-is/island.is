@@ -1,4 +1,6 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 
 import { BackendAPI } from './services'
 import { IcelandicName } from './models/icelandicName.model'
@@ -6,10 +8,16 @@ import {
   GetIcelandicNameByIdInput,
   GetIcelandicNameByInitialLetterInput,
   GetIcelandicNameBySearchInput,
-  IcelandicNameBody,
-} from './dto/icelandic-name.input'
+  CreateIcelandicNameInput,
+  UpdateIcelandicNameInput,
+  DeleteIcelandicNameByIdInput,
+} from './dto/icelandic-name.input.dto'
+import { DeleteNameResponse } from './dto/icelandic-name.response.dto'
+
+const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
 
 @Resolver()
+@Directive(cacheControlDirective())
 export class IcelandicNamesResolver {
   constructor(private backendAPI: BackendAPI) {}
 
@@ -39,28 +47,36 @@ export class IcelandicNamesResolver {
     return this.backendAPI.getBySearch(input?.q)
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => IcelandicName)
   async updateIcelandicNameById(
-    @Args('input', { type: () => IcelandicNameBody })
-    input: IcelandicNameBody,
+    @Args('input', { type: () => UpdateIcelandicNameInput })
+    input: UpdateIcelandicNameInput,
+    @CurrentUser() { authorization }: User,
   ): Promise<IcelandicName> {
-    return this.backendAPI.updateById(input?.id, input)
+    return this.backendAPI.updateById(input.id, input.body, authorization ?? '')
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => IcelandicName)
   async createIcelandicName(
-    @Args('input', { type: () => IcelandicNameBody })
-    input: IcelandicNameBody,
+    @Args('input') input: CreateIcelandicNameInput,
+    @CurrentUser() { authorization }: User,
   ): Promise<IcelandicName> {
-    return this.backendAPI.create(input)
+    return this.backendAPI.create(input, authorization ?? '')
   }
 
-  @Mutation(() => IcelandicName, { nullable: true })
+  @UseGuards(IdsUserGuard)
+  @Mutation(() => DeleteNameResponse)
   async deleteIcelandicNameById(
-    @Args('input') input: GetIcelandicNameByIdInput,
-  ): Promise<void> {
-    const { id, ...body } = input
+    @Args('input', { type: () => DeleteIcelandicNameByIdInput })
+    input: DeleteIcelandicNameByIdInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<DeleteNameResponse> {
+    await this.backendAPI.deleteById(input.id, authorization ?? '')
 
-    return this.backendAPI.deleteById(id)
+    return {
+      id: input.id,
+    }
   }
 }

@@ -22,10 +22,12 @@ import {
 } from '@island.is/judicial-system/consts'
 import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../../../environments'
-import { AuditService } from '../audit'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
 
@@ -63,7 +65,7 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
@@ -89,7 +91,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
@@ -108,19 +110,14 @@ export class AuthController {
         name: user.fullname,
         mobile: user.mobile,
       },
-      returnUrl ?? '/krofur', // looks like the return url gets lost sometimes
       res,
       new Entropy({ bits: 128 }).string(),
     )
   }
 
   @Get('login')
-  login(
-    @Res() res: Response,
-    @Query('returnUrl') returnUrl: string,
-    @Query('nationalId') nationalId: string,
-  ) {
-    this.logger.debug(`Received login request with return url ${returnUrl}`)
+  login(@Res() res: Response, @Query('nationalId') nationalId: string) {
+    this.logger.debug('Received login request')
 
     const { name, options } = REDIRECT_COOKIE
 
@@ -128,7 +125,7 @@ export class AuthController {
 
     // Local development
     if (environment.auth.allowAuthBypass && nationalId) {
-      this.logger.debug(`Logging in as ${nationalId} in development mode`)
+      this.logger.debug(`Logging in using development mode`)
 
       return this.redirectAuthenticatedUser(
         {
@@ -136,7 +133,6 @@ export class AuthController {
           name: '',
           mobile: '',
         },
-        returnUrl ?? '/krofur', // just in case the return url is missing
         res,
       )
     }
@@ -145,11 +141,7 @@ export class AuthController {
     const electronicIdOnly = '&qaa=4'
 
     return res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: EXPIRES_IN_MILLISECONDS },
-      )
+      .cookie(name, { authId }, { ...options, maxAge: EXPIRES_IN_MILLISECONDS })
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
@@ -165,7 +157,6 @@ export class AuthController {
 
   private async redirectAuthenticatedUser(
     authUser: AuthUser,
-    returnUrl: string,
     res: Response,
     csrfToken?: string,
   ) {
@@ -188,7 +179,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    this.auditService.audit(
+    this.auditTrailService.audit(
       user.id,
       AuditedAction.LOGIN,
       res
@@ -204,7 +195,7 @@ export class AuthController {
           ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl),
+        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : '/krofur'),
       user.id,
     )
   }

@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, Feature, UpdateCase } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
   constructProsecutorDemands,
   isNextDisabled,
@@ -13,11 +13,8 @@ import {
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -27,8 +24,8 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useRouter } from 'next/router'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -38,11 +35,11 @@ export const StepFour: React.FC = () => {
     legalArgumentsErrorMessage,
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
-  const { features } = useContext(FeatureContext)
 
   const router = useRouter()
   const id = router.query.id
 
+  const { updateCase } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -77,23 +74,6 @@ export const StepFour: React.FC = () => {
     }
   }, [workingCase, setIsStepIllegal])
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
   return (
     <PageLayout
       activeSection={
@@ -107,6 +87,7 @@ export const StepFour: React.FC = () => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -293,11 +274,7 @@ export const StepFour: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
-              nextUrl={
-                features.includes(Feature.CASE_FILES)
-                  ? `${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`
-                  : `${Constants.STEP_SIX_ROUTE}/${workingCase.id}`
-              }
+              nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
               nextIsDisabled={isStepIllegal}
             />
           </FormContentContainer>

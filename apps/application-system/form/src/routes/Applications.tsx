@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
-import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
@@ -10,35 +9,30 @@ import {
 import {
   Text,
   Box,
-  Stack,
-  ActionCard,
   Page,
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
-import {
-  Application,
-  ApplicationStatus,
-  coreMessages,
-  getTypeFromSlug,
-} from '@island.is/application/core'
+import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import { ApplicationList } from '@island.is/application/ui-components'
 import { NotFound } from '@island.is/application/ui-shell'
-import { useApplicationNamespaces, useLocale } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
+import {
+  useApplicationNamespaces,
+  useLocale,
+  useLocalizedQuery,
+} from '@island.is/localization'
 
-import useAuth from '../hooks/useAuth'
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
-  const nationalRegistryId = userInfo?.profile?.nationalId
   const type = getTypeFromSlug(slug)
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useQuery(
+  const { data, loading, error: applicationsError } = useLocalizedQuery(
     APPLICATION_APPLICATIONS,
     {
       variables: {
@@ -73,6 +67,10 @@ export const Applications: FC = () => {
     }
   }, [type, data])
 
+  if (loading) {
+    return <ApplicationLoading />
+  }
+
   if (!type || applicationsError) {
     return (
       <NotFound
@@ -105,48 +103,14 @@ export const Applications: FC = () => {
                 {formatMessage(coreMessages.applications)}
               </Text>
             </Box>
-
-            <Stack space={2}>
-              {(data?.applicationApplications ?? []).map(
-                (application: Application) => {
-                  const isComplete =
-                    application.status === ApplicationStatus.COMPLETED
-
-                  return (
-                    <ActionCard
-                      key={application.id}
-                      date={format(
-                        new Date(application.modified),
-                        dateFormat.is,
-                      )}
-                      tag={{
-                        label: isComplete
-                          ? formatMessage(coreMessages.tagsInCompleted)
-                          : formatMessage(coreMessages.tagsInProgress),
-                        variant: isComplete ? 'mint' : 'blue',
-                        outlined: false,
-                      }}
-                      heading={application.name || application.typeId}
-                      text={application.applicant}
-                      cta={{
-                        label: formatMessage(coreMessages.buttonNext),
-                        variant: 'ghost',
-                        size: 'small',
-                        icon: undefined,
-                        onClick: () =>
-                          history.push(`../${slug}/${application.id}`),
-                      }}
-                      progressMeter={{
-                        active: true,
-                        progress: application.progress,
-                        variant: isComplete ? 'mint' : 'blue',
-                      }}
-                    />
-                  )
-                },
-              )}
-            </Stack>
-
+            {data?.applicationApplications && (
+              <ApplicationList
+                applications={data.applicationApplications}
+                onClick={(applicationUrl) =>
+                  history.push(`../${applicationUrl}`)
+                }
+              />
+            )}
             <Box
               marginTop={5}
               marginBottom={5}

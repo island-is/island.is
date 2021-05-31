@@ -38,4 +38,5 @@ export default {
     username: process.env.NOVA_USERNAME,
     password: process.env.NOVA_PASSWORD,
   },
+  isFerdagjof2Enabled: false,
 }

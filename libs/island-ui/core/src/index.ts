@@ -7,6 +7,7 @@ export * from './lib/Toast/Toast'
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Logo/Logo'
 export * from './lib/LoadingIcon/LoadingIcon'
+export * from './lib/LoadingDots/LoadingDots'
 export * from './lib/Page/Page'
 export * from './lib/BulletList/BulletList'
 export * from './lib/VideoIframe/VideoIframe'
@@ -20,6 +21,7 @@ export * from './lib/Accordion/AccordionItem/AccordionItem'
 export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
+export * from './lib/Header/UserDropdown/UserDropdown'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/ModalBase/ModalBase'
@@ -46,7 +48,7 @@ export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
-export { default as Table } from './lib/Table'
+export { Table } from './lib/Table'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
@@ -56,6 +58,7 @@ export * from './lib/Select/Select'
 export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
+export * from './lib/ToggleSwitch'
 
 // Layout
 export * from './lib/Box/Box'
@@ -92,8 +95,8 @@ export * from './treat/global.treat'
 export * from './utils/globalStyles'
 
 // Type exports:
-export type { BoxProps } from './lib/Box/Box'
-export type { InputBackgroundColor, InputProps } from './lib/Input/Input'
+export type { BoxProps } from './lib/Box/types'
+export type { InputBackgroundColor, InputProps } from './lib/Input/types'
 export type {
   DatePickerBackgroundColor,
   DatePickerProps,

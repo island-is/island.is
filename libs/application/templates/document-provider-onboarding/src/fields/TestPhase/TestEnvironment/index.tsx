@@ -25,7 +25,7 @@ export const createTestProviderMutation = gql`
 `
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   interface Key {
     name: string
     value: string
@@ -91,6 +91,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
             ...application.answers,
           },
         },
+        locale,
       },
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers

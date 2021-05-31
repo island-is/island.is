@@ -4,6 +4,10 @@ import { DocumentProviderOnboardingModule } from './document-provider-onboarding
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
 import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
+import { LoginServiceModule } from './login-service/login-service.module'
+import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
+import { PartyLetterModule } from './party-letter/party-letter.module'
+import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -12,6 +16,10 @@ export const modules = [
   InstitutionCollaborationModule,
   HealthInsuranceModule,
   ChildrenResidenceChangeModule,
+  LoginServiceModule,
+  FundingGovernmentProjectsModule,
+  PartyLetterModule,
+  DrivingLicenseSubmissionModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -20,3 +28,7 @@ export { DocumentProviderOnboardingService } from './document-provider-onboardin
 export { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
 export { HealthInsuranceService } from './health-insurance/health-insurance.service'
 export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+export { LoginServiceService } from './login-service/login-service.service'
+export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
+export { PartyLetterService } from './party-letter/party-letter.service'
+export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'

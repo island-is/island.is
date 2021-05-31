@@ -22,6 +22,7 @@ import {
 import { validate } from './validate'
 import compareAsc from 'date-fns/compareAsc'
 import parseISO from 'date-fns/parseISO'
+import addDays from 'date-fns/addDays'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
@@ -263,7 +264,7 @@ export const constructProsecutorDemands = (
           : ''
       } ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      } með úrskurði ${workingCase.court?.replace(
+      } með úrskurði ${workingCase.court?.name?.replace(
         'Héraðsdómur',
         'Héraðsdóms',
       )}, til`}
@@ -373,4 +374,10 @@ export const getRestrictionTagVariant = (
 
 export const kb = (bytes?: number) => {
   return bytes ? Math.ceil(bytes / 1024) : ''
+}
+
+export const getAppealEndDate = (rulingDate: string) => {
+  const rulingDateToDate = parseISO(rulingDate)
+  const appealEndDate = addDays(rulingDateToDate, 3)
+  return formatDate(appealEndDate, 'PPPp')
 }

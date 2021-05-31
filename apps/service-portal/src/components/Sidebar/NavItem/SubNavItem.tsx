@@ -36,7 +36,7 @@ const SubNavItemContent: FC<Props> = ({
 
 const SubNavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank">
+    <a href={props.path} target="_blank" rel="noreferrer noopener">
       <SubNavItemContent {...props} />
     </a>
   ) : props.path ? (

@@ -54,6 +54,11 @@ export class UpdateCaseDto {
   readonly defenderEmail?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderPhoneNumber?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
@@ -61,7 +66,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly court?: string
+  readonly courtId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly leadInvestigator?: string
 
   @IsOptional()
   @IsString()
@@ -119,14 +129,14 @@ export class UpdateCaseDto {
   readonly comments?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseFilesComments?: string
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly prosecutorId?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly setCourtCaseNumberManually?: boolean
 
   @IsOptional()
   @IsString()
@@ -146,7 +156,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly courtStartTime?: Date
+  readonly courtStartDate?: Date
 
   @IsOptional()
   @IsString()
@@ -187,6 +197,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly litigationPresentations?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtCaseFacts?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtLegalArguments?: string
 
   @IsOptional()
   @IsString()
@@ -237,6 +257,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly prosecutorAppealAnnouncement?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly accusedPostponedAppealDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorPostponedAppealDate?: Date
 
   @IsOptional()
   @IsUUID()

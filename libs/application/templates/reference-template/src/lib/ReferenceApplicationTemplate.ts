@@ -6,12 +6,23 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
+  ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { ApiActions } from '../shared'
+import { m } from './messages'
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+const States = {
+  prerequisites: 'prerequisites',
+  draft: 'draft',
+  inReview: 'inReview',
+  approved: 'approved',
+  rejected: 'rejected',
+}
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -24,6 +35,7 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 const ExampleSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   person: z.object({
     name: z.string().nonempty().max(256),
     age: z.string().refine((x) => {
@@ -33,8 +45,23 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z.string().min(7),
+    nationalId: z
+      .string()
+      /**
+       * We are depending on this template for the e2e tests on the application-system-api.
+       * Because we are not allowing committing valid kennitala, I reversed the condition
+       * to check for invalid kenitala so it passes the test.
+       */
+      .refine((n) => n && !kennitala.isValid(n), {
+        params: m.dataSchemeNationalId,
+      }),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      { params: m.dataSchemePhoneNumber },
+    ),
     email: z.string().email(),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
@@ -53,15 +80,52 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: 'Reference application',
+  name: m.name,
+  institution: m.institutionName,
+  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.prerequisites,
     states: {
-      draft: {
+      [States.prerequisites]: {
+        meta: {
+          name: 'Skilyrði',
+          progress: 0,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
+      [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+          actionCard: {
+            title: m.draftTitle,
+            description: m.draftDescription,
+          },
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -78,14 +142,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: States.inReview,
           },
         },
       },
-      inReview: {
+      [States.inReview]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createApplication,
           },
@@ -117,14 +182,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'rejected' },
+          APPROVE: { target: States.approved },
+          REJECT: { target: States.rejected },
         },
       },
-      approved: {
+      [States.approved]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -138,9 +204,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
       },
-      rejected: {
+      [States.rejected]: {
         meta: {
           name: 'Rejected',
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

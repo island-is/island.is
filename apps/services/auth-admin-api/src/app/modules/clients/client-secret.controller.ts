@@ -12,34 +12,64 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/environment'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+const namespace = `${environment.audit.defaultNamespace}/client-secret`
+
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-secret')
 @Controller('backend/client-secret')
+@Audit({ namespace })
 export class ClientSecretController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new secret to client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientSecret })
+  @Audit<ClientSecret>({
+    resources: (secret) => secret.clientId,
+  })
   async create(@Body() clientSecret: ClientSecretDTO): Promise<ClientSecret> {
     if (!clientSecret) {
       throw new BadRequestException('Client Secret object is required')
     }
 
-    return await this.clientsService.addClientSecret(clientSecret)
+    return this.clientsService.addClientSecret(clientSecret)
   }
 
   /** Removes a secret from client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete()
   @ApiCreatedResponse()
-  async delete(@Body() clientSecret: ClientSecretDTO): Promise<number> {
+  async delete(
+    @Body() clientSecret: ClientSecretDTO,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!clientSecret) {
       throw new BadRequestException('The Client Secret object is required')
     }
 
-    return await this.clientsService.removeClientSecret(clientSecret)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: clientSecret.clientId,
+      },
+      this.clientsService.removeClientSecret(clientSecret),
+    )
   }
 }

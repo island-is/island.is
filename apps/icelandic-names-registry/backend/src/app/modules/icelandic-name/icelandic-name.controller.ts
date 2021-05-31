@@ -20,7 +20,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
@@ -82,7 +82,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOkResponse()
@@ -102,10 +102,11 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Post()
   @ApiBearerAuth()
   @HttpCode(201)
+  @ApiOkResponse()
   @ApiCreatedResponse({
     description: 'The name has been successfully created.',
     type: IcelandicName,
@@ -118,9 +119,10 @@ export class IcelandicNameController {
     return this.icelandicNameService.createName(body)
   }
 
-  @UseGuards(IdsAuthGuard, NationalIdGuard)
+  @UseGuards(IdsUserGuard, NationalIdGuard)
   @Delete(':id')
   @ApiBearerAuth()
+  @ApiOkResponse()
   @HttpCode(204)
   @ApiNoContentResponse({
     description: 'The name has been successfully deleted.',
@@ -128,11 +130,13 @@ export class IcelandicNameController {
   @ApiNotFoundResponse({
     description: 'The name was not found.',
   })
-  async deleteById(@Param('id') id: number): Promise<void> {
+  async deleteById(@Param('id') id: number): Promise<number> {
     const count = await this.icelandicNameService.deleteById(id)
 
     if (count === 0) {
       throw new NotFoundException(`Name with id ${id} was not found!`)
     }
+
+    return count
   }
 }

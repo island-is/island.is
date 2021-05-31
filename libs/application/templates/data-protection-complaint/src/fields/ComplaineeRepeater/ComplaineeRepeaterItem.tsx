@@ -3,6 +3,7 @@ import {
   formatText,
   FormValue,
   getValueViaPath,
+  getErrorViaPath,
   RecordObject,
 } from '@island.is/application/core'
 import {
@@ -40,9 +41,15 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
   handleRemoveComplainee,
   errors,
 }) => {
+  const fieldIndex = `${id}[${index}]`
+  const nameField = `${fieldIndex}.name`
+  const addressField = `${fieldIndex}.address`
+  const nationalIdField = `${fieldIndex}.nationalId`
+  const operatesWithinEuropeField = `${fieldIndex}.operatesWithinEurope`
+  const countryOfOperationField = `${fieldIndex}.countryOfOperation`
   const initialIsOpen = getValueViaPath(
     answers,
-    `${id}[${index}].operatesWithinEurope`,
+    operatesWithinEuropeField,
   ) as string
 
   const { formatMessage } = useLocale()
@@ -65,37 +72,40 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
       )}
       <Stack space={2}>
         <InputController
-          id={`${id}[${index}].name`}
-          name={`${id}[${index}].name`}
+          id={nameField}
+          name={nameField}
           label={formatText(
             complaint.labels.complaineeName,
             application,
             formatMessage,
           )}
-          error={errors && (errors[`${id}[${index}].name`] as string)}
+          error={errors && getErrorViaPath(errors, nameField)}
+          required
           backgroundColor="blue"
         />
         <InputController
-          id={`${id}[${index}].address`}
-          name={`${id}[${index}].address`}
+          id={addressField}
+          name={addressField}
           label={formatText(
             complaint.labels.complaineeAddress,
             application,
             formatMessage,
           )}
-          error={errors && (errors[`${id}[${index}].address`] as string)}
+          error={errors && getErrorViaPath(errors, addressField)}
+          required
           backgroundColor="blue"
         />
         <InputController
-          id={`${id}[${index}].nationalId`}
-          name={`${id}[${index}].nationalId`}
+          id={nationalIdField}
+          name={nationalIdField}
           format="######-####"
           label={formatText(
             complaint.labels.complaineeNationalId,
             application,
             formatMessage,
           )}
-          error={errors && (errors[`${id}[${index}].nationalId`] as string)}
+          error={errors && getErrorViaPath(errors, nationalIdField)}
+          required
           backgroundColor="blue"
         />
       </Stack>
@@ -103,11 +113,9 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         {formatMessage(complaint.labels.complaineeOperatesWithinEurope)}
       </Text>
       <RadioController
-        id={`${id}[${index}].operatesWithinEurope`}
-        name={`${id}[${index}].operatesWithinEurope`}
-        error={
-          errors && (errors[`${id}[${index}].operatesWithinEurope`] as string)
-        }
+        id={operatesWithinEuropeField}
+        name={operatesWithinEuropeField}
+        error={errors && getErrorViaPath(errors, operatesWithinEuropeField)}
         largeButtons
         options={[
           { value: YES, label: formatMessage(sharedFields.yes) },
@@ -120,17 +128,14 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         <Box padding={3} background="blue100">
           <Box marginBottom={2}>
             <InputController
-              id={`${id}[${index}].countryOfOperation`}
-              name={`${id}[${index}].countryOfOperation`}
+              id={countryOfOperationField}
+              name={countryOfOperationField}
               label={formatText(
                 complaint.labels.complaineeCountryOfOperation,
                 application,
                 formatMessage,
               )}
-              error={
-                errors &&
-                (errors[`${id}[${index}].countryOfOperation`] as string)
-              }
+              error={errors && getErrorViaPath(errors, countryOfOperationField)}
             />
           </Box>
           <AlertMessage

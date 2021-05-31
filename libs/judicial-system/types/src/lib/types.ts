@@ -1,20 +1,27 @@
 export enum Feature {
-  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
-  CASE_FILES = 'CASE_FILES',
+  NONE = 'NONE',
 }
 
-export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+export enum InstitutionType {
+  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
+  COURT = 'COURT',
 }
 
 export interface Institution {
   id: string
   created: string
   modified: string
+  type: InstitutionType
   name: string
+}
+
+export const IntegratedCourts = ['d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf']
+
+export enum UserRole {
+  PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
+  JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {
@@ -136,8 +143,10 @@ export interface Case {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  court?: Institution
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -151,12 +160,12 @@ export interface Case {
   investigationProgress?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutor?: User
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -165,6 +174,8 @@ export interface Case {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
@@ -176,6 +187,10 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string
+  prosecutorPostponedAppealDate?: string
+  isAppealDeadlineExpired?: boolean
+  isAppealGracePeriodExpired?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
@@ -211,8 +226,10 @@ export interface CreateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
 }
 
 export interface UpdateCase {
@@ -223,8 +240,10 @@ export interface UpdateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -234,12 +253,12 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  caseFilesComments?: string
   prosecutorId?: string
-  setCourtCaseNumberManually?: boolean
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -248,6 +267,8 @@ export interface UpdateCase {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
@@ -258,6 +279,8 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string | null
+  prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
 }
@@ -286,8 +309,10 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCustodyCourtCase {
+export interface CreateCourtCase {
+  type: CaseType
   policeCaseNumber: string
+  isExtension: boolean
 }
 
 export interface PresignedPost {

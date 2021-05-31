@@ -45,10 +45,10 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
         <a
           className="user-claim__button__show"
           onClick={() => setVisible(!visible)}
-          title={`Create new claim`}
+          title={localization.buttons['new'].helpText}
         >
           <i className="icon__new"></i>
-          <span>{localization.title}</span>
+          <span>{localization.buttons['new'].text}</span>
         </a>
       </div>
 
@@ -113,20 +113,20 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="user-claim-create-form__button__cancel"
-                    value="Cancel"
                     onClick={(e) => setVisible(false)}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="user-claim-create-form__button__container">
                   <button
                     type="submit"
                     className="user-claim-create-form__button__save"
-                    value="Save"
+                    title={localization.buttons['save'].helpText}
                     disabled={!isAvailable}
                   >
-                    {localization.saveButton}
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>

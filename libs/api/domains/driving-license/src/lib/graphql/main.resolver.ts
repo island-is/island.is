@@ -1,26 +1,21 @@
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveField,
-  Parent,
-  Directive,
-} from '@nestjs/graphql'
+import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-
 import { DrivingLicenseService } from '../drivingLicense.service'
 import { DrivingLicense } from './drivingLicense.model'
 import { DrivingLicenseType } from './drivingLicenseType.model'
 import { PenaltyPointStatus } from './penaltyPointStatus.model'
+import { HasTeachingRights } from './hasTeachingRights.model'
+import { StudentInformationResult } from './studentInformationResult.model'
+import { ApplicationEligibility } from './applicationEligibility.model'
+import { Juristiction } from './juristiction.model'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
@@ -48,5 +43,35 @@ export class MainResolver {
   @Query(() => PenaltyPointStatus)
   drivingLicensePenaltyPointStatus(@CurrentUser() user: User) {
     return this.drivingLicenseService.getPenaltyPointStatus(user.nationalId)
+  }
+
+  @Query(() => HasTeachingRights)
+  drivingLicenseTeachingRights(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getTeachingRights(user.nationalId)
+  }
+
+  @Query(() => StudentInformationResult)
+  drivingLicenseStudentInformation(@Args('nationalId') nationalId: string) {
+    const student = this.drivingLicenseService.getStudentInformation(nationalId)
+
+    return {
+      student,
+    }
+  }
+
+  @Query(() => ApplicationEligibility)
+  drivingLicenseApplicationEligibility(
+    @CurrentUser() user: User,
+    @Args('type') type: string,
+  ) {
+    return this.drivingLicenseService.getApplicationEligibility(
+      user.nationalId,
+      type,
+    )
+  }
+
+  @Query(() => [Juristiction])
+  drivingLicenseListOfJuristictions() {
+    return this.drivingLicenseService.getListOfJuristictions()
   }
 }

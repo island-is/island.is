@@ -2,8 +2,9 @@ import { uuid } from 'uuidv4'
 
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { NotFoundException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
@@ -44,22 +45,24 @@ describe('FileModule', () => {
         {
           provide: AwsS3Service,
           useClass: jest.fn(() => ({
-            createPresignedPost: jest.fn((key) => ({
-              url:
-                'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
-              fields: {
-                key,
-                bucket: 'island-is-dev-upload-judicial-system',
-                'X-Amz-Algorithm': 'Some Algorithm',
-                'X-Amz-Credential': 'Some Credentials',
-                'X-Amz-Date': 'Some Date',
-                'X-Amz-Security-Token': 'Some Token',
-                Policy: 'Some Policy',
-                'X-Amz-Signature': 'Some Signature',
-              },
-            })),
-            deleteObject: () => Promise.resolve({ success: true }),
-            getSignedUrl: () => ({}),
+            createPresignedPost: (key: string) =>
+              Promise.resolve({
+                url:
+                  'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+                fields: {
+                  key,
+                  bucket: 'island-is-dev-upload-judicial-system',
+                  'X-Amz-Algorithm': 'Some Algorithm',
+                  'X-Amz-Credential': 'Some Credentials',
+                  'X-Amz-Date': 'Some Date',
+                  'X-Amz-Security-Token': 'Some Token',
+                  Policy: 'Some Policy',
+                  'X-Amz-Signature': 'Some Signature',
+                },
+              }),
+            deleteObject: () => Promise.resolve(true),
+            getSignedUrl: () => Promise.resolve({}),
+            objectExists: () => Promise.resolve(true),
           })),
         },
         {
@@ -76,7 +79,7 @@ describe('FileModule', () => {
 
   describe('Given a case', () => {
     const caseId = uuid()
-    const user = {} as User
+    const user = { role: UserRole.PROSECUTOR } as User
     const fileName = 'test.txt'
 
     it('should create a presigned post', async () => {
@@ -212,6 +215,15 @@ describe('FileModule', () => {
 
         expect(mockGetSignedUrl).toHaveBeenCalledTimes(1)
         expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
+      })
+
+      it('should throw when getting a presigned url for a file that does not exist in AWS S3', async () => {
+        const mockObjectExists = jest.spyOn(awsS3Service, 'objectExists')
+        mockObjectExists.mockReturnValueOnce(Promise.resolve(false))
+
+        await expect(
+          fileController.getCaseFileSignedUrl(caseId, fileId, user),
+        ).rejects.toThrow(NotFoundException)
       })
     })
   })

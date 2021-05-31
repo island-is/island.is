@@ -1,6 +1,13 @@
 import React, { useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Logo,
+  Text,
+  Box,
+  ButtonProps,
+  ButtonTypes,
+} from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -12,9 +19,16 @@ import * as styles from './Header.treat'
 const Header: React.FC = () => {
   const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
+  const DynamicButton = dynamic(
+    import('../../../../../../libs/island-ui/core/src/lib/Button/Button').then(
+      (mod) => mod.Button,
+    ),
+  ) as React.ForwardRefExoticComponent<
+    (ButtonProps & ButtonTypes) & React.RefAttributes<HTMLButtonElement>
+  >
 
   return (
-    <header className={`${styles.header}`}>
+    <header className={styles.header}>
       <Link
         href={
           !user || !isAuthenticated
@@ -41,7 +55,7 @@ const Header: React.FC = () => {
         </Box>
       </Link>
       {isAuthenticated && (
-        <Button
+        <DynamicButton
           variant="ghost"
           icon="logOut"
           iconType="outline"
@@ -53,7 +67,7 @@ const Header: React.FC = () => {
           data-testid="logout-button"
         >
           {user?.name}
-        </Button>
+        </DynamicButton>
       )}
     </header>
   )

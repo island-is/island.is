@@ -248,8 +248,9 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     className="translation-create-form__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    {localization.cancelButton}
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="translation-create-form__button__container">
@@ -257,7 +258,8 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="translation-create-form__button__save"
                     disabled={isSubmitting}
-                    value={localization.saveButton}
+                    value={localization.buttons['save'].text}
+                    title={localization.buttons['save'].helpText}
                   />
                 </div>
               </div>

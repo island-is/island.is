@@ -1,9 +1,9 @@
 import { Colors } from '@island.is/island-ui/theme'
-import {
+import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -15,6 +15,7 @@ export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
+export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 export type TextFieldVariant =
   | 'text'
   | 'email'
@@ -100,7 +101,7 @@ export interface DateField extends BaseField {
   placeholder?: FormText
   component: FieldComponents.DATE
   maxDate?: Date
-  minDate?: Date
+  minDate?: MaybeWithApplication<Date>
   excludeDates?: MaybeWithApplication<Date[]>
   backgroundColor?: DatePickerBackgroundColor
 }
@@ -111,13 +112,14 @@ export interface DescriptionField extends BaseField {
   readonly description: FormText
   tooltip?: FormText
   space?: BoxProps['paddingTop']
+  titleVariant?: TitleVariants
 }
 
 export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
+  backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
 }
 
@@ -172,6 +174,7 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
+  readonly refetchApplicationAfterSubmit?: boolean
 }
 
 export interface DividerField extends BaseField {

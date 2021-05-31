@@ -58,16 +58,6 @@ export function formatCustodyProvisions(
     .slice(0, -1)
 }
 
-export function formatCourtCaseNumber(
-  court: string,
-  courtCaseNumber: string,
-): string {
-  return `Málsnúmer ${court?.replace(
-    'Héraðsdómur',
-    'Héraðsdóms',
-  )} ${courtCaseNumber}`
-}
-
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,

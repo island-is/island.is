@@ -1,25 +1,33 @@
 import { getSlugFromType } from '@island.is/application/core'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { EmailTemplateGenerator } from '../../../../types'
+import { DistrictCommissionerLogo, fontStyles } from './consts'
 
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
   const application = (props.application as unknown) as CRCApplication
   const {
-    options: { clientLocationOrigin },
+    options: { clientLocationOrigin, email },
   } = props
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
   const subject = 'Umsókn um breytt lögheimili barns'
   const body = `
-        Borist hefur umsókn um breytt lögheimili barns.
+      <img src=${DistrictCommissionerLogo} height="78" width="246" />
 
-        <a href=${applicationLink} target="_blank">Skoða umsókn</a>.
+
+        <h1>${subject}</h1>
+
+        <p style="${fontStyles} margin: 0;">${application.externalData.nationalRegistry.data.fullName} hefur óskað eftir að þú undirritir samning um breytt lögheimili barns og meðlag.
+
+        <p style="${fontStyles} margin: 0;">Samningurinn er tilbúinn til rafrænnar undirritunar á Island.is.
+
+        <a style="${fontStyles}" href=${applicationLink} target="_blank">Opna umsókn</a>.
       `
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {

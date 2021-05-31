@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
@@ -53,15 +53,25 @@ const StorySlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.StorySlice),
 )
 
+const LatestNewsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
+)
+
+const OverviewLinksSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
   fullWidth?: boolean
+  organizationPageSlug?: string
 }
 
-const fullWidthSlices = ['TimelineSlice']
+const fullWidthSlices = ['TimelineSlice', 'LogoListSlice']
+const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace) => {
+const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -87,33 +97,48 @@ const renderSlice = (slice, namespace) => {
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
       return <StorySlice slice={slice} />
+    case 'OverviewLinks':
+      return <OverviewLinksSlice slice={slice} />
+    case 'LatestNewsSlice':
+      return (
+        <LatestNewsSlice
+          slice={slice}
+          organizationPageSlug={organizationPageSlug}
+          fullWidth={fullWidth}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
 }
 
-export const OrganizationSlice: FC<OrganizationSliceProps> = ({
+export const OrganizationSlice = ({
   slice,
   namespace,
   fullWidth = false,
-}) => (
-  <GridContainer>
-    <GridRow>
-      <GridColumn
-        paddingTop={6}
-        span={
-          fullWidthSlices.includes(slice.__typename) || !fullWidth
-            ? '9/9'
-            : ['9/9', '9/9', '7/9']
-        }
-        offset={
-          fullWidthSlices.includes(slice.__typename) || !fullWidth
-            ? '0'
-            : ['0', '0', '1/9']
-        }
-      >
-        {renderSlice(slice, namespace)}
-      </GridColumn>
-    </GridRow>
-  </GridContainer>
-)
+  organizationPageSlug = '',
+}: OrganizationSliceProps) => {
+  return !slicesWithContainer.includes(slice.__typename) ? (
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          paddingTop={6}
+          span={
+            fullWidthSlices.includes(slice.__typename) || !fullWidth
+              ? '9/9'
+              : ['9/9', '9/9', '7/9']
+          }
+          offset={
+            fullWidthSlices.includes(slice.__typename) || !fullWidth
+              ? '0'
+              : ['0', '0', '1/9']
+          }
+        >
+          {renderSlice(slice, namespace, organizationPageSlug, fullWidth)}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  ) : (
+    renderSlice(slice, namespace, organizationPageSlug, fullWidth)
+  )
+}

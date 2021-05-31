@@ -21,27 +21,44 @@ import {
   GrantType,
   GrantTypeService,
   GrantTypeDTO,
+  PagedRowsDto,
 } from '@island.is/auth-api-lib'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
-import { ADMIN_ROOT_SCOPE } from '../access/scope.constants'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/environment'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+const namespace = `${environment.audit.defaultNamespace}/grant-type`
+
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('backend/grants')
+@Audit({ namespace })
 export class GrantTypeController {
-  constructor(private readonly grantTypeService: GrantTypeService) {}
+  constructor(
+    private readonly grantTypeService: GrantTypeService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Gets all Grant Types */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiOkResponse({ type: [GrantType] })
-  async findAll(): Promise<GrantType[] | null> {
-    const grantTypes = await this.grantTypeService.findAll()
-    return grantTypes
+  @Audit<GrantType[]>({
+    resources: (types) => types.map((type) => type.name),
+  })
+  async findAll(): Promise<GrantType[]> {
+    return this.grantTypeService.findAll()
   }
 
   /** Gets all grant types and count of rows */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('search')
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -64,25 +81,29 @@ export class GrantTypeController {
       ],
     },
   })
+  @Audit<PagedRowsDto<GrantType>>({
+    resources: (result) => result.rows.map((type) => type.name),
+  })
   async findAndCountAll(
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: GrantType[]; count: number } | null> {
+  ): Promise<PagedRowsDto<GrantType>> {
     if (searchString) {
-      const idps = await this.grantTypeService.find(searchString, page, count)
-      return idps
-    } else {
-      const idps = await this.grantTypeService.findAndCountAll(page, count)
-      return idps
+      return this.grantTypeService.find(searchString, page, count)
     }
+
+    return this.grantTypeService.findAndCountAll(page, count)
   }
 
   /** Gets a grant type by name */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get('type/:name')
   @ApiOkResponse({ type: GrantType })
-  async getGrantType(@Param('name') name: string): Promise<GrantType | null> {
+  @Audit<GrantType>({
+    resources: (type) => type?.name,
+  })
+  async getGrantType(@Param('name') name: string): Promise<GrantType> {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
@@ -97,12 +118,13 @@ export class GrantTypeController {
   }
 
   /** Creates a new grant type */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiOkResponse({ type: GrantType })
-  async createGrantType(
-    @Body() grantType: GrantTypeDTO,
-  ): Promise<GrantType | null> {
+  @Audit<GrantType>({
+    resources: (type) => type.name,
+  })
+  async createGrantType(@Body() grantType: GrantTypeDTO): Promise<GrantType> {
     if (!grantType) {
       throw new BadRequestException('grantType must be provided')
     }
@@ -111,13 +133,14 @@ export class GrantTypeController {
   }
 
   /** Updates an existing grantType */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put(':name')
   @ApiOkResponse({ type: GrantType })
   async updateGrantType(
     @Body() grantType: GrantTypeDTO,
     @Param('name') name: string,
-  ): Promise<GrantType | null> {
+    @CurrentUser() user: User,
+  ): Promise<GrantType> {
     if (!name) {
       throw new BadRequestException('name must be provided')
     }
@@ -125,17 +148,37 @@ export class GrantTypeController {
       throw new BadRequestException('grantType must be provided')
     }
 
-    return this.grantTypeService.update(grantType, name)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'updateGrantType',
+        namespace,
+        resources: name,
+        meta: { fields: Object.keys(grantType) },
+      },
+      this.grantTypeService.update(grantType, name),
+    )
   }
 
   /** Soft deletes a grant type */
-  @Scopes(ADMIN_ROOT_SCOPE)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':name')
   @ApiOkResponse({ type: Number })
-  async deleteGrantType(@Param('name') name: string): Promise<number | null> {
+  async deleteGrantType(
+    @Param('name') name: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!name) {
       throw new BadRequestException('name must be provided')
     }
-    return this.grantTypeService.delete(name)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'deleteGrantType',
+        namespace,
+        resources: name,
+      },
+      this.grantTypeService.delete(name),
+    )
   }
 }

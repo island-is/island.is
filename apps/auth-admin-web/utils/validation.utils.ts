@@ -2,14 +2,16 @@
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
+  public static identifierPattern = /^[@a-zA-Z0-9_.-]*$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
 
-  public static corsOriginPattern = /^http/
+  public static corsOriginPattern = /^http.+(?<!\/)$/
 
   public static urlPattern = /^http/
+
+  public static baseUrlPattern = /^http.+(?<!\/)$/
 
   public static nationalIdPattern = /^[0-9]*$/
 
@@ -46,6 +48,15 @@ class ValidationUtils {
     }
 
     const regex = new RegExp(ValidationUtils.urlPattern)
+    return regex.test(input)
+  }
+
+  public static validateBaseUrl(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+
+    const regex = new RegExp(ValidationUtils.baseUrlPattern)
     return regex.test(input)
   }
 

@@ -27,20 +27,17 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import {
+  lightThemes,
+  OrganizationSlice,
+  OrganizationWrapper,
+  SliceDropdown,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
-import dynamic from 'next/dynamic'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-
-const OrganizationSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
-)
-const SliceDropdown = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.SliceDropdown),
-)
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -96,10 +93,6 @@ const SubPage: Screen<SubPageProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
-        },
-        {
           title: organizationPage.title,
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
@@ -152,6 +145,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceCustomRenderer,
         subpage.sliceExtraText,
         namespace,
+        organizationPage.slug,
       )}
     </OrganizationWrapper>
   )
@@ -162,13 +156,20 @@ const renderSlices = (
   renderType: string,
   extraText: string,
   namespace: Namespace,
+  organizationPageSlug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          fullWidth={false}
+          organizationPageSlug={organizationPageSlug}
+        />
       ))
   }
 }

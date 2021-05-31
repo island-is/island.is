@@ -3,6 +3,7 @@ export enum ApplicationTypes {
   PASSPORT = 'Passport',
   DRIVING_LESSONS = 'DrivingLessons',
   DRIVING_LICENSE = 'DrivingLicense',
+  DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   META_APPLICATION = 'MetaApplication',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -10,8 +11,12 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
+  LOGIN_SERVICE = 'LoginService',
   PARTY_APPLICATION = 'PartyApplication',
   INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
+  FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
+  PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
+  JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
 }
 
 export const ApplicationConfigurations = {
@@ -30,6 +35,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
     translation: 'dl.application',
+  },
+  [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
+    slug: 'akstursmat',
+    translation: 'dla.application',
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
@@ -59,6 +68,10 @@ export const ApplicationConfigurations = {
     slug: 'listabokstafur',
     translation: 'ple.application',
   },
+  [ApplicationTypes.LOGIN_SERVICE]: {
+    slug: 'innskraningarthjonusta',
+    translation: 'ls.application',
+  },
   [ApplicationTypes.PARTY_APPLICATION]: {
     slug: 'frambod',
     translation: 'pa.application',
@@ -66,5 +79,17 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
+  },
+  [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
+    slug: 'fjarmognun-rikisverkefni',
+    translation: 'affgp.application',
+  },
+  [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
+    slug: 'greidsludreifing-skulda',
+    translation: 'pdpp.application',
+  },
+  [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
+    slug: 'forsja-barns',
+    translation: 'jca.application',
   },
 }

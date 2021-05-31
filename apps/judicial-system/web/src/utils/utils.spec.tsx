@@ -21,6 +21,7 @@ import {
 import { validate } from './validate'
 
 import * as formatters from './formatters'
+import { mockCourt } from './mocks'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -297,6 +298,31 @@ describe('Validation', () => {
 
       // Assert
       expect(validation.isValid).toEqual(true)
+    })
+  })
+
+  describe('Validate phonenumber format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const phonenumber = '00292'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Dæmi: 555-5555')
+    })
+
+    test('should pass if in correct form', () => {
+      // Arrange
+      const phonenumber = '555-5555'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
     })
   })
 })
@@ -599,7 +625,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         parentCase: {
           id: 'TEST_EXTENSION',
           decision: CaseDecision.ACCEPTING,
@@ -645,7 +671,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 
@@ -688,7 +714,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 

@@ -75,4 +75,84 @@ describe('transformCase', () => {
       expect(res.isCustodyEndDateInThePast).toBe(true)
     })
   })
+
+  describe('isAppealDeadlineExpired', () => {
+    it('should be false when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(false)
+    })
+
+    it('should be false while the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(false)
+    })
+
+    it('should be true when the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(true)
+    })
+  })
+
+  describe('isAppealGracePeriodExpired', () => {
+    it('should be false when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(false)
+    })
+
+    it('should be false while the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 7)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(false)
+    })
+
+    it('should be true when the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 7)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(true)
+    })
+  })
 })

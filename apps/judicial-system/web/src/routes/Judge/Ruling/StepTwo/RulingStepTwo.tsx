@@ -1,6 +1,7 @@
 import {
   Box,
   GridColumn,
+  GridContainer,
   GridRow,
   Input,
   RadioButton,
@@ -13,6 +14,7 @@ import {
   BlueBox,
   CaseNumbers,
   FormContentContainer,
+  TimeInputField,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -20,15 +22,11 @@ import {
   CaseDecision,
   CaseType,
   CaseGender,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -37,6 +35,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  validateAndSetTime,
+  validateAndSendTimeToServer,
+  getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
@@ -46,37 +47,35 @@ import {
 import {
   capitalize,
   formatAccusedByGender,
+  formatDate,
   NounCases,
+  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [
+    courtDocumentEndErrorMessage,
+    setCourtDocumentEndErrorMessage,
+  ] = useState<string>('')
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const { updateCase } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
   const resCase = data?.case
 
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
+  })
 
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
@@ -97,6 +96,7 @@ export const RulingStepTwo: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -205,7 +205,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -237,7 +237,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -274,7 +274,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -353,7 +353,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                       <GridColumn span="6/12">
@@ -382,7 +382,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -415,7 +415,7 @@ export const RulingStepTwo: React.FC = () => {
                             )
                           }}
                           large
-                          filled
+                          backgroundColor="white"
                         />
                       </GridColumn>
                     </GridRow>
@@ -551,6 +551,58 @@ export const RulingStepTwo: React.FC = () => {
                 </Text>
               )}
             </Box>
+            <Box className={style.courtEndTimeContainer}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Þinghald
+                </Text>
+              </Box>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn>
+                    <TimeInputField
+                      onChange={(evt) =>
+                        validateAndSetTime(
+                          'courtEndTime',
+                          workingCase.courtStartDate,
+                          evt.target.value,
+                          ['empty', 'time-format'],
+                          workingCase,
+                          setWorkingCase,
+                          courtDocumentEndErrorMessage,
+                          setCourtDocumentEndErrorMessage,
+                        )
+                      }
+                      onBlur={(evt) =>
+                        validateAndSendTimeToServer(
+                          'courtEndTime',
+                          workingCase.courtStartDate,
+                          evt.target.value,
+                          ['empty', 'time-format'],
+                          workingCase,
+                          updateCase,
+                          setCourtDocumentEndErrorMessage,
+                        )
+                      }
+                    >
+                      <Input
+                        data-testid="courtEndTime"
+                        name="courtEndTime"
+                        label="Þinghaldi lauk (kk:mm)"
+                        placeholder="Veldu tíma"
+                        defaultValue={formatDate(
+                          workingCase.courtEndTime,
+                          TIME_FORMAT,
+                        )}
+                        errorMessage={courtDocumentEndErrorMessage}
+                        hasError={courtDocumentEndErrorMessage !== ''}
+                        required
+                      />
+                    </TimeInputField>
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+            </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
@@ -558,7 +610,8 @@ export const RulingStepTwo: React.FC = () => {
               nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
               nextIsDisabled={
                 !workingCase.accusedAppealDecision ||
-                !workingCase.prosecutorAppealDecision
+                !workingCase.prosecutorAppealDecision ||
+                !isValidCourtEndTime?.isValid
               }
             />
           </FormContentContainer>

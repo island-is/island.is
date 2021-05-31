@@ -76,13 +76,22 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
 
   Array.from(eventMap.entries(), ([year, eventsByMonth]) => {
     Array.from(eventsByMonth.entries(), ([month, monthEvents]) => {
-      monthEvents.map((event) => {
+      offset += 100
+      items.push(
+        <MonthItem
+          month={getMonthByIndex(month)}
+          year={year.toString()}
+          offset={offset}
+        />,
+      )
+      lastYear = year
+      monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()
-        offset += Math.max(
-          90,
-          Math.min(160, (timestamp - lastTimestamp) / 4320000),
-        )
+        offset +=
+          idx > 0
+            ? Math.max(90, Math.min(160, (timestamp - lastTimestamp) / 4320000))
+            : 100
         items.push(
           <>
             <TimelineItem
@@ -101,15 +110,6 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
         i++
         lastTimestamp = timestamp
       })
-      offset += 80
-      items.push(
-        <MonthItem
-          month={getMonthByIndex(month)}
-          year={lastYear !== year && year.toString()}
-          offset={offset}
-        />,
-      )
-      lastYear = year
     })
   })
 
@@ -177,7 +177,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Text>{slice.title}</Text>
+                <Box borderTopWidth="standard" borderColor="standard"></Box>
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -324,8 +324,9 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
           <ModalBase
             baseId="eventDetails"
             isVisible={true}
-            hideOnClickOutside={false}
-            hideOnEsc={false}
+            initialVisibility={true}
+            onVisibilityChange={(isVisible) => !isVisible && setVisible(false)}
+            hideOnEsc={true}
           >
             <EventModal event={event} onClose={() => setVisible(false)} />
           </ModalBase>,
@@ -388,11 +389,11 @@ const BulletLine = ({
 const MonthItem = ({ month, offset, year = '' }) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
-      <Text color="blue600" variant="h2">
-        {year}
-      </Text>
       <Text color="blue600" variant="eyebrow">
         {month}
+      </Text>
+      <Text color="blue600" variant="eyebrow">
+        {year}
       </Text>
     </div>
   )

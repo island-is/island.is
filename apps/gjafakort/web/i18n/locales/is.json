@@ -27,7 +27,7 @@
       "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
       "items": [
         "Skanna strikamerki með smáforriti",
-        "Slá inn númer gjafabréfs í vafra",
+        "Slá inn númer Ferðagjafar í vafra",
         "Beintenging við bókunarkerfi"
       ],
       "disclaimer": "<strong>Athugið</strong> mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
@@ -109,7 +109,7 @@
         },
         {
           "id": "video2",
-          "label": "Hvernig slæ ég inn númer gjafabréfs í vafra?",
+          "label": "Hvernig slæ ég inn númer Ferðagjafar í vafra?",
           "url": "https://www.youtube.com/embed/tkff3XZ6KXE"
         }
       ]
@@ -331,7 +331,7 @@
   },
   "user": {
     "title": "Ferðagjöfin þín",
-    "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
+    "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt Ferðagjöfina, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
     "appStore": {
       "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
       "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
@@ -340,7 +340,7 @@
     },
     "privacyPolicyButton": "Persónuverndarstefna",
     "barcode": {
-      "noGiftCards": "Engin skráð gjafabréf",
+      "noGiftCards": "Engin skráð Ferðagjöf",
       "title": "Gjafakóði á strikamerki",
       "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
       "currentAmount": "Núvirði",
@@ -381,7 +381,7 @@
     },
     "mobileForm": {
       "title": "Símanúmer",
-      "intro": "Vinsamlegast skráðu inn símanúmerið þitt svo hægt sé að búa til gjafabréf fyrir þig",
+      "intro": "Vinsamlegast skráðu inn símanúmerið þitt svo hægt sé að búa til ferðagjöf fyrir þig",
       "validation": {
         "confirmPhoneNumber": "Símanúmer passa ekki. Vinsamlegast sláðu sama símanúmer inn og frá fyrri reit"
       },

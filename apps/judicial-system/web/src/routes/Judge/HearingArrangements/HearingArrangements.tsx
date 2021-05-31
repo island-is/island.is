@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react'
+import InputMask from 'react-input-mask'
+
 import {
   AlertMessage,
   Box,
@@ -7,7 +10,6 @@ import {
   Option,
   Tooltip,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -24,7 +26,6 @@ import {
   Case,
   CaseState,
   NotificationType,
-  UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -32,12 +33,13 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   JudgeSubsections,
   ReactSelectOption,
   Sections,
+  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
@@ -49,14 +51,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-
-interface CaseData {
-  case?: Case
-}
-
-interface UserData {
-  users: User[]
-}
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -64,11 +59,16 @@ export const HearingArrangements: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
+  const [
+    defenderPhoneNumberErrorMessage,
+    setDefenderPhoneNumberErrorMessage,
+  ] = useState('')
+  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
 
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const { updateCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -81,23 +81,6 @@ export const HearingArrangements: React.FC = () => {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
-  )
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
   )
 
   const [
@@ -119,13 +102,21 @@ export const HearingArrangements: React.FC = () => {
   }
 
   const judges = (userData?.users || [])
-    .filter((user: User) => user.role === UserRole.JUDGE)
+    .filter(
+      (user: User) =>
+        user.role === UserRole.JUDGE &&
+        user.institution?.id === workingCase?.court?.id,
+    )
     .map((judge: User) => {
       return { label: judge.name, value: judge.id }
     })
 
   const registrars = (userData?.users || [])
-    .filter((user: User) => user.role === UserRole.REGISTRAR)
+    .filter(
+      (user: User) =>
+        user.role === UserRole.REGISTRAR &&
+        user.institution?.id === workingCase?.court?.id,
+    )
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id }
     })
@@ -168,6 +159,10 @@ export const HearingArrangements: React.FC = () => {
       {
         value: workingCase?.defenderEmail || '',
         validations: ['email-format'],
+      },
+      {
+        value: workingCase?.defenderPhoneNumber || '',
+        validations: ['phonenumber'],
       },
     ]
 
@@ -216,6 +211,7 @@ export const HearingArrangements: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -352,61 +348,99 @@ export const HearingArrangements: React.FC = () => {
                   Skipaður verjandi
                 </Text>
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="defenderName"
-                  label="Nafn verjanda"
-                  defaultValue={workingCase.defenderName}
-                  placeholder="Fullt nafn"
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <Input
+                    name="defenderName"
+                    label="Nafn verjanda"
+                    defaultValue={workingCase.defenderName}
+                    placeholder="Fullt nafn"
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'defenderName',
+                        event,
+                        [],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'defenderName',
+                        event.target.value,
+                        [],
+                        workingCase,
+                        updateCase,
+                      )
+                    }
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    name="defenderEmail"
+                    label="Netfang verjanda"
+                    defaultValue={workingCase.defenderEmail}
+                    placeholder="Netfang"
+                    errorMessage={defenderEmailErrorMessage}
+                    hasError={defenderEmailErrorMessage !== ''}
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'defenderEmail',
+                        event,
+                        ['email-format'],
+                        workingCase,
+                        setWorkingCase,
+                        defenderEmailErrorMessage,
+                        setDefenderEmailErrorMessage,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'defenderEmail',
+                        event.target.value,
+                        ['email-format'],
+                        workingCase,
+                        updateCase,
+                        setDefenderEmailErrorMessage,
+                      )
+                    }
+                  />
+                </Box>
+                <InputMask
+                  mask="999-9999"
+                  maskPlaceholder={null}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
-                      'defenderName',
+                      'defenderPhoneNumber',
                       event,
-                      [],
+                      ['phonenumber'],
                       workingCase,
                       setWorkingCase,
+                      defenderPhoneNumberErrorMessage,
+                      setDefenderPhoneNumberErrorMessage,
                     )
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
-                      'defenderName',
+                      'defenderPhoneNumber',
                       event.target.value,
-                      [],
+                      ['phonenumber'],
                       workingCase,
                       updateCase,
+                      setDefenderPhoneNumberErrorMessage,
                     )
                   }
-                />
-              </Box>
-              <Input
-                name="defenderEmail"
-                label="Netfang verjanda"
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailErrorMessage,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailErrorMessage,
-                  )
-                }
-              />
+                >
+                  <Input
+                    name="defenderPhoneNumber"
+                    label="Símanúmer verjanda"
+                    defaultValue={workingCase.defenderPhoneNumber}
+                    placeholder="Símanúmer"
+                    errorMessage={defenderPhoneNumberErrorMessage}
+                    hasError={defenderPhoneNumberErrorMessage !== ''}
+                  />
+                </InputMask>
+              </BlueBox>
             </Box>
           </FormContentContainer>
           <FormContentContainer isFooter>

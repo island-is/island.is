@@ -25,7 +25,8 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const { user } = useContext(UserContext)
-  const isJudge = user?.role === UserRole.JUDGE
+  const isCourtRole =
+    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
   const pastRequestsColumns = useMemo(
     () => [
@@ -107,7 +108,7 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
               {
                 mapCaseStateToTagVariant(
                   row.row.original.state,
-                  isJudge,
+                  isCourtRole,
                   row.row.original.isCustodyEndDateInThePast,
                 ).text
               }
@@ -125,14 +126,18 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
               rulingDate: string
               custodyEndDate: string
               courtEndTime: string
+              state: CaseState
             }
           }
         }) => {
           const rulingDate = row.row.original.rulingDate
           const custodyEndDate = row.row.original.custodyEndDate
           const courtEndDate = row.row.original.courtEndTime
+          const state = row.row.original.state
 
-          if (rulingDate) {
+          if (state === CaseState.REJECTED) {
+            return null
+          } else if (rulingDate) {
             return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
               parseISO(custodyEndDate),
               'd.M.y',
@@ -148,7 +153,7 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
         },
       },
     ],
-    [isJudge],
+    [isCourtRole],
   )
 
   const pastRequestsData = useMemo(() => cases, [cases])

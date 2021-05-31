@@ -35,10 +35,9 @@ export default {
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
   },
-  identityServer: {
+  auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',
-    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -77,5 +76,17 @@ export default {
   },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
+  },
+  regulationsDomain: {
+    url: process.env.REGULATIONS_API_URL,
+  },
+  endorsementSystem: {
+    baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
+  },
+  nationalRegistryXRoad: {
+    url: process.env.XROAD_BASE_PATH,
+    memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
+    apiPath: process.env.XROAD_TJODSKRA_API_PATH,
+    clientId: process.env.ROAD_CLIENT_ID,
   },
 }

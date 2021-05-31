@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
@@ -25,12 +25,7 @@ interface TagListProps {
   namespace?: object
 }
 
-export const TagList: FC<TagListProps> = ({
-  data,
-  type,
-  access,
-  namespace,
-}) => {
+export const TagList = ({ data, type, access, namespace }: TagListProps) => {
   const n = useNamespace(namespace)
 
   return (

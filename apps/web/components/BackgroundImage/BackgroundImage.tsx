@@ -1,11 +1,12 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
+import { useIntersection } from 'react-use'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { useMountedState } from 'react-use'
+
 import * as styles from './BackgroundImage.treat'
 
-export type BackgroundImageProps = {
+type BaseProps = {
   image: { url: string; title: string }
   ratio?: string
   width?: number
@@ -14,43 +15,68 @@ export type BackgroundImageProps = {
   boxProps?: BoxProps
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
+  intersectionOptions?: IntersectionObserverInit
+  quality?: number
 }
 
-const useImageLoader = (url: string): boolean => {
-  const isMounted = useMountedState()
+type UseThumbnailProps = {
+  useThumbnail?: boolean
+  thumbnailColor?: never
+}
+
+type ThumbnailColorProps = {
+  useThumbnail?: never
+  thumbnailColor?: Colors
+}
+
+type ExtraProps = UseThumbnailProps | ThumbnailColorProps
+
+const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
   const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => {
-    const img = new window.Image(100)
-    img.onload = img.onerror = () => {
-      if (isMounted) {
+  useLayoutEffect(() => {
+    if (shouldLoad) {
+      const img = new window.Image(100)
+      img.onload = img.onerror = () => {
         setLoaded(true)
       }
+      img.src = url
     }
-    img.src = url
-  }, [url])
+  }, [url, shouldLoad])
 
   return loaded
 }
 
-export const BackgroundImage: FC<BackgroundImageProps> = ({
+export const BackgroundImage = ({
   image = null,
   ratio = '',
   width = 1000,
   height,
-  background = theme.color.dark100,
+  background = 'transparent',
   backgroundSize = 'cover',
   positionX,
+  thumbnailColor = 'dark100',
+  quality = 80,
+  useThumbnail,
+  intersectionOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0,
+  },
   boxProps = {
     alignItems: 'center',
     width: 'full',
     display: 'inlineFlex',
     overflow: 'hidden',
-    borderRadius: 'large',
   },
-}) => {
-  const src = `${image.url}?w=${width}`
-  const thumbnail = image.url + '?w=50'
+}: BaseProps & ExtraProps) => {
+  const intersectionRef = useRef(null)
+  const intersection = useIntersection(intersectionRef, intersectionOptions)
+  const [shouldLoad, setShouldLoad] = useState<boolean>(false)
+  const q = quality >= 0 && quality <= 100 ? quality : 80
+  const src = `${image.url}?w=${width}&q=${q}`
+  const backgroundImageRef = useRef<HTMLDivElement | null>(null)
+  const thumbnail = image.url + '?w=50&q=20'
   const alt = image.title ?? ''
   const imageProps = alt
     ? {
@@ -59,7 +85,13 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
       }
     : {}
 
-  const imageLoaded = useImageLoader(src)
+  useLayoutEffect(() => {
+    if (!shouldLoad && intersection?.isIntersecting) {
+      setShouldLoad(true)
+    }
+  }, [intersection])
+
+  const imageLoaded = useImageLoader(src, shouldLoad)
 
   let paddingTop = '0px'
 
@@ -102,14 +134,16 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
   }
 
   return (
-    <Box {...boxProps}>
+    <Box {...boxProps} ref={intersectionRef}>
       <div className={styles.container} style={{ paddingTop, background }}>
         <div
           className={cn(styles.thumbnail, styles.bgImage, {
             [styles.thumbnailHide]: imageLoaded,
           })}
           style={{
-            backgroundImage: `url(${thumbnail})`,
+            ...(useThumbnail
+              ? { backgroundImage: `url(${thumbnail})` }
+              : { backgroundColor: theme.color[thumbnailColor] }),
             backgroundSize,
             backgroundPosition,
             height,
@@ -117,11 +151,12 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
         />
         <div
           {...imageProps}
+          ref={backgroundImageRef}
           className={cn(styles.image, styles.bgImage, {
             [styles.imageShow]: imageLoaded,
           })}
           style={{
-            backgroundImage: `url(${src})`,
+            ...(shouldLoad && { backgroundImage: `url(${src})` }),
             backgroundSize,
             backgroundPosition,
             height,

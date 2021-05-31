@@ -1,8 +1,12 @@
 import React from 'react'
 import cn from 'classnames'
+
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
+import { InputBackgroundColor } from '../Input/types'
+import { Box } from '../Box/Box'
+import { BoxProps } from '../Box/types'
 
 export interface RadioButtonProps {
   name?: string
@@ -15,12 +19,22 @@ export interface RadioButtonProps {
   tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
-  filled?: boolean
   large?: boolean
+  /** backgroundColor can only be used if the 'large' prop set to true */
+  backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
 
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
+const backgroundColors: Record<InputBackgroundColor, BoxProps['background']> = {
+  white: 'white',
+  blue: 'blue100',
+}
 export const RadioButton = ({
   label,
   subLabel,
@@ -34,20 +48,24 @@ export const RadioButton = ({
   hasError,
   errorMessage,
   large,
-  filled = false,
+  backgroundColor,
 }: RadioButtonProps) => {
+  const errorId = `${id}-error`
   const ariaError = hasError
     ? {
         'aria-invalid': true,
-        'aria-describedby': id,
+        'aria-describedby': errorId,
       }
     : {}
+
   return (
-    <div
+    <Box
       className={cn(styles.container, {
         [styles.large]: large,
-        [styles.filled]: filled,
       })}
+      background={
+        large && backgroundColor ? backgroundColors[backgroundColor] : undefined
+      }
     >
       <input
         className={styles.input}
@@ -58,7 +76,7 @@ export const RadioButton = ({
         onChange={onChange}
         value={value}
         checked={checked}
-        {...ariaError}
+        {...(ariaError as AriaError)}
       />
       <label
         className={cn(styles.label, {
@@ -101,11 +119,15 @@ export const RadioButton = ({
           </div>
         )}
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+          >
             {errorMessage}
           </div>
         )}
       </label>
-    </div>
+    </Box>
   )
 }

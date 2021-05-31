@@ -6,11 +6,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { answerValidators } from './answerValidators'
+import { API_MODULE_ACTIONS } from '../constants'
 import { PartyLetterSchema } from './dataSchema'
 
-type ReferenceTemplateEvent =
+type PartyLetterApplicationTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
@@ -28,8 +29,8 @@ enum Roles {
 
 const PartyLetterApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<PartyLetterApplicationTemplateEvent>,
+  PartyLetterApplicationTemplateEvent
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Listabókstafur',
@@ -41,6 +42,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -65,6 +67,10 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+          },
           roles: [
             {
               id: Roles.SIGNATUREE,
@@ -97,6 +103,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.SIGNATUREE,

@@ -22,6 +22,10 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
+import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -132,11 +136,7 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: `${environment.identityServer.jwksUri}`,
-    }),
+    AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
       username: environment.syslumennService.username,
@@ -146,6 +146,21 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+    }),
+    IcelandicNamesModule.register({
+      backendUrl: environment.icelandicNamesRegistry.backendUrl,
+    }),
+    EndorsementSystemModule.register({
+      baseApiUrl: environment.endorsementSystem.baseApiUrl,
+    }),
+    RegulationsModule.register({
+      url: environment.regulationsDomain.url,
+    }),
+    NationalRegistryXRoadModule.register({
+      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+      xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
   ],
 })

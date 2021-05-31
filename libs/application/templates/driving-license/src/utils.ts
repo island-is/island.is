@@ -1,4 +1,4 @@
-import { DrivingLicenseType } from '@island.is/api/schema'
+import { DrivingLicenseType } from '../types/schema'
 
 export const buildEntitlementOption = (
   entitlementTypes: DrivingLicenseType[],

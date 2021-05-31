@@ -815,6 +815,9 @@ export interface IFrontpageSliderFields {
   /** Slide link */
   slideLink?: ILink | undefined
 
+  /** Animation JSON (Asset) */
+  animationJsonAsset?: Asset | undefined
+
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
 
@@ -849,7 +852,7 @@ export interface IFrontpageSliderListFields {
   items: IFrontpageSlider[]
 }
 
-/** Listi af efniseiningum sem hægt er að fletta á milli og birtast efst á forsíðu Ísland.is. */
+/** Á heima inni í 'Frontpage' núna */
 
 export interface IFrontpageSliderList
   extends Entry<IFrontpageSliderListFields> {
@@ -946,6 +949,9 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
 export interface IGenericTagFields {
   /** Title */
   title: string
+
+  /** Slug */
+  slug: string
 }
 
 /** A generic uniquely named tag that can be used for tag miscellaneous things. */
@@ -1152,6 +1158,12 @@ export interface ILandingPage extends Entry<ILandingPageFields> {
 export interface ILatestNewsSliceFields {
   /** Title */
   title?: string | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Read more text */
+  readMoreText?: string | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1426,6 +1438,9 @@ export interface IMailingListSignupFields {
 
   /** Submit button text */
   buttonText: string
+
+  /** Signup URL */
+  signupUrl: string
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1797,6 +1812,9 @@ export interface IOrganizationFields {
 
   /** Logo */
   logo?: Asset | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1884,7 +1902,15 @@ export interface IOrganizationPageFields {
       )[]
     | undefined
 
-  /** Menu Links */
+  /** Bottom slices */
+  bottomSlices?:
+    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
   menuLinks?: ILinkGroup[] | undefined
 
   /** Secondary Menu */
@@ -1942,6 +1968,7 @@ export interface IOrganizationSubpageFields {
         | IAccordionSlice
         | IContactUs
         | IDistricts
+        | IMailingListSignup
         | IOffices
         | IOneColumnText
         | ITeamList
@@ -1999,6 +2026,31 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
     contentType: {
       sys: {
         id: 'organizationTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOverviewLinksFields {
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'overviewLinks'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2361,7 +2413,16 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
 
 export interface ISidebarCardFields {
   /** Type */
-  type?: 'info' | 'warning' | undefined
+  type?:
+    | 'informationCircle'
+    | 'warning'
+    | 'notifications'
+    | 'time'
+    | 'heart'
+    | 'home'
+    | 'lockClosed'
+    | 'mail'
+    | undefined
 
   /** Title */
   title?: string | undefined
@@ -2595,6 +2656,12 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** url */
+  url: string
+
+  /** Parent */
+  parent: IArticle
 }
 
 /** A sub article that's a part of another main article */

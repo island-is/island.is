@@ -1,23 +1,15 @@
-import {
-  Accordion,
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   Modal,
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
-  TimeInputField,
   PdfButton,
   CaseNumbers,
   PageLayout,
   FormContentContainer,
+  CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   getConclusion,
@@ -27,12 +19,12 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
-  TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AppealDecisionRole,
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -46,13 +38,11 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -60,13 +50,7 @@ import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import {
-  getTimeFromDate,
-  validateAndSendTimeToServer,
-  validateAndSetTime,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
@@ -235,7 +219,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -245,11 +229,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={
-        signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
-      }
+      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
-        router.push(Constants.FEEDBACK_FORM_ROUTE)
+        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
@@ -262,19 +245,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
   )
 }
 
-interface CaseData {
-  case?: Case
-}
-
 export const Confirmation: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
   const [
     requestSignatureResponse,
     setRequestSignatureResponse,
@@ -285,28 +260,6 @@ export const Confirmation: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
-  })
-
-  const [updateCaseMutation, { loading: isUpdating }] = useMutation(
-    UpdateCaseMutation,
-  )
-
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -366,6 +319,7 @@ export const Confirmation: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -383,7 +337,7 @@ export const Confirmation: React.FC = () => {
                 )}`}</Text>
               </Box>
               <Text variant="small">{`Þinghald: ${formatDate(
-                workingCase.courtStartTime,
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
@@ -398,6 +352,9 @@ export const Confirmation: React.FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
+                <CourtCaseFactsAndLegalArgumentsAccordionItem
+                  workingCase={workingCase}
+                />
               </Accordion>
             </Box>
             <Box component="section" marginBottom={8}>
@@ -556,63 +513,10 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
             )}
-            <Box className={style.courtEndTimeContainer}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Þinghald
-                </Text>
-              </Box>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn>
-                    <TimeInputField
-                      onChange={(evt) =>
-                        validateAndSetTime(
-                          'courtEndTime',
-                          new Date().toString(),
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          setWorkingCase,
-                          courtDocumentEndErrorMessage,
-                          setCourtDocumentEndErrorMessage,
-                        )
-                      }
-                      onBlur={(evt) =>
-                        validateAndSendTimeToServer(
-                          'courtEndTime',
-                          new Date().toString(),
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          updateCase,
-                          setCourtDocumentEndErrorMessage,
-                        )
-                      }
-                    >
-                      <Input
-                        data-testid="courtEndTime"
-                        name="courtEndTime"
-                        label="Þinghaldi lauk (kk:mm)"
-                        placeholder="Veldu tíma"
-                        defaultValue={formatDate(
-                          workingCase.courtEndTime,
-                          TIME_FORMAT,
-                        )}
-                        errorMessage={courtDocumentEndErrorMessage}
-                        hasError={courtDocumentEndErrorMessage !== ''}
-                        required
-                      />
-                    </TimeInputField>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
                 title="Opna PDF þingbók og úrskurð"
-                disabled={isUpdating}
                 pdfType="ruling"
               />
             </Box>
@@ -622,9 +526,8 @@ export const Confirmation: React.FC = () => {
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
               nextButtonText="Staðfesta og hefja undirritun"
-              nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
               onNextButtonClick={handleNextButtonClick}
-              nextIsLoading={isRequestingSignature || isUpdating}
+              nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id

@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 
@@ -10,8 +10,6 @@ export type TagVariant =
   | 'purple'
   | 'white'
   | 'red'
-  | 'mint'
-  | 'darkerMint'
   | 'rose'
   | 'blueberry'
 
@@ -23,9 +21,11 @@ export interface TagProps {
   active?: boolean
   disabled?: boolean
   outlined?: boolean
-  attention?: boolean // Renders a red dot driving attention to the tag.
+  /** Renders a red dot driving attention to the tag. */
+  attention?: boolean
   children: string | ReactNode
   truncate?: boolean
+  CustomLink?: FC
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -42,6 +42,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       outlined,
       attention,
       truncate,
+      CustomLink,
       ...props
     }: TagProps,
     ref,
@@ -72,6 +73,10 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
 
     if (disabled) {
       return <span {...sharedProps}>{content}</span>
+    }
+
+    if (CustomLink) {
+      return <CustomLink {...sharedProps}>{content}</CustomLink>
     }
 
     return href ? (

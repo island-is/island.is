@@ -7,20 +7,23 @@ import {
   PersonType,
 } from '@island.is/api/domains/syslumenn'
 import {
-  CRCApplication,
-  Override,
   getSelectedChildrenFromExternalData,
   formatDate,
   childrenResidenceInfo,
-} from '@island.is/application/templates/children-residence-change'
+} from '@island.is/application/templates/family-matters-core/utils'
+import { Override } from '@island.is/application/templates/family-matters-core/types'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
+  generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
 import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
+import { syslumennDataFromPostalCode } from './utils'
+import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -59,7 +62,10 @@ export class ChildrenResidenceChangeService {
 
     const otherParent = selectedChildren[0].otherParent
 
-    const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+    const childResidenceInfo = childrenResidenceInfo(
+      applicant,
+      answers.selectedChildren,
+    )
     const currentAddress = childResidenceInfo.current.address
 
     if (!fileContent) {
@@ -109,33 +115,54 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
-    const durationType = answers.durationType as string
+    const durationType = answers.selectDuration?.type
+    const durationDate = answers.selectDuration?.date
     const extraData = {
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
-        durationType === 'temporary' && answers.durationDate
-          ? formatDate(answers.durationDate)
+        durationType === 'temporary' && durationDate
+          ? formatDate({ date: durationDate, formatter: 'dd.MM.yyyy' })
           : durationType,
     }
 
-    const response = await this.syslumennService.uploadData(
-      participants,
-      attachment,
-      extraData,
+    const syslumennData = syslumennDataFromPostalCode(
+      childResidenceInfo.future.address.postalCode,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    const response = await this.syslumennService
+      .uploadData(participants, attachment, extraData)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmailWithAttachment(
+          generateSyslumennNotificationEmail,
+          (application as unknown) as Application,
+          fileContent.toString('binary'),
+          syslumennData.email,
+        )
+        return undefined
+      })
+
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentA.email,
+          syslumennData.name,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentA.email,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentB.email,
+          syslumennData.name,
+          response?.malsnumer,
+        ),
       (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentB.email,
     )
 
     return response
@@ -145,19 +172,25 @@ export class ChildrenResidenceChangeService {
     const { answers } = application
     const { counterParty } = answers
 
-    // TODO Remove null check on counter party once we add it to the template.
-    if (counterParty?.email) {
+    if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
         (application as unknown) as Application,
       )
     }
 
-    if (counterParty?.phoneNumber) {
+    if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
-        'Borist hefur umsókn um breytt lögheimili barns.',
+        'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
+  }
+
+  async rejectApplication({ application }: props) {
+    await this.sharedTemplateAPIService.sendEmail(
+      applicationRejectedEmail,
+      (application as unknown) as Application,
+    )
   }
 }

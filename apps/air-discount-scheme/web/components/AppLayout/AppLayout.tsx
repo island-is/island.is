@@ -60,9 +60,18 @@ export const AppLayout: NextComponentType<
     href: toRoute(routeKey, nextLanguage),
   }
 
+  const islandHref = 'https://island.is'
   const noEmptyOrHash = ({ href }) => href && href !== '#'
-  const footerUpperMenuFiltered = footerUpperMenu.filter(noEmptyOrHash)
-  const footerLowerMenuFiltered = footerLowerMenu.filter(noEmptyOrHash)
+  const mapLocalLinks = (link) =>
+    link.href.substring(0, 1) === '/'
+      ? { ...link, href: islandHref + link.href }
+      : link
+  const footerUpperMenuFiltered = footerUpperMenu
+    .filter(noEmptyOrHash)
+    .map(mapLocalLinks)
+  const footerLowerMenuFiltered = footerLowerMenu
+    .filter(noEmptyOrHash)
+    .map(mapLocalLinks)
   const footerMiddleMenuFiltered = [] // footerMiddleMenu.filter(noEmptyOrHash)
   const footerTagsMenuFiltered = [] // footerTagsMenu.filter(noEmptyOrHash)
 
@@ -119,6 +128,7 @@ export const AppLayout: NextComponentType<
         </Box>
         <Footer
           topLinks={footerUpperMenuFiltered}
+          topLinksContact={[]}
           bottomLinks={footerLowerMenuFiltered}
           middleLinks={footerMiddleMenuFiltered}
           tagLinks={footerTagsMenuFiltered}

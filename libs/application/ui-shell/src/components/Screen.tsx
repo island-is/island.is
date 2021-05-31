@@ -89,20 +89,18 @@ const Screen: FC<ScreenProps> = ({
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
-    resolver,
+    resolver: (formValue, context) =>
+      resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-
   const refetch = useContext<() => void>(RefetchContext)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION,
@@ -187,6 +185,10 @@ const Screen: FC<ScreenProps> = ({
 
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
+
+        if (submitField.refetchApplicationAfterSubmit) {
+          refetch()
+        }
       }
     } else {
       response = await updateApplication({
@@ -198,6 +200,7 @@ const Screen: FC<ScreenProps> = ({
               screen,
             ),
           },
+          locale,
         },
       })
     }
@@ -240,10 +243,10 @@ const Screen: FC<ScreenProps> = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <GridColumn
-          span={['12/12', '12/12', '7/9', '7/9']}
-          offset={['0', '0', '1/9']}
+          span={['12/12', '12/12', '10/12', '7/9']}
+          offset={['0', '0', '1/12', '1/9']}
         >
-          <Text variant="h2" marginBottom={1}>
+          <Text variant="h2" as="h2" marginBottom={1}>
             {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
@@ -260,6 +263,7 @@ const Screen: FC<ScreenProps> = ({
                         id: applicationId,
                         answers: { [screen.id]: newRepeaterItems },
                       },
+                      locale,
                     },
                   })
                   if (!newData.errors) {

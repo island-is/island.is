@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages/application'
@@ -32,6 +33,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -56,6 +58,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -74,7 +77,10 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

@@ -113,4 +113,24 @@ export class ResourcesController {
       )
     }
   }
+
+  /** Gets the api scope names that are available to actors */
+  @Scopes('@identityserver.api/authentication')
+  @Get('api-scopes/for-actor')
+  @ApiQuery({
+    name: 'requestedScopes',
+    type: String,
+    required: true,
+    allowEmptyValue: true,
+  })
+  @ApiOkResponse({ type: String, isArray: true })
+  async findActorApiScopes(
+    @Query(
+      'requestedScopes',
+      new ParseArrayPipe({ optional: false, items: String, separator: ',' }),
+    )
+    requestedScopes: string[],
+  ): Promise<string[]> {
+    return await this.resourcesService.findActorApiScopes(requestedScopes)
+  }
 }

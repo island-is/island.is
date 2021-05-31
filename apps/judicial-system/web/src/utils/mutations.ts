@@ -34,8 +34,14 @@ export const CreateCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -49,15 +55,15 @@ export const CreateCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
@@ -66,6 +72,8 @@ export const CreateCaseMutation = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -76,6 +84,8 @@ export const CreateCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -91,11 +101,9 @@ export const CreateCaseMutation = gql`
   }
 `
 
-export const CreateCustodyCourtCaseMutation = gql`
-  mutation CreateCustodyCourtCaseMutation(
-    $input: CreateCustodyCourtCaseInput!
-  ) {
-    createCustodyCourtCase(input: $input) {
+export const CreateCourtCaseMutation = gql`
+  mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
+    createCourtCase(input: $input) {
       courtCaseNumber
     }
   }
@@ -139,8 +147,14 @@ export const ExtendCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
       requestedCustodyEndDate
@@ -154,15 +168,15 @@ export const ExtendCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
       }
-      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
@@ -171,6 +185,8 @@ export const ExtendCaseMutation = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -181,6 +197,8 @@ export const ExtendCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -203,6 +221,7 @@ export const CreateUserMutation = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -222,6 +241,7 @@ export const UsersQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -241,6 +261,7 @@ export const UserQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -261,6 +282,7 @@ export const InstitutionsQuery = gql`
   query InstitutionsQuery {
     institutions {
       id
+      type
       name
     }
   }

@@ -13,7 +13,7 @@ import { Icon } from '../IconRC/Icon'
 
 type ActionCardProps = {
   date?: string
-  heading: string
+  heading?: string
   text?: string
   tag?: {
     label: string
@@ -24,6 +24,11 @@ type ActionCardProps = {
     label: string
     variant?: ButtonTypes['variant']
     size?: ButtonSizes
+    icon?: 'arrowForward'
+    onClick?: () => void
+  }
+  secondaryCta?: {
+    label: string
     icon?: 'arrowForward'
     onClick?: () => void
   }
@@ -68,6 +73,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   heading,
   text,
   cta: _cta,
+  secondaryCta,
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
@@ -121,7 +127,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
     return (
       <Box paddingTop={[1, 1, 0]}>
-        <Tag outlined={tag.outlined} variant={tag.variant}>
+        <Tag outlined={tag.outlined} variant={tag.variant} disabled>
           {tag.label}
         </Tag>
       </Box>
@@ -130,16 +136,37 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const renderDefault = () => {
     const hasCTA = cta.label && !progressMeter.active
+    const hasSecondaryCTA =
+      hasCTA && secondaryCta?.label && !progressMeter.active
 
     return (
       <>
         {!date && renderTag()}
 
         {!!hasCTA && (
-          <Box paddingTop={tag.label ? 'gutter' : 0}>
-            <Button variant={cta.variant} size="small" onClick={cta.onClick}>
-              {cta.label}
-            </Button>
+          <Box
+            paddingTop={tag.label ? 'gutter' : 0}
+            display="flex"
+            justifyContent={['flexStart', 'flexEnd']}
+            alignItems="center"
+            flexDirection="row"
+          >
+            {hasSecondaryCTA && (
+              <Box paddingRight={4} paddingLeft={2}>
+                <Button
+                  variant="text"
+                  onClick={secondaryCta?.onClick}
+                  icon={'document'}
+                >
+                  {secondaryCta?.label}
+                </Button>
+              </Box>
+            )}
+            <Box>
+              <Button variant={cta.variant} size="small" onClick={cta.onClick}>
+                {cta.label}
+              </Button>
+            </Box>
           </Box>
         )}
       </>
@@ -197,15 +224,16 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
-        <Box>
+        <Box marginRight={[0, 3]}>
           <Text variant="h3">{heading}</Text>
-          <Text paddingTop={1}>{text}</Text>
+          <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
 
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
+          flexShrink={0}
           marginTop={['gutter', 0]}
           marginLeft={[0, 'auto']}
         >

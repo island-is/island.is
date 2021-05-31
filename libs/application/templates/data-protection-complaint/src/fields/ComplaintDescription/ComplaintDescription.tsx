@@ -1,4 +1,8 @@
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -30,7 +34,9 @@ export const ComplaintDescription: FC<FieldBaseProps> = ({
         alignItems="center"
         marginBottom={2}
       >
-        <Text>{formatMessage(complaint.labels.complaintDescriptionLabel)}</Text>
+        <Text fontWeight="semiBold">
+          {formatMessage(complaint.labels.complaintDescriptionLabel)}
+        </Text>
         <Text variant="small" color="dark300">
           {wordCount} / 500 {formatMessage(sharedFields.word)}
         </Text>
@@ -45,8 +51,9 @@ export const ComplaintDescription: FC<FieldBaseProps> = ({
         defaultValue={field.defaultValue as string}
         textarea
         rows={7}
-        error={errors && (errors[`${field.id}`] as string)}
+        error={errors && getErrorViaPath(errors, `${field.id}`)}
         backgroundColor="blue"
+        required
       />
     </Box>
   )

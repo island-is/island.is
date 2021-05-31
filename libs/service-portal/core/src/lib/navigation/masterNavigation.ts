@@ -153,18 +153,46 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         // ],
       },
 
+      // Mannanafnaskrá
+      {
+        name: defineMessage({
+          id: 'service.portal:icelandic-names-registry',
+          defaultMessage: 'Mannanafnaskrá',
+        }),
+        path: ServicePortalPath.IcelandicNamesRegistryRoot,
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.UserProfileRoot,
-        divider: true,
+        path: ServicePortalPath.SettingsRoot,
         icon: {
           type: 'outline',
           icon: 'settings',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:personalInformation',
+              defaultMessage: 'Persónuupplýsingar',
+            }),
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:accessControl',
+              defaultMessage: 'Aðgangsstýring',
+            }),
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+        ],
       },
     ],
   },
