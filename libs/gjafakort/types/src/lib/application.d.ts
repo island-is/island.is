@@ -8,7 +8,9 @@ export type CompanyApplicationRoutingKey =
   | 'gjafakort:rejected'
   | 'gjafakort:manual-approved'
 
-export type UserApplicationRoutingKey = 'gjafakort-user:approved'
+export type UserApplicationRoutingKey =
+  | 'gjafakort-user:approved'
+  | 'gjafakort-user-2:approved'
 
 export interface ApplicationStates {
   PENDING: 'pending'
@@ -24,7 +26,7 @@ export interface Application {
   modified: string
 
   issuerSSN: string
-  type: 'gjafakort' | 'gjafakort-user'
+  type: 'gjafakort' | 'gjafakort-user' | 'gjafakort-user-2'
   state: ValueOf<ApplicationStates>
   data: object
   AuditLogs?: [
@@ -63,7 +65,7 @@ export interface CompanyApplication extends Application {
 }
 
 export interface UserApplication extends Application {
-  type: 'gjafakort-user'
+  type: 'gjafakort-user' | 'gjafakort-user-2'
   state: 'approved'
   data: {
     mobileNumber: string
