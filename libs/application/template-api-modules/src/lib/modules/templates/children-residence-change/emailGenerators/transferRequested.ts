@@ -1,7 +1,7 @@
 import { getSlugFromType } from '@island.is/application/core'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { EmailTemplateGenerator } from '../../../../types'
-import { DistrictCommissionerLogo } from './consts'
+import { DistrictCommissionerLogo, fontStyles } from './consts'
 
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
   const application = (props.application as unknown) as CRCApplication
@@ -17,11 +17,11 @@ export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
 
         <h1>${subject}</h1>
 
-        ${application.externalData.nationalRegistry.data.fullName} hefur óskað eftir að þú undirritir samning um breytt lögheimili barns og meðlag.
+        <p style="${fontStyles} margin: 0;">${application.externalData.nationalRegistry.data.fullName} hefur óskað eftir að þú undirritir samning um breytt lögheimili barns og meðlag.
 
-        Samningurinn er tilbúinn til rafrænnar undirritunar á Island.is.
+        <p style="${fontStyles} margin: 0;">Samningurinn er tilbúinn til rafrænnar undirritunar á Island.is.
 
-        <a href=${applicationLink} target="_blank">Opna umsókn</a>.
+        <a style="${fontStyles}" href=${applicationLink} target="_blank">Opna umsókn</a>.
       `
 
   return {

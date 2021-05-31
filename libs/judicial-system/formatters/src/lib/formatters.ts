@@ -66,6 +66,11 @@ export const laws = {
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
+export const caseTypes = {
+  CUSTODY: 'gæsluvarðhald',
+  TRAVEL_BAN: 'farbann',
+}
+
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
   switch (value) {
     case CaseCustodyRestrictions.COMMUNICATION:

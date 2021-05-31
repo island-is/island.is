@@ -109,6 +109,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-national-registry-x-road": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -162,6 +165,9 @@
       "tags": []
     },
     "application-templates-document-provider-onboarding": {
+      "tags": []
+    },
+    "application-templates-driving-assessment-approval": {
       "tags": []
     },
     "application-templates-driving-lessons": {
@@ -249,7 +255,10 @@
     "clients-mms": {
       "tags": []
     },
-    "clients-national-registry": {
+    "clients-national-registry-v1": {
+      "tags": []
+    },
+    "clients-national-registry-v2": {
       "tags": []
     },
     "clients-regulations": {
@@ -280,6 +289,12 @@
       "tags": []
     },
     "content-search-toolkit": {
+      "tags": []
+    },
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -510,7 +525,13 @@
     "services-endorsements-api": {
       "tags": []
     },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {

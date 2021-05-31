@@ -21,12 +21,11 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
         mockData: { parents, children, applicant },
       },
     } = crcApplication
-    if (!children) {
-      throw new Error('Engin börn fundust í þinni forsjá')
-    }
-    const childrenArray = children.map((child) => ({
+    const childrenArray = children?.map((child) => ({
       ...child,
       livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
+      livesWithBothParents:
+        child?.livesWithBothParents?.includes('yes') || false,
       otherParent: parents[child.otherParent],
     }))
 
@@ -43,10 +42,10 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
 
     return Promise.resolve(returnObject)
   }
-  onProvideError(result: { message: string }): FailedDataProviderResult {
+  onProvideError(error: string): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result.message,
+      reason: error,
       status: 'failure',
     }
   }

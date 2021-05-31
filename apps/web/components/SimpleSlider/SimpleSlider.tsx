@@ -63,7 +63,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
   const { width } = useWindowSize()
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const current = Object.keys(slideState.breakpoints).filter(
       (x) => parseInt(x, 10) <= width,
     )
@@ -75,8 +75,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
     const newSlideCount = breakpointOption.slideCount ?? slideCount
     const newGutterWidth = breakpointOption.gutterWidth ?? gutterWidth
-    const newSlideWidthOffset =
-      breakpointOption.slideWidthOffset ?? slideWidthOffset
+    const newSlideWidthOffset = breakpointOption.slideWidthOffset ?? 0
 
     const slideWidth = Math.abs(
       newSlideWidthOffset - (containerWidth + newGutterWidth) / newSlideCount,
@@ -86,6 +85,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
       ...slideState,
       slideCount: newSlideCount,
       gutterWidth: newGutterWidth,
+      slideWidthOffset: newSlideWidthOffset,
       slideWidth,
     })
   }, [width])

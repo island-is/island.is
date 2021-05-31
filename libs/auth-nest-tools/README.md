@@ -22,11 +22,10 @@ Import and configure the AuthModule, example:
     AuthModule.register({
       audience: 'protected_resource',
       issuer: 'https://localhost:6001',
-      jwksUri: 'http://localhost:6002/.well-known/openid-configuration/jwks',
     }),
 ```
 
-where `audience` is the name your resource was registered under in IdS, `issuer` the IdS url, and `jwksUri` the IdS jwk endpoint (we probably won't need to configure this separately in the future).
+where `audience` is the name your resource was registered under in IdS and `issuer` the IdS url.
 
 ### Using in REST controller
 

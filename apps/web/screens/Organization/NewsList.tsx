@@ -7,6 +7,7 @@ import {
   Select as NativeSelect,
   OrganizationWrapper,
   lightThemes,
+  NewsCard,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -41,7 +42,6 @@ import {
   Query,
   QueryGetOrganizationPageArgs,
 } from '../../graphql/schema'
-import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 
@@ -75,12 +75,16 @@ const NewsList: Screen<NewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
-  const currentNavItem = organizationPage.menuLinks.find(
-    ({ primaryLink }) => primaryLink.url === Router.asPath,
-  )
+  const currentNavItem =
+    organizationPage.menuLinks.find(
+      ({ primaryLink }) => primaryLink.url === Router.asPath,
+    )?.primaryLink ??
+    organizationPage.secondaryMenu?.childrenLinks.find(
+      ({ url }) => url === Router.asPath,
+    )
 
   const newsTitle =
-    currentNavItem?.primaryLink.text ??
+    currentNavItem?.text ??
     newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
     n('newsTitle', 'Fréttir og tilkynningar')
 
@@ -274,7 +278,6 @@ const NewsList: Screen<NewsListProps> = ({
             key={index}
             title={newsItem.title}
             introduction={newsItem.intro}
-            slug={newsItem.slug}
             image={newsItem.image}
             titleAs="h2"
             href={
@@ -285,7 +288,6 @@ const NewsList: Screen<NewsListProps> = ({
             }
             date={newsItem.date}
             readMoreText={n('readMore', 'Lesa nánar')}
-            tags={newsItem.genericTags.map(({ title }) => ({ title }))}
           />
         ))}
         {newsList.length > 0 && (

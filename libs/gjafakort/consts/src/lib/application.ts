@@ -3,6 +3,7 @@ import { ApplicationStates as IApplicationStates } from '@island.is/gjafakort/ty
 export const ApplicationTypes = {
   GJAFAKORT_COMPANY: 'gjafakort',
   GJAFAKORT_USER: 'gjafakort-user',
+  GJAFAKORT_USER_2: 'gjafakort-user-2',
 }
 
 export const ApplicationStates = {

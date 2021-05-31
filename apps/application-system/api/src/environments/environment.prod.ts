@@ -18,7 +18,6 @@ export default {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
-    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   templateApi: {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
@@ -46,6 +45,12 @@ export default {
       password: process.env.NOVA_PASSWORD,
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
+    drivingLicense: {
+      secret: process.env.DRIVING_LICENSE_SECRET,
+      xroadClientId: process.env.XROAD_CLIENT_ID,
+      xroadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

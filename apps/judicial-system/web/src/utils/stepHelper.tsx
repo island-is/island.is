@@ -264,7 +264,7 @@ export const constructProsecutorDemands = (
           : ''
       } ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      } með úrskurði ${workingCase.court?.replace(
+      } með úrskurði ${workingCase.court?.name?.replace(
         'Héraðsdómur',
         'Héraðsdóms',
       )}, til`}

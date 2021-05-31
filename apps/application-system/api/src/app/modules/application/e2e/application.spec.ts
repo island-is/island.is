@@ -535,13 +535,13 @@ describe('Application system API', () => {
     )
   })
 
-  it('PUT /applications/:id/createPdf should return a presigned url', async () => {
+  it('PUT /applications/:id/generatePdf should return a presigned url', async () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
     const fileService: FileService = app.get<FileService>(FileService)
     jest
-      .spyOn(fileService, 'createPdf')
+      .spyOn(fileService, 'generatePdf')
       .mockImplementation(() => Promise.resolve(expectPresignedUrl))
 
     const creationResponse = await server
@@ -552,7 +552,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const res = await server
-      .put(`/applications/${creationResponse.body.id}/createPdf`)
+      .put(`/applications/${creationResponse.body.id}/generatePdf`)
       .send({
         type: type,
       })

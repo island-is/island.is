@@ -31,17 +31,12 @@ const ValueLine = ({ title, value, hasDivider = true }: ValueLineProps) => {
   )
 }
 
-export const Overview = ({ application, field }: FieldBaseProps) => {
+export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const answers = application.answers as LoginService
 
   return (
     <>
-      {field.description && (
-        <Text marginTop={1} marginBottom={[3, 5]}>
-          {formatText(field.description, application, formatMessage)}
-        </Text>
-      )}
       <Text variant="h2" marginBottom={3}>
         {formatText(applicant.general.pageTitle, application, formatMessage)}
       </Text>
@@ -101,15 +96,6 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
           value={answers.technicalContact.phoneNumber}
         />
       )}
-      {answers.technicalContact.sameAsResponsibleParty?.includes('yes') && (
-        <ValueLine
-          value={formatText(
-            technicalContact.labels.sameAsResponsibleParty,
-            application,
-            formatMessage,
-          )}
-        />
-      )}
       <ValueLine
         title={technicalContact.labels.techAnnouncementsEmail}
         value={answers.technicalContact.techAnnouncementsEmail}
@@ -141,13 +127,6 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
         title={technicalInfo.labels.prodReturnUrl}
         value={answers.technicalInfo.prodReturnUrl}
       />
-      {answers.technicalInfo.clientId && (
-        <ValueLine
-          title={technicalInfo.labels.clientId}
-          value={answers.technicalInfo.clientId}
-          hasDivider={false}
-        />
-      )}
     </>
   )
 }
