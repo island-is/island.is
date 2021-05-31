@@ -5,4 +5,4 @@ if (process.env.NODE_ENV !== 'development') {
   tracer.use('express', { blacklist: ['/liveness', '/readiness', '/metrics'] })
 }
 
-export default {}
+export default tracer
