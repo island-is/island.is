@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 
-import * as styles from './DetentionRequests.treat'
+import * as styles from './CustodyPetitions.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
@@ -20,7 +20,7 @@ interface Props {
   onRowClick: (id: string) => void
 }
 
-const PastDetentionRequests: React.FC<Props> = (props) => {
+const PastCustodyPetitions: React.FC<Props> = (props) => {
   const { cases, onRowClick } = props
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
@@ -169,4 +169,4 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
   )
 }
 
-export default PastDetentionRequests
+export default PastCustodyPetitions

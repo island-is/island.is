@@ -61,7 +61,7 @@ export const Users: React.FC = () => {
       {data && (
         <table
           className={styles.userTable}
-          data-testid="detention-requests-table"
+          data-testid="custody-petitions-table"
           aria-describedby="tableCation"
         >
           <thead className={styles.thead}>
@@ -98,7 +98,6 @@ export const Users: React.FC = () => {
               <tr
                 key={i}
                 className={cn(styles.tableRowContainer)}
-                data-testid="detention-requests-table-row"
                 role="button"
                 aria-label="Opna notanda"
                 onClick={() => {

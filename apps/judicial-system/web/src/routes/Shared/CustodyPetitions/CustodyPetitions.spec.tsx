@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { DetentionRequests } from './DetentionRequests'
+import { CustodyPetitions } from './CustodyPetitions'
 
 const mockCasesQuery = [
   {
@@ -101,7 +101,7 @@ const mockCasesQuery = [
   },
 ]
 
-describe('Detention requests route', () => {
+describe('Custody petitions route', () => {
   test('should list all cases that do not have status NEW, DELETED, ACCEPTED or REJECTED in a active cases table if you are a judge', async () => {
     render(
       <MockedProvider
@@ -109,14 +109,14 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
 
     expect(
       await waitFor(
-        () => screen.getAllByTestId('detention-requests-table-row').length,
+        () => screen.getAllByTestId('custody-petitions-table-row').length,
       ),
     ).toEqual(4)
   })
@@ -128,7 +128,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -145,7 +145,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -164,7 +164,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -181,7 +181,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -200,14 +200,14 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
 
     expect(
       await waitFor(
-        () => screen.getAllByTestId('detention-requests-table-row').length,
+        () => screen.getAllByTestId('custody-petitions-table-row').length,
       ),
     ).toEqual(5)
   })
@@ -219,7 +219,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -236,13 +236,13 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
 
     expect(
-      (await screen.findAllByTestId('detention-requests-table-row')).length,
+      (await screen.findAllByTestId('custody-petitions-table-row')).length,
     ).toEqual(5)
   })
 
@@ -253,7 +253,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -261,7 +261,7 @@ describe('Detention requests route', () => {
     userEvent.click(await screen.findByTestId('accusedNameSortButton'))
 
     const tableRows = await screen.findAllByTestId(
-      'detention-requests-table-row',
+      'custody-petitions-table-row',
     )
 
     expect(tableRows[0]).toHaveTextContent('D. M. Kil')
@@ -278,7 +278,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -286,7 +286,7 @@ describe('Detention requests route', () => {
     userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
     const tableRows = await screen.findAllByTestId(
-      'detention-requests-table-row',
+      'custody-petitions-table-row',
     )
 
     expect(tableRows[4]).toHaveTextContent('D. M. Kil')
@@ -303,7 +303,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -311,7 +311,7 @@ describe('Detention requests route', () => {
     userEvent.click(await screen.findByText('Krafa stofnuð'))
 
     const tableRows = await screen.findAllByTestId(
-      'detention-requests-table-row',
+      'custody-petitions-table-row',
     )
 
     expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
@@ -328,7 +328,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )
@@ -336,7 +336,7 @@ describe('Detention requests route', () => {
     userEvent.dblClick(await screen.findByText('Krafa stofnuð'))
 
     const tableRows = await screen.findAllByTestId(
-      'detention-requests-table-row',
+      'custody-petitions-table-row',
     )
 
     expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
@@ -361,7 +361,7 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <DetentionRequests />
+          <CustodyPetitions />
         </UserProvider>
       </MockedProvider>,
     )

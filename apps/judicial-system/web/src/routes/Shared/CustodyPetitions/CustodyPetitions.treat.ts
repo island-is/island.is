@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const detentionRequestsContainer = style({
+export const custodyPetitionsContainer = style({
   display: 'grid',
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
@@ -55,7 +55,7 @@ export const pastRequestsTable = style({
   width: '100%',
 })
 
-export const detentionRequestsError = style({
+export const custodyPetitionsError = style({
   gridRow: '2',
   gridColumn: '1 / 5',
 })

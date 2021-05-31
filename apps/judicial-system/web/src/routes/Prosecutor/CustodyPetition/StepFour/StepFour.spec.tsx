@@ -12,7 +12,7 @@ import {
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import StepFour from './StepFour'
 
-describe('Create detention request, step four', () => {
+describe('Custody petition, step four', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')

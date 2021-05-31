@@ -7,7 +7,7 @@ describe('/krofur', () => {
   })
 
   it('should have a table with one row that is a button', () => {
-    cy.getByTestid('detention-requests-table-row').should(
+    cy.getByTestid('custody-petitions-table-row').should(
       'have.attr',
       'role',
       'button',

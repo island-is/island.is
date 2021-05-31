@@ -1,3 +1,3 @@
-import DetentionRequests from '@island.is/judicial-system-web/src/routes/Shared/DetentionRequests/DetentionRequests'
+import CustodyPetitions from '@island.is/judicial-system-web/src/routes/Shared/CustodyPetitions/CustodyPetitions'
 
-export default DetentionRequests
+export default CustodyPetitions

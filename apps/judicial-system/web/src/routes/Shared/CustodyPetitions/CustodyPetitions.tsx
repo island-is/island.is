@@ -21,13 +21,13 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import * as styles from './DetentionRequests.treat'
-import ActiveDetentionRequests from './ActiveDetentionRequests'
-import PastDetentionRequests from './PastDetentionRequests'
+import * as styles from './CustodyPetitions.treat'
+import ActiveCustodyPetitions from './ActiveCustodyPetitions'
+import PastCustodyPetitions from './PastCustodyPetitions'
 import router from 'next/router'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const DetentionRequests: React.FC = () => {
+export const CustodyPetitions: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
 
@@ -165,7 +165,7 @@ export const DetentionRequests: React.FC = () => {
   }
 
   return (
-    <div className={styles.detentionRequestsContainer}>
+    <div className={styles.custodyPetitionsContainer}>
       {user && (
         <div className={styles.logoContainer}>
           <Logo />
@@ -175,7 +175,7 @@ export const DetentionRequests: React.FC = () => {
               icon="add"
               items={[
                 {
-                  href: Constants.STEP_ONE_NEW_DETENTION_ROUTE,
+                  href: Constants.STEP_ONE_CUSTODY_PETITION_ROUTE,
                   title: 'Gæsluvarðhald',
                 },
                 {
@@ -201,7 +201,7 @@ export const DetentionRequests: React.FC = () => {
             </Text>
           </Box>
           {activeCases && activeCases.length > 0 ? (
-            <ActiveDetentionRequests
+            <ActiveCustodyPetitions
               cases={activeCases}
               onRowClick={handleRowClick}
               onDeleteCase={deleteCase}
@@ -226,7 +226,7 @@ export const DetentionRequests: React.FC = () => {
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <PastDetentionRequests
+            <PastCustodyPetitions
               cases={pastCases}
               onRowClick={handleRowClick}
             />
@@ -242,8 +242,8 @@ export const DetentionRequests: React.FC = () => {
         </>
       ) : error ? (
         <div
-          className={styles.detentionRequestsError}
-          data-testid="detention-requests-error"
+          className={styles.custodyPetitionsError}
+          data-testid="custody-petitions-error"
         >
           <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
@@ -260,4 +260,4 @@ export const DetentionRequests: React.FC = () => {
   )
 }
 
-export default DetentionRequests
+export default CustodyPetitions

@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
-import * as styles from './DetentionRequests.treat'
+import * as styles from './CustodyPetitions.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
@@ -26,7 +26,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
-const ActiveDetentionRequests: React.FC<Props> = (props) => {
+const ActiveCustodyPetitions: React.FC<Props> = (props) => {
   const { cases, onRowClick, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
@@ -79,7 +79,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
   return (
     <table
       className={styles.activeRequestsTable}
-      data-testid="detention-requests-table"
+      data-testid="custody-petition-table"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
@@ -161,7 +161,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
               styles.tableRowContainer,
               requestToRemoveIndex === i && 'isDeleting',
             )}
-            data-testid="detention-requests-table-row"
+            data-testid="custody-petitions-table-row"
             role="button"
             aria-label="Opna kröfu"
             onClick={() => {
@@ -278,4 +278,4 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
   )
 }
 
-export default ActiveDetentionRequests
+export default ActiveCustodyPetitions

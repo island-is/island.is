@@ -4,19 +4,24 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
-import { StepFiveForm } from './StepFiveForm'
+import StepThreeForm from './StepThreeForm'
 
-export const StepFive: React.FC = () => {
+export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-
   const router = useRouter()
   const id = router.query.id
 
-  const { data, loading } = useQuery(CaseQuery, {
+  const [
+    requestedCustodyEndDateIsValid,
+    setRequestedCustodyEndDateIsValid,
+  ] = useState(false)
+
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -24,23 +29,23 @@ export const StepFive: React.FC = () => {
   const resCase = data?.case
 
   useEffect(() => {
-    document.title = 'Rannsóknargögn - Réttarvörslugátt'
+    document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (id && !workingCase && resCase) {
+    if (!workingCase && resCase) {
+      setRequestedCustodyEndDateIsValid(resCase.requestedCustodyEndDate != null)
+
       setWorkingCase(resCase)
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={
-        ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FIVE
-      }
+      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_THREE}
       isLoading={loading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
@@ -49,13 +54,15 @@ export const StepFive: React.FC = () => {
       caseId={workingCase?.id}
     >
       {workingCase ? (
-        <StepFiveForm
+        <StepThreeForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          requestedCustodyEndDateIsValid={requestedCustodyEndDateIsValid}
+          setRequestedCustodyEndDateIsValid={setRequestedCustodyEndDateIsValid}
         />
       ) : null}
     </PageLayout>
   )
 }
 
-export default StepFive
+export default StepThree
