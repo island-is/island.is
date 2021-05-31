@@ -337,6 +337,16 @@ export class ResourcesService {
     })
   }
 
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findApiScopesWithExplicitDelegationGrant(): Promise<ApiScope[]> {
+    this.logger.debug(`Finding api scopes with Explicit Delegation Grant`)
+
+    return this.apiScopeModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+      include: [ApiScopeGroup],
+    })
+  }
+
   /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],
