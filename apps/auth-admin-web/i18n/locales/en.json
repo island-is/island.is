@@ -551,6 +551,9 @@
         "name": {
           "headerText": "Name"
         },
+        "displayName": {
+          "headerText": "Display Name"
+        },
         "description": {
           "headerText": "Description"
         }
@@ -731,11 +734,22 @@
         }
       },
       "fields": {
+        "domain": {
+          "label": "Domain",
+          "helpText": "Select a domain for this group",
+          "errorMessage": "The domain is required"
+        },
         "name": {
           "label": "Name",
-          "placeholder": "applications",
+          "placeholder": "finance",
           "helpText": "The name of the group",
           "errorMessage": "The group is required and can not include invalid characters"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Finance heading",
+          "helpText": "The heading for this group for the user to see",
+          "errorMessage": "The Display Name is required and can not include invalid characters"
         },
         "description": {
           "label": "Description",

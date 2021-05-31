@@ -100,6 +100,35 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                 </div>
                 <div className="api-scope-group-create-form__container__field">
                   <label
+                    htmlFor="name"
+                    className="api-scope-group-create-form__label"
+                  >
+                    {localization.fields['name'].label}
+                  </label>
+                  <input
+                    type="text"
+                    name="displayName"
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
+                    defaultValue={props.apiScopeGroup.displayName}
+                    className="api-resource-form__input"
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['displayName'].helpText}
+                  />
+                  <HelpBox
+                    helpText={localization.fields['displayName'].helpText}
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="displayName"
+                    message={localization.fields['displayName'].errorMessage}
+                  />
+                </div>
+                <div className="api-scope-group-create-form__container__field">
+                  <label
                     htmlFor="description"
                     className="api-scope-group-create-form__label"
                   >
