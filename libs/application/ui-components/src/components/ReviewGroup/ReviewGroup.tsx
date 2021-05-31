@@ -41,7 +41,7 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
 
       <Box position="relative" paddingY={4}>
         {isEditable && (editChildren || editAction) && (
-          <Box position="absolute" top={4} right={0}>
+          <Box position="absolute" top={4} right={0} style={{ zIndex: 10 }}>
             <Button
               variant="utility"
               icon={editable ? 'checkmark' : 'pencil'}
@@ -56,7 +56,9 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
 
         {editable ? (
           <GridRow>
-            <GridColumn span="10/12">{editChildren}</GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+              {editChildren}
+            </GridColumn>
           </GridRow>
         ) : (
           children

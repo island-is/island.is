@@ -1,3 +1,5 @@
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+
 import {
   Application,
   ExternalData,
@@ -7,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
