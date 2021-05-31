@@ -17,7 +17,7 @@ import { UploadStreamApi } from './uploadStreamApi'
 import {
   CourtClientService,
   COURT_SERVICE_OPTIONS,
-} from './court-client.service'
+} from './courtClient.service'
 
 const genApis = [
   AuthenticateApi,
