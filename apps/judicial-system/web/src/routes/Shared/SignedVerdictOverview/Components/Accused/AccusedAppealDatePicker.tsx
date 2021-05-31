@@ -10,13 +10,13 @@ import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import { CaseGender } from '@island.is/judicial-system/types'
 
 interface Props {
-  handleAccusedAppeal: (date?: Date) => void
+  setAccusedAppealDate: (date?: Date) => void
   accusedGender: CaseGender
   isInitialMount: boolean
 }
 
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
-  const { handleAccusedAppeal, accusedGender, isInitialMount } = props
+  const { setAccusedAppealDate, accusedGender, isInitialMount } = props
   const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
 
   const animateInAndOut = {
@@ -52,7 +52,7 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
         />
         <Box className={styles.appealButton}>
           <Button
-            onClick={() => handleAccusedAppeal(accusedAppealDate)}
+            onClick={() => setAccusedAppealDate(accusedAppealDate)}
             disabled={!accusedAppealDate}
           >
             {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}

@@ -5,12 +5,12 @@ import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import * as styles from '../AppealSection/AppealSection.treat'
 
 interface Props {
-  handleProsecutorAppeal: (date?: Date) => void
+  setProsecutorAppealDate: (date?: Date) => void
   isInitialMount: boolean
 }
 
 const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
-  const { handleProsecutorAppeal, isInitialMount } = props
+  const { setProsecutorAppealDate, isInitialMount } = props
   const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
 
   const animateInAndOut = {
@@ -46,7 +46,7 @@ const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
         />
         <Box className={styles.appealButton}>
           <Button
-            onClick={() => handleProsecutorAppeal(prosecutorAppealDate)}
+            onClick={() => setProsecutorAppealDate(prosecutorAppealDate)}
             disabled={!prosecutorAppealDate}
           >
             Sækjandi kærir

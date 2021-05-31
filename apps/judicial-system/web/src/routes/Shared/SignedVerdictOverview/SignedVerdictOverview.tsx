@@ -1,25 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  Select,
-  Tag,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
-import {
-  TIME_FORMAT,
-  formatDate,
-  getShortRestrictionByValue,
-} from '@island.is/judicial-system/formatters'
-import {
   Case,
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseType,
   InstitutionType,
   UserRole,
@@ -28,21 +10,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
-  PdfButton,
   PageLayout,
-  InfoCard,
-  PoliceRequestAccordionItem,
-  RulingAccordionItem,
-  CourtRecordAccordionItem,
   FormContentContainer,
-  CaseFileList,
-  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import AppealSection from './Components/AppealSection/AppealSection'
 import { useRouter } from 'next/router'
 import {
   parseNull,
@@ -54,7 +27,6 @@ import {
   CaseData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 
@@ -134,7 +106,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleAccusedAppeal = (date?: Date) => {
+  const setAccusedAppealDate = (date?: Date) => {
     if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
@@ -148,7 +120,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleProsecutorAppeal = (date?: Date) => {
+  const setProsecutorAppealDate = (date?: Date) => {
     if (workingCase && date) {
       setWorkingCase({
         ...workingCase,
@@ -162,7 +134,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleAccusedAppealDismissal = () => {
+  const withdrawAccusedAppealDate = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
@@ -173,7 +145,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleProsecutorAppealDismissal = () => {
+  const withdrawProsecutorAppealDate = () => {
     if (workingCase) {
       setWorkingCase({
         ...workingCase,
@@ -184,8 +156,8 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleShareCaseWithAnotherInstitution = (
-    selectedInstitution?: ValueType<ReactSelectOption>,
+  const shareCaseWithAnotherInstitution = (
+    institution?: ValueType<ReactSelectOption>,
   ) => {
     if (workingCase) {
       if (workingCase.sharedWithProsecutorsOffice) {
@@ -201,8 +173,8 @@ export const SignedVerdictOverview: React.FC = () => {
         setWorkingCase({
           ...workingCase,
           sharedWithProsecutorsOffice: {
-            id: (selectedInstitution as ReactSelectOption).value as string,
-            name: (selectedInstitution as ReactSelectOption).label,
+            id: (institution as ReactSelectOption).value as string,
+            name: (institution as ReactSelectOption).label,
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
@@ -213,7 +185,7 @@ export const SignedVerdictOverview: React.FC = () => {
           workingCase.id,
           parseString(
             'sharedWithProsecutorsOfficeId',
-            (selectedInstitution as ReactSelectOption).value as string,
+            (institution as ReactSelectOption).value as string,
           ),
         )
       }
@@ -252,13 +224,11 @@ export const SignedVerdictOverview: React.FC = () => {
         <>
           <SignedVerdictOverviewForm
             workingCase={workingCase}
-            handleAccusedAppeal={handleAccusedAppeal}
-            handleProsecutorAppeal={handleProsecutorAppeal}
-            handleAccusedAppealDismissal={handleAccusedAppealDismissal}
-            handleProsecutorAppealDismissal={handleProsecutorAppealDismissal}
-            handleShareCaseWithAnotherInstitution={
-              handleShareCaseWithAnotherInstitution
-            }
+            setAccusedAppealDate={setAccusedAppealDate}
+            setProsecutorAppealDate={setProsecutorAppealDate}
+            withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+            withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
+            shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
             selectedSharingInstitutionId={selectedSharingInstitutionId}
             setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
           />

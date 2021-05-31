@@ -44,11 +44,11 @@ import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case
-  handleAccusedAppeal: () => void
-  handleProsecutorAppeal: () => void
-  handleAccusedAppealDismissal: () => void
-  handleProsecutorAppealDismissal: () => void
-  handleShareCaseWithAnotherInstitution: (
+  setAccusedAppealDate: () => void
+  setProsecutorAppealDate: () => void
+  withdrawAccusedAppealDate: () => void
+  withdrawProsecutorAppealDate: () => void
+  shareCaseWithAnotherInstitution: (
     selectedInstitution?: ValueType<ReactSelectOption>,
   ) => void
   selectedSharingInstitutionId: ValueType<ReactSelectOption>
@@ -60,11 +60,11 @@ interface Props {
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const {
     workingCase,
-    handleAccusedAppeal,
-    handleProsecutorAppeal,
-    handleAccusedAppealDismissal,
-    handleProsecutorAppealDismissal,
-    handleShareCaseWithAnotherInstitution,
+    setAccusedAppealDate,
+    setProsecutorAppealDate,
+    withdrawAccusedAppealDate,
+    withdrawProsecutorAppealDate,
+    shareCaseWithAnotherInstitution,
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
   } = props
@@ -274,10 +274,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               prosecutorPostponedAppealDate={
                 workingCase.prosecutorPostponedAppealDate
               }
-              handleAccusedAppeal={handleAccusedAppeal}
-              handleProsecutorAppeal={handleProsecutorAppeal}
-              handleAccusedAppealDismissal={handleAccusedAppealDismissal}
-              handleProsecutorAppealDismissal={handleProsecutorAppealDismissal}
+              setAccusedAppealDate={setAccusedAppealDate}
+              setProsecutorAppealDate={setProsecutorAppealDate}
+              withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+              withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
               isAppealDeadlineExpired={
                 workingCase.isAppealDeadlineExpired ?? false
               }
@@ -370,9 +370,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   !workingCase.sharedWithProsecutorsOffice
                 }
                 onClick={() =>
-                  handleShareCaseWithAnotherInstitution(
-                    selectedSharingInstitutionId,
-                  )
+                  shareCaseWithAnotherInstitution(selectedSharingInstitutionId)
                 }
               >
                 {workingCase.sharedWithProsecutorsOffice
