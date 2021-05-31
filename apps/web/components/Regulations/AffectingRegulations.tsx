@@ -36,7 +36,7 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
 
   const affectingRegulations = uniqBy(
     regulation.history.filter(
-      ({ effect, date }) => effect === 'amend' && from < date && date <= to,
+      ({ effect, date }) => effect === 'amend' && from <= date && date <= to,
     ),
     'name',
   )
