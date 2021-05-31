@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param } from '@nestjs/common'
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { DocumentProviderService } from '../document-provider.service'
 import { Changelog } from '../models/changelog.model'
