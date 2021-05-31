@@ -91,7 +91,6 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
 
 Cypress.Commands.add('stubAPIResponses', () => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    console.log(getFixtureFor(req))
     req.reply(getFixtureFor(req))
   })
 })
