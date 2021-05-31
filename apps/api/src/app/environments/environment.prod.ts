@@ -84,7 +84,7 @@ export default {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
   },
   nationalRegistryXRoad: {
-    url: process.env.XROAD_BASE_PATH,
+    url: process.env.XROAD_BASE_PATH_WITH_ENV,
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.ROAD_CLIENT_ID,
