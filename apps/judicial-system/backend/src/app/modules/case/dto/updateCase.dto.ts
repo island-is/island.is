@@ -206,6 +206,16 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly courtCaseFacts?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtLegalArguments?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly ruling?: string
 
   @IsOptional()
