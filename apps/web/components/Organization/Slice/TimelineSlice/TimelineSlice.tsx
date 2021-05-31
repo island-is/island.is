@@ -193,12 +193,21 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
           <Hidden below="lg">
             <div className={timelineStyles.timelineContainer}>
               <ArrowButtonShadow type="prev">
-                <ArrowButton type="prev" onClick={() => moveTimeline('left')} />
+                <ArrowButton
+                  type="prev"
+                  onClick={() => moveTimeline('left')}
+                  disabled={position === 0}
+                />
               </ArrowButtonShadow>
               <ArrowButtonShadow type="next">
                 <ArrowButton
                   type="next"
                   onClick={() => moveTimeline('right')}
+                  disabled={
+                    frameRef.current?.scrollWidth -
+                      frameRef.current?.offsetWidth ===
+                    position
+                  }
                 />
               </ArrowButtonShadow>
               <div className={timelineStyles.timelineGradient} />
@@ -271,10 +280,15 @@ const ArrowButtonShadow: React.FC<ArrowButtonShadowProps> = ({
 
 interface ArrowButtonProps {
   type: 'prev' | 'next'
+  disabled?: boolean
   onClick: () => void
 }
 
-const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
+const ArrowButton = ({
+  type = 'prev',
+  disabled = false,
+  onClick,
+}: ArrowButtonProps) => {
   return (
     <Box
       className={cn(
@@ -283,9 +297,10 @@ const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
       )}
     >
       <Button
-        colorScheme="negative"
+        colorScheme="light"
         circle
         icon="arrowBack"
+        disabled={disabled}
         onClick={onClick}
       />
     </Box>
