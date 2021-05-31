@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { Header, Loader } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
+import { Image } from 'react-native'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -22,6 +23,7 @@ import {
   LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { authStore, useAuthStore } from '../../stores/auth-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
@@ -42,19 +44,10 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl) => ({
     topBar: {
-      background: {
-        color: theme.shade.background,
-      },
-      barStyle: theme.isDark ? 'black' : 'default',
       title: {
-        color: theme.shade.foreground,
         text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
       },
       noBorder: true,
-    },
-    layout: {
-      backgroundColor: theme.shade.background,
-      componentBackgroundColor: theme.shade.background,
     },
   }),
   {
@@ -75,6 +68,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
   const { authorizeResult } = useAuthStore()
   const intl = useIntl()
 
@@ -137,6 +131,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           message={Document.subject}
           isLoading={loading}
           hasBorder={false}
+          logo={{ uri: getOrganizationLogoUrl(Document.senderName!, 75) }}
         />
       </Host>
       <Border />

@@ -95,14 +95,7 @@ export function setupRoutes() {
         passProps: {
           docId,
         },
-        options: {
-          ...(DocumentDetailScreen.options as Options),
-          topBar: {
-            title: {
-              text: title,
-            }
-          }
-        },
+        options: DocumentDetailScreen.options as Options
       },
     })
   })

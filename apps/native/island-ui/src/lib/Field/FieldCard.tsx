@@ -1,11 +1,14 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade500 : theme.color.blue200};
+  border-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shade.shade500,
+    light : theme.color.blue200
+  }))};
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
@@ -14,8 +17,10 @@ const Host = styled.View`
 const Header = styled.View`
   flex-direction: row;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade500 : theme.color.blue200};
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shade.shade500,
+    light: theme.color.blue200
+  }))};
   padding: ${({ theme }) => theme.spacing[2]}px;
 `
 const HeaderTextBold = styled.Text`

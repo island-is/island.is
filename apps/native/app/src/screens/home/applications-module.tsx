@@ -1,6 +1,7 @@
 import {
   Badge,
   EmptyCard,
+  dynamicColor,
   Heading,
   Skeleton,
   StatusCard,
@@ -86,9 +87,10 @@ export const ApplicationsModule = React.memo(
               borderRadius: 8,
               marginBottom: 16,
               borderWidth: 1,
-              borderColor: theme.isDark
-                ? theme.shade.shade300
-                : theme.color.blue200,
+              borderColor: dynamicColor({
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue200,
+              }) as any,
             }}
           />
         ) : (

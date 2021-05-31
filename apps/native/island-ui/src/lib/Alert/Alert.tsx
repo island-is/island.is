@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
@@ -40,18 +41,22 @@ type VariantStyles = {
   [Type in AlertType]: VariantStyle
 }
 
+const darkBackgroundColor = (color: string, colors: any) => {
+  if (color === colors.blue100) {
+    return '#001333'
+  }
+  return color;
+}
+
 const Host = styled(Animated.View)<HostProps>`
   position: absolute;
   left: 0;
   right: 0;
   padding: 20px 18px;
-  background-color: ${(props) => {
-    const value = theme.color[props.backgroundColor]
-    if (props.theme.isDark && value === props.theme.color.blue100) {
-      return '#001333'
-    }
-    return value
-  }};
+  background-color: ${dynamicColor(props => ({
+    light: props.theme.color[props.backgroundColor],
+    dark: darkBackgroundColor(props.theme.color[props.backgroundColor], props.theme.color),
+  }))};
   z-index: 10;
 `
 

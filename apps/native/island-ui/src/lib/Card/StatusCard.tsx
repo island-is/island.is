@@ -3,23 +3,26 @@ import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  border-width: ${({ theme }) => theme.border.width.standard};
-  border-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade300 : theme.color.blue200};
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade300,
+    light: theme.color.blue200
+  }))};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const ActionsContainer = styled.View`
-  border-top-width: ${({ theme }) => theme.border.width.standard};
-  border-top-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade300
-      : props.theme.color.blue200};
+  border-top-width: ${({ theme }) => theme.border.width.standard}px;
+  border-top-color: ${dynamicColor(props => ({
+    light: props.theme.color.blue200,
+    dark: 'shade300',
+  }))};
   flex-direction: row;
 `
 
@@ -28,9 +31,8 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   align-items: center;
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
-  border-left-width: ${({ theme }) => theme.border.width.standard};
-  border-left-color: ${(props) =>
-    props.border ? props.theme.color.blue200 : props.theme.color.transparent};
+  border-left-width: ${({ theme }) => theme.border.width.standard}px;
+  border-left-color: ${dynamicColor(({ theme, border }) => !border ? 'transparent' : theme.color.blue200)};
 `
 
 const ActionText = styled.Text`
@@ -48,15 +50,14 @@ const Title = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.shade.foreground,
   })}
 `
+
 
 const Description = styled.Text`
   ${font({
     fontWeight: '300',
     lineHeight: 24,
-    color: ({ theme }) => theme.shade.foreground,
   })}
 `
 
@@ -75,7 +76,6 @@ const DateText = styled.Text`
     fontWeight: '300',
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => theme.shade.foreground,
   })}
 `
 
@@ -89,8 +89,10 @@ const Bar = styled.View`
   height: 12px;
   padding: 2px;
   overflow: hidden;
-  background-color: ${({ theme }) =>
-    theme.isDark ? theme.color.roseTinted600 : theme.color.roseTinted200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.color.roseTinted600,
+    light : theme.color.roseTinted200
+  }))};
   border-radius: 6px;
 
   margin-top: ${({ theme }) => theme.spacing[2]}px;
@@ -101,7 +103,7 @@ const Progress = styled.View<{ width?: number }>`
   width: ${(props: any) => props.width ?? 0}%;
   border-radius: 6px;
 
-  background-color: ${(props) => props.theme.color.roseTinted400};
+  background-color: ${dynamicColor(({ theme }) => theme.color.roseTinted400)};
 `
 
 interface StatusCardProps {

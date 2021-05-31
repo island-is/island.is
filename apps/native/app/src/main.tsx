@@ -11,14 +11,8 @@ import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { showLockScreenOverlay } from './utils/lock-screen-helpers'
 
 async function startApp() {
+  // setup global packages and polyfills
   setupGlobals()
-
-  // would be good to wait for async to complete
-  try {
-    // await AsyncStorage.getItem('test');
-  } catch (e) {
-    // noop
-  }
 
   // Register all event handlers
   setupEventHandlers()
@@ -40,8 +34,6 @@ async function startApp() {
     // Set default navigation theme options
     Navigation.setDefaultOptions(getDefaultOptions())
 
-    // skipAppLock();
-
     // Dismiss all previous modals (good when in development mode)
     await Navigation.dismissAllModals()
     await Navigation.dismissAllOverlays()
@@ -51,7 +43,7 @@ async function startApp() {
       root: await getAppRoot(),
     })
 
-    // Show lock screen overlay (android needs after setRoot)
+    // Show lock screen overlay
     await showLockScreenOverlay({ enforceActivated: true })
   })
 }

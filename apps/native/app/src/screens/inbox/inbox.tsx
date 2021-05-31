@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { EmptyList, ListItem, SearchHeader } from '@island.is/island-ui-native'
+import { dynamicColor, EmptyList, ListItem, SearchHeader } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -10,14 +10,14 @@ import {
   Platform,
   RefreshControl,
   StyleSheet,
-  View,
+  View
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -25,7 +25,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -40,7 +40,10 @@ interface IndexedDocument extends IDocument {
 }
 
 const TopLine = styled(Animated.View)`
-  background-color: ${(props) => props.theme.color.blue200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue200,
+    dark: theme.shades.dark.shade600
+  }))};
   position: absolute;
   top: 0px;
   left: 0px;
@@ -108,7 +111,7 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
         title={item.senderName}
         subtitle={item.subject}
         date={new Date(item.date)}
-        swipable={false}
+        swipable
         icon={
           <Image
             source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
@@ -120,7 +123,6 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
     </PressableHighlight>
   )
 })
-
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -261,7 +263,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       <TopLine
         style={{
           height: StyleSheet.hairlineWidth,
-          opacity: scrollY.interpolate({
+          opacity: isSearch ? 0 : scrollY.interpolate({
             inputRange: [0, 32],
             outputRange: [0, 1],
           }),

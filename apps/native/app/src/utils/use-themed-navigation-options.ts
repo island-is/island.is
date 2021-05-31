@@ -1,5 +1,7 @@
 import { defaultsDeep } from 'lodash'
 import { useEffect } from 'react'
+import { Platform } from 'react-native'
+import { DynamicColorIOS } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
@@ -21,38 +23,42 @@ const defaultOptions = (
   initialized: boolean,
   staticOptions: Options,
 ): Options => {
-  const options: Options = {
-    layout: {
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-      componentBackgroundColor: theme.isDark ? '#000000' : '#ffffff',
-    },
+  const options: Options = {}
+
+  if (Platform.OS === 'android') {
+    options.layout = {
+      backgroundColor: theme.shade.background,
+      componentBackgroundColor: theme.shade.background,
+    };
   }
 
   if (staticOptions.bottomTab) {
-    options.bottomTabs = {
-      barStyle: theme.isDark ? 'black' : 'default',
-      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
-    }
     options.bottomTab = {
       iconColor: !initialized
         ? theme.shade.background
         : theme.shade.foreground,
       selectedIconColor: theme.color.blue400,
-      textColor: theme.shade.foreground,
-      selectedTextColor: theme.shade.foreground,
+      textColor: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
+      selectedTextColor: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
+    }
+    if (Platform.OS === 'android') {
+      options.bottomTabs = {
+        backgroundColor: theme.shade.background,
+      };
     }
   }
 
   if (staticOptions.topBar) {
     options.topBar = {
-      background: {
-        color: theme.shade.background,
-      },
-      barStyle: theme.isDark ? 'black' : 'default',
       title: {
-        color: theme.shade.foreground
+        color: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
       },
       noBorder: true,
+    }
+    if (Platform.OS === 'android') {
+      options.topBar.background = {
+        color: theme.shade.background,
+      }
     }
   }
 

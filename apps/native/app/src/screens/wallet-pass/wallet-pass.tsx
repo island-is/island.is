@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import {
+  dynamicColor,
   Field,
   FieldCard,
   FieldGroup,
@@ -18,10 +19,10 @@ import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-op
 
 const Information = styled.ScrollView`
   flex: 1;
-  background-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade100
-      : props.theme.color.blue100};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade100,
+    light: theme.color.blue100,
+  }))};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   margin-top: -70px;
@@ -34,12 +35,11 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl) => ({
     topBar: {
-      background: {
-        color: theme.shade.background,
-      },
-      barStyle: theme.isDark ? 'black' : 'default',
+      // background: {
+      //   color: theme.shade.background,
+      // },
+      // barStyle: theme.isDark ? 'black' : 'default',
       title: {
-        color: theme.shade.foreground,
         text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
       },
       noBorder: true,

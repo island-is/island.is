@@ -5,6 +5,10 @@ import KeyboardManager from 'react-native-keyboard-manager'
 import { config } from "../config";
 import { ReactNativeNavigationInstrumentation } from "../react-native-navigation-instrumentation";
 
+if (__DEV__) {
+  require('../devtools/index');
+}
+
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
 import 'intl'

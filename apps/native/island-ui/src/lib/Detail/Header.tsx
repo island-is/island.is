@@ -1,15 +1,17 @@
-import { boolean } from '@storybook/addon-knobs'
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 import { Skeleton } from '../Skeleton/Skeleton'
 
 const Host = styled.View<{ hasBorder?: boolean}>`
   padding-bottom: 16px;
   border-bottom-width: ${({ hasBorder }) => hasBorder ? '1px' : 0};
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
+  border-bottom-color: ${dynamicColor(props => ({
+    dark: props.theme.shades.dark.shade200,
+    light: props.theme.color.blue100,
+  }))};
   margin-bottom: ${({ hasBorder }) => hasBorder ? '16px' : 0};
   margin-top: 16px;
 `

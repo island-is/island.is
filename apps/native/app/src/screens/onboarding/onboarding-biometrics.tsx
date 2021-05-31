@@ -1,14 +1,13 @@
-import { Button } from '@island.is/island-ui-native'
+import { Button, dynamicColor, font } from '@island.is/island-ui-native'
 import {
   authenticateAsync,
   AuthenticationType,
   isEnrolledAsync,
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
-import { AppState, Image, Platform, SafeAreaView, View } from 'react-native'
+import { AppState, Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
-import image from '../../assets/illustrations/digital-services-m1.png'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -16,20 +15,15 @@ import {
 import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-
-const Illustration = styled.SafeAreaView`
-  background-color: ${(props) => props.theme.isDark ? props.theme.shade.shade300 : props.theme.color.blue100};
-  align-items: center;
-  max-height: 40%;
-  height: 300px;
-`
+import { Illustration } from './illustration'
 
 const Title = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 20px;
-  line-height: 28px;
+  ${font({
+    fontWeight: '300',
+    fontSize: 20,
+    lineHeight: 28,
+  })}
   text-align: center;
-  color: ${(props) => props.theme.shade.foreground};
   margin-left: 32px;
   margin-right: 32px;
   margin-bottom: 64px;
@@ -41,14 +35,15 @@ const ButtonContainer = styled.View`
 
 const CancelButton = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.color.blue400};
+  border-bottom-color: ${dynamicColor(({  theme }) => theme.color.blue400)};
 `
 
 const CancelText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 16px;
-  line-height: 20px;
-  color: ${(props) => props.theme.color.blue400};
+  ${font({
+    fontWeight: '600',
+    fontSize: 16,
+    color: (props) => props.theme.color.blue400,
+  })}
 `
 
 export function useBiometricType(type: AuthenticationType[]) {
@@ -67,7 +62,7 @@ export function useBiometricType(type: AuthenticationType[]) {
     return intl.formatMessage({ id: 'onboarding.biometrics.type.iris' })
   }
 
-  return '';
+  return ''
 }
 
 export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
@@ -109,17 +104,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_ONBOARDING_BIOMETRICS}>
-      <Illustration>
-        <Image
-          source={image}
-          style={{
-            marginTop: -20,
-            marginRight: -40,
-            height: '120%',
-          }}
-          resizeMode="contain"
-        />
-      </Illustration>
+      <Illustration />
       <SafeAreaView
         style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
       >
@@ -147,7 +132,10 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
             disabled={!isEnrolled}
           />
         </ButtonContainer>
-        <CancelButton onPress={onCancelPress} testID={testIDs.ONBOARDING_BIOMETRICS_CANCEL_BUTTON}>
+        <CancelButton
+          onPress={onCancelPress}
+          testID={testIDs.ONBOARDING_BIOMETRICS_CANCEL_BUTTON}
+        >
           <CancelText>
             <FormattedMessage id="onboarding.biometrics.skipButtonText" />
           </CancelText>
@@ -164,5 +152,5 @@ OnboardingBiometricsScreen.options = {
   },
   layout: {
     orientation: ['portrait'],
-  }
+  },
 }

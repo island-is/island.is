@@ -9,9 +9,10 @@ import {
 import Keychain from 'react-native-keychain'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
-import { config } from '../utils/config'
-import { preferencesStore } from './preferences-store'
 import { client } from '../graphql/client'
+import { config } from '../utils/config'
+import { zustandFlipper } from '../utils/devtools/flipper-zustand'
+import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
 
@@ -167,3 +168,5 @@ export async function checkIsAuthenticated() {
 
   return false
 }
+
+zustandFlipper(authStore, 'AuthStore');

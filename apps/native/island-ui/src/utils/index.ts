@@ -1,5 +1,2 @@
-import { font } from './font';
-
-export const utils = {
-  font,
-}
+export * from './dynamic-color';
+export * from './font';

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Animated } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 
 const Dots = styled.View`
   flex-direction: row;
@@ -15,14 +16,10 @@ const Dot = styled(Animated.View)<{ active?: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.standard};
   margin-right: ${({ theme, active }) =>
     active ? theme.spacing.none : theme.spacing.smallGutter}px;
-  background-color: ${({ active, theme }) =>
-    theme.isDark
-      ? active
-        ? theme.color.purple400
-        : theme.color.purple600
-      : active
-      ? theme.color.purple400
-      : theme.color.purple200};
+  background-color: ${dynamicColor(({ active, theme }) => ({
+    dark: active ? theme.color.purple400 : theme.color.purple600,
+    light: active ? theme.color.purple400 : theme.color.purple200,
+  }))};
 `
 
 interface ViewPagerProps {

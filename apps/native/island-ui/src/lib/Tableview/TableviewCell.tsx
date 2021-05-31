@@ -1,6 +1,7 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 interface TableViewCellProps {
@@ -41,10 +42,10 @@ const Cell = styled.View<{ border: boolean; disabled: boolean }>`
   flex-direction: row;
   min-height: 71px;
   border-bottom-width: ${(props) => (props.border ? 1 : 0)}px;
-  border-bottom-color: ${(props) =>
-    props.theme.isDark
-      ? props.theme.shade.shade200
-      : props.theme.color.blue100};
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade200,
+    light: theme.color.blue100,
+  }))};
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `
 
@@ -95,7 +96,10 @@ const SubtitleText = styled.Text`
 export const TableViewAccessory = styled.Text`
   ${font({
     fontSize: 14,
-    color: (props) => props.theme.color.dark400,
+    color: ({ theme }) => ({
+      light: theme.color.dark400,
+      dark: theme.color.white,
+    }),
   })}
 `
 

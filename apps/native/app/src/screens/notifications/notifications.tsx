@@ -100,6 +100,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   return (
     <>
       <NavigationBarSheet
+        componentId={componentId}
         title={intl.formatMessage({ id: 'notifications.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}

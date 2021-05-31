@@ -1,10 +1,13 @@
-import { Button } from '@island.is/island-ui-native'
+import { Button, dynamicColor, font } from '@island.is/island-ui-native'
+import { theme } from '@island.is/island-ui/theme'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  DynamicColorIOS,
   Image,
   NativeEventEmitter,
   NativeModules,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -13,6 +16,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
+import gridDotSrc from '../../assets/illustrations/grid-dot.png'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
@@ -21,20 +25,19 @@ import { nextOnboardingStep } from '../../utils/onboarding'
 import { openBrowser } from '../../utils/rn-island'
 import { testIDs } from '../../utils/test-ids'
 
-const Title = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 26px;
-  line-height: 32px;
-  text-align: center;
-  color: ${(props) => props.theme.color.dark400};
-  margin-top: 32px;
+const Host = styled.View`
+  flex: 1;
+  background-color: ${dynamicColor('background')};
 `
 
-const Illustration = styled.SafeAreaView`
-  background-color: ${(props) => props.theme.color.blue100};
-  height: 330px;
-  max-height: 35%;
-  align-items: center;
+const Title = styled.Text`
+  ${font({
+    fontWeight: '600',
+    fontSize: 26,
+    color: (props) => ({ light: props.theme.color.dark400, dark: 'white' }),
+  })}
+  text-align: center;
+  margin-top: 32px;
 `
 
 const BottomRow = styled.View`
@@ -108,10 +111,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   }
 
   return (
-    <View
-      style={{ flex: 1, backgroundColor: 'white' }}
-      testID={testIDs.SCREEN_LOGIN}
-    >
+    <Host testID={testIDs.SCREEN_LOGIN}>
       <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
@@ -159,15 +159,54 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
         </BottomRow>
       </SafeAreaView>
       <Illustration>
+        <DotGrid>
+          <Image
+            source={gridDotSrc}
+            style={{
+              width: '100%',
+              height: '100%',
+              tintColor: Platform.OS === 'android' ? theme.color.blue200 : DynamicColorIOS({
+                  light: theme.color.blue200,
+                  dark: 'rgba(204, 223, 255, 0.20)',
+                }),
+            }}
+            resizeMode="repeat"
+          />
+        </DotGrid>
         <Image
           source={illustrationSrc}
-          style={{ marginTop: -20, marginBottom: -40, marginRight: -60 }}
           resizeMode="contain"
+          style={{
+            width: '100%',
+            height: '100%',
+            marginTop: 48,
+            marginLeft: 32,
+          }}
         />
       </Illustration>
-    </View>
+    </Host>
   )
 }
+
+const Illustration = styled.SafeAreaView`
+  background-color: ${dynamicColor((props) => ({
+    light: props.theme.color.blue100,
+    dark: props.theme.shades.dark.background,
+  }))};
+  height: 360px;
+  max-height: 40%;
+  align-items: center;
+  margin-bottom: -32px;
+`
+
+const DotGrid = styled.View`
+  position: absolute;
+  top: 8px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  padding: 16px;
+`
 
 LoginScreen.options = {
   popGesture: false,
@@ -175,8 +214,6 @@ LoginScreen.options = {
     visible: false,
   },
   layout: {
-    backgroundColor: 'white',
-    componentBackgroundColor: 'white',
     orientation: ['portrait'],
   },
 }
