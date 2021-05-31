@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -21,7 +21,7 @@ module.exports = {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
-          }
+          },
         },
         { transaction: t },
       ),
@@ -32,5 +32,5 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.dropTable('applications', { transaction: t }),
     )
-  }
-};
+  },
+}

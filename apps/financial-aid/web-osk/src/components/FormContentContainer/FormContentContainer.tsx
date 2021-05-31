@@ -3,11 +3,11 @@ import { GridColumn } from '@island.is/island-ui/core'
 import * as styles from './FormContentContainer.treat'
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const FormContentContainer: React.FC<Props> = (props) => {
-  // return ( 
+  // return (
   //   <GridColumn
   //     span={['9/9', '9/9', '7/9', '7/9']}
   //     offset={['0', '0', '1/9', '1/9']}
@@ -15,12 +15,8 @@ const FormContentContainer: React.FC<Props> = (props) => {
   //     {props.children}
   //   </GridColumn>
   // )
-  
-  return (
-    <div className={styles.formContainer}>
-       {props.children}
-    </div>
-  )
+
+  return <div className={styles.formContainer}>{props.children}</div>
 }
 
 export default FormContentContainer

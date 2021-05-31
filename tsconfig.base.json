@@ -226,6 +226,11 @@
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
+      "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
+      "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
+      "@island.is/financial-aid/shared": [
+        "libs/financial-aid/shared/src/index.ts"
+      ],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
         "apps/gjafakort/application/src/*"
@@ -350,13 +355,6 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
-      "@island.is/financial-aid/shared": [
-        "libs/financial-aid/shared/src/index.ts"
-      ],
-      "@island.is/financial-aid/auth": [
-        "libs/financial-aid/auth/src/index.ts"
-      ],
       "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
       "@island.is/utils/shared": ["libs/utils/shared/src/index.ts"],
