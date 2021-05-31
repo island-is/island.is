@@ -67,7 +67,6 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          fullWidth={true}
           organizationPageSlug={organizationPage.slug}
         />
       ))}
