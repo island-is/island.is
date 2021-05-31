@@ -870,5 +870,5 @@ export class ResourcesService {
     return this.domainModel.destroy({ where: { name: name } })
   }
 
-  // #endregion ApiScopeGroup
+  // #endregion Domain
 }
