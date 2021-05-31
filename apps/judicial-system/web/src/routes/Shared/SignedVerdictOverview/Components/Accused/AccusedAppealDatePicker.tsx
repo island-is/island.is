@@ -17,7 +17,7 @@ interface Props {
 
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
   const { setAccusedAppealDate, accusedGender, isInitialMount } = props
-  const [accusedAppealDate, setAccusedAppealDate] = useState<Date>()
+  const [appealDate, setAppealDate] = useState<Date>()
 
   const animateInAndOut = {
     visible: {
@@ -46,14 +46,14 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
         <DateTime
           name="accusedAppealDate"
           maxDate={new Date()}
-          onChange={(date) => setAccusedAppealDate(date)}
+          onChange={(date) => setAppealDate(date)}
           size="sm"
           blueBox={false}
         />
         <Box className={styles.appealButton}>
           <Button
-            onClick={() => setAccusedAppealDate(accusedAppealDate)}
-            disabled={!accusedAppealDate}
+            onClick={() => setAccusedAppealDate(appealDate)}
+            disabled={!appealDate}
           >
             {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}
           </Button>
