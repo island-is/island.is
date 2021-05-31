@@ -1,28 +1,35 @@
 import { logger } from '@island.is/logging'
 import { UserApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
-
 import cache from '../../extensions/cache'
-import { ApplicationAPI, NovaAPI } from '../../services'
-
-const APPLICATION_TYPE = 'gjafakort-user'
+import {
+  ApplicationAPI,
+  getVersionConfiguration,
+  NovaAPI,
+} from '../../services'
 
 export const getApplication = (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
+  const { type: applicationType } = getVersionConfiguration()
+
   return applicationApi.getApplicationByType<UserApplication>(
-    APPLICATION_TYPE,
+    applicationType,
     userSSN,
   )
 }
 
 export const getApplications = (applicationApi: ApplicationAPI) => {
-  return applicationApi.getApplications<UserApplication>(APPLICATION_TYPE)
+  const { type: applicationType } = getVersionConfiguration()
+
+  return applicationApi.getApplications<UserApplication>(applicationType)
 }
 
 export const getApplicationCount = (applicationApi: ApplicationAPI) => {
-  return applicationApi.getApplicationCount<UserApplication>(APPLICATION_TYPE)
+  const { type: applicationType } = getVersionConfiguration()
+
+  return applicationApi.getApplicationCount<UserApplication>(applicationType)
 }
 
 export const createApplication = (
@@ -31,8 +38,10 @@ export const createApplication = (
   countryCode: string,
   applicationApi: ApplicationAPI,
 ) => {
+  const { type: applicationType } = getVersionConfiguration()
+
   return applicationApi.createApplication<UserApplication>({
-    applicationType: APPLICATION_TYPE,
+    applicationType,
     issuerSSN: userSSN,
     authorSSN: userSSN,
     state: ApplicationStates.APPROVED,

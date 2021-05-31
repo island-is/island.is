@@ -42,8 +42,10 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -69,8 +71,10 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [

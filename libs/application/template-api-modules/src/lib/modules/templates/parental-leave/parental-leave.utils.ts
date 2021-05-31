@@ -45,8 +45,11 @@ export const getPersonalAllowance = (
     : 'personalAllowance.usage'
 
   const willUsePersonalAllowance =
-    extractAnswer(application.answers, usePersonalAllowanceGetter) ===
-    formConstants.boolean.true
+    get(
+      application.answers,
+      usePersonalAllowanceGetter,
+      formConstants.boolean.false,
+    ) === formConstants.boolean.true
 
   if (!willUsePersonalAllowance) {
     return 0

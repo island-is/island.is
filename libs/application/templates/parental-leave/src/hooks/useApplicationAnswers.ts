@@ -1,26 +1,34 @@
-import {
-  Application,
-  getValueViaPath,
-  ValidAnswers,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 
 import { MANUAL, NO, YES } from '../constants'
 
 type OtherParent = typeof NO | typeof MANUAL | undefined
+export type ApplicationAnswers = ReturnType<typeof useApplicationAnswers>
 export type Boolean = typeof NO | typeof YES
 
-/**
- * Hook used to return different fields from the application answers object
- */
 export const useApplicationAnswers = (application: Application) => {
   const answers = application.answers
 
   const otherParent = getValueViaPath(answers, 'otherParent') as OtherParent
 
-  const privatePensionFund = getValueViaPath(
+  const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
+
+  const union = getValueViaPath(answers, 'payments.union') as string
+
+  const usePrivatePensionFund = getValueViaPath(
     answers,
     'usePrivatePensionFund',
   ) as Boolean
+
+  const privatePensionFund = getValueViaPath(
+    answers,
+    'payments.privatePensionFund',
+  ) as string
+
+  const privatePensionFundPercentage = getValueViaPath(
+    answers,
+    'payments.privatePensionFundPercentage',
+  ) as string
 
   const isSelfEmployed = getValueViaPath(
     answers,
@@ -91,7 +99,11 @@ export const useApplicationAnswers = (application: Application) => {
 
   return {
     otherParent,
+    pensionFund,
+    union,
+    usePrivatePensionFund,
     privatePensionFund,
+    privatePensionFundPercentage,
     isSelfEmployed,
     otherParentName,
     otherParentId,

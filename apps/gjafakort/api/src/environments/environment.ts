@@ -47,4 +47,5 @@ export default {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
   },
+  isFerdagjof2Enabled: true,
 }
