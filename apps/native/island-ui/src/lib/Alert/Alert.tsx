@@ -72,7 +72,7 @@ const Message = styled.Text`
 `
 
 const Content = styled.View`
-  padding-right: 48px;
+  padding-right: 34px;
   flex: 1;
 `
 

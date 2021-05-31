@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
-import { dynamicColor, EmptyList, font, ListItem } from '@island.is/island-ui-native'
+import { dynamicColor, EmptyList, ListItem, SearchHeader } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Animated,
@@ -9,14 +10,14 @@ import {
   Platform,
   RefreshControl,
   StyleSheet,
-  View,
+  View
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -24,7 +25,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -59,6 +60,7 @@ const {
         text: intl.formatMessage({ id: 'inbox.screenTitle' }),
       },
       searchBar: {
+        placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
       },
     },
@@ -75,7 +77,6 @@ const {
       height: 120,
       searchBar: {
         visible: true,
-        placeholder: 'Leita að skjölum...',
         hideTopBarOnFocus: true,
       },
       background: {
@@ -101,7 +102,11 @@ const {
 const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   return (
-    <PressableHighlight onPress={() => navigateTo(`/inbox/${item.id}`, { title: item.senderName })}>
+    <PressableHighlight
+      onPress={() =>
+        navigateTo(`/inbox/${item.id}`, { title: item.senderName })
+      }
+    >
       <ListItem
         title={item.senderName}
         subtitle={item.subject}
@@ -117,35 +122,7 @@ const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
       />
     </PressableHighlight>
   )
-});
-
-const SearchHeaderHost = styled.View`
-  height: 46px;
-  background-color: ${dynamicColor('background')};
-  align-items: center;
-  justify-content: center;
-  border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade400
-  }))};
-`
-const SearchHeaderText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 14,
-  })}
-`
-
-function SearchHeader({ count, loading }: any) {
-  return (
-    <SearchHeaderHost>
-      <SearchHeaderText>
-        {loading ? 'Leita í skjölum...' : `${count} niðurstöður`}
-      </SearchHeaderText>
-    </SearchHeaderHost>
-  )
-}
+})
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -157,6 +134,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
   const scrollY = useRef(new Animated.Value(0)).current
+  const intl = useIntl()
 
   const [searchLoading, setSearchLoading] = useState(false)
 
@@ -217,8 +195,8 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   if (!isLoading && isEmpty) {
     return (
       <EmptyList
-        title="Hér eru engin skjöl sem stendur"
-        description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
+        title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
+        description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
         image={<Image source={illustrationSrc} height={176} width={134} />}
       />
     )
@@ -244,7 +222,18 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         stickyHeaderIndices={isSearch ? [0] : undefined}
         ListHeaderComponent={
           isSearch ? (
-            <SearchHeader count={inboxItems.length} loading={searchLoading} />
+            <SearchHeader
+              loadingText={intl.formatMessage({ id: 'inbox.loadingText' })}
+              resultText={
+                inboxItems.length === 0
+                  ? intl.formatMessage({ id: 'inbox.noResultText' })
+                  : inboxItems.length === 1
+                  ? intl.formatMessage({ id: 'inbox.singleResultText' })
+                  : intl.formatMessage({ id: 'inbox.resultText' })
+              }
+              count={inboxItems.length}
+              loading={searchLoading}
+            />
           ) : undefined
         }
         refreshControl={

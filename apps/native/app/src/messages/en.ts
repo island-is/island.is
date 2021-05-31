@@ -96,10 +96,20 @@ export const en: TranslatedMessages = {
   // inbox
   "inbox.screenTitle": "Inbox",
   "inbox.bottomTabText": "Inbox",
+  "inbox.searchPlaceholder": "Search...",
+  "inbox.loadingText": "Searching...",
+  "inbox.resultText": "results",
+  "inbox.singleResultText": "result",
+  "inbox.noResultText": "No results",
+  "inbox.emptyListTitle": "There are currently no documents",
+  "inbox.emptyListDescription": "When you receive electronic documents from the government, they will appear here.",
 
   // wallet
   "wallet.screenTitle": "Wallet",
   "wallet.bottomTabText": "Wallet",
+  "wallet.alertMessage": "To use certificates as valid credentials, you need to transfer them to Apple Wallet.",
+  "wallet.emptyListTitle": "There are currently no documents",
+  "wallet.emptyListDescription": "When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.",
 
   // wallet pass
   "walletPass.screenTitle": "Pass",
@@ -112,6 +122,7 @@ export const en: TranslatedMessages = {
 
   // document detail
   "documentDetail.screenTitle": "Document",
+  "documentDetail.loadingText": "Loading document",
 
   // cards
   "applicationStatusCard.openButtonLabel": "Open application",

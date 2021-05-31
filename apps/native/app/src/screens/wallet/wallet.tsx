@@ -6,6 +6,7 @@ import {
   Skeleton,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -113,6 +114,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [loading, setLoading] = useState(res.loading)
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
+  const intl = useIntl()
 
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({
@@ -177,7 +179,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             <Alert
               visible={alertVisible}
               type="info"
-              message="Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet."
+              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
               onClose={() => {
                 dismiss('howToUseCertificates')
                 flatListRef.current?.scrollToOffset({
@@ -236,8 +238,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         </>
       ) : (
         <EmptyList
-          title="Hér eru engin skírteini sem stendur"
-          description="Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera þá birtast þau hér."
+          title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+          description={intl.formatMessage({ id: 'wallet.emptyListDescription' })}
           image={<Image source={illustrationSrc} height={198} width={146} />}
         />
       )}

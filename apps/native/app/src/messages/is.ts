@@ -98,13 +98,24 @@ export const is = {
   // inbox
   "inbox.screenTitle": "Skjöl",
   "inbox.bottomTabText": "Skjöl",
+  "inbox.searchPlaceholder": "Leita að skjölum...",
+  "inbox.loadingText": "Leita í skjölum...",
+  "inbox.resultText": "niðurstöður fundust",
+  "inbox.singleResultText": "niðurstaða fannst",
+  "inbox.noResultText": "Engar niðurstöður fundust",
+  "inbox.emptyListTitle": "Hér eru engin skjöl sem stendur",
+  "inbox.emptyListDescription": "Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér.",
 
   // document detail
   "documentDetail.screenTitle": "Skjal",
+  "documentDetail.loadingText": "Sæki skjal",
 
   // wallet
   "wallet.screenTitle": "Skírteini",
   "wallet.bottomTabText": "Skírteini",
+  "wallet.alertMessage": "Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet.",
+  "wallet.emptyListTitle": "Hér eru engin skírteini sem stendur",
+  "wallet.emptyListDescription": "Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera þá birtast þau hér.",
 
   // wallet pass
   "walletPass.screenTitle": "Skírteini",
