@@ -244,8 +244,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EmployerApproval').then((val) =>
                   Promise.resolve(val.EmployerApproval),
                 ),
-              read: { answers: ['periods'], externalData: ['pregnancyStatus'] },
-              write: 'all',
+              read: {
+                answers: ['periods', 'selectedChild'],
+                externalData: ['children'],
+              },
+
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
@@ -694,9 +697,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
-      return Roles.APPLICANT
-    }
+    // if (id === application.applicant) {
+    //   return Roles.APPLICANT
+    // }
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
