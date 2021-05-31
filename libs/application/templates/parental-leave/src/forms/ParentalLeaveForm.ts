@@ -26,7 +26,6 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   createRange,
-  getEndPeriodsDate,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -777,13 +776,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  minDate: (application) =>
-                    addDays(
-                      getEndPeriodsDate(
-                        application.answers.periods as Period[],
-                      ),
-                      1,
-                    ),
                   excludeDates: (application) =>
                     getAllPeriodDates(application.answers.periods as Period[]),
                 }),

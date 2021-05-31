@@ -194,26 +194,6 @@ export const getAllPeriodDates = (periods: Period[]) => {
   return dates.map((d) => new Date(d))
 }
 
-export const getEndPeriodsDate = (periods: Period[]) => {
-  const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
-
-  return filledPeriods.reduce((acc, cur) => {
-    const date = new Date(cur.endDate)
-
-    if (date > acc) {
-      acc = date
-    }
-
-    return acc
-  }, new Date(0, 0, 0))
-}
-
-export const getStartDateOfLatestPeriod = (periods: Period[]) => {
-  const latestPeriod = periods[periods.length - 1]
-
-  return latestPeriod.startDate
-}
-
 export const createRange = <T>(
   length: number,
   output: (index: number) => T,
