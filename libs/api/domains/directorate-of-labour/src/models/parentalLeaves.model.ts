@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
+import { ParentalLeaveAttachment } from './parentalLeaveAttachment.model'
 import { ParentalLeaveEmployer } from './parentalLeaveEmployer.model'
 import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
@@ -44,4 +45,8 @@ export class ParentalLeave {
   @Field(() => String, { nullable: true })
   @IsOptional()
   rightsCode?: string | null
+
+  @Field(() => [ParentalLeaveAttachment], { nullable: true })
+  @IsOptional()
+  attachments?: ParentalLeaveAttachment[] | null
 }
