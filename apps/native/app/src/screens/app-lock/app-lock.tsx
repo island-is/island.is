@@ -1,6 +1,7 @@
 import { selectionAsync } from 'expo-haptics'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Animated, Image, Keyboard, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
@@ -64,6 +65,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const [invalidCode, setInvalidCode] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
+  const intl = useIntl();
 
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({
@@ -197,9 +199,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
             resizeMode="contain"
             style={{ width: 45, height: 45, marginBottom: 20 }}
           />
-          <Title>Sláðu inn 4-tölustafa PIN</Title>
+          <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
           <Subtitle>
-            {attempts > 0 ? `${MAX_ATTEMPTS - attempts} tilraunir eftir` : ''}
+            {attempts > 0 ? `${MAX_ATTEMPTS - attempts} ${intl.formatMessage({ id: 'applock.attempts' })}` : ''}
           </Subtitle>
         </View>
         <Center>

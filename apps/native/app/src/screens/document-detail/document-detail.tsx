@@ -1,14 +1,8 @@
 import { useQuery } from '@apollo/client'
-import { Loader, Skeleton } from '@island.is/island-ui-native'
+import { Header, Loader } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import {
-  Platform,
-  Share,
-  StyleSheet,
-
-  View
-} from 'react-native'
+import { Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
@@ -31,59 +25,15 @@ import { authStore, useAuthStore } from '../../stores/auth-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
-const Header = styled.SafeAreaView`
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-bottom: 16px;
-  margin-top: 8px;
-`
-
-const Row = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  padding-bottom: 8px;
+const Host = styled.SafeAreaView`
+  margin-left: 24px;
+  margin-right: 24px;
 `
 
 const Border = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) =>
     theme.isDark ? theme.shade.shade200 : theme.color.blue100};
-`
-
-const Title = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  padding-right: 8px;
-`
-
-const TitleText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
-  flex: 1;
-`
-
-const Date = styled.View`
-  flex-direction: row;
-  align-items: center;
-`
-
-const DateText = styled.Text<{ unread?: boolean }>`
-  font-family: ${(props) =>
-    props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
-`
-
-const Message = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
-  padding-bottom: 8px;
 `
 
 const {
@@ -180,31 +130,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   return (
     <>
-      <Header>
-        <Row>
-          {loading ? (
-            <Skeleton active style={{ borderRadius: 4 }} height={17} />
-          ) : (
-            <>
-              <Title>
-                <TitleText numberOfLines={1} ellipsizeMode="tail">
-                  {Document.senderName}
-                </TitleText>
-              </Title>
-              <Date>
-                <DateText>
-                  <FormattedDate value={Document.date} />
-                </DateText>
-              </Date>
-            </>
-          )}
-        </Row>
-        {loading ? (
-          <Skeleton active style={{ borderRadius: 4 }} height={32} />
-        ) : (
-          <Message>{Document.subject}</Message>
-        )}
-      </Header>
+      <Host>
+        <Header
+          title={Document.senderName}
+          date={<FormattedDate value={Document.date} />}
+          message={Document.subject}
+          isLoading={loading}
+          hasBorder={false}
+        />
+      </Host>
       <Border />
       <View
         style={{

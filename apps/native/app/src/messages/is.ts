@@ -6,6 +6,9 @@ export const is = {
   "login.languageButtonText": "English",
   "login.needHelpButtonText": "Þarftu hjálp",
 
+  // app lock
+  "applock.title": "Sláðu inn 4-tölustafa PIN",
+
   // onboarding
   "onboarding.notifications.title": "Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.",
   "onboarding.notifications.allowNotificationsButtonText": "Leyfa tilkynningar",
@@ -25,6 +28,8 @@ export const is = {
   "onboarding.biometrics.type.facialRecognition": 'andlitsgreiningu',
   "onboarding.biometrics.type.fingerprint": "fingrafar",
   "onboarding.biometrics.type.iris": "augnskanna",
+  "onboarding.pinKeypad.accessibilityLabel.faceId": "Nota andlits auðkenningu",
+  "onboarding.pinKeypad.accessibilityLabel.delete": "Eyða staf",
 
   // user
   "user.screenTitle": "Notandi",
@@ -94,6 +99,9 @@ export const is = {
   "home.applicationsStatus": "Staða umsókna",
   "home.notifications": "Tilkynningar",
   "home.welcomeText": "Hæ",
+  "home.onboardingModule.card1": "Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.",
+  "home.onboardingModule.card2": "Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.",
+  "home.onboardingModule.card3": "Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is",
 
   // inbox
   "inbox.screenTitle": "Skjöl",

@@ -25,4 +25,7 @@ export * from './lib/SearchBar/SearchBar'
 export * from './lib/EmptyList/EmptyList'
 export * from './lib/Loader/Loader'
 export * from './lib/SearchHeader/SearchHeader'
+export * from './lib/Detail/Header'
+export * from './lib/Detail/Content'
+export * from './lib/EmptyList/EmptyCard'
 export * from './utils/index';
