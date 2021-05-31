@@ -129,7 +129,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       setPosition(
         Math.min(
           position + 500,
-          frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+          frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
     } else {
@@ -147,7 +147,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   useEffect(() => {
     setPosition(frameRef.current.scrollWidth - frameRef.current.offsetWidth)
     frameRef.current.scrollTo({
-      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
     })
   }, [frameRef])
 
@@ -237,7 +237,6 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                   }
                 />
               </ArrowButtonShadow>
-              <div className={timelineStyles.timelineGradient} />
               <div className={timelineStyles.monthItem}>
                 <Text color="blue600" variant="h2">
                   {months[month].year}
@@ -317,7 +316,7 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
   const style = mobile
     ? {}
     : {
-        left: offset - 158,
+        left: offset - 208,
         alignItems: index % 2 ? 'flex-end' : 'flex-start',
         ...positionStyles[index % 4],
       }
