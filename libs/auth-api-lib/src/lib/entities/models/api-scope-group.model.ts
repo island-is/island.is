@@ -51,13 +51,13 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty({
     example: '@island.is',
   })
   @ForeignKey(() => Domain)
-  domainName?: string
+  domainName!: string
 
   @CreatedAt
   @ApiProperty()
