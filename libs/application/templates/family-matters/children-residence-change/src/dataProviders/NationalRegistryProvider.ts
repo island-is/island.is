@@ -46,7 +46,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
           return this.handleError(response.errors)
         }
         const returnObject: NationalRegistry =
-          response.data.nationalRegistryUser
+          response.data.nationalRegistryUserV2
         return Promise.resolve(returnObject)
       })
       .catch((error) => {
