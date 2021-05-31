@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import formatDate from 'date-fns/format'
 import { logger } from '@island.is/logging'
 import {
   UnionApi,
@@ -39,8 +38,12 @@ export class DirectorateOfLabourRepository {
     if (isRunningInDevelopment) {
       return [
         {
-          id: 'id',
+          id: 'id-vr',
           name: 'VR',
+        },
+        {
+          id: 'id-efling',
+          name: 'Efling',
         },
       ]
     }
@@ -68,8 +71,12 @@ export class DirectorateOfLabourRepository {
     if (isRunningInDevelopment) {
       return [
         {
-          id: 'id',
+          id: 'id-frjalsi',
           name: 'Frjalsi',
+        },
+        {
+          id: 'id-fluga',
+          name: 'Fluga',
         },
       ]
     }
@@ -85,8 +92,12 @@ export class DirectorateOfLabourRepository {
     if (isRunningInDevelopment) {
       return [
         {
-          id: 'id',
+          id: 'id-frjalsi',
           name: 'Frjalsi',
+        },
+        {
+          id: 'id-draumur',
+          name: 'Draumur',
         },
       ]
     }

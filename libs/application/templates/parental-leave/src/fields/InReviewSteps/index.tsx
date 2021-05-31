@@ -14,7 +14,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
 import { States as ApplicationStates } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/use-application-answers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
