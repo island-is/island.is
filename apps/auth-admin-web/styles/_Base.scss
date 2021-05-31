@@ -36,9 +36,7 @@ input[type='number'],
 select {
   padding: 30px 16px 10px 20px;
   height: 60px;
-  font-size: 18px;
   font-style: normal;
-  font-weight: $color-border;
   line-height: 28px;
   letter-spacing: 0em;
   text-align: left;
@@ -291,6 +289,7 @@ a {
     font-weight: $weight-semi-bold;
     font-size: 1rem;
     top: 1px;
+    z-index: 1;
   }
 }
 
@@ -333,6 +332,11 @@ a {
   cursor: pointer;
   position: absolute;
   right: 20px;
+}
+
+.icon__list {
+  @extend .fa;
+  @extend .fa-list;
 }
 
 .button__warning {

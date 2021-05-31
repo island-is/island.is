@@ -20,6 +20,7 @@ interface LatestNewsProps {
   items: GetNewsQuery['getNews']['items']
   linkType?: LinkType
   overview?: LinkType
+  parameters?: Array<string>
   readMoreText?: string
 }
 
@@ -28,6 +29,7 @@ export const LatestNewsSectionSlider: React.FC<LatestNewsProps> = ({
   items = [],
   linkType = 'news',
   overview = 'newsoverview',
+  parameters = [],
   readMoreText,
 }) => {
   const newsItems = items.slice(0, 3)
@@ -74,13 +76,13 @@ export const LatestNewsSectionSlider: React.FC<LatestNewsProps> = ({
                     introduction={intro}
                     image={image}
                     date={date}
-                    href={linkResolver(linkType, [slug]).href}
+                    href={linkResolver(linkType, [...parameters, slug]).href}
                   />
                 )
               })}
           />
           <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
-            <Link {...linkResolver(overview)} skipTab>
+            <Link {...linkResolver(overview, parameters)} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"

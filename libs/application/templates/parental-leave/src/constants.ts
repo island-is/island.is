@@ -1,6 +1,9 @@
 export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
+export const SPOUSE = 'spouse'
+
+export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export enum API_MODULE_ACTIONS {
   assignOtherParent = 'assignOtherParent',

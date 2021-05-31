@@ -3,6 +3,8 @@ export enum ApplicationStates {
   IN_REVIEW = 'inReview',
   SUBMITTED = 'submitted',
   REJECTED = 'rejected',
+  COMPLETED = 'completed',
+  REJECTEDBYPARENTB = 'rejectedbyparentb',
 }
 
 export enum Roles {

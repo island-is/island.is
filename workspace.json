@@ -434,7 +434,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web"
+            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web -c"
           }
         },
         "lint": {
@@ -1689,7 +1689,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form -c"
           }
         },
         "lint": {
@@ -1869,6 +1869,34 @@
         }
       }
     },
+    "application-templates-driving-assessment-approval": {
+      "root": "libs/application/templates/driving-assessment-approval",
+      "sourceRoot": "libs/application/templates/driving-assessment-approval/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-assessment-approval/tsconfig.lib.json",
+              "libs/application/templates/driving-assessment-approval/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-assessment-approval/**/*"
+            ]
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
@@ -1937,6 +1965,12 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
           }
         }
       }
@@ -2566,7 +2600,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web"
+            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web -c"
           }
         },
         "lint": {
@@ -3724,7 +3758,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web"
+            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web -c"
           }
         },
         "lint": {
@@ -4988,8 +5022,7 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2,
-            "webpackConfig": "apps/reference-backend/webpack.config.js"
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -5507,7 +5540,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur"
+            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur -c"
           }
         },
         "lint": {
@@ -6178,7 +6211,8 @@
             "jestConfig": "apps/services/auth-public-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-documents": {
@@ -6298,7 +6332,6 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js",
             "assets": [
               {
                 "glob": "*",
@@ -6362,11 +6395,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
-            "commands": [
-              "nx run services-endorsements-api:build",
-              "node dist/apps/services/endorsements/api/buildOpenApi.js"
-            ],
-            "parallel": false
+            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -6456,17 +6485,6 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/party-letter-registry-api"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-party-letter-registry-api:build",
-              "node dist/apps/services/party-letter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
           }
         },
         "migrate": {
@@ -6643,17 +6661,6 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/temporary-voter-registry-api"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-temporary-voter-registry-api:build",
-              "node dist/apps/services/temporary-voter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
           }
         },
         "migrate": {
@@ -7180,7 +7187,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web"
+            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web -c"
           }
         },
         "lint": {
@@ -7517,7 +7524,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
+            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web -c"
           }
         },
         "lint": {

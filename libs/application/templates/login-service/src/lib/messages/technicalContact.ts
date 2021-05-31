@@ -30,11 +30,6 @@ export const technicalContact = {
       defaultMessage: 'Símanúmer tengiliðs',
       description: 'Technical contact tel label',
     },
-    sameAsResponsibleParty: {
-      id: `ls.application:section.technicalContact.sameAsResponsibleParty`,
-      defaultMessage: 'Sami og ábyrgðaraðili',
-      description: 'Technical contact sameAsResponsibleParty label',
-    },
     techAnnouncementsEmailTitle: {
       id: `ls.application:section.technicalContact.techAnnouncementsEmailTitle`,
       defaultMessage: 'Tæknilegar tilkynningar',
