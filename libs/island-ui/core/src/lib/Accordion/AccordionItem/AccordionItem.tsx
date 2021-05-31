@@ -30,7 +30,7 @@ export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 
 export type AccordionItemBaseProps = {
   id: string
-  label: string
+  label: ReactNode
   labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
   labelColor?: Colors
@@ -71,12 +71,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     },
     forwardedRef,
   ) => {
-    if (process.env.NODE_ENV !== 'production') {
-      if (label !== undefined && typeof label !== 'string') {
-        throw new Error('Label must be a string')
-      }
-    }
-
     const { toggledId, setToggledId } = useContext(AccordionContext)
     const [expandedFallback, setExpandedFallback] = useState(false)
     let expanded = expandedProp ?? expandedFallback
