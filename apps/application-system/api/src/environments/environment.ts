@@ -23,8 +23,6 @@ export default {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   templateApi: {
     clientLocationOrigin: 'http://localhost:4242',

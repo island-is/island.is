@@ -32,6 +32,8 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   tagVariant = 'blue',
   renderLink = (link) => link,
 }) => {
+  const visibleItems = items.filter((x) => x.title)
+
   return (
     <Box
       component="nav"
@@ -39,7 +41,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
       display={'inlineFlex'}
       alignItems={'center'}
     >
-      {items.map((item, index) => {
+      {visibleItems.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (
           <Tag disabled={!isLink} variant={tagVariant}>
@@ -74,7 +76,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                   item,
                 )
               : renderCrumb}
-            {items.length - 1 > index && (
+            {visibleItems.length - 1 > index && (
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}

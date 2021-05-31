@@ -7,11 +7,7 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
 
 @Module({
   imports: [
-    AuthModule.register({
-      audience: '@island.is/auth/public',
-      issuer: environment.auth.issuer,
-      jwksUri: environment.auth.jwksUri,
-    }),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

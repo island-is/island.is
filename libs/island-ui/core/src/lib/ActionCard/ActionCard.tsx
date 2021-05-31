@@ -224,7 +224,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
-        <Box>
+        <Box marginRight={[0, 3]}>
           <Text variant="h3">{heading}</Text>
           <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
