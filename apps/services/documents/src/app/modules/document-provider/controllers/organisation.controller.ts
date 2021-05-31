@@ -28,18 +28,11 @@ import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { Provider } from '../models/provider.model'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../../environments'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  User,
-} from '@island.is/auth-nest-tools'
-import { DocumentProviderScope } from '@island.is/auth/scopes'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard)
 @ApiTags('organisations')
 @ApiHeader({
   name: 'authorization',
@@ -53,7 +46,6 @@ export class OrganisationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(DocumentProviderScope.read)
   @Get()
   @ApiOkResponse({ type: [Organisation] })
   @Audit<Organisation[]>({
@@ -64,7 +56,6 @@ export class OrganisationController {
     return this.documentProviderService.getOrganisations()
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get(':nationalId')
   @ApiOkResponse({ type: Organisation })
   @Audit<Organisation>({
@@ -86,7 +77,6 @@ export class OrganisationController {
     return org
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Post()
   @ApiCreatedResponse({ type: Organisation })
   @Audit<Organisation>({
@@ -102,7 +92,6 @@ export class OrganisationController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Put(':id')
   @ApiOkResponse({ type: Organisation })
   async updateOrganisation(
@@ -133,7 +122,6 @@ export class OrganisationController {
     return updatedOrganisation
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get(':nationalId/islastmodifier')
   @ApiOkResponse({ type: Boolean })
   @Audit()
@@ -147,7 +135,6 @@ export class OrganisationController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Post(':id/administrativecontact')
   @ApiOkResponse({ type: AdministrativeContact })
   @Audit<AdministrativeContact>({
@@ -166,7 +153,6 @@ export class OrganisationController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Put(':id/administrativecontact/:administrativeContactId')
   @ApiOkResponse({ type: AdministrativeContact })
   async updateAdministrativeContact(
@@ -203,7 +189,6 @@ export class OrganisationController {
     return updatedContact
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Post(':id/technicalcontact')
   @ApiOkResponse({ type: TechnicalContact })
   @Audit<TechnicalContact>({
@@ -222,7 +207,6 @@ export class OrganisationController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Put(':id/technicalcontact/:technicalContactId')
   @ApiOkResponse({ type: TechnicalContact })
   async updateTechnicalContact(
@@ -259,7 +243,6 @@ export class OrganisationController {
     return updatedContact
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Post(':id/helpdesk')
   @ApiOkResponse({ type: Helpdesk })
   @Audit<Helpdesk>({
@@ -278,7 +261,6 @@ export class OrganisationController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Put(':id/helpdesk/:helpdeskId')
   @ApiOkResponse({ type: Helpdesk })
   async updateHelpdesk(
@@ -313,7 +295,6 @@ export class OrganisationController {
     return updatedHelpdesk
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get(':id/providers')
   @ApiOkResponse({ type: [Provider] })
   @Audit<Provider[]>({

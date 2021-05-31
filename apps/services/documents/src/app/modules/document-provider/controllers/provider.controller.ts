@@ -1,11 +1,4 @@
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  User,
-} from '@island.is/auth-nest-tools'
-import { DocumentProviderScope } from '@island.is/auth/scopes'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -31,7 +24,7 @@ import { Provider } from '../models/provider.model'
 
 const namespace = `${environment.audit.defaultNamespace}/providers`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard)
 @ApiTags('providers')
 @ApiHeader({
   name: 'authorization',
@@ -45,7 +38,6 @@ export class ProviderController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(DocumentProviderScope.read)
   @Get()
   @ApiOkResponse({ type: [Provider] })
   @Audit<Provider[]>({
@@ -55,7 +47,6 @@ export class ProviderController {
     return this.documentProviderService.getProviders()
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get(':id')
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
@@ -71,7 +62,6 @@ export class ProviderController {
     return provider
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get('/external/:id')
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
@@ -91,7 +81,6 @@ export class ProviderController {
     return provider
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Post()
   @ApiCreatedResponse({ type: Provider })
   @Audit<Provider>({
@@ -107,7 +96,6 @@ export class ProviderController {
     )
   }
 
-  @Scopes(DocumentProviderScope.write)
   @Put(':id')
   @ApiOkResponse({ type: Provider })
   async updateProvider(

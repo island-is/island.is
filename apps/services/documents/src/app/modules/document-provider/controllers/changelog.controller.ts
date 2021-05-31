@@ -1,11 +1,8 @@
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { DocumentProviderScope } from '@island.is/auth/scopes'
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { DocumentProviderService } from '../document-provider.service'
 import { Changelog } from '../models/changelog.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('changelogs')
 @ApiHeader({
   name: 'authorization',
@@ -17,7 +14,6 @@ export class ChangelogController {
     private readonly documentProviderService: DocumentProviderService,
   ) {}
 
-  @Scopes(DocumentProviderScope.read)
   @Get('/organisations/:organisationId')
   @ApiOkResponse({ type: [Changelog] })
   async getChangelogsByOrganisationId(
@@ -28,7 +24,6 @@ export class ChangelogController {
     )
   }
 
-  @Scopes(DocumentProviderScope.read)
   @Get('/organisations/:organisationId/entities/:entityId')
   @ApiOkResponse({ type: [Changelog] })
   async getChangelogsByOrganisationIdAndEntityId(

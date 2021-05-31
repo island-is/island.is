@@ -1,7 +1,6 @@
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { DocumentProviderScope } from '../../../../../../../../libs/auth/scopes/src/lib/documents.scope'
 import { setup } from '../../../../../test/setup'
 
 let app: INestApplication
@@ -54,7 +53,6 @@ beforeAll(async () => {
         .useValue(
           new MockAuthGuard({
             nationalId,
-            scope: [DocumentProviderScope.read, DocumentProviderScope.write],
           }),
         )
         .compile()
