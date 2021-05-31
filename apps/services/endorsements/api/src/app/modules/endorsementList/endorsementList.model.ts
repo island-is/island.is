@@ -71,7 +71,7 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   tags!: EndorsementTag[]
 
-  @ApiProperty({ type: ValidationRuleDto, isArray: true })
+  @ApiProperty({ type: [ValidationRuleDto] })
   @Column({
     type: DataType.JSONB,
     defaultValue: '[]',
@@ -85,7 +85,7 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   owner!: string
 
-  @ApiProperty({ type: () => Endorsement, isArray: true })
+  @ApiProperty({ type: () => [Endorsement] })
   @HasMany(() => Endorsement)
   readonly endorsements?: Endorsement[]
 
