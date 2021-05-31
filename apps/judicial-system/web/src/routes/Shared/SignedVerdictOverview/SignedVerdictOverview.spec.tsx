@@ -8,6 +8,7 @@ import {
   mockInstitutionsQuery,
   mockJudgeQuery,
   mockProsecutorQuery,
+  mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -23,7 +24,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -45,7 +50,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -67,7 +76,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -91,7 +104,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -123,7 +140,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -146,7 +167,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -173,7 +198,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -195,7 +224,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -219,7 +252,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -233,7 +270,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should show a button to open case files if you are a prosecutor', async () => {
+    test('should show a button to open case files if you are a prosecutor that belongs to the prosecutors office that created the case', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -241,7 +278,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorWonderWomanQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -321,7 +362,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -344,7 +389,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -371,7 +420,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -393,7 +446,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -417,7 +474,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -443,7 +504,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -466,7 +531,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -493,7 +562,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -517,7 +590,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -543,7 +620,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -566,7 +647,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>
@@ -593,7 +678,11 @@ describe('Signed Verdict Overview route', () => {
 
       render(
         <MockedProvider
-          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
           addTypename={false}
         >
           <UserProvider>

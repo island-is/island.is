@@ -37,6 +37,16 @@ export const mockProsecutor = {
   },
 } as User
 
+export const mockProsecutorWonderWoman = {
+  role: UserRole.PROSECUTOR,
+  name: 'Wonder Woman',
+  title: 'saksóknari',
+  institution: {
+    id: '1338',
+    name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  },
+} as User
+
 export const mockJudge = {
   id: 'judge_1',
   role: UserRole.JUDGE,
@@ -92,8 +102,10 @@ const testCase1 = {
   legalArguments: 'string',
   comments: 'string',
   prosecutor: {
-    id: '1338',
     name: 'Áki Ákærandi',
+    institution: {
+      id: '1338',
+    },
   },
   courtCaseNumber: null,
   courtDate: null,
@@ -652,6 +664,19 @@ export const mockJudgeQuery = [
     result: {
       data: {
         currentUser: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockProsecutorWonderWomanQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockProsecutorWonderWoman,
       },
     },
   },
