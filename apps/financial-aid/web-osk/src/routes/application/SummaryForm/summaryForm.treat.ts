@@ -5,18 +5,15 @@ export const iconMargin = style({
   marginRight: theme.spacing[2],
 })
 
-export const marginBottom = style({
-  marginBottom: theme.spacing[10],
-})
-
 export const userInfoContainer = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(1, 1fr)',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
+  rowGap: theme.spacing[3],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridTemplateColumns: 'repeat(8, 1fr)',
+      gridTemplateColumns: 'repeat(7, 1fr)',
     },
   },
 })
@@ -31,10 +28,10 @@ export const mainInfo = style({
 })
 
 export const contactInfo = style({
-  gridColumn: 'span 4',
+  gridColumn: 'span 3',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 5',
+      gridColumn: 'span 4',
     },
   },
 })

@@ -78,6 +78,7 @@ const HomeCircumstancesForm = () => {
         </div>
 
         <Box
+          marginTop={1}
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,

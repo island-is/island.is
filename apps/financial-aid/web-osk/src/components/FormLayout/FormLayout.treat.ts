@@ -41,14 +41,13 @@ export const formContainer = style({
   display: 'grid',
   gridTemplateRows: 'auto max-content max-content',
   paddingTop: theme.spacing[3],
-  paddingBottom: theme.spacing[5],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       minHeight: '880px',
       paddingTop: theme.spacing[10],
       // paddingLeft: `0px`,
       // paddingRight: `0px`,
-      gridTemplateColumns: 'repeat(9, 1fr)',
+      gridTemplateColumns: 'repeat(10, 1fr)',
       columnGap: theme.spacing[3],
     },
   },

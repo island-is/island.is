@@ -24,16 +24,16 @@ const EmailForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const interviewOptions = [
-    {
-      label: 'Já, ég þigg viðtal',
-      value: 0,
-    },
-    {
-      label: 'Nei, þess þarf ekki',
-      value: 1,
-    },
-  ]
+  // const interviewOptions = [
+  //   {
+  //     label: 'Já, ég þigg viðtal',
+  //     value: 0,
+  //   },
+  //   {
+  //     label: 'Nei, þess þarf ekki',
+  //     value: 1,
+  //   },
+  // ]
 
   return (
     <FormLayout
@@ -66,21 +66,20 @@ const EmailForm = () => {
           />
         </Box>
 
-        <Text as="h2" variant="h3" marginBottom={[3, 3]}>
+        {/* <Text as="h2" variant="h3" marginBottom={[3, 3]}>
           Má bjóða þér viðtal?
         </Text>
 
-        <Box className={styles.container}>
-          <RadioButtonContainer
-            options={interviewOptions}
-            isChecked={(value: string | number | boolean) => {
-              return value === form?.interview
-            }}
-            onChange={(value: string | number | boolean) => {
-              updateForm({ ...form, interview: value })
-            }}
-          />
-        </Box>
+        <RadioButtonContainer
+          className={styles.container}
+          options={interviewOptions}
+          isChecked={(value: string | number | boolean) => {
+            return value === form?.interview
+          }}
+          onChange={(value: string | number | boolean) => {
+            updateForm({ ...form, interview: value })
+          }}
+        /> */}
       </FormContentContainer>
 
       <FormFooter

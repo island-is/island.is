@@ -33,7 +33,7 @@ const PersonalTaxCreditForm = () => {
       value: 0,
     },
     {
-      label: 'Nei, vil nota persónuafslátt í annað',
+      label: 'Nei, nýti ekki persónuafslátt',
       value: 1,
     },
   ]
@@ -54,21 +54,20 @@ const PersonalTaxCreditForm = () => {
           annað sem þú vilt nýta hann í.
         </Text>
 
-        <div className={styles.container}>
-          <RadioButtonContainer
-            options={options}
-            error={error && !form?.usePersonalTaxCredit}
-            isChecked={(value: string | number | boolean) => {
-              return value === form?.usePersonalTaxCredit
-            }}
-            onChange={(value: string | number | boolean) => {
-              updateForm({ ...form, usePersonalTaxCredit: value })
-              if (error) {
-                setError(false)
-              }
-            }}
-          />
-        </div>
+        <RadioButtonContainer
+          className={styles.container}
+          options={options}
+          error={error && !form?.usePersonalTaxCredit}
+          isChecked={(value: string | number | boolean) => {
+            return value === form?.usePersonalTaxCredit
+          }}
+          onChange={(value: string | number | boolean) => {
+            updateForm({ ...form, usePersonalTaxCredit: value })
+            if (error) {
+              setError(false)
+            }
+          }}
+        />
 
         <div
           className={cn({

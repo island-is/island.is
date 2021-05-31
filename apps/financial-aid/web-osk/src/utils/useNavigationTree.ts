@@ -7,6 +7,10 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
       url: '/umsokn',
     },
     {
+      name: 'Fjárhagsaðstoð',
+      url: '/umsokn/rettur',
+    },
+    {
       name: 'Persónuhagir',
       children: [
         // { type: 'SUB_SECTION', name: 'Heimili', url: '/umsokn/heimili' },
@@ -17,34 +21,34 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
     },
     {
       name: 'Fjármál',
-      children: hasIncome
-        ? [
-            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
-            {
-              type: 'SUB_SECTION',
-              name: 'Persónuafsláttur',
-              url: '/umsokn/personuafslattur',
-            },
-            {
-              type: 'SUB_SECTION',
-              name: 'Bankaupplýsingar',
-              url: '/umsokn/bankaupplysingar',
-            },
-          ]
-        : [
-            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
-            {
-              type: 'SUB_SECTION',
-              name: 'Persónuafsláttur',
-              url: '/umsokn/personuafslattur',
-            },
-            {
-              type: 'SUB_SECTION',
-              name: 'Bankaupplýsingar',
-              url: '/umsokn/bankaupplysingar',
-            },
-          ],
+      children: [
+        { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+        { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Persónuafsláttur',
+          url: '/umsokn/personuafslattur',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Bankaupplýsingar',
+          url: '/umsokn/bankaupplysingar',
+        },
+      ],
+      // ? [
+      //     { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+      //     {
+      //       type: 'SUB_SECTION',
+      //       name: 'Persónuafsláttur',
+      //       url: '/umsokn/personuafslattur',
+      //     },
+      //     {
+      //       type: 'SUB_SECTION',
+      //       name: 'Bankaupplýsingar',
+      //       url: '/umsokn/bankaupplysingar',
+      //     },
+      //   ]
+      // : [
     },
     {
       name: 'Samskipti',

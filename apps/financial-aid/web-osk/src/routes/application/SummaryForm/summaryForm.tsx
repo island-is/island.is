@@ -195,7 +195,7 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={2}>
           Yfirlit umsóknar
         </Text>
-        <Text marginBottom={[3, 3, 5]}>
+        <Text marginBottom={[4, 4, 5]}>
           <strong>Við eigum enn eftir að klára gagnaöflun</strong> en samkvæmt
           því sem við vitum um þig í dag getur þú miðað við:
         </Text>
@@ -283,9 +283,6 @@ const SummaryForm = () => {
                 justifyContent="spaceBetween"
                 alignItems="flexStart"
                 paddingY={[4, 4, 5]}
-                className={cn({
-                  [`${styles.marginBottom}`]: index === overview.length - 1,
-                })}
               >
                 <Box marginRight={3}>
                   <Text fontWeight="semiBold">{item.label}</Text>
@@ -308,6 +305,31 @@ const SummaryForm = () => {
             </>
           )
         })}
+        <Divider />
+
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="flexStart"
+          paddingY={[4, 4, 5]}
+          marginBottom={10}
+        >
+          <Box marginRight={3}>
+            <Text fontWeight="semiBold">Gögn</Text>
+            <Text></Text>
+          </Box>
+
+          <Button
+            icon="pencil"
+            iconType="filled"
+            variant="utility"
+            onClick={() => {
+              router.push('gogn')
+            }}
+          >
+            Breyta
+          </Button>
+        </Box>
 
         <div
           className={cn({

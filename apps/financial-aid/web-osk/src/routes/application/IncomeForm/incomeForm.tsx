@@ -51,21 +51,20 @@ const IncomeForm = () => {
           stofnunum fyrir utan fjárhagsaðstoð Hafnarfjarðar.
         </Text>
 
-        <div className={styles.container}>
-          <RadioButtonContainer
-            options={incomeOptions}
-            error={error && !form?.hasIncome}
-            isChecked={(value: string | number | boolean) => {
-              return value === form?.hasIncome
-            }}
-            onChange={(value: string | number | boolean) => {
-              updateForm({ ...form, hasIncome: value })
-              if (error) {
-                setError(false)
-              }
-            }}
-          />
-        </div>
+        <RadioButtonContainer
+          className={styles.container}
+          options={incomeOptions}
+          error={error && !form?.hasIncome}
+          isChecked={(value: string | number | boolean) => {
+            return value === form?.hasIncome
+          }}
+          onChange={(value: string | number | boolean) => {
+            updateForm({ ...form, hasIncome: value })
+            if (error) {
+              setError(false)
+            }
+          }}
+        />
 
         <div
           className={cn({
