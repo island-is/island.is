@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
-import { Application } from '@island.is/financial-aid/types'
+import { Application } from '@island.is/financial-aid/shared'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import {
   AdminLayout,

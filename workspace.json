@@ -6712,9 +6712,9 @@
         "docker-express": {}
       }
     },
-    "financial-aid-types": {
-      "root": "libs/financial-aid/types",
-      "sourceRoot": "libs/financial-aid/types/src",
+    "financial-aid-shared": {
+      "root": "libs/financial-aid/shared",
+      "sourceRoot": "libs/financial-aid/shared/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -6723,22 +6723,49 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/financial-aid/types/tsconfig.lib.json",
-              "libs/financial-aid/types/tsconfig.spec.json"
+              "libs/financial-aid/shared/tsconfig.lib.json",
+              "libs/financial-aid/shared/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/financial-aid/types/**/*"
+              "!libs/financial-aid/shared/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/financial-aid/types/jest.config.js",
+            "jestConfig": "libs/financial-aid/shared/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/financial-aid/types"]
+          "outputs": ["coverage/libs/financial-aid/shared"]
+        }
+      }
+    },
+    "financial-aid-auth": {
+      "root": "libs/financial-aid/auth",
+      "sourceRoot": "libs/financial-aid/auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/auth/tsconfig.lib.json",
+              "libs/financial-aid/auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/auth"]
         }
       }
     },

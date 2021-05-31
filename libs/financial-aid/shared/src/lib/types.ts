@@ -76,6 +76,12 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
+export interface User {
+  nationalId: string
+  name: string
+  phoneNumber: string
+}
+
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
 
 // export type HomeCircumstances =

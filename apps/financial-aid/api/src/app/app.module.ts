@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
+import { SharedAuthModule } from '@island.is/financial-aid/auth'
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
-import { ApplicationModule, MunicipalityModule } from './modules/'
+import {
+  AuthModule,
+  UserModule,
+  ApplicationModule,
+  MunicipalityModule,
+} from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -21,6 +27,12 @@ const autoSchemaFile = environment.production
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
+    SharedAuthModule.register({
+      jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
+    }),
+    AuthModule,
+    UserModule,
     ApplicationModule,
     MunicipalityModule,
   ],

@@ -12,7 +12,7 @@ import { MunicipalityQueryInput } from './dto'
 import {
   Municipality,
   MunicipalitySettings,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 @Resolver(() => MunicipalityModel)
 export class MunicipalityResolver {

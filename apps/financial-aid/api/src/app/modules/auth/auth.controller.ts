@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyResult } from 'islandis-login'
+import IslandisLogin, { VerifyResult, VerifyUser } from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -15,17 +15,21 @@ import {
 } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
-  CSRF_COOKIE_NAME,
+  User,
   ACCESS_TOKEN_COOKIE_NAME,
-  EXPIRES_IN_MILLISECONDS,
-} from '@island.is/judicial-system/consts'
-import { User, UserRole } from '@island.is/judicial-system/types'
-import { SharedAuthService } from '@island.is/judicial-system/auth'
+  COOKIE_EXPIRES_IN_MILLISECONDS,
+  CSRF_COOKIE_NAME,
+} from '@island.is/financial-aid/shared'
+
+import { SharedAuthService } from '@island.is/financial-aid/auth'
 
 import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
+import { UnionDefinition } from '@nestjs/graphql/dist/schema-builder/factories/union-definition.factory'
+import { UniqueDirectiveNamesRule } from 'graphql'
 
 const { samlEntryPoint } = environment.auth
 
@@ -69,6 +73,38 @@ export class AuthController {
     private readonly logger: Logger,
   ) {}
 
+  @Get('login')
+  login(
+    @Res() res: Response,
+    @Query('returnUrl') returnUrl: string,
+    @Query('nationalId') nationalId: string,
+  ) {
+    this.logger.debug(`Received login request with return url ${returnUrl}`)
+
+    // Local development
+    if (environment.auth.allowAuthBypass && nationalId) {
+      this.logger.debug(`Logging in as ${nationalId} in development mode`)
+
+      const fakeUser = this.fakeUser(nationalId)
+
+      if (fakeUser) {
+        return this.logInUser(fakeUser, res, returnUrl || '/umsokn')
+      }
+    }
+    res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
+
+    const authId = uuid()
+    const electronicIdOnly = '&qaa=4'
+
+    return res
+      .cookie(
+        REDIRECT_COOKIE.name,
+        { authId, returnUrl },
+        { ...REDIRECT_COOKIE.options, maxAge: COOKIE_EXPIRES_IN_MILLISECONDS },
+      )
+      .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
+  }
+
   @Post('callback')
   async callback(
     @Body('token') token: string,
@@ -86,68 +122,28 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
+    const { user: islandUser } = verifyResult
+
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
-    const { user } = verifyResult
-    if (!user || (authId && user.authId !== authId)) {
+
+    if (!islandUser || (authId && islandUser.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
         extra: {
           authId,
-          userAuthId: user?.authId,
+          userAuthId: islandUser?.authId,
         },
       })
 
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    return this.redirectAuthenticatedUser(
-      {
-        nationalId: user.kennitala,
-        name: user.fullname,
-        mobile: user.mobile,
-      },
-      returnUrl ?? '/krofur', // looks like the return url gets lost sometimes
-      res,
-      new Entropy({ bits: 128 }).string(),
-    )
-  }
-
-  @Get('login')
-  login(
-    @Res() res: Response,
-    @Query('returnUrl') returnUrl: string,
-    @Query('nationalId') nationalId: string,
-  ) {
-    this.logger.debug(`Received login request with return url ${returnUrl}`)
-
-    const { name, options } = REDIRECT_COOKIE
-
-    res.clearCookie(name, options)
-
-    // Local development
-    if (environment.auth.allowAuthBypass && nationalId) {
-      this.logger.debug(`Logging in as ${nationalId} in development mode`)
-
-      return this.redirectAuthenticatedUser(
-        {
-          nationalId,
-          name: '',
-          mobile: '',
-        },
-        returnUrl ?? '/krofur', // just in case the return url is missing
-        res,
-      )
+    const user: User = {
+      nationalId: islandUser.kennitala,
+      name: islandUser.fullname,
+      phoneNumber: islandUser.mobile,
     }
 
-    const authId = uuid()
-    const electronicIdOnly = '&qaa=4'
-
-    return res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: EXPIRES_IN_MILLISECONDS },
-      )
-      .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
+    return this.logInUser(user, res, returnUrl)
   }
 
   @Get('logout')
@@ -160,44 +156,41 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private async redirectAuthenticatedUser(
-    authUser: AuthUser,
-    returnUrl: string,
-    res: Response,
-    csrfToken?: string,
-  ) {
-    const user = await this.authService.findUser(authUser.nationalId)
-
-    if (!user || !this.authService.validateUser(user)) {
-      this.logger.error('Unknown user', {
-        extra: {
-          authUser,
-        },
-      })
-
-      return res.redirect('/?villa=innskraning-ekki-notandi')
+  private fakeUser(nationalId: string) {
+    const fakeUsers: { [key: string]: User } = {
+      '0000000000': {
+        nationalId: '0000000000',
+        name: 'Lárus Árnasson',
+        phoneNumber: '9999999',
+      },
+      '1111111111': {
+        nationalId: '1111111111',
+        name: 'Lára Margrétardóttir',
+        phoneNumber: '9999999',
+      },
     }
 
-    const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
-
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/?villa=innskraning-ogild')
+    if (nationalId in fakeUsers) {
+      return fakeUsers[nationalId]
     }
+
+    return undefined
+  }
+
+  private logInUser(user: User, res: Response, returnUrl: string) {
+    const csrfToken = new Entropy({ bits: 128 }).string()
+
+    const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
     res
-      .cookie(
-        CSRF_COOKIE.name,
-        csrfToken as string,
-        {
-          ...CSRF_COOKIE.options,
-          maxAge: EXPIRES_IN_MILLISECONDS,
-        } as CookieOptions,
-      )
+      .cookie(CSRF_COOKIE.name, csrfToken, {
+        ...CSRF_COOKIE.options,
+        maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
+      } as CookieOptions)
       .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
         ...ACCESS_TOKEN_COOKIE.options,
-        maxAge: EXPIRES_IN_MILLISECONDS,
+        maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl)
+      .redirect(returnUrl)
   }
 }

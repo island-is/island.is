@@ -8,7 +8,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/types'
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
 
 export class CreateApplicationDto {
   @IsNotEmpty()

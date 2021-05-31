@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/types'
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
 
 export interface Form {
   customAddress?: boolean

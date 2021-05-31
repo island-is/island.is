@@ -18,7 +18,7 @@ import {
   NavigationProps,
   Employment,
   getEmploymentStatus,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 const EmploymentForm = () => {
   const router = useRouter()

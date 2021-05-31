@@ -30,6 +30,14 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
+export const GetCurrentUserQuery = gql`
+  query currentUserQuery {
+    currentUser {
+      name
+    }
+  }
+`
+
 // export const GetApplicationQuery = gql`
 //   query GetApplicationQuery {
 //     applications {

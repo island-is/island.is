@@ -517,7 +517,10 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-types": {
+    "financial-aid-shared": {
+      "tags": []
+    },
+    "financial-aid-auth": {
       "tags": []
     },
     "financial-aid-web-osk": {

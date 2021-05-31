@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   Municipality,
   MunicipalitySettings,
-} from '@island.is/financial-aid/types'
+} from '@island.is/financial-aid/shared'
 
 // @Table({
 //   tableName: 'municipality',
