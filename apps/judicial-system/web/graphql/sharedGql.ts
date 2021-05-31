@@ -42,6 +42,7 @@ export const CaseQuery = gql`
         name
         title
         institution {
+          id
           name
         }
       }

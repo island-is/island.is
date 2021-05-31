@@ -321,66 +321,69 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           pdfType="ruling"
         />
       </Box>
-      {user?.role === UserRole.PROSECUTOR && (
-        <Box marginBottom={9}>
-          <Box marginBottom={3}>
-            <Text variant="h3">
-              Opna mál fyrir öðru embætti{' '}
-              <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
-            </Text>
-          </Box>
-          <BlueBox>
-            <Box display="flex">
-              <Box flexGrow={1} marginRight={2}>
-                <Select
-                  name="sharedWithProsecutorsOfficeId"
-                  label="Veldu embætti"
-                  placeholder="Velja embætti sem tekur við málinu"
-                  size="sm"
-                  options={prosecutorsOffices
-                    .map((prosecutorsOffice) => ({
-                      label: prosecutorsOffice.name,
-                      value: prosecutorsOffice.id,
-                    }))
-                    .filter((t) => t.value !== user?.institution?.id)}
-                  value={
-                    workingCase.sharedWithProsecutorsOffice
-                      ? {
-                          label: workingCase.sharedWithProsecutorsOffice.name,
-                          value: workingCase.sharedWithProsecutorsOffice.id,
-                        }
-                      : selectedSharingInstitutionId
-                      ? {
-                          label: (selectedSharingInstitutionId as ReactSelectOption)
-                            .label,
-                          value: (selectedSharingInstitutionId as ReactSelectOption)
-                            .value as string,
-                        }
-                      : null
-                  }
-                  onChange={(so: ValueType<ReactSelectOption>) =>
-                    setSelectedSharingInstitutionId(so)
-                  }
-                />
-              </Box>
-              <Button
-                size="small"
-                disabled={
-                  !selectedSharingInstitutionId &&
-                  !workingCase.sharedWithProsecutorsOffice
-                }
-                onClick={() =>
-                  shareCaseWithAnotherInstitution(selectedSharingInstitutionId)
-                }
-              >
-                {workingCase.sharedWithProsecutorsOffice
-                  ? 'Loka aðgangi'
-                  : 'Opna mál'}
-              </Button>
+      {user?.role === UserRole.PROSECUTOR &&
+        user.institution?.id === workingCase.prosecutor?.institution?.id && (
+          <Box marginBottom={9}>
+            <Box marginBottom={3}>
+              <Text variant="h3">
+                Opna mál fyrir öðru embætti{' '}
+                <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
+              </Text>
             </Box>
-          </BlueBox>
-        </Box>
-      )}
+            <BlueBox>
+              <Box display="flex">
+                <Box flexGrow={1} marginRight={2}>
+                  <Select
+                    name="sharedWithProsecutorsOfficeId"
+                    label="Veldu embætti"
+                    placeholder="Velja embætti sem tekur við málinu"
+                    size="sm"
+                    options={prosecutorsOffices
+                      .map((prosecutorsOffice) => ({
+                        label: prosecutorsOffice.name,
+                        value: prosecutorsOffice.id,
+                      }))
+                      .filter((t) => t.value !== user?.institution?.id)}
+                    value={
+                      workingCase.sharedWithProsecutorsOffice
+                        ? {
+                            label: workingCase.sharedWithProsecutorsOffice.name,
+                            value: workingCase.sharedWithProsecutorsOffice.id,
+                          }
+                        : selectedSharingInstitutionId
+                        ? {
+                            label: (selectedSharingInstitutionId as ReactSelectOption)
+                              .label,
+                            value: (selectedSharingInstitutionId as ReactSelectOption)
+                              .value as string,
+                          }
+                        : null
+                    }
+                    onChange={(so: ValueType<ReactSelectOption>) =>
+                      setSelectedSharingInstitutionId(so)
+                    }
+                  />
+                </Box>
+                <Button
+                  size="small"
+                  disabled={
+                    !selectedSharingInstitutionId &&
+                    !workingCase.sharedWithProsecutorsOffice
+                  }
+                  onClick={() =>
+                    shareCaseWithAnotherInstitution(
+                      selectedSharingInstitutionId,
+                    )
+                  }
+                >
+                  {workingCase.sharedWithProsecutorsOffice
+                    ? 'Loka aðgangi'
+                    : 'Opna mál'}
+                </Button>
+              </Box>
+            </BlueBox>
+          </Box>
+        )}
     </FormContentContainer>
   )
 }

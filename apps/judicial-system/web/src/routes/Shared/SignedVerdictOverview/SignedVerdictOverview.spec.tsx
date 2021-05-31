@@ -284,6 +284,32 @@ describe('Signed Verdict Overview route', () => {
         screen.queryByText('Opna mál fyrir öðru embætti'),
       ).not.toBeInTheDocument()
     })
+
+    test('should not allow prosecutors to share case with another institution if they do not belong to the prosecutors office that created the case', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        screen.queryByText('Opna mál fyrir öðru embætti'),
+      ).not.toBeInTheDocument()
+    })
   })
 
   describe('Accepted case with custody end time in the past', () => {

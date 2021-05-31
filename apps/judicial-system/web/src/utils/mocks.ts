@@ -32,6 +32,7 @@ export const mockProsecutor = {
   name: 'Batman Robinson',
   title: 'saksóknari',
   institution: {
+    id: '1337',
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
@@ -90,7 +91,10 @@ const testCase1 = {
   investigationProgress: 'string',
   legalArguments: 'string',
   comments: 'string',
-  prosecutor: null,
+  prosecutor: {
+    id: '1338',
+    name: 'Áki Ákærandi',
+  },
   courtCaseNumber: null,
   courtDate: null,
   courtStartDate: null,
