@@ -36,6 +36,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  SPOUSE,
   StartDateOptions,
   YES,
 } from '../constants'
@@ -338,10 +339,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) => {
-                // TODO add check if this person has a spouse...
-                return true
-              },
+              condition: (answers) =>
+                answers.otherParent === SPOUSE ||
+                (answers.otherParent === MANUAL &&
+                  answers.otherParentRightOfAccess === YES),
               width: 'half',
               options: [
                 {
