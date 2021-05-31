@@ -101,7 +101,7 @@ export interface DateField extends BaseField {
   placeholder?: FormText
   component: FieldComponents.DATE
   maxDate?: Date
-  minDate?: Date
+  minDate?: MaybeWithApplication<Date>
   excludeDates?: MaybeWithApplication<Date[]>
   backgroundColor?: DatePickerBackgroundColor
 }
