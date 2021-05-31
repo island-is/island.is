@@ -64,6 +64,16 @@ export const section = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'Application Received',
   },
+  rejected: {
+    id: 'crc.application:section.rejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  approved: {
+    id: 'crc.application:section.approved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Application approved',
+  },
 })
 
 export const stateDescriptions = defineMessages({
@@ -97,23 +107,28 @@ export const stateDescriptions = defineMessages({
       'Umsókn ykkar um breytt lögheimili og meðlag var hafnað af sýslumanni. Ástæður höfnunar koma fram í bréfi sem er að finna undir Rafræn skjöl á Island.is.',
     description: 'Rejected by the Commissioner',
   },
-  accepted: {
-    id: 'crc.application:stateDescriptions.accepted',
+  approved: {
+    id: 'crc.application:stateDescriptions.approved',
     defaultMessage:
       'Samningur ykkar um breytt lögheimili og meðlag var staðfestur af sýslumanni. Formlega staðfestingu er að finna undir Rafræn skjöl á Island.is. Til að meðlag fari í innheimtu þarf nýtt lögheimilisforeldri að skila staðfestingunni rafrænt til Tryggingastofnunar.',
-    description: 'Accepted by the Commissioner',
+    description: 'Approved by the Commissioner',
   },
 })
 
 export const stateLabels = defineMessages({
-  rejectedByParentB: {
-    id: 'crc.application:stateLabels.rejectedByParentB',
+  rejected: {
+    id: 'crc.application:stateLabels.rejected',
     defaultMessage: 'Hafnað',
-    description: 'Rejected by parent B',
+    description: 'Rejected',
   },
   submitted: {
     id: 'crc.application:stateLabels.submitted',
     defaultMessage: 'Í afgreiðslu',
     description: 'Submitted to the Commissioner',
+  },
+  approved: {
+    id: 'crc.application:stateLabels.approved',
+    defaultMessage: 'Samþykkt',
+    description: 'Approved',
   },
 })

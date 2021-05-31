@@ -7,37 +7,25 @@ import {
   UpdatedAt,
   PrimaryKey,
   HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApiScope } from './api-scope.model'
-import { Domain } from './domain.model'
+import { ApiScopeGroup } from './api-scope-group.model'
 
 @Table({
-  tableName: 'api_scope_group',
+  tableName: 'domain',
   indexes: [
     {
-      fields: ['id'],
+      fields: ['name'],
     },
   ],
 })
-export class ApiScopeGroup extends Model<ApiScopeGroup> {
+export class Domain extends Model<Domain> {
   @PrimaryKey
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
-  id!: string
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty({
-    example: 'Finance',
-  })
+  @ApiProperty({ example: '@island.is' })
   name!: string
 
   @Column({
@@ -45,7 +33,7 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'Description about the Finance group',
+    example: 'Domain for Island.is',
   })
   description!: string
 
@@ -54,10 +42,9 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
     allowNull: false,
   })
   @ApiProperty({
-    example: '@island.is',
+    example: '0123456789',
   })
-  @ForeignKey(() => Domain)
-  domainName!: string
+  national_id!: string
 
   @CreatedAt
   @ApiProperty()
@@ -67,11 +54,7 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
   @ApiProperty()
   readonly modified?: Date
 
-  @HasMany(() => ApiScope)
+  @HasMany(() => ApiScopeGroup)
   @ApiPropertyOptional()
-  scopes?: ApiScope[]
-
-  @BelongsTo(() => Domain)
-  @ApiPropertyOptional()
-  domain?: Domain
+  groups?: ApiScopeGroup[]
 }

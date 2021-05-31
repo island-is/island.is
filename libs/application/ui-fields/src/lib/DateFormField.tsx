@@ -26,20 +26,43 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     placeholder,
     backgroundColor,
     excludeDates,
+    minDate,
   } = field
   const { formatMessage, lang } = useLocale()
 
+  const computeMinDate = (
+    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    memoApplication: Application,
+    memoField: DateField,
+  ) => {
+    if (typeof maybeMinDate === 'function') {
+      return maybeMinDate(memoApplication, memoField)
+    }
+
+    return maybeMinDate
+  }
+
   const computeExcludeDates = (
     maybeExcludeDates: MaybeWithApplicationAndField<Date[]>,
-    application: Application,
-    field: DateField,
+    memoApplication: Application,
+    memoField: DateField,
   ) => {
     if (typeof maybeExcludeDates === 'function') {
-      return maybeExcludeDates(application, field)
+      return maybeExcludeDates(memoApplication, memoField)
     }
 
     return maybeExcludeDates
   }
+
+  const finalMinDate = useMemo(
+    () =>
+      computeMinDate(
+        minDate as MaybeWithApplicationAndField<Date>,
+        application,
+        field,
+      ),
+    [minDate, application, field],
+  )
 
   const finalExcludeDates = useMemo(
     () =>
@@ -66,6 +89,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           name={`${id}`}
           locale={lang}
           excludeDates={finalExcludeDates}
+          minDate={finalMinDate}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={

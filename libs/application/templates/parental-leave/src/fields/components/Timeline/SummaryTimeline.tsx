@@ -16,6 +16,7 @@ export const SummaryTimeline = ({ application }: SummaryTimelineProps) => {
   const { formatMessage, formatDateFns } = useLocale()
   const periods = formatPeriods(application, formatMessage)
 
+  // TODO: add otherParentPeriods once available
   return (
     <Box>
       {periods.map((period, index) => {

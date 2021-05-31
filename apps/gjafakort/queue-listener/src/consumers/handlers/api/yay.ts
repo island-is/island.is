@@ -43,6 +43,7 @@ export const createGiftCard = (message: UserApplication) => {
       countryCode: message.data.countryCode,
       mobileNumber: message.data.mobileNumber,
       identifier: message.id,
+      version: message.type === 'gjafakort-user-2' ? '2021' : null,
     }),
   })
 }
