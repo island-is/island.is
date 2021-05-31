@@ -97,6 +97,10 @@ export type ModalBaseProps = {
    * When enabled, the dialog can be closed by pressing Escape. Enabled by default.
    */
   hideOnEsc?: boolean
+  /**
+   * When enabled, user can't scroll on body when the dialog is visible. This option doesn't work if the dialog isn't modal.
+   */
+  preventBodyScroll?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -115,6 +119,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   hideOnClickOutside,
   tabIndex,
   hideOnEsc,
+  preventBodyScroll,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -139,10 +144,12 @@ export const ModalBase: FC<ModalBaseProps> = ({
   useEffect(() => {
     onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
+
   const renderModal = !removeOnClose || (removeOnClose && modal.visible)
+
   return (
     <>
-      {disclosure ? (
+      {disclosure && (
         <DialogDisclosure {...modal} {...disclosure.props}>
           {(disclosureProps: DisclosureProps) =>
             renderDisclosure(
@@ -151,7 +158,8 @@ export const ModalBase: FC<ModalBaseProps> = ({
             )
           }
         </DialogDisclosure>
-      ) : null}
+      )}
+
       {renderModal && (
         <DialogBackdrop
           {...modal}
@@ -165,6 +173,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
             hideOnClickOutside={hideOnClickOutside}
             tabIndex={tabIndex}
             hideOnEsc={hideOnEsc}
+            preventBodyScroll={preventBodyScroll}
           >
             {typeof children === 'function'
               ? children({ closeModal })

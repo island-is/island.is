@@ -56,7 +56,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly court?: string
+  readonly courtId?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -161,6 +161,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly litigationPresentations?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly courtCaseFacts?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly courtLegalArguments?: string
 
   @Allow()
   @Field({ nullable: true })

@@ -16,6 +16,7 @@ import {
   NounCases,
   formatAccusedByGender,
   formatProsecutorDemands,
+  caseTypes,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -50,7 +51,7 @@ export async function getRulingPdfAsString(
     .text('Þingbók', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(existingCase.court, { align: 'center' })
+    .text(existingCase.court?.name, { align: 'center' })
     .fontSize(12)
     .lineGap(30)
     .text(
@@ -84,7 +85,7 @@ export async function getRulingPdfAsString(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Krafa lögreglu')
+    .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.policeDemands, {
@@ -98,7 +99,7 @@ export async function getRulingPdfAsString(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text('Krafa lögreglu þingmerkt nr. 1.', {
+    .text(`Krafa um ${caseTypes[existingCase.type]} þingmerkt nr. 1.`, {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -178,7 +179,7 @@ export async function getRulingPdfAsString(
     .text('Úrskurður', { align: 'center' })
     .fontSize(14)
     .lineGap(8)
-    .text('Krafa lögreglu')
+    .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
     .text(
@@ -186,7 +187,7 @@ export async function getRulingPdfAsString(
         existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.court,
+        existingCase.court?.name,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -215,7 +216,7 @@ export async function getRulingPdfAsString(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts, {
+    .text(existingCase.courtCaseFacts, {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -226,7 +227,7 @@ export async function getRulingPdfAsString(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments, {
+    .text(existingCase.courtLegalArguments, {
       lineGap: 6,
       paragraphGap: 0,
     })

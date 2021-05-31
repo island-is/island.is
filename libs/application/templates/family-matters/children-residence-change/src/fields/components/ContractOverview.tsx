@@ -52,7 +52,7 @@ const ContractOverview = ({ application, parentKey }: Props) => {
                 localeKey: locale,
               }),
             })
-          : formatMessage(m.duration.permanentInput.label)}
+          : formatMessage(m.contract.duration.permanentText)}
       </Text>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>

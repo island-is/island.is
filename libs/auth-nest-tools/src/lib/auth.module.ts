@@ -4,7 +4,6 @@ import { JwtStrategy } from './jwt.strategy'
 export interface AuthConfig {
   audience: string
   issuer: string
-  jwksUri: string
 }
 
 @Module({})

@@ -28,7 +28,7 @@ export class DrivingLicenseModule {
             ),
         },
       ],
-      exports: [],
+      exports: [DrivingLicenseService],
     }
   }
 }

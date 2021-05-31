@@ -29,6 +29,7 @@ import {
   AsyncSelectField,
   Context,
   RecordObject,
+  TitleVariants,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -89,7 +90,7 @@ export function buildDateField(data: {
   placeholder?: FormText
   description?: FormText
   maxDate?: Date
-  minDate?: Date
+  minDate?: MaybeWithApplication<Date>
   excludeDates?: MaybeWithApplication<Date[]>
   disabled?: boolean
   width?: FieldWidth
@@ -133,15 +134,25 @@ export function buildDescriptionField(data: {
   condition?: Condition
   id: string
   title: FormText
+  titleVariant?: TitleVariants
   description: FormText
   space?: BoxProps['paddingTop']
   tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description, tooltip, space } = data
+  const {
+    condition,
+    id,
+    titleVariant = 'h2',
+    title,
+    description,
+    tooltip,
+    space,
+  } = data
   return {
     children: undefined,
     condition,
     description,
+    titleVariant,
     tooltip,
     space,
     id,
@@ -345,6 +356,7 @@ export function buildCustomField(
     description?: FormText
     component: string
     defaultValue?: MaybeWithApplication<unknown>
+    width?: FieldWidth
   },
   props?: RecordObject,
 ): CustomField {
@@ -356,6 +368,7 @@ export function buildCustomField(
     description,
     component,
     childInputIds,
+    width = 'full',
   } = data
   return {
     children: undefined,
@@ -364,6 +377,7 @@ export function buildCustomField(
     id,
     childInputIds,
     title,
+    width,
     description,
     type: FieldTypes.CUSTOM,
     component,
