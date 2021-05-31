@@ -1,25 +1,25 @@
-import { IsString, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsString } from 'class-validator'
 
-export class ApiScopeGroupDTO {
+export class DomainDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'Finance',
+    example: '@island.is',
   })
   readonly name!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: 'Description about the Finance Group',
+    example: 'Domain for Island.is',
   })
   readonly description!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '@island.is',
+    example: '0123456789',
   })
-  readonly domainName!: string
+  readonly national_id!: string
 }
