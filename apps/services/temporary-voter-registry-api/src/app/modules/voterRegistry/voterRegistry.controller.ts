@@ -1,5 +1,5 @@
 import { Controller, Get, NotFoundException, Query } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { FindOneDto } from './dto/findOne.dto'
 import { VoterRegistry } from './voterRegistry.model'
 import { VoterRegistryService } from './voterRegistry.service'
@@ -9,6 +9,10 @@ import { VoterRegistryService } from './voterRegistry.service'
 export class VoterRegistryController {
   constructor(private readonly voterRegistryService: VoterRegistryService) {}
 
+  @ApiOkResponse({
+    description: 'Finds voters region given voters national id',
+    type: VoterRegistry,
+  })
   @Get()
   async findOne(@Query() { nationalId }: FindOneDto): Promise<VoterRegistry> {
     const resource = await this.voterRegistryService.findByNationalId(

@@ -16,6 +16,6 @@ export class EndorsementListOpen {
   })
   description!: string | null
 
-  @ApiProperty()
+  @ApiProperty({ enum: EndorsementTag, isArray: true })
   tags?: EndorsementTag[]
 }
