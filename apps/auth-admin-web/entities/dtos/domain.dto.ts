@@ -3,4 +3,3 @@ export class DomainDTO {
   description!: string
   nationalId!: string
 }
-do

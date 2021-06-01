@@ -66,7 +66,13 @@
       "title": "Edit Translation"
     },
     "admin.translation.index": {
-      "title": "Create Translation"
+      "title": "Create a Domain"
+    },
+    "admin.domain.[domainName]": {
+      "title": "Edit Domain"
+    },
+    "admin.domain.index": {
+      "title": "Create an Api Scope"
     },
     "client.[client]": {
       "title": "Edit Client",
@@ -242,6 +248,10 @@
     },
     "adminTabNav": {
       "items": {
+        "domains": {
+          "text": "Domains",
+          "title": "List of Domains"
+        },
         "users": {
           "text": "Users",
           "title": "User Identity Management"
@@ -430,6 +440,43 @@
         }
       },
       "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        }
+      }
+    },
+    {
+      "id": "DomainList",
+      "removeConfirmation": "Are you sure want to delete this domain:",
+      "title": "Domains",
+      "search": {
+        "label": "Domain name"
+      },
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Domain"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Domain"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Domain"
+        },
+        "new": {
+          "text": "Create new Domain",
+          "helpText": "Open Domain Form"
+        }
+      },
+      "columns": {
+        "nationalId": {
+          "headerText": "National Id"
+        },
         "name": {
           "headerText": "Name"
         },
