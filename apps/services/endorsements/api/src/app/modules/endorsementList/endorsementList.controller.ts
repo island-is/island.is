@@ -13,6 +13,7 @@ import {
   ApiOAuth2,
   ApiOkResponse,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
@@ -33,7 +34,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
 @Controller('endorsement-list')
 @ApiOAuth2([])
 export class EndorsementListController {
-  constructor (
+  constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
@@ -43,7 +44,7 @@ export class EndorsementListController {
   })
   @Get()
   @BypassAuth()
-  async findByTags (
+  async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
@@ -64,7 +65,7 @@ export class EndorsementListController {
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
-  async findEndorsements (@CurrentUser() user: User): Promise<Endorsement[]> {
+  async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
@@ -82,7 +83,7 @@ export class EndorsementListController {
     action: 'findOne',
     resources: (endorsementList) => endorsementList.id,
   })
-  async findOne (
+  async findOne(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -104,7 +105,7 @@ export class EndorsementListController {
     action: 'close',
     resources: (endorsementList) => endorsementList.id,
   })
-  async close (
+  async close(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -130,7 +131,7 @@ export class EndorsementListController {
       tags: endorsementList.tags,
     }),
   })
-  async create (
+  async create(
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {

@@ -6,7 +6,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { CreateDto } from './dto/create.dto'
 import { FindByManagerDto } from './dto/findByManager.dto'
 import { FindByOwnerDto } from './dto/findByOwner.dto'
@@ -20,6 +25,10 @@ export class PartyLetterRegistryController {
     private readonly partyLetterRegistryService: PartyLetterRegistryService,
   ) {}
 
+  @ApiOkResponse({
+    description: 'Finds party letter by owners national id',
+    type: PartyLetterRegistry,
+  })
   @Get('owner')
   async findByOwner(
     @Query() { owner }: FindByOwnerDto,
@@ -33,6 +42,10 @@ export class PartyLetterRegistryController {
     return resource
   }
 
+  @ApiOkResponse({
+    description: 'Finds party letter by managers national id',
+    type: PartyLetterRegistry,
+  })
   @Get('manager')
   async findByManager(
     @Query() { manager }: FindByManagerDto,
@@ -48,6 +61,13 @@ export class PartyLetterRegistryController {
     return resource
   }
 
+  @ApiCreatedResponse({
+    description: 'Creates a new party letter entry',
+    type: PartyLetterRegistry,
+  })
+  @ApiBody({
+    type: CreateDto,
+  })
   @Post()
   async create(@Body() input: CreateDto): Promise<PartyLetterRegistry> {
     return await this.partyLetterRegistryService.create(input)

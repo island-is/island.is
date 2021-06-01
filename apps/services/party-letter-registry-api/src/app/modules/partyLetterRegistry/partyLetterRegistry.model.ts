@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -16,6 +17,7 @@ import {
   ],
 })
 export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
+  @ApiProperty()
   @Column({
     type: DataType.CHAR(2),
     primaryKey: true,
@@ -36,27 +38,32 @@ export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
   })
   partyLetter!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   partyName!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   owner!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   managers!: string[]
 
+  @ApiProperty()
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty()
   @UpdatedAt
   readonly modified!: Date
 }
