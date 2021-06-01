@@ -29,11 +29,17 @@ import {
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
-import { SjukratryggingarHeader } from './Themes/SjukratryggingarTheme'
+import {
+  SjukratryggingarHeader,
+  SjukratryggingarFooter,
+} from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
-import { UtlendingastofnunHeader } from './Themes/UtlendingastofnunTheme'
+import {
+  UtlendingastofnunFooter,
+  UtlendingastofnunHeader,
+} from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import { useRouter } from 'next/router'
 import * as styles from './OrganizationWrapper.treat'
@@ -82,24 +88,45 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
 
 interface FooterProps {
   organizations: Array<Organization>
+  force?: boolean
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
   organizations,
+  force = false,
 }) => {
   const footerEnabled = ['syslumenn']
 
-  const organization = organizations.find((x) => footerEnabled.includes(x.slug))
+  const organization = force
+    ? organizations[0]
+    : organizations.find((x) => footerEnabled.includes(x.slug))
   if (!organization) return null
 
-  if (organization.slug === 'syslumenn') {
-    return (
-      <SyslumennFooter
-        title={organization.title}
-        logo={organization.logo?.url}
-        footerItems={organization.footerItems}
-      />
-    )
+  switch (organization.slug) {
+    case 'syslumenn':
+      return (
+        <SyslumennFooter
+          title={organization.title}
+          logo={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
+    case 'sjukratryggingar':
+      return (
+        <SjukratryggingarFooter
+          title={organization.title}
+          logo={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
+    case 'utlendingastofnun':
+      return (
+        <UtlendingastofnunFooter
+          title={organization.title}
+          logo={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
   }
   return null
 }
@@ -333,7 +360,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         )}
       </Main>
       {!minimal && (
-        <OrganizationFooter organizations={[organizationPage.organization]} />
+        <OrganizationFooter
+          organizations={[organizationPage.organization]}
+          force={true}
+        />
       )}
       <OrganizationChatPanel slugs={[organizationPage?.slug]} />
     </>
