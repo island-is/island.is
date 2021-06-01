@@ -139,6 +139,11 @@ export class UpdateCaseDto {
   readonly prosecutorId?: string
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly sharedWithProsecutorsOfficeId?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber?: string
