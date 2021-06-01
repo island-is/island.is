@@ -8,13 +8,16 @@ export const SIGNED_VERDICT_OVERVIEW = '/krafa/yfirlit'
 // Prosecutor
 export const STEP_ONE_CUSTODY_PETITION_ROUTE = '/krafa/ny/gaesluvardhald'
 export const STEP_ONE_NEW_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
-export const NEW_R_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const STEP_ONE_ROUTE = '/krafa/sakborningur'
 export const STEP_TWO_ROUTE = '/krafa/fyrirtaka'
 export const STEP_THREE_ROUTE = '/krafa/domkrofur-og-lagaakvaedi'
 export const STEP_FOUR_ROUTE = '/krafa/greinargerd'
 export const STEP_FIVE_ROUTE = '/krafa/rannsoknargogn'
 export const STEP_SIX_ROUTE = '/krafa/stadfesta'
+
+// R-cases
+export const NEW_R_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
+export const R_CASE_DEFENDANT_ROUTE = '/krafa/rannsoknarheimild/varnaradili'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'

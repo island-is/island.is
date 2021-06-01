@@ -85,7 +85,7 @@ const PetitionTypeForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.REQUEST_LIST_ROUTE}
-          onNextButtonClick={() => console.log('hero')}
+          nextUrl={`${constants.R_CASE_DEFENDANT_ROUTE}/TODO`}
           nextIsLoading={false}
           nextIsDisabled={false}
           nextButtonText={
