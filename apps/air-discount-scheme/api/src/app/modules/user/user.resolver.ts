@@ -1,7 +1,7 @@
 import { Query, Resolver, Context, ResolveField, Parent } from '@nestjs/graphql'
 
+import type { User as TUser } from '@island.is/air-discount-scheme/types'
 import {
-  User as TUser,
   Flight,
   FlightLeg as TFlightLeg,
 } from '@island.is/air-discount-scheme/types'

@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 import flatten from 'lodash/flatten'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   MMSApi,
   LanguageGrade,
@@ -17,7 +17,7 @@ import {
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
 
-import { Config } from './education.module'
+import type { Config } from './education.module'
 import { License, ExamFamilyOverview, ExamResult } from './education.type'
 import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
