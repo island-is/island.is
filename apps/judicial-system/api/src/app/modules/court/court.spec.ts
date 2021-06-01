@@ -28,7 +28,7 @@ describe('CourtModule', () => {
   let courtResolver: CourtResolver
 
   beforeEach(async () => {
-    createCase = jest.fn((args) => {
+    createCase = jest.fn((_, args) => {
       receivalDate = args?.receivalDate
 
       return Promise.resolve(courtCaseNumber)
