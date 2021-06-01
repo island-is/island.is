@@ -1,5 +1,5 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
-import { DistributiveOmit } from '@island.is/shared/types'
+import type { DistributiveOmit } from '@island.is/shared/types'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { getSelectedChild, getTransferredDays } from '../../parentalLeaveUtils'
 

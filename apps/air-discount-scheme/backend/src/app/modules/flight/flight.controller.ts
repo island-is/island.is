@@ -49,7 +49,7 @@ import {
 import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
-import { HttpRequest } from '../../app.types'
+import type { HttpRequest } from '../../app.types'
 
 @ApiTags('Flights')
 @Controller('api/public')

@@ -5,7 +5,7 @@ import {
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryUserService } from './providers/nationalRegistryUser.service'
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments'
 import { NationalRegistryApiMock } from './providers/mock/nationalRegistryApiMock'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Endorsement } from '../endorsement/endorsement.model'
