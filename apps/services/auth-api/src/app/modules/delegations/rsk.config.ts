@@ -5,12 +5,12 @@ import { environment } from '../../../environments'
 
 export const RskConfig: RskModuleConfig = {
   xRoadPath: createXRoadAPIPath(
-    environment.rsk.xroad.basePath,
-    environment.rsk.xroad.memberClass,
-    environment.rsk.xroad.memberCode,
-    environment.rsk.xroad.apiPath,
+    environment.rsk.xroad.basePath ?? '',
+    environment.rsk.xroad.memberClass ?? '',
+    environment.rsk.xroad.memberCode ?? '',
+    environment.rsk.xroad.apiPath ?? '',
   ),
-  xRoadClient: environment.rsk.xroad.clientId,
+  xRoadClient: environment.rsk.xroad.clientId ?? '',
   basicAuth: `${Base64.encode(
     `${environment.rsk.username}:${environment.rsk.password}`,
   )}`,
