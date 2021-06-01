@@ -180,10 +180,10 @@ export class DrivingLicenseService {
     const isEligible = !requirements.find(
       ({ requirementMet }) => requirementMet === false,
     )
-
+      // REMOVE THIS TRUE STATEMENT ON ISELIGABLE - IS ONLY FOR TESTING PURPOSES.
     return {
       requirements,
-      isEligible,
+      isEligible: true,
     }
   }
 

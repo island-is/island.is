@@ -11,6 +11,7 @@ import { Charge } from '@island.is/clients/payment'
 import { PaymentService } from '@island.is/clients/payment'
 import { CreatingPaymentModel, PaymentCatalogResponse } from './models/index'
 
+// MUST UNCOMMENT GUARDS - WORKAROUND FOR GRAPHQLQUERIES.
 //@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentResolver {
@@ -25,7 +26,7 @@ export class PaymentResolver {
   paymentCatalog(): Promise<PaymentCatalogResponse> {
     return this.PaymentService.getCatalog()
   }
-  
+
   @Query(() => PaymentCatalogResponse)
   paymentCatalogPerformingOrg(@Args('performingOrganizationID') performingOrganizationID: string): Promise<PaymentCatalogResponse> {
     console.log('resolver param: ' +performingOrganizationID)

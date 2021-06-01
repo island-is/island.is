@@ -18,15 +18,11 @@ export class PaymentService extends RESTDataSource {
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set(
-      'Authorization',
-      `Basic ${Base64.encode(`${this.options.username}:${this.options.password}`)}`,
-    )
+    request.headers.set('Authorization',`Basic ${Base64.encode(`${this.options.username}:${this.options.password}`)}`)
   }
 
   createCharge (
-    upcomingPayment: Charge// CHARGE OBJECT,
-  ): Promise<ChargeResponse> {
+    upcomingPayment: Charge): Promise<ChargeResponse> {
     return this.post<ChargeResponse>(
       `/chargeFJS/v1/charge`,
       upcomingPayment
@@ -42,11 +38,11 @@ export class PaymentService extends RESTDataSource {
   }
 
   async getCatalogByPerformingOrg(performingOrganizationID: string) {
-      const response = await this.get<Catalog>(
-        `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`
-      )
-      console.log('service param: ' +performingOrganizationID)
-      console.log('service response: ' + response.item)
-      return response
+    const response = await this.get<Catalog>(
+      `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`
+    )
+    console.log('service param: ' +performingOrganizationID)
+    console.log('service response: ' + response.item)
+    return response
   }
 }

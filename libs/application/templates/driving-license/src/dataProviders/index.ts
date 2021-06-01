@@ -4,5 +4,5 @@ export { PenaltyPointsProvider } from './PenaltyPointsProvider'
 export { EntitlementTypesProvider } from './EntitlementTypesProvider'
 export { EligibilityProvider } from './EligibilityProvider'
 export { JuristictionProvider } from './JuristictionProvider'
-export { PaymentProvider } from './PaymentProvider'
+export { PaymentCatalogProvider } from './PaymentCatalogProvider'
 
