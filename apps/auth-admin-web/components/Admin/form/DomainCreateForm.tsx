@@ -90,7 +90,6 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                     placeholder={localization.fields['nationalId'].placeholder}
                     maxLength={10}
                     title={localization.fields['nationalId'].helpText}
-                    readOnly={isEditing}
                   />
                   <HelpBox
                     helpText={localization.fields['nationalId'].helpText}
@@ -115,6 +114,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                       validate: ValidationUtils.validateIdentifier,
                     })}
                     name="domain.name"
+                    readOnly={isEditing}
                     defaultValue={props.domain.name}
                     className="domain-create-form__input"
                     title={localization.fields['name'].helpText}

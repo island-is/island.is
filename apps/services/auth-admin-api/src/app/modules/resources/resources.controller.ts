@@ -881,13 +881,13 @@ export class ResourcesController {
   @Audit<Domain[] | PagedRowsDto<Domain>>({
     resources: (result) => {
       const domains = Array.isArray(result) ? result : result.rows
-      return domains.map((group) => group.id)
+      return domains.map((domain) => domain.name)
     },
   })
   async findAllDomains(
-    searchString: string | null = null,
-    page: number | null = null,
-    count: number | null = null,
+    @Query('searchString') searchString: string,
+    @Query('page') page: number,
+    @Query('count') count: number,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
     return this.resourcesService.findAllDomains(searchString, page, count)
   }
@@ -914,10 +914,10 @@ export class ResourcesController {
 
   /** Updates an existing Domain */
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
-  @Put('domain')
+  @Put('domain/:name')
   async updateDomain(
     @CurrentUser() user: User,
-    @Body() domain: ApiScopeGroupDTO,
+    @Body() domain: DomainDTO,
     @Param('name') name: string,
   ): Promise<[number, Domain[]]> {
     return this.auditService.auditPromise(

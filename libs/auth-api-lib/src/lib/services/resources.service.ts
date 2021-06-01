@@ -25,7 +25,6 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
-import { isNumber } from 'class-validator'
 
 @Injectable()
 export class ResourcesService {
@@ -833,7 +832,7 @@ export class ResourcesService {
     page: number | null = null,
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
-    if (page && count && isNumber(page) && isNumber(count)) {
+    if (page && count) {
       page--
       const offset = page * count
       if (!searchString || searchString.length === 0) {
