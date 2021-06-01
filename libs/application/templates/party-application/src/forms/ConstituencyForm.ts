@@ -10,6 +10,7 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildDescriptionField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { Constituencies } from '../types'
@@ -73,12 +74,6 @@ export const ConstituencyForm: Form = buildForm({
               id: 'disclaimer',
               type: undefined,
               title: '',
-              subTitle: m.disclaimerSection.descriptionPt2,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
@@ -90,7 +85,7 @@ export const ConstituencyForm: Form = buildForm({
             buildDataProviderItem({
               id: 'partyLetterRegistry',
               type: 'PartyLetterRegistryProvider',
-              title: 'Stafir',
+              title: '',
               subTitle: '',
             }),
           ],
@@ -98,9 +93,9 @@ export const ConstituencyForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overviewSection',
-      title: m.constituencySection.confirmationTitle,
-      condition: (answers, externalData) => {
+      id: 'partyLetterFailed',
+      title: '',
+      condition: (_, externalData) => {
         const partyLetter = externalData.partyLetterRegistry
           ?.data as PartyLetterRegistryPartyLetter
 
@@ -147,7 +142,7 @@ export const ConstituencyForm: Form = buildForm({
               placement: 'footer',
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitButton,
                   type: 'primary',
                 },

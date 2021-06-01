@@ -49,15 +49,9 @@ export const m: MessageDir = {
         'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang  að söfnun meðmælanna ásamt þeim stjórnmálaflokki sem stofnar viðkomandi söfnun. Óheimilt er að dreifa meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Description part one',
     },
-    descriptionPt2: {
-      id: 'pa.application:disclaimerSection.descrtipion.p2',
-      defaultMessage:
-        'Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.',
-      description: 'Description part two',
-    },
     checkboxLabel: {
       id: 'pa.application:disclaimerSection.checkboxLabel',
-      defaultMessage: 'Ég samþykki skilmála hér að ofan',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Checkbox label',
     },
   }),
@@ -264,13 +258,12 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
-      defaultMessage:
-        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
@@ -304,6 +297,13 @@ export const m: MessageDir = {
       id: 'pa.application:application.approved.card.bulletLink2Title',
       defaultMessage: 'kosning.is',
       description: 'Link title',
+    },
+  }),
+  applicationApprovedOverview: defineMessages({
+    title: {
+      id: 'pa.application:application.approved.title',
+      defaultMessage: 'Umsokn samþykkt',
+      description: 'Title for overview',
     },
   }),
   collectEndorsements: defineMessages({
@@ -342,7 +342,7 @@ export const m: MessageDir = {
     },
     agreeTermsLabel: {
       id: 'pa.application:collect.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
     submitButton: {
@@ -396,7 +396,7 @@ export const m: MessageDir = {
   endorsementDisclaimer: defineMessages({
     title: {
       id: 'pa.application:endorsement.disclaimer.title',
-      defaultMessage: 'Meðmælendalisti með listabókstafnum',
+      defaultMessage: 'Meðmæli með framboðslista',
       description: 'Title for signature disclaimer',
     },
     messagePt1: {
@@ -553,7 +553,7 @@ export const m: MessageDir = {
     },
     csvButton: {
       id: 'pa.application:supreme.court.csv.button',
-      defaultMessage: 'Hlaða niður atkvæðum',
+      defaultMessage: 'Hlaða niður meðmælum',
       description: 'Download endorsements button',
     },
     noEndorsementsMessage: {

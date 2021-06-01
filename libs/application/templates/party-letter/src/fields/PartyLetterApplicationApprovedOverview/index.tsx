@@ -4,32 +4,36 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { ExportAsCSV } from '@island.is/application/ui-components'
-import { SchemaFormValues } from '../../lib/dataSchema'
 import { csvFileName } from '../../constants'
+import { PartyLetter } from '../../lib/dataSchema'
 
 export interface Props extends FieldBaseProps {
   title?: string
   description?: string
 }
 
-const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
+const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
-  const answers = application.answers as SchemaFormValues
+  const answers = (application as any).answers as PartyLetter
 
   return (
     <Box>
-      <Text variant="h3"> {formatMessage(m.supremeCourt.subtitle)}</Text>
+      <Text variant="h3">
+        {formatMessage(m.partyLetterApprovedOverview.subtitle)}
+      </Text>
       <Box display="flex" marginTop={3} marginBottom={5}>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.partyNameLabel)}
+            {formatMessage(m.ministryOfJustice.partyNameLabel)}
           </Text>
           <Text>{answers.partyName}</Text>
         </Box>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.partyLetterLabel)}
+            {formatMessage(m.ministryOfJustice.partyLetterLabel)}
           </Text>
           <Text>{answers.partyLetter}</Text>
         </Box>
@@ -37,7 +41,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
       <Box display="flex" marginBottom={5}>
         <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.responsiblePersonLabel)}
+            {formatMessage(m.ministryOfJustice.responsiblePersonLabel)}
           </Text>
           <Text>
             {
@@ -47,34 +51,22 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             }
           </Text>
         </Box>
-        <Box marginBottom={3} width="half">
+        <Box width="half">
           <Text variant="h5">
-            {formatMessage(m.supremeCourt.typeOfEndorsementLabel)}
+            {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text>{'Alþingi 2021'}</Text>
+          <Text>{'528'}</Text>
         </Box>
       </Box>
       <Box display="flex">
-        <Box marginBottom={3} width="half">
-          <Text variant="h5">
-            {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
-          </Text>
-          <Text marginBottom={1}>{'528'}</Text>
-          <ExportAsCSV
-            data={answers.endorsements as object[]}
-            filename={csvFileName(answers.partyLetter, answers.partyName)}
-            title={formatMessage(m.supremeCourt.csvButton)}
-          />
-        </Box>
-        <Box marginBottom={3} width="half">
-          <Text variant="h5">
-            {formatMessage(m.supremeCourt.constituencyLabel)}
-          </Text>
-          <Text>{answers.constituency}</Text>
-        </Box>
+        <ExportAsCSV
+          data={answers.endorsements as object[]}
+          filename={csvFileName(answers.partyLetter, answers.partyName)}
+          title={formatMessage(m.ministryOfJustice.csvButton)}
+        />
       </Box>
     </Box>
   )
 }
 
-export default SupremeCourtOverview
+export default PartyLetterApplicationApprovedOverview
