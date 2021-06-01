@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import { FormContentContainer } from '@island.is/judicial-system-web/src/shared-components'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+  BlueBox,
+  FormContentContainer,
+} from '@island.is/judicial-system-web/src/shared-components'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { petitionTypes } from './PetitionTypes'
 
 interface Props {
   workingCase: Case
@@ -35,37 +35,48 @@ const PetitionTypeForm: React.FC<Props> = (props) => {
             Efni kröfu
           </Text>
         </Box>
-        <Input
-          data-testid="petition-description"
-          name="petition-description"
-          label="Efni kröfu"
-          placeholder="Skráðu efni kröfu"
-          defaultValue={''}
-          errorMessage={petitionDescriptionEM}
-          hasError={petitionDescriptionEM !== ''}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'petitionDescription',
-              event,
-              ['empty'],
-              workingCase,
-              setWorkingCase,
-              petitionDescriptionEM,
-              setPetitionDescriptionEM,
-            )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'petitionDescription',
-              event.target.value,
-              ['empty'],
-              workingCase,
-              updateCase,
-              setPetitionDescriptionEM,
-            )
-          }
-          required
-        />
+        <BlueBox>
+          <Box marginBottom={2}>
+            <Select
+              name="petition-type"
+              options={petitionTypes}
+              label="Tegund kröfu"
+              placeholder="Veldu tegund kröfu"
+              required
+            />
+          </Box>
+          <Input
+            data-testid="petition-description"
+            name="petition-description"
+            label="Efni kröfu"
+            placeholder="Skráðu efni kröfu"
+            defaultValue={''}
+            errorMessage={petitionDescriptionEM}
+            hasError={petitionDescriptionEM !== ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'petitionDescription',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                petitionDescriptionEM,
+                setPetitionDescriptionEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'petitionDescription',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setPetitionDescriptionEM,
+              )
+            }
+            required
+          />
+        </BlueBox>
       </Box>
     </FormContentContainer>
   )
