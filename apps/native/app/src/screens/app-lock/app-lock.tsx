@@ -228,8 +228,14 @@ export const AppLockScreen: NavigationFunctionComponent<{
 }
 
 AppLockScreen.options = {
-  layout: {
-    backgroundColor: 'transparent',
-    componentBackgroundColor: 'transparent',
+  topBar: {
+    visible: false,
   },
+  navigationBar: {
+    visible: false,
+  },
+  // layout: {
+  //   backgroundColor: 'blue',
+  //   componentBackgroundColor: 'hotpink',
+  // },
 }

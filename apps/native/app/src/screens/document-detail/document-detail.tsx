@@ -26,6 +26,8 @@ import { authStore, useAuthStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { dynamicColor } from '@island.is/island-ui-native'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -33,9 +35,11 @@ const Host = styled.SafeAreaView`
 `
 
 const Border = styled.View`
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
+  height: 1px;
+  background-color: ${dynamicColor((props) => ({
+    dark: props.theme.shade.shade200,
+    light: props.theme.color.blue100,
+  }))};
 `
 
 const {

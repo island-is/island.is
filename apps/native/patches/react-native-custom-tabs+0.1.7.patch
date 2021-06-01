@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native-custom-tabs/android/src/main/java/com/github/droibit/android/reactnative/customtabs/CustomTabsModule.java b/node_modules/react-native-custom-tabs/android/src/main/java/com/github/droibit/android/reactnative/customtabs/CustomTabsModule.java
+index 29a0fe6..e01ee90 100644
+--- a/node_modules/react-native-custom-tabs/android/src/main/java/com/github/droibit/android/reactnative/customtabs/CustomTabsModule.java
++++ b/node_modules/react-native-custom-tabs/android/src/main/java/com/github/droibit/android/reactnative/customtabs/CustomTabsModule.java
+@@ -5,7 +5,7 @@ import android.content.Context;
+ import android.graphics.Color;
+ import android.os.Bundle;
+ import android.provider.Browser;
+-import android.support.customtabs.CustomTabsIntent;
++import androidx.browser.customtabs.CustomTabsIntent;
+ import android.text.TextUtils;
+ 
+ import com.droibit.android.customtabs.launcher.CustomTabsLauncher;
+@@ -105,7 +105,7 @@ public class CustomTabsModule extends ReactContextBaseJavaModule {
+             );
+             final Activity activity = getCurrentActivity();
+             if (activity != null) {
+-                CustomTabsLauncher.launch(activity, customTabsIntent, url);
++                CustomTabsLauncher.launch(activity, customTabsIntent, android.net.Uri.parse(url));
+                 promise.resolve(true);
+             } else {
+                 promise.resolve(false);

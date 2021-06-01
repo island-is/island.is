@@ -6,10 +6,10 @@ import { ComponentRegistry } from './component-registry'
 import { isOnboarded } from './onboarding'
 
 export function skipAppLock() {
-  const { userInfo } = authStore.getState()
+  const { authorizeResult } = authStore.getState()
   const { dev__useLockScreen } = preferencesStore.getState()
 
-  const skip = !userInfo || !isOnboarded() || dev__useLockScreen === false;
+  const skip = !authorizeResult || !isOnboarded() || dev__useLockScreen === false;
 
   if (skip) {
     uiStore.setState({ initializedApp: true });

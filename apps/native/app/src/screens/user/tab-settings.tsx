@@ -11,7 +11,15 @@ import {
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Platform, ScrollView, Switch, View } from 'react-native'
+import { Pressable } from 'react-native'
+import {
+  Animated,
+  Platform,
+  ScrollView,
+  Switch,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
@@ -23,6 +31,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
+import { uiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
@@ -56,6 +65,7 @@ export function TabSettings() {
   const [applicationsNotifications, setApplicationsNotifications] = useState(
     false,
   )
+  const efficient = useRef<any>({}).current
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
 
@@ -100,8 +110,7 @@ export function TabSettings() {
   useEffect(() => {
     // @todo move to ui store, persist somehow
     setTimeout(() => {
-      supportedAuthenticationTypesAsync()
-        .then(setSupportedAuthenticationTypes)
+      supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
       setLoadingCP(true)
       CodePush.getUpdateMetadata().then((p) => {
         setLoadingCP(false)
@@ -222,25 +231,39 @@ export function TabSettings() {
               />
             }
           />
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.darkMode',
-            })}
-            accessory={
-              <Switch
-                disabled={appearanceMode === 'automatic'}
-                onValueChange={(value) =>
-                  setAppearanceMode(value ? 'dark' : 'light')
-                }
-                value={appearanceMode === 'dark'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
+          <Pressable
+            onPress={() => {
+              clearTimeout(efficient.ts);
+              efficient.count = (efficient.count ?? 0) + 1
+              if (efficient.count === 11) {
+                console.log('tab appearance');
+                setAppearanceMode('efficient');
+              }
+              efficient.ts = setTimeout(() => {
+                efficient.count = 0;
+              }, 500);
+            }}
+          >
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.accessibilityLayout.darkMode',
+              })}
+              accessory={
+                <Switch
+                  disabled={appearanceMode === 'automatic'}
+                  onValueChange={(value) =>
+                    setAppearanceMode(value ? 'dark' : 'light')
+                  }
+                  value={appearanceMode === 'dark'}
+                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  trackColor={{
+                    false: theme.color.dark200,
+                    true: theme.color.blue400,
+                  }}
+                />
+              }
+            />
+          </Pressable>
           <PressableHighlight onPress={onLanguagePress}>
             <TableViewCell
               title={intl.formatMessage({

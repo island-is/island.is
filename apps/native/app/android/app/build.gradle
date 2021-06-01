@@ -222,6 +222,7 @@ dependencies {
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-web-view')
     implementation project(':react-native-sentry')
+    implementation project(':react-native-custom-tabs')
     implementation project(':@react-native-firebase_app')
     implementation project(':@react-native-firebase_messaging')
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Animated, View } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor, spacing } from '../../utils';
 import { font } from '../../utils/font';
 
 const Host = styled.View`
@@ -10,7 +11,7 @@ const Host = styled.View`
 `
 
 const Text = styled.Text`
-  margin-bottom: ${({ theme }) => theme.spacing[3]}px;
+  margin-bottom: ${spacing(3)};
   ${font({
     fontWeight: '600',
     lineHeight: 24,
@@ -24,15 +25,15 @@ const Wrapper = styled.View`
   justify-content: space-between;
   align-items: center;
 
-  width: ${({ theme }) => theme.spacing[5]}px;
-  height: ${({ theme }) => theme.spacing[2]}px;
+  width: ${spacing(5)};
+  height: ${spacing(2)};
 `;
 
 const AnimatedCircle = styled(Animated.View)`
-  height: ${({ theme }) => theme.spacing[1]}px;
-  width: ${({ theme }) => theme.spacing[1]}px;
+  height: ${spacing(1)};
+  width: ${spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${({ theme }) => theme.color.blue400};
+  background-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
 `
 
 interface LoaderProps {

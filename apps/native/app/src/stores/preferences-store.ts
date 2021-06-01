@@ -6,7 +6,8 @@ import create, { State } from 'zustand/vanilla'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 
 export type Locale = 'en-US' | 'is-IS'
-export type AppearanceMode = 'light' | 'dark' | 'automatic'
+export type ThemeMode = 'dark' | 'light' | 'efficient';
+export type AppearanceMode = ThemeMode | 'automatic'
 
 export interface PreferencesStore extends State {
   dev__useLockScreen: boolean

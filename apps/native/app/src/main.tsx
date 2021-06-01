@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-community/async-storage'
 import { Navigation } from 'react-native-navigation'
 import { getDefaultOptions } from './utils/get-default-options'
 import { getAppRoot } from './utils/lifecycle/get-app-root'
@@ -9,6 +8,7 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { showLockScreenOverlay } from './utils/lock-screen-helpers'
+import { readAuthorizeResult } from './stores/auth-store'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -31,20 +31,26 @@ async function startApp() {
 
   // Wait until React Native is initialized
   Navigation.events().registerAppLaunchedListener(async () => {
+    // Read authorize result from keychain
+    await readAuthorizeResult();
+
     // Set default navigation theme options
     Navigation.setDefaultOptions(getDefaultOptions())
 
-    // Dismiss all previous modals (good when in development mode)
-    await Navigation.dismissAllModals()
-    await Navigation.dismissAllOverlays()
+    // Get app root
+    const root = await getAppRoot();
 
-    // Set the app root
-    await Navigation.setRoot({
-      root: await getAppRoot(),
-    })
+    // Dismiss all overlays
+    await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
     await showLockScreenOverlay({ enforceActivated: true })
+
+    // Dismiss all modals
+    await Navigation.dismissAllModals()
+
+    // Set the app root
+    await Navigation.setRoot({ root })
   })
 }
 

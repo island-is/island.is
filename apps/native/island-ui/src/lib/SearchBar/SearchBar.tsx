@@ -77,7 +77,7 @@ export function SearchBar(props: SearchBarProps) {
             return props?.onBlur?.(e)
           }}
           keyboardType="web-search"
-          placeholderTextColor={theme.shade.shade600}
+          placeholderTextColor={theme.isDark ? theme.shade.shade700 : theme.color.dark300}
           keyboardAppearance={theme.isDark ? 'dark' : 'light'}
           style={{ color: theme.shade.foreground }}
         />
@@ -87,7 +87,7 @@ export function SearchBar(props: SearchBarProps) {
         style={{
           position: 'absolute',
           zIndex: 40,
-          top: 0,
+          top: 2,
           right: 0,
           width: 46,
           height: 46,

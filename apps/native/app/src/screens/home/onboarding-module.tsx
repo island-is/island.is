@@ -9,7 +9,7 @@ import { SafeAreaView, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m2.png'
-import { authStore } from '../../stores/auth-store'
+import { authStore, useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useIntl } from '../../utils/intl'
 
@@ -17,6 +17,7 @@ export const OnboardingModule = React.memo(() => {
   const theme = useTheme()
   const intl = useIntl()
   const { dismissed, dismiss } = usePreferencesStore()
+  const { userInfo } = useAuthStore();
 
   if (dismissed.includes('onboardingWidget')) {
     return null
@@ -32,7 +33,7 @@ export const OnboardingModule = React.memo(() => {
         }
       >
         {intl.formatMessage({ id: 'home.welcomeText' })}{' '}
-        {authStore.getState().userInfo?.name.split(' ').shift()}
+        {userInfo?.name.split(' ').shift()}
       </Heading>
       <ViewPager>
         <WelcomeCard

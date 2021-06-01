@@ -1,8 +1,6 @@
 import { addPlugin, Flipper } from "react-native-flipper";
 import MessageQueue from "react-native/Libraries/BatchedBridge/MessageQueue";
 
-console.log('elo');
-
 const TO_JS = 0;
 let id = 0;
 
@@ -12,7 +10,6 @@ const BATCH_SIZE = 50;
 
 addPlugin({
   getId() {
-    console.log('okay!');
     return "com.sylvanaar.flipper.bridgespy";
   },
   onConnect(connection) {
