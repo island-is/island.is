@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useNavigationTree = (hasIncome: boolean | number | undefined) => {
+const useNavigationTree = () => {
   const section = [
     {
       name: 'Gagnaöflun',

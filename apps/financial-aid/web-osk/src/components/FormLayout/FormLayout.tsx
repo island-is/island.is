@@ -1,16 +1,9 @@
-import React, { ReactNode, useContext } from 'react'
-import {
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  FormStepper,
-} from '@island.is/island-ui/core'
+import React, { ReactNode, useContext, useEffect } from 'react'
+import { Box, GridContainer, FormStepper } from '@island.is/island-ui/core'
 
 import * as styles from './FormLayout.treat'
 
 import { LogoHfj } from '@island.is/financial-aid-web/osk/src/components'
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 
@@ -25,9 +18,15 @@ const FormLayout: React.FC<PageProps> = ({
   activeSection,
   activeSubSection,
 }) => {
-  const { form, updateForm } = useContext(FormContext)
+  const sections = useNavigationTree()
 
-  const sections = useNavigationTree(form?.hasIncome)
+  useEffect(() => {
+    if (activeSection !== undefined) {
+      document.title = 'Umsókn - ' + sections[activeSection].name ?? ''
+    } else {
+      document.title = 'Umsókn'
+    }
+  }, [])
 
   return children ? (
     <Box
