@@ -6,7 +6,7 @@ import { environment } from '../../../environments'
 export const RskConfig: RskModuleConfig = {
   xRoadPath: createXRoadAPIPath(
     environment.rsk.xroad.basePath ?? '',
-    environment.rsk.xroad.memberClass ?? '',
+    environment.rsk.xroad.memberClass,
     environment.rsk.xroad.memberCode ?? '',
     environment.rsk.xroad.apiPath ?? '',
   ),

@@ -5,7 +5,7 @@ import { environment } from '../../../environments'
 export const NationalRegistryConfig: NationalRegistryModuleConfig = {
   xRoadPath: createXRoadAPIPath(
     environment.nationalRegistry.xroad.basePath ?? '',
-    environment.nationalRegistry.xroad.memberClass ?? '',
+    environment.nationalRegistry.xroad.memberClass,
     environment.nationalRegistry.xroad.memberCode ?? '',
     environment.nationalRegistry.xroad.apiPath ?? '',
   ),
