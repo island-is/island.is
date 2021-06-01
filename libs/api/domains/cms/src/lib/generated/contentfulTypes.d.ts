@@ -2985,6 +2985,9 @@ export interface ITimelineFields {
   /** Title */
   title?: string | undefined
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Events */
   events: ITimelineEvent[]
 }

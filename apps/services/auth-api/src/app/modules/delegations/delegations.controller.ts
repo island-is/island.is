@@ -1,9 +1,9 @@
 import { DelegationsService, DelegationDTO } from '@island.is/auth-api-lib'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'

@@ -4,8 +4,7 @@ export default {
   production: false,
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
+    audience: '@island.is',
   },
   port: 3370,
   rsk: {

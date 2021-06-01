@@ -1,11 +1,11 @@
 import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
@@ -17,12 +17,15 @@ export class NationalRegistryXRoadResolver {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  @Query(() => NationalRegistryPerson)
+  @Query(() => NationalRegistryPerson, {
+    name: 'nationalRegistryUserV2',
+  })
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user.nationalId,
+      user.authorization,
     )
   }
 

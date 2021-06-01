@@ -12,7 +12,9 @@ import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
 export type RecordObject<T = unknown> = Record<string, T>
-export type MaybeWithApplication<T> = T | ((a: Application) => T)
+export type MaybeWithApplicationAndField<T> =
+  | T
+  | ((a: Application, f: Field) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -52,7 +54,7 @@ export interface BaseField extends FormItem {
   width?: FieldWidth
   condition?: Condition
   isPartOfRepeater?: boolean
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
@@ -90,7 +92,7 @@ export enum FieldComponents {
 export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
@@ -101,8 +103,8 @@ export interface DateField extends BaseField {
   placeholder?: FormText
   component: FieldComponents.DATE
   maxDate?: Date
-  minDate?: Date
-  excludeDates?: MaybeWithApplication<Date[]>
+  minDate?: MaybeWithApplicationAndField<Date>
+  excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
 }
 
@@ -118,7 +120,7 @@ export interface DescriptionField extends BaseField {
 export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
 }
@@ -126,7 +128,7 @@ export interface RadioField extends BaseField {
 export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor

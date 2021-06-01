@@ -73,13 +73,19 @@ export class ApplicationTemplateHelper<
     return ApplicationStatus.IN_PROGRESS
   }
 
-  getApplicationStateInfo(
+  getApplicationActionCardMeta(
     stateKey: string = this.application.state,
-  ): { title?: StaticText; description?: StaticText } {
+  ): {
+    title?: StaticText
+    description?: StaticText
+    tag: { variant?: string; label?: StaticText }
+  } {
+    const actionCard = this.template.stateMachineConfig.states[stateKey]?.meta
+      ?.actionCard
     return {
-      title: this.template.stateMachineConfig.states[stateKey]?.meta?.title,
-      description: this.template.stateMachineConfig.states[stateKey]?.meta
-        ?.description,
+      title: actionCard?.title,
+      description: actionCard?.description,
+      tag: { variant: actionCard?.tag?.variant, label: actionCard?.tag?.label },
     }
   }
 
