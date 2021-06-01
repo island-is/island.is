@@ -18,13 +18,11 @@ import {
   DokobitErrorCodes,
 } from './utils/constants'
 import { AwsService } from './aws.service'
-import {
-  APPLICATION_CONFIG,
-  ApplicationConfig,
-} from '../application.configuration'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
+import type { ApplicationConfig } from '../application.configuration'
+import { APPLICATION_CONFIG } from '../application.configuration'
 import {
   generateJointCustodyPdf,
   generateResidenceChangePdf,

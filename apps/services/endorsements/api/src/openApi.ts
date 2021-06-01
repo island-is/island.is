@@ -1,5 +1,5 @@
 import { DocumentBuilder } from '@nestjs/swagger'
-import { environment } from './environments/environment'
+import { environment } from './environments'
 
 export const openApi = new DocumentBuilder()
   .setTitle('EndorsementSystem')

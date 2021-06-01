@@ -3,7 +3,8 @@ import { SES } from 'aws-sdk'
 
 import { Inject } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const EMAIL_OPTIONS = 'EMAIL_OPTIONS'
 

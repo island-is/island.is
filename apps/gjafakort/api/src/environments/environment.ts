@@ -1,6 +1,6 @@
 const TEN_MINUTES = 10 * 60
 
-export default {
+const devConfig = {
   production: false,
   sentry: {
     dsn: '',
@@ -47,7 +47,52 @@ export default {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
   },
-  configCat: {
-    sdkKey: process.env.CONFIGCAT_SDK_KEY,
+}
+
+const prodConfig = {
+  production: true,
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
+  accessGroups: {
+    developers: process.env.DEVELOPERS,
+    admins: process.env.ADMINS,
+    testers: process.env.TESTERS,
+  },
+  auth: {
+    samlEntryPoint: process.env.SAML_ENTRY_POINT,
+    audience: process.env.AUTH_AUDIENCE,
+    jwtSecret: process.env.AUTH_JWT_SECRET,
+  },
+  applicationUrl: process.env.APPLICATION_URL,
+  ferdalag: {
+    url: process.env.FERDALAG_URL,
+    apiKey: process.env.FERDALAG_API_KEY,
+    ttl: process.env.CACHE_TIME_TO_LIVE
+      ? parseInt(process.env.CACHE_TIME_TO_LIVE, 10)
+      : TEN_MINUTES,
+  },
+  rsk: {
+    url: process.env.RSK_URL,
+    username: process.env.RSK_USERNAME,
+    password: process.env.RSK_API_PASSWORD,
+    ttl: process.env.CACHE_TIME_TO_LIVE
+      ? parseInt(process.env.CACHE_TIME_TO_LIVE, 10)
+      : TEN_MINUTES,
+  },
+  redis: {
+    urls: [process.env.REDIS_URL_NODE_01],
+  },
+  yay: {
+    url: process.env.YAY_URL,
+    apiKey: process.env.YAY_API_KEY,
+    secretKey: process.env.YAY_SECRET_KEY,
+  },
+  nova: {
+    url: process.env.NOVA_URL,
+    username: process.env.NOVA_USERNAME,
+    password: process.env.NOVA_PASSWORD,
   },
 }
+
+export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

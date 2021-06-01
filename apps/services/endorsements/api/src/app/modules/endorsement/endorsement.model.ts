@@ -13,6 +13,7 @@ import {
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 import { EndorsementListOpen } from './endorsementListOpen.model'
+
 @Table({
   tableName: 'endorsement',
   indexes: [
