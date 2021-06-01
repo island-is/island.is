@@ -182,6 +182,10 @@ export const CustodyPetitions: React.FC = () => {
                   href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
                   title: 'Farbann',
                 },
+                {
+                  href: Constants.NEW_R_CASE_ROUTE,
+                  title: 'Rannsóknarheimild',
+                },
               ]}
               title="Stofna nýja kröfu"
             />
