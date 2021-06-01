@@ -47,9 +47,6 @@ const devConfig = {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
   },
-  configCat: {
-    sdkKey: process.env.CONFIGCAT_SDK_KEY,
-  },
 }
 
 const prodConfig = {
@@ -95,9 +92,6 @@ const prodConfig = {
     url: process.env.NOVA_URL,
     username: process.env.NOVA_USERNAME,
     password: process.env.NOVA_PASSWORD,
-  },
-  configCat: {
-    sdkKey: process.env.CONFIGCAT_SDK_KEY,
   },
 }
 
