@@ -711,6 +711,42 @@
   ],
   "formControls": [
     {
+      "id": "DomainCreateForm",
+      "title": "Create a Domain",
+      "editTitle": "Edit Domain",
+      "help": "Create a Domain to associate Api Scope Groups",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "National Id associated with this domain",
+          "errorMessage": "National Id is required"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "@island.is",
+          "helpText": "The identifier of this domain",
+          "errorMessage": "The domain is required and can not include invalid characters"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Island.is SPA client",
+          "helpText": "The description of this domain",
+          "errorMessage": "The description is required and can not include invalid characters"
+        }
+      }
+    },
+    {
       "id": "ApiScopeGroupCreateForm",
       "title": "Create a Api Scope Group",
       "editTitle": "Edit Api Scope Group",
@@ -734,10 +770,10 @@
         }
       },
       "fields": {
-        "domain": {
+        "domainName": {
           "label": "Domain",
-          "helpText": "Select a domain for this group",
-          "errorMessage": "The domain is required"
+          "helpText": "The domain associated with this Api Scope Group",
+          "errorMessage": "Domain is required and needs to be in the right format"
         },
         "name": {
           "label": "Name",

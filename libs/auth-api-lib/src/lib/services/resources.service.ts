@@ -852,6 +852,11 @@ export class ResourcesService {
     return this.domainModel.findAll({ order: [['name', 'asc']] })
   }
 
+  /** Gets domain by name */
+  async findDomainByPk(name: string): Promise<Domain | null> {
+    return this.domainModel.findByPk(name)
+  }
+
   /** Creates a new Domain */
   async createDomain(domain: DomainDTO): Promise<Domain> {
     return this.domainModel.create({ ...domain })
