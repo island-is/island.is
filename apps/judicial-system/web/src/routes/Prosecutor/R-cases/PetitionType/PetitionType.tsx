@@ -9,6 +9,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
+import PetitionTypeForm from './PetitionTypeForm'
 
 const PetitionType = () => {
   const router = useRouter()
@@ -22,7 +23,7 @@ const PetitionType = () => {
   })
 
   useEffect(() => {
-    document.title = 'Sakborningur - Réttarvörslugátt'
+    document.title = 'Rannsóknarheimild - Réttarvörslugátt'
   }, [])
 
   // Run this if id is in url, i.e. if user is opening an existing request.
@@ -62,7 +63,12 @@ const PetitionType = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && <p>Hello</p>}
+      {workingCase && (
+        <PetitionTypeForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      )}
     </PageLayout>
   )
 }
