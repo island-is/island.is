@@ -252,34 +252,36 @@ const Slider = ({
         )}
       </Box>
 
-      {rangeDates && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          width="full"
-          marginTop={9}
-        >
-          <Box>
-            <Text color="blue400" variant="eyebrow">
-              {rangeDates.start.message}
-            </Text>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        width="full"
+        marginTop={9}
+      >
+        {rangeDates && (
+          <>
+            <Box>
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.start.message}
+              </Text>
 
-            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-              {rangeDates.start.date}
-            </Text>
-          </Box>
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.start.date}
+              </Text>
+            </Box>
 
-          <Box textAlign="right">
-            <Text color="blue400" variant="eyebrow">
-              {rangeDates.end.message}
-            </Text>
+            <Box textAlign="right">
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.end.message}
+              </Text>
 
-            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-              {rangeDates.end.date}
-            </Text>
-          </Box>
-        </Box>
-      )}
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.end.date}
+              </Text>
+            </Box>
+          </>
+        )}
+      </Box>
     </Box>
   )
 }

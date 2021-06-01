@@ -1,6 +1,5 @@
+import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
 import { environment } from '../environments'
-
-const versionCutoffTime = '2021-06-01T00:00:00'
 
 interface Version {
   yearBornLimit: number
@@ -17,9 +16,24 @@ const v2: Version = {
   type: 'gjafakort-user-2',
 }
 
-export const getVersionConfiguration = (): Version => {
-  const useV2 =
-    new Date() >= new Date(versionCutoffTime) || environment.isFerdagjof2Enabled
+const IS_FERDAGJOF_2_ENABLED = 'isferdagjof2enabled'
 
-  return useV2 ? v2 : v1
+const sdkKey = environment.configCat.sdkKey
+if (!sdkKey) {
+  throw new Error(
+    'Trying to initialize configcat client without configCat.sdkKey environment variable',
+  )
+}
+
+const configCat = eval('require')('configcat-node').createClient(sdkKey, {
+  dataGovernance: DataGovernance.EuOnly,
+})
+
+export const getVersionConfiguration = async (): Promise<Version> => {
+  const isFerdagjof2Enabled = await configCat.getValueAsync(
+    IS_FERDAGJOF_2_ENABLED,
+    false,
+  )
+
+  return isFerdagjof2Enabled ? v2 : v1
 }

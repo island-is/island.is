@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import {
+import type {
   BaseUser as TBaseUser,
   User as TUser,
   Fund as TFund,
