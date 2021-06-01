@@ -8,6 +8,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -19,7 +20,10 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
-    const wards = await this.delegationsService.findAllWardsTo(user, '')
+    const wards = await this.delegationsService.findAllWardsTo(
+      user,
+      environment.nationalRegistry.xroad.clientId,
+    )
 
     const companies = await this.delegationsService.findAllCompaniesTo(
       user.nationalId,
