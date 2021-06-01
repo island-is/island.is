@@ -55,8 +55,12 @@ export class CaseService {
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(buffer)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        buffer,
+      )
       await this.courtService.createThingbok(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
@@ -378,8 +382,12 @@ export class CaseService {
     const pdf = await getRequestPdfAsBuffer(existingCase)
 
     try {
-      const streamId = await this.courtService.uploadStream(pdf)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        pdf,
+      )
       await this.courtService.createDocument(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )

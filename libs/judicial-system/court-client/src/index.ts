@@ -1,2 +1,5 @@
 export * from './lib/courtClient.module'
-export { CourtClientService } from './lib/courtClient.service'
+export {
+  CourtClientServiceOptions,
+  CourtClientService,
+} from './lib/courtClient.service'

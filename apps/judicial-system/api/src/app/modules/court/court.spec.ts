@@ -56,6 +56,7 @@ describe('CourtModule', () => {
 
   describe('Given a case', () => {
     const caseId = uuid()
+    const courtId = uuid()
     const policeCaseNumber = uuid() // should be of the form '111-2021-2', but using random uuid for testing
     const user = {} as User
     let updateCase: jest.Mock
@@ -71,13 +72,13 @@ describe('CourtModule', () => {
       const isExtension = false
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber, isExtension },
+        { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
-      expect(createCase).toHaveBeenCalledWith({
+      expect(createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
         subtype: 'Gæsluvarðhald',
         basedOn: 'Rannsóknarhagsmunir',
@@ -97,13 +98,13 @@ describe('CourtModule', () => {
       const isExtension = true
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber, isExtension },
+        { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
-      expect(createCase).toHaveBeenCalledWith({
+      expect(createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
         subtype: 'Framlenging gæsluvarðhalds',
         basedOn: 'Rannsóknarhagsmunir',
@@ -123,13 +124,13 @@ describe('CourtModule', () => {
       const isExtension = false
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber, isExtension },
+        { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
-      expect(createCase).toHaveBeenCalledWith({
+      expect(createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
         subtype: 'Farbann',
         basedOn: 'Rannsóknarhagsmunir',
@@ -149,13 +150,13 @@ describe('CourtModule', () => {
       const isExtension = true
 
       const res = await courtResolver.createCourtCase(
-        { caseId, type, policeCaseNumber, isExtension },
+        { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
         { backendApi: ({ updateCase } as unknown) as BackendAPI },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
-      expect(createCase).toHaveBeenCalledWith({
+      expect(createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
         subtype: 'Framlenging farbanns',
         basedOn: 'Rannsóknarhagsmunir',

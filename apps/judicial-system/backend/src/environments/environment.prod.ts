@@ -1,3 +1,5 @@
+import { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
+
 export default {
   production: true,
   auth: {
@@ -5,9 +7,11 @@ export default {
     secretToken: process.env.SECRET_TOKEN,
   },
   notifications: {
-    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
+    courtsMobileNumbers: JSON.parse(process.env.COURTS_MOBILE_NUMBERS) as {
+      [key: string]: string
+    },
   },
   email: {
     fromEmail: process.env.EMAIL_FROM,
@@ -46,10 +50,11 @@ export default {
     clientKey: process.env.XROAD_CLIENT_KEY,
     clientCa: process.env.XROAD_CLIENT_PEM,
   },
-  courtService: {
+  courtClientOptions: {
     apiPath: process.env.XROAD_COURT_API_PATH,
     memberCode: process.env.XROAD_COURT_MEMBER_CODE,
-    username: process.env.COURT_USERNAME,
-    password: process.env.COURT_PASSWORD,
+    serviceOptions: JSON.parse(
+      process.env.COURTS_CREDENTIALS,
+    ) as CourtClientServiceOptions,
   },
 }
