@@ -34,7 +34,7 @@ const argv = yargs
 app.use(argv['base-path'], express.static(path.join(process.cwd(), argv.dist)))
 
 // Setup server shutdown signal from parent
-process.on('SIGTERM', () => {
+process.on('SIGINT', () => {
   console.log('Shutting down server...')
   server.close()
   console.log('Exiting process...')
