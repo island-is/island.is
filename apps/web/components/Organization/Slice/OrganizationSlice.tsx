@@ -61,6 +61,10 @@ const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
 
+const MailingListSignupSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -68,7 +72,11 @@ interface OrganizationSliceProps {
   organizationPageSlug?: string
 }
 
-const fullWidthSlices = ['TimelineSlice', 'LogoListSlice']
+const fullWidthSlices = [
+  'TimelineSlice',
+  'LogoListSlice',
+  'MailingListSignupSlice',
+]
 const slicesWithContainer = ['LatestNewsSlice']
 
 const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
@@ -107,6 +115,8 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
           fullWidth={fullWidth}
         />
       )
+    case 'MailingListSignupSlice':
+      return <MailingListSignupSlice slice={slice} namespace={namespace} />
     default:
       return <RichText body={[slice]} />
   }
@@ -118,18 +128,18 @@ export const OrganizationSlice = ({
   fullWidth = false,
   organizationPageSlug = '',
 }: OrganizationSliceProps) => {
-  return !slicesWithContainer.includes(slice.__typename) ? (
+  return !(fullWidth && slicesWithContainer.includes(slice.__typename)) ? (
     <GridContainer>
       <GridRow>
         <GridColumn
           paddingTop={6}
           span={
-            fullWidthSlices.includes(slice.__typename) || !fullWidth
+            fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
-            fullWidthSlices.includes(slice.__typename) || !fullWidth
+            fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '0'
               : ['0', '0', '1/9']
           }

@@ -23,6 +23,7 @@ export const slices = gql`
     __typename
     id
     title
+    intro
     events {
       id
       title
