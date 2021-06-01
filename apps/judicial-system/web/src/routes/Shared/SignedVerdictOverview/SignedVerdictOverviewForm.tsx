@@ -339,6 +339,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     label="Veldu embætti"
                     placeholder="Velja embætti sem tekur við málinu"
                     size="sm"
+                    icon={
+                      workingCase.sharedWithProsecutorsOffice
+                        ? 'checkmark'
+                        : undefined
+                    }
                     options={prosecutorsOffices
                       .map((prosecutorsOffice) => ({
                         label: prosecutorsOffice.name,
@@ -363,6 +368,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     onChange={(so: ValueType<ReactSelectOption>) =>
                       setSelectedSharingInstitutionId(so)
                     }
+                    disabled={Boolean(workingCase.sharedWithProsecutorsOffice)}
                   />
                 </Box>
                 <Button

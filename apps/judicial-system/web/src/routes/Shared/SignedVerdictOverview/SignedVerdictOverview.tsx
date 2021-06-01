@@ -6,12 +6,13 @@ import {
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -29,9 +30,15 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
+import { Text } from '@island.is/island-ui/core'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [shareCaseModal, setSharedCaseModal] = useState<{
+    open: boolean
+    title: string
+    text: ReactNode
+  }>()
   const [
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
@@ -161,15 +168,40 @@ export const SignedVerdictOverview: React.FC = () => {
   ) => {
     if (workingCase) {
       if (workingCase.sharedWithProsecutorsOffice) {
+        setSharedCaseModal({
+          open: true,
+          title: `Mál ${workingCase.courtCaseNumber} er nú lokað öðrum en upprunalegu embætti`,
+          text: (
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {workingCase.sharedWithProsecutorsOffice.name}
+              </Text>{' '}
+              hefur ekki lengur aðgang að málinu.
+            </Text>
+          ),
+        })
+
         setWorkingCase({
           ...workingCase,
           sharedWithProsecutorsOffice: undefined,
         })
-
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, parseNull('sharedWithProsecutorsOfficeId'))
       } else {
+        setSharedCaseModal({
+          open: true,
+          title: `Mál ${workingCase.courtCaseNumber} hefur verið opnað fyrir öðru embætti`,
+          text: (
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {(institution as ReactSelectOption).label}
+              </Text>{' '}
+              hefur nú fengið aðgang að málinu.
+            </Text>
+          ),
+        })
+
         setWorkingCase({
           ...workingCase,
           sharedWithProsecutorsOffice: {
@@ -251,6 +283,14 @@ export const SignedVerdictOverview: React.FC = () => {
               infoBoxText={getInfoText(workingCase)}
             />
           </FormContentContainer>
+          {shareCaseModal?.open && (
+            <Modal
+              title={shareCaseModal.title}
+              text={shareCaseModal.text}
+              primaryButtonText="Loka glugga"
+              handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+            />
+          )}
         </>
       ) : null}
     </PageLayout>
