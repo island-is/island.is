@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Loader, Skeleton } from '@island.is/island-ui-native'
+import { dynamicColor, font, Loader, Skeleton } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
 import { Image } from 'react-native'
 import { FormattedDate, useIntl } from 'react-intl'
@@ -32,6 +32,7 @@ import { authStore, useAuthStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 const Header = styled.SafeAreaView`
   margin-left: 16px;
@@ -48,9 +49,11 @@ const Row = styled.View`
 `
 
 const Border = styled.View`
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade200 : theme.color.blue100};
+  height: 1px;
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shade.shade200,
+    light: theme.color.blue100,
+  }))};
 `
 
 const Title = styled.View`
@@ -61,10 +64,10 @@ const Title = styled.View`
 `
 
 const TitleText = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '600',
+    fontSize: 13,
+  })}
   flex: 1;
 `
 
@@ -74,18 +77,18 @@ const Date = styled.View`
 `
 
 const DateText = styled.Text<{ unread?: boolean }>`
-  font-family: ${(props) =>
-    props.unread ? 'IBMPlexSans-SemiBold' : 'IBMPlexSans-Light'};
-  font-size: 13px;
-  line-height: 17px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: props => props.unread ? '600' : '300',
+    fontSize: 13,
+  })}
 `
 
 const Message = styled.Text`
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
+  ${font({
+    fontWeight: '300',
+    fontSize: 16,
+    lineHeight: 24,
+  })}
   padding-bottom: 8px;
 `
 

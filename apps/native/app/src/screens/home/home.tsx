@@ -93,7 +93,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(({ item }: any) => item.component, []);
-
   const keyExtractor = useCallback((item) => item.id, []);
 
   const refetch = async () => {

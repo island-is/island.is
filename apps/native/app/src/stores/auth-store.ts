@@ -7,11 +7,13 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
+import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { client } from '../graphql/client'
 import { config } from '../utils/config'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
+import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
@@ -33,7 +35,7 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
-  fetchUserInfo(): Promise<UserInfo>
+  fetchUserInfo(_refresh?: boolean): Promise<UserInfo>
   refresh(): Promise<boolean>
   login(): Promise<boolean>
   logout(): Promise<boolean>
@@ -56,7 +58,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo() {
+  async fetchUserInfo(_refresh: boolean = false) {
     return fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
@@ -65,15 +67,14 @@ export const authStore = create<AuthStore>((set, get) => ({
         },
       },
     ).then(async (res) => {
+      console.log(res);
       if (res.status === 401) {
         // Attempt to refresh the access token
-        const wasRefreshed = await this.refresh()
-        if (wasRefreshed) {
+        if (!_refresh && await this.refresh()) {
           // Retry the userInfo call
-          return this.fetchUserInfo()
-        } else {
-          return false
+          return this.fetchUserInfo(true)
         }
+        throw new Error('failed to fetch user info')
       }
       const userInfo = await res.json()
       set({ userInfo })
@@ -141,32 +142,49 @@ export const authStore = create<AuthStore>((set, get) => ({
 
 export const useAuthStore = createUse(authStore)
 
-export async function checkIsAuthenticated() {
-  // Fetch initial authorization result from keychain
+export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
+  const { authorizeResult } = authStore.getState();
+
+  if (authorizeResult) {
+    return authorizeResult as AuthorizeResult;
+  }
+
   try {
     const res = await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
     })
     if (res) {
-      const authorizeResult = JSON.parse(res.password)
-      authStore.setState({ authorizeResult })
-    }
-    if (!res) {
-      return false
+      const authRes = JSON.parse(res.password);
+      authStore.setState({ authorizeResult: authRes })
+      return authRes;
     }
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
 
-  // Attempt to fetch user info (validate the token is all good)
-  try {
-    const userInfo = await authStore.getState().fetchUserInfo()
-    return !!userInfo
-  } catch (err) {
-    // noop
+  return null;
+}
+
+export async function checkIsAuthenticated() {
+  const { authorizeResult, fetchUserInfo, logout } = authStore.getState();
+
+  if (!authorizeResult) {
+    console.log('no auth result')
+    return false;
   }
 
-  return false
+
+  fetchUserInfo()
+  .catch(async () => {
+    await logout();
+    await Navigation.dismissAllModals()
+    await Navigation.dismissAllOverlays()
+    await Navigation.setRoot({
+      root: await getAppRoot(),
+    });
+  });
+
+  return true;
 }
 
 zustandFlipper(authStore, 'AuthStore');

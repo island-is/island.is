@@ -1,0 +1,63 @@
+diff --git a/node_modules/styled-components/native/dist/styled-components.native.cjs.js b/node_modules/styled-components/native/dist/styled-components.native.cjs.js
+index bae056c..317f698 100644
+--- a/node_modules/styled-components/native/dist/styled-components.native.cjs.js
++++ b/node_modules/styled-components/native/dist/styled-components.native.cjs.js
+@@ -14,6 +14,42 @@ var unitless = _interopDefault(require('@emotion/unitless'));
+ var supportsColor = _interopDefault(require('supports-color'));
+ var hoist = _interopDefault(require('hoist-non-react-statics'));
+
++function mapReactNativeStyles(styles) {
++  var colorPropNames = [
++    'backgroundColor',
++    'borderBottomColor',
++    'borderColor',
++    'borderLeftColor',
++    'borderRightColor',
++    'borderTopColor',
++    'borderStartColor',
++    'borderEndColor',
++    'color',
++    'shadowColor',
++    'textDecorationColor',
++    'tintColor',
++    'textShadowColor',
++    'overlayColor',
++  ]
++  for (var i = 0; i < colorPropNames.length; i++) {
++    var val = styles[colorPropNames[i]];
++    // starts with a string
++    if (val && val[0] === "'") {
++      try {
++        const obj = JSON.parse(val.substr(1, val.length - 2))
++        if (obj.dynamic) {
++          styles[colorPropNames[i]] = reactNative.DynamicColorIOS(obj.dynamic);
++        } else if (obj.semantic) {
++          styles[colorPropNames[i]] = reactNative.PlatformColor(obj.semantic);
++        }
++      } catch (err) {
++        // noop
++      }
++    }
++  }
++  return styles;
++}
++
+ //
+
+ /* eslint-disable no-bitwise */
+@@ -5780,6 +5816,7 @@ var _InlineStyle = (function (styleSheet) {
+         // https://github.com/styled-components/css-to-react-native/issues/11
+
+         var styleObject = transformDeclPairs(declPairs, ['borderRadius', 'borderWidth', 'borderColor', 'borderStyle']);
++        mapReactNativeStyles(styleObject);
+         var styles = styleSheet.create({
+           generated: styleObject
+         });
+@@ -6166,7 +6203,6 @@ function css(styles) {
+     return styles;
+   } // $FlowFixMe
+
+-
+   return flatten(interleave(styles, interpolations));
+ }
+

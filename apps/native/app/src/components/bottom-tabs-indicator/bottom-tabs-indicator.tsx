@@ -12,7 +12,7 @@ const Host = styled.View`
   left: 0px;
   right: 0px;
   height: 30px;
-  z-index: 1000;
+  z-index: 101;
   background-color: ${dynamicColor('background')};
 `;
 
@@ -60,15 +60,19 @@ export function BottomTabsIndicator({
       },
       shadowOpacity: 0.08,
       shadowRadius: 30.0,
+      elevation: 1,
     }}>
       <SafeAreaView>
         <View
+          style={{
+          }}
           onLayout={(e) => {
             setWidth(e.nativeEvent.layout.width)
           }}
         >
           <Active
             style={{
+              zIndex: 102,
               width: tabWidth * p,
               height: 1,
               transform: [

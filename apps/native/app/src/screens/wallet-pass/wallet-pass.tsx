@@ -14,6 +14,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
@@ -84,6 +85,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
+      <BottomTabsIndicator index={2} total={3} />
       <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>

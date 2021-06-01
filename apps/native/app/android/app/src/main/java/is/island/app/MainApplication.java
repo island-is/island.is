@@ -20,6 +20,7 @@ import io.sentry.react.RNSentryPackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 import com.wix.interactable.Interactable;
+import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -67,6 +68,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new ReactNativeFirebaseAppPackage());
           packages.add(new ReactNativeFirebaseMessagingPackage());
           packages.add(new Interactable());
+          packages.add(new CustomTabsPackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

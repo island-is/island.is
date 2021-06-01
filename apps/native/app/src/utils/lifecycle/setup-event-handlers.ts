@@ -126,7 +126,9 @@ export function setupEventHandlers() {
       } else if (command === 'dismissModal') {
         uiStore.setState({ modalsOpen: Math.max(0, modalsOpen - 1) });
       }
-      setStatusBar(theme!);
+      if (theme) {
+        setStatusBar(theme!);
+      }
     }
   })
 }

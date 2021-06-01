@@ -1,49 +1,92 @@
 import { theme } from '@island.is/island-ui/theme'
-import { Appearance } from 'react-native'
-import { AppearanceMode } from '../stores/preferences-store'
+import { Appearance, ColorSchemeName } from 'react-native'
+import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
 
-export const shades = {
+export const themes = {
   light: {
-    background: '#FFFFFF',
-    foreground: '#00003C',
-    shade700: '#8A8A8A',
-    shade600: '#BFC1C0',
-    shade500: '#CCCCD8',
-    shade400: '#E4E3E2',
-    shade300: '#EBEBEB',
-    shade200: '#F2F2F5',
-    shade100: '#FBFBFB',
+    isDark: false,
+    shade: {
+      background: '#FFFFFF',
+      foreground: '#00003C',
+      shade700: '#8A8A8A',
+      shade600: '#BFC1C0',
+      shade500: '#CCCCD8',
+      shade400: '#E4E3E2',
+      shade300: '#EBEBEB',
+      shade200: '#F2F2F5',
+      shade100: '#FBFBFB',
+    },
   },
   dark: {
-    background: '#000000',
-    foreground: '#F2F2F5',
-    shade700: '#6E6E6E',
-    shade600: '#4F4F50',
-    shade500: '#434444',
-    shade400: '#373737',
-    shade300: '#2E2E2E',
-    shade200: '#222222',
-    shade100: '#141414',
+    isDark: true,
+    shade: {
+      background: '#000000',
+      foreground: '#F2F2F5',
+      shade700: '#6E6E6E',
+      shade600: '#4F4F50',
+      shade500: '#434444',
+      shade400: '#373737',
+      shade300: '#2E2E2E',
+      shade200: '#222222',
+      shade100: '#141414',
+    },
+  },
+  efficient: {
+    isDark: true,
+    shade: {
+      background: '#000000',
+      foreground: '#00ff00',
+      shade700: '#00b300',
+      shade600: '#009900',
+      shade500: '#008000',
+      shade400: '#006600',
+      shade300: '#004c00',
+      shade200: '#003300',
+      shade100: '#001900',
+    },
   },
 }
 
+const defaultTheme = 'light'
+
 export function getThemeWithPreferences(
   { appearanceMode }: { appearanceMode: AppearanceMode },
-  systemScheme = Appearance.getColorScheme(),
+  systemScheme: ColorSchemeName = Appearance.getColorScheme() ?? defaultTheme,
 ) {
   // get color scheme from system if "automatic"
-  const colorScheme = appearanceMode === 'automatic'
+  // otherwise from appearanceMode
+  const colorScheme = (appearanceMode === 'automatic'
     ? systemScheme
-    : appearanceMode
+    : appearanceMode) as ThemeMode
 
-  // find correct shades key ("light" | "dark")
-  const shadesKey = typeof colorScheme === 'string' ? colorScheme : 'light'
+  // find correct shades key
+  let themeKey =
+    typeof colorScheme === 'string' && themes.hasOwnProperty(colorScheme)
+      ? colorScheme
+      : defaultTheme
+
+  const themeObj = {
+    ...theme,
+  };
+
+  const shades = {
+    dark: themes.dark.shade,
+    light: themes.light.shade,
+    efficient: themes.efficient.shade,
+  }
+
+  if (themeKey === 'efficient') {
+    shades.dark = shades.efficient;
+    themeObj.color = {
+      ...themeObj.color,
+      blue400: shades.dark.foreground as any,
+    };
+  }
 
   return {
-    ...theme,
-    isDark: colorScheme !== 'light',
-    colorScheme: shadesKey,
-    shade: shades[shadesKey],
+    colorScheme: themeKey,
+    ...themeObj,
+    ...themes[themeKey],
     shades,
   }
 }

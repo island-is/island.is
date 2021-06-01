@@ -29,6 +29,7 @@
     "expo-notifications": "0.11.6",
     "react-native-app-auth": "6.2.0",
     "react-native-code-push": "7.0.1",
+    "react-native-custom-tabs": "0.1.7",
     "react-native-dialogs": "1.1.1",
     "react-native-interactable": "2.0.1",
     "react-native-keyboard-manager": "6.5.4-1",
