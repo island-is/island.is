@@ -45,6 +45,7 @@
     "react-native-unimodules": "0.13.3",
     "react-native-webview": "11.4.5",
     "rn-pdf-reader-js": "4.1.1",
+    "styled-components": "5.3.0",
     "zustand": "3.5.1"
   },
   "devDependencies": {

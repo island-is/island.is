@@ -67,7 +67,6 @@ export const authStore = create<AuthStore>((set, get) => ({
         },
       },
     ).then(async (res) => {
-      console.log(res);
       if (res.status === 401) {
         // Attempt to refresh the access token
         if (!_refresh && await this.refresh()) {

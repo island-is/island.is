@@ -134,6 +134,7 @@ export const en: TranslatedMessages = {
     inReview {In review}
     approved {Approved}
     rejected {Rejected}
+    unknown {Unknown status}
   }`,
   "applicationStatusCard.noActiveApplications": "No active applications"
 }
