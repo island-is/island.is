@@ -3403,6 +3403,11 @@
                 "glob": "migrations/**",
                 "input": "apps/gjafakort/application",
                 "output": "./"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/gjafakort/application",
+                "output": "./"
               }
             ],
             "maxWorkers": 2
