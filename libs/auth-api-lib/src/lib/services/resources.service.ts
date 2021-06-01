@@ -862,7 +862,7 @@ export class ResourcesService {
 
   /** Updates an existing Domain */
   async updateDomain(
-    domain: ApiScopeGroupDTO,
+    domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
     return this.domainModel.update({ ...domain }, { where: { name: name } })
