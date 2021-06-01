@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
 import { useRouter } from 'next/router'
+import DefendantForm from './DefendantForm'
 
 const Defendant = () => {
   const router = useRouter()
@@ -22,8 +23,14 @@ const Defendant = () => {
   })
 
   useEffect(() => {
-    document.title = 'Rannsóknarheimild - Réttarvörslugátt'
+    document.title = 'Varnaradili - Réttarvörslugátt'
   }, [])
+
+  useEffect(() => {
+    if (!workingCase && data) {
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
@@ -39,7 +46,7 @@ const Defendant = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      <p>hreer</p>
+      {workingCase && <DefendantForm workingCase={workingCase} />}
     </PageLayout>
   )
 }
