@@ -13,6 +13,8 @@ import ReactSelect, {
   InputProps,
   ControlProps,
   Props,
+  OptionsType,
+  GroupedOptionsType,
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
@@ -34,7 +36,7 @@ export interface SelectProps {
   name: string
   id?: string
   disabled?: boolean
-  options: ReadonlyArray<Option>
+  options: OptionsType<Option> | GroupedOptionsType<Option> | undefined
   hasError?: boolean
   errorMessage?: string
   noOptionsMessage?: string
