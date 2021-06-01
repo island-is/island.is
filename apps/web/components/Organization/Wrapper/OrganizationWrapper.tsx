@@ -29,7 +29,10 @@ import {
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
-import { SjukratryggingarHeader, SjukratryggingarFooter } from './Themes/SjukratryggingarTheme'
+import {
+  SjukratryggingarHeader,
+  SjukratryggingarFooter,
+} from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
 import getConfig from 'next/config'
