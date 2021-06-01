@@ -5,16 +5,24 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Delegation } from '../entities/models/delegation.model'
 import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
+import {
+  EinstaklingarApi,
+  EinstaklingarGetForsjaRequest,
+  EinstaklingarGetEinstaklingurRequest,
+} from '@island.is/clients/national-registry-v2'
 import { DelegationDTO } from '../entities/dto/delegation.dto'
 import { uuid } from 'uuidv4'
 import { DelegationScopeService } from './delegation-scope.service'
 import { DelegationScope } from '@island.is/auth-api-lib'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class DelegationsService {
   constructor(
     @Inject(RskApi)
     private rskApi: RskApi,
+    @Inject(EinstaklingarApi)
+    private personApi: EinstaklingarApi,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
     @Inject(DelegationScopeService)
@@ -23,18 +31,52 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
-  async findAllTo(toNationalId: string): Promise<IDelegation[]> {
-    const wards = await this.findAllWardsTo(toNationalId)
+  async findAllWardsTo(
+    auth: Auth,
+    xRoadClient: string,
+  ): Promise<IDelegation[]> {
+    try {
+      const response = await this.personApi
+        .withMiddleware(new AuthMiddleware(auth))
+        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+          id: auth.nationalId,
+          xRoadClient: xRoadClient,
+        })
 
-    const companies = await this.findAllCompaniesTo(toNationalId)
+      const distinct = response.filter(
+        (r: string, i: number) => response.indexOf(r) === i,
+      )
 
-    const custom = await this.findAllValidCustomTo(toNationalId)
+      let resultPromises = distinct.map(async (nationalId) =>
+        this.personApi
+          .withMiddleware(new AuthMiddleware(auth))
+          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+            id: nationalId,
+            xRoadClient: xRoadClient,
+          }),
+      )
 
-    return [...wards, ...companies, ...custom]
-  }
+      const result = await Promise.all(resultPromises)
 
-  async findAllWardsTo(toNationalId: string): Promise<IDelegation[]> {
-    return [] // TODO: national registry
+      return result.map(
+        (p) =>
+          <IDelegation>{
+            toNationalId: auth.nationalId,
+            fromNationalId: p.kennitala,
+            fromName: p.nafn,
+            type: DelegationType.LegalGuardian,
+            provider: DelegationProvider.NationalRegistry,
+          },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error in findAllWardsTo. Status: ${error?.status} (${
+          error?.statusText
+        })\n${JSON.stringify(error?.headers)}`,
+      )
+    }
+
+    return []
   }
 
   async findAllCompaniesTo(toNationalId: string): Promise<IDelegation[]> {

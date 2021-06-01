@@ -23,6 +23,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -34,7 +35,20 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentActor() user: User): Promise<IDelegation[]> {
-    return await this.delegationsService.findAllTo(user.nationalId)
+    const wards = await this.delegationsService.findAllWardsTo(
+      user,
+      environment.nationalRegistry.xroad.clientId,
+    )
+
+    const companies = await this.delegationsService.findAllCompaniesTo(
+      user.nationalId,
+    )
+
+    const custom = await this.delegationsService.findAllValidCustomTo(
+      user.nationalId,
+    )
+
+    return [...wards, ...companies, ...custom]
   }
 
   @Scopes('@island.is/auth-public/delegations:write')

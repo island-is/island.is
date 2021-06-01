@@ -19,6 +19,16 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
-    return await this.delegationsService.findAllTo(user.nationalId)
+    const wards = await this.delegationsService.findAllWardsTo(user, '')
+
+    const companies = await this.delegationsService.findAllCompaniesTo(
+      user.nationalId,
+    )
+
+    const custom = await this.delegationsService.findAllValidCustomTo(
+      user.nationalId,
+    )
+
+    return [...wards, ...companies, ...custom]
   }
 }
