@@ -72,7 +72,7 @@
       "title": "Edit Domain"
     },
     "admin.domain.index": {
-      "title": "Create an Api Scope"
+      "title": "Create a Domain"
     },
     "client.[client]": {
       "title": "Edit Client",
