@@ -97,7 +97,11 @@ export class NotificationController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }
