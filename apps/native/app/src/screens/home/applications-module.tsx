@@ -37,7 +37,7 @@ export const ApplicationsModule = React.memo(
           <Badge
             title={intl.formatMessage(
               { id: 'applicationStatusCard.state' },
-              { state: application.state },
+              { state: application.state || 'unknown' },
             )}
           />
         }
