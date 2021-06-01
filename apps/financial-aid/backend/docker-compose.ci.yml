@@ -6,19 +6,19 @@ services:
       context: .
       dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
-        DB_NAME: db_finencial_aid
-        APP: finencial-aid-backend
+        DB_NAME: db_financial_aid
+        APP: financial-aid-backend
     networks:
       - local
     depends_on:
-      - db_finencial_aid
+      - db_financial_aid
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
-      - DB_HOST=db_finencial_aid
+      - DB_HOST=db_financial_aid
     volumes:
       - ../../..:/code
 
-  db_finencial_aid:
+  db_financial_aid:
     ports: []

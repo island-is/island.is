@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_finencial_aid:
+  db_financial_aid:
     image: postgres:11.6
-    container_name: db_finencial_aid
+    container_name: db_financial_aid
     networks:
       - local
     environment:
