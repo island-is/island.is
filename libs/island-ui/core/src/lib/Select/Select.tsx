@@ -35,7 +35,7 @@ interface AriaError {
 
 export interface SelectProps {
   name: string
-  options: OptionsType<Option> | GroupedOptionsType<Option> | undefined
+  options: OptionsType<Option> | GroupedOptionsType<Option>
   id?: string
   disabled?: boolean
   hasError?: boolean
