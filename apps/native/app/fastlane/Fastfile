@@ -15,9 +15,9 @@ platform :ios do
 
   brands = {
     "dev" => {
-      :appId => "is.island.appdev",
-      :displayName => "Ísland",
-      :appNotificationsId => "is.island.appdev.richnotifications",
+      :appId => "is.island.app.dev",
+      :displayName => "Ísland Dev",
+      :appNotificationsId => "is.island.app.dev.richnotifications",
       :distribution_external => false
     }
   }
@@ -71,10 +71,22 @@ platform :ios do
 
   desc "Configure project with brand assets and config"
   lane :config do |options|
-     brand = options[:brand]
-     brandProps = brands[brand]
+    brand = options[:brand]
+    brandProps = brands[brand]
 
-  end
+    update_info_plist(
+     xcodeproj: "ios/IslandApp.xcodeproj",
+     plist_path: "../ios/IslandApp/Info.plist",
+     display_name: brandProps[:displayName],
+   )
+
+   update_app_identifier(
+     xcodeproj: "ios/IslandApp.xcodeproj", 
+     plist_path: "../ios/IslandApp/Info.plist",
+     app_identifier: brandProps[:appId] 
+   )
+
+ end
 
   desc "Common build lane of both Test and Production"
   lane :build do |options|
@@ -94,8 +106,8 @@ platform :ios do
     # ) if !options[:bitrise]
 
 
-    # # Retrieve certificated
-    # match(type: "appstore", readonly: true, app_identifier: [ options[:app_identifier], options[:app_identifier_richnotifications]])
+    # Retrieve certificated
+    match(type: "appstore", readonly: true, app_identifier: [ options[:app_identifier], options[:app_identifier_richnotifications]])
 
     #
     # clear_derived_data
