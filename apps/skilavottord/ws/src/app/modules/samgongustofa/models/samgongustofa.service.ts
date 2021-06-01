@@ -2,7 +2,8 @@ import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import * as xml2js from 'xml2js'
 import { environment } from '../../../../environments'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
 
 @Injectable()

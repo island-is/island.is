@@ -5,7 +5,7 @@ import {
   EndorsementList,
   EndorsementTag,
 } from '../../endorsementList/endorsementList.model'
-import { MetadataProvider } from '../endorsementMetadata.service'
+import { MetadataProvider } from '../types'
 
 export interface EndorsementSystemSignedListsInput {
   nationalId: string

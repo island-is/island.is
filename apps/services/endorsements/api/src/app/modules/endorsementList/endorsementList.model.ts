@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata.service'
+import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { ValidationRuleDto } from './dto/validationRule.dto'
 
 export enum EndorsementTag {
@@ -26,6 +26,7 @@ export enum EndorsementTag {
   tableName: 'endorsement_list',
 })
 export class EndorsementList extends Model<EndorsementList> {
+  @ApiProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -33,6 +34,7 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -57,28 +59,33 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   closedDate!: Date | null
 
+  @ApiProperty({ enum: EndorsementMetaField, isArray: true })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   endorsementMeta!: EndorsementMetaField[]
 
+  @ApiProperty({ enum: EndorsementTag, isArray: true })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   tags!: EndorsementTag[]
 
+  @ApiProperty({ type: [ValidationRuleDto] })
   @Column({
     type: DataType.JSONB,
     defaultValue: '[]',
   })
   validationRules!: ValidationRuleDto[]
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   owner!: string
 
+  @ApiProperty({ type: () => [Endorsement] })
   @HasMany(() => Endorsement)
   readonly endorsements?: Endorsement[]
 

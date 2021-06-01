@@ -18,11 +18,11 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
-  CaseState,
-  User,
   UserRole,
+  CaseState,
+  CaseAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'

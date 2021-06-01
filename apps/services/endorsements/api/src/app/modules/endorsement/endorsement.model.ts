@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
   BelongsTo,
   Column,
@@ -12,6 +13,7 @@ import {
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 import { EndorsementListOpen } from './endorsementListOpen.model'
+
 @Table({
   tableName: 'endorsement',
   indexes: [
@@ -22,6 +24,7 @@ import { EndorsementListOpen } from './endorsementListOpen.model'
   ],
 })
 export class Endorsement extends Model<Endorsement> {
+  @ApiProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -29,12 +32,14 @@ export class Endorsement extends Model<Endorsement> {
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   endorser!: string
 
+  @ApiProperty()
   @ForeignKey(() => EndorsementList)
   @Column({
     type: DataType.UUID,
@@ -42,9 +47,11 @@ export class Endorsement extends Model<Endorsement> {
   })
   endorsementListId!: string
 
+  @ApiProperty()
   @BelongsTo(() => EndorsementList, 'endorsementListId')
   endorsementList?: EndorsementListOpen
 
+  @ApiProperty({ type: EndorsementMetadata })
   @Column({
     type: DataType.JSONB,
     allowNull: false,

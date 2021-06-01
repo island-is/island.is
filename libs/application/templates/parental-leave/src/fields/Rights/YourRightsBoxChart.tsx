@@ -13,7 +13,7 @@ import {
   maxMonths,
 } from '../../config'
 import { YES } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/use-application-answers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface YourRightsBoxChartProps {
   application: Application

@@ -26,9 +26,9 @@ import {
   CaseState,
   CaseTransition,
   IntegratedCourts,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,

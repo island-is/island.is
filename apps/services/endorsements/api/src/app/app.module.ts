@@ -6,7 +6,7 @@ import {
 import { AuditModule, AuditOptions } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { EndorsementModule } from './modules/endorsement/endorsement.module'
 import { EndorsementListModule } from './modules/endorsementList/endorsementList.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
