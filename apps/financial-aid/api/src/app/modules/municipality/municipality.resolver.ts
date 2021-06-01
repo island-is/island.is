@@ -1,6 +1,6 @@
-import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
+import { Query, Resolver, Context, Args } from '@nestjs/graphql'
 
-import { Inject, UseInterceptors } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -8,11 +8,6 @@ import { BackendAPI } from '../../../services'
 
 import { MunicipalityModel } from './models'
 import { MunicipalityQueryInput } from './dto'
-
-import {
-  Municipality,
-  MunicipalitySettings,
-} from '@island.is/financial-aid/shared'
 
 @Resolver(() => MunicipalityModel)
 export class MunicipalityResolver {

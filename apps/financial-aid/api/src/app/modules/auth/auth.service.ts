@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 
 import { Injectable } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { User } from '@island.is/financial-aid/shared'
 
 import { environment } from '../../../environments'
 
@@ -23,9 +23,24 @@ export class AuthService {
     return await res.json()
   }
 
-  async findFakeUser(nationalId: string) {}
+  fakeUser(nationalId: string) {
+    const fakeUsers: { [key: string]: User } = {
+      '0000000000': {
+        nationalId: '0000000000',
+        name: 'Lárus Árnasson',
+        phoneNumber: '9999999',
+      },
+      '0000000001': {
+        nationalId: '0000000001',
+        name: 'Lára Margrétardóttir',
+        phoneNumber: '9999999',
+      },
+    }
 
-  validateUser(user: User): boolean {
-    return user.active
+    if (nationalId in fakeUsers) {
+      return fakeUsers[nationalId]
+    }
+
+    return undefined
   }
 }

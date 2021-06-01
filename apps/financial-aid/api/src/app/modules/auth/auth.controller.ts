@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyResult, VerifyUser } from 'islandis-login'
+import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -26,10 +26,8 @@ import {
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
 import { environment } from '../../../environments'
-import { AuthUser, Cookie } from './auth.types'
+import { Cookie } from './auth.types'
 import { AuthService } from './auth.service'
-import { UnionDefinition } from '@nestjs/graphql/dist/schema-builder/factories/union-definition.factory'
-import { UniqueDirectiveNamesRule } from 'graphql'
 
 const { samlEntryPoint } = environment.auth
 
@@ -85,7 +83,7 @@ export class AuthController {
     if (environment.auth.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
 
-      const fakeUser = this.fakeUser(nationalId)
+      const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
         return this.logInUser(fakeUser, res, returnUrl || '/umsokn')
@@ -154,27 +152,6 @@ export class AuthController {
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
 
     return res.json({ logout: true })
-  }
-
-  private fakeUser(nationalId: string) {
-    const fakeUsers: { [key: string]: User } = {
-      '0000000000': {
-        nationalId: '0000000000',
-        name: 'Lárus Árnasson',
-        phoneNumber: '9999999',
-      },
-      '1111111111': {
-        nationalId: '1111111111',
-        name: 'Lára Margrétardóttir',
-        phoneNumber: '9999999',
-      },
-    }
-
-    if (nationalId in fakeUsers) {
-      return fakeUsers[nationalId]
-    }
-
-    return undefined
   }
 
   private logInUser(user: User, res: Response, returnUrl: string) {
