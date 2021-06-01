@@ -28,6 +28,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import * as styles from './StepOne.treat'
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 
 interface Props {
   case: Case
@@ -131,29 +132,12 @@ export const StepOneForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Málsnúmer lögreglu
-            </Text>
-          </Box>
-          <InputMask
-            // This is temporary until we start reading LÖKE case numbers from LÖKE
-            mask="999-9999-9999999"
-            maskPlaceholder={null}
-            onChange={(event) => setField(event.target)}
-            onBlur={(event) => validateAndSendToServer(event.target)}
-          >
-            <Input
-              data-testid="policeCaseNumber"
-              name="policeCaseNumber"
-              label="Slá inn LÖKE málsnúmer"
-              placeholder="007-2020-X"
-              defaultValue={workingCase.policeCaseNumber}
-              errorMessage={policeCaseNumberErrorMessage}
-              hasError={policeCaseNumberErrorMessage !== undefined}
-              required
-            />
-          </InputMask>
+          <LokeCaseNumber
+            workingCase={workingCase}
+            validateAndSendToServer={validateAndSendToServer}
+            setField={setField}
+            policeCaseNumberErrorMessage={policeCaseNumberErrorMessage}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
