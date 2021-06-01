@@ -29,4 +29,3 @@ export * from './lib/Detail/Header'
 export * from './lib/Detail/Content'
 export * from './lib/EmptyList/EmptyCard'
 export * from './utils/index';
-export * from './utils'
