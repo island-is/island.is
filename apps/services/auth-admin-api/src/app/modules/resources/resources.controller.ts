@@ -892,6 +892,16 @@ export class ResourcesController {
     return this.resourcesService.findAllDomains(searchString, page, count)
   }
 
+  /** Gets domain by name */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Get('domain/:name')
+  @Audit<Domain>({
+    resources: (domain) => domain?.name,
+  })
+  async findDomainsByPk(@Param('name') name: string): Promise<Domain | null> {
+    return this.resourcesService.findDomainByPk(name)
+  }
+
   /** Creates a new Domain */
   @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post('domain')

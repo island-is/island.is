@@ -9,6 +9,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import { ApiScopeGroupDTO } from './../../../entities/dtos/api-scope-group.dto'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
+import { Domain } from '../../../entities/models/domain.model'
 
 interface Props {
   apiScopeGroup?: ApiScopeGroup
@@ -29,10 +30,20 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),
   )
+  const [domains, setDomains] = useState<Domain[]>([])
   useEffect(() => {
+    async function getDomains() {
+      const response = await ResourcesService.findAllDomains()
+      if (response) {
+        setDomains(response as Domain[])
+      }
+    }
+
     if (props.apiScopeGroup && props.apiScopeGroup.id) {
       setIsEditing(true)
     }
+
+    getDomains()
   }, [props.apiScopeGroup])
 
   const save = async (group: ApiScopeGroupDTO): Promise<void> => {
@@ -73,6 +84,38 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
               <div className="api-scope-group-create-form__container__fields">
                 <div className="api-scope-group-create-form__container__field">
                   <label
+                    htmlFor="domainName"
+                    className="api-scope-group-create-form__label"
+                  >
+                    {localization.fields['domainName'].label}
+                  </label>
+                  <select
+                    name="domainName"
+                    ref={register({
+                      required: true,
+                    })}
+                    defaultValue={props.apiScopeGroup.domainName}
+                    className="api-resource-form__input"
+                    placeholder={localization.fields['domainName'].placeholder}
+                    title={localization.fields['domainName'].helpText}
+                  >
+                    {domains.map((domain: Domain) => {
+                      return <option value={domain.name}>{domain.name}</option>
+                    })}
+                  </select>
+                  <HelpBox
+                    helpText={localization.fields['domainName'].helpText}
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="domainName"
+                    message={localization.fields['domainName'].errorMessage}
+                  />
+                </div>
+
+                <div className="api-scope-group-create-form__container__field">
+                  <label
                     htmlFor="name"
                     className="api-scope-group-create-form__label"
                   >
@@ -100,10 +143,10 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                 </div>
                 <div className="api-scope-group-create-form__container__field">
                   <label
-                    htmlFor="name"
+                    htmlFor="displayName"
                     className="api-scope-group-create-form__label"
                   >
-                    {localization.fields['name'].label}
+                    {localization.fields['displayName'].label}
                   </label>
                   <input
                     type="text"
@@ -114,7 +157,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={props.apiScopeGroup.displayName}
                     className="api-resource-form__input"
-                    placeholder={localization.fields['name'].placeholder}
+                    placeholder={localization.fields['displayName'].placeholder}
                     title={localization.fields['displayName'].helpText}
                   />
                   <HelpBox
@@ -125,6 +168,12 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     errors={errors}
                     name="displayName"
                     message={localization.fields['displayName'].errorMessage}
+                  />
+                  <TranslationCreateFormDropdown
+                    className="apiscopegroup"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.apiScopeGroup.id}
                   />
                 </div>
                 <div className="api-scope-group-create-form__container__field">
