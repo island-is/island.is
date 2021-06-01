@@ -60,6 +60,11 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
       courtRoom
@@ -172,6 +177,11 @@ export const ExtendCaseMutation = gql`
       prosecutor {
         name
         title
+      }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
       }
       courtCaseNumber
       courtDate
