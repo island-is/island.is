@@ -41,6 +41,7 @@ export interface Application {
   answers: FormValue
   externalData: ExternalData
   name?: string
+  institution?: string
   progress?: number
   status: ApplicationStatus
 }
