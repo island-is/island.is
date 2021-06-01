@@ -15,23 +15,23 @@ import Logo from '../assets/Logo'
 
 export const InReview: Form = buildForm({
   id: 'inReview',
-  title: m.supremeCourt.steps,
+  title: m.ministryOfJustice.steps,
   mode: FormModes.REVIEW,
   logo: Logo,
   children: [
     buildSection({
       id: 'review',
-      title: m.supremeCourt.step1,
+      title: m.ministryOfJustice.step1,
       children: [
         buildMultiField({
-          id: 'supremeMultiField',
-          title: m.supremeCourt.title,
-          description: m.supremeCourt.description,
+          id: 'ministryMultiField',
+          title: m.ministryOfJustice.title,
+          description: m.ministryOfJustice.description,
           children: [
             buildCustomField({
-              id: 'supremeCourtOverview',
+              id: 'ministryOverview',
               title: '',
-              component: 'SupremeCourtOverview',
+              component: 'MinistryOfJusticeOverview',
             }),
             buildTextField({
               id: 'reasonForReject',
@@ -45,14 +45,15 @@ export const InReview: Form = buildForm({
               id: 'submit',
               title: 'Submit',
               placement: 'footer',
+
               actions: [
                 {
-                  name: m.supremeCourt.rejectButton,
+                  name: m.ministryOfJustice.rejectButton,
                   type: 'reject',
                   event: DefaultEvents.REJECT,
                 },
                 {
-                  name: m.supremeCourt.approveButton,
+                  name: m.ministryOfJustice.approveButton,
                   type: 'primary',
                   event: DefaultEvents.APPROVE,
                 },
@@ -62,8 +63,8 @@ export const InReview: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'endorsementsApproved',
-          title: m.supremeCourt.approvedTitle,
-          description: m.supremeCourt.approvedDescription,
+          title: m.ministryOfJustice.approvedTitle,
+          description: m.ministryOfJustice.approvedDescription,
         }),
       ],
     }),

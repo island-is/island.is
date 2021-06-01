@@ -12,6 +12,7 @@ import {
   buildDataProviderItem,
   Application,
   getValueViaPath,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
@@ -165,7 +166,7 @@ export const LetterApplicationForm: Form = buildForm({
               title: m.overview.title,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: 'Hefja söfnun',
                   type: 'primary',
                 },

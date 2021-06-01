@@ -8,81 +8,30 @@ import {
   CheckboxController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-
-const GET_ENDORSEMENTS = gql`
-  query endorsementSystemUserEndorsements {
-    endorsementSystemUserEndorsements {
-      id
-      endorser
-      endorsementListId
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`
-const CREATE_ENDORSEMENT = gql`
-  mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
-    endorsementSystemEndorseList(input: $input) {
-      id
-      endorser
-      endorsementListId
-      meta {
-        fullName
-      }
-      created
-      modified
-    }
-  }
-`
-
-const GET_FULLNAME = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      fullName
-    }
-  }
-`
+import { useHasEndorsed } from '../../hooks/useHasEndorsed'
+import { GetFullName } from '../../graphql/queries'
+import { EndorseList } from '../../graphql/mutations'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
-  const [createEndorsement, { loading: submitLoad }] = useMutation(
-    CREATE_ENDORSEMENT,
-  )
 
-  const answers = (application as any).answers as PartyLetter
-  const partyLetter = answers.partyLetter
-  const partyName = answers.partyName
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
+  const answers = application.answers as PartyLetter
+  const endorsedBefore = useHasEndorsed(endorsementListId)
 
-  const { data: userData } = useQuery(GET_FULLNAME)
-
-  const { loading, error } = useQuery(GET_ENDORSEMENTS, {
-    onCompleted: async ({ endorsementSystemUserEndorsements }) => {
-      if (!loading && endorsementSystemUserEndorsements) {
-        const hasEndorsements =
-          !error && !loading && endorsementSystemUserEndorsements?.length
-            ? endorsementSystemUserEndorsements.length > 0
-            : false
-        setHasEndorsed(hasEndorsements)
-      }
-    },
-  })
+  const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
+  const { data: userData } = useQuery(GetFullName)
 
   const onEndorse = async () => {
     const success = await createEndorsement({
       variables: {
         input: {
-          listId: (application.externalData?.createEndorsementList.data as any)
-            .id,
+          listId: endorsementListId,
         },
       },
     })
@@ -93,27 +42,26 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <>
-      {hasEndorsed ? (
+      {endorsedBefore || hasEndorsed ? (
         <EndorsementApproved />
       ) : (
         <Box>
           <Box marginBottom={2}>
             <Text variant="h2">
               {formatMessage(m.endorsementForm.title)}
-              <strong>{` ${partyLetter}`}</strong>
+              <strong>{` ${answers.partyLetter}`}</strong>
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Text>
               {formatMessage(m.endorsementDisclaimer.part1)}
-              <strong>{` ${partyName} `}</strong>
+              <strong>{` ${answers.partyName} `}</strong>
               {formatMessage(m.endorsementDisclaimer.part2)}
-              <strong>{` ${partyLetter}`}</strong>.
+              <strong>{` ${answers.partyLetter}`}</strong>.
             </Text>
           </Box>
           <Box width="half" marginBottom={4}>
             <Input
-              disabled
               label={formatMessage(m.endorsementForm.nameInput)}
               name={formatMessage(m.endorsementForm.nameInput)}
               value={userData?.nationalRegistryUser?.fullName}

@@ -47,7 +47,8 @@ const PartyApplicationApproved: FC<FieldBaseProps> = ({ application }) => {
         justifyContent="flexEnd"
         alignItems="flexEnd"
         height="full"
-        marginTop={10}
+        marginTop={8}
+        marginBottom={10}
       >
         <svg
           width="100%"
