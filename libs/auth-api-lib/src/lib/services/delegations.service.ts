@@ -47,7 +47,7 @@ export class DelegationsService {
         (r: string, i: number) => response.indexOf(r) === i,
       )
 
-      let resultPromises = distinct.map(async (nationalId) =>
+      const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
           .withMiddleware(new AuthMiddleware(auth, false))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
