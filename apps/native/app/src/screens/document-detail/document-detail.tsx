@@ -1,14 +1,13 @@
 import { useQuery } from '@apollo/client'
-import { Header, Loader } from '@island.is/island-ui-native'
+import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
-import { Image } from 'react-native'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear
+  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import WebView from 'react-native-webview'
 import PDFReader from 'rn-pdf-reader-js'
@@ -16,18 +15,16 @@ import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
   GetDocumentResponse,
-  GET_DOCUMENT_QUERY
+  GET_DOCUMENT_QUERY,
 } from '../../graphql/queries/get-document.query'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY
+  LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { authStore, useAuthStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { dynamicColor } from '@island.is/island-ui-native'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;

@@ -1,5 +1,6 @@
 export * from './lib/Button/Button'
 export * from './lib/Button/Close'
+export * from './lib/Button/CancelButton'
 export * from './lib/Heading/Heading'
 export * from './lib/Card/WelcomeCard'
 export * from './lib/Card/StatusCard'
@@ -28,4 +29,5 @@ export * from './lib/SearchHeader/SearchHeader'
 export * from './lib/Detail/Header'
 export * from './lib/Detail/Content'
 export * from './lib/EmptyList/EmptyCard'
+export * from './lib/Illustration/Illustration'
 export * from './utils/index';

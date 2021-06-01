@@ -1,9 +1,14 @@
-import { Button, dynamicColor, font } from '@island.is/island-ui-native'
+import {
+  Button,
+  CancelButton,
+  font,
+  Illustration
+} from '@island.is/island-ui-native'
 import {
   AndroidImportance,
   getPermissionsAsync,
   requestPermissionsAsync,
-  setNotificationChannelAsync,
+  setNotificationChannelAsync
 } from 'expo-notifications'
 import React from 'react'
 import { Platform, SafeAreaView, View } from 'react-native'
@@ -13,7 +18,6 @@ import { preferencesStore } from '../../stores/preferences-store'
 import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-import { Illustration } from './illustration'
 
 const Title = styled.Text`
   ${font({
@@ -29,19 +33,6 @@ const Title = styled.Text`
 
 const ButtonContainer = styled.View`
   margin-bottom: 32px;
-`
-
-const CancelButton = styled.TouchableOpacity`
-  border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
-`
-
-const CancelText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 16,
-    color: (props) => props.theme.color.blue400,
-  })}
 `
 
 enum PermissionStatus {
@@ -109,9 +100,7 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
           onPress={onSkipPress}
           testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
         >
-          <CancelText>
-            <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
-          </CancelText>
+          <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
         </CancelButton>
       </SafeAreaView>
     </View>
