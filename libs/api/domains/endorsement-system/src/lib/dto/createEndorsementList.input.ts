@@ -21,10 +21,10 @@ export class CreateEndorsementListDto {
   @IsString()
   title!: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  description?: string
+  description!: string | null
 
   @Field(() => [EndorsementListDtoEndorsementMetaEnum])
   @IsEnum(EndorsementListDtoEndorsementMetaEnum, { each: true })

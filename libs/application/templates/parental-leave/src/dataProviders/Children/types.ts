@@ -1,4 +1,4 @@
-import { DistributiveOmit } from '@island.is/shared/types'
+import type { DistributiveOmit } from '@island.is/shared/types'
 
 interface BaseChildInformation {
   expectedDateOfBirth: string

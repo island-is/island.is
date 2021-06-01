@@ -16,8 +16,10 @@ import {
   buildSubSection,
   buildTextField,
   ExternalData,
+  Field,
   Form,
   FormModes,
+  SelectField,
 } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -26,6 +28,7 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   createRange,
+  calculatePeriodPercentage,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -36,6 +39,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  SPOUSE,
   StartDateOptions,
   YES,
 } from '../constants'
@@ -52,12 +56,13 @@ const percentOptions = createRange<{ label: string; value: string }>(
   10,
   (i) => {
     const ii = (i + 1) * 10
+
     return {
       label: `${ii}%`,
       value: `${ii}`,
     }
   },
-)
+).sort((a, b) => Number(b.value) - Number(a.value))
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -338,10 +343,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) => {
-                // TODO add check if this person has a spouse...
-                return true
-              },
+              condition: (answers) =>
+                answers.otherParent === SPOUSE ||
+                (answers.otherParent === MANUAL &&
+                  answers.otherParentRightOfAccess === YES),
               width: 'half',
               options: [
                 {
@@ -755,8 +760,34 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.ratio.label,
                   placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                  defaultValue: '100',
-                  options: percentOptions,
+                  defaultValue: (
+                    application: Application,
+                    field: SelectField,
+                  ) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+
+                    return `${percentage}`
+                  },
+                  options: (application: Application, field: Field) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+                    const existingOptions = percentOptions.filter(
+                      (option) => Number(option.value) < percentage,
+                    )
+
+                    return [
+                      {
+                        label: `${percentage}%`,
+                        value: `${percentage}`,
+                      },
+                      ...existingOptions,
+                    ]
+                  },
                 }),
               ],
             }),
@@ -815,9 +846,35 @@ export const ParentalLeaveForm: Form = buildForm({
                       id: 'ratio',
                       width: 'half',
                       title: parentalLeaveFormMessages.ratio.label,
-                      defaultValue: '100',
                       placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                      options: percentOptions,
+                      defaultValue: (
+                        application: Application,
+                        field: SelectField,
+                      ) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+
+                        return `${percentage}`
+                      },
+                      options: (application: Application, field: Field) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+                        const existingOptions = percentOptions.filter(
+                          (option) => Number(option.value) < percentage,
+                        )
+
+                        return [
+                          {
+                            label: `${percentage}%`,
+                            value: `${percentage}`,
+                          },
+                          ...existingOptions,
+                        ]
+                      },
                     }),
                   ],
                 }),

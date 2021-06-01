@@ -11,14 +11,14 @@ import { CaseGender } from '@island.is/judicial-system/types'
 interface Props {
   accusedGender: CaseGender
   accusedPostponedAppealDate?: string
-  handleAccusedAppealDismissal?: () => void
+  withdrawAccusedAppealDate?: () => void
 }
 
 const AccusedAppealInfo: React.FC<Props> = (props) => {
   const {
     accusedGender,
     accusedPostponedAppealDate,
-    handleAccusedAppealDismissal,
+    withdrawAccusedAppealDate,
   } = props
 
   const animateInAndOut = {
@@ -41,7 +41,7 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
           accusedPostponedAppealDate,
           'PPPp',
         )}`}
-        onDismiss={handleAccusedAppealDismissal}
+        onDismiss={withdrawAccusedAppealDate}
         fluid
         light
       />

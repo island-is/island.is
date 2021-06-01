@@ -41,6 +41,7 @@ interface CCase extends TCase {
   courtId: string
   prosecutorId: string
   prosecutor: CUser
+  sharedWithProsecutorsOfficeId: string
   judgeId: string
   judge: CUser
   registrarId: string
@@ -54,6 +55,8 @@ let court: TInstitution
 const prosecutorNationalId = '0000000009'
 let prosecutor: CUser
 let prosecutorAuthCookie: string
+const prosecutorsOfficeName = 'Lögreglustjórinn á höfuðborgarsvæðinu'
+let sharedWithProsecutorsOffice: TInstitution
 const registrarNationalId = '0000001119'
 let registrar: CUser
 const judgeNationalId = '0000002229'
@@ -79,6 +82,15 @@ beforeAll(async () => {
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
+
+  await Institution.findOne({ where: { name: prosecutorsOfficeName } }).then(
+    (value) => {
+      sharedWithProsecutorsOffice = institutionToTInstitution(
+        value.toJSON() as Institution,
+      )
+      return
+    },
+  )
 
   judge = (
     await request(app.getHttpServer())
@@ -141,6 +153,7 @@ function remainingProsecutorCaseData() {
     comments: 'Comments',
     caseFilesComments: 'Case Files Comments',
     prosecutorId: prosecutor.id,
+    sharedWithProsecutorsOfficeId: sharedWithProsecutorsOffice.id,
   }
 }
 
@@ -249,6 +262,9 @@ function caseToCCase(dbCase: Case) {
       theCase.requestedCustodyEndDate &&
       theCase.requestedCustodyEndDate.toISOString(),
     prosecutor: theCase.prosecutor && userToCUser(theCase.prosecutor),
+    sharedWithProsecutorsOffice:
+      theCase.sharedWithProsecutorsOffice &&
+      institutionToTInstitution(theCase.sharedWithProsecutorsOffice),
     courtDate: theCase.courtDate && theCase.courtDate.toISOString(),
     courtStartDate:
       theCase.courtStartDate && theCase.courtStartDate.toISOString(),
@@ -344,6 +360,13 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
+  expect(caseOne.sharedWithProsecutorsOfficeId || null).toBe(
+    caseTwo.sharedWithProsecutorsOfficeId || null,
+  )
+  expectInstitutionsToMatch(
+    caseOne.sharedWithProsecutorsOffice,
+    caseTwo.sharedWithProsecutorsOffice,
+  )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -763,6 +786,7 @@ describe('Case', () => {
               as: 'prosecutor',
               include: [{ model: Institution, as: 'institution' }],
             },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
             {
               model: User,
               as: 'judge',
@@ -781,6 +805,7 @@ describe('Case', () => {
           ...apiCase,
           court,
           prosecutor,
+          sharedWithProsecutorsOffice,
           judge,
           registrar,
         })
@@ -822,6 +847,7 @@ describe('Case', () => {
           ...dbCase,
           court,
           prosecutor,
+          sharedWithProsecutorsOffice,
           judge,
           registrar,
         })
@@ -882,6 +908,7 @@ describe('Case', () => {
               as: 'prosecutor',
               include: [{ model: Institution, as: 'institution' }],
             },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
             {
               model: User,
               as: 'judge',
@@ -905,6 +932,7 @@ describe('Case', () => {
           rulingDate: updatedDbCase.rulingDate,
           court,
           prosecutor,
+          sharedWithProsecutorsOffice,
           registrar,
           judge,
         })
@@ -945,6 +973,7 @@ describe('Case', () => {
           requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,
+          prosecutorId: prosecutor.id,
           parentCaseId: dbCase.id,
         } as CCase)
       })
