@@ -22,7 +22,7 @@ export class DelegationsController {
   async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
     const wards = await this.delegationsService.findAllWardsTo(
       user,
-      environment.nationalRegistry.xroad.clientId,
+      environment.nationalRegistry.xroad.clientId ?? '',
     )
 
     const companies = await this.delegationsService.findAllCompaniesTo(
