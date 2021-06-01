@@ -2966,10 +2966,10 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@irdnis/esbuildnx@0.0.4-rc7":
-  version "0.0.4-rc7"
-  resolved "https://registry.yarnpkg.com/@irdnis/esbuildnx/-/esbuildnx-0.0.4-rc7.tgz#7ba14a1622750a2540ed549c9dda5acb535f988f"
-  integrity sha512-zxz+wkCe8MDNzO7kTHfvAxdMCyhvDm3vMTqajolmwrTbNnmXXRloITaOp2CW2lNu4EXY4gDWVIx8TTFakWcdAw==
+"@irdnis/esbuildnx@0.0.4-rc8":
+  version "0.0.4-rc8"
+  resolved "https://registry.yarnpkg.com/@irdnis/esbuildnx/-/esbuildnx-0.0.4-rc8.tgz#ea144bc8e5b17e7110fb153099c165ba1f4466b6"
+  integrity sha512-KJkeXrGUelbXjdPvxLGv/Edu4XfVQ4JLv5FGFUayvQY2SQUtkLNU1ZmmkhgXyK3vm3B9Cu5i+3W/FHyuHO6jTg==
   dependencies:
     "@anatine/esbuild-decorators" "^0.2.10"
     "@nrwl/devkit" "^12.2.0"
