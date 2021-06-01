@@ -42,7 +42,7 @@ import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,

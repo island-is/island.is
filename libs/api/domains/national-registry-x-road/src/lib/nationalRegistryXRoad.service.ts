@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
+import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class NationalRegistryXRoadService {
