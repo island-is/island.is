@@ -1,7 +1,8 @@
 import { apiDomainsHealthInsurance } from './api-domains-health-insurance'
 // import { BucketService } from './bucket.service'
 // import { Test } from '@nestjs/testing'
-// import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+// import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 describe('apiDomainsHealthInsurance', () => {
   it('should work', () => {

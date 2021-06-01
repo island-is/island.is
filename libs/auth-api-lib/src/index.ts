@@ -29,6 +29,7 @@ export * from './lib/entities/models/api-scope-user.model'
 export * from './lib/entities/models/delegation.model'
 export * from './lib/entities/models/delegation-scope.model'
 export * from './lib/entities/models/api-scope-group.model'
+export * from './lib/entities/models/domain.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -60,6 +61,8 @@ export * from './lib/entities/dto/api-scope-user-access.dto'
 export * from './lib/entities/dto/api-scope-user-update.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
+export * from './lib/entities/dto/paged-rows.dto'
+export * from './lib/entities/dto/domain.dto'
 
 // Services
 export * from './lib/services/clients.service'

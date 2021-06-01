@@ -18,6 +18,10 @@ type autofillProperties = Pick<
   | 'policeDemands'
   | 'litigationPresentations'
   | 'courtStartDate'
+  | 'courtCaseFacts'
+  | 'courtLegalArguments'
+  | 'custodyEndDate'
+  | 'isolationTo'
 >
 
 interface CreateCourtCaseMutationResponse {
@@ -59,8 +63,8 @@ const useCase = () => {
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
             sendRequestToDefender: theCase.sendRequestToDefender,
-            court: 'Héraðsdómur Reykjavíkur',
             leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.court?.id,
           },
         },
       })
@@ -148,6 +152,7 @@ const useCase = () => {
     return data?.sendNotification?.notificationSent
   }
 
+  // TODO: find a way for this to work where value is something other then string
   const autofill = (
     key: keyof autofillProperties,
     value: string,

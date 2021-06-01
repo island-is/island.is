@@ -21,6 +21,6 @@ export class NationalRegistryPerson {
   @Field(() => [NationalRegistryPerson], { nullable: true })
   children?: NationalRegistryPerson[]
 
-  @Field(() => [NationalRegistryPerson], { nullable: true })
-  parents?: NationalRegistryPerson[]
+  @Field(() => NationalRegistryPerson, { nullable: true })
+  otherParent?: NationalRegistryPerson
 }

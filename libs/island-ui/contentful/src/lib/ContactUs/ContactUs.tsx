@@ -79,37 +79,28 @@ export const ContactUs: FC<ContactUsProps> = ({
                 )}
                 {isNotSent && (
                   <Stack space={3}>
-                    <GridRow>
-                      <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
-                        <Input
-                          name="name"
-                          label={labelName}
-                          placeholder={labelName}
-                          required
-                          errorMessage={errors.name?.message}
-                          ref={register({
-                            required: required,
-                          })}
-                        />
-                      </GridColumn>
-                      <GridColumn
-                        span={['10/10', '10/10', '10/10', '3/10']}
-                        paddingTop={[3, 3, 3, 0]}
-                      >
-                        <Input
-                          name="phone"
-                          label={labelPhone}
-                          placeholder="000 0000"
-                          errorMessage={errors.phone?.message}
-                          ref={register({
-                            pattern: {
-                              value: /^\d{3}[\d- ]*$/,
-                              message: invalidPhone,
-                            },
-                          })}
-                        />
-                      </GridColumn>
-                    </GridRow>
+                    <Input
+                      name="name"
+                      label={labelName}
+                      placeholder={labelName}
+                      required
+                      errorMessage={errors.name?.message}
+                      ref={register({
+                        required: required,
+                      })}
+                    />
+                    <Input
+                      name="phone"
+                      label={labelPhone}
+                      placeholder="000 0000"
+                      errorMessage={errors.phone?.message}
+                      ref={register({
+                        pattern: {
+                          value: /^\d{3}[\d- ]*$/,
+                          message: invalidPhone,
+                        },
+                      })}
+                    />
                     <Input
                       name="email"
                       label={labelEmail}

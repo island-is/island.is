@@ -60,7 +60,7 @@ function constructRequestPdf(existingCase: Case) {
       },
     )
     .lineGap(40)
-    .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
+    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
@@ -94,7 +94,7 @@ function constructRequestPdf(existingCase: Case) {
         existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.court,
+        existingCase.court?.name,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,

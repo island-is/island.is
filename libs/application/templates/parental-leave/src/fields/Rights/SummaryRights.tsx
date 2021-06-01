@@ -12,7 +12,7 @@ import {
 } from '../../parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { YES } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/use-application-answers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
   application: Application

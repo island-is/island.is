@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
+import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
@@ -19,12 +20,14 @@ interface Props {
   accusedGender: CaseGender
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  handleAccusedAppeal: (date?: Date) => void
-  handleProsecutorAppeal: (date?: Date) => void
-  handleAccusedAppealDismissal?: () => void
-  handleProsecutorAppealDismissal?: () => void
+  setAccusedAppealDate: (date?: Date) => void
+  setProsecutorAppealDate: (date?: Date) => void
+  withdrawAccusedAppealDate?: () => void
+  withdrawProsecutorAppealDate?: () => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
+  isAppealDeadlineExpired: boolean
+  isAppealGracePeriodExpired: boolean
 }
 
 const AppealSection: React.FC<Props> = (props) => {
@@ -35,10 +38,12 @@ const AppealSection: React.FC<Props> = (props) => {
     prosecutorAppealDecision,
     accusedPostponedAppealDate,
     prosecutorPostponedAppealDate,
-    handleAccusedAppeal,
-    handleProsecutorAppeal,
-    handleAccusedAppealDismissal,
-    handleProsecutorAppealDismissal,
+    setAccusedAppealDate,
+    setProsecutorAppealDate,
+    withdrawAccusedAppealDate,
+    withdrawProsecutorAppealDate,
+    isAppealDeadlineExpired,
+    isAppealGracePeriodExpired,
   } = props
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
@@ -54,57 +59,83 @@ const AppealSection: React.FC<Props> = (props) => {
           Ákvörðun um kæru
         </Text>
       </Box>
-      <Box marginBottom={2}>
-        <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
-      </Box>
-      {accusedAppealDecision === CaseAppealDecision.POSTPONE && (
+      {!isAppealDeadlineExpired && (
+        <Box marginBottom={2}>
+          <Text>{`Kærufrestur rennur út ${getAppealEndDate(rulingDate)}`}</Text>
+        </Box>
+      )}
+      {isAppealDeadlineExpired && (
         <div className={styles.appealContainer}>
-          <BlueBox height={120}>
-            <AnimatePresence>
-              {!accusedPostponedAppealDate && (
-                <AccusedAppealDatePicker
-                  handleAccusedAppeal={handleAccusedAppeal}
-                  accusedGender={accusedGender}
-                  isInitialMount={isInitialMount}
-                />
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {accusedPostponedAppealDate && (
-                <AccusedAppealInfo
-                  accusedGender={accusedGender}
-                  handleAccusedAppealDismissal={handleAccusedAppealDismissal}
-                  accusedPostponedAppealDate={accusedPostponedAppealDate}
-                />
-              )}
-            </AnimatePresence>
+          <BlueBox>
+            <InfoBox
+              text={`Kærufrestur rann út ${getAppealEndDate(rulingDate)}`}
+              fluid
+              light
+            />
           </BlueBox>
         </div>
       )}
-      {prosecutorAppealDecision === CaseAppealDecision.POSTPONE && (
-        <div className={styles.appealContainer}>
-          <BlueBox height={120}>
-            <AnimatePresence>
-              {!prosecutorPostponedAppealDate && (
-                <ProsecutorAppealDatePicker
-                  handleProsecutorAppeal={handleProsecutorAppeal}
-                  isInitialMount={isInitialMount}
-                />
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {prosecutorPostponedAppealDate && (
-                <ProsecutorAppealInfo
-                  prosecutorPostponedAppealDate={prosecutorPostponedAppealDate}
-                  handleProsecutorAppealDismissal={
-                    handleProsecutorAppealDismissal
-                  }
-                />
-              )}
-            </AnimatePresence>
-          </BlueBox>
-        </div>
-      )}
+      {accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+        (Boolean(accusedPostponedAppealDate) ||
+          !isAppealGracePeriodExpired) && (
+          <div className={styles.appealContainer}>
+            <BlueBox height={112}>
+              <AnimatePresence>
+                {!accusedPostponedAppealDate && !isAppealGracePeriodExpired && (
+                  <AccusedAppealDatePicker
+                    setAccusedAppealDate={setAccusedAppealDate}
+                    accusedGender={accusedGender}
+                    isInitialMount={isInitialMount}
+                  />
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {accusedPostponedAppealDate && (
+                  <AccusedAppealInfo
+                    accusedGender={accusedGender}
+                    withdrawAccusedAppealDate={
+                      isAppealGracePeriodExpired
+                        ? undefined
+                        : withdrawAccusedAppealDate
+                    }
+                    accusedPostponedAppealDate={accusedPostponedAppealDate}
+                  />
+                )}
+              </AnimatePresence>
+            </BlueBox>
+          </div>
+        )}
+      {prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+        (Boolean(prosecutorPostponedAppealDate) ||
+          !isAppealGracePeriodExpired) && (
+          <div className={styles.appealContainer}>
+            <BlueBox height={112}>
+              <AnimatePresence>
+                {!prosecutorPostponedAppealDate &&
+                  !isAppealGracePeriodExpired && (
+                    <ProsecutorAppealDatePicker
+                      setProsecutorAppealDate={setProsecutorAppealDate}
+                      isInitialMount={isInitialMount}
+                    />
+                  )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {prosecutorPostponedAppealDate && (
+                  <ProsecutorAppealInfo
+                    prosecutorPostponedAppealDate={
+                      prosecutorPostponedAppealDate
+                    }
+                    withdrawProsecutorAppealDate={
+                      isAppealGracePeriodExpired
+                        ? undefined
+                        : withdrawProsecutorAppealDate
+                    }
+                  />
+                )}
+              </AnimatePresence>
+            </BlueBox>
+          </div>
+        )}
     </>
   )
 }

@@ -36,7 +36,11 @@ export const CreateCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
       leadInvestigator
       arrestDate
       requestedCourtDate
@@ -56,6 +60,11 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
       courtRoom
@@ -68,6 +77,8 @@ export const CreateCaseMutation = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -143,7 +154,11 @@ export const ExtendCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
       leadInvestigator
       arrestDate
       requestedCourtDate
@@ -163,6 +178,11 @@ export const ExtendCaseMutation = gql`
         name
         title
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
       courtRoom
@@ -175,6 +195,8 @@ export const ExtendCaseMutation = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -209,6 +231,7 @@ export const CreateUserMutation = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -228,6 +251,7 @@ export const UsersQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -247,6 +271,7 @@ export const UserQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -267,6 +292,7 @@ export const InstitutionsQuery = gql`
   query InstitutionsQuery {
     institutions {
       id
+      type
       name
     }
   }
