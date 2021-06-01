@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
@@ -11,7 +11,7 @@ import { Charge } from '@island.is/clients/payment'
 import { PaymentService } from '@island.is/clients/payment'
 import { CreatingPaymentModel, PaymentCatalogResponse } from './models/index'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+//@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentResolver {
   constructor(private PaymentService: PaymentService) {}
@@ -27,7 +27,8 @@ export class PaymentResolver {
   }
   
   @Query(() => PaymentCatalogResponse)
-  paymentCatalogPerformingOrg(thisOrganizationCatalog: string): Promise<PaymentCatalogResponse> {
-    return this.PaymentService.getCatalogByPerformingOrg(thisOrganizationCatalog)
+  paymentCatalogPerformingOrg(@Args('performingOrganizationID') performingOrganizationID: string): Promise<PaymentCatalogResponse> {
+    console.log('resolver param: ' +performingOrganizationID)
+    return this.PaymentService.getCatalogByPerformingOrg(performingOrganizationID)
   }
 }

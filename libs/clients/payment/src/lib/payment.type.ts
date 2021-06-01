@@ -42,7 +42,7 @@ export interface PaymentServiceOptions {
   }
   
   export interface Catalog {
-    items: Item[],
+    item: Item[],
     //createdTimeStamp: Date
   }
   

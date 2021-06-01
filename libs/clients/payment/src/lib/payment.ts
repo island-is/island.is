@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+import { RESTDataSource, RequestOptions, HTTPCache } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
 import { ChargeResponse, Charge, Catalog, PaymentServiceOptions } from './payment.type'
@@ -12,7 +12,7 @@ export class PaymentService extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    this.baseURL = `https://tbrws-s.hysing.is/chargeFJS/v1`
+    this.baseURL = this.options.url//`https://tbrws-s.hysing.is/chargeFJS/v1`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -20,12 +20,7 @@ export class PaymentService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',
-      // `Basic ${Base64.encode(
-      //   `${this.options.username}:${this.options.password}`,
-      // )}`,
-      `Basic ${Base64.encode(
-        'isl_aranja_p:vogur.123'
-      )}`,
+      `Basic ${Base64.encode(`${this.options.username}:${this.options.password}`)}`,
     )
   }
 
@@ -33,22 +28,25 @@ export class PaymentService extends RESTDataSource {
     upcomingPayment: Charge// CHARGE OBJECT,
   ): Promise<ChargeResponse> {
     return this.post<ChargeResponse>(
-      `/charge`,
+      `/chargeFJS/v1/charge`,
       upcomingPayment
     ) 
   }
 
   // could skip promise due to higher lvl graphql promise
   getCatalog() {
-    return this.get<Catalog>(
-      `/catalog`
+    const response =  this.get<Catalog>(
+      `/chargeFJS/v1/catalog`
     )
+    return response
   }
 
-  getCatalogByPerformingOrg(
-      performingOrgID: string) {
-        return this.get<Catalog>(
-        `/catalog/performingOrg/${performingOrgID}`
+  async getCatalogByPerformingOrg(performingOrganizationID: string) {
+      const response = await this.get<Catalog>(
+        `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`
       )
+      console.log('service param: ' +performingOrganizationID)
+      console.log('service response: ' + response.item)
+      return response
   }
 }

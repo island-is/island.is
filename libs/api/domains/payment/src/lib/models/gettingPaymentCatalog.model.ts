@@ -4,5 +4,5 @@ import { PaymentCatalog } from '../models/paymentCatalog.model'
 @ObjectType()
 export class GettingPaymentCatalog {
   @Field(() => [PaymentCatalog])
-  items!: PaymentCatalog[]
+  item!: PaymentCatalog[]
 }

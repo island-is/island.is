@@ -63,7 +63,7 @@ export const application: Form = buildForm({
             buildDataProviderItem({
               id: 'payment',
               type: 'PaymentProvider',
-              title: '',
+              title: 'Borga meira. + VSK',
             }),
           ],
         }),

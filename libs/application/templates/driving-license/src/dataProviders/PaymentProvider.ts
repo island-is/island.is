@@ -11,28 +11,30 @@ type = 'PaymentProvider'
 
 async provide(application: Application): Promise<PaymentCatalog[]> {
     const query = `
-    query PaymentProvider {
-        paymentCatalog {
-        performingOrgID
-        chargeType
-        chargeItemCode
-        chargeItemName
-        priceAmount
+    query PaymentProvider($performingOrganizationID: String!) {
+        paymentCatalogPerformingOrg(performingOrganizationID: $performingOrganizationID) {
+            item {                
+                performingOrgID
+                chargeType
+                chargeItemCode
+                chargeItemName
+                priceAmount
+            }
         }
     }
     `
-
-    return this.useGraphqlGateway(query)
+    console.log(query)
+    return this.useGraphqlGateway(query, { performingOrganizationID: "6509142520" })
     .then(async (res: Response) => {
         const response = await res.json()
-
+        console.log('GraphqlGateway: ' + JSON.stringify(response, null, 4))
         if (response.errors) {
-        return this.handleError()
+            return this.handleError()
         }
-
         return Promise.resolve(response.data.items)
     })
     .catch(() => {
+        console.log('catch error  ' + this)
         return this.handleError()
     })
 }
@@ -42,6 +44,7 @@ handleError() {
 }
 
 onProvideError(result: string): FailedDataProviderResult {
+    console.log('provide Error  ' + result)
     return {
     date: new Date(),
     reason: result,
@@ -51,6 +54,7 @@ onProvideError(result: string): FailedDataProviderResult {
 }
 
 onProvideSuccess(result: object): SuccessfulDataProviderResult {
+    console.log('provide success  ' + result)
     return { date: new Date(), status: 'success', data: result }
 }
 }
