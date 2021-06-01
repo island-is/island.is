@@ -13,7 +13,7 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
-import {
+import type {
   Travel,
   RangeInput,
   PeriodInput,

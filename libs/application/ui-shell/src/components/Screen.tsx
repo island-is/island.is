@@ -113,7 +113,6 @@ const Screen: FC<ScreenProps> = ({
       },
     },
   )
-
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

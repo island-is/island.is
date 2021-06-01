@@ -1,19 +1,23 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import parseISO from 'date-fns/parseISO'
 
 import {
   Application,
   ExternalData,
+  extractRepeaterIndexFromField,
+  Field,
+  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { YES, NO, MANUAL, SPOUSE } from './constants'
+import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
@@ -54,32 +58,78 @@ export function getEstimatedMonthlyPay(application: Application): number {
   return 384000
 }
 
+// TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
-  periods?: Period[],
-  otherParentPeriods?: Period[],
+  application: Application,
+  formatMessage: FormatMessage,
 ): TimelinePeriod[] {
+  const periods = application.answers.periods as Period[]
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
-    if (period.startDate && period.endDate) {
+    const isActualDob =
+      index === 0 &&
+      application.answers.firstPeriodStart ===
+        StartDateOptions.ACTUAL_DATE_OF_BIRTH
+
+    if (isActualDob) {
+      const expectedDateOfBirth = getExpectedDateOfBirth(application)
+
       timelinePeriods.push({
+        actualDob: isActualDob,
         startDate: period.startDate,
         endDate: period.endDate,
+        ratio: period.ratio,
+        duration: expectedDateOfBirth
+          ? differenceInMonths(
+              parseISO(period.endDate),
+              parseISO(expectedDateOfBirth),
+            )
+          : 0,
         canDelete: true,
-        title: `Period ${index + 1} - ${period.ratio ?? 100}%`,
+        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+          index: index + 1,
+          ratio: period.ratio,
+        }),
+      })
+    }
+
+    if (period.startDate && period.endDate) {
+      timelinePeriods.push({
+        actualDob: isActualDob,
+        startDate: period.startDate,
+        endDate: period.endDate,
+        ratio: period.ratio,
+        duration: differenceInMonths(
+          parseISO(period.endDate),
+          parseISO(period.startDate),
+        ),
+        canDelete: true,
+        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+          index: index + 1,
+          ratio: period.ratio,
+        }),
       })
     }
   })
 
+  /*
   otherParentPeriods?.forEach((period) => {
     timelinePeriods.push({
       startDate: period.startDate,
       endDate: period.endDate,
+      ratio: period.ratio,
+      duration: differenceInMonths(
+        parseISO(period.endDate),
+        parseISO(period.startDate),
+      ),
       canDelete: false,
-      color: theme.color.red200,
       title: `Other parent ${period.ratio ?? 100}%`,
+      color: theme.color.red200,
     })
   })
+  */
+
   return timelinePeriods
 }
 
@@ -242,4 +292,38 @@ export const isEligibleForParentalLeave = (
     (children.length > 0 || existingApplications.length > 0) &&
     dataProvider?.remainingDays > 0
   )
+}
+
+export const calculatePeriodPercentage = (
+  application: Application,
+  field: Field,
+  dates?: { startDate: string; endDate: string },
+) => {
+  const months = getAvailableRightsInMonths(application)
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const repeaterIndex = extractRepeaterIndexFromField(field)
+  const index = repeaterIndex === -1 ? 0 : repeaterIndex
+  const { answers } = application
+
+  const startDate = getValueViaPath(
+    answers,
+    `periods[${index}].startDate`,
+    expectedDateOfBirth,
+  ) as string
+
+  const endDate = getValueViaPath(
+    answers,
+    `periods[${index}].endDate`,
+  ) as string
+
+  const difference = differenceInMonths(
+    parseISO(dates?.endDate ?? endDate),
+    parseISO(dates?.startDate ?? startDate),
+  )
+
+  if (difference <= months) {
+    return 100
+  }
+
+  return Math.min(100, Math.round((months / difference) * 100))
 }

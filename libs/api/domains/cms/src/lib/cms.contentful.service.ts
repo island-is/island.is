@@ -34,16 +34,11 @@ import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
-import {
-  FrontpageSliderList,
-  mapFrontpageSliderList,
-} from './models/frontpageSliderList.model'
 import { ContentfulRepository } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
-import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
@@ -179,25 +174,6 @@ export class CmsContentfulService {
     return {
       items: (result.items as types.IOrganizationTag[]).map(mapOrganizationTag),
     }
-  }
-
-  // DEPRECATED: will be removed after 18-05-21
-  async getFrontpageSliderList(lang = 'is-IS'): Promise<FrontpageSliderList> {
-    const params = {
-      ['content_type']: 'frontpageSliderList',
-      include: 10,
-      limit: 1,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IFrontpageSliderListFields>(lang, params)
-      .catch(errorHandler('getFrontpageSliderList'))
-
-    return (
-      (result.items as types.IFrontpageSliderList[]).map(
-        mapFrontpageSliderList,
-      )[0] ?? null
-    )
   }
 
   async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
@@ -591,21 +567,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEventsInCategory'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
-  }
-
-  // DEPRECATED: will be removed after 18-05-21
-  async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
-    const params = {
-      ['content_type']: 'homepage',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IHomepageFields>(lang, params)
-      .catch(errorHandler('getHomepage'))
-
-    return (result.items as types.IHomepage[]).map(mapHomepage)[0]
   }
 
   async getFrontpage({

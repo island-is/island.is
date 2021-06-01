@@ -114,7 +114,7 @@ export const RulingStepOne: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data, updateCase, autofill])
 
   /**
    * Prefills the ruling of extension cases with the parent case ruling

@@ -2,10 +2,8 @@ import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
-import {
-  DocumentProviderClientConfig,
-  DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
-} from './documentProviderClientConfig'
+import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
+import { DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST } from './documentProviderClientConfig'
 import { ClientCredentials, AudienceAndScope, TestResult } from './models'
 
 @Injectable()
