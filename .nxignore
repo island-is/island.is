@@ -16,6 +16,10 @@ apps/air-discount-scheme/Makefile
 apps/judicial-system/codegen.yml
 apps/judicial-system/api.graphql
 
+# financial-aid
+apps/financial-aid/codegen.yml
+apps/financial-aid/api.graphql
+
 # Readmes
 apps/air-discount-scheme/README.md
 apps/application-system/README.md
