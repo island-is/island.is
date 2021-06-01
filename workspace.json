@@ -6453,13 +6453,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/endorsements/api/src/environments/environment.ts",
-                  "with": "apps/services/endorsements/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -6564,13 +6558,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/party-letter-registry-api/src/environments/environment.ts",
-                  "with": "apps/services/party-letter-registry-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -6601,6 +6589,13 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/party-letter-registry-api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/party-letter-registry-api/tsconfig.app.json apps/services/party-letter-registry-api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -6739,13 +6734,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/temporary-voter-registry-api/src/environments/environment.ts",
-                  "with": "apps/services/temporary-voter-registry-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -6776,6 +6765,13 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/temporary-voter-registry-api"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/temporary-voter-registry-api/tsconfig.app.json apps/services/temporary-voter-registry-api/src/buildOpenApi.ts"
           }
         },
         "migrate": {

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { MetadataProvider } from '../../endorsementMetadata.service'
+import { MetadataProvider } from '../../types'
 import { TemporaryVoterRegistryApi } from './gen/fetch'
 
 export interface TemporaryVoterRegistryInput {

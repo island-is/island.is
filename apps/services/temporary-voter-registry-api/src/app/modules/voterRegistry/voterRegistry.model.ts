@@ -7,6 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Exclude } from 'class-transformer'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'voter_registry',
@@ -17,6 +18,7 @@ import { Exclude } from 'class-transformer'
   ],
 })
 export class VoterRegistry extends Model<VoterRegistry> {
+  @ApiProperty()
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -24,18 +26,21 @@ export class VoterRegistry extends Model<VoterRegistry> {
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   nationalId!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   regionNumber!: number
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,

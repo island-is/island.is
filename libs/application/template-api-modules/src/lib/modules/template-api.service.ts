@@ -33,7 +33,7 @@ type PerformActionResult =
 
 @Injectable()
 export class TemplateAPIService {
-  constructor (
+  constructor(
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
@@ -47,7 +47,7 @@ export class TemplateAPIService {
     private readonly partyApplicationService: PartyApplicationService,
   ) {}
 
-  private async tryRunningActionOnService (
+  private async tryRunningActionOnService(
     service:
       | ReferenceTemplateService
       | ParentalLeaveService
@@ -90,7 +90,7 @@ export class TemplateAPIService {
     }
   }
 
-  async performAction (
+  async performAction(
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     switch (action.templateId) {
