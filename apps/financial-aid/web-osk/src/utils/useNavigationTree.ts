@@ -26,6 +26,11 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
         { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
         {
           type: 'SUB_SECTION',
+          name: 'Skattframtal',
+          url: '/umsokn/skattframtal',
+        },
+        {
+          type: 'SUB_SECTION',
           name: 'Persónuafsláttur',
           url: '/umsokn/personuafslattur',
         },

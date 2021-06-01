@@ -63,8 +63,7 @@ const EmailForm = () => {
             value={form?.emailAddress}
             type="email"
             backgroundColor="blue"
-            // errorMessage={'Nauðsynlegur reitur'}
-            // hasError={email === ''}
+            hasError={error && !Boolean(form?.emailAddress)}
           />
         </Box>
         <div
@@ -103,8 +102,6 @@ const EmailForm = () => {
             setError(true)
           }
         }}
-        // nextUrl="/umsokn/heimili"
-        // nextIsDisabled={form?.emailAddress === ''}
       />
     </FormLayout>
   )
