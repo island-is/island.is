@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import { generateAssignSupremeCourtApplicationEmail } from './emailGenerators'
+import {
+  generateAssignSupremeCourtApplicationEmail,
+  generateApplicationRejectedEmail,
+  generateApplicationApprovedEmail,
+} from './emailGenerators'
 import { Constituencies } from '@island.is/application/templates/party-application'
 import { EndorsementListTagsEnum } from './gen/fetch'
 
@@ -49,20 +53,31 @@ export class PartyApplicationService {
     )
   }
 
+  async applicationRejected({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationRejectedEmail,
+      application,
+    )
+  }
+
+  async applicationApproved({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationApprovedEmail,
+      application,
+    )
+  }
+
   async createEndorsementList({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
     const constituencyTag =
       constituencyMapper[application.answers.constituency as Constituencies]
-    const { partyLetter, partyName } = application.externalData
-      .partyLetterRegistry?.data as any
-
     const CREATE_ENDORSEMENT_LIST_QUERY = `
       mutation {
         endorsementSystemCreateEndorsementList(input: {
-          title: "${partyName}",
-          description: "${partyLetter}",
+          title: "${application.answers.partyName}",
+          description: "${application.answers.partyLetter}",
           endorsementMeta: [fullName, address, signedTags],
           tags: [${constituencyTag}],
           validationRules: [],
