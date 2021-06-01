@@ -10,6 +10,7 @@ import {
   User,
   CurrentActor,
   CurrentUser,
+  ActorScopes,
 } from '@island.is/auth-nest-tools'
 import {
   Body,
@@ -36,7 +37,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 export class DelegationsController {
   constructor(private readonly delegationsService: DelegationsService) {}
 
-  @Scopes(AuthScope.actorDelegations)
+  @ActorScopes(AuthScope.actorDelegations)
   @Get()
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {

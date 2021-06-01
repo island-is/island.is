@@ -27,7 +27,10 @@ export class ScopesGuard implements CanActivate {
 
     if (
       actorScopes &&
-      !this.hasScope(actorScopes, request.user?.actor?.scope ?? request.user?.scope)
+      !this.hasScope(
+        actorScopes,
+        request.user?.actor ? request.user.actor.scope : request.user?.scope,
+      )
     ) {
       return false
     }
@@ -35,10 +38,7 @@ export class ScopesGuard implements CanActivate {
     return true
   }
 
-  private hasScope(
-    needScopes: string[],
-    haveScopes: string[] = [],
-  ): boolean {
+  private hasScope(needScopes: string[], haveScopes: string[] = []): boolean {
     return needScopes.some((scope) => haveScopes.includes(scope))
   }
 }
