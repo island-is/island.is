@@ -1,5 +1,6 @@
 export { default as Header } from './Header/Header'
 export { default as Nav } from './Nav/Nav'
+export { default as Profile } from './Profile/Profile'
 export { default as AdminLayout } from './AdminLayout/AdminLayout'
 export { default as LogoHfj } from './LogoHfj/index'
 export { default as ApplicationTable } from './ApplicationTable/ApplicationTable'
