@@ -267,7 +267,7 @@ export class ResourcesService extends BaseService {
   }
 
   /** Delete Api Scope from Api Resource Scope */
-  static async DeleteApiResourceScopeByScopeName(
+  static async deleteApiResourceScopeByScopeName(
     scopeName: string,
   ): Promise<number | null> {
     return BaseService.DELETE(
