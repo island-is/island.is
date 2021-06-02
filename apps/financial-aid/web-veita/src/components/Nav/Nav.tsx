@@ -41,12 +41,15 @@ const Nav: React.FC = () => {
   const navLinks = [
     {
       label: 'Ný mál',
+      link: '/',
     },
     {
       label: 'Í vinnslu',
+      link: '/vinnslu',
     },
     {
       label: 'Afgreidd mál',
+      link: '/afgreidd',
     },
   ]
 
@@ -70,28 +73,16 @@ const Nav: React.FC = () => {
       <div>
         {navLinks.map((item, index) => {
           return (
-            <Box
-              display="block"
-              marginBottom={1}
-              key={'nav link' + index}
-              className={cn({
-                [`${styles.activeLink}`]: index === 0,
-              })}
-            >
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onBlur={function noRefCheck() {}}
-                onClick={function noRefCheck() {}}
-                onFocus={function noRefCheck() {}}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+            <Link href={item.link} key={'NavigationLinks-' + index}>
+              <a
+                className={cn({
+                  [`${styles.link}`]: true,
+                  [`${styles.activeLink}`]: router.pathname === item.link,
+                })}
               >
-                {item.label}
-              </Button>
-            </Box>
+                <Text fontWeight="semiBold">{item.label}</Text>
+              </a>
+            </Link>
           )
         })}
       </div>

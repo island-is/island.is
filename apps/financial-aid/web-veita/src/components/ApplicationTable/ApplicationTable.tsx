@@ -50,11 +50,13 @@ const ApplicationTable: React.FC<PageProps> = ({
           <>
             {applications.map((item: [ReactNode]) => {
               return (
-                <tr>
-                  {item.map((el: ReactNode) => {
-                    return <td className={styles.tablePadding}>{el}</td>
-                  })}
-                </tr>
+                <Link href="application/bla">
+                  <tr className={styles.link}>
+                    {item.map((el: ReactNode) => {
+                      return <td className={styles.tablePadding}>{el}</td>
+                    })}
+                  </tr>
+                </Link>
               )
             })}
           </>

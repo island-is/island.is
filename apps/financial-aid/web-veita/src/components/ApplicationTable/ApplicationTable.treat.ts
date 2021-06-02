@@ -10,3 +10,13 @@ export const tableContainer = style({
 export const tablePadding = style({
   paddingRight: theme.spacing[4],
 })
+
+export const link = style({
+  transition: 'backgroundColor ease 250ms',
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.purple100,
+      cursor: 'pointer',
+    },
+  },
+})

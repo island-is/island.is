@@ -7,4 +7,5 @@ export const container = style({
   width: '100%',
   columnGap: theme.spacing[3],
   rowGap: theme.spacing[4],
+  marginBottom: theme.spacing[7],
 })

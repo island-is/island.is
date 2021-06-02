@@ -9,6 +9,8 @@ export const gridWrapper = style({
       display: 'grid',
       gridTemplateColumns: 'repeat(12, 1fr)',
       columnGap: theme.spacing[3],
+      paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
     },
   },
 })

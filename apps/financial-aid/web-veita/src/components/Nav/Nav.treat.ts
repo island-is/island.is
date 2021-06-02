@@ -9,7 +9,7 @@ export const container = style({
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[6],
   backgroundColor: theme.color.purple100,
-  width: '24.5%',
+  width: '25.4%',
   paddingTop: theme.spacing[5],
   paddingBottom: theme.spacing[7],
   display: 'none',
@@ -17,10 +17,11 @@ export const container = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       display: 'grid',
+      paddingLeft: theme.spacing[6],
     },
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      paddingLeft: 'calc((100vw - 1440px)/2 + 24px)',
-      width: 'calc((100vw - 1440px)/2 + (0.246 * 1440px))',
+      paddingLeft: 'calc((100vw - 1440px)/2 + 48px)',
+      width: 'calc((100vw - 1440px)/2 + (0.254 * 1440px))',
     },
   },
 })
@@ -63,4 +64,10 @@ export const otherItems = style({})
 export const activeLink = style({
   backgroundColor: theme.color.white,
   borderRadius: theme.spacing[1],
+})
+
+export const link = style({
+  display: 'block',
+  padding: theme.spacing[1],
+  marginBottom: theme.spacing[1],
 })

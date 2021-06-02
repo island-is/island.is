@@ -41,6 +41,19 @@ const Profile: React.FC<Props> = ({ heading, info }) => {
                 {item.title}
               </Text>
               <Text>{item.content}</Text>
+
+              {item.other && (
+                <Box
+                  background="blue100"
+                  borderRadius="large"
+                  padding={2}
+                  marginTop={1}
+                >
+                  <Text variant="small">
+                    „<em>{item.other}</em>“
+                  </Text>
+                </Box>
+              )}
             </Box>
           )
         })}
