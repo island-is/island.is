@@ -53,7 +53,12 @@
   dependencies:
     cross-fetch "3.0.6"
 
-"@anatine/esbuild-decorators@^0.2.4", "@anatine/esbuild-decorators@^0.2.8":
+"@anatine/esbuild-decorators@^0.2.10":
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/@anatine/esbuild-decorators/-/esbuild-decorators-0.2.10.tgz#dc406d643e98a2e7d074571220b582a5147a2153"
+  integrity sha512-XoMqlqUvyo2xSBDhz2H8ES7mMI8iPK96u5/ZsCX1FB1tVyOuS/ZM+qaZm1qnYFAmBWsivNsOrWY+/OnMks3SSw==
+
+"@anatine/esbuild-decorators@^0.2.4":
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/@anatine/esbuild-decorators/-/esbuild-decorators-0.2.8.tgz#67899378f17d7b23f83b87f38a05b9fa6f161101"
   integrity sha512-M1KKNDSkeZ0nK4OvcaGCEmW+lSYHS67gXIUwkDRbsXoGwMvFvi/ZUpkJdgCR3RlOeXiV786Dy9kPnkU56wOpow==
@@ -2961,17 +2966,16 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@irdnis/esbuildnx@0.0.4-rc2":
-  version "0.0.4-rc2"
-  resolved "https://registry.yarnpkg.com/@irdnis/esbuildnx/-/esbuildnx-0.0.4-rc2.tgz#4f584a064c908e9f9955adffecc12d515a46da9e"
-  integrity sha512-nqVaWOjH50K/HNQUs51YrpSx1EX6MiEtaKMJ7N+8RcXHcdISwctTsvZvFkcL+E9USVbutES9nDj6h+qBdrXAng==
+"@irdnis/esbuildnx@0.0.4-rc8":
+  version "0.0.4-rc8"
+  resolved "https://registry.yarnpkg.com/@irdnis/esbuildnx/-/esbuildnx-0.0.4-rc8.tgz#ea144bc8e5b17e7110fb153099c165ba1f4466b6"
+  integrity sha512-KJkeXrGUelbXjdPvxLGv/Edu4XfVQ4JLv5FGFUayvQY2SQUtkLNU1ZmmkhgXyK3vm3B9Cu5i+3W/FHyuHO6jTg==
   dependencies:
-    "@anatine/esbuild-decorators" "^0.2.8"
-    "@nrwl/devkit" "^12.0.6"
-    "@nrwl/workspace" "^12.0.6"
+    "@anatine/esbuild-decorators" "^0.2.10"
+    "@nrwl/devkit" "^12.2.0"
+    "@nrwl/workspace" "^12.2.0"
     chalk "^4.1.0"
-    date-fns "^2.21.1"
-    esbuild-plugin-alias "^0.1.2"
+    date-fns "^2.21.3"
     fs-extra "^9.1.0"
     node-watch "^0.7.1"
     recursive-copy "^2.0.11"
@@ -3546,12 +3550,12 @@
     yargs "15.4.1"
     yargs-parser "20.0.0"
 
-"@nrwl/cli@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/cli/-/cli-12.1.1.tgz#853f04314b584173e54ad427770731da2e74a029"
-  integrity sha512-Svsq0qFu6RnP8piVS69mxgQCYKLvhhCLVVa9/mGLY6guXApk2pc6fHQMmB2HgYZuAUtwDADw/qe8LBh4Hr4PRQ==
+"@nrwl/cli@12.3.5":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/cli/-/cli-12.3.5.tgz#15a4011990cc8cfae660addc7abcf6a3f7402107"
+  integrity sha512-iAH90jevQW3G9KPtEg9b14g1zMxrsxgRYQfkZDXijx21yJGDieJh1mCIewpy5jcEBS+ODQKvant0XdyhS/kUBw==
   dependencies:
-    "@nrwl/tao" "12.1.1"
+    "@nrwl/tao" "12.3.5"
     chalk "4.1.0"
     v8-compile-cache "2.3.0"
     yargs "15.4.1"
@@ -3588,12 +3592,12 @@
     strip-json-comments "2.0.1"
     tslib "^2.0.0"
 
-"@nrwl/devkit@12.1.1", "@nrwl/devkit@^12.0.6":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/devkit/-/devkit-12.1.1.tgz#e92a02d638d3aacd1c795338c9a17794281cef38"
-  integrity sha512-gDSIB4Mv8oz7+emEsZiC40YKyCBQHT+RbycoB7LeFWGbiuaK9YRkaqnTuuhpuOnfIOwq1klRMtvyZB7Zwo5TVQ==
+"@nrwl/devkit@12.3.5", "@nrwl/devkit@^12.2.0":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/devkit/-/devkit-12.3.5.tgz#5b1a9382f9a51f12ce133a95eb4d6731fc2cda03"
+  integrity sha512-bZi2WNHAAy/nSHAlA7r8zGpLuWPeurTbwBeNH9gm3It19fV5+hWoL1/pPlDBr2xEWjJQJNmWikxonxhw2ZIpGw==
   dependencies:
-    "@nrwl/tao" "12.1.1"
+    "@nrwl/tao" "12.3.5"
     ejs "^3.1.5"
     ignore "^5.0.4"
     semver "7.3.4"
@@ -3631,12 +3635,12 @@
     strip-json-comments "2.0.1"
     tslib "^2.0.0"
 
-"@nrwl/jest@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/jest/-/jest-12.1.1.tgz#2130457f2133ea831f774b3ce781cc21f73e7c01"
-  integrity sha512-JZac9SSbqA/+KcDVQxXvfJF7bjJQ1Y6TXF42+IzKutyN8piGmG14BTeWuBtGmV6uZEjJeTHIGMI0H53peiPR/g==
+"@nrwl/jest@12.3.5":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/jest/-/jest-12.3.5.tgz#6e74902cc290b8a7c6cdcf937d4634c4befea59e"
+  integrity sha512-pFaDcr7tGbYQ7NrWlym0cKAXFtphqLq8KlEoWM0aQcBQxv9VZtj4N8dwYPXPMAiAGYKYqgt9e74rgvN+bGeS1g==
   dependencies:
-    "@nrwl/devkit" "12.1.1"
+    "@nrwl/devkit" "12.3.5"
     jest-resolve "^26.6.2"
     rxjs "^6.5.4"
     strip-json-comments "^3.1.1"
@@ -3652,12 +3656,12 @@
     minimatch "3.0.4"
     tslib "^2.0.0"
 
-"@nrwl/linter@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/linter/-/linter-12.1.1.tgz#937bca41621c03f4f895dd174857b3ebf29ad2e5"
-  integrity sha512-PlwPOR00klt4Hl6EvTSKHFhHEhD1mSGewWbTQzq3S1MaQW2+1ZbWV2fkytMGm0xSE+nMjDlOe2F4bDrIU933/Q==
+"@nrwl/linter@12.3.5":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/linter/-/linter-12.3.5.tgz#3224926a936b60e31c74b63efd7c97fce511610a"
+  integrity sha512-6YhjlDZFb2dk0kphdLUELj99bAhG/So+CO1E8/eJsTvK4Mf7LySaTamabR9meSJW7yu2WKxiIIm4Z69IBI1bNQ==
   dependencies:
-    "@nrwl/devkit" "12.1.1"
+    "@nrwl/devkit" "12.3.5"
     glob "7.1.4"
     minimatch "3.0.4"
     tmp "~0.2.1"
@@ -3775,10 +3779,10 @@
     tslib "^2.0.0"
     yargs-parser "20.0.0"
 
-"@nrwl/tao@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/tao/-/tao-12.1.1.tgz#b00273390a1f7dc136954328bb76a94cd95a4e6d"
-  integrity sha512-qzJpQ6YAmAEy1toYM1JPZtNMo+GFNnly53FV4j1c/1gnQpmpT3PU3gFwEx/tzseafX6DKlxF/KSAbPdhsNnkdw==
+"@nrwl/tao@12.3.5":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/tao/-/tao-12.3.5.tgz#7cbc65a561e5f9255403dc55bddf0f9a6743397c"
+  integrity sha512-K/Q0GsrLzqXubmLgm8tFSjvrG61lQ00DrtNZ5dHywOAXREeV11A0bR7lXVDTohABk3D9Wgly5IKZPZ3iUwscsg==
   dependencies:
     chalk "4.1.0"
     enquirer "~2.3.6"
@@ -3917,16 +3921,15 @@
     yargs "15.4.1"
     yargs-parser "20.0.0"
 
-"@nrwl/workspace@^12.0.6":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@nrwl/workspace/-/workspace-12.1.1.tgz#e08a9a32e70371cac24bfeb1f7e3b077e459b3e0"
-  integrity sha512-Zk33TLCClbiJvEvCn53J9WJqNBT59zxaIRrx5L+Jzlt8kjW50mc6/t+PB2B22e86H7r+pIbL7lfrdYtELoHJ/A==
+"@nrwl/workspace@^12.2.0":
+  version "12.3.5"
+  resolved "https://registry.yarnpkg.com/@nrwl/workspace/-/workspace-12.3.5.tgz#1e3c0ba31bf45ba18a958a7bf99b938631eae9eb"
+  integrity sha512-mawmYJBxjjiqGKQPu7bqtAhuWFj1vzK+VVUuGlItDM+mJuDFLrOZqVAQL/SJOVPS0qRpYTBiWrdF4ZsLTEa8LQ==
   dependencies:
-    "@nrwl/cli" "12.1.1"
-    "@nrwl/devkit" "12.1.1"
-    "@nrwl/jest" "12.1.1"
-    "@nrwl/linter" "12.1.1"
-    axios "0.21.1"
+    "@nrwl/cli" "12.3.5"
+    "@nrwl/devkit" "12.3.5"
+    "@nrwl/jest" "12.3.5"
+    "@nrwl/linter" "12.3.5"
     chalk "4.1.0"
     cosmiconfig "^4.0.0"
     dotenv "8.2.0"
@@ -7970,11 +7973,6 @@ async-each@^1.0.1:
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.3.tgz#b727dbf87d7651602f06f4d4ac387f47d91b0cbf"
   integrity sha512-z/WhQ5FPySLdvREByI2vZiTWwCnF0moMJ1hK9YQwDTHKh6I7/uSckMetoRGb5UBZPC1z0jlw+n/XCgjeH7y1AQ==
 
-async-limiter@~1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
-  integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
-
 async-retry@^1.2.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/async-retry/-/async-retry-1.3.1.tgz#139f31f8ddce50c0870b0ba558a6079684aaed55"
@@ -11389,10 +11387,10 @@ date-fns@^2.0.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.19.0.tgz#65193348635a28d5d916c43ec7ce6fbd145059e1"
   integrity sha512-X3bf2iTPgCAQp9wvjOQytnf5vO5rESYRXlPIVcgSbtT5OTScPcsf9eZU+B/YIkKAtYr5WeCii58BgATrNitlWg==
 
-date-fns@^2.21.1:
-  version "2.21.2"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.21.2.tgz#9db92305cf00626e9122e56c72195b17725594aa"
-  integrity sha512-FMkG7pIPx64mGIpS2LOb3Wp3O606H/hatoiz7G0oiYWai1izdM4tF1dd7QABv2NogkIDI4wxsfLLFQSuVvDHgA==
+date-fns@^2.21.3:
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.22.1.tgz#1e5af959831ebb1d82992bf67b765052d8f0efc4"
+  integrity sha512-yUFPQjrxEmIsMqlHhAhmxkuH769baF21Kk+nZwZGyrMoyLA+LugaQtC0+Tqf9CBUUULWwUJt6Q5ySI3LJDDCGg==
 
 dayjs@^1.9.1, dayjs@^1.9.3:
   version "1.10.4"
@@ -12579,11 +12577,6 @@ es6-weak-map@^2.0.3:
     es5-ext "^0.10.46"
     es6-iterator "^2.0.3"
     es6-symbol "^3.1.1"
-
-esbuild-plugin-alias@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/esbuild-plugin-alias/-/esbuild-plugin-alias-0.1.2.tgz#1232fbde807c0c8ad44c44ec859819eb492e12a8"
-  integrity sha512-WsX0OJy8IGOsGZV+4oHEU5B6XQUpxOsZN1iSoYf9COTDbY7WXcOwd1oCLYNWUIWCExyGXSghIGq2k7sXBldxwQ==
 
 esbuild@0.12.1:
   version "0.12.1"
@@ -27988,29 +27981,10 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-ws@7.4.3:
-  version "7.4.3"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.3.tgz#1f9643de34a543b8edb124bdcbc457ae55a6e5cd"
-  integrity sha512-hr6vCR76GsossIRsr8OLR9acVVm1jyfEWvhbNjtgPOrfvAlKzvyeg/P6r8RuDjRyrcQoPQT7K0DGEPc7Ae6jzA==
-
-ws@^5.1.1, ws@^5.2.0:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.2.tgz#dffef14866b8e8dc9133582514d1befaf96e980f"
-  integrity sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
-  dependencies:
-    async-limiter "~1.0.0"
-
-ws@^6.0.0, ws@^6.1.2, ws@^6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
-  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
-  dependencies:
-    async-limiter "~1.0.0"
-
-ws@^7.4.4:
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.4.tgz#383bc9742cb202292c9077ceab6f6047b17f2d59"
-  integrity sha512-Qm8k8ojNQIMx7S+Zp8u/uHOx7Qazv3Yv4q68MiWWWOJhiwG5W3x7iqmRtJo8xxrciZUY4vRxUTJCKuRnF28ZZw==
+ws@7.4.3, "ws@7.4.6 ", ws@^5.1.1, ws@^5.2.0, ws@^6.0.0, ws@^6.1.2, ws@^6.2.1, ws@^7.4.4:
+  version "7.4.6"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
+  integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
 
 x-is-string@^0.1.0:
   version "0.1.0"

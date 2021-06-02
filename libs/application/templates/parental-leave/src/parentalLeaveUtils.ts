@@ -94,7 +94,7 @@ export function formatPeriods(
       })
     }
 
-    if (period.startDate && period.endDate) {
+    if (!isActualDob && period.startDate && period.endDate) {
       timelinePeriods.push({
         actualDob: isActualDob,
         startDate: period.startDate,
@@ -112,23 +112,6 @@ export function formatPeriods(
       })
     }
   })
-
-  /*
-  otherParentPeriods?.forEach((period) => {
-    timelinePeriods.push({
-      startDate: period.startDate,
-      endDate: period.endDate,
-      ratio: period.ratio,
-      duration: differenceInMonths(
-        parseISO(period.endDate),
-        parseISO(period.startDate),
-      ),
-      canDelete: false,
-      title: `Other parent ${period.ratio ?? 100}%`,
-      color: theme.color.red200,
-    })
-  })
-  */
 
   return timelinePeriods
 }

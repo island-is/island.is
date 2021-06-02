@@ -2,6 +2,8 @@
   "platform": "node",
   "external": [
     "fsevents",
+    "color-convert",
+    "color-string",
     "@nestjs/microservices",
     "class-transformer",
     "cache-manager",
