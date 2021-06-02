@@ -1,9 +1,10 @@
 app_identifier "is.island.app" # The bundle identifier of your app
 
-json_key_file "fastlane/key.json"
+json_key_file "~/Downloads/pc-api-8701487029959181480-770-2b445f651e91.json"
 apple_id "pshomov@gmail.com"
+
 team_id "J3WWZR9JLF" # Fjarmala- og efnahagsraduneyti
-# itc_team_id "...."
+itc_team_id "123094020"
 
 # you can even provide different app identifiers, Apple IDs and team names per lane:
 # More information: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Appfile.md

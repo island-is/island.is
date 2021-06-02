@@ -109,16 +109,16 @@ platform :ios do
     # Retrieve certificated
     match(type: "appstore", readonly: true, app_identifier: [ options[:app_identifier], options[:app_identifier_richnotifications]])
 
-    #
-    # clear_derived_data
 
-    # update_project_provisioning(
-    #   xcodeproj: "ios/IslandApp.xcodeproj",
-    #   target_filter: "IslandApp", 
-    #   profile: "#{ENV['sigh_'+options[:app_identifier]+'_appstore_profile-path']}",
-    #   build_configuration: "Release",
-    #   code_signing_identity: "iPhone Distribution"
-    # )    
+    clear_derived_data
+
+    update_project_provisioning(
+      xcodeproj: "ios/IslandApp.xcodeproj",
+      target_filter: "IslandApp", 
+      profile: "#{ENV['sigh_'+options[:app_identifier]+'_appstore_profile-path']}",
+      build_configuration: "Release",
+      code_signing_identity: "iPhone Distribution"
+    )    
 
     extraArgs = "-allowProvisioningUpdates" 
 
@@ -134,8 +134,8 @@ platform :ios do
       output_directory: "ios/build",
       output_name: options[:ipa_name],
       export_options: {
-        # method: "app-store"
-        method: "development"
+        method: "app-store"
+        # method: "development"
       }
     )    
   
@@ -159,7 +159,7 @@ platform :ios do
     # Upload to TestFlight
     pilot(
       beta_app_review_info: {
-        contact_email: "andrihr@island.is",
+        contact_email: "andri.kristinsson@fjr.is",
         contact_first_name: "Andri Heiðar",
         contact_last_name: "Kristinsson",
         contact_phone: "+354",
