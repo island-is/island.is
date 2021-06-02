@@ -15,6 +15,7 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
@@ -328,7 +329,7 @@ export const application: Form = buildForm({
               placement: 'footer',
               title: 'Panta ökuskírteini',
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: 'Greiða', type: 'primary' },
               ],
             }),
           ],

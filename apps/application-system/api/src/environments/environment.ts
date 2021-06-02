@@ -52,7 +52,9 @@ const devConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
-      url: 'aaaaa',
+      url: 'https://tbrws-s.hysing.is',
+      username: 'isl_aranja_p',
+      password: 'vogur.123',
     },
   },
   application: {
@@ -121,7 +123,9 @@ const prodConfig = {
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     paymentOptions: {
-      url: 'aaaaa',
+      url: process.env.PAYMENT_URL,
+      username: process.env.PAYMENT_USERNAME,
+      password: process.env.PAYMENT_PASSWORD,
     },
   },
   application: {

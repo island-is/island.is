@@ -18,7 +18,10 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({ application }: TemplateApiModuleActionProps) {
+  async createCharge({ application: { applicant, externalData, answers } }: TemplateApiModuleActionProps) {
+    console.log('==== creating charge ====')
+    console.log({ externalData })
+    console.log({ answers })
     const result = await this.sharedTemplateAPIService.createCharge({
       chargeItemSubject: 'Fullnaðarskírteini',
       chargeType: 'atype',
@@ -32,8 +35,8 @@ export class DrivingLicenseSubmissionService {
           reference: 'no idea',
         },
       ],
-      payeeNationalID: application.applicant,
-      performerNationalID: application.applicant,
+      payeeNationalID: applicant,
+      performerNationalID: applicant,
       // sýslumannskennitala - úr juristictions
       performingOrgID: '0910815209',
       systemID: 'sysid',
@@ -47,7 +50,7 @@ export class DrivingLicenseSubmissionService {
       },
     })
 
-    console.log(result)
+    console.log({ result })
 
     return result
   }

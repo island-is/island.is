@@ -11,8 +11,6 @@ export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     const configuration = () => config
 
-    console.log('=== DAS CONFIG 2 !!! ===', { config })
-
     return {
       module: SharedTemplateAPIModule,
       imports: [
