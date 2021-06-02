@@ -1,34 +1,22 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 
-import {
-  Text,
-  Input,
-  Box,
-  RadioButton,
-  Checkbox,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Text, Input, Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 
-import {
-  Case,
-  CaseGender,
-  CaseType,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import * as styles from './StepOne.treat'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
   workingCase: Case
@@ -147,52 +135,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
-                Kyn{' '}
-                <Text as="span" color="red600" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <Box marginBottom={2} className={styles.genderContainer}>
-              <Box className={styles.genderColumn}>
-                <RadioButton
-                  name="accusedGender"
-                  id="genderMale"
-                  label="Karl"
-                  value={CaseGender.MALE}
-                  checked={workingCase.accusedGender === CaseGender.MALE}
-                  onChange={(event) => setAndSendToServer(event.target)}
-                  large
-                  backgroundColor="white"
-                />
-              </Box>
-              <Box className={styles.genderColumn}>
-                <RadioButton
-                  name="accusedGender"
-                  id="genderFemale"
-                  label="Kona"
-                  value={CaseGender.FEMALE}
-                  checked={workingCase.accusedGender === CaseGender.FEMALE}
-                  onChange={(event) => setAndSendToServer(event.target)}
-                  large
-                  backgroundColor="white"
-                />
-              </Box>
-              <Box className={styles.genderColumn}>
-                <RadioButton
-                  name="accusedGender"
-                  id="genderOther"
-                  label="Kynsegin/Annað"
-                  value={CaseGender.OTHER}
-                  checked={workingCase.accusedGender === CaseGender.OTHER}
-                  onChange={(event) => setAndSendToServer(event.target)}
-                  large
-                  backgroundColor="white"
-                />
-              </Box>
-            </Box>
+            <DefendantInfo
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
             <Box marginBottom={2}>
               <InputMask
                 mask="999999-9999"

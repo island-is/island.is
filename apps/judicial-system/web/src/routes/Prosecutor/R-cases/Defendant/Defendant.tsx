@@ -46,7 +46,12 @@ const Defendant = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && <DefendantForm workingCase={workingCase} />}
+      {workingCase && (
+        <DefendantForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      )}
     </PageLayout>
   )
 }

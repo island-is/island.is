@@ -1,6 +1,9 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { FormContentContainer } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  BlueBox,
+  FormContentContainer,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { Case } from '@island.is/judicial-system/types'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 
@@ -31,6 +34,14 @@ const DefendantForm: React.FC<Props> = (props) => {
           policeCaseNumberErrorMessage={'' /**TODO */}
           setPoliceCaseNumberErrorMessage={undefined /**TODO */}
         />
+      </Box>
+      <Box component="section" marginBottom={5}>
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3">
+            Varnaraðili
+          </Text>
+        </Box>
+        <BlueBox></BlueBox>
       </Box>
     </FormContentContainer>
   )
