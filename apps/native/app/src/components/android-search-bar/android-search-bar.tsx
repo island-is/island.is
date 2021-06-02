@@ -1,5 +1,6 @@
 import { SearchBar } from '@island.is/island-ui-native'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components/native'
 import { I18nProvider } from '../../contexts/i18n-provider'
 import { ThemeProvider } from '../../contexts/theme-provider'
@@ -23,14 +24,14 @@ const Container = styled.View`
   background-color: ${(props) => props.theme.shade.background};
 `
 
-const SearchBarComponent = ({ query }: { query: string }) => (
+const SearchBarComponent = ({ query, placeholder }: { query: string, placeholder: string }) => (
   <Host>
     <Container>
       <SearchBar
         value={query}
         onChangeText={(text) => uiStore.setState({ query: text })}
         onCancelPress={() => uiStore.setState({ query: '' })}
-        placeholder="Leita að skjölum..."
+        placeholder={placeholder}
         returnKeyType="search"
       />
     </Container>
@@ -39,10 +40,11 @@ const SearchBarComponent = ({ query }: { query: string }) => (
 
 export const AndroidSearchBar = () => {
   const { query } = useUiStore()
+  const intl = useIntl()
   return (
     <I18nProvider>
       <ThemeProvider>
-        <SearchBarComponent query={query} />
+        <SearchBarComponent query={query} placeholder={intl.formatMessage({ id: 'inbox.searchPlaceholder' })} />
       </ThemeProvider>
     </I18nProvider>
   )

@@ -1,10 +1,17 @@
 import { TranslatedMessages } from './index';
 
 export const en: TranslatedMessages = {
+  // login
   "login.welcomeMessage": "Log in to the app with electronic ID",
   "login.loginButtonText": "Login",
   "login.languageButtonText": "Íslenska",
   "login.needHelpButtonText": "Need help",
+
+  // app lock
+  "applock.title": "Enter a 4-digit PIN",
+  "applock.attempts": "attempts left",
+
+  // onboarding
   "onboarding.notifications.title": "Receive notifications of new documents as soon as they are received.",
   "onboarding.notifications.allowNotificationsButtonText": "Allow notifications",
   "onboarding.notifications.decideLaterButtonText": "Decide later",
@@ -23,6 +30,8 @@ export const en: TranslatedMessages = {
   "onboarding.biometrics.type.facialRecognition": 'facial recognition',
   "onboarding.biometrics.type.fingerprint": "fingerprint",
   "onboarding.biometrics.type.iris": "iris scanner",
+  "onboarding.pinKeypad.accessibilityLabel.faceId": "Use FaceID",
+  "onboarding.pinKeypad.accessibilityLabel.delete": "Delete character",
 
   // user
   "user.screenTitle": "User",
@@ -92,6 +101,9 @@ export const en: TranslatedMessages = {
   "home.applicationsStatus": "Applications",
   "home.notifications": "Notifications",
   "home.welcomeText": "Hi",
+  "home.onboardingModule.card1": "In this first version of the Ísland.is app, you can access electronic documents and certificates from the public sector, receive notifications and see the status of applications.",
+  "home.onboardingModule.card2": "The goal of the app is to have at your disposal what you need at any given time in dealing with the public sector.",
+  "home.onboardingModule.card3": "If you have comments or suggestions about something that is missing or that could be improved, we would like to receive a line from you at island@island.is",
 
   // inbox
   "inbox.screenTitle": "Inbox",

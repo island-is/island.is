@@ -1,5 +1,6 @@
 import {
   Badge,
+  EmptyCard,
   Heading,
   StatusCard,
   StatusCardSkeleton,
@@ -7,7 +8,7 @@ import {
 } from '@island.is/island-ui-native'
 import React from 'react'
 import { Image, SafeAreaView } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { IApplication } from '../../graphql/fragments/application.fragment'
 import { config } from '../../utils/config'
@@ -19,27 +20,6 @@ interface ApplicationsModuleProps {
   loading: boolean
   componentId: string
 }
-
-const Empty = styled.View`
-  display: flex;
-  flex-direction: row;
-  padding: 20px 70px 20px 24px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  border: 1px solid
-    ${({ theme }) =>
-      theme.isDark ? theme.shade.shade300 : theme.color.blue200};
-  align-items: center;
-  justify-content: space-between;
-`
-
-const EmptyText = styled.Text`
-  padding-right: 30px;
-  font-family: 'IBMPlexSans-Light';
-  font-size: 16px;
-  line-height: 24px;
-  color: ${(props) => props.theme.shade.foreground};
-`
 
 export const ApplicationsModule = React.memo(
   ({ applications, loading, componentId }: ApplicationsModuleProps) => {
@@ -98,14 +78,13 @@ export const ApplicationsModule = React.memo(
         ) : (
           <>
             {count === 0 && (
-              <Empty>
-                <EmptyText>
-                  {intl.formatMessage({
-                    id: 'applicationStatusCard.noActiveApplications',
-                  })}
-                </EmptyText>
+              <EmptyCard
+                text={intl.formatMessage({
+                  id: 'applicationStatusCard.noActiveApplications',
+                })}
+              >
                 <Image source={leJobss4} height={90} width={42} />
-              </Empty>
+              </EmptyCard>
             )}
             {count === 1 && children.slice(0, 1)}
             {count >= 2 && <ViewPager>{children}</ViewPager>}

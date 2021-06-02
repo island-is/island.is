@@ -1,8 +1,14 @@
-import { Button, dynamicColor, font } from '@island.is/island-ui-native'
+import {
+  Button,
+  CancelButton,
+
+  font,
+  Illustration
+} from '@island.is/island-ui-native'
 import {
   authenticateAsync,
   AuthenticationType,
-  isEnrolledAsync,
+  isEnrolledAsync
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
 import { AppState, Platform, SafeAreaView, View } from 'react-native'
@@ -10,12 +16,11 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import {
   preferencesStore,
-  usePreferencesStore,
+  usePreferencesStore
 } from '../../stores/preferences-store'
 import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-import { Illustration } from './illustration'
 
 const Title = styled.Text`
   ${font({
@@ -31,19 +36,6 @@ const Title = styled.Text`
 
 const ButtonContainer = styled.View`
   margin-bottom: 32px;
-`
-
-const CancelButton = styled.TouchableOpacity`
-  border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({  theme }) => theme.color.blue400)};
-`
-
-const CancelText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 16,
-    color: (props) => props.theme.color.blue400,
-  })}
 `
 
 export function useBiometricType(type: AuthenticationType[]) {
@@ -136,9 +128,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
           onPress={onCancelPress}
           testID={testIDs.ONBOARDING_BIOMETRICS_CANCEL_BUTTON}
         >
-          <CancelText>
-            <FormattedMessage id="onboarding.biometrics.skipButtonText" />
-          </CancelText>
+          <FormattedMessage id="onboarding.biometrics.skipButtonText" />
         </CancelButton>
       </SafeAreaView>
     </View>

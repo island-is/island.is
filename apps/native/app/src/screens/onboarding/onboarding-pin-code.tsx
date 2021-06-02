@@ -1,10 +1,10 @@
-import { dynamicColor, font } from '@island.is/island-ui-native'
+import { CancelButton, dynamicColor, font } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
 import { Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
@@ -48,19 +48,6 @@ const Center = styled.View`
 `
 
 const MAX_PIN_CHARS = 4
-
-const CancelButton = styled.TouchableOpacity`
-  border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
-`
-
-const CancelText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 16,
-    color: (props) => props.theme.color.blue400,
-  })}
-`
 
 export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
   confirmPin?: string
@@ -195,13 +182,11 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
                 onPress={onCancelPress}
                 testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
               >
-                <CancelText>
-                  {confirmPin ? (
-                    <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
-                  ) : (
-                    <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
-                  )}
-                </CancelText>
+                {confirmPin ? (
+                  <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
+                ) : (
+                  <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
+                )}
               </CancelButton>
             )}
           </View>

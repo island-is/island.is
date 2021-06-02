@@ -1,5 +1,6 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Dimensions,
   DynamicColorIOS,
@@ -144,6 +145,7 @@ export function PinKeypad({
   const r = invlerp(512, 1024, height)
   const size = 50 + 32 * r
   const gutter = 8 + 8 * r
+  const intl = useIntl();
 
   return (
     <View>
@@ -240,7 +242,7 @@ export function PinKeypad({
             value="face_id"
             onPress={onFaceIdPress}
             icon={require('../../assets/icons/face-id.png')}
-            accessibilityLabel="Use FaceID"
+            accessibilityLabel={intl.formatMessage({ id: 'onboarding.pinKeypad.accessibilityLabel.faceId' })}
             testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
             size={size}
             gutter={gutter}
@@ -262,7 +264,7 @@ export function PinKeypad({
             value="delete"
             onPress={onBackPress}
             icon={require('../../assets/icons/keyboard-delete.png')}
-            accessibilityLabel="Delete character"
+            accessibilityLabel={intl.formatMessage({ id: 'onboarding.pinKeypad.accessibilityLabel.delete' })}
             testID={testIDs.PIN_KEYPAD_BUTTON_DELETE}
             size={size}
             gutter={gutter}

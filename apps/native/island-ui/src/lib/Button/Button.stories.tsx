@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
 import { Button } from './Button'
+import { CancelButton } from './CancelButton'
 import { Close } from './Close'
 
 const CenterView = ({ children }: any) => (
@@ -31,4 +32,7 @@ storiesOf('Button', module)
   })
   .add('Close', () => {
     return <Close />
+  })
+  .add('Cancel Button', () => {
+    return <CancelButton onPress={() => console.log('pressed')}>Sleppa í bili</CancelButton>
   })
