@@ -76,14 +76,6 @@ jobs:
           ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
           echo "ZGVmYXVsdHMudXJsPWh0dHBzOi8vc2VudHJ5LmlvLwpkZWZhdWx0cy5vcmc9c29saWQtbW9iaWxlLXJ6CmRlZmF1bHRzLnByb2plY3Q9aXNsYW5kLWFwcC1kZW1vCmF1dGgudG9rZW49Nzk4OGY3YmM3N2Y5NGZhNDlhYmU3ODZjOGY4MzdmNzg0MTJlMmY1NzJiY2M0NDkxODQ0ODFjMTI3OTFiYTE4Mgo=" | base64 --decode > "$(pwd)/apps/native/app/ios/sentry.properties"
 
-      - name: Setup AppCenter secret iOS
-        run: echo APPCENTER_ACCESS_TOKEN=${{ secrets.APPCENTER_ACCESS_TOKEN_IOS }} >> $GITHUB_ENV
-        if: ${{ matrix.build.platform == 'ios' }}
-
-      - name: Setup AppCenter secret Android
-        run: echo APPCENTER_ACCESS_TOKEN=${{ secrets.APPCENTER_ACCESS_TOKEN_ANDROID }} >> $GITHUB_ENV
-        if: ${{ matrix.build.platform == 'android' }}
-
       - name: Preparing CodePush deployment
         run: |
           export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
@@ -92,8 +84,16 @@ jobs:
           echo "CodePush deployment is $CODEPUSH_DEPLOYMENT"
           echo CODEPUSH_DEPLOYMENT=$CODEPUSH_DEPLOYMENT >> $GITHUB_ENV
 
-      - name: Build and publish bundle
+      - name: Build and publish bundle iOS
         run: |
           ./codepush-release.sh ios
+        working-directory: apps/native/app
+        env:
+          APPCENTER_ACCESS_TOKEN: ${{ secrets.APPCENTER_ACCESS_TOKEN_IOS }}
+
+      - name: Build and publish bundle Android
+        run: |
           ./codepush-release.sh android
         working-directory: apps/native/app
+        env:
+          APPCENTER_ACCESS_TOKEN: ${{ secrets.APPCENTER_ACCESS_TOKEN_ANDROID }}
