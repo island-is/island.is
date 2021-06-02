@@ -43,18 +43,6 @@ export class Delegation extends Model<Delegation> {
   })
   toNationalId!: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  validFrom!: Date
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  validTo?: Date
-
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

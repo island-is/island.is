@@ -151,7 +151,7 @@ export class DelegationsService {
       ...delegation,
     })
     if (delegation.scopes) {
-      this.delegationScopeService.createMany(id, delegation.scopes)
+      this.delegationScopeService.createMany(delegation.scopes)
     }
     return this.findOne(nationalId, id)
   }
@@ -173,9 +173,10 @@ export class DelegationsService {
       { ...delegation },
       { where: { id: id, fromNationalId: nationalId } },
     )
+
     await this.delegationScopeService.delete(id)
     if (delegation.scopes) {
-      await this.delegationScopeService.createMany(id, delegation.scopes)
+      await this.delegationScopeService.createMany(delegation.scopes)
     }
     return this.findOne(nationalId, id)
   }
