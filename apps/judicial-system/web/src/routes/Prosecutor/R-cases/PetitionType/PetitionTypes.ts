@@ -1,46 +1,48 @@
+import { CaseType } from '@island.is/judicial-system/types'
+
 export const petitionTypes = [
   {
     label: 'Húsleit',
-    value: '0',
+    value: CaseType.SEARCH_WARRANT,
   },
   {
     label: 'Rof bankaleyndar',
-    value: '1',
+    value: CaseType.BANKING_SECRECY_WAIVER,
   },
   {
     label: 'Símhlustun',
-    value: '2',
+    value: CaseType.PHONE_TAPPING,
   },
   {
     label: 'Upplýsingar um fjarskiptasamskipti',
-    value: '3',
+    value: CaseType.TELECOMMUNICATIONS,
   },
   {
     label: 'Eftirfararbúnaður',
-    value: '4',
+    value: CaseType.TRACKING_EQUIPMENT,
   },
   {
     label: 'Geðrannsókn',
-    value: '5',
+    value: CaseType.PSYCHIATRIC_EXAMINATION,
   },
   {
     label: 'Hljóðupptökubúnaði komið fyrir',
-    value: '6',
+    value: CaseType.SOUND_RECORDING_EQUIPMENT,
   },
   {
     label: 'Krufning',
-    value: '7',
+    value: CaseType.AUTOPSY,
   },
   {
     label: 'Leit og líkamsrannsókn',
-    value: '8',
+    value: CaseType.BODY_SEARCH,
   },
   {
     label: 'Upplýsingar um vefnotkun',
-    value: '9',
+    value: CaseType.INTERNET_USAGE,
   },
   {
     label: 'Annað',
-    value: '10',
+    value: CaseType.OTHER,
   },
 ]
