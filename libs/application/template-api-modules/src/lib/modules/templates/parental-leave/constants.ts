@@ -18,4 +18,7 @@ export const apiConstants = {
     // Id used when applicant does not wish to pay into a private pension fund
     noPrivatePensionFundId: 'X000',
   },
+  attachments: {
+    selfEmployed: 'selfEmployed',
+  },
 }

@@ -1,9 +1,9 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'

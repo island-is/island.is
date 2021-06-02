@@ -140,5 +140,46 @@ export const TempTest = () => (
       noOptionsMessage="Enginn valmöguleiki"
       backgroundColor="blue"
     />
+    <div style={{ height: 30 }} />
+    <Template
+      name="select"
+      label="With groups"
+      size="md"
+      placeholder="placeholder test"
+      menuIsOpen
+      formatGroupLabel={() => <p>Custom group label</p>}
+      options={[
+        {
+          label: 'Valmöguleiki 3',
+          value: '4',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '5',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '6',
+        },
+        {
+          label: 'group1',
+          options: [
+            {
+              label: 'Valmöguleiki 1',
+              value: '0',
+            },
+            {
+              label: 'Valmöguleiki 2',
+              value: '1',
+            },
+            {
+              label: 'Valmöguleiki 3',
+              value: '3',
+            },
+          ],
+        },
+      ]}
+      noOptionsMessage="Enginn valmöguleiki"
+    />
   </div>
 )

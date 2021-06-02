@@ -4,6 +4,7 @@ import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   padTimeWithZero,
   parseArray,
+  parseNull,
   parseString,
   parseTime,
   replaceTabs,
@@ -228,18 +229,25 @@ export const validateAndSendTimeToServer = async (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean,
+  value: string | boolean | null,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
+  let stringValue = ''
+
   setCase({
     ...theCase,
     [field]: value,
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    if (typeof value === 'string') {
+      stringValue = value
+      updateCase(theCase.id, parseString(field, stringValue))
+    } else {
+      updateCase(theCase.id, parseNull(field))
+    }
   }
 }
 
