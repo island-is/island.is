@@ -30,4 +30,5 @@ export * from './lib/Detail/Header'
 export * from './lib/Detail/Content'
 export * from './lib/EmptyList/EmptyCard'
 export * from './lib/Illustration/Illustration'
+export * from './lib/Onboarding/Onboarding'
 export * from './utils/index';

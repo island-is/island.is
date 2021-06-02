@@ -1,8 +1,12 @@
 import React from 'react'
-import { Image, TouchableOpacity } from 'react-native'
+import { Image, TouchableOpacityProps } from 'react-native'
 import styled from 'styled-components/native'
 import arrow from '../../assets/icons/arrow.png'
 import { dynamicColor, font } from '../../utils'
+
+interface CancelProps extends TouchableOpacityProps {
+  title: React.ReactNode;
+}
 
 const Host = styled.TouchableOpacity`
   border-bottom-width: 1px;
@@ -25,17 +29,12 @@ const Title = styled.Text`
   })}
 `;
 
-interface CancelProps extends TouchableOpacity {
-  children: React.ReactNode;
-  testID: string;
-  onPress?: () => void;
-}
 
-export function CancelButton({ children, ...rest }: CancelProps) {
+export function CancelButton({ title, ...rest }: CancelProps) {
   return (
-    <Host {...rest}>
+    <Host {...rest as any}>
       <Wrapper>
-        <Title>{children}</Title>
+        <Title>{title}</Title>
         <Image source={arrow}  style={{ width: 10, height: 10 }} />
       </Wrapper>
     </Host>

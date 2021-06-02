@@ -1,9 +1,8 @@
 import {
   Button,
   CancelButton,
-
-  font,
-  Illustration
+  Illustration,
+  Onboarding
 } from '@island.is/island-ui-native'
 import {
   authenticateAsync,
@@ -11,9 +10,8 @@ import {
   isEnrolledAsync
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
-import { AppState, Platform, SafeAreaView, View } from 'react-native'
+import { AppState, Platform } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled from 'styled-components/native'
 import {
   preferencesStore,
   usePreferencesStore
@@ -22,21 +20,6 @@ import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
-const Title = styled.Text`
-  ${font({
-    fontWeight: '300',
-    fontSize: 20,
-    lineHeight: 28,
-  })}
-  text-align: center;
-  margin-left: 32px;
-  margin-right: 32px;
-  margin-bottom: 64px;
-`
-
-const ButtonContainer = styled.View`
-  margin-bottom: 32px;
-`
 
 export function useBiometricType(type: AuthenticationType[]) {
   const intl = useIntl()
@@ -95,43 +78,41 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
   }
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_ONBOARDING_BIOMETRICS}>
-      <Illustration />
-      <SafeAreaView
-        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-      >
-        <Title>
-          {isEnrolled ? (
-            <FormattedMessage
-              id="onboarding.biometrics.title"
-              values={{ biometricType }}
-            />
-          ) : (
-            <FormattedMessage
-              id="onboarding.biometrics.notEnrolled"
-              values={{ biometricType }}
-            />
-          )}
-        </Title>
-        <ButtonContainer>
-          <Button
-            testID={testIDs.ONBOARDING_BIOMETRICS_USE_BUTTON}
-            title={intl.formatMessage(
-              { id: 'onboarding.biometrics.useBiometricsButtonText' },
-              { biometricType },
-            )}
-            onPress={onBiometricsPress}
-            disabled={!isEnrolled}
+    <Onboarding
+      testID={testIDs.SCREEN_ONBOARDING_BIOMETRICS}
+      title={
+        isEnrolled ? (
+          <FormattedMessage
+            id="onboarding.biometrics.title"
+            values={{ biometricType }}
           />
-        </ButtonContainer>
+        ) : (
+          <FormattedMessage
+            id="onboarding.biometrics.notEnrolled"
+            values={{ biometricType }}
+          />
+        )
+      }
+      illustration={<Illustration />}
+      buttonSubmit={
+        <Button
+          testID={testIDs.ONBOARDING_BIOMETRICS_USE_BUTTON}
+          title={intl.formatMessage(
+            { id: 'onboarding.biometrics.useBiometricsButtonText' },
+            { biometricType },
+          )}
+          onPress={onBiometricsPress}
+          disabled={!isEnrolled}
+        />
+      }
+      buttonCancel={
         <CancelButton
+          title={<FormattedMessage id="onboarding.biometrics.skipButtonText" />}
           onPress={onCancelPress}
           testID={testIDs.ONBOARDING_BIOMETRICS_CANCEL_BUTTON}
-        >
-          <FormattedMessage id="onboarding.biometrics.skipButtonText" />
-        </CancelButton>
-      </SafeAreaView>
-    </View>
+        />
+      }
+    />
   )
 }
 
