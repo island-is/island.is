@@ -5,6 +5,7 @@ import {
   PaymentServiceOptions,
 } from '@island.is/clients/payment'
 import { PaymentResolver } from './api-domains-payment.resolver'
+import { PaymentService } from './api-domains-payment.service'
 
 @Module({})
 export class PaymentModule {
@@ -12,12 +13,15 @@ export class PaymentModule {
     return {
       module: PaymentModule,
       providers: [
-        PaymentAPI,
-        PaymentResolver,
         {
-          provide: PAYMENT_OPTIONS,
-          useValue: config,
+          provide: PaymentAPI,
+          useFactory: () => new PaymentAPI(config),
         },
+        PaymentService,
+        PaymentResolver,
+      ],
+      exports: [
+        PaymentService,
       ],
     }
   }

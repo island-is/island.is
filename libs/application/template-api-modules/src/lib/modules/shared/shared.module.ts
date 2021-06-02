@@ -5,10 +5,13 @@ import { PaymentModule } from '@island.is/api/domains/payment'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
 import { SharedTemplateApiService } from './shared.service'
+import { PAYMENT_OPTIONS } from '@island.is/clients/payment'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     const configuration = () => config
+
+    console.log('=== DAS CONFIG 2 !!! ===', { config })
 
     return {
       module: SharedTemplateAPIModule,

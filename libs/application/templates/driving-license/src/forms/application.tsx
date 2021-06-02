@@ -79,8 +79,11 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
+              value: ({ externalData }) => {
+                console.log(externalData)
+
+                return 'hallo'
+              }
             }),
             buildDividerField({
               title: '',
