@@ -21,12 +21,8 @@ export class DelegationScopeService {
     return this.delegationScopeModel.create({ ...delegationScope })
   }
 
-  async createMany(delegationId: string, scopes: string[]): Promise<any> {
-    const delegationScopes: DelegationScopeDTO[] = scopes.map((scope) => ({
-      delegationId,
-      scopeName: scope,
-    }))
-    return this.delegationScopeModel.bulkCreate(delegationScopes)
+  async createMany(scopes: DelegationScopeDTO[]): Promise<any> {
+    return this.delegationScopeModel.bulkCreate(scopes)
   }
 
   async findAll(
