@@ -166,6 +166,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      {
+        name: defineMessage({
+          id: 'service.portal:licenses',
+          defaultMessage: 'Skilríki',
+        }),
+        path: ServicePortalPath.LicensesRoot,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'business',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({

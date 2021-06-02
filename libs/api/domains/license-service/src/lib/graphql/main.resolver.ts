@@ -7,16 +7,18 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-import { LicenseServiceService } from './licenseService.service'
+import { LicenseServiceService } from '../licenseService.service'
+import { GenericLicense } from './genericLicense.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class LicenseServiceResolver {
+export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [])
-  allLicenses(@CurrentUser() user: User) {
+  @Query(() => [GenericLicense])
+  genericLicenses(@CurrentUser() user: User) {
+    console.log('genericLicenses !!!!!!')
+
     return this.licenseServiceService.getAllLicenses(user.nationalId)
   }
-
 }

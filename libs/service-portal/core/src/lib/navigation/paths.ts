@@ -64,6 +64,9 @@ export enum ServicePortalPath {
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
 
+  // Licenses service
+  LicensesRoot = '/min-gogn/skilriki',
+
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in

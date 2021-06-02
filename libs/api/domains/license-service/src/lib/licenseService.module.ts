@@ -1,13 +1,15 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
 import { LicenseServiceService } from './licenseService.service'
-import { LicenseServiceResolver } from './licenseService.resolver'
-import { DrivingLicenseApi } from './client'
+import { LicenseServiceApi } from './client'
+import { MainResolver } from './graphql/main.resolver'
 
 export interface Config {
-  xroadBaseUrl: string
-  xroadClientId: string
-  secret: string
+  xroad: {
+    xroadBaseUrl: string
+    xroadClientId: string
+    drivingLicenseSecret: string
+  }
 }
 
 @Module({})
@@ -16,15 +18,15 @@ export class LicenseServiceModule {
     return {
       module: LicenseServiceModule,
       providers: [
-        LicenseServiceResolver,
+        MainResolver,
         LicenseServiceService,
         {
-          provide: DrivingLicenseApi,
+          provide: LicenseServiceApi,
           useFactory: async () =>
-            new DrivingLicenseApi(
-              config.xroadBaseUrl,
-              config.xroadClientId,
-              config.secret,
+            new LicenseServiceApi(
+              config.xroad.xroadBaseUrl,
+              config.xroad.xroadClientId,
+              config.xroad.drivingLicenseSecret,
             ),
         },
       ],

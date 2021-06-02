@@ -1,1 +1,1 @@
-export * from './lib/licenseService.service'
+export * from './lib/licenseService.module'

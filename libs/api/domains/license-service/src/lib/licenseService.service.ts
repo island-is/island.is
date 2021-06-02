@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { License } from './licenceService.type'
-import { DrivingLicenseApi } from './client'
+import { GenericLicense } from './licenceService.type'
+import { LicenseServiceApi } from './client'
 
 @Injectable()
 export class LicenseServiceService {
-  constructor(private readonly drivingLicense: DrivingLicenseApi) {}
+  constructor(private readonly licenseService: LicenseServiceApi) {}
 
-  async getAllLicenses(nationalId: User['nationalId']): Promise<License[]> {
-    const drivingLicenses = await this.drivingLicense.getDrivingLicenses(
+  async getAllLicenses(
+    nationalId: User['nationalId'],
+  ): Promise<GenericLicense[]> {
+    console.log('GenericLicense query !!!!!!!!!!!!!!!!!!!!!!!')
+    const drivingLicense = await this.licenseService.getGenericDrivingLicense(
       nationalId,
     )
-    return [{'type': 'driving', 'licences': drivingLicenses}]
+    console.log({ drivingLicense })
+    const drivingLicenseTest = { type: 'driving', issuer: 'rls', name: 'Foo' }
+
+    return [drivingLicenseTest]
   }
 }

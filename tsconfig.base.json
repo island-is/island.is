@@ -333,6 +333,9 @@
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/service-portal/licenses": [
+        "libs/service-portal/licenses/src/index.ts"
+      ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],

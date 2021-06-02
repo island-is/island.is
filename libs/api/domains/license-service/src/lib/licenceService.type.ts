@@ -1,4 +1,5 @@
-export type License = {
+export type GenericLicense = {
   type: string
-  licences: any
+  name: string
+  issuer?: string
 }

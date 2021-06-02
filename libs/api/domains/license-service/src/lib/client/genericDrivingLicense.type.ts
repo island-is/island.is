@@ -1,4 +1,4 @@
-export interface DrivingLicenseResponse {
+export interface GenericDrivingLicenseResponse {
   id: number
   nafn: string
   kennitala: string
@@ -51,4 +51,3 @@ export interface DrivingLicenseResponse {
     endurupptakaSkirteinis: number | null
   }
 }
-

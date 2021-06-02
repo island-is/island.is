@@ -1,20 +1,15 @@
 import fetch from 'node-fetch'
-
 import { User } from '@island.is/auth-nest-tools'
 
-import {
-  DrivingLicenseResponse,
-} from './drivingLicense.type'
+import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 
-export class DrivingLicenseApi {
+export class LicenseServiceApi {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly secret: string
 
   constructor(xroadBaseUrl: string, xroadClientId: string, secret: string) {
-    const xroadPath =
-      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-    this.xroadApiUrl = `${xroadBaseUrl}/${xroadPath}`
+    this.xroadApiUrl = xroadBaseUrl
     this.xroadClientId = xroadClientId
     this.secret = secret
   }
@@ -34,10 +29,13 @@ export class DrivingLicenseApi {
     return res.json()
   }
 
-  getDrivingLicenses(
+  getGenericDrivingLicense(
     nationalId: User['nationalId'],
-  ): Promise<DrivingLicenseResponse[]> {
-    return this.requestApi(`api/Okuskirteini/${nationalId}`)
+  ): Promise<GenericDrivingLicenseResponse[]> {
+    const xroadDrivingLicensePath =
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
+    return this.requestApi(
+      `${xroadDrivingLicensePath}/api/Okuskirteini/${nationalId}`,
+    )
   }
-
 }
