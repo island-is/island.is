@@ -137,41 +137,16 @@ export const StepOneForm: React.FC<Props> = (props) => {
               Sakborningur
             </Text>
           </Box>
-          <BlueBox>
-            <DefendantInfo
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              nationalIdErrorMessage={nationalIdErrorMessage}
-              setNationalIdErrorMessage={setNationalIdErrorMessage}
-            />
-
-            <Box marginBottom={2}>
-              <Input
-                data-testid="accusedName"
-                name="accusedName"
-                label="Fullt nafn"
-                placeholder="Fullt nafn"
-                defaultValue={workingCase.accusedName}
-                errorMessage={accusedNameErrorMessage}
-                hasError={accusedNameErrorMessage !== ''}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-                required
-              />
-            </Box>
-            <Input
-              data-testid="accusedAddress"
-              name="accusedAddress"
-              label="Lögheimili/dvalarstaður"
-              placeholder="Lögheimili eða dvalarstaður"
-              defaultValue={workingCase.accusedAddress}
-              errorMessage={accusedAddressErrorMessage}
-              hasError={accusedAddressErrorMessage !== ''}
-              onChange={(event) => setField(event.target)}
-              onBlur={(event) => validateAndSendToServer(event.target)}
-              required
-            />
-          </BlueBox>
+          <DefendantInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            nationalIdErrorMessage={nationalIdErrorMessage}
+            setNationalIdErrorMessage={setNationalIdErrorMessage}
+            accusedNameErrorMessage={accusedNameErrorMessage}
+            setAccusedNameErrorMessage={setAccusedNameErrorMessage}
+            accusedAddressErrorMessage={accusedAddressErrorMessage}
+            setAccusedAddressErrorMessage={setAccusedAddressErrorMessage}
+          />
         </Box>
         <Box component="section" marginBottom={7}>
           <Box
@@ -263,7 +238,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder="Hver stýrir rannsókn málsins?"
                 defaultValue={workingCase.leadInvestigator}
                 errorMessage={leadInvestigatorErrorMessage}
-                hasError={leadInvestigatorErrorMessage !== undefined}
+                hasError={leadInvestigatorErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
                 required

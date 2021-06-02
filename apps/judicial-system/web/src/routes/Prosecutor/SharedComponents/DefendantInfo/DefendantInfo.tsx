@@ -16,6 +16,10 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   nationalIdErrorMessage?: string
   setNationalIdErrorMessage?: React.Dispatch<React.SetStateAction<string>>
+  accusedNameErrorMessage?: string
+  setAccusedNameErrorMessage?: React.Dispatch<React.SetStateAction<string>>
+  accusedAddressErrorMessage?: string
+  setAccusedAddressErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
@@ -24,11 +28,15 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setWorkingCase,
     nationalIdErrorMessage,
     setNationalIdErrorMessage,
+    accusedNameErrorMessage,
+    setAccusedNameErrorMessage,
+    accusedAddressErrorMessage,
+    setAccusedAddressErrorMessage,
   } = props
   const { updateCase } = useCase()
 
   return (
-    <>
+    <BlueBox>
       <Box marginBottom={2}>
         <Text as="h4" variant="h4">
           Kyn{' '}
@@ -137,7 +145,74 @@ const DefendantInfo: React.FC<Props> = (props) => {
           />
         </InputMask>
       </Box>
-    </>
+      <Box marginBottom={2}>
+        <Input
+          data-testid="accusedName"
+          name="accusedName"
+          label="Fullt nafn"
+          placeholder="Fullt nafn"
+          defaultValue={workingCase.accusedName}
+          errorMessage={accusedNameErrorMessage}
+          hasError={accusedNameErrorMessage !== ''}
+          onChange={(event) =>
+            removeTabsValidateAndSet(
+              'accusedName',
+              event,
+              ['empty'],
+              workingCase,
+              setWorkingCase,
+              accusedNameErrorMessage,
+              setAccusedNameErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSendToServer(
+              'accusedName',
+              event.target.value,
+              ['empty'],
+              workingCase,
+              updateCase,
+              setAccusedNameErrorMessage,
+            )
+          }
+          required
+        />
+      </Box>
+      <Input
+        data-testid="accusedAddress"
+        name="accusedAddress"
+        label="Lögheimili/dvalarstaður"
+        placeholder="Lögheimili eða dvalarstaður"
+        defaultValue={workingCase.accusedAddress}
+        errorMessage={accusedAddressErrorMessage}
+        hasError={
+          Boolean(accusedAddressErrorMessage) &&
+          accusedAddressErrorMessage !== ''
+        }
+        onChange={(event) =>
+          removeTabsValidateAndSet(
+            'accusedAddress',
+            event,
+            ['empty'],
+            workingCase,
+            setWorkingCase,
+            accusedAddressErrorMessage,
+            setAccusedAddressErrorMessage,
+          )
+        }
+        onBlur={(event) =>
+          validateAndSendToServer(
+            'accusedAddress',
+            event.target.value,
+            ['empty'],
+            workingCase,
+            updateCase,
+            setAccusedAddressErrorMessage,
+          )
+        }
+        required
+      />
+    </BlueBox>
   )
 }
 
