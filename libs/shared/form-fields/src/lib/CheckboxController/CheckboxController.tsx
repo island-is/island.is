@@ -24,7 +24,7 @@ interface CheckboxControllerProps {
   disabled?: boolean
   error?: string
   id: string
-  labelVariant: CheckboxProps['labelVariant']
+  labelVariant?: CheckboxProps['labelVariant']
   name?: string
   large?: boolean
   spacing?: 0 | 1 | 2

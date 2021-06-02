@@ -18,7 +18,7 @@ interface Props {
   name?: string
   locale?: Locale
   label: string
-  size?: DatePickerProps['size'],
+  size?: DatePickerProps['size']
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
