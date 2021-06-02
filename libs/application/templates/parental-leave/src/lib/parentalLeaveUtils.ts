@@ -29,6 +29,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { Boolean } from '../types'
+import { maxDaysToGiveOrReceive } from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -143,7 +144,7 @@ export const getTransferredDays = (
   let days = 0
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    const requestedDays = requestRights.requestDays
+    const requestedDays = Number(requestRights.requestDays)
 
     days = requestedDays
   }
@@ -153,7 +154,7 @@ export const getTransferredDays = (
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
-    const givenDays = giveRights.giveDays
+    const givenDays = Number(giveRights.giveDays)
 
     days = -givenDays
   }
@@ -165,19 +166,24 @@ export const getTransferredDays = (
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
+  const { answers, externalData } = application
+
+  const selectedChild = getSelectedChild(answers, externalData)
 
   if (!selectedChild) {
     throw new Error('Missing selected child')
   }
 
-  return daysToMonths(
-    selectedChild.remainingDays +
-      getTransferredDays(application, selectedChild),
-  )
+  const useMockData = getValueViaPath(answers, 'mock.useMockData') === YES
+
+  if (useMockData) {
+    return daysToMonths(
+      selectedChild.remainingDays +
+        getTransferredDays(application, selectedChild),
+    )
+  }
+
+  return daysToMonths(selectedChild.remainingDays)
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -315,6 +321,20 @@ export const calculatePeriodPercentage = (
   return Math.min(100, Math.round((months / difference) * 100))
 }
 
+const getOrFallback = (condition: Boolean, value: number | undefined) => {
+  if (condition === YES) {
+    // In the first version of the app, we can't manually change the number of
+    // days requested or given, so we use the maximum number of days in this case
+    if (value === undefined) {
+      return maxDaysToGiveOrReceive
+    }
+
+    return value
+  }
+
+  return 0
+}
+
 export function getApplicationAnswers(answers: Application['answers']) {
   const otherParent = getValueViaPath(
     answers,
@@ -396,17 +416,22 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'requestRights.isRequestingRights',
   ) as Boolean
 
-  const requestDays = getValueViaPath(
-    answers,
-    'requestRights.requestDays',
-  ) as number
+  const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
+    | number
+    | undefined
+
+  const requestDays = getOrFallback(isRequestingRights, requestValue)
 
   const isGivingRights = getValueViaPath(
     answers,
     'giveRights.isGivingRights',
   ) as Boolean
 
-  const giveDays = getValueViaPath(answers, 'giveRights.giveDays') as number
+  const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
+    | number
+    | undefined
+
+  const giveDays = getOrFallback(isGivingRights, giveValue)
 
   const usePersonalAllowanceFromSpouse = getValueViaPath(
     answers,

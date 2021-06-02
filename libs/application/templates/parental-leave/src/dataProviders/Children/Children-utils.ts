@@ -1,6 +1,7 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
+import { ParentalRelations } from '../../constants'
 import {
   getSelectedChild,
   getTransferredDays,
@@ -9,7 +10,6 @@ import {
   ChildInformation,
   ExistingChildApplication,
   PregnancyStatus,
-  ChildrenAndExistingApplications,
   ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 
@@ -43,16 +43,16 @@ export const applicationsToChildInformation = (
           transferredDays *= -1
         }
 
-        if (selectedChild.parentalRelation === 'primary') {
+        if (selectedChild.parentalRelation === ParentalRelations.primary) {
           result.push({
-            parentalRelation: 'secondary',
+            parentalRelation: ParentalRelations.secondary,
             expectedDateOfBirth: selectedChild.expectedDateOfBirth,
             primaryParentNationalRegistryId: application.applicant,
             transferredDays,
           })
         } else {
           result.push({
-            parentalRelation: 'primary',
+            parentalRelation: ParentalRelations.primary,
             expectedDateOfBirth: selectedChild.expectedDateOfBirth,
             transferredDays,
           })
@@ -90,48 +90,58 @@ export const applicationsToExistingChildApplication = (
 
 export const getChildrenFromMockData = (
   application: Application,
-): ChildrenAndExistingApplications => {
+): ChildInformation => {
   const parentalRelation = getValueViaPath(
     application.answers,
-    'useMockedParentalRelation',
+    'mock.useMockedParentalRelation',
   ) as ChildInformation['parentalRelation']
+
   const dob = getValueViaPath(
     application.answers,
-    'useMockedDateOfBirth',
+    'mock.useMockedDateOfBirth',
   ) as string
+
   const primaryParentNationalRegistryId = getValueViaPath(
     application.answers,
-    'useMockedPrimaryParentNationalRegistryId',
+    'mock.useMockedPrimaryParentNationalRegistryId',
   ) as string
+
+  const primaryParentRightsDays = Number(
+    getValueViaPath(
+      application.answers,
+      'mock.useMockedPrimaryParentRights',
+    ) as string,
+  )
+
+  const secondaryParentRightsDays = Number(
+    getValueViaPath(
+      application.answers,
+      'mock.useMockedSecondaryParentRights',
+    ) as string,
+  )
 
   const formattedDOB = `${dob.slice(0, 4)}-${dob.slice(4, 6)}-${dob.slice(
     6,
     8,
   )}`
 
-  // TODO: Be able to configure rights when mocking
   const child: ChildInformation =
-    parentalRelation === 'primary'
+    parentalRelation === ParentalRelations.primary
       ? {
           expectedDateOfBirth: formattedDOB,
-          parentalRelation: 'primary',
-          // Hardcode rights when mocking data for now
-          hasRights: true,
-          remainingDays: 180,
+          parentalRelation: ParentalRelations.primary,
+          hasRights: primaryParentRightsDays > 0,
+          remainingDays: primaryParentRightsDays,
         }
       : {
           expectedDateOfBirth: formattedDOB,
-          parentalRelation: 'secondary',
+          parentalRelation: ParentalRelations.secondary,
           primaryParentNationalRegistryId,
-          // Hardcode rights when mocking data for now
-          hasRights: true,
-          remainingDays: 180,
+          hasRights: secondaryParentRightsDays > 0,
+          remainingDays: secondaryParentRightsDays,
         }
 
-  return {
-    children: [child],
-    existingApplications: [],
-  }
+  return child
 }
 
 export const getChildrenAndExistingApplications = (
@@ -170,7 +180,7 @@ export const getChildrenAndExistingApplications = (
     if (!hasAlreadyAppliedForChild) {
       children.push({
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
-        parentalRelation: 'primary',
+        parentalRelation: ParentalRelations.primary,
       })
     }
   }
