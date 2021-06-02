@@ -62,6 +62,7 @@ export interface UpdateUser {
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
+  INVESTIGATION = 'INVESTIGATION',
 }
 
 export enum CaseState {
