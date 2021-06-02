@@ -32,7 +32,6 @@ target 'IslandApp' do
   pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
   pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
-  pod 'RNReanimated', :path => '../../node_modules/react-native-reanimated'
   pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'

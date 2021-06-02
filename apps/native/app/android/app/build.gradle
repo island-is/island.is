@@ -139,7 +139,7 @@ android {
         applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 3
         versionName "1.0.0"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
@@ -160,26 +160,21 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        // In production, you need to generate your own keystore file.
-        // See: https://reactnative.dev/docs/signed-apk-android
-        // release {
-        //     if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-        //         storeFile file(MYAPP_UPLOAD_STORE_FILE)
-        //         storePassword MYAPP_UPLOAD_STORE_PASSWORD
-        //         keyAlias MYAPP_UPLOAD_KEY_ALIAS
-        //         keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-        //     }
-        // }
+        release {
+            if (project.hasProperty('ISLANDAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(ISLANDAPP_UPLOAD_STORE_FILE)
+                storePassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+                keyAlias ISLANDAPP_UPLOAD_KEY_ALIAS
+                keyPassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // See: https://reactnative.dev/docs/signed-apk-android
-            signingConfig signingConfigs.debug
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

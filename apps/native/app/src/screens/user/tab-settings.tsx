@@ -2,36 +2,35 @@ import {
   Alert,
   TableViewAccessory,
   TableViewCell,
-  TableViewGroup,
+  TableViewGroup
 } from '@island.is/island-ui-native'
 import * as Sentry from '@sentry/react-native'
 import {
   AuthenticationType,
-  supportedAuthenticationTypesAsync,
+  supportedAuthenticationTypesAsync
 } from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
 import React, { useEffect, useRef, useState } from 'react'
-import { Pressable } from 'react-native'
 import {
   Animated,
   Platform,
+  Pressable,
   ScrollView,
   Switch,
-  TouchableWithoutFeedback,
-  View,
+  View
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
-  LocalPackage,
+  LocalPackage
 } from '../../../../node_modules/react-native-code-push'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { useAuthStore } from '../../stores/auth-store'
 import {
+  PreferencesStore,
   preferencesStore,
-  usePreferencesStore,
+  usePreferencesStore
 } from '../../stores/preferences-store'
-import { uiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { config } from '../../utils/config'
 import { useIntl } from '../../utils/intl'
@@ -39,6 +38,34 @@ import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { showPicker } from '../../utils/show-picker'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+
+const PreferencesSwitch = React.memo(
+  ({ name }: { name: keyof PreferencesStore }) => {
+    const theme = useTheme()
+    const [value, setValue] = useState(
+      preferencesStore.getState()[name] as boolean,
+    )
+    const onValueChange = (val: boolean) => {
+      setValue(val)
+    }
+    useEffect(() => {
+      requestAnimationFrame(() => {
+        preferencesStore.setState(() => ({ [name]: value } as any))
+      })
+    }, [value])
+    return (
+      <Switch
+        onValueChange={onValueChange}
+        value={value}
+        thumbColor={Platform.select({ android: theme.color.dark100 })}
+        trackColor={{
+          false: theme.color.dark200,
+          true: theme.color.blue400,
+        }}
+      />
+    )
+  },
+)
 
 export function TabSettings() {
   const authStore = useAuthStore()
@@ -55,16 +82,10 @@ export function TabSettings() {
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
+
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const [pushToken, setPushToken] = useState('loading...')
-  const [notificationsNewDocuments, setNotificationsNewDocuments] = useState(
-    false,
-  )
-  const [appUpdatesNotifications, setAppUpdatesNotifications] = useState(false)
-  const [applicationsNotifications, setApplicationsNotifications] = useState(
-    false,
-  )
   const efficient = useRef<any>({}).current
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
@@ -163,48 +184,20 @@ export function TabSettings() {
             title={intl.formatMessage({
               id: 'settings.communication.newDocumentsNotifications',
             })}
-            accessory={
-              <Switch
-                onValueChange={setNotificationsNewDocuments}
-                value={notificationsNewDocuments}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
+            accessory={<PreferencesSwitch name="notificationsNewDocuments" />}
           />
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.communication.appUpdatesNotifications',
             })}
-            accessory={
-              <Switch
-                onValueChange={setAppUpdatesNotifications}
-                value={appUpdatesNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
+            accessory={<PreferencesSwitch name="notificationsAppUpdates" />}
           />
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.communication.applicationsNotifications',
             })}
             accessory={
-              <Switch
-                onValueChange={setApplicationsNotifications}
-                value={applicationsNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
+              <PreferencesSwitch name="notificationsApplicationStatusUpdates" />
             }
           />
         </TableViewGroup>
@@ -233,15 +226,15 @@ export function TabSettings() {
           />
           <Pressable
             onPress={() => {
-              clearTimeout(efficient.ts);
+              clearTimeout(efficient.ts)
               efficient.count = (efficient.count ?? 0) + 1
               if (efficient.count === 11) {
-                console.log('tab appearance');
-                setAppearanceMode('efficient');
+                console.log('tab appearance')
+                setAppearanceMode('efficient')
               }
               efficient.ts = setTimeout(() => {
-                efficient.count = 0;
-              }, 500);
+                efficient.count = 0
+              }, 500)
             }}
           >
             <TableViewCell

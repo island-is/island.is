@@ -1,9 +1,8 @@
 import {
   Badge,
-  dynamicColor,
   Heading,
-  Skeleton,
   StatusCard,
+  StatusCardSkeleton,
   ViewPager,
 } from '@island.is/island-ui-native'
 import React from 'react'
@@ -95,24 +94,7 @@ export const ApplicationsModule = React.memo(
           {intl.formatMessage({ id: 'home.applicationsStatus' })}
         </Heading>
         {loading ? (
-          <Skeleton
-            active={true}
-            height={183}
-            overlayColor={
-              theme.isDark ? theme.shade.foreground : theme.color.blue400
-            }
-            overlayOpacity={theme.isDark ? 1 : 0.7}
-            backgroundColor={theme.shade.background}
-            style={{
-              borderRadius: 8,
-              marginBottom: 16,
-              borderWidth: 1,
-              borderColor: dynamicColor({
-                dark: theme.shades.dark.shade300,
-                light: theme.color.blue200,
-              }) as any,
-            }}
-          />
+          <StatusCardSkeleton />
         ) : (
           <>
             {count === 0 && (

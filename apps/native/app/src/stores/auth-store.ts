@@ -73,11 +73,13 @@ export const authStore = create<AuthStore>((set, get) => ({
           // Retry the userInfo call
           return this.fetchUserInfo(true)
         }
-        throw new Error('failed to fetch user info')
+        throw new Error('Unauthorized')
+      } else if (res.status === 200) {
+        const userInfo = await res.json()
+        set({ userInfo })
+        return userInfo
       }
-      const userInfo = await res.json()
-      set({ userInfo })
-      return userInfo
+      return undefined;
     })
   },
   async refresh() {
@@ -105,6 +107,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         prompt: 'login',
         prompt_delegations: 'true',
         ui_locales: preferencesStore.getState().locale,
+        externalUserAgent: 'yes',
       },
     })
     if (authorizeResult) {

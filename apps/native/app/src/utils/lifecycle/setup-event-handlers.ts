@@ -8,7 +8,6 @@ import { evaluateUrl, navigateTo } from '../deep-linking'
 import { showLockScreenOverlay } from '../lock-screen-helpers'
 import { isOnboarded } from '../onboarding'
 import SpotlightSearch from 'react-native-spotlight-search'
-import { StatusBar } from 'react-native'
 import { setStatusBar } from '../../contexts/theme-provider'
 
 let backgroundAppLockTimeout: number

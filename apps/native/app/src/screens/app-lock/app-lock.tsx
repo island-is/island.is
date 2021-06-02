@@ -1,5 +1,4 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
-// import { font } from 'apps/native/island-ui/src/utils/font'
 import { selectionAsync } from 'expo-haptics'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -45,7 +44,7 @@ const Title = styled.Text`
 
 const Subtitle = styled.Text`
   ${font({
-    fontSize: 20
+    fontSize: 20,
   })}
   height: 20px;
 `
@@ -232,8 +231,8 @@ AppLockScreen.options = {
   navigationBar: {
     visible: false,
   },
-  // layout: {
-  //   backgroundColor: 'blue',
-  //   componentBackgroundColor: 'hotpink',
-  // },
+  layout: {
+    backgroundColor: 'transparent',
+    componentBackgroundColor: 'transparent',
+  },
 }

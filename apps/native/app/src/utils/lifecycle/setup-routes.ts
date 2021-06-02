@@ -128,6 +128,19 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/webview', (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [{
+          component: {
+            name: ComponentRegistry.WebViewScreen,
+            passProps
+          }
+        }]
+      }
+    })
+  })
+
   addRoute('/e2e/cookie/:cookie', ({ cookie }: any) => {
     const decodedCookie = Base64.decode(cookie);
     authStore.setState({ cookies: decodedCookie });

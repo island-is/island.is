@@ -5,7 +5,8 @@
     "types": ["node"]
   },
   "files": [
-    "../../../node_modules/@types/styled-components-react-native/index.d.ts",
+    "../node_modules/@types/styled-components-react-native/index.d.ts",
+    "./src/react-native.d.ts",
     "./src/styled-components.d.ts"
   ],
   "exclude": ["**/*.spec.ts", "**/*.spec.tsx"],

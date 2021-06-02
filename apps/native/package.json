@@ -38,7 +38,6 @@
     "react-native-navigation": "7.14.0",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkit-wallet": "0.1.4",
-    "react-native-reanimated": "2.1.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-spotlight-search": "2.0.0",
     "react-native-ultimate-config": "3.3.4",
@@ -50,6 +49,7 @@
   },
   "devDependencies": {
     "@types/react-native": "0.64.5",
+    "@types/styled-components-react-native": "5.1.1",
     "detox": "18.13.0",
     "detox-recorder": "1.0.151",
     "jest": "26.6.3",
