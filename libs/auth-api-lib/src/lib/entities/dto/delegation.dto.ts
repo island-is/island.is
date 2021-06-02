@@ -5,16 +5,10 @@ export class DelegationDTO {
   @IsString()
   @ApiProperty()
   fromDisplayName!: string
+
   @IsString()
   @ApiProperty()
   toNationalId!: string
-  @IsDateString()
-  @ApiProperty()
-  validFrom!: Date
-  @IsOptional()
-  @IsDateString()
-  @ApiProperty()
-  validTo?: Date
 
   @IsOptional()
   @ApiProperty()

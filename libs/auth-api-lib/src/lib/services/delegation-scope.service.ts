@@ -21,10 +21,18 @@ export class DelegationScopeService {
     return this.delegationScopeModel.create({ ...delegationScope })
   }
 
-  async createMany(delegationId: string, scopes: string[]): Promise<any> {
+  // TODO: Fix this before creating a PR
+  async createMany(
+    delegationId: string,
+    scopes: string[],
+    validFrom: Date = new Date(),
+    validTo: Date = new Date(),
+  ): Promise<any> {
     const delegationScopes: DelegationScopeDTO[] = scopes.map((scope) => ({
-      delegationId,
+      delegationId: delegationId,
       scopeName: scope,
+      validFrom: validFrom,
+      validTo: validTo,
     }))
     return this.delegationScopeModel.bulkCreate(delegationScopes)
   }
