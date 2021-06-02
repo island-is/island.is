@@ -28,8 +28,12 @@ export class PaymentResolver {
   }
 
   @Query(() => PaymentCatalogResponse)
-  paymentCatalogPerformingOrg(@Args('performingOrganizationID') performingOrganizationID: string): Promise<PaymentCatalogResponse> {
-    console.log('resolver param: ' +performingOrganizationID)
-    return this.PaymentService.getCatalogByPerformingOrg(performingOrganizationID)
+  paymentCatalogPerformingOrg(
+    @Args('performingOrganizationID') performingOrganizationID: string,
+  ): Promise<PaymentCatalogResponse> {
+    console.log('resolver param: ' + performingOrganizationID)
+    return this.PaymentService.getCatalogByPerformingOrg(
+      performingOrganizationID,
+    )
   }
 }

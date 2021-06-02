@@ -5,4 +5,3 @@ export { EntitlementTypesProvider } from './EntitlementTypesProvider'
 export { EligibilityProvider } from './EligibilityProvider'
 export { JuristictionProvider } from './JuristictionProvider'
 export { PaymentCatalogProvider } from './PaymentCatalogProvider'
-

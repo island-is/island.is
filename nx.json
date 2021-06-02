@@ -109,10 +109,10 @@
     "api-domains-national-registry": {
       "tags": []
     },
-    "api-domains-payment": {
+    "api-domains-national-registry-x-road": {
       "tags": []
     },
-    "api-domains-national-registry-x-road": {
+    "api-domains-payment": {
       "tags": []
     },
     "api-domains-regulations": {

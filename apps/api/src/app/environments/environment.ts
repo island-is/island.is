@@ -195,6 +195,11 @@ const prodConfig = {
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
   },
+  paymentDomain: {
+    username: 'isl_aranja_p',
+    password: 'vogur.123',
+    url: 'https://tbrws-s.hysing.is',
+  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

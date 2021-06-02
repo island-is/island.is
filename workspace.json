@@ -1103,33 +1103,6 @@
         }
       }
     },
-    "api-domains-payment": {
-      "root": "libs/api/domains/payment",
-      "sourceRoot": "libs/api/domains/payment/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/payment/tsconfig.lib.json",
-              "libs/api/domains/payment/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/payment/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/domains/payment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/api/domains/payment"]
-        }
-      }
-    },
     "api-domains-national-registry-x-road": {
       "root": "libs/api/domains/national-registry-x-road",
       "sourceRoot": "libs/api/domains/national-registry-x-road/src",
@@ -1157,6 +1130,33 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
+        }
+      }
+    },
+    "api-domains-payment": {
+      "root": "libs/api/domains/payment",
+      "sourceRoot": "libs/api/domains/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/payment/tsconfig.lib.json",
+              "libs/api/domains/payment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/payment"]
         }
       }
     },
@@ -2817,33 +2817,6 @@
         }
       }
     },
-    "clients-payment": {
-      "root": "libs/clients/payment",
-      "sourceRoot": "libs/clients/payment/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/payment/tsconfig.lib.json",
-              "libs/clients/payment/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/clients/payment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/payment"]
-        }
-      }
-    },
     "clients-national-registry-v2": {
       "root": "libs/clients/national-registry/v2",
       "sourceRoot": "libs/clients/national-registry/v2/src",
@@ -2868,6 +2841,33 @@
           "options": {
             "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
+        }
+      }
+    },
+    "clients-payment": {
+      "root": "libs/clients/payment",
+      "sourceRoot": "libs/clients/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/payment/tsconfig.lib.json",
+              "libs/clients/payment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/payment"]
         }
       }
     },
