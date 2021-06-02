@@ -12,11 +12,11 @@ on:
       - docker-build-*
   workflow_dispatch:
   create:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - labeled
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/

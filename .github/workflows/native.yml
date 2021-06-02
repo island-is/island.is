@@ -1,8 +1,8 @@
 name: Native
 
 on:
-  push:
-    branches: [ mobile-app/** ]
+  # push:
+  #   branches: [ mobile-app/** ]
   workflow_dispatch:
 
 jobs:

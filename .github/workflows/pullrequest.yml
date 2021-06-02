@@ -1,7 +1,7 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
+  # pull_request: {}
   workflow_dispatch: {}
 
 jobs:
