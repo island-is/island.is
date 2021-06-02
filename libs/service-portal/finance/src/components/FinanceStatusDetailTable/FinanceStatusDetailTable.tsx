@@ -49,36 +49,38 @@ const FinanceStatusDetailTable: FC<Props> = ({
               </T.HeadData>
             ))}
             <T.HeadData>
-              <Box className={styles.buttonWrap}>
+              <Box className={styles.buttonTd}>
                 <Button
-                  circle
                   colorScheme="default"
-                  icon="document"
+                  icon="arrowForward"
                   iconType="filled"
                   onClick={function noRefCheck() {}}
                   preTextIconType="filled"
                   size="small"
-                  title="Sækja Excel"
                   type="button"
-                  variant="primary"
-                />
-                <Button
-                  circle
-                  colorScheme="default"
-                  icon="reader"
-                  iconType="filled"
-                  onClick={() =>
-                    exportGjoldSundurlidunCSV(
-                      financeStatusDetails,
-                      organization?.chargeTypes?.[0].name || 'details',
-                    )
-                  }
-                  preTextIconType="filled"
-                  size="small"
-                  title="Sækja CSV"
-                  type="button"
-                  variant="primary"
-                />
+                  variant="text"
+                >
+                  Sækja Excel
+                </Button>
+                <div className={styles.btnSpacer}>
+                  <Button
+                    colorScheme="default"
+                    icon="arrowForward"
+                    iconType="filled"
+                    onClick={() =>
+                      exportGjoldSundurlidunCSV(
+                        financeStatusDetails,
+                        organization?.chargeTypes?.[0].name || 'details',
+                      )
+                    }
+                    preTextIconType="filled"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    Sækja CSV
+                  </Button>
+                </div>
               </Box>
             </T.HeadData>
           </T.Row>
@@ -103,15 +105,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   </div>
                 </T.Data>
               ))}
-              <T.Data>
-                {row.payID ? (
-                  <Box className={styles.buttonTd} display="flex">
-                    <ArrowLink href={`https://TODO_PAYMENT_LINK/${row.payID}`}>
-                      Greiða
-                    </ArrowLink>
-                  </Box>
-                ) : null}
-              </T.Data>
+              <T.Data></T.Data>
             </T.Row>
           ))}
         </T.Body>

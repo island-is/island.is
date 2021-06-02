@@ -20,3 +20,8 @@ export const buttonWrap = style({
   justifyContent: 'space-around',
   display: 'flex',
 })
+
+export const btnSpacer = style({
+  marginLeft: theme.spacing[2],
+  display: 'inline-flex',
+})

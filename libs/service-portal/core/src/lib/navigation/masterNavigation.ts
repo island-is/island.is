@@ -172,7 +172,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FinanceStatus,
         children: [
           {
             name: defineMessage({

@@ -61,13 +61,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     },
   })
 
-  if (financeStatusData?.organizations) {
-    console.log(
-      'exportGreidslustadaXSLX',
-      exportGreidslustadaXSLX(financeStatusData),
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
