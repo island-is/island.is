@@ -202,12 +202,6 @@ const prodConfig = {
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
-  temporaryVoterRegistry: {
-    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
-  },
-  partyLetterRegistry: {
-    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
-  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
