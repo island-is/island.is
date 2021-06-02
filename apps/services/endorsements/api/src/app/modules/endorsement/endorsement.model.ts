@@ -47,7 +47,7 @@ export class Endorsement extends Model<Endorsement> {
   })
   endorsementListId!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: EndorsementListOpen, required: false })
   @BelongsTo(() => EndorsementList, 'endorsementListId')
   endorsementList?: EndorsementListOpen
 
