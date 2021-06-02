@@ -84,6 +84,9 @@ jobs:
           echo "CodePush deployment is $CODEPUSH_DEPLOYMENT"
           echo CODEPUSH_DEPLOYMENT=$CODEPUSH_DEPLOYMENT >> $GITHUB_ENV
 
+      - name: install AppCenter cli
+        run: npm install -g appcenter-cli
+
       - name: Build and publish bundle iOS
         run: |
           ./codepush-release.sh ios
