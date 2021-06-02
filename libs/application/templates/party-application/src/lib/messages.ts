@@ -46,7 +46,7 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'pa.application:disclaimerSection.descrtipion.p1',
       defaultMessage:
-        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang  að söfnun meðmælanna ásamt þeim stjórnmálaflokki sem stofnar viðkomandi söfnun. Óheimilt er að dreifa meðmælunum eða þeim upplýsingum sem þar koma fram.',
+        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang að söfnum meðmælanna ásamt þeim stjórnmálasamtökum sem stofna söfnunina. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Description part one',
     },
     checkboxLabel: {
@@ -401,25 +401,25 @@ export const m: MessageDir = {
     },
     messagePt1: {
       id: 'pa.application:endorsement.disclaimer.message.pt1',
-      defaultMessage: 'Ég undirritaður kjósandi í',
+      defaultMessage: 'Ég kjósandi í',
       description: 'Part 1 of signature disclaimer',
     },
     messagePt2: {
       id: 'pa.application:endorsement.disclaimer.message.pt2',
       defaultMessage:
-        'lýsi hér með yfir stuðningi eftirfarandi lista vegna alþingiskosninganna 25. september 2021.',
+        'lýsi hér með yfir stuðningi við neðangreindan lista vegna alþingiskosninganna 25.september 2021.',
       description: 'Part 2 of signature disclaimer',
     },
     descriptionPt1: {
       id: 'pa.application:endorsement.disclaimer.description.pt1',
       defaultMessage:
-        'Með því að mæla með framboði tiltekinna stjórnmálasamtaka til tilgreinds kjördæmis samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, yfirkjörstjórn í kjördæmi, landskjörstjórn og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt, heimilsfang og kjördæmi. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Part 1 of message disclaimer',
     },
     descriptionPt2: {
       id: 'pa.application:endorsement.disclaimer.description.pt2',
       defaultMessage:
-        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+        'Þjóðskrá Íslands er heimilt að samkeyra upplýsingar úr meðmælendalista við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga.',
       description: 'Part 2 of message disclaimer',
     },
     partyLetter: {

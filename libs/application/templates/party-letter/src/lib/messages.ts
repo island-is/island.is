@@ -48,9 +48,9 @@ export const m: MessageDir = {
       description: 'External data island.is subtitle',
     },
     agree: {
-      id: 'ple.application:island.agree',
-      defaultMessage: 'Lorem ipsum dolar sit amet, consectetur adipiscing elit',
-      description: 'External data island.is subtitle',
+      id: 'ple.application:terms.checkbox',
+      defaultMessage: 'Ég veiti umboð',
+      description: 'Agree terms and conditions',
     },
   }),
   collectEndorsements: defineMessages({
@@ -324,13 +324,14 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'ple.application:endorsement.form.descripton.pt.one',
       defaultMessage:
-        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, dómsmálaráðuneytinu og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt og heimilsfang. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Disclaimer description, first paragraph',
     },
     descriptionPt2: {
       id: 'ple.application:endorsement.form.descripton.pt.two',
       defaultMessage:
         'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+
       description: 'Disclaimer description, second paragraph',
     },
     agreeTermsLabel: {

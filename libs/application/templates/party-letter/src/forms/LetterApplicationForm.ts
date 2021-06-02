@@ -42,12 +42,13 @@ export const LetterApplicationForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveTermsAndConditions',
           title: m.externalDataSection.title,
-          subTitle: m.externalDataSection.subTitle,
+          subTitle: m.externalDataSection.subtitle,
+          checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
             buildDataProviderItem({
               id: 'dmr',
               type: undefined,
-              title: m.externalDataSection.dmrTitle,
+              title: '',
               subTitle: m.externalDataSection.dmrSubtitle,
             }),
             buildDataProviderItem({
