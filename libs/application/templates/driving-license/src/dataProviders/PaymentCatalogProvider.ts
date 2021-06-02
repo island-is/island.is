@@ -6,17 +6,22 @@ import {
 } from '@island.is/application/core'
 import { PaymentCatalog } from '../types/schema'
 
-const searchCorrectCatalog = (keySearch: string, searchJSON: string): string => {
-  if(keySearch == "" || searchJSON == "") { return searchJSON }
+const searchCorrectCatalog = (
+  keySearch: string,
+  searchJSON: string,
+): string => {
+  if (keySearch == '' || searchJSON == '') {
+    return searchJSON
+  }
 
   var resultCatalog = JSON.parse(searchJSON)
-  for(var item in resultCatalog) {
-      if(resultCatalog[item].chargeItemCode == keySearch) {
-        console.log('Correct catalog found: ' + resultCatalog[item])
-        return resultCatalog[item]
-      }
+  for (var item in resultCatalog) {
+    if (resultCatalog[item].chargeItemCode == keySearch) {
+      console.log('Correct catalog found: ' + resultCatalog[item])
+      return resultCatalog[item]
+    }
   }
-  return ""
+  return ''
 }
 
 export class PaymentCatalogProvider extends BasicDataProvider {
@@ -38,8 +43,8 @@ export class PaymentCatalogProvider extends BasicDataProvider {
     `
     /// THIS NEEDS REFACTORING
     console.log(application.typeId)
-    let chargeItemCode = ""
-    if(application.typeId == "DrivingLicense") chargeItemCode = "AY110"
+    let chargeItemCode = ''
+    if (application.typeId == 'DrivingLicense') chargeItemCode = 'AY110'
 
     return this.useGraphqlGateway(query, {
       performingOrganizationID: '6509142520',
@@ -50,15 +55,15 @@ export class PaymentCatalogProvider extends BasicDataProvider {
         if (response.errors) {
           return this.handleError()
         }
-        console.log(response.data.paymentCatalogPerformingOrg != "")
-        if(response.data.paymentCatalogPerformingOrg != "") {
+        console.log(response.data.paymentCatalogPerformingOrg != '')
+        if (response.data.paymentCatalogPerformingOrg != '') {
           var correctCatalog = searchCorrectCatalog(
-            chargeItemCode, 
-            JSON.stringify(response.data.paymentCatalogPerformingOrg.item
-          ))
+            chargeItemCode,
+            JSON.stringify(response.data.paymentCatalogPerformingOrg.item),
+          )
           console.log(correctCatalog)
 
-          if(correctCatalog != "") {
+          if (correctCatalog != '') {
             return Promise.resolve(correctCatalog)
           }
         }

@@ -17,7 +17,11 @@ import {
   FormModes,
   DefaultEvents,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile, PaymentCatalog } from '../types/schema'
+import {
+  NationalRegistryUser,
+  UserProfile,
+  PaymentCatalog,
+} from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -328,15 +332,14 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: 'money',
-              value: ({ externalData }) => 
-                {
-                  /// needs a lot of refactoring
-                  let str = (Object as any).values(externalData.payment.data)
-                  console.log(str[0])
-                  console.log(externalData.payment?.data)
-                  /// more refactoring
-                  return (str[1].toString() + " kr.")
-                },
+              value: ({ externalData }) => {
+                /// needs a lot of refactoring
+                let str = (Object as any).values(externalData.payment.data)
+                console.log(str[0])
+                console.log(externalData.payment?.data)
+                /// more refactoring
+                return str[1].toString() + ' kr.'
+              },
             }),
             buildDividerField({}),
             buildSubmitField({
