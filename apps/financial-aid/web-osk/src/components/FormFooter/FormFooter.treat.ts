@@ -15,7 +15,6 @@ export const dividerContainer = style({
 })
 
 export const footerContainer = style({
-  // borderTop: `${theme.border.width.large}px solid ${theme.color.purple100}`,
   paddingTop: theme.spacing[3],
   paddingBottom: theme.spacing[3],
   paddingLeft: theme.spacing[3],
@@ -48,4 +47,8 @@ export const mobilePreviosButton = style({
       display: 'none',
     },
   },
+})
+
+export const oneButton = style({
+  flexDirection: 'row-reverse',
 })

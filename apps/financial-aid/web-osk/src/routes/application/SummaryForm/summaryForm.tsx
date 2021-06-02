@@ -315,7 +315,7 @@ const SummaryForm = () => {
           justifyContent="spaceBetween"
           alignItems="flexStart"
           paddingY={[4, 4, 5]}
-          marginBottom={10}
+          marginBottom={[2, 2, 10]}
         >
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>

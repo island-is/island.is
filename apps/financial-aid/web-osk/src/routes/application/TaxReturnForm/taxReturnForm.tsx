@@ -68,7 +68,7 @@ const TaxReturnForm = () => {
             ),
           }}
         >
-          <Text marginBottom={[4, 4, 5]}>
+          <Text marginBottom={[3, 3, 5]}>
             Á vef Skattsins finnur þú{' '}
             <a href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/">
               leiðbeiningar

@@ -43,7 +43,7 @@ const IncomeFilesForm = () => {
         </Text>
 
         <div className={styles.fileContainer}>
-          <Box className={styles.files} marginBottom={2}>
+          <Box className={styles.files} marginBottom={[1, 1, 2]}>
             <InputFileUpload
               fileList={[]}
               header="Dragðu gögn hingað"

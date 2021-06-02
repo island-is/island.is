@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, Input } from '@island.is/island-ui/core'
+import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -78,7 +78,8 @@ const StudentForm = () => {
             Þú þarft að svara
           </Text>
         </div>
-        <div
+        <Box
+          marginTop={1}
           className={cn({
             [`${styles.inputContainer}`]: true,
             [`${styles.inputAppear}`]:
@@ -97,7 +98,7 @@ const StudentForm = () => {
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => setCustomEducation(event.target.value)}
           />
-        </div>
+        </Box>
       </FormContentContainer>
 
       <FormFooter

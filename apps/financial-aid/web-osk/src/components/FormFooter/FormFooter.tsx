@@ -1,16 +1,9 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  Icon,
-  Text,
-  GridColumn,
-  ButtonProps,
-  Divider,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, ButtonProps } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './FormFooter.treat'
+import cn from 'classnames'
 interface Props {
   hidePreviousButton?: boolean
   previousIsDestructive?: boolean
@@ -34,15 +27,13 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       <Box className={styles.dividerContainer} />
 
       <div className={styles.footerContainer}>
-        {/* <GridColumn
-        span={['9/9', '9/9', '7/9', '7/9']}
-        offset={['0', '0', '1/9', '1/9']}
-      > */}
-
         <Box
           display="flex"
           justifyContent="spaceBetween"
           alignItems="flexStart"
+          className={cn({
+            [`${styles.oneButton}`]: props.hidePreviousButton,
+          })}
         >
           {!props.hidePreviousButton && (
             <>
@@ -121,8 +112,6 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             </div>
           )}
         </Box>
-        {/* 
-      </GridColumn> */}
       </div>
     </>
   )

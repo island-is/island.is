@@ -24,9 +24,9 @@ const FormLayout: React.FC<PageProps> = ({
     if (activeSection !== undefined) {
       document.title = 'Umsókn - ' + sections[activeSection].name ?? ''
     } else {
-      document.title = 'Umsókn'
+      document.title = 'Umsókn um fjárhagsaðstoð'
     }
-  }, [])
+  }, [activeSection])
 
   return children ? (
     <Box

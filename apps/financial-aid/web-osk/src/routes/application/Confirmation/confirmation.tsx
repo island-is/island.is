@@ -38,23 +38,11 @@ const Confirmation = () => {
 
   const otherOptions = [
     {
-      text: 'Umsóknin',
+      text: 'Upplýsingar um fjárhagsaðstoð',
       url: '/',
     },
     {
       text: 'Hafðu samband',
-      url: '/',
-    },
-    {
-      text: 'Áfrýja niðurstöðu',
-      url: '/',
-    },
-    {
-      text: 'Sendu okkur skilaboð',
-      url: '/',
-    },
-    {
-      text: 'Sjá þjónustumiðstöðina mína',
       url: '/',
     },
   ]
@@ -66,7 +54,7 @@ const Confirmation = () => {
           Staðfesting
         </Text>
 
-        <Box marginBottom={[3, 3, 5]}>
+        <Box marginBottom={[4, 4, 5]}>
           <AlertMessage
             type="success"
             title="Umsókn þín um fjárhagsaðstoð hjá Hafnarfirði er móttekin"
@@ -76,8 +64,8 @@ const Confirmation = () => {
         <Text as="h2" variant="h3" marginBottom={2}>
           Hér eru næstu skref
         </Text>
-        <Box padding="gutter" marginBottom={[1, 1, 3]}>
-          <BulletList type={'ul'}>
+        <Box marginBottom={[4, 4, 5]}>
+          <BulletList type={'ul'} space={2}>
             {nextSteps.map((item) => {
               return <Bullet>{item}</Bullet>
             })}
@@ -87,8 +75,8 @@ const Confirmation = () => {
         <Text as="h2" variant="h3" marginBottom={2}>
           Frekari aðgerðir í boði
         </Text>
-        <Box padding="gutter" marginBottom={[1, 1, 3]}>
-          <BulletList type={'ul'}>
+        <Box marginBottom={[4, 4, 5]}>
+          <BulletList type={'ul'} space={2}>
             {otherOptions.map((item) => {
               return (
                 <Bullet>
@@ -111,7 +99,7 @@ const Confirmation = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousIsDestructive={true}
+        hidePreviousButton={true}
         nextButtonText="Sjá stöðu umsóknar"
         nextButtonIcon="open"
         onNextButtonClick={() => {

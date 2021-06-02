@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, BulletList, Bullet } from '@island.is/island-ui/core'
+import { Text, BulletList, Bullet, Box } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -49,7 +49,7 @@ const IncomeForm = () => {
       activeSubSection={navigation?.activeSubSectionIndex}
     >
       <FormContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[2, 2, 4]}>
+        <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
         </Text>
 
@@ -79,14 +79,16 @@ const IncomeForm = () => {
           </Text>
         </div>
 
-        <Text as="h2" variant="h3" marginBottom={2} marginTop={[4, 4, 5]}>
+        <Text as="h2" variant="h3" marginBottom={2} marginTop={[3, 3, 5]}>
           Dæmi um tekjur
         </Text>
-        <BulletList type={'ul'} space={2}>
-          {examples.map((item) => {
-            return <Bullet>{item}</Bullet>
-          })}
-        </BulletList>
+        <Box marginBottom={5}>
+          <BulletList type={'ul'} space={2}>
+            {examples.map((item) => {
+              return <Bullet>{item}</Bullet>
+            })}
+          </BulletList>
+        </Box>
       </FormContentContainer>
 
       <FormFooter

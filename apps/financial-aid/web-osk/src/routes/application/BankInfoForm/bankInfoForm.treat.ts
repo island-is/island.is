@@ -5,6 +5,7 @@ export const bankInformationContainer = style({
   display: 'block',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
+  marginBottom: theme.spacing[5],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       display: 'grid',
