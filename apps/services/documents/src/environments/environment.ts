@@ -15,11 +15,11 @@ const prodConfig = {
   port: 3333,
   audit: {
     defaultNamespace: '@island.is/documents',
-    groupName: process.env.AUDIT_GROUP_NAME,
+    groupName: process.env.AUDIT_GROUP_NAME!,
     serviceName: 'services-documents',
   },
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
     audience: '@island.is',
   },
 }
