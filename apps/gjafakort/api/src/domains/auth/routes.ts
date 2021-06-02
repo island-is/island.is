@@ -58,7 +58,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
     return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
   }
 
-  const { yearBornLimit } = getVersionConfiguration()
+  const { yearBornLimit } = await getVersionConfiguration()
 
   const yearBorn = new Date(
     kennitala.info(user.kennitala).birthday,

@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { UserIdentity } from '../entities/models/user-identity.model'
