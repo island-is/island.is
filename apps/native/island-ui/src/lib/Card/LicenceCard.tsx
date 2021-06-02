@@ -21,6 +21,7 @@ const Host = styled.View`
   border-radius: 16px;
   overflow: hidden;
 `
+
 const BackgroundImage = styled.ImageBackground<{ color: any }>`
   position: absolute;
   left: 0;

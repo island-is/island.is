@@ -5,53 +5,30 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View<{ color: any }>`
-  padding: 0 0 32px;
+  padding: 0 0 24px;
   margin-bottom: 30px;
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   width: 283px;
-  min-height: 460px;
+  min-height: 406px;
   background-color: ${dynamicColor((props) => props.color)};
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
 const Image = styled.Image`
   width: 100%;
-  margin-bottom: -35px;
-`
-
-const Number = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 20,
-  })}
-  text-align: center;
-`
-
-const TextWrap = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  height: ${({ theme }) => theme.spacing[4]}px;
-  width: ${({ theme }) => theme.spacing[4]}px;
-  margin: 0 auto;
-  border: ${({ theme }) => `1px solid ${theme.color.purple300}`};
-  border-radius: ${({ theme }) => theme.spacing[4]}px;
-`
+  height: 262px;
+`;
 
 const Description = styled.Text`
-  padding: 16px 27px 0;
+  padding: 0 24px 0;
 
   ${font({
     fontWeight: '300',
     lineHeight: 24,
   })}
-
-  text-align: center;
 `
 
 interface CardProps {
-  number: string
   description?: string
   backgroundColor: { light: string; dark: string }
   imgSrc?: ImageSourcePropType
@@ -59,7 +36,6 @@ interface CardProps {
 }
 
 export function WelcomeCard({
-  number = '1',
   description,
   imgSrc,
   backgroundColor,
@@ -68,10 +44,7 @@ export function WelcomeCard({
   const color = backgroundColor
   return (
     <Host color={color} style={style}>
-      {imgSrc && <Image source={imgSrc} />}
-      <TextWrap>
-        <Number>{number}</Number>
-      </TextWrap>
+      {imgSrc && <Image source={imgSrc} resizeMode="cover" />}
       <Description>{description}</Description>
     </Host>
   )
