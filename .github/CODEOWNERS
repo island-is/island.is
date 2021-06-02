@@ -125,8 +125,8 @@
 /libs/application/templates/document-provider-onboarding/                                     @island-is/advania
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /apps/services/xroad-collector/                                                               @island-is/advania
-/apps/services/documents                                                                      @island-is/advania
-/libs/clients/document-provider                                                               @island-is/advania
+/apps/services/documents                                                                      @island-is/advania @island-is/core
+/libs/clients/document-provider                                                               @island-is/advania @island-is/core
 
 /apps/skilavottord/                                                                           @island-is/deloitte
 /libs/application/templates/health-insurance/                                                 @island-is/deloitte
