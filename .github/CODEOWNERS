@@ -18,7 +18,7 @@
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
 /apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
@@ -30,33 +30,33 @@
 /*/gjafakort/                                                                                 @island-is/kosmos-kaos
 /libs/service-portal/education/                                                               @island-is/kosmos-kaos
 /libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
-
-/apps/application-system/                                                                     @island-is/aranja
-/apps/reference-next-app/                                                                     @island-is/aranja
-/libs/api/domains/application/                                                                @island-is/aranja
-/libs/api/domains/translations/                                                               @island-is/aranja
-/libs/application/core/                                                                       @island-is/aranja
-/libs/application/data-providers/                                                             @island-is/aranja
-/libs/application/graphql/                                                                    @island-is/aranja
-/libs/application/ui-components/                                                              @island-is/aranja
-/libs/application/ui-fields/                                                                  @island-is/aranja
-/libs/application/ui-shell/                                                                   @island-is/aranja
-/libs/application/template-api-modules/                                                       @island-is/aranja
-/libs/application/template-loader/                                                            @island-is/aranja
-/libs/application/templates/meta-application/                                                 @island-is/aranja
-/libs/application/templates/parental-leave/                                                   @island-is/aranja
-/libs/application/templates/reference-template/                                               @island-is/aranja
-/libs/contentful-extensions/                                                                  @island-is/aranja @island-is/kosmos-kaos
-/libs/contentful-extensions/translation/                                                      @island-is/aranja
 /libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
 /libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
-/libs/localization/                                                                           @island-is/aranja
-/libs/utils/api/                                                                              @island-is/aranja
-/libs/utils/shared/                                                                           @island-is/aranja
-/libs/clients/vmst/                                                                           @island-is/aranja
-/libs/shared/form-fields/                                                                     @island-is/aranja
 
-/libs/service-portal/settings/access-control                                                  @island-is/vice-versa @island-is/aranja
+/apps/reference-next-app/                                                                     @island-is/aranja-core
+/libs/api/domains/translations/                                                               @island-is/aranja-core
+/libs/contentful-extensions/                                                                  @island-is/aranja-core @island-is/kosmos-kaos
+/libs/contentful-extensions/translation/                                                      @island-is/aranja-core
+/libs/localization/                                                                           @island-is/aranja-core
+/libs/utils/api/                                                                              @island-is/aranja-core
+/libs/utils/shared/                                                                           @island-is/aranja-core
+/libs/service-portal/settings/access-control                                                  @island-is/aranja-core @island-is/vice-versa
+
+/apps/application-system/                                                                     @island-is/aranja-applications
+/libs/api/domains/application/                                                                @island-is/aranja-applications
+/libs/application/core/                                                                       @island-is/aranja-applications
+/libs/application/data-providers/                                                             @island-is/aranja-applications
+/libs/application/graphql/                                                                    @island-is/aranja-applications
+/libs/application/ui-components/                                                              @island-is/aranja-applications
+/libs/application/ui-fields/                                                                  @island-is/aranja-applications
+/libs/application/ui-shell/                                                                   @island-is/aranja-applications
+/libs/application/template-api-modules/                                                       @island-is/aranja-applications
+/libs/application/template-loader/                                                            @island-is/aranja-applications
+/libs/application/templates/meta-application/                                                 @island-is/aranja-applications
+/libs/application/templates/parental-leave/                                                   @island-is/aranja-applications
+/libs/application/templates/reference-template/                                               @island-is/aranja-applications
+/libs/clients/vmst/                                                                           @island-is/aranja-applications
+/libs/shared/form-fields/                                                                     @island-is/aranja-applications
 
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
