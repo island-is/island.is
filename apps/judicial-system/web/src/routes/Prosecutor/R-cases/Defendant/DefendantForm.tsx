@@ -6,10 +6,11 @@ import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber
 
 interface Props {
   workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
 }
 
 const DefendantForm: React.FC<Props> = (props) => {
-  const { workingCase } = props
+  const { workingCase, setWorkingCase } = props
 
   return (
     <FormContentContainer>
@@ -24,6 +25,12 @@ const DefendantForm: React.FC<Props> = (props) => {
             Málsnúmer lögreglu
           </Text>
         </Box>
+        <LokeCaseNumber
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          policeCaseNumberErrorMessage={'' /**TODO */}
+          setPoliceCaseNumberErrorMessage={undefined /**TODO */}
+        />
       </Box>
     </FormContentContainer>
   )
