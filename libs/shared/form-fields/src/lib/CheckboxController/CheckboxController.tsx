@@ -9,6 +9,8 @@ import {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
+type CheckboxProps = React.ComponentProps<typeof Checkbox>
+
 interface Option {
   value: string
   label: React.ReactNode
@@ -22,8 +24,10 @@ interface CheckboxControllerProps {
   disabled?: boolean
   error?: string
   id: string
+  labelVariant: CheckboxProps['labelVariant']
   name?: string
   large?: boolean
+  spacing?: 0 | 1 | 2
   strong?: boolean
   options?: Option[]
   split?: '1/1' | '1/2' | '1/3' | '1/4'
@@ -33,6 +37,8 @@ interface CheckboxControllerProps {
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
   disabled = false,
+  labelVariant,
+  spacing = 2,
   error,
   id,
   name = id,
@@ -73,7 +79,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
           {options.map((option, index) => (
             <GridColumn
               span={['1/1', split]}
-              paddingBottom={2}
+              paddingBottom={spacing}
               key={`option-${option.value}`}
             >
               <Checkbox
@@ -90,6 +96,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                 name={`${id}[${index}]`}
                 label={option.label}
                 strong={strong}
+                labelVariant={labelVariant}
                 subLabel={option.subLabel}
                 value={option.value}
                 hasError={error !== undefined}
