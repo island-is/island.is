@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { Charge, ChargeResponse, PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import { Injectable } from '@nestjs/common'
+import { Charge, PaymentAPI } from '@island.is/clients/payment'
+import { ChargeResult } from './api-domains-payment.types'
 
 @Injectable()
 export class PaymentService {
@@ -7,11 +8,22 @@ export class PaymentService {
     private readonly paymentApi: PaymentAPI
   ) {}
 
-  async createCharge(chargeParameters: Charge): Promise<ChargeResponse> {
-    const charge = await this.paymentApi.createCharge(chargeParameters)
+  async createCharge(chargeParameters: Charge): Promise<ChargeResult> {
+    try {
+      const charge = await this.paymentApi.createCharge(chargeParameters)
 
-    console.log(charge)
+      console.log(charge)
 
-    return charge
+      return {
+        success: true,
+        error: null,
+        data: charge
+      }
+    } catch (e) {
+      return {
+        success: false,
+        error: e,
+      }
+    }
   }
 }
