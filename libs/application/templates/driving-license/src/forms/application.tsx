@@ -16,6 +16,7 @@ import {
   Form,
   FormModes,
   DefaultEvents,
+  StaticText,
 } from '@island.is/application/core'
 import {
   NationalRegistryUser,
@@ -338,7 +339,7 @@ export const application: Form = buildForm({
                 console.log(str[0])
                 console.log(externalData.payment?.data)
                 /// more refactoring
-                return str[1].toString() + ' kr.'
+                return (str[1].toString() + ' kr.') as StaticText
               },
             }),
             buildDividerField({}),
