@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { GenericLicense } from './licenceService.type'
 import { LicenseServiceApi } from './client'
+import { drivingLicenseToGeneric } from './util/licenseMappers'
 
 @Injectable()
 export class LicenseServiceService {
@@ -14,9 +15,9 @@ export class LicenseServiceService {
     const drivingLicense = await this.licenseService.getGenericDrivingLicense(
       nationalId,
     )
+    const genericDrivingLicense = drivingLicenseToGeneric(drivingLicense)
     console.log({ drivingLicense })
-    const drivingLicenseTest = { type: 'driving', issuer: 'rls', name: 'Foo' }
 
-    return [drivingLicenseTest]
+    return [genericDrivingLicense]
   }
 }
