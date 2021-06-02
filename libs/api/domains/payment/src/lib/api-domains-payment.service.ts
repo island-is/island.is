@@ -4,9 +4,7 @@ import { ChargeResult } from './api-domains-payment.types'
 
 @Injectable()
 export class PaymentService {
-  constructor(
-    private readonly paymentApi: PaymentAPI
-  ) {}
+  constructor(private readonly paymentApi: PaymentAPI) {}
 
   async createCharge(chargeParameters: Charge): Promise<ChargeResult> {
     try {
@@ -17,7 +15,7 @@ export class PaymentService {
       return {
         success: true,
         error: null,
-        data: charge
+        data: charge,
       }
     } catch (e) {
       return {

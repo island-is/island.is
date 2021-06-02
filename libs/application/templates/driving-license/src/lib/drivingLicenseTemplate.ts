@@ -12,8 +12,7 @@ import {
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 
-type Events = { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
 
 enum States {
   DRAFT = 'draft',
@@ -65,7 +64,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: DefaultEvents.PAYMENT, name: 'Greiða', type: 'primary' },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },

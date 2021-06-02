@@ -86,7 +86,7 @@ export const application: Form = buildForm({
                 console.log(externalData)
 
                 return 'hallo'
-              }
+              },
             }),
             buildDividerField({
               title: '',
@@ -344,7 +344,11 @@ export const application: Form = buildForm({
               placement: 'footer',
               title: 'Panta ökuskírteini',
               actions: [
-                { event: DefaultEvents.PAYMENT, name: 'Greiða', type: 'primary' },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
               ],
             }),
           ],

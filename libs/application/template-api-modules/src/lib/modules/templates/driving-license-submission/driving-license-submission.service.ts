@@ -18,41 +18,45 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({ application: { applicant, externalData, answers } }: TemplateApiModuleActionProps) {
+  async createCharge({
+    application: { applicant, externalData, answers },
+  }: TemplateApiModuleActionProps) {
     console.log('==== creating charge ====')
     console.log({ externalData })
     console.log({ answers })
-    const result = await this.sharedTemplateAPIService.createCharge({
-      chargeItemSubject: 'Fullnaðarskírteini',
-      chargeType: 'atype',
-      immediateProcess: true,
-      charges: [
-        {
-          amount: 2000,
-          chargeItemCode: 'someitemcode',
-          priceAmount: 2,
-          quantity: 2,
-          reference: 'no idea',
+    const result = await this.sharedTemplateAPIService
+      .createCharge({
+        chargeItemSubject: 'Fullnaðarskírteini',
+        chargeType: 'atype',
+        immediateProcess: true,
+        charges: [
+          {
+            amount: 2000,
+            chargeItemCode: 'someitemcode',
+            priceAmount: 2,
+            quantity: 2,
+            reference: 'no idea',
+          },
+        ],
+        payeeNationalID: applicant,
+        performerNationalID: applicant,
+        // sýslumannskennitala - úr juristictions
+        performingOrgID: '0910815209',
+        systemID: 'sysid',
+        payInfo: {
+          RRN: '',
+          cardType: '',
+          paymentMeans: '',
+          authCode: '',
+          PAN: '',
+          payableAmount: 2000,
         },
-      ],
-      payeeNationalID: applicant,
-      performerNationalID: applicant,
-      // sýslumannskennitala - úr juristictions
-      performingOrgID: '0910815209',
-      systemID: 'sysid',
-      payInfo: {
-        RRN: '',
-        cardType: '',
-        paymentMeans: '',
-        authCode: '',
-        PAN: '',
-        payableAmount: 2000,
-      },
-    }).catch(e => {
-      console.error(e)
+      })
+      .catch((e) => {
+        console.error(e)
 
-      return { error: e }
-    })
+        return { error: e }
+      })
 
     console.log({ result })
 

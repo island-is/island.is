@@ -20,9 +20,7 @@ export class PaymentModule {
         PaymentService,
         PaymentResolver,
       ],
-      exports: [
-        PaymentService,
-      ],
+      exports: [PaymentService],
     }
   }
 }

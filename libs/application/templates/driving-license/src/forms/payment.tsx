@@ -36,7 +36,7 @@ export const payment: Form = buildForm({
             buildKeyValueField({
               label: 'hoho',
               value: 'hi hi',
-              width: 'full'
+              width: 'full',
             }),
             buildDividerField({
               title: '',

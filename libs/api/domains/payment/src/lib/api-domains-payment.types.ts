@@ -1,6 +1,5 @@
-
-export interface ChargeResult {
+export interface ChargeResult {
   success: boolean
-  error: Error|null
+  error: Error | null
   data?: object
 }
