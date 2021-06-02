@@ -6,7 +6,6 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { User } from '@island.is/api/domains/national-registry'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -18,6 +17,43 @@ export class DrivingLicenseSubmissionService {
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  async createCharge({ application: { applicant, externalData, answers } }: TemplateApiModuleActionProps) {
+    console.log('==== creating charge ====')
+    console.log({ externalData })
+    console.log({ answers })
+    const result = await this.sharedTemplateAPIService.createCharge({
+      chargeItemSubject: 'Fullnaðarskírteini',
+      chargeType: 'atype',
+      immediateProcess: true,
+      charges: [
+        {
+          amount: 2000,
+          chargeItemCode: 'someitemcode',
+          priceAmount: 2,
+          quantity: 2,
+          reference: 'no idea',
+        },
+      ],
+      payeeNationalID: applicant,
+      performerNationalID: applicant,
+      // sýslumannskennitala - úr juristictions
+      performingOrgID: '0910815209',
+      systemID: 'sysid',
+      payInfo: {
+        RRN: '',
+        cardType: '',
+        paymentMeans: '',
+        authCode: '',
+        PAN: '',
+        payableAmount: 2000,
+      },
+    })
+
+    console.log({ result })
+
+    return result
+  }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { answers } = application

@@ -15,6 +15,7 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile, PaymentCatalog } from '../types/schema'
 import { m } from '../lib/messages'
@@ -81,8 +82,11 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
+              value: ({ externalData }) => {
+                console.log(externalData)
+
+                return 'hallo'
+              }
             }),
             buildDividerField({
               title: '',
@@ -340,7 +344,7 @@ export const application: Form = buildForm({
               placement: 'footer',
               title: 'Panta ökuskírteini',
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: 'Greiða', type: 'primary' },
               ],
             }),
           ],

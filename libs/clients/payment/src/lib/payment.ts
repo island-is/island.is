@@ -15,7 +15,7 @@ import {
 
 export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
 
-export class PaymentService extends RESTDataSource {
+export class PaymentAPI extends RESTDataSource {
   constructor(
     @Inject(PAYMENT_OPTIONS)
     private readonly options: PaymentServiceOptions,

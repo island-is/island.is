@@ -167,8 +167,6 @@ const autoSchemaFile = environment.production
       password: environment.paymentDomain.password,
       url: environment.paymentDomain.url,
       username: environment.paymentDomain.username,
-      key: 123,
-      organization: '6509142520',
     }),
   ],
 })

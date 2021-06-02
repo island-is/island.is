@@ -196,9 +196,9 @@ const prodConfig = {
     clientId: process.env.XROAD_CLIENT_ID,
   },
   paymentDomain: {
-    username: 'isl_aranja_p',
-    password: 'vogur.123',
-    url: 'https://tbrws-s.hysing.is',
+    username: process.env.PAYMENT_USER,
+    password: process.env.PAYMENT_PASSWORD,
+    url: process.env.PAYMENT_URL,
   },
 }
 
