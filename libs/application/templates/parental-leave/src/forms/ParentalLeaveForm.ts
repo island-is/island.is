@@ -1,8 +1,11 @@
+import addDays from 'date-fns/addDays'
+
 import {
   Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -13,28 +16,35 @@ import {
   buildSubSection,
   buildTextField,
   ExternalData,
+  Field,
   Form,
   FormModes,
+  SelectField,
 } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  formatIsk,
-  getEstimatedMonthlyPay,
   getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
   createRange,
+  calculatePeriodPercentage,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
   GetPrivatePensionFunds,
 } from '../graphql/queries'
-import { MANUAL, NO, StartDateOptions, YES } from '../constants'
+import {
+  FILE_SIZE_LIMIT,
+  MANUAL,
+  NO,
+  SPOUSE,
+  StartDateOptions,
+  YES,
+} from '../constants'
 import Logo from '../assets/Logo'
-import { defaultMonths } from '../config'
-
+import { defaultMonths, minPeriodDays } from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
@@ -46,12 +56,13 @@ const percentOptions = createRange<{ label: string; value: string }>(
   10,
   (i) => {
     const ii = (i + 1) * 10
+
     return {
       label: `${ii}%`,
       value: `${ii}`,
     }
   },
-)
+).sort((a, b) => Number(b.value) - Number(a.value))
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -332,10 +343,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) => {
-                // TODO add check if this person has a spouse...
-                return true
-              },
+              condition: (answers) =>
+                answers.otherParent === SPOUSE ||
+                (answers.otherParent === MANUAL &&
+                  answers.otherParentRightOfAccess === YES),
               width: 'half',
               options: [
                 {
@@ -415,6 +426,31 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
+              id: 'employer.selfEmployed.attachment',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              condition: (answers) =>
+                (answers as {
+                  employer: {
+                    isSelfEmployed: string
+                  }
+                })?.employer?.isSelfEmployed === YES,
+              children: [
+                buildFileUploadField({
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
+              ],
+            }),
+            buildMultiField({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
@@ -473,6 +509,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'requestRights.isRequestingRights',
               title: parentalLeaveFormMessages.shared.requestRightsName,
@@ -497,6 +535,26 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'requestRights.isRequestingRights',
+              title: parentalLeaveFormMessages.shared.requestRightsName,
+              description:
+                parentalLeaveFormMessages.shared.requestRightsDescription,
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'giveRights.isGivingRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
@@ -539,8 +597,46 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'giveRights.isGivingRights',
+              title: parentalLeaveFormMessages.shared.giveRightsName,
+              description:
+                parentalLeaveFormMessages.shared.giveRightsDescription,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
           ],
         }),
+        /*
+        TODO: add back once payment plan is implemented
         buildSubSection({
           id: 'rightsReview',
           title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
@@ -562,6 +658,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        */
       ],
     }),
     buildSection({
@@ -663,8 +760,34 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.ratio.label,
                   placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                  defaultValue: '100',
-                  options: percentOptions,
+                  defaultValue: (
+                    application: Application,
+                    field: SelectField,
+                  ) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+
+                    return `${percentage}`
+                  },
+                  options: (application: Application, field: Field) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+                    const existingOptions = percentOptions.filter(
+                      (option) => Number(option.value) < percentage,
+                    )
+
+                    return [
+                      {
+                        label: `${percentage}%`,
+                        value: `${percentage}`,
+                      },
+                      ...existingOptions,
+                    ]
+                  },
                 }),
               ],
             }),
@@ -684,13 +807,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  excludeDates: (application) => {
-                    const {
-                      answers: { periods },
-                    } = application
-
-                    return getAllPeriodDates(periods as Period[])
-                  },
+                  excludeDates: (application) =>
+                    getAllPeriodDates(application.answers.periods as Period[]),
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -702,6 +820,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
+                      minDate: (application) => {
+                        const periods = application.answers.periods as Period[]
+                        const latestStartDate =
+                          periods[periods.length - 1].startDate
+
+                        return addDays(new Date(latestStartDate), minPeriodDays)
+                      },
                       excludeDates: (application) => {
                         const {
                           answers: { periods },
@@ -721,9 +846,35 @@ export const ParentalLeaveForm: Form = buildForm({
                       id: 'ratio',
                       width: 'half',
                       title: parentalLeaveFormMessages.ratio.label,
-                      defaultValue: '100',
                       placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                      options: percentOptions,
+                      defaultValue: (
+                        application: Application,
+                        field: SelectField,
+                      ) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+
+                        return `${percentage}`
+                      },
+                      options: (application: Application, field: Field) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+                        const existingOptions = percentOptions.filter(
+                          (option) => Number(option.value) < percentage,
+                        )
+
+                        return [
+                          {
+                            label: `${percentage}%`,
+                            value: `${percentage}`,
+                          },
+                          ...existingOptions,
+                        ]
+                      },
                     }),
                   ],
                 }),

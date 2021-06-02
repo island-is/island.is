@@ -3,8 +3,8 @@ import { XRoadMemberClass } from '@island.is/utils/api'
 export default {
   production: true,
   auth: {
+    audience: '@island.is/auth/public',
     issuer: process.env.IDS_ISSUER,
-    jwksUri: process.env.JWKS_URI,
   },
   rsk: {
     xroad: {
@@ -16,5 +16,14 @@ export default {
     },
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_PASSWORD,
+  },
+  nationalRegistry: {
+    xroad: {
+      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      memberClass: XRoadMemberClass.GovernmentInstitution,
+      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
+      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
+      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+    },
   },
 }

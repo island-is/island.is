@@ -38,19 +38,21 @@ describe('Create detention request, step three', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockProsecutorQuery,
-          ...mockUpdateCaseMutation([
-            {
-              lawsBroken:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-            } as UpdateCase,
-            {
-              custodyProvisions: [CaseCustodyProvisions._95_1_C],
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              requestedCustodyEndDate: formatISO(lastDateOfTheMonth),
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                lawsBroken:
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+              } as UpdateCase,
+              {
+                custodyProvisions: [CaseCustodyProvisions._95_1_C],
+              } as UpdateCase,
+              {
+                requestedCustodyEndDate: formatISO(lastDateOfTheMonth),
+              } as UpdateCase,
+            ],
+            'test_id_2',
+          ),
         ]}
         addTypename={false}
       >

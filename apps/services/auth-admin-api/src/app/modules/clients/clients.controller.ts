@@ -3,6 +3,7 @@ import {
   ClientDTO,
   ClientsService,
   ClientUpdateDTO,
+  PagedRowsDto,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -23,17 +24,31 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
-import { Scope } from '../access/scope.constants'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/'
+
+const namespace = `${environment.audit.defaultNamespace}/clients`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('clients')
 @Controller('backend/clients')
+@Audit({ namespace })
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Gets all clients and count of rows */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get()
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
@@ -56,69 +71,92 @@ export class ClientsController {
       ],
     },
   })
+  @Audit<PagedRowsDto<Client>>({
+    resources: (result) => result.rows.map((client) => client.clientId),
+  })
   async findAndCountAll(
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: Client[]; count: number } | null> {
+  ): Promise<PagedRowsDto<Client>> {
     if (searchString) {
-      const clients = await this.clientsService.findClients(
-        searchString,
-        page,
-        count,
-      )
-      return clients
+      return this.clientsService.findClients(searchString, page, count)
     }
 
-    const clients = await this.clientsService.findAndCountAll(page, count)
-    return clients
+    return this.clientsService.findAndCountAll(page, count)
   }
 
   /** Gets client by id */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Get(':id')
   @ApiOkResponse({ type: Client })
+  @Audit<Client>({
+    resources: (client) => client?.clientId,
+  })
   async findOne(@Param('id') id: string): Promise<Client> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
 
-    const clientProfile = await this.clientsService.findClientById(id)
-    return clientProfile
+    return this.clientsService.findClientById(id)
   }
 
   /** Creates a new client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: Client })
+  @Audit<Client>({
+    resources: (client) => client.clientId,
+  })
   async create(@Body() client: ClientDTO): Promise<Client> {
-    return await this.clientsService.create(client)
+    return this.clientsService.create(client)
   }
 
   /** Updates an existing client */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Put(':id')
   @ApiCreatedResponse({ type: Client })
   async update(
     @Body() client: ClientUpdateDTO,
     @Param('id') id: string,
-  ): Promise<Client | null> {
+    @CurrentUser() user: User,
+  ): Promise<Client> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
 
-    return await this.clientsService.update(client, id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'update',
+        namespace,
+        resources: id,
+        meta: { fields: Object.keys(client) },
+      },
+      this.clientsService.update(client, id),
+    )
   }
 
   /** Soft deleting a client by Id */
-  @Scopes(Scope.root, Scope.full)
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':id')
   @ApiCreatedResponse()
-  async delete(@Param('id') id: string): Promise<number> {
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
 
-    return await this.clientsService.delete(id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: id,
+      },
+      this.clientsService.delete(id),
+    )
   }
 }

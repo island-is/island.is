@@ -4,7 +4,7 @@ import { XRoadConfig, MMSApi } from '@island.is/clients/mms'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
-} from '@island.is/clients/national-registry'
+} from '@island.is/clients/national-registry-v1'
 
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'

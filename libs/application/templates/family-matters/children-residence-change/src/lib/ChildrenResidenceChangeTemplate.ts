@@ -7,13 +7,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import { application } from './messages'
+import { application, stateDescriptions, stateLabels } from './messages'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -24,9 +23,22 @@ enum TemplateApiActions {
   submitApplication = 'submitApplication',
   sendNotificationToCounterParty = 'sendNotificationToCounterParty',
   rejectApplication = 'rejectApplication',
+  approveApplication = 'approveApplication',
+  rejectedApplication = 'rejectedApplication',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
+
+const oneYear = 24 * 3600 * 1000 * 365
+const twentyEightDays = 24 * 3600 * 1000 * 28
+
+const pruneAfter = (time: number) => {
+  return {
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: time,
+  }
+}
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -43,8 +55,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
-          progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            description: stateDescriptions.draft,
+          },
+          lifecycle: pruneAfter(oneYear),
           roles: [
             {
               id: Roles.ParentA,
@@ -73,8 +87,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         meta: {
           name: applicationName,
-          progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            description: stateDescriptions.inReview,
+          },
+          lifecycle: pruneAfter(twentyEightDays),
           onEntry: {
             apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
           },
@@ -114,15 +130,18 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             target: ApplicationStates.SUBMITTED,
           },
           REJECT: {
-            target: ApplicationStates.REJECTED,
+            target: ApplicationStates.REJECTEDBYPARENTB,
           },
         },
       },
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: applicationName,
-          progress: 0.75,
-          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            description: stateDescriptions.submitted,
+            tag: { label: stateLabels.submitted },
+          },
+          lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -148,11 +167,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ],
         },
       },
-      [ApplicationStates.REJECTED]: {
+      [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            description: stateDescriptions.rejectedByParentB,
+            tag: {
+              variant: 'red',
+              label: stateLabels.rejected,
+            },
+          },
+          lifecycle: pruneAfter(oneYear),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,
           },
@@ -169,6 +194,68 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/ContractRejected').then((module) =>
                   Promise.resolve(module.ContractRejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.REJECTED]: {
+        meta: {
+          name: applicationName,
+          actionCard: {
+            description: stateDescriptions.rejected,
+            tag: { label: stateLabels.rejected, variant: 'red' },
+          },
+          lifecycle: pruneAfter(oneYear),
+          onEntry: {
+            apiModuleAction: TemplateApiActions.rejectedApplication,
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationRejected').then((module) =>
+                  Promise.resolve(module.ApplicationRejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ApplicationRejected').then((module) =>
+                  Promise.resolve(module.ApplicationRejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.COMPLETED]: {
+        meta: {
+          name: applicationName,
+          actionCard: {
+            description: stateDescriptions.approved,
+            tag: { label: stateLabels.approved, variant: 'blueberry' },
+          },
+          lifecycle: pruneAfter(oneYear),
+          onEntry: {
+            apiModuleAction: TemplateApiActions.approveApplication,
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationApproved').then((module) =>
+                  Promise.resolve(module.ApplicationApproved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ApplicationApproved').then((module) =>
+                  Promise.resolve(module.ApplicationApproved),
                 ),
               read: 'all',
             },

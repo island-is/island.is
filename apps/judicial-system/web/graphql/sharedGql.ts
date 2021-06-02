@@ -17,7 +17,11 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        name
+        type
+      }
       leadInvestigator
       arrestDate
       requestedCourtDate
@@ -38,8 +42,14 @@ export const CaseQuery = gql`
         name
         title
         institution {
+          id
           name
         }
+      }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
       }
       courtCaseNumber
       courtDate
@@ -53,6 +63,8 @@ export const CaseQuery = gql`
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -96,7 +108,8 @@ export const CaseQuery = gql`
         size
         created
       }
-      isCaseAppealable
+      isAppealDeadlineExpired
+      isAppealGracePeriodExpired
     }
   }
 `

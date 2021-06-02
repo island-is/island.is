@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 import {
   DrivingLicenseResponse,
@@ -8,6 +8,15 @@ import {
   EntitlementTypesResponse,
   RemarkTypesResponse,
   PenaltyPointStatusResponse,
+  TeachingRightsResponse,
+  GetDrivingAssessmentResponse,
+  FinishedSchoolResponse,
+  CanApplyForResponse,
+  EmbaettiDto,
+  NewDrivingLicenseResponse,
+  NewDrivingAssessmentResponse,
+  NewDrivingLicenseDto,
+  NewDrivingAssessmentDto,
 } from './drivingLicense.type'
 
 export class DrivingLicenseApi {
@@ -23,13 +32,29 @@ export class DrivingLicenseApi {
     this.secret = secret
   }
 
-  async requestApi(url: string) {
+  headers() {
+    return {
+      'X-Road-Client': this.xroadClientId,
+      SECRET: this.secret,
+      Accept: 'application/json',
+    }
+  }
+
+  async postApi(url: string, body: {}) {
     const res = await fetch(`${this.xroadApiUrl}/${url}`, {
       headers: {
-        'X-Road-Client': this.xroadClientId,
-        SECRET: this.secret,
-        Accept: 'application/json',
+        ...this.headers(),
+        'Content-Type': 'application/json',
       },
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+    return res.json()
+  }
+
+  async requestApi(url: string) {
+    const res = await fetch(`${this.xroadApiUrl}/${url}`, {
+      headers: this.headers(),
     })
     return res.json()
   }
@@ -52,9 +77,54 @@ export class DrivingLicenseApi {
     return this.requestApi('api/Okuskirteini/tegundirathugasemda')
   }
 
-  async getPenaltyPointStatus(
+  getPenaltyPointStatus(
     nationalId: User['nationalId'],
   ): Promise<PenaltyPointStatusResponse> {
     return this.requestApi(`api/Okuskirteini/punktastada/${nationalId}`)
+  }
+
+  getTeachingRights(
+    nationalId: User['nationalId'],
+  ): Promise<TeachingRightsResponse> {
+    return this.requestApi(`api/Okuskirteini/hasteachingrights/${nationalId}`)
+  }
+
+  getDrivingAssessment(
+    nationalId: User['nationalId'],
+  ): Promise<GetDrivingAssessmentResponse | null> {
+    return this.requestApi(`api/Okuskirteini/saekjaakstursmat/${nationalId}`)
+  }
+
+  hasFinishedSchool(
+    nationalId: User['nationalId'],
+  ): Promise<FinishedSchoolResponse> {
+    return this.requestApi(`api/Okuskirteini/${nationalId}/finishedokugerdi`)
+  }
+
+  getListOfJuristictions(): Promise<EmbaettiDto[]> {
+    return this.requestApi(`api/Okuskirteini/embaetti`)
+  }
+
+  canApplyFor(
+    nationalId: User['nationalId'],
+    type: string,
+  ): Promise<CanApplyForResponse> {
+    return this.requestApi(
+      `api/Okuskirteini/${nationalId}/canapplyfor/${type}/full`,
+    )
+  }
+
+  newDrivingAssessment(
+    input: NewDrivingAssessmentDto,
+  ): Promise<NewDrivingAssessmentResponse> {
+    return this.postApi(`api/Okuskirteini/new/drivingassesment`, input)
+  }
+
+  newDrivingLicense(
+    input: NewDrivingLicenseDto,
+  ): Promise<NewDrivingLicenseResponse> {
+    // We are only implementing the B license ATM.
+    const category = 'B'
+    return this.postApi(`api/Okuskirteini/applications/new/${category}`, input)
   }
 }

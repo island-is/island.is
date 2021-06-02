@@ -1,8 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { User } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
@@ -34,7 +35,7 @@ export class CourtResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    const { caseId, type, policeCaseNumber, isExtension } = input
+    const { caseId, courtId, type, policeCaseNumber, isExtension } = input
 
     this.logger.debug(`Creating custody court case for case ${caseId}`)
 
@@ -43,6 +44,7 @@ export class CourtResolver {
       AuditedAction.CREATE_COURT_CASE,
       backendApi.updateCase(caseId, {
         courtCaseNumber: await this.courtService.createCourtCase(
+          courtId,
           type,
           policeCaseNumber,
           isExtension,

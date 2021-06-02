@@ -850,6 +850,22 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
     },
+    attachmentTitle: {
+      id: 'pl.application:selfEmployed.attachment.title',
+      defaultMessage: 'Reiknað endurgjald',
+      description: 'Title for the attachement required for self employed',
+    },
+    attachmentDescription: {
+      id: 'pl.application:selfEmployed.attachment.description',
+      defaultMessage:
+        'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
+      description: 'Description for the attachement required for self employed',
+    },
+    attachmentButton: {
+      id: 'pl.application:selfEmployed.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Button copy for the self employed attachement',
+    },
   }),
 
   ratio: defineMessages({
@@ -1083,6 +1099,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:review.period',
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
+    },
+    periodActualDob: {
+      id: 'pl.application:review.period.actual.dob',
+      defaultMessage: 'Raunverulegum fæðingardegi - {duration} mánuðir',
+      description: 'Actual DOB period copy',
     },
     usePersonalAllowance: {
       id: 'pl.application:review.use.personal.allowance',
@@ -1329,6 +1350,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að skilgreina gilt netfang.',
     description: 'Invalid email copy',
   },
+  bank: {
+    id: 'pl.application:answerValidators.bank',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+  },
   periodsPeriodRange: {
     id: 'pl.application:answerValidators.periodsPeriodRange',
     defaultMessage:
@@ -1399,6 +1425,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
+  },
+  requiredAttachment: {
+    id: 'pl.application:errors.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
   },
 })
 
