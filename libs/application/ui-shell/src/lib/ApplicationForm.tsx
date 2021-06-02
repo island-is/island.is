@@ -1,8 +1,7 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
-import { RefetchProvider } from '../context/RefetchContext'
 
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
   Application,
   ApplicationTemplateHelper,
@@ -17,8 +16,9 @@ import {
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
 
+import { RefetchProvider } from '../context/RefetchContext'
+import { FieldProvider, useFields } from '../context/FieldContext'
 import { FormShell } from './FormShell'
-import { FieldProvider, useFields } from '../components/FieldContext'
 import { NotFound } from './NotFound'
 import * as styles from './FormShell.treat'
 
@@ -30,14 +30,7 @@ function isOnProduction(): boolean {
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
-  setApplicationName: Dispatch<SetStateAction<string | undefined>>
-  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
-}> = ({
-  applicationId,
-  nationalRegistryId,
-  setApplicationName,
-  setInstitutionName,
-}) => {
+}> = ({ applicationId, nationalRegistryId }) => {
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -71,12 +64,6 @@ const ApplicationLoader: FC<{
 
   if (!applicationId || error) {
     return <NotFound />
-  }
-
-  setApplicationName(application.name)
-
-  if (application.institution) {
-    setInstitutionName(application.institution)
   }
 
   return (
@@ -175,21 +162,12 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-  setApplicationName: Dispatch<SetStateAction<string | undefined>>
-  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
-}> = ({
-  applicationId,
-  nationalRegistryId,
-  setApplicationName,
-  setInstitutionName,
-}) => {
+}> = ({ applicationId, nationalRegistryId }) => {
   return (
     <FieldProvider>
       <ApplicationLoader
         applicationId={applicationId}
         nationalRegistryId={nationalRegistryId}
-        setApplicationName={setApplicationName}
-        setInstitutionName={setInstitutionName}
       />
     </FieldProvider>
   )
