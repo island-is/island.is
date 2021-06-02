@@ -137,14 +137,14 @@ const FinanceStatusDetailTable: FC<Props> = ({
               </a>
             </Box>
           )}
-          {organization['e-mail'] && (
+          {organization.email && (
             <Box display="inlineBlock" marginRight={2}>
               <Text variant="small" as="span">
                 Netfang:
               </Text>{' '}
-              <a href={`mailto:${organization['e-mail']}`} target="_blank">
+              <a href={`mailto:${organization.email}`} target="_blank">
                 <Text color="blue400" variant="small" as="span">
-                  {organization['e-mail']}
+                  {organization.email}
                 </Text>
               </a>
             </Box>

@@ -21,5 +21,8 @@ export const resolvers: Resolvers = {
     getCustomerRecords: () => {
       return store.customerRecords
     },
+    getExcelDocument: () => {
+      return store.excelDocument
+    },
   },
 }

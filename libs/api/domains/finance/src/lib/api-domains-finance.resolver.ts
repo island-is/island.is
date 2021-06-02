@@ -1,6 +1,7 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
+import { ExcelSheetInput } from './dto/getExcelSheet.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
@@ -52,5 +53,10 @@ export class FinanceResolver {
       input.dayFrom,
       input.dayTo,
     )
+  }
+
+  @Query(() => graphqlTypeJson)
+  async getExcelDocument(@Args('input') input: ExcelSheetInput) {
+    return this.FinanceService.getExcelDocument(input.headers, input.data)
   }
 }

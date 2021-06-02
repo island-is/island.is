@@ -1,5 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Base64 } from 'js-base64'
+import axios from 'axios'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -8,6 +10,7 @@ import {
   CustomerChargeType,
   CustomerRecords,
 } from './finance.types'
+import { DocumentModule } from '@island.is/api/domains/documents'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
@@ -22,6 +25,8 @@ export class FinanceService extends RESTDataSource {
   constructor(
     @Inject(FINANCE_OPTIONS)
     private readonly options: FinanceServiceOptions,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {
     super()
     this.baseURL = `${this.options.url}`
@@ -91,5 +96,32 @@ export class FinanceService extends RESTDataSource {
       },
     )
     return response
+  }
+
+  async getExcelDocument(
+    sheetHeaders: (string | number)[],
+    sheetData: (string | number)[][],
+  ): Promise<any> {
+    const excelData = {
+      headers: sheetHeaders,
+      data: sheetData,
+    }
+
+    console.log('excelData', excelData)
+    try {
+      const response = await axios
+        .post(`http://localhost:3377/download/v1/xlsx`, excelData) // TODO: Add env var for download service for URL.
+        .then((res) => res.data)
+      return response
+    } catch (e) {
+      const errMsg = 'Failed to create xlsx sheet'
+      const description = e
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
   }
 }

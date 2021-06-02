@@ -1,11 +1,11 @@
-import { downloadCSV } from './downloadCSV'
+import { downloadCSV } from './downloadFile'
 import flatten from 'lodash/flatten'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
 
-const greidsluStadaHeaders = [
+export const greidsluStadaHeaders = [
   'Gjaldflokkur',
   'Staða',
   'Umsjónarmaður',
@@ -24,9 +24,25 @@ export const exportGreidslustadaCSV = async (data: FinanceStatusDataType) => {
         org.name,
         org.homepage,
         org.phone,
-        org['e-mail'],
+        org.email,
       ]),
   )
 
   await downloadCSV(name, greidsluStadaHeaders, flatten(dataArrays))
+}
+
+export const exportGreidslustadaXSLX = (data: FinanceStatusDataType) => {
+  const dataArrays = data.organizations.map(
+    (org: FinanceStatusOrganizationType) =>
+      org.chargeTypes.map((chargeType) => [
+        chargeType.name,
+        chargeType.totals.toString(),
+        org.name,
+        org.homepage,
+        org.phone,
+        org.email,
+      ]),
+  )
+
+  return flatten(dataArrays)
 }

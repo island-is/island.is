@@ -13,7 +13,7 @@ export type FinanceStatusOrganizationType = {
   name: string
   type: string
   phone: string
-  'e-mail': string
+  email: string
   homepage: string
   principalTotals: number
   interestTotals: number

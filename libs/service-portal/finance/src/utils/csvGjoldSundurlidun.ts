@@ -1,4 +1,4 @@
-import { downloadCSV } from './downloadCSV'
+import { downloadCSV } from './downloadFile'
 import {
   FinanceStatusDetailsType,
   FinanceStatusDetailsChangeItem,

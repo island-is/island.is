@@ -1,5 +1,5 @@
 import React from 'react'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
@@ -22,12 +22,23 @@ import {
 } from './FinanceStatusData.types'
 import { ExpandHeader } from '../../components/ExpandableTable'
 import { exportGreidslustadaCSV } from '../../utils/csvGreidslustada'
+import {
+  exportGreidslustadaXSLX,
+  greidsluStadaHeaders,
+} from '../../utils/csvGreidslustada'
+import { downloadXlsx } from '../../utils/downloadFile'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import * as styles from './FinanceStatus.treat'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
     getFinanceStatus
+  }
+`
+
+const GetExcelSheetData = gql`
+  query GetExcelSheetData($input: ExcelSheetInput!) {
+    getExcelDocument(input: $input)
   }
 `
 
@@ -38,7 +49,24 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery)
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
-  console.log({ financeStatusData, loading })
+
+  const [loadExcelSheet] = useLazyQuery(GetExcelSheetData, {
+    onCompleted: (data) => {
+      const xlslData = data?.getExcelDocument || null
+      if (xlslData) {
+        downloadXlsx(xlslData.file, xlslData.filename)
+      } else {
+        console.warn('No excel data') // Should warn the user with toast?
+      }
+    },
+  })
+
+  if (financeStatusData?.organizations) {
+    console.log(
+      'exportGreidslustadaXSLX',
+      exportGreidslustadaXSLX(financeStatusData),
+    )
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -99,16 +127,22 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                         menuLabel="Fleiri möguleikar"
                         items={[
                           {
-                            href: '#',
-                            title: 'Staða í lok árs ...',
-                          },
-                          {
                             onClick: () =>
                               exportGreidslustadaCSV(financeStatusData),
                             title: 'Sækja sem CSV',
                           },
                           {
-                            onClick: function noRefCheck() {},
+                            onClick: () =>
+                              loadExcelSheet({
+                                variables: {
+                                  input: {
+                                    headers: greidsluStadaHeaders,
+                                    data: exportGreidslustadaXSLX(
+                                      financeStatusData,
+                                    ),
+                                  },
+                                },
+                              }),
                             title: 'Sækja sem Excel',
                           },
                         ]}

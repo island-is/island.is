@@ -18,3 +18,16 @@ export const downloadCSV = async (
     link.click()
   })
 }
+
+export const downloadXlsx = async (output: string, name: string) => {
+  const filename = `${name}.xlsx`
+  const encodedUri = encodeURI(
+    `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${output}`,
+  )
+  const link = document.createElement('a')
+  link.setAttribute('href', encodedUri)
+  link.setAttribute('download', filename)
+  document.body.appendChild(link)
+
+  link.click()
+}
