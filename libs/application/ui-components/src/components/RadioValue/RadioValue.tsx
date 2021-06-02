@@ -14,10 +14,10 @@ interface RadioValueProps {
 
 export const RadioValue = ({ label, value }: RadioValueProps) => {
   const { formatMessage } = useLocale()
-  const answer = value.toLowerCase()
+  const answer = value?.toLowerCase()
 
   if (answer !== 'no' && answer !== 'yes') {
-    throw new Error(
+    console.warn(
       `This component is only used to handle radio answer 'yes' or 'no'. ${label} ${value}`,
     )
   }
@@ -27,7 +27,9 @@ export const RadioValue = ({ label, value }: RadioValueProps) => {
       {label && <Label>{label}</Label>}
 
       <Text>
-        {answer === 'no'
+        {answer === undefined
+          ? '—'
+          : answer === 'no'
           ? formatMessage(coreMessages.radioNo)
           : formatMessage(coreMessages.radioYes)}
       </Text>
