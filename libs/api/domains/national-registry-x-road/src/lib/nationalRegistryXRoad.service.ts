@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
+import {
+  Einstaklingsupplysingar,
+  Fjolskylda,
+} from '@island.is/clients/national-registry-v2'
 import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import type { Logger } from '@island.is/logging'
@@ -81,9 +84,10 @@ export class NationalRegistryXRoadService {
         parentNationalId,
         authToken,
       )
-      if (!childrenNationalIds) {
-        return
+      if (!Array.isArray(childrenNationalIds)) {
+        return []
       }
+
       const children = await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
           return await this.nationalRegistryFetch<Einstaklingsupplysingar>(
@@ -92,8 +96,13 @@ export class NationalRegistryXRoadService {
           )
         }),
       )
+      const parentAFamily = await this.nationalRegistryFetch<Fjolskylda>(
+        `/${parentNationalId}/fjolskylda`,
+        authToken,
+      )
+
       return await Promise.all(
-        children.map(async (child) => {
+        children?.map(async (child) => {
           const parents = await this.nationalRegistryFetch<string[]>(
             `/${parentNationalId}/forsja/${child.kennitala}`,
             authToken,
@@ -104,20 +113,18 @@ export class NationalRegistryXRoadService {
             authToken,
           )
 
-          const parentLegalHomeNationalIds = await this.nationalRegistryFetch<
-            string[]
-          >(`/${child.kennitala}/logforeldrar`, authToken)
+          const livesWithApplicant = parentAFamily.einstaklingar?.some(
+            (person) => person.kennitala === child.kennitala,
+          )
+          const livesWithParentB = parentAFamily.einstaklingar?.some(
+            (person) => person.kennitala === parentB.kennitala,
+          )
 
           return {
             nationalId: child.kennitala,
             fullName: child.nafn,
-            livesWithApplicant: parentLegalHomeNationalIds.includes(
-              parentNationalId,
-            ),
-            livesWithBothParents: [
-              parentNationalId,
-              parentB.kennitala,
-            ].every((id) => parentLegalHomeNationalIds.includes(id)),
+            livesWithApplicant,
+            livesWithBothParents: livesWithParentB && livesWithApplicant,
             otherParent: {
               nationalId: parentB.kennitala,
               fullName: parentB.nafn,

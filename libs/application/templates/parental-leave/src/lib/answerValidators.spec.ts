@@ -109,11 +109,7 @@ describe('answerValidators', () => {
 
     expect(
       answerValidators['periods'](newAnswers, newApplication),
-    ).toStrictEqual({
-      message: errorMessages.periodsStartDateRequired,
-      path: 'periods[1].startDate',
-      values: undefined,
-    })
+    ).toStrictEqual(undefined)
   })
 
   it('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
