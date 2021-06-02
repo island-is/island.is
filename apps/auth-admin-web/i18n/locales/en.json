@@ -66,7 +66,13 @@
       "title": "Edit Translation"
     },
     "admin.translation.index": {
-      "title": "Create Translation"
+      "title": "Create a Translation"
+    },
+    "admin.domain.[domainName]": {
+      "title": "Edit Domain"
+    },
+    "admin.domain.index": {
+      "title": "Create a Domain"
     },
     "client.[client]": {
       "title": "Edit Client",
@@ -242,6 +248,10 @@
     },
     "adminTabNav": {
       "items": {
+        "domains": {
+          "text": "Domains",
+          "title": "List of Domains"
+        },
         "users": {
           "text": "Users",
           "title": "User Identity Management"
@@ -439,6 +449,43 @@
       }
     },
     {
+      "id": "DomainList",
+      "removeConfirmation": "Are you sure want to delete this domain:",
+      "title": "Domains",
+      "search": {
+        "label": "Domain name"
+      },
+      "buttons": {
+        "search": {
+          "text": "Search",
+          "helpText": "Search for Domain"
+        },
+        "remove": {
+          "text": "Delete",
+          "helpText": "Delete Domain"
+        },
+        "edit": {
+          "text": "Edit",
+          "helpText": "Edit Domain"
+        },
+        "new": {
+          "text": "Create new Domain",
+          "helpText": "Open Domain Form"
+        }
+      },
+      "columns": {
+        "nationalId": {
+          "headerText": "National Id"
+        },
+        "name": {
+          "headerText": "Name"
+        },
+        "description": {
+          "headerText": "Description"
+        }
+      }
+    },
+    {
       "id": "ApiScopeUsersList",
       "removeConfirmation": "Are you sure want to delete this user:",
       "title": "Api Scope users",
@@ -550,6 +597,9 @@
         },
         "name": {
           "headerText": "Name"
+        },
+        "displayName": {
+          "headerText": "Display Name"
         },
         "description": {
           "headerText": "Description"
@@ -708,6 +758,42 @@
   ],
   "formControls": [
     {
+      "id": "DomainCreateForm",
+      "title": "Create a Domain",
+      "editTitle": "Edit Domain",
+      "help": "Create a Domain to associate Api Scope Groups",
+      "buttons": {
+        "save": {
+          "text": "Save",
+          "helpText": "Save changes"
+        },
+        "cancel": {
+          "text": "Cancel",
+          "helpText": "Cancel changes"
+        }
+      },
+      "fields": {
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "National Id associated with this domain",
+          "errorMessage": "National Id is required"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "@island.is",
+          "helpText": "The identifier of this domain",
+          "errorMessage": "The domain is required and can not include invalid characters"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Island.is SPA client",
+          "helpText": "The description of this domain",
+          "errorMessage": "The description is required and can not include invalid characters"
+        }
+      }
+    },
+    {
       "id": "ApiScopeGroupCreateForm",
       "title": "Create a Api Scope Group",
       "editTitle": "Edit Api Scope Group",
@@ -731,11 +817,22 @@
         }
       },
       "fields": {
+        "domainName": {
+          "label": "Domain",
+          "helpText": "The domain associated with this Api Scope Group",
+          "errorMessage": "Domain is required and needs to be in the right format"
+        },
         "name": {
           "label": "Name",
-          "placeholder": "applications",
+          "placeholder": "finance",
           "helpText": "The name of the group",
           "errorMessage": "The group is required and can not include invalid characters"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Finance heading",
+          "helpText": "The heading for this group for the user to see",
+          "errorMessage": "The Display Name is required and can not include invalid characters"
         },
         "description": {
           "label": "Description",
