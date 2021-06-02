@@ -16,4 +16,5 @@ else
 export LOG_MSG=$(git log --no-merges -n 1 --pretty=format:'%s' --abbrev-commit)
 fi
 set -u
+yarn nx bundle-${TARGET} native-app   
 appcenter codepush release -a ${ORG}/${APP} -d $CODEPUSH_DEPLOYMENT -c $ROOT/dist/apps/native/app/$TARGET/main.bundle -t '*' --disable-duplicate-release-error --description "$(node -e 'console.log(JSON.stringify({rev:process.env.RELEASE_TAG, desc: process.env.LOG_MSG}))')"
