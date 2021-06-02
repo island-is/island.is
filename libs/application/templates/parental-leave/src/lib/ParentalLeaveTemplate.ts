@@ -89,7 +89,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           actionCard: {
-            title: statesMessages.draftTitle,
             description: statesMessages.draftDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -132,7 +131,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
-            title: statesMessages.otherParentApprovalTitle,
             description: statesMessages.otherParentApprovalDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -185,7 +183,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
-            title: statesMessages.otherParentActionTitle,
             description: statesMessages.otherParentActionDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -211,7 +208,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           actionCard: {
-            title: statesMessages.employerWaitingToAssignTitle,
             description: statesMessages.employerWaitingToAssignDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -242,7 +238,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_APPROVAL,
           actionCard: {
-            title: statesMessages.employerApprovalTitle,
             description: statesMessages.employerApprovalDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -288,7 +283,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_ACTION,
           actionCard: {
-            title: statesMessages.employerActionTitle,
             description: statesMessages.employerActionDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -313,7 +307,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
-            title: statesMessages.vinnumalastofnunApprovalTitle,
             description: statesMessages.vinnumalastofnunApprovalDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -346,7 +339,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           actionCard: {
-            title: statesMessages.vinnumalastofnunActionTitle,
             description: statesMessages.vinnumalastofnunActionDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -371,7 +363,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.APPROVED,
           actionCard: {
-            title: statesMessages.approvedTitle,
             description: statesMessages.approvedDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -400,7 +391,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           actionCard: {
-            title: statesMessages.editOrAddPeriodsTitle,
             description: statesMessages.editOrAddPeriodsDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -440,7 +430,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           actionCard: {
-            title: statesMessages.employerWaitingToAssignForEditsTitle,
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
@@ -472,7 +461,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           actionCard: {
-            title: statesMessages.employerApproveEditsTitle,
             description: statesMessages.employerApproveEditsDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -503,7 +491,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
           actionCard: {
-            title: statesMessages.employerEditsActionTitle,
             description: statesMessages.employerEditsActionDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -532,7 +519,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           actionCard: {
-            title: statesMessages.vinnumalastofnunApproveEditsTitle,
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
           lifecycle: DefaultStateLifeCycle,
@@ -561,7 +547,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
           actionCard: {
-            title: statesMessages.vinnumalastofnunEditsActionTitle,
             description: statesMessages.vinnumalastofnunEditsActionDescription,
           },
           lifecycle: DefaultStateLifeCycle,
