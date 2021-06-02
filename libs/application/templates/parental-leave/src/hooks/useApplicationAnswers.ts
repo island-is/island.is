@@ -49,6 +49,7 @@ export const useApplicationAnswers = (application: Application) => {
   const personalAllowanceFromSpouse = getValueViaPath(
     answers,
     'usePersonalAllowanceFromSpouse',
+    NO,
   ) as Boolean
 
   const personalUseAsMuchAsPossible = getValueViaPath(

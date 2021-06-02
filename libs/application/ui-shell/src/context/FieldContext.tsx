@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
 } from 'react'
+
 import { FieldBaseProps, RepeaterProps } from '@island.is/application/core'
 import * as uiFields from '@island.is/application/ui-fields'
 
@@ -17,8 +18,9 @@ const FieldStateContext = createContext<[Fields, Dispatch]>([
   () => undefined,
 ])
 
-const FieldProvider = ({ children }: FieldStateProviderProps) => {
+export const FieldProvider = ({ children }: FieldStateProviderProps) => {
   const [fields, setFields] = useState<Fields>(uiFields as Fields)
+
   return (
     <FieldStateContext.Provider
       value={[fields, (newFields) => setFields({ ...fields, ...newFields })]}
@@ -28,6 +30,4 @@ const FieldProvider = ({ children }: FieldStateProviderProps) => {
   )
 }
 
-const useFields = () => useContext(FieldStateContext)
-
-export { FieldProvider, useFields }
+export const useFields = () => useContext(FieldStateContext)
