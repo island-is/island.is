@@ -22,14 +22,10 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiTags,
-  getSchemaPath,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthScope } from '@island.is/auth/scopes'
+
+import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -41,7 +37,20 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
-    return await this.delegationsService.findAllTo(user.nationalId)
+    const wards = await this.delegationsService.findAllWardsTo(
+      user,
+      environment.nationalRegistry.xroad.clientId ?? '',
+    )
+
+    const companies = await this.delegationsService.findAllCompaniesTo(
+      user.nationalId,
+    )
+
+    const custom = await this.delegationsService.findAllValidCustomTo(
+      user.nationalId,
+    )
+
+    return [...wards, ...companies, ...custom]
   }
 
   @Scopes(AuthScope.writeDelegations)
