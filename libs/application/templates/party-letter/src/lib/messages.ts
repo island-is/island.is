@@ -406,7 +406,8 @@ export const m: MessageDir = {
     },
     partyListUrl: {
       id: 'ple.application:endorsement.approved.url.partylist',
-      defaultMessage: 'https://island.is/althingiskosningar2021/medmaeli-kjosenda',
+      defaultMessage:
+        'https://island.is/althingiskosningar2021/medmaeli-kjosenda',
       description: 'Url to party list',
     },
   }),

@@ -196,7 +196,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
             target: States.IN_REVIEW,
           },
           [DefaultEvents.REJECT]: { target: States.IN_REVIEW },
-
         },
       },
       [States.APPROVED]: {
@@ -266,7 +265,10 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     // TODO: Applicant can recommend his own list
     else if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.COLLECT_ENDORSEMENTS || States.REJECTED) {
+    } else if (
+      application.state === States.COLLECT_ENDORSEMENTS ||
+      States.REJECTED
+    ) {
       // TODO: Maybe display collection as closed in final state for signaturee
       // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE

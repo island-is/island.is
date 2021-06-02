@@ -163,6 +163,7 @@ export const LetterApplicationForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
+              refetchApplicationAfterSubmit: true,
               title: m.overview.title,
               actions: [
                 {
