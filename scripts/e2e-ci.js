@@ -164,7 +164,7 @@ const main = async () => {
 
     if (serveChild) {
       console.log('Clean up serve process...')
-      let killed = serveChild.kill('SIGTERM')
+      let killed = serveChild.kill()
       console.log(`Child process cleaned up successfully: ${killed}`)
     }
   } catch (err) {
@@ -172,6 +172,7 @@ const main = async () => {
     console.log(err)
   }
 
+  console.log(`Exiting main process with code ${exitCode}`)
   process.exit(exitCode)
 }
 

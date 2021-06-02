@@ -9,7 +9,6 @@ const { spawn } = require('child_process')
  */
 exports.exec = (command, options) => {
   return new Promise((resolve, reject) => {
-    console.log(options)
     const cmd = spawn(command, {
       stdio: 'inherit',
       shell: true,
