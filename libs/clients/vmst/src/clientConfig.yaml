@@ -287,10 +287,11 @@ components:
         rightsCode:
           type: string
           minLength: 1
-        attachment:
-          type: string
-          format: byte
+        attachments:
+          type: array
           nullable: true
+          items:
+            $ref: '#/components/schemas/Attachment'
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -383,6 +384,20 @@ components:
           minLength: 1
         nationalRegistryId:
           type: string
+          minLength: 1
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - attachmentType
+        - attachmentBytes
+      properties:
+        attachmentType:
+          type: string
+          minLength: 1
+        attachmentBytes:
+          type: string
+          format: byte
           minLength: 1
     PostParentalLeaveResponse:
       type: object

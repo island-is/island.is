@@ -137,11 +137,7 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: `${environment.identityServer.jwksUri}`,
-    }),
+    AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
       username: environment.syslumennService.username,

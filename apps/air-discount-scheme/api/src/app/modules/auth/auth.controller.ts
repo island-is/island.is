@@ -13,7 +13,8 @@ import { Entropy } from 'entropy-string'
 import * as kennitala from 'kennitala'
 import IslandisLogin, { VerifyResult } from 'islandis-login'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,

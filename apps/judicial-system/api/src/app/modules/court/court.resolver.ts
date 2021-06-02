@@ -1,8 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { User } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,

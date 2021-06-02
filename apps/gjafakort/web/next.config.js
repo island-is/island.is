@@ -12,6 +12,16 @@ const {
 
 module.exports = withSourceMaps(
   withTreat({
+    redirects() {
+      return [
+        {
+          source: '/',
+          destination: 'https://island.is/ferdagjof',
+          permanent: true,
+        },
+      ]
+    },
+
     webpack: (config, options) => {
       if (!options.isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'

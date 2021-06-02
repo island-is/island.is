@@ -3,7 +3,7 @@ import {
   FieldBaseProps,
   DateField,
   formatText,
-  MaybeWithApplication,
+  MaybeWithApplicationAndField,
   Application,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
@@ -26,24 +26,50 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     placeholder,
     backgroundColor,
     excludeDates,
+    minDate,
   } = field
   const { formatMessage, lang } = useLocale()
 
+  const computeMinDate = (
+    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    memoApplication: Application,
+    memoField: DateField,
+  ) => {
+    if (typeof maybeMinDate === 'function') {
+      return maybeMinDate(memoApplication, memoField)
+    }
+
+    return maybeMinDate
+  }
+
   const computeExcludeDates = (
-    maybeExcludeDates: MaybeWithApplication<Date[]>,
-    application: Application,
+    maybeExcludeDates: MaybeWithApplicationAndField<Date[]>,
+    memoApplication: Application,
+    memoField: DateField,
   ) => {
     if (typeof maybeExcludeDates === 'function') {
-      return maybeExcludeDates(application)
+      return maybeExcludeDates(memoApplication, memoField)
     }
+
     return maybeExcludeDates
   }
+
+  const finalMinDate = useMemo(
+    () =>
+      computeMinDate(
+        minDate as MaybeWithApplicationAndField<Date>,
+        application,
+        field,
+      ),
+    [minDate, application, field],
+  )
 
   const finalExcludeDates = useMemo(
     () =>
       computeExcludeDates(
-        excludeDates as MaybeWithApplication<Date[]>,
+        excludeDates as MaybeWithApplicationAndField<Date[]>,
         application,
+        field,
       ),
     [excludeDates, application],
   )
@@ -63,6 +89,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           name={`${id}`}
           locale={lang}
           excludeDates={finalExcludeDates}
+          minDate={finalMinDate}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={
