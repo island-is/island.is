@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useContext, useReducer } from 'react'
-import { Text, InputFileUpload, Box } from '@island.is/island-ui/core'
+import {
+  Text,
+  InputFileUpload,
+  Box,
+  LinkContext,
+} from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -8,13 +13,13 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
-import * as styles from './incomeFilesForm.treat'
+import * as styles from './taxReturnForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
 
-const IncomeFilesForm = () => {
+const TaxReturnForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
@@ -33,20 +38,50 @@ const IncomeFilesForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Tekjugögn
+          Skattframtal
         </Text>
 
-        <Text marginBottom={[3, 3, 4]}>
-          Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
-          smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
-          heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.
+        <Text marginBottom={[4, 4, 5]}>
+          Við þurfum að fá afrit af nýjasta skattframtali þínu. Skattframtal er
+          staðfesting á öllum þeim tekjum, eignum og skuldum sem þú áttir á
+          skattárinu sem leið og er nauðsynlegt fylgigagn fyrir úrvinnslu á
+          fjárhagsaðstoð.
         </Text>
+
+        <Text as="h2" variant="h3" marginBottom={2}>
+          Hvar finn ég staðfest afrit af mínu skattframtali?
+        </Text>
+
+        <LinkContext.Provider
+          value={{
+            linkRenderer: (href, children) => (
+              <a
+                style={{
+                  color: '#0061ff',
+                }}
+                href={href}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {children}
+              </a>
+            ),
+          }}
+        >
+          <Text marginBottom={[3, 3, 5]}>
+            Á vef Skattsins finnur þú{' '}
+            <a href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/">
+              leiðbeiningar
+            </a>{' '}
+            um hvernig sækja má staðfest afrit skattframtals.
+          </Text>
+        </LinkContext.Provider>
 
         <div className={styles.fileContainer}>
-          <Box className={styles.files} marginBottom={[1, 1, 2]}>
+          <Box className={styles.files} marginBottom={2}>
             <InputFileUpload
               fileList={[]}
-              header="Dragðu gögn hingað"
+              header="Dragðu skattframtalið hingað"
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
               onChange={() => {}}
@@ -69,7 +104,7 @@ const IncomeFilesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        nextButtonText="Skila gögnum seinna"
+        nextButtonText="Halda áfram"
         onNextButtonClick={() => {
           router.push(navigation?.nextUrl ?? '/')
         }}
@@ -78,4 +113,4 @@ const IncomeFilesForm = () => {
   )
 }
 
-export default IncomeFilesForm
+export default TaxReturnForm

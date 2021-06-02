@@ -151,14 +151,6 @@ const Form = () => {
             )
           })}
         </div>
-
-        {/* <Box marginBottom={5} marginTop={[3, 3, 0]}>
-          <AlertMessage
-            type="info"
-            title="Upplýsingar um bankareikning"
-            message="Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur bankaupplýsingarnar upp eru þær geymdar í gagnagrunni Stafræns Íslands. Kjósirðu að gefa ekki upp bankaupplýsingarnar á þessu stigi verður hringt í þig og óskað eftir upplýsingunum ef umsóknin verður samþykkt."
-          />
-        </Box> */}
       </FormContentContainer>
 
       <FormFooter

@@ -73,7 +73,7 @@ const Header: React.FC = () => {
             type="button"
             variant="utility"
           >
-            <img src="/placeholder.jpg" className={styles.userProfileImage} />
+            {/* <img src="/placeholder.jpg" className={styles.userProfileImage} /> */}
             Nafn Nafndóttir
           </Button>
         </Box>

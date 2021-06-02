@@ -19,6 +19,10 @@ const Index = () => {
   //   },
   // )
 
+  useEffect(() => {
+    document.title = 'Umsókn um fjárhagsaðstoð'
+  }, [])
+
   const { data, error, loading } = useQuery(GetCurrentUserQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',

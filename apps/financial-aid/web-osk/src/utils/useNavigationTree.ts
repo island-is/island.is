@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useNavigationTree = (hasIncome: boolean | number | undefined) => {
+const useNavigationTree = () => {
   const section = [
     {
       name: 'Gagnaöflun',
@@ -24,6 +24,11 @@ const useNavigationTree = (hasIncome: boolean | number | undefined) => {
       children: [
         { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
         { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Skattframtal',
+          url: '/umsokn/skattframtal',
+        },
         {
           type: 'SUB_SECTION',
           name: 'Persónuafsláttur',

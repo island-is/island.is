@@ -7,6 +7,7 @@ export const container = style({
   bottom: 0,
   top: 0,
   paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[6],
   backgroundColor: theme.color.purple100,
   width: '24.5%',
   paddingTop: theme.spacing[5],
@@ -33,16 +34,33 @@ export const logoContainer = style({
 export const logoHfjContainer = style({
   display: 'grid',
   gridTemplateColumns: 'max-content auto',
+  alignItems: 'center',
   columnGap: theme.spacing[2],
   marginBottom: theme.spacing[8],
 })
 
 export const logoHfj = style({
-  width: theme.spacing[5],
-  height: theme.spacing[5],
-  backgroundColor: theme.color.purple200,
-  paddingRight: '16px',
-  borderRight: `2px solid ${theme.color.purple200}`,
+  width: theme.spacing[4],
+  height: theme.spacing[6],
+})
+
+export const headline = style({
+  position: 'relative',
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    display: 'block',
+    height: theme.spacing[3],
+    width: '2px',
+    left: '0px',
+    backgroundColor: theme.color.purple200,
+    top: 'calc((100%/2) - 12px)',
+  },
 })
 
 export const otherItems = style({})
+
+export const activeLink = style({
+  backgroundColor: theme.color.white,
+  borderRadius: theme.spacing[1],
+})

@@ -35,3 +35,8 @@ export const contactInfo = style({
     },
   },
 })
+
+export const taxReturn = style({
+  color: theme.color.red400,
+  fontWeight: 'bold',
+})

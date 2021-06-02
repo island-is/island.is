@@ -192,63 +192,66 @@ const SummaryForm = () => {
       activeSubSection={navigation?.activeSubSectionIndex}
     >
       <FormContentContainer>
-        <Text as="h1" variant="h2" marginBottom={2}>
+        <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Text marginBottom={[4, 4, 5]}>
-          <strong>Við eigum enn eftir að klára gagnaöflun</strong> en samkvæmt
-          því sem við vitum um þig í dag getur þú miðað við:
+        <Text as="h2" variant="h3" marginBottom={2}>
+          Áætluð aðstoð
+        </Text>
+
+        <Text marginBottom={[2, 2, 3]}>
+          Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
+          <span className={styles.taxReturn}>
+            gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
+          </span>{' '}
+          sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
+          útreikningur liggur fyrir.
         </Text>
         {data && (
-          <ContentBlock>
-            <Box marginBottom={[4, 4, 5]}>
-              <AccordionCard id="id_1" label="Bráðabirgðaútreikningur">
-                {calculation.map((item, index) => {
-                  return (
-                    <>
-                      <Box
-                        display="flex"
-                        justifyContent="spaceBetween"
-                        alignItems="center"
-                        paddingTop={2}
-                        paddingBottom={2}
-                      >
-                        <Text variant="small">{item.label}</Text>
-                        <Text fontWeight="semiBold">{item.sum}</Text>
-                      </Box>
+          <>
+            {calculation.map((item, index) => {
+              return (
+                <>
+                  <Box
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    alignItems="center"
+                    padding={2}
+                  >
+                    <Text variant="small">{item.label}</Text>
+                    <Text>{item.sum}</Text>
+                  </Box>
 
-                      <Divider />
-                    </>
-                  )
-                })}
-
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  paddingTop={2}
-                >
-                  <Text variant="small" fontWeight="semiBold">
-                    Áætluð aðstoð (hámark)
-                  </Text>
-                  <Text fontWeight="semiBold">
-                    {aidAmount !== undefined
-                      ? aidAmount?.toLocaleString('de-DE') + ' kr.'
-                      : 'Abbabb.. mistókst að reikna'}
-                  </Text>
-                </Box>
-              </AccordionCard>
+                  <Divider />
+                </>
+              )
+            })}
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+              background="blue100"
+            >
+              <Text variant="small">Áætluð aðstoð (hámark)</Text>
+              <Text>
+                {aidAmount !== undefined
+                  ? aidAmount?.toLocaleString('de-DE') + ' kr.'
+                  : 'Abbabb.. mistókst að reikna'}
+              </Text>
             </Box>
-          </ContentBlock>
+            <Divider />
+          </>
         )}
-
         {loading && (
           <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
             <LoadingIcon animate size={50} />
           </Box>
         )}
+        <Box marginTop={[4, 4, 5]}>
+          <Divider />
+        </Box>
 
-        <Divider />
         <Box
           display="flex"
           alignItems="flexStart"
@@ -312,7 +315,7 @@ const SummaryForm = () => {
           justifyContent="spaceBetween"
           alignItems="flexStart"
           paddingY={[4, 4, 5]}
-          marginBottom={10}
+          marginBottom={[2, 2, 10]}
         >
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>
