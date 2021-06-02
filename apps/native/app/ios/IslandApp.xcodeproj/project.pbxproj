@@ -442,6 +442,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = is.island.app;
 				PRODUCT_NAME = IslandApp;
+				PROVISIONING_PROFILE_SPECIFIER = "match Development is.island.app.dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "IslandApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -471,6 +472,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = is.island.app;
 				PRODUCT_NAME = IslandApp;
+				PROVISIONING_PROFILE = "48b3d3e6-c1d2-4596-8629-364de069e8ab";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore is.island.app.dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "IslandApp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
