@@ -13,8 +13,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { petitionTypes } from './PetitionTypes'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-import { ValueType } from 'react-select'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case
@@ -24,8 +22,6 @@ interface Props {
 const PetitionTypeForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const [petitionDescriptionEM, setPetitionDescriptionEM] = useState<string>('')
-  const [petitionType, setPetitionType] = useState<string>()
-  const [petitionDescription, setPetitionDescription] = useState<string>()
   const { updateCase } = useCase()
 
   return (
@@ -49,9 +45,6 @@ const PetitionTypeForm: React.FC<Props> = (props) => {
                 options={petitionTypes}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
-                onChange={(evt: ValueType<ReactSelectOption>) => {
-                  setPetitionType((evt as ReactSelectOption).value as string)
-                }}
                 required
               />
             </Box>
@@ -76,16 +69,14 @@ const PetitionTypeForm: React.FC<Props> = (props) => {
                   )
               }}
               onBlur={(event) =>
-                workingCase.id
-                  ? validateAndSendToServer(
-                      'petitionDescription',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setPetitionDescriptionEM,
-                    )
-                  : setPetitionDescription(event.target.value)
+                validateAndSendToServer(
+                  'petitionDescription',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setPetitionDescriptionEM,
+                )
               }
               required
             />
@@ -95,7 +86,7 @@ const PetitionTypeForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.REQUEST_LIST_ROUTE}
-          nextUrl={`${constants.R_CASE_DEFENDANT_ROUTE}?tegund_krofu=${petitionType}?efni_krofu=${petitionDescription}`}
+          nextUrl={constants.R_CASE_DEFENDANT_ROUTE}
           nextIsLoading={false}
           nextIsDisabled={false}
         />
