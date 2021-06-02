@@ -139,7 +139,7 @@ export const getTransferredDays = (
   let days = 0
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    const requestedDays = requestRights.requestDays
+    const requestedDays = Number(requestRights.requestDays)
 
     days = requestedDays
   }
@@ -149,7 +149,7 @@ export const getTransferredDays = (
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
-    const givenDays = giveRights.giveDays
+    const givenDays = Number(giveRights.giveDays)
 
     days = -givenDays
   }
@@ -161,19 +161,24 @@ export const getTransferredDays = (
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
+  const { answers, externalData } = application
+
+  const selectedChild = getSelectedChild(answers, externalData)
 
   if (!selectedChild) {
     throw new Error('Missing selected child')
   }
 
-  return daysToMonths(
-    selectedChild.remainingDays +
-      getTransferredDays(application, selectedChild),
-  )
+  const useMockData = getValueViaPath(answers, 'mock.useMockData') === YES
+
+  if (useMockData) {
+    return daysToMonths(
+      selectedChild.remainingDays +
+        getTransferredDays(application, selectedChild),
+    )
+  }
+
+  return daysToMonths(selectedChild.remainingDays)
 }
 
 export const getOtherParentOptions = (application: Application) => {

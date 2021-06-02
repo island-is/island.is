@@ -1,5 +1,4 @@
 import { assign } from 'xstate'
-
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
@@ -14,10 +13,18 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  getValueViaPath,
 } from '@island.is/application/core'
 
-import { YES, API_MODULE_ACTIONS, States } from '../constants'
-import { dataSchema, SchemaFormValues } from './dataSchema'
+import {
+  YES,
+  API_MODULE_ACTIONS,
+  States,
+  ParentalRelations,
+  NO,
+  MANUAL,
+} from '../constants'
+import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
@@ -54,7 +61,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
-        exit: 'attemptToSavePrimaryParentAsOtherParent',
+        exit: [
+          'attemptToSetPrimaryParentAsOtherParent',
+          'setRightsToOtherParent',
+          'setAllowanceToOtherParent',
+        ],
         meta: {
           name: States.PREREQUISITES,
           lifecycle: {
@@ -124,7 +135,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
         exit: 'clearAssignees',
@@ -146,6 +156,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/OtherParentApproval').then((val) =>
                   Promise.resolve(val.OtherParentApproval),
                 ),
+              read: {
+                answers: ['requestRights', 'usePersonalAllowanceFromSpouse'],
+              },
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
@@ -204,7 +217,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        exit: 'saveEmployerNationalRegistryId',
+        exit: 'setEmployerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           actionCard: {
@@ -386,7 +399,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
-
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
         entry: 'createTempPeriods',
@@ -427,9 +439,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'saveEmployerNationalRegistryId',
+        exit: 'setEmployerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           actionCard: {
@@ -577,10 +588,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      /*
-      Copy the current periods to temp. If the user cancels the edits,
-      we will restore the periods to their original state from temp.
-      */
+      /**
+       * Copy the current periods to temp. If the user cancels the edits,
+       * we will restore the periods to their original state from temp.
+       */
       createTempPeriods: assign((context, event) => {
         if (event.type !== DefaultEvents.EDIT) {
           return context
@@ -591,16 +602,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'tempPeriods', answers.periods)
 
-        return {
-          ...context,
-          application,
-        }
+        return context
       }),
-
-      /*
-        The user canceled the edits.
-        Restore the periods to their original state from temp.
-      */
+      /**
+       * The user canceled the edits.
+       * Restore the periods to their original state from temp.
+       */
       restorePeriodsFromTemp: assign((context, event) => {
         if (event.type !== DefaultEvents.ABORT) {
           return context
@@ -612,15 +619,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         set(answers, 'periods', cloneDeep(answers.tempPeriods))
         unset(answers, 'tempPeriods')
 
-        return {
-          ...context,
-          application,
-        }
+        return context
       }),
-
-      /*
-        The edits were approved. Clear out temp.
-      */
+      /**
+       * The edits were approved. Clear out temp.
+       */
       clearTemp: assign((context, event) => {
         if (event.type !== DefaultEvents.APPROVE) {
           return context
@@ -631,33 +634,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         unset(answers, 'tempPeriods')
 
-        return {
-          ...context,
-          application,
-        }
-      }),
-
-      assignToOtherParent: assign((context) => {
-        const currentApplicationAnswers = context.application
-          .answers as SchemaFormValues
-
-        if (
-          currentApplicationAnswers.requestRights.isRequestingRights === YES &&
-          currentApplicationAnswers.otherParentId !== undefined &&
-          currentApplicationAnswers.otherParentId !== ''
-        ) {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: [currentApplicationAnswers.otherParentId],
-            },
-          }
-        }
         return context
       }),
-      saveEmployerNationalRegistryId: assign((context, event) => {
-        // Only save if employer gets assigned
+      assignToOtherParent: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const otherParentId = getValueViaPath(answers, 'otherParentId')
+
+        if (
+          otherParentId !== undefined &&
+          otherParentId !== '' &&
+          needsOtherParentApproval(context)
+        ) {
+          set(application, 'assignees', [answers.otherParentId])
+        }
+
+        return context
+      }),
+      setEmployerNationalRegistryId: assign((context, event) => {
+        // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
           return context
         }
@@ -667,29 +662,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'employer.nationalRegistryId', application.assignees[0])
 
-        return {
-          ...context,
-          application,
-        }
+        return context
       }),
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-      attemptToSavePrimaryParentAsOtherParent: assign((context) => {
+      attemptToSetPrimaryParentAsOtherParent: assign((context) => {
         const { application } = context
         const { answers, externalData } = application
-
         const selectedChild = getSelectedChild(answers, externalData)
 
         if (!selectedChild) {
           return context
         }
 
-        if (selectedChild.parentalRelation === 'primary') {
+        if (selectedChild.parentalRelation === ParentalRelations.primary) {
           return context
         }
 
@@ -700,11 +684,59 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           selectedChild.primaryParentNationalRegistryId,
         )
 
-        return {
-          ...context,
-          application,
-        }
+        set(answers, 'otherParent', MANUAL)
+
+        return context
       }),
+      setRightsToOtherParent: assign((context) => {
+        const { application } = context
+        const { answers, externalData } = application
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        if (!selectedChild) {
+          return context
+        }
+
+        if (selectedChild.parentalRelation === ParentalRelations.primary) {
+          return context
+        }
+
+        const days = selectedChild.transferredDays
+
+        if (days && days < 0) {
+          set(answers, 'requestRights.isRequestingRights', YES)
+          set(answers, 'requestRights.requestDays', days)
+        } else {
+          set(answers, 'requestRights.isRequestingRights', NO)
+        }
+
+        return context
+      }),
+      setAllowanceToOtherParent: assign((context) => {
+        const { application } = context
+        const { answers, externalData } = application
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        if (!selectedChild) {
+          return context
+        }
+
+        if (selectedChild.parentalRelation === ParentalRelations.primary) {
+          return context
+        }
+
+        set(answers, 'usePersonalAllowance', NO)
+        set(answers, 'usePersonalAllowanceFromSpouse', NO)
+
+        return context
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
   mapUserToRole(

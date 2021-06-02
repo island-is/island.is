@@ -174,6 +174,7 @@ export function buildRadioField(data: {
   width?: FieldWidth
   defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
+  space?: BoxProps['paddingTop']
 }): RadioField {
   const {
     condition,
@@ -186,6 +187,7 @@ export function buildRadioField(data: {
     disabled = false,
     width = 'full',
     backgroundColor,
+    space,
   } = data
   return {
     children: undefined,
@@ -199,6 +201,7 @@ export function buildRadioField(data: {
     description,
     options,
     backgroundColor,
+    space,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }

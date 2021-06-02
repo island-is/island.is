@@ -1,3 +1,8 @@
+import { MANUAL, NO, YES } from './constants'
+
+export type OtherParent = typeof NO | typeof MANUAL | undefined
+export type Boolean = typeof NO | typeof YES
+
 export type Period = {
   startDate: string
   endDate: string

@@ -15,6 +15,7 @@ import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { ParentalRelations } from '../../constants'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
@@ -29,7 +30,10 @@ const ChildSelector: FC<FieldBaseProps> = ({
     'externalData.children.data',
     [],
   ) as {
-    children: { expectedDateOfBirth: string }[]
+    children: {
+      expectedDateOfBirth: string
+      primaryParentNationalRegistryId?: string
+    }[]
     existingApplications: {
       applicationId: string
       expectedDateOfBirth: string
@@ -69,10 +73,17 @@ const ChildSelector: FC<FieldBaseProps> = ({
               name="selectedChild"
               largeButtons={true}
               defaultValue={selectedChild}
-              options={children.map((child, index) => ({
-                value: `${index}`,
-                label: child.expectedDateOfBirth,
-              }))}
+              options={children.map((child, index) => {
+                const nationalRegistryId = child.primaryParentNationalRegistryId
+                  ? `- ${child.primaryParentNationalRegistryId}`
+                  : ''
+                const label = `${child.expectedDateOfBirth} ${nationalRegistryId}`
+
+                return {
+                  value: `${index}`,
+                  label,
+                }
+              })}
             />
           </Box>
         </>

@@ -7,10 +7,14 @@ import {
   Form,
   FormModes,
   coreMessages,
+  Application,
+  getValueViaPath,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
+import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
+import { Boolean } from '../types'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
@@ -24,12 +28,56 @@ export const OtherParentApproval: Form = buildForm({
       children: [
         buildMultiField({
           id: 'multi',
-          title: otherParentApprovalFormMessages.multiTitle,
+          title: (application: Application) => {
+            const isRequestingRights = getValueViaPath(
+              application.answers,
+              'requestRights.isRequestingRights',
+            ) as Boolean
+            const usePersonalAllowanceFromSpouse = getValueViaPath(
+              application.answers,
+              'usePersonalAllowanceFromSpouse',
+            ) as Boolean
+
+            if (
+              isRequestingRights === YES &&
+              usePersonalAllowanceFromSpouse === YES
+            ) {
+              return otherParentApprovalFormMessages.requestBoth
+            }
+
+            if (isRequestingRights === YES) {
+              return otherParentApprovalFormMessages.requestRights
+            }
+
+            return otherParentApprovalFormMessages.requestAllowance
+          },
           children: [
             buildDescriptionField({
               id: 'intro',
               title: '',
-              description: otherParentApprovalFormMessages.introDescription,
+              description: (application: Application) => {
+                const isRequestingRights = getValueViaPath(
+                  application.answers,
+                  'requestRights.isRequestingRights',
+                ) as Boolean
+                const usePersonalAllowanceFromSpouse = getValueViaPath(
+                  application.answers,
+                  'usePersonalAllowanceFromSpouse',
+                ) as Boolean
+
+                if (
+                  isRequestingRights === YES &&
+                  usePersonalAllowanceFromSpouse === YES
+                ) {
+                  return otherParentApprovalFormMessages.introDescriptionBoth
+                }
+
+                if (isRequestingRights === YES) {
+                  return otherParentApprovalFormMessages.introDescriptionRights
+                }
+
+                return otherParentApprovalFormMessages.introDescriptionAllowance
+              },
             }),
             buildSubmitField({
               id: 'submit',

@@ -1,12 +1,14 @@
 import React, { FC } from 'react'
-import { RepeaterProps } from '@island.is/application/core'
 
+import { RepeaterProps } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
+
 import Timeline from '../components/Timeline'
 import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { FieldDescription } from '@island.is/shared/form-fields'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { States } from '../../constants'
 
 const PeriodsRepeater: FC<RepeaterProps> = ({
   removeRepeaterItem,
@@ -22,7 +24,8 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
 
   const dobDate = new Date(dob)
   const editable =
-    application.state === 'draft' || application.state === 'editOrAddPeriods'
+    application.state === States.DRAFT ||
+    application.state === States.EDIT_OR_ADD_PERIODS
 
   return (
     <Box>

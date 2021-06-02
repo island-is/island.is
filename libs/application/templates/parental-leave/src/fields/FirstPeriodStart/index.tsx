@@ -77,6 +77,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
           largeButtons
         />
+
         <input
           type="hidden"
           value={

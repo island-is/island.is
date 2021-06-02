@@ -60,7 +60,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </Text>
             )}
 
-            {isRequestingRights === YES && (
+            {isRequestingRights === YES && requestDays > 0 && (
               <>
                 {', '}
                 <Text as="span">
@@ -75,7 +75,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </>
             )}
 
-            {isGivingRights === YES && (
+            {isGivingRights === YES && giveDays > 0 && (
               <>
                 {', '}
                 <Text as="span">

@@ -1,6 +1,10 @@
-import { ApplicationContext } from '@island.is/application/core'
+import {
+  ApplicationContext,
+  getValueViaPath,
+} from '@island.is/application/core'
+
 import { YES, NO } from '../constants'
-import { SchemaFormValues } from './dataSchema'
+import { Boolean } from '../types'
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
@@ -11,8 +15,16 @@ export function hasEmployer(context: ApplicationContext) {
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application
-    .answers as SchemaFormValues
+  const { application } = context
+  const { answers } = application
+  const isRequestingRights = getValueViaPath(
+    answers,
+    'requestRights.isRequestingRights',
+  ) as Boolean
+  const usePersonalAllowanceFromSpouse = getValueViaPath(
+    answers,
+    'usePersonalAllowanceFromSpouse',
+  ) as Boolean
 
-  return currentApplicationAnswers.requestRights.isRequestingRights === YES
+  return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
 }

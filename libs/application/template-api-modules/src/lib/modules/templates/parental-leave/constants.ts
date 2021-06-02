@@ -14,9 +14,14 @@ export const formConstants = {
 }
 
 export const apiConstants = {
+  maxDaysToGiveOrReceive: 45,
   pensionFunds: {
     // Id used when applicant does not wish to pay into a private pension fund
     noPrivatePensionFundId: 'X000',
+  },
+  rights: {
+    // When primary or secondary parents are requested extra days from their spouse
+    givingReceivingRightsId: 'FSAL-GR',
   },
   attachments: {
     selfEmployed: 'selfEmployed',

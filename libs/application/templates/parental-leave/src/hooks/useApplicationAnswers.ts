@@ -1,13 +1,27 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 
-import { MANUAL, NO, YES } from '../constants'
+import { YES, NO } from '../constants'
+import { maxDaysToGiveOrReceive } from '../config'
+import { Boolean, OtherParent } from '../types'
 
-type OtherParent = typeof NO | typeof MANUAL | undefined
 export type ApplicationAnswers = ReturnType<typeof useApplicationAnswers>
-export type Boolean = typeof NO | typeof YES
+
+const getOrFallback = (condition: Boolean, value: number | undefined) => {
+  if (condition === YES) {
+    // In the first version of the app, we can't manually change the number of
+    // days requested or given, so we use the maximum number of days in this case
+    if (value === undefined) {
+      return maxDaysToGiveOrReceive
+    }
+
+    return value
+  }
+
+  return 0
+}
 
 export const useApplicationAnswers = (application: Application) => {
-  const answers = application.answers
+  const { answers } = application
 
   const otherParent = getValueViaPath(answers, 'otherParent') as OtherParent
 
@@ -86,17 +100,22 @@ export const useApplicationAnswers = (application: Application) => {
     'requestRights.isRequestingRights',
   ) as Boolean
 
-  const requestDays = getValueViaPath(
-    answers,
-    'requestRights.requestDays',
-  ) as number
+  const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
+    | number
+    | undefined
+
+  const requestDays = getOrFallback(isRequestingRights, requestValue)
 
   const isGivingRights = getValueViaPath(
     answers,
     'giveRights.isGivingRights',
   ) as Boolean
 
-  const giveDays = getValueViaPath(answers, 'giveRights.giveDays') as number
+  const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
+    | number
+    | undefined
+
+  const giveDays = getOrFallback(isGivingRights, giveValue)
 
   return {
     otherParent,

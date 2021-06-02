@@ -126,7 +126,6 @@ const Screen: FC<ScreenProps> = ({
     : errors ?? {}
 
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
-
   const setBeforeSubmitCallback = useCallback(
     (callback: BeforeSubmitCallback | null) => {
       beforeSubmitCallback.current = callback
