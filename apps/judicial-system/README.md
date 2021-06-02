@@ -56,10 +56,10 @@ You can serve this service locally by running:
 yarn start judicial-system-backend
 ```
 
-To enable SMS notifications to an on-call judge provide a password for the SMS service and a judge mobile number:
+To enable SMS notifications to an on-call judge provide a password for the SMS service and court mobile numbers:
 
 ```bash
-NOVA_PASSWORD=<SMS password> COURT_MOBILE_NUMBERS=<judge mobile number> yarn start judicial-system-backend
+NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: { mobileNumbers: <judge mobile number> } }' yarn start judicial-system-backend
 ```
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
@@ -81,7 +81,7 @@ To enable prison and prison administration email notifications provide email add
 
 To enable writing to AWS S3 you need to be authenticated against AWS.
 
-Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtService` sections in `environment.ts`.
+Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
 ### Graphql
 
@@ -90,6 +90,8 @@ Make sure you are serving the graphql client as well in order for you to make gr
 ```bash
 yarn start judicial-system-api
 ```
+
+You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
 ### OpenApi and Swagger
 
