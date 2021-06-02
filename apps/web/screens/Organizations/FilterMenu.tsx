@@ -16,6 +16,7 @@ interface FilterMenuProps {
   setFilter: Dispatch<SetStateAction<FilterProps>>
   asDialog?: boolean
   resultCount: number
+  onBeforeUpdate: Function
 }
 
 export type CategoriesProps = {
@@ -31,6 +32,7 @@ export const FilterMenu = ({
   setFilter,
   asDialog,
   resultCount,
+  onBeforeUpdate,
 }: FilterMenuProps) => (
   <Filter
     labelClear="Hreinsa síu"
@@ -56,18 +58,20 @@ export const FilterMenu = ({
     <FilterMultiChoice
       labelClear="Hreinsa val"
       categories={categories}
-      onChange={(event) =>
+      onChange={(event) => {
+        onBeforeUpdate()
         setFilter({
           ...filter,
           [event.categoryId]: event.selected,
         })
-      }
-      onClear={(categoryId) =>
+      }}
+      onClear={(categoryId) => {
+        onBeforeUpdate()
         setFilter({
           ...filter,
           [categoryId]: [],
         })
-      }
+      }}
     />
   </Filter>
 )
