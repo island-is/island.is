@@ -164,7 +164,7 @@ const main = async () => {
 
     if (serveChild) {
       console.log('Clean up serve process...')
-      let killed = serveChild.kill('SIGINT')
+      let killed = serveChild.kill('SIGTERM')
       console.log(`Child process cleaned up successfully: ${killed}`)
     }
   } catch (err) {
