@@ -61,8 +61,8 @@ const target = argv.name.replace('-e2e', '')
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
   EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
-  SERVE_NEXT: `node ${argv.dist}/main.js`,
-  SERVE_REACT: `node scripts/static-serve.js -p ${argv.port} -d ${argv.dist} -b ${argv['base-path']}`,
+  SERVE_NEXT: [ `${argv.dist}/main.js` ],
+  SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production ${
     argv.ci ? `--record --group=${argv.name}` : ''}${
     argv['skip-cache'] ? ' --skip-nx-cache' : ''}` 
@@ -103,9 +103,8 @@ const extractEnv = async () => {
 const serve = () => {
   console.log(`Starting serve for ${argv.type} app in a child process...`)
   // Start static-serve
-  let child = spawn(CMD[`SERVE_${argv.type.toUpperCase()}`], {
+  let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`], {
     stdio: 'inherit',
-    shell: true,
   })
   console.log(`Serving target project in a child process: ${child.pid}`)
 
@@ -143,11 +142,9 @@ const test = () => {
       })
 
       child.on('error', (err) => {
-        console.log(err)
         reject(err)
       })
     } catch (err) {
-      console.log(err)
       reject(err)
     }
   })
@@ -155,21 +152,22 @@ const test = () => {
 
 const main = async () => {
   let exitCode = 0
+  let serveChild
 
   try {
     await build()
     await extractEnv()
-    let serveChild = serve()
+    serveChild = serve()
     await test()
-
-    if (serveChild) {
-      console.log('Clean up serve process...')
-      let killed = serveChild.kill()
-      console.log(`Child process cleaned up successfully: ${killed}`)
-    }
   } catch (err) {
     exitCode = 1
     console.log(err)
+  }
+
+  if (serveChild) {
+    console.log('Clean up serve process...')
+    let killed = serveChild.kill()
+    console.log(`Child process cleaned up successfully: ${killed}`)
   }
 
   console.log(`Exiting main process with code ${exitCode}`)
