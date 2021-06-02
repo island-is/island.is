@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
 import { IsString, IsOptional, IsArray, IsDateString } from 'class-validator'
+import { DelegationScopeDTO } from './delegation-scope.dto'
 
 export enum DelegationType {
   LegalGuardian = 'LegalGuardian',
@@ -35,18 +36,10 @@ export class DelegationDTO {
   @ApiProperty({ enum: DelegationProvider, enumName: 'DelegationProvider' })
   provider!: DelegationProvider
 
-  @IsDateString()
-  @ApiPropertyOptional()
-  validFrom?: Date
-
   @IsOptional()
-  @IsDateString()
-  @ApiPropertyOptional()
-  validTo?: Date
-
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsArray()
-  scopes?: string[]
+  scopes?: DelegationScopeDTO[]
 }
 
 export class UpdateDelegationDTO extends OmitType(DelegationDTO, [

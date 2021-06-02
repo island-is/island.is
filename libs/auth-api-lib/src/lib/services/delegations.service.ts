@@ -3,15 +3,17 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
+import { RskApi } from '@island.is/clients/rsk/v2'
+import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
-import {
-  EinstaklingarApi,
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import type {
   EinstaklingarGetForsjaRequest,
   EinstaklingarGetEinstaklingurRequest,
 } from '@island.is/clients/national-registry-v2'
 import { DelegationScope } from '@island.is/auth-api-lib'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
 
 import {
   DelegationDTO,
@@ -171,6 +173,7 @@ export class DelegationsService {
       { ...delegation },
       { where: { id: id, fromNationalId: nationalId } },
     )
+
     await this.delegationScopeService.delete(id)
     if (delegation.scopes) {
       await this.delegationScopeService.createMany(id, delegation.scopes)

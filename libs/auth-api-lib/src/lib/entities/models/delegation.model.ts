@@ -42,18 +42,6 @@ export class Delegation extends Model<Delegation> {
   })
   toNationalId!: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  validFrom!: Date
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  validTo?: Date
-
   @CreatedAt
   readonly created!: Date
 
@@ -70,10 +58,8 @@ export class Delegation extends Model<Delegation> {
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       scopes: this.delegationScopes
-        ? this.delegationScopes.map((scope) => scope.scopeName)
+        ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
-      validFrom: this.validFrom,
-      validTo: this.validTo,
       provider: DelegationProvider.Custom,
       type: DelegationType.Custom,
     }
