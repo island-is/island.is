@@ -2,8 +2,6 @@ export interface PaymentServiceOptions {
   url: string
   username: string
   password: string
-  key: number
-  organization: string
 }
 
 export interface Charge {

@@ -8,14 +8,14 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { Charge } from '@island.is/clients/payment'
-import { PaymentService } from '@island.is/clients/payment'
+import { PaymentAPI } from '@island.is/clients/payment'
 import { CreatingPaymentModel, PaymentCatalogResponse } from './models/index'
 
 // MUST UNCOMMENT GUARDS - WORKAROUND FOR GRAPHQLQUERIES.
 //@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentResolver {
-  constructor(private PaymentService: PaymentService) {}
+  constructor(private PaymentService: PaymentAPI) {}
 
   @Query(() => CreatingPaymentModel)
   createChargePayment(createChargeToClient: Charge) {

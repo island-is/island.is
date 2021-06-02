@@ -1,7 +1,7 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
-import { PaymentService, PAYMENT_OPTIONS } from './payment'
+import { PaymentAPI, PAYMENT_OPTIONS } from './payment'
 import { Catalog, Item, Charge, ChargeResponse } from './payment.type'
 import { Base64 } from 'js-base64'
 
@@ -222,7 +222,7 @@ startMocking(handlers)
 const getNestModule = async (condition: expectedResult) => {
   const moduleRef = await Test.createTestingModule({
     providers: [
-      PaymentService,
+      PaymentAPI,
       {
         provide: PAYMENT_OPTIONS,
         useValue: {
@@ -234,11 +234,11 @@ const getNestModule = async (condition: expectedResult) => {
     ],
   }).compile()
 
-  return moduleRef.get<PaymentService>(PaymentService)
+  return moduleRef.get<PaymentAPI>(PaymentAPI)
 }
 
 describe('getCatalog', () => {
-  let paymentService: PaymentService
+  let paymentService: PaymentAPI
 
   beforeEach(async () => {
     paymentService = await getNestModule(expectedResult.SUCCESS)

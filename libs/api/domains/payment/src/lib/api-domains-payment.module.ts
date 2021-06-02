@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import {
   PAYMENT_OPTIONS,
-  PaymentService,
+  PaymentAPI,
   PaymentServiceOptions,
 } from '@island.is/clients/payment'
 import { PaymentResolver } from './api-domains-payment.resolver'
@@ -12,12 +12,12 @@ export class PaymentModule {
     return {
       module: PaymentModule,
       providers: [
+        PaymentAPI,
         PaymentResolver,
         {
           provide: PAYMENT_OPTIONS,
           useValue: config,
         },
-        PaymentService,
       ],
     }
   }
