@@ -95,7 +95,7 @@ export const ConstituencyForm: Form = buildForm({
     buildSection({
       id: 'partyLetterFailed',
       title: '',
-      condition: (_a, externalData) => {
+      condition: (_, externalData) => {
         const partyLetter = externalData.partyLetterRegistry
           ?.data as PartyLetterRegistryPartyLetter
 
