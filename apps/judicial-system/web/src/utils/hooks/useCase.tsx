@@ -90,6 +90,7 @@ const useCase = () => {
           variables: {
             input: {
               caseId: workingCase?.id,
+              courtId: workingCase?.court?.id,
               type: workingCase?.type,
               policeCaseNumber: workingCase?.policeCaseNumber,
               isExtension: Boolean(workingCase?.parentCase?.id),

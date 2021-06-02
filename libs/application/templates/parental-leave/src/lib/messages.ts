@@ -1350,6 +1350,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að skilgreina gilt netfang.',
     description: 'Invalid email copy',
   },
+  bank: {
+    id: 'pl.application:answerValidators.bank',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+  },
   periodsPeriodRange: {
     id: 'pl.application:answerValidators.periodsPeriodRange',
     defaultMessage:
