@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { EndorsementTag } from '../endorsementList/endorsementList.model'
 
 export class EndorsementMetadata {
   @ApiProperty()
@@ -13,6 +14,6 @@ export class EndorsementMetadata {
   @ApiProperty()
   invalidated!: boolean
 
-  @ApiProperty()
-  signedTags!: string
+  @ApiProperty({ enum: EndorsementTag, isArray: true })
+  signedTags!: EndorsementTag[]
 }
