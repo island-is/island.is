@@ -8,11 +8,11 @@ import {
   NovaAPI,
 } from '../../services'
 
-export const getApplication = (
+export const getApplication = async (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
-  const { type: applicationType } = getVersionConfiguration()
+  const { type: applicationType } = await getVersionConfiguration()
 
   return applicationApi.getApplicationByType<UserApplication>(
     applicationType,
@@ -20,25 +20,25 @@ export const getApplication = (
   )
 }
 
-export const getApplications = (applicationApi: ApplicationAPI) => {
-  const { type: applicationType } = getVersionConfiguration()
+export const getApplications = async (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = await getVersionConfiguration()
 
   return applicationApi.getApplications<UserApplication>(applicationType)
 }
 
-export const getApplicationCount = (applicationApi: ApplicationAPI) => {
-  const { type: applicationType } = getVersionConfiguration()
+export const getApplicationCount = async (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = await getVersionConfiguration()
 
   return applicationApi.getApplicationCount<UserApplication>(applicationType)
 }
 
-export const createApplication = (
+export const createApplication = async (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
   applicationApi: ApplicationAPI,
 ) => {
-  const { type: applicationType } = getVersionConfiguration()
+  const { type: applicationType } = await getVersionConfiguration()
 
   return applicationApi.createApplication<UserApplication>({
     applicationType,

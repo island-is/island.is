@@ -20,10 +20,10 @@ interface Props {
   accusedGender: CaseGender
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  handleAccusedAppeal: (date?: Date) => void
-  handleProsecutorAppeal: (date?: Date) => void
-  handleAccusedAppealDismissal?: () => void
-  handleProsecutorAppealDismissal?: () => void
+  setAccusedAppealDate: (date?: Date) => void
+  setProsecutorAppealDate: (date?: Date) => void
+  withdrawAccusedAppealDate?: () => void
+  withdrawProsecutorAppealDate?: () => void
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
   isAppealDeadlineExpired: boolean
@@ -38,10 +38,10 @@ const AppealSection: React.FC<Props> = (props) => {
     prosecutorAppealDecision,
     accusedPostponedAppealDate,
     prosecutorPostponedAppealDate,
-    handleAccusedAppeal,
-    handleProsecutorAppeal,
-    handleAccusedAppealDismissal,
-    handleProsecutorAppealDismissal,
+    setAccusedAppealDate,
+    setProsecutorAppealDate,
+    withdrawAccusedAppealDate,
+    withdrawProsecutorAppealDate,
     isAppealDeadlineExpired,
     isAppealGracePeriodExpired,
   } = props
@@ -83,7 +83,7 @@ const AppealSection: React.FC<Props> = (props) => {
               <AnimatePresence>
                 {!accusedPostponedAppealDate && !isAppealGracePeriodExpired && (
                   <AccusedAppealDatePicker
-                    handleAccusedAppeal={handleAccusedAppeal}
+                    setAccusedAppealDate={setAccusedAppealDate}
                     accusedGender={accusedGender}
                     isInitialMount={isInitialMount}
                   />
@@ -93,10 +93,10 @@ const AppealSection: React.FC<Props> = (props) => {
                 {accusedPostponedAppealDate && (
                   <AccusedAppealInfo
                     accusedGender={accusedGender}
-                    handleAccusedAppealDismissal={
+                    withdrawAccusedAppealDate={
                       isAppealGracePeriodExpired
                         ? undefined
-                        : handleAccusedAppealDismissal
+                        : withdrawAccusedAppealDate
                     }
                     accusedPostponedAppealDate={accusedPostponedAppealDate}
                   />
@@ -114,7 +114,7 @@ const AppealSection: React.FC<Props> = (props) => {
                 {!prosecutorPostponedAppealDate &&
                   !isAppealGracePeriodExpired && (
                     <ProsecutorAppealDatePicker
-                      handleProsecutorAppeal={handleProsecutorAppeal}
+                      setProsecutorAppealDate={setProsecutorAppealDate}
                       isInitialMount={isInitialMount}
                     />
                   )}
@@ -125,10 +125,10 @@ const AppealSection: React.FC<Props> = (props) => {
                     prosecutorPostponedAppealDate={
                       prosecutorPostponedAppealDate
                     }
-                    handleProsecutorAppealDismissal={
+                    withdrawProsecutorAppealDate={
                       isAppealGracePeriodExpired
                         ? undefined
-                        : handleProsecutorAppealDismissal
+                        : withdrawProsecutorAppealDate
                     }
                   />
                 )}

@@ -84,6 +84,7 @@ const SubPage: Screen<SubPageProps> = ({
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
+      fullWidthContent={true}
       pageFeaturedImage={
         subpage.featuredImage ?? organizationPage.featuredImage
       }
@@ -103,40 +104,57 @@ const SubPage: Screen<SubPageProps> = ({
       }}
     >
       <GridContainer>
-        <Box paddingBottom={4}>
+        <Box paddingY={4}>
           <GridRow>
             <GridColumn
-              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
+              span={['9/9', '9/9', '7/9']}
+              offset={['9/9', '9/9', '1/9']}
             >
-              <Box marginBottom={2}>
-                <Text variant="h1" as="h2">
-                  {subpage.title}
-                </Text>
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
-            >
-              {richText(subpage.description as SliceType[])}
-            </GridColumn>
-            {subpage.links.length > 0 && (
-              <GridColumn
-                span={['12/12', '12/12', '4/12']}
-                offset={[null, null, '1/12']}
-              >
-                <Stack space={2}>
-                  {subpage.links.map((link) => (
-                    <Link href={link.url} underline="small">
-                      <Text fontWeight="light" color="blue400">
-                        {link.text}
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage.links.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    <Box marginBottom={2}>
+                      <Text variant="h1" as="h2">
+                        {subpage.title}
                       </Text>
-                    </Link>
-                  ))}
-                </Stack>
-              </GridColumn>
-            )}
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage.links.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    {richText(subpage.description as SliceType[])}
+                  </GridColumn>
+                  {subpage.links.length > 0 && (
+                    <GridColumn
+                      span={['12/12', '12/12', '4/12']}
+                      offset={[null, null, '1/12']}
+                    >
+                      <Stack space={2}>
+                        {subpage.links.map((link) => (
+                          <Link href={link.url} underline="small">
+                            <Text fontWeight="light" color="blue400">
+                              {link.text}
+                            </Text>
+                          </Link>
+                        ))}
+                      </Stack>
+                    </GridColumn>
+                  )}
+                </GridRow>
+              </GridContainer>
+            </GridColumn>
           </GridRow>
         </Box>
       </GridContainer>
@@ -167,7 +185,6 @@ const renderSlices = (
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          fullWidth={false}
           organizationPageSlug={organizationPageSlug}
         />
       ))

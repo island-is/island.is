@@ -17,4 +17,13 @@ export default {
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_PASSWORD,
   },
+  nationalRegistry: {
+    xroad: {
+      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      memberClass: XRoadMemberClass.GovernmentInstitution,
+      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
+      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
+      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+    },
+  },
 }

@@ -77,7 +77,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/air-discount-scheme/api",
             "main": "apps/air-discount-scheme/api/src/main.ts",
@@ -89,13 +89,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/air-discount-scheme/api/src/environments/environment.ts",
-                  "with": "apps/air-discount-scheme/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -151,7 +145,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/air-discount-scheme/backend",
             "main": "apps/air-discount-scheme/backend/src/main.ts",
@@ -174,13 +168,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/air-discount-scheme/backend/src/environments/environment.ts",
-                  "with": "apps/air-discount-scheme/backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -339,14 +327,7 @@
             "outputPath": "dist/apps/air-discount-scheme/web"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/air-discount-scheme/web/environments/environment.ts",
-                  "with": "apps/air-discount-scheme/web/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },
@@ -458,7 +439,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
@@ -470,13 +451,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/api/src/app/environments/environment.ts",
-                  "with": "apps/api/src/app/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -1462,7 +1437,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
@@ -1496,13 +1471,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/application-system/api/src/environments/environment.ts",
-                  "with": "apps/application-system/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -1600,12 +1569,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/application-system/form/src/environments/environment.ts",
-                  "with": "apps/application-system/form/src/environments/environment.prod.ts"
-                }
-              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -1804,8 +1767,8 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/data-protection-complaint/tsconfig.lib.json",
-              "libs/application/templates/data-protection-complaint/tsconfig.spec.json"
+              "libs/application/templates/data-protection-complaint/tsconfig.spec.json",
+              "libs/application/templates/data-protection-complaint/tsconfig.lib.json"
             ],
             "exclude": [
               "**/node_modules/**",
@@ -3238,7 +3201,7 @@
       "prefix": "download-service",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/download-service",
@@ -3250,13 +3213,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/download-service/src/environments/environment.ts",
-                  "with": "apps/download-service/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -3791,7 +3748,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/gjafakort/api",
             "main": "apps/gjafakort/api/src/main.ts",
@@ -3803,13 +3760,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/gjafakort/api/src/environments/environment.ts",
-                  "with": "apps/gjafakort/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -3856,7 +3807,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/gjafakort/application",
             "main": "apps/gjafakort/application/src/main.ts",
@@ -3871,6 +3822,11 @@
                 "glob": "migrations/**",
                 "input": "apps/gjafakort/application",
                 "output": "./"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/gjafakort/application",
+                "output": "./"
               }
             ],
             "maxWorkers": 2
@@ -3879,13 +3835,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/gjafakort/application/src/environments/environment.ts",
-                  "with": "apps/gjafakort/application/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -3977,7 +3927,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/gjafakort/queue-listener",
             "main": "apps/gjafakort/queue-listener/src/main.ts",
@@ -3988,13 +3938,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/gjafakort/queue-listener/src/environments/environment.ts",
-                  "with": "apps/gjafakort/queue-listener/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4085,14 +4029,7 @@
             "outputPath": "dist/apps/gjafakort/web"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/gjafakort/web/environments/environment.ts",
-                  "with": "apps/gjafakort/web/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },
@@ -4224,7 +4161,7 @@
       "prefix": "icelandic-names-registry-backend",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/icelandic-names-registry/backend",
@@ -4251,6 +4188,11 @@
                 "glob": "data/**",
                 "input": "apps/icelandic-names-registry/backend",
                 "output": "./"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/icelandic-names-registry/backend",
+                "output": "./"
               }
             ],
             "maxWorkers": 2
@@ -4259,13 +4201,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/icelandic-names-registry/backend/src/environments/environment.ts",
-                  "with": "apps/icelandic-names-registry/backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -4695,7 +4631,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/judicial-system/api",
             "main": "apps/judicial-system/api/src/main.ts",
@@ -4707,13 +4643,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/judicial-system/api/src/environments/environment.ts",
-                  "with": "apps/judicial-system/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4823,7 +4753,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/judicial-system/backend",
             "main": "apps/judicial-system/backend/src/main.ts",
@@ -4856,13 +4786,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/judicial-system/backend/src/environments/environment.ts",
-                  "with": "apps/judicial-system/backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -5087,14 +5011,7 @@
             "outputPath": "dist/apps/judicial-system/web"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/judicial-system/web/src/environments/environment.ts",
-                  "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },
@@ -5196,7 +5113,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/judicial-system/xrd-api",
             "main": "apps/judicial-system/xrd-api/src/main.ts",
@@ -5208,13 +5125,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/judicial-system/xrd-api/src/environments/environment.ts",
-                  "with": "apps/judicial-system/xrd-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -5419,7 +5330,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
@@ -5441,20 +5352,13 @@
                 "output": "./"
               }
             ],
-            "maxWorkers": 2,
-            "webpackConfig": "apps/reference-backend/webpack.config.js"
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/reference-backend/src/environments/environment.ts",
-                  "with": "apps/reference-backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -5543,14 +5447,7 @@
             "outputPath": "dist/apps/reference-next-app"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/reference-next-app/environments/environment.ts",
-                  "with": "apps/reference-next-app/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },
@@ -5637,12 +5534,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/service-portal/src/environments/environment.ts",
-                  "with": "apps/service-portal/src/environments/environment.prod.ts"
-                }
-              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -6411,7 +6302,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-admin-api",
             "main": "apps/services/auth-admin-api/src/main.ts",
@@ -6423,13 +6314,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/auth-admin-api/src/environments/environment.ts",
-                  "with": "apps/services/auth-admin-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -6474,7 +6359,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
             "main": "apps/services/auth-api/src/main.ts",
@@ -6508,13 +6393,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/auth-api/src/environments/environment.ts",
-                  "with": "apps/services/auth-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -6643,7 +6522,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/documents",
             "main": "apps/services/documents/src/main.ts",
@@ -6672,13 +6551,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/documents/src/environments/environment.ts",
-                  "with": "apps/services/documents/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -6746,13 +6619,12 @@
       "prefix": "services-endorsements-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js",
             "assets": [
               {
                 "glob": "*",
@@ -6770,6 +6642,23 @@
                 "output": "./"
               }
             ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "nrwl-node-build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/endorsements/api-nrwl-node",
+            "main": "apps/services/endorsements/api/src/main.ts",
+            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
+            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -6816,11 +6705,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
-            "commands": [
-              "nx run services-endorsements-api:build",
-              "node dist/apps/services/endorsements/api/buildOpenApi.js"
-            ],
-            "parallel": false
+            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -6912,17 +6797,6 @@
             "cwd": "apps/services/party-letter-registry-api"
           }
         },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-party-letter-registry-api:build",
-              "node dist/apps/services/party-letter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
-          }
-        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -6962,7 +6836,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/search-indexer",
             "main": "apps/services/search-indexer/src/main.ts",
@@ -6971,6 +6845,11 @@
               {
                 "glob": "config/**",
                 "input": "apps/services/search-indexer",
+                "output": "./"
+              },
+              {
+                "glob": "migrate*.js",
+                "input": "apps/services/search-indexer/migration-entrypoints",
                 "output": "./"
               }
             ],
@@ -6981,13 +6860,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/search-indexer/src/environments/environment.ts",
-                  "with": "apps/services/search-indexer/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7099,17 +6972,6 @@
             "cwd": "apps/services/temporary-voter-registry-api"
           }
         },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
-            "commands": [
-              "nx run services-temporary-voter-registry-api:build",
-              "node dist/apps/services/temporary-voter-registry-api/buildOpenApi.js"
-            ],
-            "parallel": false
-          }
-        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -7149,7 +7011,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/user-profile",
             "main": "apps/services/user-profile/src/main.ts",
@@ -7178,13 +7040,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/user-profile/src/environments/environment.ts",
-                  "with": "apps/services/user-profile/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7256,7 +7112,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/xroad-collector",
             "main": "apps/services/xroad-collector/src/main.ts",
@@ -7268,13 +7124,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/xroad-collector/src/environments/environment.ts",
-                  "with": "apps/services/xroad-collector/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7549,14 +7399,7 @@
             "outputPath": "dist/apps/skilavottord/web"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/skilavottord/web/environments/environment.ts",
-                  "with": "apps/skilavottord/web/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },
@@ -7655,7 +7498,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/skilavottord/ws",
             "main": "apps/skilavottord/ws/src/main.ts",
@@ -7689,13 +7532,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/skilavottord/ws/src/environments/environment.ts",
-                  "with": "apps/skilavottord/ws/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7880,14 +7717,7 @@
             "outputPath": "dist/apps/web"
           },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/web/environments/environment.ts",
-                  "with": "apps/web/environments/environment.prod.ts"
-                }
-              ]
-            }
+            "production": {}
           },
           "outputs": ["{options.outputPath}"]
         },

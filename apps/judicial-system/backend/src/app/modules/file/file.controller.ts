@@ -18,11 +18,11 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
-  CaseState,
-  User,
   UserRole,
+  CaseState,
+  CaseAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
@@ -181,7 +181,11 @@ export class FileController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
   ): Promise<CaseFile[]> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     return this.fileService.getAllCaseFiles(existingCase.id)
   }

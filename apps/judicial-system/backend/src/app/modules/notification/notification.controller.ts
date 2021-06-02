@@ -1,11 +1,8 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import {
-  NotificationType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
+import { UserRole, NotificationType } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -100,7 +97,11 @@ export class NotificationController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

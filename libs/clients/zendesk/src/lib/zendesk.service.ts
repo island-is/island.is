@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common'
 import axios from 'axios'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const ZENDESK_OPTIONS = 'ZENDESK_OPTIONS'
 

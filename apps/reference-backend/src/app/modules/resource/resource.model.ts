@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -16,6 +17,7 @@ import {
   ],
 })
 export class Resource extends Model<Resource> {
+  @ApiProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -24,6 +26,7 @@ export class Resource extends Model<Resource> {
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -31,9 +34,11 @@ export class Resource extends Model<Resource> {
   })
   nationalId!: string
 
+  @ApiProperty()
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty()
   @UpdatedAt
   readonly modified!: Date
 }
