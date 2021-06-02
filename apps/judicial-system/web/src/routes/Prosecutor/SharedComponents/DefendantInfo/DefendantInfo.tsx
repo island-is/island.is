@@ -1,18 +1,30 @@
 import React from 'react'
+import InputMask from 'react-input-mask'
 import { Case, CaseGender } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  removeTabsValidateAndSet,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as styles from './DefendantInfo.treat'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  nationalIdErrorMessage?: string
+  setNationalIdErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    nationalIdErrorMessage,
+    setNationalIdErrorMessage,
+  } = props
   const { updateCase } = useCase()
 
   return (
@@ -33,7 +45,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             label="Karl"
             value={CaseGender.MALE}
             checked={workingCase.accusedGender === CaseGender.MALE}
-            onChange={(event) =>
+            onChange={() =>
               setAndSendToServer(
                 'accusedGender',
                 CaseGender.MALE,
@@ -53,7 +65,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             label="Kona"
             value={CaseGender.FEMALE}
             checked={workingCase.accusedGender === CaseGender.FEMALE}
-            onChange={(event) =>
+            onChange={() =>
               setAndSendToServer(
                 'accusedGender',
                 CaseGender.FEMALE,
@@ -73,7 +85,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             label="Kynsegin/Annað"
             value={CaseGender.OTHER}
             checked={workingCase.accusedGender === CaseGender.OTHER}
-            onChange={(event) =>
+            onChange={() =>
               setAndSendToServer(
                 'accusedGender',
                 CaseGender.OTHER,
@@ -86,6 +98,44 @@ const DefendantInfo: React.FC<Props> = (props) => {
             backgroundColor="white"
           />
         </Box>
+      </Box>
+      <Box marginBottom={2}>
+        <InputMask
+          mask="999999-9999"
+          maskPlaceholder={null}
+          onChange={(event) =>
+            removeTabsValidateAndSet(
+              'accusedNationalId',
+              event,
+              ['empty', 'national-id'],
+              workingCase,
+              setWorkingCase,
+              nationalIdErrorMessage,
+              setNationalIdErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSendToServer(
+              'accusedNationalId',
+              event.target.value,
+              ['empty', 'national-id'],
+              workingCase,
+              updateCase,
+              setNationalIdErrorMessage,
+            )
+          }
+        >
+          <Input
+            data-testid="nationalId"
+            name="accusedNationalId"
+            label="Kennitala"
+            placeholder="Kennitala"
+            defaultValue={workingCase.accusedNationalId}
+            errorMessage={nationalIdErrorMessage}
+            hasError={nationalIdErrorMessage !== ''}
+            required
+          />
+        </InputMask>
       </Box>
     </>
   )

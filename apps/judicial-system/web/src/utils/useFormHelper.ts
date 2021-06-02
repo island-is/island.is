@@ -6,7 +6,7 @@ import { validate, Validation } from './validate'
 export interface FieldSettings {
   validations?: Validation[]
   errorMessage?: string | undefined
-  setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
+  setErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 export interface FormSettings {
@@ -35,7 +35,7 @@ export const useCaseFormHelper = (
       ) {
         valid = false
       } else if (fieldSettings.errorMessage && fieldSettings.setErrorMessage) {
-        fieldSettings.setErrorMessage(undefined)
+        fieldSettings.setErrorMessage('')
       }
     }
 

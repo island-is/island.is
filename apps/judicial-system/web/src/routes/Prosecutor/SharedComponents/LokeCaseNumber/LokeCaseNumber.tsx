@@ -54,6 +54,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
             ['empty', 'police-casenumber-format'],
             workingCase,
             updateCase,
+            setPoliceCaseNumberErrorMessage,
           )
         }
       >
@@ -64,7 +65,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
           placeholder={`007-${new Date().getFullYear()}-X`}
           defaultValue={workingCase.policeCaseNumber}
           errorMessage={policeCaseNumberErrorMessage}
-          hasError={policeCaseNumberErrorMessage !== undefined}
+          hasError={policeCaseNumberErrorMessage !== ''}
           required
         />
       </InputMask>

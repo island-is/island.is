@@ -38,34 +38,36 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
-  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
+  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
+    '',
+  )
 
   const [
     accusedNameErrorMessage,
     setAccusedNameErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
   const [
     accusedAddressErrorMessage,
     setAccusedAddressErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
   const [
     defenderEmailErrorMessage,
     setDefenderEmailErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
   const [
     defenderPhoneNumberErrorMessage,
     setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
   const [
     leadInvestigatorErrorMessage,
     setLeadInvestigatorErrorMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
 
   const validations: FormSettings = {
     policeCaseNumber: {
@@ -126,6 +128,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             policeCaseNumberErrorMessage={policeCaseNumberErrorMessage}
+            setPoliceCaseNumberErrorMessage={setPoliceCaseNumberErrorMessage}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -138,26 +141,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
             <DefendantInfo
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
+              nationalIdErrorMessage={nationalIdErrorMessage}
+              setNationalIdErrorMessage={setNationalIdErrorMessage}
             />
-            <Box marginBottom={2}>
-              <InputMask
-                mask="999999-9999"
-                maskPlaceholder={null}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              >
-                <Input
-                  data-testid="nationalId"
-                  name="accusedNationalId"
-                  label="Kennitala"
-                  placeholder="Kennitala"
-                  defaultValue={workingCase.accusedNationalId}
-                  errorMessage={nationalIdErrorMessage}
-                  hasError={nationalIdErrorMessage !== undefined}
-                  required
-                />
-              </InputMask>
-            </Box>
+
             <Box marginBottom={2}>
               <Input
                 data-testid="accusedName"
@@ -166,7 +153,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.accusedName}
                 errorMessage={accusedNameErrorMessage}
-                hasError={accusedNameErrorMessage !== undefined}
+                hasError={accusedNameErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
                 required
@@ -179,7 +166,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               placeholder="Lögheimili eða dvalarstaður"
               defaultValue={workingCase.accusedAddress}
               errorMessage={accusedAddressErrorMessage}
-              hasError={accusedAddressErrorMessage !== undefined}
+              hasError={accusedAddressErrorMessage !== ''}
               onChange={(event) => setField(event.target)}
               onBlur={(event) => validateAndSendToServer(event.target)}
               required
@@ -217,7 +204,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 placeholder="Netfang"
                 defaultValue={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== undefined}
+                hasError={defenderEmailErrorMessage !== ''}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
               />
@@ -236,7 +223,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   placeholder="Símanúmer"
                   defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
-                  hasError={defenderPhoneNumberErrorMessage !== undefined}
+                  hasError={defenderPhoneNumberErrorMessage !== ''}
                 />
               </InputMask>
             </Box>
