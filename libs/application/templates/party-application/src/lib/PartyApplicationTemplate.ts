@@ -176,7 +176,15 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 import('../forms/EndorsementForm').then((val) =>
                   Promise.resolve(val.EndorsementApplication),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -184,6 +192,53 @@ const PartyApplicationTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
           },
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: 'assignToSupremeCourt',
+        exit: 'clearAssignees',
+        meta: {
+          name: 'In Review',
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
+          },
+          roles: [
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
+              ],
+              write: 'all',
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ConstituencyForm').then((module) =>
+                  Promise.resolve(module.ConstituencyForm),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.APPROVED,
+            },
+          ],
+          [DefaultEvents.REJECT]: { target: States.COLLECT_ENDORSEMENTS },
         },
       },
       [States.APPROVED]: {
