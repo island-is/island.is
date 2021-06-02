@@ -1,13 +1,15 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
-import Head from 'next/head'
+import React, { useEffect, useState } from 'react'
 import NextLink from 'next/link'
 import {
-  ContentBlock,
   Box,
   Text,
   Breadcrumbs,
   ColorSchemeContext,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  ResponsiveSpace,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -17,7 +19,7 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { FilteredCards } from '@island.is/web/components'
+import { Card, HeadWithSocialSharing } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
@@ -28,12 +30,17 @@ import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { FilterMenu, CategoriesProps, FilterProps } from './FilterMenu'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
   tags: Query['getOrganizationTags']
   namespace: Query['getNamespace']
 }
+
+const verticalSpacing: ResponsiveSpace = 3
 
 const OrganizationPage: Screen<OrganizationProps> = ({
   organizations,
@@ -43,16 +50,52 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
+  const [filter, setFilter] = useState<FilterProps>({
+    raduneyti: [],
+    input: '',
+  })
+
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
 
+  const categories: CategoriesProps[] = [
+    {
+      id: 'raduneyti',
+      label: 'Ráðuneyti',
+      selected: filter.raduneyti,
+      filters: tagsItems
+        .filter((x) => x.title)
+        .map((f) => ({
+          value: f.title,
+          label: f.title,
+        })),
+    },
+  ]
+
+  const hasFilters = filter.raduneyti.length || filter.input
+  const filteredItems = hasFilters
+    ? organizationsItems.filter(
+        (x) =>
+          (filter.input &&
+            x.title
+              .trim()
+              .toLowerCase()
+              .includes(filter.input.trim().toLowerCase())) ||
+          filter.raduneyti.some((title) =>
+            x.tag.find((t) => t.title === title),
+          ),
+      )
+    : organizationsItems
+
+  const metaTitle = `${n(
+    'stofnanirHeading',
+    'Stofnanir Íslenska Ríkisins',
+  )} | Ísland.is`
+
+  console.log('redraw')
   return (
     <>
-      <Head>
-        <title>
-          {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')} | Ísland.is
-        </title>
-      </Head>
+      <HeadWithSocialSharing title={metaTitle} />
       <SidebarLayout fullWidthContent sidebarContent={null}>
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs
@@ -79,16 +122,61 @@ const OrganizationPage: Screen<OrganizationProps> = ({
           {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
         </Text>
       </SidebarLayout>
-      <Box background="blue100">
-        <ContentBlock width="large">
-          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-            <FilteredCards
-              tags={tagsItems}
-              items={organizationsItems}
-              namespace={namespace}
-            />
-          </ColorSchemeContext.Provider>
-        </ContentBlock>
+      <Box
+        background="blue100"
+        display="inlineBlock"
+        width="full"
+        paddingTop={[verticalSpacing, 0]}
+      >
+        <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+          <SidebarLayout
+            contentId="organizations-list"
+            sidebarContent={
+              <FilterMenu
+                categories={categories}
+                filter={filter}
+                setFilter={setFilter}
+                resultCount={filteredItems.length}
+              />
+            }
+            hiddenOnTablet
+          >
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  hiddenAbove="md"
+                  span="12/12"
+                  paddingBottom={verticalSpacing}
+                >
+                  <FilterMenu
+                    categories={categories}
+                    filter={filter}
+                    setFilter={setFilter}
+                    resultCount={filteredItems.length}
+                    asDialog={true}
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                {filteredItems.map(({ title, description, slug }, index) => {
+                  return (
+                    <GridColumn
+                      key={index}
+                      span={['12/12', '6/12', '6/12', '12/12', '6/12']}
+                      paddingBottom={verticalSpacing}
+                    >
+                      <Card
+                        title={title}
+                        description={description}
+                        link={linkResolver('organizationpage', [slug])}
+                      />
+                    </GridColumn>
+                  )
+                })}
+              </GridRow>
+            </GridContainer>
+          </SidebarLayout>
+        </ColorSchemeContext.Provider>
       </Box>
     </>
   )
