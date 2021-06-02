@@ -301,7 +301,7 @@ export const m = defineMessages({
   overviewBringCertificateData: {
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
-    description: 'I bring a certificate from a doctor',
+    description: `I'll bring a certificate from a doctor`,
   },
   overviewSubmit: {
     id: 'dl.application:overview.submit',
@@ -311,7 +311,12 @@ export const m = defineMessages({
   overviewDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Staðfesting',
-    description: 'Glæsilegt',
+    description: 'Confirmation',
+  },
+  overviewPaymentCharge: {
+    id: 'dl.application:overview.paymentcharge',
+    defaultMessage: 'Greiðsla',
+    description: 'Cost'
   },
   requirementUnmetDrivingAssessment: {
     id: 'dl.application:requirementunmet.drivingassessment',

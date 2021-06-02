@@ -87,11 +87,7 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: ({ externalData }) => {
-                console.log(externalData)
-
-                return 'hallo'
-              },
+              value: '',
             }),
             buildDividerField({
               title: '',
@@ -319,29 +315,36 @@ export const application: Form = buildForm({
                 return options
               },
             }),
+            buildDividerField({}),
+            buildKeyValueField({
+              label: m.overviewPaymentCharge,
+              width: 'half',
+              value: () => '' as string,
+            }),
+            buildKeyValueField({
+              label: ({ externalData }) => {
+                /// needs a lot of refactoring
+                let str = Object.values(externalData.payment.data as object)
+                console.log(str[0])
+                console.log(externalData.payment?.data)
+                /// more refactoring
+                return (str[1].toString() + ' kr.') as StaticText
+              },
+              width: 'half',
+              value: () => '',
+            }),
           ],
         }),
       ],
     }),
     buildSection({
       id: 'payment',
-      title: 'Greiðsla X',
+      title: 'Greiðsla',
       children: [
         buildMultiField({
           id: 'paymentFinal',
-          title: 'Greiðsla Y',
+          title: 'Greiðsla',
           children: [
-            buildKeyValueField({
-              label: 'money',
-              value: ({ externalData }) => {
-                /// needs a lot of refactoring
-                let str = (Object as any).values(externalData.payment.data)
-                console.log(str[0])
-                console.log(externalData.payment?.data)
-                /// more refactoring
-                return (str[1].toString() + ' kr.') as StaticText
-              },
-            }),
             buildDividerField({}),
             buildSubmitField({
               id: 'submit',
