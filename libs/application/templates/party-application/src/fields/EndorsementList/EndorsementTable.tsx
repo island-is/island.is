@@ -23,11 +23,30 @@ interface EndorsementTableProps {
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
   const renderRow = (endorsement: Endorsement) => {
+    const rowBackground = endorsement.hasWarning ? 'yellow200' : 'white'
     return (
       <T.Row key={endorsement.id}>
-        <T.Data>{formatDate(endorsement.date)}</T.Data>
-        <T.Data>{endorsement.name}</T.Data>
-        <T.Data>{formatKennitala(endorsement.nationalId)}</T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatDate(endorsement.date)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {endorsement.name}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatKennitala(endorsement.nationalId)}
+        </T.Data>
         <T.Data
           box={{
             background: endorsement.hasWarning ? 'yellow200' : 'white',
@@ -41,7 +60,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
                 <Tooltip
                   color="blue400"
                   iconSize="medium"
-                  text={formatMessage(m.validationMessages.signatureInvalid)}
+                  text={formatMessage(m.endorsementList.signatureInvalid)}
                 />
               </Box>
             </Box>
