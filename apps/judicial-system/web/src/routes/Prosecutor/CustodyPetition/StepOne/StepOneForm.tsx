@@ -31,14 +31,21 @@ import * as styles from './StepOne.treat'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 
 interface Props {
-  case: Case
+  workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   loading: boolean
   updateCase: (id: string, updateCase: UpdateCase) => void
   handleNextButtonClick: (theCase: Case) => void
 }
 
 export const StepOneForm: React.FC<Props> = (props) => {
-  const [workingCase, setWorkingCase] = useState(props.case)
+  const {
+    workingCase,
+    setWorkingCase,
+    loading,
+    updateCase,
+    handleNextButtonClick,
+  } = props
 
   const [
     policeCaseNumberErrorMessage,
@@ -116,12 +123,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setField,
     validateAndSendToServer,
     setAndSendToServer,
-  } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-    props.updateCase,
-  )
+  } = useCaseFormHelper(workingCase, setWorkingCase, validations, updateCase)
 
   return (
     <>
@@ -134,8 +136,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <LokeCaseNumber
             workingCase={workingCase}
-            validateAndSendToServer={validateAndSendToServer}
-            setField={setField}
+            setWorkingCase={setWorkingCase}
             policeCaseNumberErrorMessage={policeCaseNumberErrorMessage}
           />
         </Box>
@@ -342,9 +343,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
           onNextButtonClick={async () =>
-            await props.handleNextButtonClick(workingCase)
+            await handleNextButtonClick(workingCase)
           }
-          nextIsLoading={props.loading}
+          nextIsLoading={loading}
           nextIsDisabled={!isValid}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

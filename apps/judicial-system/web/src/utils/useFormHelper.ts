@@ -15,7 +15,7 @@ export interface FormSettings {
 
 export const useCaseFormHelper = (
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setCase: (value: React.SetStateAction<Case | undefined>) => void,
   formSettings: FormSettings,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {

@@ -87,7 +87,8 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     >
       {workingCase && !institutionLoading && (
         <StepOneForm
-          case={workingCase}
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
           loading={isCreatingCase}
           updateCase={updateCase}
           handleNextButtonClick={handleNextButtonClick}
