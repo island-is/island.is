@@ -35,6 +35,7 @@ const prodConfig = {
     audience: '@island.is/auth/public',
     issuer: process.env.IDS_ISSUER,
   },
+  port: 3333,
   rsk: {
     xroad: {
       basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
