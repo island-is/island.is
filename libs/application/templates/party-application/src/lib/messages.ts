@@ -195,6 +195,11 @@ export const m: MessageDir = {
       defaultMessage: 'Sjá einungis meðmæli í vafa',
       description: 'Invalid signatures message',
     },
+    signatureInvalidTooltip: {
+      id: 'pa.application:endorsementList.tooltip',
+      defaultMessage: 'Meðmæli í vafa',
+      description: 'Invalid signature tooltip',
+    },
   }),
   endorsementListSubmission: defineMessages({
     title: {

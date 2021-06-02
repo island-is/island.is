@@ -49,7 +49,13 @@ export const CollectEndorsementsForm: Form = buildForm({
               title: m.collectEndorsements.title,
               component: 'FileUploadDisclaimer',
             }),
-            buildFileUploadField({
+            buildCustomField({
+              condition: (answer) => answer.includePapers !== undefined,
+              id: 'bulkUpload',
+              title: m.collectEndorsements.title,
+              component: 'BulkUpload',
+            }),
+            /*buildFileUploadField({
               condition: (answer) => answer.includePapers !== undefined,
               id: 'documents',
               title: '',
@@ -59,7 +65,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               uploadHeader: m.collectEndorsements.fileUploadHeader,
               uploadDescription: m.collectEndorsements.uploadDescription,
               uploadButtonLabel: m.collectEndorsements.uploadButtonLabel,
-            }),
+            }),*/
           ],
         }),
       ],

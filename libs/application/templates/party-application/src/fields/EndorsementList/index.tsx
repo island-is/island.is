@@ -35,6 +35,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 address: x.meta.address ? x.meta.address.streetAddress : '',
                 hasWarning: x.meta?.invalidated ?? false,
                 id: x.id,
+                bulkImported: x.meta?.bulkEndorsement ?? false,
               }))
             : []
           setEndorsements(mapToEndorsementList)
