@@ -89,7 +89,7 @@ export class NationalRegistryXRoadService {
       }
 
       const children = await Promise.all(
-        childrenNationalIds?.map(async (childNationalId) => {
+        childrenNationalIds.map(async (childNationalId) => {
           return await this.nationalRegistryFetch<Einstaklingsupplysingar>(
             `/${childNationalId}`,
             authToken,
