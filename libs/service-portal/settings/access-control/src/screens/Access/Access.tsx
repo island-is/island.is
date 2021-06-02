@@ -54,7 +54,7 @@ function Access() {
       <IntroHeader
         title={access.name}
         intro={defineMessage({
-          id: 'service.portal:access-control-access-intro',
+          id: 'service.portal.settings.accessControl:access-intro',
           defaultMessage:
             'Reyndu að lámarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
@@ -71,13 +71,13 @@ function Access() {
                 icon="close"
               >
                 {formatMessage({
-                  id: 'service.portal:access-control-access-remove',
+                  id: 'service.portal.settings.accessControl:access-remove',
                   defaultMessage: 'Eyða umboði',
                 })}
               </Button>
               <Button size="small" type="submit" icon="checkmark">
                 {formatMessage({
-                  id: 'service.portal:access-control-access-save',
+                  id: 'service.portal.settings.accessControl:access-save',
                   defaultMessage: 'Vista aðgang',
                 })}
               </Button>
@@ -90,7 +90,7 @@ function Access() {
                 <T.HeadData>
                   <Text variant="small" color="blue600">
                     {formatMessage({
-                      id: 'service.portal:access-control-access-access',
+                      id: 'service.portal.settings.accessControl:access-access',
                       defaultMessage: 'Aðgangur',
                     })}
                   </Text>
@@ -98,7 +98,8 @@ function Access() {
                 <T.HeadData>
                   <Text variant="small" color="blue600">
                     {formatMessage({
-                      id: 'service.portal:access-control-access-explanation',
+                      id:
+                        'service.portal.settings.accessControl:access-explanation',
                       defaultMessage: 'Útskýring',
                     })}
                   </Text>
@@ -106,7 +107,8 @@ function Access() {
                 <T.HeadData>
                   <Text variant="small" color="blue600">
                     {formatMessage({
-                      id: 'service.portal:access-control-access-created',
+                      id:
+                        'service.portal.settings.accessControl:access-created',
                       defaultMessage: 'Í gildi frá',
                     })}
                   </Text>
