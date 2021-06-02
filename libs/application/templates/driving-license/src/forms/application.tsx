@@ -16,10 +16,12 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { NationalRegistryUser, UserProfile, PaymentCatalog } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
+import { Provider } from 'reakit/ts'
+import { PaymentCatalogProvider } from '../dataProviders'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -314,12 +316,25 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      title: 'Greiðsla',
+      title: 'Greiðsla X',
       children: [
         buildMultiField({
           id: 'paymentFinal',
-          title: 'Greiðsla',
+          title: 'Greiðsla Y',
           children: [
+            buildKeyValueField({
+              label: 'money',
+              value: ({ externalData }) => 
+                {
+                  /// needs a lot of refactoring
+                  let str = (Object as any).values(externalData.payment.data)
+                  console.log(str[0])
+                  console.log(externalData.payment?.data)
+                  /// more refactoring
+                  return (str[1].toString() + " kr.")
+                },
+            }),
+            buildDividerField({}),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
