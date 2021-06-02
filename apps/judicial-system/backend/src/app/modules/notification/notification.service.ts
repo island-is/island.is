@@ -94,29 +94,26 @@ export class NotificationService {
     }
   }
 
-  private async sendSms(smsText: string): Promise<Recipient> {
+  private async sendSms(
+    mobileNumbers: string,
+    smsText: string,
+  ): Promise<Recipient> {
     // Production or local development with judge mobile number
-    if (
-      environment.production ||
-      environment.notifications.courtMobileNumbers
-    ) {
+    if (environment.production || mobileNumbers) {
       try {
-        await this.smsService.sendSms(
-          environment.notifications.courtMobileNumbers.split(','),
-          smsText,
-        )
+        await this.smsService.sendSms(mobileNumbers.split(','), smsText)
       } catch (error) {
         this.logger.error('Failed to send sms to court mobile number', error)
 
         return {
-          address: environment.notifications.courtMobileNumbers,
+          address: mobileNumbers,
           success: false,
         }
       }
     }
 
     return {
-      address: environment.notifications.courtMobileNumbers,
+      address: mobileNumbers,
       success: true,
     }
   }
@@ -198,7 +195,10 @@ export class NotificationService {
       existingCase.requestedCourtDate,
     )
 
-    return await this.sendSms(smsText)
+    return await this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private async sendHeadsUpNotifications(
@@ -222,7 +222,10 @@ export class NotificationService {
       existingCase.court?.name,
     )
 
-    return this.sendSms(smsText)
+    return this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
@@ -255,8 +258,12 @@ export class NotificationService {
     const pdf = await getRequestPdfAsBuffer(existingCase)
 
     try {
-      const streamId = await this.courtService.uploadStream(pdf)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        pdf,
+      )
       await this.courtService.createDocument(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
@@ -518,7 +525,10 @@ export class NotificationService {
       existingCase.courtDate,
     )
 
-    return await this.sendSms(smsText)
+    return await this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private sendRevokedEmailNotificationToPrison(
@@ -578,7 +588,7 @@ export class NotificationService {
 
     const courtWasBeenNotified = await this.existsRevokableNotification(
       existingCase.id,
-      environment.notifications.courtMobileNumbers,
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
     )
 
     if (courtWasBeenNotified) {
