@@ -7,7 +7,6 @@ import {
   UpdatedAt,
   PrimaryKey,
   HasMany,
-  Sequelize,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { DelegationScope } from './delegation-scope.model'
@@ -43,13 +42,6 @@ export class Delegation extends Model<Delegation> {
     allowNull: false,
   })
   toNationalId!: string
-
-  @Column(DataType.VIRTUAL)
-  get ValidTo(): unknown {
-    return Sequelize.literal(
-      '(SELECT Max(`DelegationScope`.`validTo`) FROM `DelegationScope` WHERE `DelegationScope`.`delegationId` = `Delegation`.`id`)',
-    )
-  }
 
   @CreatedAt
   @ApiProperty()

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString, IsOptional, IsArray, IsDateString } from 'class-validator'
+import { DelegationScopeDTO } from './delegation-scope.dto'
 
 export class DelegationDTO {
   @IsString()
@@ -13,5 +14,5 @@ export class DelegationDTO {
   @IsOptional()
   @ApiProperty()
   @IsArray()
-  scopes?: string[]
+  scopes?: DelegationScopeDTO[]
 }
