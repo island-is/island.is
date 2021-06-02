@@ -46,11 +46,13 @@ const Defendant = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && (
+      {workingCase ? (
         <DefendantForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
         />
+      ) : (
+        'working case missing'
       )}
     </PageLayout>
   )
