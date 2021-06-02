@@ -22,7 +22,7 @@ import { m } from '../lib/messages'
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: 'greiðsla',
-  mode: FormModes.PENDING,
+  mode: FormModes.EDITING,
   renderLastScreenButton: true,
   children: [
     buildSection({

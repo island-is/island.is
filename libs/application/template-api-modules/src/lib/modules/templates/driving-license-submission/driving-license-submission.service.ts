@@ -48,6 +48,10 @@ export class DrivingLicenseSubmissionService {
         PAN: '',
         payableAmount: 2000,
       },
+    }).catch(e => {
+      console.error(e)
+
+      return { error: e }
     })
 
     console.log({ result })
