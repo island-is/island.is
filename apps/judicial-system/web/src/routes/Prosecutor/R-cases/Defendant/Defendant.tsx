@@ -55,7 +55,7 @@ const Defendant = () => {
   const handleNextButtonClick = async (theCase: Case) => {
     const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
 
-    // router.push(`${constants.STEP_TWO_ROUTE}/${caseId}`)
+    router.push(`${constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`)
   }
 
   return (
