@@ -22,18 +22,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   loading: boolean
-  updateCase: (id: string, updateCase: UpdateCase) => void
   handleNextButtonClick: (theCase: Case) => void
 }
 
 export const StepOneForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    loading,
-    updateCase,
-    handleNextButtonClick,
-  } = props
+  const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
 
   const [
     defenderEmailErrorMessage,
@@ -53,6 +46,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
+    },
+    accusedGender: {
+      validations: ['empty'],
     },
     accusedNationalId: {
       validations: ['empty', 'national-id'],
@@ -86,7 +82,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
     setField,
     validateAndSendToServer,
     setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations, updateCase)
+  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>

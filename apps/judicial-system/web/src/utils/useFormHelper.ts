@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import { parseString, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
+import useCase from './hooks/useCase'
 
 export interface FieldSettings {
   validations?: Validation[]
@@ -17,9 +18,9 @@ export const useCaseFormHelper = (
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   formSettings: FormSettings,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const [isValid, setIsValid] = useState(true)
+  const { updateCase } = useCase()
 
   useEffect(() => {
     let valid = true

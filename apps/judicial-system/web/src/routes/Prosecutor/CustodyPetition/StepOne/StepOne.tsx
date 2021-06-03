@@ -25,7 +25,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const router = useRouter()
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
-  const { createCase, updateCase, isCreatingCase } = useCase()
+  const { createCase, isCreatingCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -90,7 +90,6 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           loading={isCreatingCase}
-          updateCase={updateCase}
           handleNextButtonClick={handleNextButtonClick}
         />
       )}

@@ -148,10 +148,10 @@ export interface Case {
   id: string
   created: string
   modified: string
-  type: CaseType
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
+  type?: CaseType
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender

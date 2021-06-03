@@ -38,7 +38,6 @@ const Defendant = () => {
         id: '',
         created: '',
         modified: '',
-        type: CaseType.SEARCH_WARRANT,
         state: CaseState.NEW,
         policeCaseNumber: '',
         accusedNationalId: '',

@@ -18,6 +18,10 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+import {
+  FormSettings,
+  useCaseFormHelper,
+} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 
 interface Props {
   workingCase: Case
@@ -26,9 +30,31 @@ interface Props {
 }
 
 const DefendantForm: React.FC<Props> = (props) => {
+  const validations: FormSettings = {
+    policeCaseNumber: {
+      validations: ['empty', 'police-casenumber-format'],
+    },
+    accusedGender: {
+      validations: ['empty'],
+    },
+    accusedNationalId: {
+      validations: ['empty', 'national-id'],
+    },
+    accusedName: {
+      validations: ['empty'],
+    },
+    accusedAddress: {
+      validations: ['empty'],
+    },
+  }
   const { workingCase, setWorkingCase, handleNextButtonClick } = props
   const [petitionDescriptionEM, setPetitionDescriptionEM] = useState<string>('')
   const { updateCase } = useCase()
+  const { isValid } = useCaseFormHelper(
+    workingCase,
+    setWorkingCase,
+    validations,
+  )
 
   return (
     <>
@@ -120,8 +146,11 @@ const DefendantForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${constants.STEP_ONE_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={false}
+          nextIsDisabled={!isValid}
           nextIsLoading={false}
+          nextButtonText={
+            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
+          }
         />
       </FormContentContainer>
     </>
