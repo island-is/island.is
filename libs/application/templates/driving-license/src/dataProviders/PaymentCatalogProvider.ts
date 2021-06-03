@@ -27,7 +27,7 @@ const searchCorrectCatalog = (
 export class PaymentCatalogProvider extends BasicDataProvider {
   type = 'PaymentCatalogProvider'
 
-  async provide(application: Application): Promise<PaymentCatalog> {
+  async provide(application: Application): Promise<PaymentCatalog[]> {
     const query = `
     query PaymentCatalogProvider($performingOrganizationID: String!) {
         paymentCatalogPerformingOrg(performingOrganizationID: $performingOrganizationID) {
@@ -42,7 +42,6 @@ export class PaymentCatalogProvider extends BasicDataProvider {
     }
     `
     /// THIS NEEDS REFACTORING
-    console.log(application.typeId)
     let chargeItemCode = ''
     if (application.typeId == 'DrivingLicense') chargeItemCode = 'AY110'
 
@@ -55,13 +54,11 @@ export class PaymentCatalogProvider extends BasicDataProvider {
         if (response.errors) {
           return this.handleError()
         }
-        console.log(response.data.paymentCatalogPerformingOrg != '')
         if (response.data.paymentCatalogPerformingOrg != '') {
           var correctCatalog = searchCorrectCatalog(
             chargeItemCode,
             JSON.stringify(response.data.paymentCatalogPerformingOrg.item),
           )
-          console.log(correctCatalog)
 
           if (correctCatalog != '') {
             return Promise.resolve(correctCatalog)
