@@ -8,6 +8,7 @@ export const is = {
 
   // app lock
   "applock.title": "Sláðu inn 4-tölustafa PIN",
+  "applock.attempts": "tilraunir eftir",
 
   // onboarding
   "onboarding.notifications.title": "Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.",

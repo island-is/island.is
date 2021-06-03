@@ -179,15 +179,14 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           >
             {(confirmPin || replacePin) && (
               <CancelButton
-                onPress={onCancelPress}
-                testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
-              >
-                {confirmPin ? (
+                title={confirmPin ? (
                   <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
                 ) : (
                   <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
                 )}
-              </CancelButton>
+                onPress={onCancelPress}
+                testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
+              />
             )}
           </View>
         </Center>

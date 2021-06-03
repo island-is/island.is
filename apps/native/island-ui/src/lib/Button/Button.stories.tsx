@@ -34,5 +34,5 @@ storiesOf('Button', module)
     return <Close />
   })
   .add('Cancel Button', () => {
-    return <CancelButton onPress={() => console.log('pressed')}>Sleppa í bili</CancelButton>
+    return <CancelButton title="Sleppa í bili" onPress={() => console.log('pressed')} />
   })

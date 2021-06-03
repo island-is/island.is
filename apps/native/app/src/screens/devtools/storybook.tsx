@@ -16,8 +16,9 @@ configure(() =>{
   require('../../../../island-ui/src/lib/ViewPager/ViewPager.stories');
   require('../../../../island-ui/src/lib/TabBar/TabBar.stories');
   require('../../../../island-ui/src/lib/SearchBar/SearchBar.stories');
-  require('../../../../island-ui/src/lib/EmptyList/EmptyList.stories');
+  require('../../../../island-ui/src/lib/EmptyState/EmptyList.stories');
   require('../../../../island-ui/src/lib/Loader/Loader.stories');
+  require('../../../../island-ui/src/lib/Onboarding/Onboarding.stories');
   require('../../../../island-ui/src/lib/SearchHeader/SearchHeader.stories');
 }, module);
 

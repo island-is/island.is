@@ -82,9 +82,8 @@ export const ApplicationsModule = React.memo(
                 text={intl.formatMessage({
                   id: 'applicationStatusCard.noActiveApplications',
                 })}
-              >
-                <Image source={leJobss4} height={90} width={42} />
-              </EmptyCard>
+                image={<Image source={leJobss4} height={90} width={42} />}
+              />
             )}
             {count === 1 && children.slice(0, 1)}
             {count >= 2 && <ViewPager>{children}</ViewPager>}

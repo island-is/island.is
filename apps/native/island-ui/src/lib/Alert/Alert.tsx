@@ -10,6 +10,9 @@ import {
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'
+import warning from '../../assets/icons/warning.png'
+import error from '../../assets/icons/error.png'
+import check from '../../assets/icons/check.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -86,7 +89,7 @@ const variantStyles: VariantStyles = {
   error: {
     background: 'red100',
     borderColor: 'red200',
-    icon: info,
+    icon: error,
   },
   info: {
     background: 'blue100',
@@ -96,12 +99,12 @@ const variantStyles: VariantStyles = {
   success: {
     background: 'mint100',
     borderColor: 'mint200',
-    icon: info,
+    icon: check,
   },
   warning: {
     background: 'yellow200',
     borderColor: 'yellow400',
-    icon: info,
+    icon: warning,
   },
 }
 

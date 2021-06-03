@@ -15,6 +15,7 @@ import {
   RefreshControl,
   SafeAreaView,
   TouchableHighlight,
+  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
