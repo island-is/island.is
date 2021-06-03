@@ -18,7 +18,7 @@ export class PartyLetterRegistryResolver {
 
   @Mutation(() => PartyLetterRegistry, { nullable: true })
   async partyLetterRegistryCreate(
-    @CurrentUser() { nationalId }: User, // TODO: Make sure system toke persists original user
+    @CurrentUser() { nationalId }: User,
     @Args('input') input: CreatePartyLetterDto,
   ): Promise<PartyLetterRegistry> {
     return this.partyLetterRegistryService.partyLetterRegistryControllerCreate({
@@ -27,9 +27,9 @@ export class PartyLetterRegistryResolver {
     })
   }
 
-  @Query(() => PartyLetterRegistry, { nullable: true })
+  @Query(() => PartyLetterRegistry)
   async partyLetterRegistryFindLetter(
-    @CurrentUser() { nationalId }: User, // TODO: Make sure system token persists original user
+    @CurrentUser() { nationalId }: User,
   ): Promise<PartyLetterRegistry> {
     return this.partyLetterRegistryService.partyLetterRegistryControllerFindByManager(
       {

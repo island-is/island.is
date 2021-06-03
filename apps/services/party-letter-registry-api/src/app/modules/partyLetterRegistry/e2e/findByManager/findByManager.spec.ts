@@ -9,7 +9,7 @@ beforeAll(async () => {
   app = await setup()
 })
 
-describe('FindByOwnerPartyLetterRegistry', () => {
+describe('FindByManagerPartyLetterRegistry', () => {
   it('GET /party-letter-registry/manager should return error when national id is invalid', async () => {
     const nationalId = '0000000001'
     const response = await request(app.getHttpServer())
@@ -42,7 +42,7 @@ describe('FindByOwnerPartyLetterRegistry', () => {
       .expect(200)
 
     expect(response.body).toMatchObject({
-      owner: nationalId,
+      managers: [nationalId],
     })
   })
 })
