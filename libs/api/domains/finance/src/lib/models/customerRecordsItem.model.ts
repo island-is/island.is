@@ -41,7 +41,7 @@ export class CustomerRecordsItem {
   @Field()
   subCategory!: string
 
-  @Field()
+  @Field(() => String, { nullable: true })
   actionCategory!: string
 
   @Field()

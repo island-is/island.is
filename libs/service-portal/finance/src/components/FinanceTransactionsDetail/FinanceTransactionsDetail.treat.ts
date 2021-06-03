@@ -10,11 +10,6 @@ export const col = style({
 })
 
 export const innerCol = style({
-  display: 'inline-block',
+  display: 'block',
   wordBreak: 'break-word',
-  selectors: {
-    [`&:first-child`]: {
-      marginRight: theme.spacing[3],
-    },
-  },
 })

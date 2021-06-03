@@ -25,7 +25,7 @@ export type CustomerRecordsDetails = {
   amount: number
   category: string
   subCategory: string
-  actionCategory: string
+  actionCategory?: string
   reference: string
   referenceToLevy: string
   accountReference: string

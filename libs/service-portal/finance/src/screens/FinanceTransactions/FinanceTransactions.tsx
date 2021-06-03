@@ -1,9 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Table as T } from '@island.is/island-ui/core'
-import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
-import FinanceTransactionsDetail from '../../components/FinanceTransactionsDetail/FinanceTransactionsDetail'
+import format from 'date-fns/format'
+import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
 import {
   CustomerChargeType,
   CustomerRecords,
@@ -17,9 +16,13 @@ import {
   GridRow,
   GridColumn,
   DatePicker,
+  LoadingDots,
   Select,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+
+const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
 const GetCustomerChargeTypeQuery = gql`
   query GetCustomerChargeTypeQuery {
@@ -61,41 +64,60 @@ const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
-  const { loading, data: queryData } = useQuery<Query>(
+  const [fromDate, setFromDate] = useState<string>()
+  const [toDate, setToDate] = useState<string>()
+  const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
+
+  const { data: customerChartypeData } = useQuery<Query>(
     GetCustomerChargeTypeQuery,
   )
   const chargeTypeData: CustomerChargeType =
-    queryData?.getCustomerChargeType || {}
-  console.log({ chargeTypeData, loading })
+    customerChartypeData?.getCustomerChargeType || {}
+  console.log({ chargeTypeData })
 
-  const { loading: cLoading, ...customerRecordsData } = useQuery<Query>(
+  const [loadCustomerRecords, { data, loading, called }] = useLazyQuery(
     GetCustomerRecordsQuery,
-    {
-      variables: {
-        input: {
-          chargeTypeID: ['AB'],
-          dayFrom: '2021-01-01',
-          dayTo: '2021-03-31',
-        },
-      },
-    },
   )
-  const custRecordsData: CustomerRecords =
-    customerRecordsData.data?.getCustomerRecords || {}
-  console.log({ custRecordsData, cLoading })
 
-  const defaultChargeType = { label: 'Allar færslur', value: '' }
+  useEffect(() => {
+    if (toDate && fromDate && dropdownSelect) {
+      loadCustomerRecords({
+        variables: {
+          input: {
+            chargeTypeID: dropdownSelect,
+            dayFrom: fromDate,
+            dayTo: toDate,
+          },
+        },
+      })
+    }
+  }, [toDate, fromDate, dropdownSelect])
+
+  function onDropdownSelect(selection: any) {
+    const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
+    const selectedID =
+      selection.value === ALL_CHARGE_TYPES
+        ? allChargeTypeValues
+        : [selection.value]
+    setDropdownSelect(selectedID)
+  }
+
+  const recordsData: CustomerRecords = data?.getCustomerRecords || {}
+  const recordsDataArray = recordsData?.records || []
+
+  const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
     label: item.name,
     value: item.id,
   }))
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
         <Text variant="h1" as="h1">
           {formatMessage({
             id: 'service.portal:finance-transactions-title',
-            defaultMessage: 'Færslur',
+            defaultMessage: 'Hreyfingar',
           })}
         </Text>
         <Columns collapseBelow="sm">
@@ -111,25 +133,43 @@ const FinanceTransactions = () => {
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 5]}>
           <GridRow>
-            <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
+            <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/12']}>
               <Select
                 name="faerslur"
                 backgroundColor="blue"
-                placeholder="Allar færslur"
+                placeholder="Færslur"
                 label="Veldu tegund færslu"
                 size="sm"
-                options={[defaultChargeType, ...chargeTypeSelect]}
-                defaultValue={defaultChargeType}
+                options={[allChargeTypes, ...chargeTypeSelect]}
+                onChange={(sel) => onDropdownSelect(sel)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '3/8']}>
+            <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={function noRefCheck() {}}
+                handleChange={(d) => {
+                  const date = format(d, 'yyyy-MM-dd')
+                  setFromDate(date)
+                }}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
-                label="Dagsetning"
+                label="Dagsetning frá"
+                locale="is"
+                placeholderText="Veldu dagsetningu"
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '4/12']}>
+              <DatePicker
+                backgroundColor="blue"
+                handleChange={(d) => {
+                  const date = format(d, 'yyyy-MM-dd')
+                  setToDate(date)
+                }}
+                icon="calendar"
+                iconType="outline"
+                size="sm"
+                label="Dagsetning til"
                 locale="is"
                 placeholderText="Veldu dagsetningu"
               />
@@ -137,40 +177,22 @@ const FinanceTransactions = () => {
           </GridRow>
         </Box>
         <Box marginTop={2}>
-          <T.Table>
-            <ExpandHeader
-              data={['Dagsetning', 'Tegund', 'Skýring', 'Upphæð']}
+          {!called && !loading && (
+            <AlertBanner
+              description="Veldu öll leitarskilyrði til að fá niðurstöður"
+              variant="info"
             />
-            <T.Body>
-              <ExpandRow
-                data={[
-                  '07.01.2019',
-                  'Greiðslukvittun',
-                  'Sýslumaðurinn á Vesturlandi',
-                  '-',
-                ]}
-              >
-                <FinanceTransactionsDetail
-                  data={[
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                    { title: 'Umsjónarmaður', value: 'Skatturinn' },
-                  ]}
-                />
-              </ExpandRow>
-              <ExpandRow
-                data={[
-                  '07.01.2019',
-                  'Greiðslukvittun',
-                  'Sýslumaðurinn á Vesturlandi',
-                  '-',
-                ]}
-              />
-            </T.Body>
-          </T.Table>
+          )}
+          {loading && <LoadingDots large color="gradient" />}
+          {recordsDataArray.length === 0 && called && !loading && (
+            <AlertBanner
+              description="Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur."
+              variant="warning"
+            />
+          )}
+          {recordsDataArray.length > 0 ? (
+            <FinanceTransactionsTable recordsArray={recordsDataArray} />
+          ) : null}
         </Box>
       </Stack>
     </Box>

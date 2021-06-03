@@ -184,7 +184,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: defineMessage({
               id: 'service.portal:financeTransactions',
-              defaultMessage: 'Færslur',
+              defaultMessage: 'Hreyfingar',
             }),
             path: ServicePortalPath.FinanceTransactions,
           },

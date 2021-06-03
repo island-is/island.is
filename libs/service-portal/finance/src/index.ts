@@ -22,7 +22,7 @@ export const financeModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/FinanceStatus')),
       },
       {
-        name: 'Færslur',
+        name: 'Hreyfingar',
         path: ServicePortalPath.FinanceTransactions,
         render: () => lazy(() => import('./screens/FinanceTransactions')),
       },
