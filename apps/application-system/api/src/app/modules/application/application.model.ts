@@ -5,6 +5,7 @@ import {
   Model,
   Table,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
@@ -113,4 +114,76 @@ export class Application extends Model<Application> {
   })
   @ApiPropertyOptional()
   pruneAt?: Date
+}
+
+///Payment table to hold onto fulfilled payments and expiring payments.
+@Table({
+  tableName: 'payment',
+  timestamps: true,
+  indexes: [
+    {
+      fields: ['applicationId', 'fulfilled'],
+    },
+  ],
+})
+export class Payment {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  @ApiProperty()
+  id!: string
+
+  @Column({
+      type: DataType.DATE,
+      allowNull: false,
+      defaultValue: DataType.NOW,
+  })
+  @ApiProperty()
+  expiresAt!: Date
+
+  @ForeignKey(() => Application)
+  @Column({
+      type: DataType.UUID,
+      allowNull: false,
+  })
+  ApplicationId!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  fulfilled!: boolean
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  referenceId!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  arkUrl!: string
+
+  @Column({
+    type: DataType.JSONB,
+    defaultValue: {},
+  })
+  @ApiPropertyOptional()
+  definition?: object
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  amount!: number
 }
