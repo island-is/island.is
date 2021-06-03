@@ -28,14 +28,14 @@ const Img = styled.View``;
 
 interface EmptyCardProps {
   text: string
-  children: React.ReactNode
+  image: React.ReactNode
 }
 
-export function EmptyCard({ text, children }: EmptyCardProps) {
+export function EmptyCard({ text, image }: EmptyCardProps) {
   return (
     <Host>
       <Text>{text}</Text>
-      <Img>{children}</Img>
+      <Img>{image}</Img>
     </Host>
   )
 }

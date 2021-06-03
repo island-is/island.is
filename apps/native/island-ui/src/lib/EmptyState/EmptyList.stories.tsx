@@ -3,6 +3,8 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { Image, View } from 'react-native'
 import illustrationSrc from '../../assets/empty-list/LE-Company-S3.png'
+import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
+import { EmptyCard } from './EmptyCard'
 import { EmptyList } from './EmptyList'
 
 const CenterView = ({ children }: any) => (
@@ -28,6 +30,14 @@ storiesOf('Empty List', module)
         title="Hér eru engin skjöl sem stendur"
         description="Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér."
         image={<Image source={illustrationSrc} height={198} width={146} />}
+      />
+    )
+  })
+  .add('Empty Card', () => {
+    return (
+      <EmptyCard
+        text="Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér."
+        image={<Image source={leJobss4} height={90} width={42} />}
       />
     )
   })
