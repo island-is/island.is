@@ -70,7 +70,7 @@ export class DelegationsController {
   @ApiCreatedResponse({ type: DelegationDTO })
   update(
     @CurrentUser() user: User,
-    @Body() delegation: any,
+    @Body() delegation: UpdateDelegationDTO,
     @Param('id') id: string,
   ): Promise<DelegationDTO | null> {
     return this.delegationsService.update(user.nationalId, delegation, id)

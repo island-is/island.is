@@ -201,8 +201,13 @@ export class DelegationsService {
     return delegation ? delegation.toDTO() : null
   }
 
-  async findOneTo(fromNationalId: string, toNationalId: string): Promise<DelegationDTO | null> {
-    this.logger.debug(`Finding a delegation with from ${fromNationalId} to ${toNationalId}`)
+  async findOneTo(
+    fromNationalId: string,
+    toNationalId: string,
+  ): Promise<DelegationDTO | null> {
+    this.logger.debug(
+      `Finding a delegation with from ${fromNationalId} to ${toNationalId}`,
+    )
     const delegation = await this.delegationModel.findOne({
       where: {
         toNationalId: toNationalId,
