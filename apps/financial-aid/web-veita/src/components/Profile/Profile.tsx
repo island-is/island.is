@@ -5,10 +5,9 @@ import {
   Box,
   Button,
   GridContainer,
-  ButtonProps,
+  Link,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 
 import * as styles from './Profile.treat'
 import cn from 'classnames'
@@ -19,6 +18,8 @@ interface Props {
     {
       title: string
       content: string
+      link: string
+      other: string
     },
   ]
 }
@@ -40,7 +41,14 @@ const Profile: React.FC<Props> = ({ heading, info }) => {
               <Text fontWeight="semiBold" marginBottom={1}>
                 {item.title}
               </Text>
-              <Text>{item.content}</Text>
+
+              {item.link ? (
+                <Link href={item.link} color="blue400">
+                  {item.content}
+                </Link>
+              ) : (
+                <Text>{item.content}</Text>
+              )}
 
               {item.other && (
                 <Box

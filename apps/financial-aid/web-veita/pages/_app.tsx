@@ -6,6 +6,8 @@ import { Header } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
+import { AdminLayout } from '../src/components'
+
 import '../src/styles.css'
 
 class FinancialAidApplication extends App<AppProps> {
@@ -15,7 +17,9 @@ class FinancialAidApplication extends App<AppProps> {
     return (
       <ApolloProvider client={client}>
         {/* <Header /> */}
-        <Component {...pageProps} />
+        <AdminLayout>
+          <Component {...pageProps} />
+        </AdminLayout>
         <style jsx global>{`
           @font-face {
             font-family: 'IBM Plex Sans';
