@@ -1,5 +1,5 @@
+import { GenericDrivingLicenseResponse } from '../client'
 import { GenericLicense } from '../licenceService.type'
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 
 export const drivingLicenseToGeneric = (
   license: GenericDrivingLicenseResponse[],
