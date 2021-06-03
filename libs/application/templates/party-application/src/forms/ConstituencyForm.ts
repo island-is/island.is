@@ -103,7 +103,7 @@ export const ConstituencyForm: Form = buildForm({
       id: 'partyLetterFailed',
       title: '',
       condition: (_, externalData) => {
-        return hasPartyLetter(externalData)
+        return !hasPartyLetter(externalData)
       },
       children: [
         buildMultiField({

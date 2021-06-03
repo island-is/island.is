@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { ExportAsCSV } from '@island.is/application/ui-components'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { csvFileName } from '../../constants'
+import { PartyLetterRegistry } from '@island.is/api/schema'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -16,6 +17,8 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
+  const partyLetterRegistry = externalData.partyLetterRegistry
+    .data as PartyLetterRegistry
 
   return (
     <Box>
@@ -62,7 +65,10 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text marginBottom={1}>{'528'}</Text>
           <ExportAsCSV
             data={answers.endorsements as object[]}
-            filename={csvFileName(answers.partyLetter, answers.partyName)}
+            filename={csvFileName(
+              partyLetterRegistry?.partyLetter,
+              partyLetterRegistry?.partyName,
+            )}
             title={formatMessage(m.supremeCourt.csvButton)}
           />
         </Box>
