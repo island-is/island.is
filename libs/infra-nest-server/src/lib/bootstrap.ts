@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   NestInterceptor,
 } from '@nestjs/common'
+import { ValidationError } from 'class-validator'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { logger, LoggingModule } from '@island.is/logging'
 import { startMetricServer } from '@island.is/infra-metrics'
@@ -72,7 +73,10 @@ export const createApp = async (options: RunServerOptions) => {
 
   // Enable validation of request DTOs globally.
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+    new ValidationPipe({
+      forbidNonWhitelisted: true,
+      exceptionFactory: (errors: ValidationError[]) => errors.join('\n'),
+    }),
   )
 
   if (options.globalPrefix) {
