@@ -10,7 +10,7 @@ export const generateAssignMinistryOfJusticeApplicationEmail: AssignmentEmailTem
     options: { email },
   } = props
 
-  const ministryOfJusticeEmail = 'sigridur@kosmosogkaos.is'
+  const ministryOfJusticeEmail = 'postur@dmr.is'
 
   const subject = 'Meðmæli með listabókstaf'
   const body = dedent(`

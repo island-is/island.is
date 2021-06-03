@@ -40,7 +40,7 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'pa.application:disclaimerSection.subtitle',
-      defaultMessage: 'Eftirfarandi gildir um söfnun meðmælenda',
+      defaultMessage: 'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
       description: 'Subtitle of disclaimer section',
     },
     descriptionPt1: {
@@ -487,6 +487,18 @@ export const m: MessageDir = {
       id: 'pa.application:logo.organization',
       defaultMessage: 'Dómsmálaráðuneytið',
       description: 'Name of organization',
+    },
+  }),
+  partyLetterFailed: defineMessages({
+    title: {
+      id: 'pa.application:partyletter.failed.title',
+      defaultMessage: 'Listabókstafur ekki á skrá',
+      description: 'Title for party letter failed',
+    },
+    description: {
+      id: 'pa.application:partyletter.failed.description',
+      defaultMessage: 'Þú ert ekki á skrá sem umsjónarmaður stjórnmálasamtaka vinsamlegast hafðu samband við postur@dmr.is',
+      description: 'Description for party letter failed',
     },
   }),
   supremeCourt: defineMessages({

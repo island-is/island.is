@@ -3,19 +3,27 @@ import {
   buildSection,
   buildSubmitField,
   buildCustomField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
   Form,
   FormModes,
   buildRadioField,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
-  buildDescriptionField,
   DefaultEvents,
+  ExternalData,
+  Answer,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { Constituencies } from '../types'
 import Logo from '../assets/Logo'
 import { PartyLetterRegistryPartyLetter } from '../dataProviders/partyLetterRegistry'
+
+const hasPartyLetter = (externalData: ExternalData) => {
+  const partyLetter = externalData.partyLetterRegistry
+    ?.data as PartyLetterRegistryPartyLetter
+
+  return Boolean(partyLetter && partyLetter.partyLetter)
+}
 
 export const ConstituencyForm: Form = buildForm({
   id: 'Constitunecy',
@@ -96,21 +104,17 @@ export const ConstituencyForm: Form = buildForm({
       id: 'partyLetterFailed',
       title: '',
       condition: (_, externalData) => {
-        const partyLetter = externalData.partyLetterRegistry
-          ?.data as PartyLetterRegistryPartyLetter
-
-        return !Boolean(partyLetter && partyLetter.partyLetter)
+        return hasPartyLetter(externalData)
       },
       children: [
         buildMultiField({
-          id: 'overviewSubmit',
-          title: 'Failed to find party letter',
-          description: 'Please apply for party letter',
+          id: 'partyLetterFailed',
+          title: '',
           children: [
-            buildDescriptionField({
+            buildCustomField({
               id: 'intro',
               title: '',
-              description: 'You need to apply for a party letter',
+              component: 'PartyLetterFailed',
             }),
             buildSubmitField({
               id: 'submit',
@@ -125,6 +129,9 @@ export const ConstituencyForm: Form = buildForm({
     buildSection({
       id: 'overviewSection',
       title: m.constituencySection.confirmationTitle,
+      condition: (_, externalData) => {
+        return hasPartyLetter(externalData)
+      },
       children: [
         buildMultiField({
           id: 'overviewSubmit',
@@ -140,6 +147,7 @@ export const ConstituencyForm: Form = buildForm({
               id: 'submit',
               title: '',
               placement: 'footer',
+
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
