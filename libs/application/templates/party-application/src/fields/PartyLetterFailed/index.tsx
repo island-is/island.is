@@ -4,14 +4,13 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
 const PartyLetterFailed = () => {
-    const { formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
 
   return (
     <AlertMessage
       type="warning"
       title={formatMessage(m.partyLetterFailed.title)}
       message={formatMessage(m.partyLetterFailed.description)}
-
     />
   )
 }

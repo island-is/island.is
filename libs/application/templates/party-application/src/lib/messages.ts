@@ -40,7 +40,8 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'pa.application:disclaimerSection.subtitle',
-      defaultMessage: 'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
+      defaultMessage:
+        'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
       description: 'Subtitle of disclaimer section',
     },
     descriptionPt1: {
@@ -497,7 +498,8 @@ export const m: MessageDir = {
     },
     description: {
       id: 'pa.application:partyletter.failed.description',
-      defaultMessage: 'Þú ert ekki á skrá sem umsjónarmaður stjórnmálasamtaka vinsamlegast hafðu samband við postur@dmr.is',
+      defaultMessage:
+        'Þú ert ekki á skrá sem umsjónarmaður stjórnmálasamtaka vinsamlegast hafðu samband við postur@dmr.is',
       description: 'Description for party letter failed',
     },
   }),

@@ -12,7 +12,7 @@ export const generateAssignSupremeCourtApplicationEmail: AssignmentEmailTemplate
 
   const supremeCourtEmail = 'sigridur@kosmosogkaos.is'
   const { partyLetter, partyName } = application.externalData
-  .partyLetterRegistry?.data as any
+    .partyLetterRegistry?.data as any
 
   const subject = 'Meðmæli með framboðslista'
   const body = dedent(`

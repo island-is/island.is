@@ -10,7 +10,7 @@ beforeAll(async () => {
   app = await setup()
 })
 
-describe('findByTagEndorsementList', () => {
+describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list?tags should return validation error when called with a non existing tag`, async () => {
     const response = await request(app.getHttpServer())
       .get(
