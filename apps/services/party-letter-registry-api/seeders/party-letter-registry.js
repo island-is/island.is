@@ -4,6 +4,20 @@ const argv = yargs(process.argv.slice(2)).argv
 const xlsx = require('node-xlsx')
 const { isPerson } = require('kennitala')
 
+/**
+ * We don't expect this data to change to frequently hence we have faced out a admin panel from our current scope.
+ * This seeder file serves as out way to update the database safely via data from a excel file.
+ * The first row of the excel file must be headers.
+ * The excel file should include four columns from left to right: Party letter, party name, owner, managers.
+ * Party letter: string (ID PK)
+ * Party name: string
+ * Owner: string (nationalId)
+ * Managers: string (csv of national ids e.g. 0000000000,1111111111)
+ *
+ * Uploading a excel file containing an existing party letter will update the existing party letter.
+ * All fields must be included when updating.
+ */
+
 const validateImportedData = (partyLetters) => {
   const errors = []
   partyLetters.forEach((partyLetter) => {
