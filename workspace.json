@@ -700,6 +700,27 @@
         }
       }
     },
+    "api-domains-auth": {
+      "root": "libs/api/domains/auth",
+      "sourceRoot": "libs/api/domains/auth/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/auth/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/auth"],
+          "options": {
+            "jestConfig": "libs/api/domains/auth/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-cms": {
       "root": "libs/api/domains/cms",
       "sourceRoot": "libs/api/domains/cms/src",
@@ -2697,6 +2718,34 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/cache"]
+        }
+      }
+    },
+    "clients-auth-public-api": {
+      "root": "libs/clients/auth-public-api",
+      "sourceRoot": "libs/clients/auth-public-api/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/auth-public-api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/auth-public-api"],
+          "options": {
+            "jestConfig": "libs/clients/auth-public-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/clients/auth-public-api/gen",
+            "command": "yarn openapi-generator -o libs/clients/auth-public-api/gen/fetch -i apps/services/auth-public-api/src/openapi.yaml"
+          }
         }
       }
     },
@@ -5732,6 +5781,13 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/service-portal/graphql"]
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "output": "libs/service-portal/graphql/src/schema.ts",
+            "command": "graphql-codegen --config libs/service-portal/graphql/codegen.yml"
+          }
         }
       }
     },
@@ -6090,6 +6146,13 @@
           "options": {
             "jestConfig": "apps/services/auth-public-api/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/auth-public-api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/auth-public-api/tsconfig.app.json apps/services/auth-public-api/src/buildOpenApi.ts"
           }
         },
         "docker-express": {}

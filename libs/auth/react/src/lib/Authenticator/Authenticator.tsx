@@ -56,6 +56,30 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     [userManager, dispatch],
   )
 
+  const switchUser = useCallback(
+    async function switchUser(nationalId?: string) {
+      const args =
+        nationalId !== undefined
+          ? {
+              login_hint: nationalId,
+              prompt: 'none',
+            }
+          : {
+              login_hint: 'delegations',
+            }
+
+      dispatch({
+        type: ActionType.SIGNIN_START,
+      })
+      return userManager.signinRedirect({
+        state: history.location.pathname + history.location.search,
+        ...args,
+      })
+      // Nothing more happens here since browser will redirect to IDS.
+    },
+    [userManager, dispatch],
+  )
+
   const signOut = useCallback(
     async function signOut() {
       dispatch({
@@ -132,9 +156,10 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       ...state,
       signIn,
       signInSilent,
+      switchUser,
       signOut,
     }),
-    [state, signIn, signInSilent, signOut],
+    [state, signIn, signInSilent, switchUser, signOut],
   )
 
   return (

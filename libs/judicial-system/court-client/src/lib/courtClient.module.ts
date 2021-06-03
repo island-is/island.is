@@ -7,7 +7,6 @@ import {
   AuthenticateApi,
   Configuration,
   CreateCaseApi,
-  CreateCustodyCaseApi,
   CreateDocumentApi,
   CreateThingbokApi,
   FetchParams,
@@ -16,13 +15,13 @@ import {
 import { UploadStreamApi } from './uploadStreamApi'
 import {
   CourtClientService,
-  COURT_SERVICE_OPTIONS,
-} from './court-client.service'
+  CourtClientServiceOptions,
+  COURT_CLIENT_SERVICE_OPTIONS,
+} from './courtClient.service'
 
 const genApis = [
   AuthenticateApi,
   CreateCaseApi,
-  CreateCustodyCaseApi,
   CreateDocumentApi,
   CreateThingbokApi,
 ]
@@ -35,18 +34,17 @@ function injectAgentMiddleware(agent: Agent) {
   }
 }
 
-export interface CourtClientModuleOptions {
+export interface CourtClientOptions {
   xRoadPath: string
   xRoadClient: string
   clientCert: string
   clientKey: string
   clientCa: string
-  username: string
-  password: string
+  serviceOptions: CourtClientServiceOptions
 }
 
 export class CourtClientModule {
-  static register(options: CourtClientModuleOptions): DynamicModule {
+  static register(options: CourtClientOptions): DynamicModule {
     // Some packages are not available in unit tests
     const agent = https
       ? new https.Agent({
@@ -78,11 +76,8 @@ export class CourtClientModule {
             new UploadStreamApi(options.xRoadPath, defaultHeaders, agent),
         },
         {
-          provide: COURT_SERVICE_OPTIONS,
-          useFactory: () => ({
-            username: options.username,
-            password: options.password,
-          }),
+          provide: COURT_CLIENT_SERVICE_OPTIONS,
+          useValue: options.serviceOptions,
         },
         CourtClientService,
       ],

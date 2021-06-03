@@ -2,19 +2,14 @@ import { useEffect } from 'react'
 
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
-import { createClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/feature-flags'
 
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { featureFlaggedModules, ModuleKeys } from '../../store/modules'
-import { environment } from '../../environments'
-
-const featureFlagClient = createClient({
-  sdkKey: environment.featureFlagSdkKey,
-})
 
 export const useModules = () => {
-  const { userInfo } = useAuth()
+  const featureFlagClient = useFeatureFlagClient()
   const [{ modules }, dispatch] = useStore()
 
   async function filterModulesBasedOnFeatureFlags() {
@@ -24,14 +19,6 @@ export const useModules = () => {
         return featureFlagClient.getValue(
           `isServicePortal${capKey}ModuleEnabled`,
           false,
-          userInfo && userInfo.profile.sid
-            ? {
-                id: userInfo.profile.sid,
-                attributes: {
-                  nationalId: userInfo.profile.nationalId,
-                },
-              }
-            : undefined,
         )
       }),
     )

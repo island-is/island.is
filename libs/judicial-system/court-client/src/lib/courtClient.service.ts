@@ -8,14 +8,11 @@ import {
   AuthenticateRequest,
   CreateCaseApi,
   CreateCaseData,
-  CreateCustodyCaseApi,
-  CreateCustodyCaseRequest,
   CreateDocumentApi,
   CreateDocumentData,
   CreateThingbokApi,
   CreateThingbokRequest,
 } from '../../gen/fetch'
-
 import { UploadStreamApi } from './uploadStreamApi'
 
 function stripResult(str: string): string {
@@ -26,45 +23,42 @@ function stripResult(str: string): string {
   return str.slice(1, str.length - 1)
 }
 
-type CreateCustodyCaseArgs = Omit<
-  CreateCustodyCaseRequest,
-  'authenticationToken'
->
-
 type CreateCaseArgs = Omit<CreateCaseData, 'authenticationToken'>
 
 type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
 
 type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
 
-let authenticationToken: string
+export const COURT_CLIENT_SERVICE_OPTIONS = 'COURT_CLIENT_SERVICE_OPTIONS'
 
-export const COURT_SERVICE_OPTIONS = 'export const COURT_SERVICE_OPTIONS'
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface CourtServiceOptions extends AuthenticateRequest {}
+export interface CourtClientServiceOptions {
+  [key: string]: AuthenticateRequest
+}
 
 @Injectable()
 export class CourtClientService {
+  private readonly authenticationToken: { [key: string]: string } = {}
+
   constructor(
     private readonly authenticateApi: AuthenticateApi,
-    private readonly createCustodyCaseApi: CreateCustodyCaseApi,
     private readonly createCaseApi: CreateCaseApi,
     private readonly createDocumentApi: CreateDocumentApi,
     private readonly createThingbokApi: CreateThingbokApi,
     private readonly uploadStreamApi: UploadStreamApi,
-    @Inject(COURT_SERVICE_OPTIONS)
-    private readonly options: CourtServiceOptions,
+    @Inject(COURT_CLIENT_SERVICE_OPTIONS)
+    private readonly options: CourtClientServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  private async login() {
+  private async login(clientId: string) {
     try {
-      const res = await this.authenticateApi.authenticate(this.options)
+      const res = await this.authenticateApi.authenticate(
+        this.options[clientId],
+      )
 
       // Strip the quotation marks from the result
-      authenticationToken = stripResult(res)
+      this.authenticationToken[clientId] = stripResult(res)
     } catch (_) {
       // Cannot log the error as it contains username and password in plain text
       this.logger.error('Unable to log into the court service')
@@ -74,15 +68,16 @@ export class CourtClientService {
   }
 
   private async wrappedRequest(
-    request: () => Promise<string>,
+    clientId: string,
+    request: (authenticationToken: string) => Promise<string>,
     isRetry = false,
   ): Promise<string> {
-    if (!authenticationToken || isRetry) {
-      await this.login()
+    if (!this.authenticationToken[clientId] || isRetry) {
+      await this.login(clientId)
     }
 
     try {
-      const res = await request()
+      const res = await request(this.authenticationToken[clientId])
 
       return stripResult(res)
     } catch (error) {
@@ -92,21 +87,12 @@ export class CourtClientService {
         throw error
       }
 
-      return this.wrappedRequest(request, true)
+      return this.wrappedRequest(clientId, request, true)
     }
   }
 
-  createCustodyCase(args: CreateCustodyCaseArgs): Promise<string> {
-    return this.wrappedRequest(() =>
-      this.createCustodyCaseApi.createCustodyCase({
-        ...args,
-        authenticationToken,
-      }),
-    )
-  }
-
-  createCase(args: CreateCaseArgs): Promise<string> {
-    return this.wrappedRequest(() =>
+  createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
+    return this.wrappedRequest(clientId, (authenticationToken) =>
       this.createCaseApi.createCase({
         createCaseData: {
           ...args,
@@ -116,8 +102,8 @@ export class CourtClientService {
     )
   }
 
-  createDocument(args: CreateDocumentArgs): Promise<string> {
-    return this.wrappedRequest(() =>
+  createDocument(clientId: string, args: CreateDocumentArgs): Promise<string> {
+    return this.wrappedRequest(clientId, (authenticationToken) =>
       this.createDocumentApi.createDocument({
         createDocumentData: {
           ...args,
@@ -127,8 +113,8 @@ export class CourtClientService {
     )
   }
 
-  createThingbok(args: CreateThingbokArgs): Promise<string> {
-    return this.wrappedRequest(() =>
+  createThingbok(clientId: string, args: CreateThingbokArgs): Promise<string> {
+    return this.wrappedRequest(clientId, (authenticationToken) =>
       this.createThingbokApi.createThingbok({
         ...args,
         authenticationToken,
@@ -136,14 +122,17 @@ export class CourtClientService {
     )
   }
 
-  uploadStream(file: {
-    value: Buffer
-    options?: {
-      filename?: string
-      contentType?: string
-    }
-  }): Promise<string> {
-    return this.wrappedRequest(() =>
+  uploadStream(
+    clientId: string,
+    file: {
+      value: Buffer
+      options?: {
+        filename?: string
+        contentType?: string
+      }
+    },
+  ): Promise<string> {
+    return this.wrappedRequest(clientId, (authenticationToken) =>
       this.uploadStreamApi.uploadStream(authenticationToken, file),
     )
   }
