@@ -15,14 +15,26 @@ export class DelegationScopeService {
   ) {}
 
   async create(
+    delegationId: string,
     delegationScope: DelegationScopeDTO,
   ): Promise<DelegationScope | null> {
     this.logger.debug('Creating new delegation scope')
-    return this.delegationScopeModel.create({ ...delegationScope })
+    return this.delegationScopeModel.create({
+      ...delegationScope,
+      delegationId,
+    })
   }
 
-  async createMany(scopes: DelegationScopeDTO[]): Promise<any> {
-    return this.delegationScopeModel.bulkCreate(scopes)
+  async createMany(
+    delegationId: string,
+    scopes: DelegationScopeDTO[],
+  ): Promise<any> {
+    return this.delegationScopeModel.bulkCreate(
+      scopes.map((delegationScope) => ({
+        ...delegationScope,
+        delegationId,
+      })),
+    )
   }
 
   async findAll(
