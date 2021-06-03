@@ -10,12 +10,15 @@ import {
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { useRouter } from 'next/router'
 import DefendantForm from './DefendantForm'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const Defendant = () => {
   const router = useRouter()
   const id = router.query.id
 
   const [workingCase, setWorkingCase] = useState<Case>()
+  const { createCase, isCreatingCase } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -35,7 +38,7 @@ const Defendant = () => {
         id: '',
         created: '',
         modified: '',
-        type: CaseType.CUSTODY,
+        type: CaseType.SEARCH_WARRANT,
         state: CaseState.NEW,
         policeCaseNumber: '',
         accusedNationalId: '',
@@ -49,13 +52,19 @@ const Defendant = () => {
     }
   }, [id, workingCase, setWorkingCase, data])
 
+  const handleNextButtonClick = async (theCase: Case) => {
+    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
+
+    // router.push(`${constants.STEP_TWO_ROUTE}/${caseId}`)
+  }
+
   return (
     <PageLayout
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_ONE}
-      isLoading={loading}
+      isLoading={loading || isCreatingCase}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
       decision={workingCase?.decision}
@@ -67,6 +76,7 @@ const Defendant = () => {
         <DefendantForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          handleNextButtonClick={handleNextButtonClick}
         />
       ) : (
         'working case missing'
