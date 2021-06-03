@@ -7,7 +7,7 @@ import {
 import { Case } from '@island.is/judicial-system/types'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import { petitionTypes } from '../PetitionType/PetitionTypes'
+import { petitionTypes } from './PetitionTypes'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

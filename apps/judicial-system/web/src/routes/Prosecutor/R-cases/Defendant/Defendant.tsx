@@ -7,7 +7,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { useRouter } from 'next/router'
 import DefendantForm from './DefendantForm'
 
@@ -23,14 +23,31 @@ const Defendant = () => {
   })
 
   useEffect(() => {
-    document.title = 'Varnaradili - Réttarvörslugátt'
+    document.title = 'Rannsóknarheimild - Réttarvörslugátt'
   }, [])
 
+  // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    if (!workingCase && data) {
-      setWorkingCase(data.case)
+    if (id && !workingCase && data?.case) {
+      setWorkingCase(data?.case)
+    } else if (!id && !workingCase) {
+      setWorkingCase({
+        id: '',
+        created: '',
+        modified: '',
+        type: CaseType.CUSTODY,
+        state: CaseState.NEW,
+        policeCaseNumber: '',
+        accusedNationalId: '',
+        accusedName: '',
+        accusedAddress: '',
+        defenderName: '',
+        defenderEmail: '',
+        sendRequestToDefender: false,
+        accusedGender: undefined,
+      })
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [id, workingCase, setWorkingCase, data])
 
   return (
     <PageLayout

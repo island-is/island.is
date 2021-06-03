@@ -1,8 +1,8 @@
 import React from 'react'
-import PetitionType from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/PetitionType/PetitionType'
+import Defendant from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/Defendant/Defendant'
 
 const NewRCase = () => {
-  return <PetitionType />
+  return <Defendant />
 }
 
 export default NewRCase
