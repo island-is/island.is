@@ -8,7 +8,7 @@ import {
 
 export const drivingLicenseToGeneric = (
   license: GenericDrivingLicenseResponse[],
-) => {
+): GenericUserLicenseFields => {
   const licenseid: LICENSE_TYPE = 'DRIVERS_LICENSE'
   const out: GenericUserLicenseFields = {
     licenseType: licenseid,
@@ -18,7 +18,10 @@ export const drivingLicenseToGeneric = (
     licenseStatus: 'HAS_LICENSE',
     fetchStatus: 'FETCHED',
     pkpassUrl: '',
-    payload: '',
+    payload: {
+      data: [],
+      rawData: null,
+    },
   }
 
   return out

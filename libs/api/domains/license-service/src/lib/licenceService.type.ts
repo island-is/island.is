@@ -37,5 +37,17 @@ export type GenericUserLicenseFields = {
   licenseStatus: 'HAS_LICENSE' | 'NOT_AVAILABLE'
   fetchStatus: 'FETCHED' | 'NOT_FETCHED' | 'FETCHING' | 'ERROR' | 'STALE'
   pkpassUrl: string
-  payload: any
+  payload: {
+    data: GenericLicenseData
+    rawData: any
+  }
 }
+
+export type GenericLicenseDataField = {
+  type: 'group' | 'category' | 'value';
+  label: string;
+  value: string;
+  fields: Array<GenericLicenseDataField>;
+}
+
+export type GenericLicenseData = Array<GenericLicenseDataField>;

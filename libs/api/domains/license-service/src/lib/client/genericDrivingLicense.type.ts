@@ -1,3 +1,5 @@
+// Copied from DrivingLicenseResponse
+// TODO move to a shared type?
 export interface GenericDrivingLicenseResponse {
   id: number
   nafn: string
