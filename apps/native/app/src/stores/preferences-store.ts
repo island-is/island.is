@@ -15,6 +15,9 @@ export interface PreferencesStore extends State {
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
   hasAcceptedNotifications: boolean
+  notificationsNewDocuments: boolean
+  notificationsAppUpdates: boolean
+  notificationsApplicationStatusUpdates: boolean
   dismissed: string[]
   useBiometrics: boolean
   locale: Locale
@@ -40,6 +43,9 @@ const defaultPreferences = {
   hasOnboardedPinCode: false,
   hasOnboardedNotifications: false,
   hasAcceptedNotifications: false,
+  notificationsNewDocuments: true,
+  notificationsAppUpdates: true,
+  notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
   appLockTimeout: 5000,
 }
@@ -73,7 +79,7 @@ export const preferencesStore = create<PreferencesStore>(
       },
     }),
     {
-      name: 'preferences03',
+      name: 'preferences04',
       getStorage: () => AsyncStorage,
     },
   ),

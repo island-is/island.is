@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useRef } from 'react';
 import { Animated, View } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor, spacing } from '../../utils';
@@ -33,7 +34,10 @@ const AnimatedCircle = styled(Animated.View)`
   height: ${spacing(1)};
   width: ${spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
+  background-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue400,
+    dark: theme.color.blue600,
+  }))};
 `
 
 interface LoaderProps {
@@ -41,13 +45,19 @@ interface LoaderProps {
 }
 
 export function Loader({ text }: LoaderProps ) {
-  const [scales, _] = useState([
+  const animRef = useRef<Animated.CompositeAnimation>();
+  const scales = useRef<Animated.Value[]>([
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
-  ])
+  ]).current
 
   const animation = () => {
+    if (animRef.current) {
+      scales.forEach(scale => scale.setValue(0));
+      animRef.current.stop();
+    }
+
     const duration = 1400;
     const delay = 400;
 
@@ -67,11 +77,17 @@ export function Loader({ text }: LoaderProps ) {
         ]),
       )
     }
-    Animated.stagger(delay, [seq(0), seq(1), seq(2)]).start()
+    animRef.current = Animated.stagger(delay, [seq(0), seq(1), seq(2)])
+    animRef.current.start();
   }
 
   useEffect(() => {
-    animation()
+    animation();
+    return () => {
+      if (animRef.current) {
+        animRef.current.reset();
+      }
+    }
   }, [])
 
   const renderCircle = (i: number) => {

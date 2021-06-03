@@ -21,6 +21,7 @@ export const ComponentRegistry = {
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
   NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
+  WebViewScreen: `${prefix}.screens.WebViewScreen`,
 
   // ui components
   AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,

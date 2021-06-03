@@ -17,6 +17,7 @@ export function setStatusBar(theme: DefaultTheme) {
   const isLandscape = win.width > win.height
   const isHandle =
     modalsOpen > 0 && Platform.OS === 'ios' && !Platform.isPad && !isLandscape
+
   StatusBar.setBarStyle(
     isHandle
       ? 'light-content'
@@ -42,8 +43,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (prevColorScheme !== selectedTheme.colorScheme) {
       Navigation.setDefaultOptions(getDefaultOptions(selectedTheme))
       setPrevColorScheme(selectedTheme.colorScheme)
-      uiStore.setState({ theme: selectedTheme })
     }
+    uiStore.setState({ theme: selectedTheme })
     setStatusBar(selectedTheme)
   }, [selectedTheme])
 

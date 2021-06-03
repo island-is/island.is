@@ -38,8 +38,8 @@ const errorLink = onError(
             return
           }),
         )
-          .filter((value) => Boolean(value))
-          .flatMap((accessToken) => {
+          .filter((value: string) => Boolean(value))
+          .flatMap((accessToken: string) => {
             const oldHeaders = operation.getContext().headers
             operation.setContext({
               headers: {

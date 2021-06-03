@@ -474,35 +474,6 @@ PODS:
     - React-Core
   - RNLocalize (2.0.3):
     - React-Core
-  - RNReanimated (2.1.0):
-    - DoubleConversion
-    - FBLazyVector
-    - FBReactNativeSpec
-    - glog
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React
-    - React-callinvoker
-    - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
-    - React-RCTVibration
-    - ReactCommon/turbomodule/core
-    - Yoga
   - RNSentry (2.4.3):
     - React-Core
     - Sentry (= 6.1.4)
@@ -602,7 +573,6 @@ DEPENDENCIES:
   - "RNFBMessaging (from `../../node_modules/@react-native-firebase/messaging`)"
   - RNKeychain (from `../../node_modules/react-native-keychain`)
   - RNLocalize (from `../../node_modules/react-native-localize`)
-  - RNReanimated (from `../../node_modules/react-native-reanimated`)
   - "RNSentry (from `../../node_modules/@sentry/react-native`)"
   - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
   - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
@@ -747,8 +717,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-keychain"
   RNLocalize:
     :path: "../../node_modules/react-native-localize"
-  RNReanimated:
-    :path: "../../node_modules/react-native-reanimated"
   RNSentry:
     :path: "../../node_modules/@sentry/react-native"
   UMAppLoader:
@@ -845,7 +813,6 @@ SPEC CHECKSUMS:
   RNFBMessaging: ba11538f4d76a5ef89dc8c97dad04fbf2fa6ebef
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: 99e59cad311ca1b6872b1764514009416ccba03d
-  RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9

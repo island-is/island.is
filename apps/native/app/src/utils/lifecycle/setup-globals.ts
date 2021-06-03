@@ -37,15 +37,17 @@ import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 
 // initialize sentry
-Sentry.init({
-  dsn: config.sentryDsn,
-  tracesSampleRate: 1, // @todo reduce to 0.2 for production
-  integrations: [
-    new Sentry.ReactNativeTracing({
-      routingInstrumentation: new ReactNativeNavigationInstrumentation(),
-    }),
-  ],
-});
+if (!__DEV__) {
+  Sentry.init({
+    dsn: config.sentryDsn,
+    tracesSampleRate: 1, // @todo reduce to 0.2 for production
+    integrations: [
+      new Sentry.ReactNativeTracing({
+        routingInstrumentation: new ReactNativeNavigationInstrumentation(),
+      }),
+    ],
+  });
+}
 
 // ignore expo warnings
 LogBox.ignoreLogs([

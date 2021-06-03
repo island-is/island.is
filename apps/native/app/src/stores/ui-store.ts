@@ -1,4 +1,3 @@
-import { StatusBar } from 'react-native'
 import { DefaultTheme } from 'styled-components'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
