@@ -345,7 +345,17 @@ export const application: Form = buildForm({
           id: 'paymentFinal',
           title: 'Greiðsla',
           children: [
-            buildDividerField({}),
+            buildKeyValueField({
+              label: 'money',
+              value: ({ externalData }) => {
+                /// needs a lot of refactoring
+                let str = Object.values(externalData.payment.data as object)
+                console.log(str[0])
+                console.log(externalData.payment?.data)
+                /// more refactoring
+                return (str[1].toString() + ' kr.') as StaticText
+              },
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

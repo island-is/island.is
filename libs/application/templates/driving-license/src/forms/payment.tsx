@@ -22,27 +22,20 @@ import { m } from '../lib/messages'
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: 'greiðsla',
-  mode: FormModes.EDITING,
+  mode: FormModes.APPLYING,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'paypay',
+      id: 'awaitingPayment',
       title: 'Greiðsla',
       children: [
-        buildMultiField({
+        buildDescriptionField({
           id: 'info',
           title: m.informationMultiFieldTitle,
-          children: [
-            buildKeyValueField({
-              label: 'hoho',
-              value: 'hi hi',
-              width: 'full',
-            }),
-            buildDividerField({
-              title: '',
-              color: 'dark400',
-            }),
-          ],
+          description: (application) => {
+            console.log({ application })
+            return 'Skemmtu þér vel...'
+          }
         }),
       ],
     }),

@@ -4,7 +4,17 @@ import { ChargeResult } from './api-domains-payment.types'
 
 @Injectable()
 export class PaymentService {
-  constructor(private readonly paymentApi: PaymentAPI) {}
+  private baseUrl: string
+
+  constructor(private readonly paymentApi: PaymentAPI) {
+    this.baseUrl = 'https://birtint.ebp.solutions'
+  }
+
+  private makePaymentUrl(docNum: string, returnUrl: string): string {
+    return `${this.baseUrl}/quickpay/document/pay`
+      + `?returnUrl=${encodeURIComponent(returnUrl)}`
+      + `&doc_num=${docNum}`
+  }
 
   async createCharge(chargeParameters: Charge): Promise<ChargeResult> {
     try {
@@ -15,7 +25,10 @@ export class PaymentService {
       return {
         success: true,
         error: null,
-        data: charge,
+        data: {
+          ...charge,
+          paymentUrl: this.makePaymentUrl(charge.user4, 'http://localhost:4200/umsoknir/okuskirteini/')
+        },
       }
     } catch (e) {
       return {

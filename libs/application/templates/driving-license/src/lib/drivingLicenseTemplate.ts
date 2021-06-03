@@ -88,7 +88,7 @@ const template: ApplicationTemplate<
           },
           roles: [
             {
-              id: 'payment',
+              id: 'applicant',
               formLoader: () =>
                 import('../forms/payment').then((val) =>
                   Promise.resolve(val.payment),
@@ -101,7 +101,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.DONE]: {

@@ -11,6 +11,14 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
+interface Payment {
+  chargeItemCode: string,
+  chargeItemName: string,
+  priceAmount: number,
+  performingOrgID: string,
+  chargeType: string,
+}
+
 @Injectable()
 export class DrivingLicenseSubmissionService {
   constructor(
@@ -24,33 +32,31 @@ export class DrivingLicenseSubmissionService {
     console.log('==== creating charge ====')
     console.log({ externalData })
     console.log({ answers })
+
+    const payment = (externalData.payment.data as Payment)
+
+    const chargeItem = {
+      chargeItemCode: payment.chargeItemCode,
+      quantity: 1,
+      priceAmount: payment.priceAmount,
+      amount: payment.priceAmount * 1,
+      reference: 'Vinnslugjald',
+    }
+
     const result = await this.sharedTemplateAPIService
       .createCharge({
         chargeItemSubject: 'Fullnaðarskírteini',
-        chargeType: 'atype',
+        chargeType: payment.chargeType,
         immediateProcess: true,
         charges: [
-          {
-            amount: 2000,
-            chargeItemCode: 'someitemcode',
-            priceAmount: 2,
-            quantity: 2,
-            reference: 'no idea',
-          },
+          chargeItem,
         ],
         payeeNationalID: applicant,
+        // TODO: possibly somebody else, if 'umboð'
         performerNationalID: applicant,
-        // sýslumannskennitala - úr juristictions
-        performingOrgID: '0910815209',
-        systemID: 'sysid',
-        payInfo: {
-          RRN: '',
-          cardType: '',
-          paymentMeans: '',
-          authCode: '',
-          PAN: '',
-          payableAmount: 2000,
-        },
+        // TODO: sýslumannskennitala - úr juristictions
+        performingOrgID: payment.performingOrgID,
+        systemID: 'ISL',
       })
       .catch((e) => {
         console.error(e)
