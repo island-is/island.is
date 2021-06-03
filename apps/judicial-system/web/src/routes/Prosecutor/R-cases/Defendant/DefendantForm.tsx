@@ -34,6 +34,12 @@ const DefendantForm: React.FC<Props> = (props) => {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
     },
+    type: {
+      validations: ['empty'],
+    },
+    description: {
+      validations: ['empty'],
+    },
     accusedGender: {
       validations: ['empty'],
     },
@@ -68,7 +74,6 @@ const DefendantForm: React.FC<Props> = (props) => {
           <LokeCaseNumber
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            policeCaseNumberErrorMessage={'' /**TODO */}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -101,24 +106,23 @@ const DefendantForm: React.FC<Props> = (props) => {
               name="petition-description"
               label="Efni kröfu"
               placeholder="Skráðu efni kröfu"
-              defaultValue={''}
+              defaultValue={workingCase.description}
               errorMessage={petitionDescriptionEM}
               hasError={petitionDescriptionEM !== ''}
               onChange={(event) => {
-                workingCase.id &&
-                  removeTabsValidateAndSet(
-                    'petitionDescription',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    petitionDescriptionEM,
-                    setPetitionDescriptionEM,
-                  )
+                removeTabsValidateAndSet(
+                  'description',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  petitionDescriptionEM,
+                  setPetitionDescriptionEM,
+                )
               }}
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'petitionDescription',
+                  'description',
                   event.target.value,
                   ['empty'],
                   workingCase,

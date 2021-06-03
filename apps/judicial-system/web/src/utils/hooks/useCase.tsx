@@ -65,6 +65,7 @@ const useCase = () => {
             sendRequestToDefender: theCase.sendRequestToDefender,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.court?.id,
+            description: theCase.description,
           },
         },
       })

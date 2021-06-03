@@ -11,8 +11,6 @@ import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  policeCaseNumberErrorMessage?: string
-  setPoliceCaseNumberErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 const LokeCaseNumber: React.FC<Props> = (props) => {

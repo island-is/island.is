@@ -39,6 +39,7 @@ const Defendant = () => {
         created: '',
         modified: '',
         state: CaseState.NEW,
+        description: '',
         policeCaseNumber: '',
         accusedNationalId: '',
         accusedName: '',
