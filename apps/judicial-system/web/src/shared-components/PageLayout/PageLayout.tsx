@@ -290,7 +290,11 @@ const PageLayout: React.FC<PageProps> = ({
                       : sections.filter((_, index) => index <= 2)
                   }
                   formName={
-                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                    caseType === CaseType.CUSTODY
+                      ? 'Gæsluvarðhald'
+                      : caseType === CaseType.TRAVEL_BAN
+                      ? 'Farbann'
+                      : 'Rannsóknarheimild'
                   }
                   activeSection={activeSection}
                   activeSubSection={activeSubSection}
