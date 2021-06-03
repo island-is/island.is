@@ -122,9 +122,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
 
     return `${
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-        ? 'Farbann'
-        : 'Gæsla' // ACCEPTING
+      isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
     } til ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
       theCase.custodyEndDate,
       TIME_FORMAT,
