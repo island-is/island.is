@@ -20,8 +20,6 @@ export class PaymentService {
     try {
       const charge = await this.paymentApi.createCharge(chargeParameters)
 
-      console.log(charge)
-
       return {
         success: true,
         error: null,

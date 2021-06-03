@@ -6,6 +6,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
+import { ChargeResult } from '@island.is/api/domains/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -61,8 +62,12 @@ export class DrivingLicenseSubmissionService {
       .catch((e) => {
         console.error(e)
 
-        return { error: e }
+        return ({ error: e } as ChargeResult)
       })
+
+    if (result.error || !result.success) {
+      throw new Error('Villa kom upp við að stofna til greiðslu')
+    }
 
     console.log({ result })
 
