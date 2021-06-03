@@ -132,7 +132,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -241,7 +241,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
