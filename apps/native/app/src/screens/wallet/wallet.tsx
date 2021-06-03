@@ -26,7 +26,7 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { client } from '../../graphql/client'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { LicenseType } from '../../types/license-type'
+import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
@@ -74,7 +74,7 @@ const WalletItem = React.memo(
       title: string
       serviceProvider: string
       dateTime: string
-      status: string
+      status: LicenseStatus
       type: LicenseType
     }
   }) => (

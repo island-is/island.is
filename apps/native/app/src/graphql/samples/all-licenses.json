@@ -4,7 +4,7 @@
     "serviceProvider": "Ríkislögreglustjóri",
     "title": "Ökuskírteini (IS)",
     "type": "DRIVERS_LICENSE",
-    "status": "Valid",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -12,7 +12,7 @@
     "serviceProvider": "Ríkislögreglustjóri",
     "title": "Skotvopnaleyfi",
     "type": "WEAPON_LICENSE",
-    "status": "Valid",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -20,7 +20,7 @@
     "serviceProvider": "Umhverfisstofnun",
     "title": "Veiðikort",
     "type": "FISHING_CARD",
-    "status": "Valid",
+    "status": "NOT_VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -28,7 +28,7 @@
     "serviceProvider": "Þjóðskrá Íslands",
     "title": "Vegabréf",
     "type": "PASSPORT",
-    "status": "Valid",
+    "status": "WARNING",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -36,7 +36,7 @@
     "serviceProvider": "Þjóðskrá Íslands",
     "title": "Nafnskírteini",
     "type": "IDENTIDY_CARD",
-    "status": "Valid",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -44,7 +44,7 @@
     "serviceProvider": "Ríkissaksóknari",
     "title": "Sakavottorð",
     "type": "CRIMINAL_RECORD_CERTIFICATE",
-    "status": "Valid",
+    "status": "NOT_VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -52,7 +52,7 @@
     "serviceProvider": "Vinnueftirlitið",
     "title": "Vinnuvélaskírteini",
     "type": "MACHINE_CERTIFICATE",
-    "status": "Valid",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -60,7 +60,7 @@
     "serviceProvider": "Vinnueftirlitið",
     "title": "ADR skírteini",
     "type": "ADR_LICENSE",
-    "status": "Valid",
+    "status": "WARNING",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -68,7 +68,7 @@
     "serviceProvider": "Landlæknisembættið",
     "title": "Bólusetningaskíreini",
     "type": "VACCINE_CERTIFICATE",
-    "status": "Valid",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   }
 ]
