@@ -20,6 +20,11 @@ export class AuthService {
     return this.delegationsApiWithAuth(user).delegationsControllerFindAllTo()
   }
 
+  getAuthScopes(): Promise<any> {
+    // XXX: waiting on auth-public-api implementation
+    return Promise.resolve([])
+  }
+
   getDelegationFromNationalId(
     user: User,
     { toNationalId }: DelegationInput,
