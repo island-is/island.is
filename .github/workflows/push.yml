@@ -94,7 +94,7 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
