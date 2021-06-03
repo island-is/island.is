@@ -156,6 +156,13 @@ platform :ios do
         file.write @changelog
     end
 
+    api_key = app_store_connect_api_key(
+      key_id: "FKSX32QUV7",
+      issuer_id: "xxx",
+      key_filepath: "/Users/petar/Downloads/AuthKey_FKSX32QUV7.p8",
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )    
     # Upload to TestFlight
     pilot(
       beta_app_review_info: {
@@ -172,7 +179,8 @@ platform :ios do
       ipa: "ios/build/"+options[:ipa_name],
       skip_waiting_for_build_processing: false,
       distribute_external: options[:distribute_external],
-      groups: "IslandApp"
+      groups: "IslandApp",
+      api_key: api_key
     )
 
     # Download Dsyms from Appstore and upload to Firebase Crashlytics
@@ -190,16 +198,16 @@ platform :ios do
     clean_build_artifacts
 
     # Commit the version bump
-    commit_version_bump(xcodeproj: "ios/IslandApp.xcodeproj", force: true) if !options[:bitrise]
+    # commit_version_bump(xcodeproj: "ios/IslandApp.xcodeproj", force: true) if !options[:bitrise]
 
     # Add a git tag for this build. This will automatically
     # use an appropriate git tag name
-    add_git_tag(
-      grouping: options[:app_identifier]
-    )
+    # add_git_tag(
+    #   grouping: options[:app_identifier]
+    # )
 
     # Push the new commit and tag back to your git remote
-    push_to_git_remote if !options[:bitrise]
+    # push_to_git_remote if !options[:bitrise]
 
   end
 
