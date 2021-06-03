@@ -28,7 +28,8 @@ import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { Provider } from '../models/provider.model'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../../environments'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 
