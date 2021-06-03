@@ -42,6 +42,15 @@ export abstract class Delegation {
   provider!: DelegationProvider
 }
 
+@ObjectType('AuthDelegationScope')
+export class DelegationScope {
+  @Field()
+  scopeName!: string
+
+  @Field((type) => Date, { nullable: true })
+  validTo?: Date
+}
+
 @ObjectType('AuthLegalGuardianDelegation', {
   implements: Delegation,
 })
@@ -59,12 +68,6 @@ export class CustomDelegation extends Delegation {
   @Field((type) => ID)
   id!: string
 
-  @Field((type) => Date)
-  validFrom!: Date
-
-  @Field((type) => Date, { nullable: true })
-  validTo?: Date
-
-  @Field((type) => [String])
-  scopes!: string[]
+  @Field((type) => [DelegationScope])
+  scopes!: DelegationScope[]
 }

@@ -250,6 +250,7 @@
       "tags": []
     },
     "clients-auth-public-api": {
+      "implicitDependencies": ["services-auth-public-api"],
       "tags": []
     },
     "clients-document-provider": {

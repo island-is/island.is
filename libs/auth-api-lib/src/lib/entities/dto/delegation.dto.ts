@@ -37,7 +37,7 @@ export class DelegationDTO {
   provider!: DelegationProvider
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]
 }
