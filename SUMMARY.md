@@ -126,6 +126,7 @@
   - [Data Providers](libs/application/data-providers/README.md)
   - [Template API Modules](libs/application/template-api-modules/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
+  - [Templates](libs/application/templates/README.md)
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Driver's License Approval](libs/application/templates/driving-assessment-approval/README.md)
