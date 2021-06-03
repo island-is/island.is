@@ -152,6 +152,7 @@ export interface Case {
   policeCaseNumber: string
   accusedNationalId: string
   type?: CaseType
+  description?: string
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
@@ -173,6 +174,8 @@ export interface Case {
   witnessAccounts?: string
   investigationProgress?: string
   legalArguments?: string
+  requestProsecutorOnlySession?: boolean
+  prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
   prosecutor?: User
@@ -234,6 +237,7 @@ export interface Notification {
 
 export interface CreateCase {
   type: CaseType
+  description?: string
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string
@@ -248,6 +252,8 @@ export interface CreateCase {
 }
 
 export interface UpdateCase {
+  type?: string
+  description?: string
   policeCaseNumber?: string
   accusedNationalId?: string
   accusedName?: string

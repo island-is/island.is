@@ -13,6 +13,11 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
+  readonly description?: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
   readonly policeCaseNumber: string
 
   @IsNotEmpty()

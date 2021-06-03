@@ -10,6 +10,7 @@ import {
   CaseGender,
   AccusedPleaDecision,
   UpdateCase,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -17,6 +18,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field()
   readonly id!: string
+
+  @Allow()
+  @Field(() => String)
+  readonly type?: CaseType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly description?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -101,6 +110,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly legalArguments?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestProsecutorOnlySession?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorOnlySessionRequest?: string
 
   @Allow()
   @Field({ nullable: true })

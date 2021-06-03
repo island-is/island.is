@@ -37,6 +37,41 @@ describe('transformCase', () => {
     })
   })
 
+  describe('requestProsecutorOnlySession', () => {
+    it('should set undefined to false', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.requestProsecutorOnlySession).toBe(false)
+    })
+
+    it('should leave false unchanged', () => {
+      // Arrange
+      const theCase = { requestProsecutorOnlySession: false } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.requestProsecutorOnlySession).toBe(false)
+    })
+
+    it('should leave true unchanged', () => {
+      // Arrange
+      const theCase = { requestProsecutorOnlySession: true } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.requestProsecutorOnlySession).toBe(true)
+    })
+  })
+
   describe('isCustodyEndDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {
       // Arrange

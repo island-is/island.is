@@ -15,9 +15,20 @@ import {
   CaseGender,
   CaseDecision,
   AccusedPleaDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: CaseType })
+  readonly type?: CaseType
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly description?: string
+
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
@@ -122,6 +133,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly legalArguments?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly requestProsecutorOnlySession?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorOnlySessionRequest?: string
 
   @IsOptional()
   @IsString()
