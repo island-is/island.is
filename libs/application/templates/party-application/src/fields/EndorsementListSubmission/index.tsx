@@ -26,6 +26,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: false,
+    bulkImported: false
   },
   {
     id: 2,
@@ -34,6 +35,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Miðskógar 17',
     hasWarning: true,
+    bulkImported: false
   },
   {
     id: 3,
@@ -42,6 +44,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Skúr hjá mömmu',
     hasWarning: false,
+    bulkImported: false
   },
   {
     id: 4,
@@ -50,6 +53,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Reykjavík',
     hasWarning: false,
+    bulkImported: false
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: false,
+    bulkImported: false
   },
   {
     id: 6,
@@ -66,6 +71,7 @@ const ENDORSEMENTS: Endorsement[] = [
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: true,
+    bulkImported: false
   },
 ]
 

@@ -21,9 +21,9 @@ interface EndorsementTableProps {
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
+  console.log(endorsements)
   const { formatMessage } = useLocale()
   const renderRow = (endorsement: Endorsement) => {
-    console.log(endorsement)
     const rowBackground = endorsement.bulkImported
       ? 'blue200'
       : endorsement.hasWarning

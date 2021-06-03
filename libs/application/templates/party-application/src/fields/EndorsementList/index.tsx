@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { Endorsement } from '../../lib/dataSchema'
 import { GetEndorsements } from '../../graphql/queries'
+import BulkUpload from '../BulkUpload'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -16,11 +17,12 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[]>([])
   const [showWarning, setShowWarning] = useState(false)
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
 
   const [getEndorsementList, { loading, error }] = useLazyQuery(
     GetEndorsements,
     {
-      pollInterval: 20000,
+      pollInterval: 2000,
       onCompleted: async ({ endorsementSystemGetEndorsements }) => {
         if (!loading && endorsementSystemGetEndorsements) {
           const hasEndorsements =
@@ -45,6 +47,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   )
 
   useEffect(() => {
+    console.log('updating table')
     getEndorsementList({
       variables: {
         input: {
@@ -52,13 +55,16 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         },
       },
     })
-  }, [])
+  }, [updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
+
+  console.log('rendering')
+
   return (
     <Box marginBottom={8}>
       <CopyLink
@@ -111,11 +117,19 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
         {endorsements && endorsements.length > 0 && (
-          <EndorsementTable
-            application={application}
-            endorsements={endorsements}
-          />
+          <Box marginY={3}>
+            <EndorsementTable
+              application={application}
+              endorsements={endorsements}
+            />
+          </Box>
         )}
+        <Box marginY={5}>
+          <BulkUpload 
+            application={application}
+            onSuccess={() => setUpdateOnBulkImport(true)}
+          />
+        </Box>
       </Box>
     </Box>
   )
