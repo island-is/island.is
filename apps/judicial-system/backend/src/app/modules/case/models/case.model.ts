@@ -56,6 +56,13 @@ export class Case extends Model<Case> {
   type: CaseType
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  description: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseState),
@@ -216,6 +223,20 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   legalArguments: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestProsecutorOnlySession: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorOnlySessionRequest: string
 
   @Column({
     type: DataType.STRING,

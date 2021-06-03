@@ -59,6 +59,8 @@ const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD,
   dtoFields: [
+    'type',
+    'description',
     'policeCaseNumber',
     'accusedNationalId',
     'accusedName',
@@ -80,6 +82,8 @@ const prosecutorUpdateRule = {
     'requestedOtherRestrictions',
     'caseFacts',
     'legalArguments',
+    'requestProsecutorOnlySession',
+    'prosecutorOnlySessionRequest',
     'comments',
     'caseFilesComments',
     'prosecutorId',

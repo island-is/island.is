@@ -7,6 +7,7 @@ export const CaseQuery = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -35,6 +36,8 @@ export const CaseQuery = gql`
       witnessAccounts
       investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {

@@ -31,6 +31,9 @@ export class Case implements TCase {
   @Field(() => String)
   readonly type!: CaseType
 
+  @Field({ nullable: true })
+  readonly description?: string
+
   @Field(() => String)
   readonly state!: CaseState
 
@@ -102,6 +105,12 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly legalArguments?: string
+
+  @Field({ nullable: true })
+  requestProsecutorOnlySession?: boolean
+
+  @Field({ nullable: true })
+  readonly prosecutorOnlySessionRequest?: string
 
   @Field({ nullable: true })
   readonly comments?: string

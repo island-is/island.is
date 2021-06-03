@@ -26,6 +26,7 @@ export const CreateCaseMutation = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -54,6 +55,8 @@ export const CreateCaseMutation = gql`
       witnessAccounts
       investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
@@ -120,6 +123,7 @@ export const CasesQuery = gql`
       id
       created
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -144,6 +148,7 @@ export const ExtendCaseMutation = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -172,6 +177,8 @@ export const ExtendCaseMutation = gql`
       witnessAccounts
       investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
