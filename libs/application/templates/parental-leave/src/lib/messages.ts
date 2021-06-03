@@ -101,6 +101,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
       description: `The other parent is {spouseName} (kt. {spouseId})`,
     },
+    otherParentEmailSubSection: {
+      id: 'pl.application:otherParentEmail.subSection',
+      defaultMessage: 'Netfang hins foreldris',
+      description: 'Other parent email',
+    },
+    otherParentEmailTitle: {
+      id: 'pl.application:otherParentEmail.title',
+      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      description: 'Asking about the email address of the other parent',
+    },
+    otherParentEmailDescription: {
+      id: 'pl.application:otherParentEmail.description',
+      defaultMessage:
+        'Þú ert að óska eftir réttindum frá hinu foreldrinu sem það þarf að samþykkja.',
+      description:
+        'We need the email if you are requesting days or personal discount from the other parent for them to verify',
+    },
     paymentInformationSubSection: {
       id: 'pl.application:payment.information.subsection',
       defaultMessage: 'Greiðsluupplýsingar',
