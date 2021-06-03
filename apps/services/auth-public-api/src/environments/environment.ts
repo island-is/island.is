@@ -3,10 +3,10 @@ import { XRoadMemberClass } from '@island.is/utils/api'
 const devConfig = {
   production: false,
   auth: {
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
-    issuer: 'https://localhost:6001',
   },
-  port: 3333,
+  port: 3370,
   rsk: {
     xroad: {
       basePath: process.env.XROAD_BASE_PATH_WITH_ENV,

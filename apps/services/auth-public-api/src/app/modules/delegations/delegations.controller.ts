@@ -1,8 +1,7 @@
 import {
   DelegationsService,
-  IDelegation,
   DelegationDTO,
-  Delegation,
+  UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,6 +10,7 @@ import {
   ScopesGuard,
   CurrentActor,
   CurrentUser,
+  ActorScopes,
 } from '@island.is/auth-nest-tools'
 import {
   Body,
@@ -23,6 +23,8 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { AuthScope } from '@island.is/auth/scopes'
+
 import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -31,10 +33,10 @@ import { environment } from '../../../environments'
 export class DelegationsController {
   constructor(private readonly delegationsService: DelegationsService) {}
 
-  @Scopes('@island.is/auth/delegations:read')
+  @ActorScopes(AuthScope.actorDelegations)
   @Get()
-  @ApiOkResponse({ isArray: true })
-  async findAllTo(@CurrentActor() user: User): Promise<IDelegation[]> {
+  @ApiOkResponse({ type: [DelegationDTO] })
+  async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
     const wards = await this.delegationsService.findAllWardsTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
@@ -51,28 +53,28 @@ export class DelegationsController {
     return [...wards, ...companies, ...custom]
   }
 
-  @Scopes('@island.is/auth-public/delegations:write')
+  @Scopes(AuthScope.writeDelegations)
   @Post()
-  @ApiCreatedResponse({ type: Delegation })
+  @ApiCreatedResponse({ type: DelegationDTO })
   async create(
     @CurrentUser() user: User,
-    @Body() delegation: DelegationDTO,
-  ): Promise<Delegation | null> {
+    @Body() delegation: UpdateDelegationDTO,
+  ): Promise<DelegationDTO | null> {
     return await this.delegationsService.create(user.nationalId, delegation)
   }
 
-  @Scopes('@island.is/auth-public/delegations:write')
+  @Scopes(AuthScope.writeDelegations)
   @Put(':id')
-  @ApiCreatedResponse({ type: Delegation })
+  @ApiCreatedResponse({ type: DelegationDTO })
   async update(
     @CurrentUser() user: User,
-    @Body() delegation: DelegationDTO,
+    @Body() delegation: UpdateDelegationDTO,
     @Param('id') id: string,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     return await this.delegationsService.update(user.nationalId, delegation, id)
   }
 
-  @Scopes('@island.is/auth-public/delegations:write')
+  @Scopes(AuthScope.writeDelegations)
   @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
   async deleteFrom(
@@ -82,7 +84,7 @@ export class DelegationsController {
     return await this.delegationsService.deleteFrom(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth-public/delegations:write')
+  @Scopes(AuthScope.writeDelegations)
   @Delete('custom/delete/to/:id')
   @ApiCreatedResponse()
   async deleteTo(
@@ -92,31 +94,31 @@ export class DelegationsController {
     return await this.delegationsService.deleteTo(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth-public/delegations:read')
+  @Scopes(AuthScope.readDelegations)
   @Get('custom/findone/:id')
-  @ApiOkResponse({ type: Delegation })
+  @ApiOkResponse({ type: DelegationDTO })
   async findOne(
     @CurrentUser() user: User,
     @Param('id') id: string,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     return await this.delegationsService.findOne(user.nationalId, id)
   }
 
-  @Scopes('@island.is/auth-public/delegations:read')
+  @Scopes(AuthScope.readDelegations)
   @Get('custom/to')
-  @ApiOkResponse({ type: [Delegation] })
+  @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomTo(
     @CurrentUser() user: User,
-  ): Promise<Delegation[] | null> {
+  ): Promise<DelegationDTO[] | null> {
     return await this.delegationsService.findAllCustomTo(user.nationalId)
   }
 
-  @Scopes('@island.is/auth-public/delegations:read')
+  @Scopes(AuthScope.readDelegations)
   @Get('custom/from')
-  @ApiOkResponse({ type: [Delegation] })
+  @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomFrom(
     @CurrentUser() user: User,
-  ): Promise<Delegation[] | null> {
+  ): Promise<DelegationDTO[] | null> {
     return await this.delegationsService.findAllCustomFrom(user.nationalId)
   }
 }

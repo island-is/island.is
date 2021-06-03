@@ -1,5 +1,20 @@
-import { User } from 'oidc-client'
+import { IDTokenClaims, User as OidcUser } from 'oidc-client'
 import { Dispatch } from 'react'
+
+interface IdsAuthClaims {
+  nationalId: string
+  name: string
+  nat: string
+  idp: string
+  act?: {
+    nationalId: string
+    name: string
+  }
+}
+
+export type User = Omit<OidcUser, 'profile'> & {
+  profile: IDTokenClaims & IdsAuthClaims
+}
 
 export type UserInfoState =
   | 'passive'
