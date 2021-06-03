@@ -17,6 +17,8 @@ import {
   ApiScopeGroup,
   ApiScopeGroupDTO,
   PagedRowsDto,
+  Domain,
+  DomainDTO,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -870,4 +872,87 @@ export class ResourcesController {
   }
 
   // #endregion ApiScopeGroup
+
+  // #region Domain
+
+  /** Find all domains with or without paging */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Get('domain')
+  @Audit<Domain[] | PagedRowsDto<Domain>>({
+    resources: (result) => {
+      const domains = Array.isArray(result) ? result : result.rows
+      return domains.map((domain) => domain.name)
+    },
+  })
+  async findAllDomains(
+    @Query('searchString') searchString: string,
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<Domain[] | PagedRowsDto<Domain>> {
+    return this.resourcesService.findAllDomains(searchString, page, count)
+  }
+
+  /** Gets domain by name */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Get('domain/:name')
+  @Audit<Domain>({
+    resources: (domain) => domain?.name,
+  })
+  async findDomainsByPk(@Param('name') name: string): Promise<Domain | null> {
+    return this.resourcesService.findDomainByPk(name)
+  }
+
+  /** Creates a new Domain */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Post('domain')
+  @Audit<ApiScopeGroup>({
+    resources: (domain) => domain.name,
+  })
+  async createDomain(@Body() domain: DomainDTO): Promise<Domain> {
+    return this.resourcesService.createDomain(domain)
+  }
+
+  /** Updates an existing Domain */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Put('domain/:name')
+  async updateDomain(
+    @CurrentUser() user: User,
+    @Body() domain: DomainDTO,
+    @Param('name') name: string,
+  ): Promise<[number, Domain[]]> {
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'updateDomain',
+        resources: name,
+        meta: { fields: Object.keys(domain) },
+      },
+      this.resourcesService.updateDomain(domain, name),
+    )
+  }
+
+  /** Delete Domain */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
+  @Delete('domain/:name')
+  async deleteDomain(
+    @CurrentUser() user: User,
+    @Param('name') name: string,
+  ): Promise<number> {
+    if (!name) {
+      throw new BadRequestException('name must be provided')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'deleteDomain',
+        resources: name,
+      },
+      this.resourcesService.deleteDomain(name),
+    )
+  }
+
+  // #endregion Domain
 }

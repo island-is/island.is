@@ -3,18 +3,34 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { Delegation } from '../entities/models/delegation.model'
-import { RskApi, CompaniesResponse } from '@island.is/clients/rsk/v2'
-import { DelegationDTO } from '../entities/dto/delegation.dto'
+import { RskApi } from '@island.is/clients/rsk/v2'
+import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
-import { DelegationScopeService } from './delegation-scope.service'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import type {
+  EinstaklingarGetForsjaRequest,
+  EinstaklingarGetEinstaklingurRequest,
+} from '@island.is/clients/national-registry-v2'
 import { DelegationScope } from '@island.is/auth-api-lib'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
+
+import {
+  DelegationDTO,
+  DelegationProvider,
+  DelegationType,
+  UpdateDelegationDTO,
+} from '../entities/dto/delegation.dto'
+import { Delegation } from '../entities/models/delegation.model'
+import { DelegationScopeService } from './delegation-scope.service'
 
 @Injectable()
 export class DelegationsService {
   constructor(
     @Inject(RskApi)
     private rskApi: RskApi,
+    @Inject(EinstaklingarApi)
+    private personApi: EinstaklingarApi,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
     @Inject(DelegationScopeService)
@@ -23,21 +39,55 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
-  async findAllTo(toNationalId: string): Promise<IDelegation[]> {
-    const wards = await this.findAllWardsTo(toNationalId)
+  async findAllWardsTo(
+    auth: Auth,
+    xRoadClient: string,
+  ): Promise<DelegationDTO[]> {
+    try {
+      const response = await this.personApi
+        .withMiddleware(new AuthMiddleware(auth, false))
+        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+          id: auth.nationalId,
+          xRoadClient: xRoadClient,
+        })
 
-    const companies = await this.findAllCompaniesTo(toNationalId)
+      const distinct = response.filter(
+        (r: string, i: number) => response.indexOf(r) === i,
+      )
 
-    const custom = await this.findAllValidCustomTo(toNationalId)
+      const resultPromises = distinct.map(async (nationalId) =>
+        this.personApi
+          .withMiddleware(new AuthMiddleware(auth, false))
+          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+            id: nationalId,
+            xRoadClient: xRoadClient,
+          }),
+      )
 
-    return [...wards, ...companies, ...custom]
+      const result = await Promise.all(resultPromises)
+
+      return result.map(
+        (p) =>
+          <DelegationDTO>{
+            toNationalId: auth.nationalId,
+            fromNationalId: p.kennitala,
+            fromName: p.nafn,
+            type: DelegationType.LegalGuardian,
+            provider: DelegationProvider.NationalRegistry,
+          },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error in findAllWardsTo. Status: ${error?.status} (${
+          error?.statusText
+        })\n${JSON.stringify(error?.headers)}`,
+      )
+    }
+
+    return []
   }
 
-  async findAllWardsTo(toNationalId: string): Promise<IDelegation[]> {
-    return [] // TODO: national registry
-  }
-
-  async findAllCompaniesTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllCompaniesTo(toNationalId: string): Promise<DelegationDTO[]> {
     try {
       const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
         { kennitala: toNationalId },
@@ -51,7 +101,7 @@ export class DelegationsService {
         if (Array.isArray(companies) && companies.length > 0) {
           return companies.map(
             (p) =>
-              <IDelegation>{
+              <DelegationDTO>{
                 toNationalId: toNationalId,
                 fromNationalId: p.kennitala,
                 fromName: p.nafn,
@@ -72,7 +122,7 @@ export class DelegationsService {
     return []
   }
 
-  async findAllValidCustomTo(toNationalId: string): Promise<IDelegation[]> {
+  async findAllValidCustomTo(toNationalId: string): Promise<DelegationDTO[]> {
     const now = new Date()
 
     const result = await this.delegationModel.findAll({
@@ -83,24 +133,16 @@ export class DelegationsService {
           { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
         ],
       },
+      include: [DelegationScope],
     })
 
-    return result.map(
-      (d) =>
-        <IDelegation>{
-          toNationalId: d.toNationalId,
-          fromNationalId: d.fromNationalId,
-          fromName: d.fromDisplayName,
-          type: DelegationType.Custom,
-          provider: DelegationProvider.Custom,
-        },
-    )
+    return result.map((d) => d.toDTO())
   }
 
   async create(
     nationalId: string,
-    delegation: DelegationDTO,
-  ): Promise<Delegation | null> {
+    delegation: UpdateDelegationDTO,
+  ): Promise<DelegationDTO | null> {
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
@@ -116,9 +158,9 @@ export class DelegationsService {
 
   async update(
     nationalId: string,
-    delegation: DelegationDTO,
+    delegation: UpdateDelegationDTO,
     id: string,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     this.logger.debug(`Updating a delegation with id ${id}`)
 
     const delCheck = await this.delegationModel.findByPk(id)
@@ -131,6 +173,7 @@ export class DelegationsService {
       { ...delegation },
       { where: { id: id, fromNationalId: nationalId } },
     )
+
     await this.delegationScopeService.delete(id)
     if (delegation.scopes) {
       await this.delegationScopeService.createMany(id, delegation.scopes)
@@ -138,35 +181,38 @@ export class DelegationsService {
     return this.findOne(nationalId, id)
   }
 
-  async findOne(nationalId: string, id: string): Promise<Delegation | null> {
+  async findOne(nationalId: string, id: string): Promise<DelegationDTO | null> {
     this.logger.debug(`Finding a delegation with id ${id}`)
-    return await this.delegationModel.findOne({
+    const delegation = await this.delegationModel.findOne({
       where: {
         id: id,
         fromNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegation ? delegation.toDTO() : null
   }
 
-  async findAllCustomTo(nationalId: string): Promise<Delegation[] | null> {
+  async findAllCustomTo(nationalId: string): Promise<DelegationDTO[] | null> {
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
-    return await this.delegationModel.findAll({
+    const delegations = await await this.delegationModel.findAll({
       where: {
         toNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegations.map((delegation) => delegation.toDTO())
   }
 
-  async findAllCustomFrom(nationalId: string): Promise<Delegation[] | null> {
+  async findAllCustomFrom(nationalId: string): Promise<DelegationDTO[] | null> {
     this.logger.debug(`Finding a delegation for nationalId ${nationalId}`)
-    return await this.delegationModel.findAll({
+    const delegations = await this.delegationModel.findAll({
       where: {
         fromNationalId: nationalId,
       },
       include: [DelegationScope],
     })
+    return delegations.map((delegation) => delegation.toDTO())
   }
 
   async deleteFrom(nationalId: string, id: string): Promise<number> {
@@ -201,24 +247,4 @@ export class DelegationsService {
       where: { id: id, toNationalId: nationalId },
     })
   }
-}
-
-export interface IDelegation {
-  toNationalId: string
-  fromNationalId: string
-  fromName: string
-  type: DelegationType
-  provider: DelegationProvider
-}
-
-enum DelegationType {
-  LegalGuardian = 'LegalGuardian',
-  ProcurationHolder = 'ProcurationHolder',
-  Custom = 'Custom',
-}
-
-enum DelegationProvider {
-  NationalRegistry = 'thjodskra',
-  CompanyRegistry = 'fyrirtaekjaskra',
-  Custom = 'delegationdb',
 }

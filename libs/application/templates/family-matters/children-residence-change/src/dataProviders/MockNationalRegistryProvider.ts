@@ -37,7 +37,7 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
         postalCode: applicant.address.postalCode,
         streetName: applicant.address.streetName,
       },
-      children: childrenArray,
+      children: childrenArray || [],
     }
 
     return Promise.resolve(returnObject)
