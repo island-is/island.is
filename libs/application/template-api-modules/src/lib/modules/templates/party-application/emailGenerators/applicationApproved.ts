@@ -12,13 +12,15 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   } = props
 
   const applicantEmail = get(application.answers, 'responsiblePersonEmail')
+  const { partyLetter, partyName } = application.externalData
+    .partyLetterRegistry?.data as any
 
   const subject = 'Meðmæli með framboðslista uppfyllir skilyrði'
   const body = dedent(`
         Meðmæli með framboðslista <strong>uppfyllir skilyrði</strong> yfirkjörstjórnar. 
 
-        <b>Stjórnmálasamtök: </b>${application.answers.partyName}
-        <b>Listabókstafur: </b>${application.answers.partyLetter}
+        <b>Stjórnmálasamtök: </b>${partyName}
+        <b>Listabókstafur: </b>${partyLetter}
         <b>Kjördæmi: </b>${application.answers.constituency}
 
         <b>Athugasemd frá yfirkjörstjórn: </b>${

@@ -22,9 +22,8 @@ export const useHasEndorsed = (endorsementListId: string) => {
   )
 
   const endorsements = endorsementsData?.endorsementSystemUserEndorsements
-  if (endorsements && endorsements.length > 0) {
-    return endorsements.some((x) => x.endorsementListId === endorsementListId)
-  } else {
-    return false
-  }
+  return (
+    endorsements?.some((x) => x.endorsementListId === endorsementListId) ??
+    false
+  )
 }

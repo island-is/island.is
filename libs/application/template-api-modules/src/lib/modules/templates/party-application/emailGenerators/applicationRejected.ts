@@ -15,13 +15,15 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
   const applicantEmail = get(application.answers, 'responsiblePersonEmail')
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
+  const { partyLetter, partyName } = application.externalData
+    .partyLetterRegistry?.data as any
 
   const subject = 'Meðmæli með framboðslista uppfylla ekki skilyrði'
   const body = dedent(`
         Meðmæli með framboðslista <strong>uppfyllir ekki skilyrði</strong> yfirkjörstjórnar. 
 
-        <b>Stjórnmálasamtök: </b>${application.answers.partyName}
-        <b>Listabókstafur: </b>${application.answers.partyLetter}
+        <b>Stjórnmálasamtök: </b>${partyName}
+        <b>Listabókstafur: </b>${partyLetter}
         <b>Kjördæmi: </b>${application.answers.constituency}
 
         <b>Athugasemd frá yfirkjörstjórn: </b>${

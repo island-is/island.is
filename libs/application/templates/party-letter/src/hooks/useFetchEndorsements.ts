@@ -23,7 +23,5 @@ export const useEndorsements = (
     },
   )
 
-  if (endorsementsData && endorsementsData.endorsementSystemGetEndorsements)
-    return endorsementsData.endorsementSystemGetEndorsements
-  else return undefined
+  return endorsementsData?.endorsementSystemGetEndorsements
 }

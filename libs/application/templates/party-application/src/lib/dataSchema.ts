@@ -2,7 +2,7 @@ import * as z from 'zod'
 import { m } from './messages'
 
 const EndorsementSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   date: z.string(),
   name: z.string(),
   nationalId: z.string(),

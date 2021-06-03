@@ -11,13 +11,15 @@ export const generateAssignSupremeCourtApplicationEmail: AssignmentEmailTemplate
   } = props
 
   const supremeCourtEmail = 'sigridur@kosmosogkaos.is'
+  const { partyLetter, partyName } = application.externalData
+  .partyLetterRegistry?.data as any
 
   const subject = 'Meðmæli með framboðslista'
   const body = dedent(`
         Meðmæli með framboðslista hefur verið skilað inn fyrir:
 
-        <b>Stjórnmálasamtök:</b> ${application.answers.partyName}
-        <b>Listabókstafur:</b> ${application.answers.partyLetter}
+        <b>Stjórnmálasamtök:</b> ${partyName}
+        <b>Listabókstafur:</b> ${partyLetter}
         <b>Kjördæmi:</b> ${application.answers.constituency}
 
         Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.

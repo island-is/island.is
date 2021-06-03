@@ -9,14 +9,9 @@ import { PartyLetter, File } from '../../lib/dataSchema'
 const Review: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = application.answers as PartyLetter
-  const endorsementsCount =
-    answers.endorsements && answers.endorsements.length > 0
-      ? answers.endorsements.length
-      : 0
+  const endorsementsCount = answers.endorsements?.length ?? 0
   const endorsementsWarningCount =
-    answers.endorsements && answers.endorsements.length > 0
-      ? answers.endorsements.filter((x) => x.hasWarning === true).length
-      : 0
+    answers.endorsements?.filter((x) => x.hasWarning).length ?? 0
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
