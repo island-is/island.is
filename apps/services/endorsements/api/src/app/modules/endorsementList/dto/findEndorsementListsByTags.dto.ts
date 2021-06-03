@@ -5,7 +5,8 @@ import { EndorsementTag } from '../endorsementList.model'
 
 export class FindEndorsementListByTagsDto {
   @ApiProperty({ enum: EndorsementTag, isArray: true })
-  @Transform((tags) => (!Array.isArray(tags) ? [tags] : tags)) // serialize query array parameters to array
+  // query parameters of length one are not arrays, we normalize all tags input to arrays here
+  @Transform((tags) => (!Array.isArray(tags) ? [tags] : tags))
   @IsEnum(EndorsementTag, { each: true })
   tags!: EndorsementTag[]
 }

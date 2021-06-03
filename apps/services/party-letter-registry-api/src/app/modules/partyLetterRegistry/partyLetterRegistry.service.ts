@@ -34,7 +34,10 @@ export class PartyLetterRegistryService {
 
   create(input: CreateDto) {
     return this.partyLetterRegistryModel
-      .create({ ...input, managers: [...input.managers, input.owner] }) // the owner is always a manager
+      .create({
+        ...input,
+        managers: [...new Set([...input.managers, input.owner])],
+      }) // ensure the owner is always a manager
       .catch((error: UniqueConstraintError) => {
         switch (error.constructor) {
           // we want to relay this specific error type to the client
