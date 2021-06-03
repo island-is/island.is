@@ -146,7 +146,9 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   })
 
   useNavigationSearchBarUpdate((e) => {
-    setSearchLoading(true)
+    if (e.text !== ui.query) {
+      setSearchLoading(true)
+    }
     ui.setQuery(e.text)
   })
 
