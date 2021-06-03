@@ -21,7 +21,7 @@ const hasPartyLetter = (externalData: ExternalData) => {
   const partyLetter = externalData.partyLetterRegistry
     ?.data as PartyLetterRegistryPartyLetter
 
-  return Boolean(partyLetter && partyLetter.partyLetter)
+  return !!partyLetter?.partyLetter
 }
 
 export const ConstituencyForm: Form = buildForm({

@@ -1,6 +1,6 @@
 # Service Portal Endorsements
 
-This library was generated with [Nx](https://nx.dev).
+This module displays what endorsements are assigned to you, and allows you to un-register your endorsements or register new endorsements
 
 ## Running unit tests
 
