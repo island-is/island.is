@@ -158,7 +158,7 @@ platform :ios do
 
     api_key = app_store_connect_api_key(
       key_id: "FKSX32QUV7",
-      issuer_id: "xxx",
+      issuer_id: "dec0c948-1d39-4cff-a63d-bd6acf143d68",
       key_filepath: "/Users/petar/Downloads/AuthKey_FKSX32QUV7.p8",
       duration: 1200, # optional (maximum 1200)
       in_house: false # optional but may be required if using match/sigh
