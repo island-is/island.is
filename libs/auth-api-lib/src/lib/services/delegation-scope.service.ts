@@ -2,7 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { DelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
+import { DelegationScopeDTO, UpdateDelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 
 @Injectable()
@@ -27,7 +27,7 @@ export class DelegationScopeService {
 
   async createMany(
     delegationId: string,
-    scopes: DelegationScopeDTO[],
+    scopes: UpdateDelegationScopeDTO[],
   ): Promise<any> {
     return this.delegationScopeModel.bulkCreate(
       scopes.map((delegationScope) => ({

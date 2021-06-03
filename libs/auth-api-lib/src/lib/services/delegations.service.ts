@@ -20,6 +20,7 @@ import {
   DelegationProvider,
   DelegationType,
   UpdateDelegationDTO,
+  CreateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { Delegation } from '../entities/models/delegation.model'
 import { DelegationScopeService } from './delegation-scope.service'
@@ -147,16 +148,17 @@ export class DelegationsService {
 
   async create(
     nationalId: string,
-    delegation: UpdateDelegationDTO,
+    delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
       id: id,
       fromNationalId: nationalId,
-      ...delegation,
+      toNationalId: delegation.toNationalId,
+      fromDisplayName: delegation.fromName,
     })
-    if (delegation.scopes) {
+    if (delegation.scopes && delegation.scopes.length > 0) {
       this.delegationScopeService.createMany(id, delegation.scopes)
     }
     return this.findOne(nationalId, id)
@@ -176,7 +178,7 @@ export class DelegationsService {
     }
 
     await this.delegationModel.update(
-      { ...delegation },
+      { fromDisplayName: delegation.fromName },
       { where: { id: id, fromNationalId: nationalId } },
     )
 
@@ -193,6 +195,18 @@ export class DelegationsService {
       where: {
         id: id,
         fromNationalId: nationalId,
+      },
+      include: [DelegationScope],
+    })
+    return delegation ? delegation.toDTO() : null
+  }
+
+  async findOneTo(fromNationalId: string, toNationalId: string): Promise<DelegationDTO | null> {
+    this.logger.debug(`Finding a delegation with from ${fromNationalId} to ${toNationalId}`)
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        toNationalId: toNationalId,
+        fromNationalId: fromNationalId,
       },
       include: [DelegationScope],
     })

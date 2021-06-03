@@ -2,6 +2,7 @@ import {
   DelegationsService,
   DelegationDTO,
   UpdateDelegationDTO,
+  CreateDelegationDTO,
 } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -21,6 +22,7 @@ import {
   Post,
   Put,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthScope } from '@island.is/auth/scopes'
@@ -56,22 +58,22 @@ export class DelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @Post()
   @ApiCreatedResponse({ type: DelegationDTO })
-  async create(
+  create(
     @CurrentUser() user: User,
-    @Body() delegation: UpdateDelegationDTO,
+    @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    return await this.delegationsService.create(user.nationalId, delegation)
+    return this.delegationsService.create(user.nationalId, delegation)
   }
 
   @Scopes(AuthScope.writeDelegations)
   @Put(':id')
   @ApiCreatedResponse({ type: DelegationDTO })
-  async update(
+  update(
     @CurrentUser() user: User,
-    @Body() delegation: UpdateDelegationDTO,
+    @Body() delegation: any,
     @Param('id') id: string,
   ): Promise<DelegationDTO | null> {
-    return await this.delegationsService.update(user.nationalId, delegation, id)
+    return this.delegationsService.update(user.nationalId, delegation, id)
   }
 
   @Scopes(AuthScope.writeDelegations)
@@ -105,7 +107,27 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/to')
+  @Get('custom/findone/to/:nationalId')
+  @ApiOkResponse({ type: DelegationDTO })
+  async findOneTo(
+    @CurrentUser() user: User,
+    @Param('nationalId') nationalId: string,
+  ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationsService.findOneTo(
+      user.nationalId,
+      nationalId,
+    )
+    if (!delegation) {
+      throw new NotFoundException(
+        `Delegation<from: ${user.nationalId};to: ${nationalId}> was not found`,
+      )
+    }
+
+    return delegation
+  }
+
+  @Scopes(AuthScope.readDelegations)
+  @Get('custom/to')
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomTo(
     @CurrentUser() user: User,
