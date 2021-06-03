@@ -127,13 +127,19 @@ export class DelegationsService {
 
     const result = await this.delegationModel.findAll({
       where: {
-        [Op.and]: [
-          { toNationalId: toNationalId },
-          { validFrom: { [Op.lt]: now } },
-          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-        ],
+        toNationalId: toNationalId,
       },
-      include: [DelegationScope],
+      include: [
+        {
+          model: DelegationScope,
+          where: {
+            [Op.and]: [
+              { validFrom: { [Op.lt]: now } },
+              { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
+            ],
+          },
+        },
+      ],
     })
 
     return result.map((d) => d.toDTO())
