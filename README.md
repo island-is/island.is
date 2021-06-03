@@ -8,7 +8,7 @@ The repository is a [monorepo](../technical-overview/monorepo.md) that has multi
 
 ## GitBook
 
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is/handbook/).
+The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is).
 
 ## Storybook
 
