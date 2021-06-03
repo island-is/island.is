@@ -1,15 +1,21 @@
 import React, { useState, useCallback, FC } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { Table as T } from '@island.is/island-ui/core'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './ExpandableTable.treat'
 
 interface Props {
   data: Array<string | number>
+  last?: boolean
   onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
+const ExpandableLine: FC<Props> = ({
+  data,
+  onExpandCallback,
+  children,
+  last,
+}) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
@@ -42,7 +48,9 @@ const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
             }}
           >
             {!fullClose && i === 0 ? <div className={styles.line} /> : null}
-            {item}
+            <Text variant={last ? 'eyebrow' : 'small'} as="span">
+              {item}
+            </Text>
           </T.Data>
         ))}
         <T.Data
@@ -53,20 +61,22 @@ const ExpandableLine: FC<Props> = ({ data, onExpandCallback, children }) => {
             printHidden: true,
           }}
         >
-          <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
-            <Button
-              circle
-              colorScheme="light"
-              icon={expanded ? 'remove' : 'add'}
-              iconType="filled"
-              onClick={onExpandButton}
-              preTextIconType="filled"
-              size="small"
-              title="Sundurliðun"
-              type="button"
-              variant="primary"
-            />
-          </Box>
+          {!last && (
+            <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
+              <Button
+                circle
+                colorScheme="light"
+                icon={expanded ? 'remove' : 'add'}
+                iconType="filled"
+                onClick={onExpandButton}
+                preTextIconType="filled"
+                size="small"
+                title="Sundurliðun"
+                type="button"
+                variant="primary"
+              />
+            </Box>
+          )}
         </T.Data>
       </T.Row>
       <T.Row>

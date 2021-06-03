@@ -1,4 +1,5 @@
 import React from 'react'
+import flatten from 'lodash/flatten'
 import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
@@ -20,12 +21,13 @@ import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import { ExpandHeader } from '../../components/ExpandableTable'
-import { exportGreidslustadaCSV } from '../../utils/csvGreidslustada'
+import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
+import amountFormat from '../../utils/amountFormat'
 import {
+  exportGreidslustadaCSV,
   exportGreidslustadaXSLX,
   greidsluStadaHeaders,
-} from '../../utils/csvGreidslustada'
+} from '../../utils/filesGreidslustada'
 import { downloadXlsx } from '../../utils/downloadFile'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import * as styles from './FinanceStatus.treat'
@@ -60,6 +62,19 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
       }
     },
   })
+
+  function getChargeTypeTotal() {
+    const organizationChargeTypes = financeStatusData?.organizations?.map(
+      (org) => org.chargeTypes,
+    )
+    const allChargeTypes = flatten(organizationChargeTypes)
+
+    const chargeTypeTotal =
+      allChargeTypes.length > 0
+        ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
+        : 0
+    return amountFormat(chargeTypeTotal)
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -152,6 +167,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                   />
                   <T.Body>
                     {financeStatusData.organizations.map(
+                      // TODO: Put in separate component :+1:
                       (org: FinanceStatusOrganizationType) =>
                         org.chargeTypes.map((chargeType) => (
                           <FinanceStatusTableRow
@@ -161,6 +177,10 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                           />
                         )),
                     )}
+                    <ExpandRow
+                      last
+                      data={['Samtals', '', getChargeTypeTotal()]}
+                    />
                   </T.Body>
                 </T.Table>
               </Box>
