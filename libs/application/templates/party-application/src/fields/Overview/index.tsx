@@ -80,11 +80,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}
-          defaultValue={
-            (externalData.userProfile?.data as {
-              email?: string
-            })?.email
-          }
+          defaultValue=""
         />
       </Box>
     </>

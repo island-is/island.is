@@ -13,18 +13,19 @@ export interface Props extends FieldBaseProps {
 const ReviewConstituency: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers, externalData } = application
-  const partyLetter = externalData.partyLetterRegistry
-    .data as PartyLetterRegistryPartyLetter
+
+  const party: PartyLetterRegistryPartyLetter = externalData
+    ?.partyLetterRegistry?.data as PartyLetterRegistryPartyLetter
 
   return (
     <>
       <Box marginBottom={3}>
         <Text variant="h5">{formatMessage(m.overviewSection.partyletter)}</Text>
-        <Text>{partyLetter.partyLetter}</Text>
+        <Text>{party.partyLetter}</Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">{formatMessage(m.overviewSection.party)}</Text>
-        <Text>{partyLetter.partyName}</Text>
+        <Text>{party.partyName}</Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">

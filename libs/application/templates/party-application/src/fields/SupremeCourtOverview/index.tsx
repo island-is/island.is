@@ -1,26 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import gql from 'graphql-tag'
-import { useQuery } from '@apollo/client'
-import { Endorsement } from '../../types/schema'
-
-const GET_ENDORSEMENT_LIST = gql`
-  query endorsementSystemGetEndorsements($input: FindEndorsementListInput!) {
-    endorsementSystemGetEndorsements(input: $input) {
-      id
-      endorser
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`
+import { ExportAsCSV } from '@island.is/application/ui-components'
+import { SchemaFormValues } from '../../lib/dataSchema'
+import { csvFileName } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -28,46 +13,9 @@ export interface Props extends FieldBaseProps {
 }
 
 const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
-  const endorsementListId = (application.externalData?.createEndorsementList
-    .data as any).id
   const { formatMessage } = useLocale()
-  const { answers, externalData } = application
-  const [endorsements, setEndorsements] = useState<Endorsement[]>()
-
-  const { loading, error } = useQuery(GET_ENDORSEMENT_LIST, {
-    variables: {
-      input: {
-        listId: endorsementListId,
-      },
-    },
-    onCompleted: async ({ endorsementSystemGetEndorsements }) => {
-      if (!loading && endorsementSystemGetEndorsements) {
-        const hasEndorsements =
-          !error && !loading && endorsementSystemGetEndorsements?.length
-            ? endorsementSystemGetEndorsements.length > 0
-            : false
-        const mapToEndorsementList: Endorsement[] = hasEndorsements
-          ? endorsementSystemGetEndorsements.map((x: any) => ({
-              date: x.created,
-              name: x.meta.fullName,
-              nationalId: x.endorser,
-              address: x.meta.address ? x.meta.address : '',
-              hasWarning: false,
-              id: x.id,
-            }))
-          : undefined
-        setEndorsements(mapToEndorsementList)
-      }
-    },
-  })
-
-  const filename = (): string => {
-    const strippedPartyName = answers.partyName.toString().replace(/\s/g, '')
-    const strippedPartyLetter = answers.partyLetter
-      .toString()
-      .replace(/\s/g, '')
-    return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
-  }
+  const { externalData } = application
+  const answers = application.answers as SchemaFormValues
 
   return (
     <Box>
@@ -112,6 +60,11 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
           <Text marginBottom={1}>{'528'}</Text>
+          <ExportAsCSV
+            data={answers.endorsements as object[]}
+            filename={csvFileName(answers.partyLetter, answers.partyName)}
+            title={formatMessage(m.supremeCourt.csvButton)}
+          />
         </Box>
         <Box marginBottom={3} width="half">
           <Text variant="h5">

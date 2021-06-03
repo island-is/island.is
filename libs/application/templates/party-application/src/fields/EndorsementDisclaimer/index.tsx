@@ -7,63 +7,26 @@ import {
   CheckboxController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-
-const GET_ENDORSEMENTS = gql`
-  query endorsementSystemUserEndorsements {
-    endorsementSystemUserEndorsements {
-      id
-      endorser
-      endorsementListId
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`
-const CREATE_ENDORSEMENT = gql`
-  mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
-    endorsementSystemEndorseList(input: $input) {
-      id
-      endorser
-      endorsementListId
-      meta {
-        fullName
-      }
-      created
-      modified
-    }
-  }
-`
-
-const GET_FULLNAME = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      fullName
-    }
-  }
-`
+import { GetFullName, GetEndorsements } from '../../graphql/queries'
+import { EndorseList } from '../../graphql/mutations'
+import { SchemaFormValues } from '../../lib/dataSchema'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
-  const [createEndorsement, { loading: submitLoad }] = useMutation(
-    CREATE_ENDORSEMENT,
-  )
+  const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
+  const answers = application.answers as SchemaFormValues
 
-  const partyLetter = 'K'
-  const partyName = 'Flokkur'
+  const partyLetter = answers.partyLetter
+  const partyName = answers.partyName
   const constituency = application.answers.constituency
-  const { data: userData } = useQuery(GET_FULLNAME)
+  const { data: userData } = useQuery(GetFullName)
 
-  const { loading, error } = useQuery(GET_ENDORSEMENTS, {
+  const { loading, error } = useQuery(GetEndorsements, {
     onCompleted: async ({ endorsementSystemUserEndorsements }) => {
       if (!loading && endorsementSystemUserEndorsements) {
         const hasEndorsements =
@@ -91,15 +54,13 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <>
-      {!loading && hasEndorsed ? (
+      {!loading && !hasEndorsed ? (
         <EndorsementApproved />
       ) : (
         <Box>
           <Box marginBottom={2}>
             <Text variant="h2" marginBottom={3}>
-              {`${formatMessage(
-                m.endorsementDisclaimer.title,
-              )} (${partyLetter})`}
+              {`${formatMessage(m.endorsementDisclaimer.title)} ${partyLetter}`}
             </Text>
             <Text marginBottom={2}>
               {`${formatMessage(

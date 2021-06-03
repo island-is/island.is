@@ -40,24 +40,18 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'pa.application:disclaimerSection.subtitle',
-      defaultMessage: 'Eftirfarandi gildir um söfnun meðmælenda',
+      defaultMessage: 'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
       description: 'Subtitle of disclaimer section',
     },
     descriptionPt1: {
       id: 'pa.application:disclaimerSection.descrtipion.p1',
       defaultMessage:
-        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang  að söfnun meðmælanna ásamt þeim stjórnmálaflokki sem stofnar viðkomandi söfnun. Óheimilt er að dreifa meðmælunum eða þeim upplýsingum sem þar koma fram.',
+        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang að söfnum meðmælanna ásamt þeim stjórnmálasamtökum sem stofna söfnunina. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Description part one',
-    },
-    descriptionPt2: {
-      id: 'pa.application:disclaimerSection.descrtipion.p2',
-      defaultMessage:
-        'Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.',
-      description: 'Description part two',
     },
     checkboxLabel: {
       id: 'pa.application:disclaimerSection.checkboxLabel',
-      defaultMessage: 'Ég samþykki skilmála hér að ofan',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Checkbox label',
     },
   }),
@@ -264,13 +258,12 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
-      defaultMessage:
-        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
@@ -304,6 +297,13 @@ export const m: MessageDir = {
       id: 'pa.application:application.approved.card.bulletLink2Title',
       defaultMessage: 'kosning.is',
       description: 'Link title',
+    },
+  }),
+  applicationApprovedOverview: defineMessages({
+    title: {
+      id: 'pa.application:application.approved.title',
+      defaultMessage: 'Umsokn samþykkt',
+      description: 'Title for overview',
     },
   }),
   collectEndorsements: defineMessages({
@@ -342,7 +342,7 @@ export const m: MessageDir = {
     },
     agreeTermsLabel: {
       id: 'pa.application:collect.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
     submitButton: {
@@ -396,30 +396,30 @@ export const m: MessageDir = {
   endorsementDisclaimer: defineMessages({
     title: {
       id: 'pa.application:endorsement.disclaimer.title',
-      defaultMessage: 'Meðmælendalisti með listabókstafnum',
+      defaultMessage: 'Meðmæli með framboðslista',
       description: 'Title for signature disclaimer',
     },
     messagePt1: {
       id: 'pa.application:endorsement.disclaimer.message.pt1',
-      defaultMessage: 'Ég undirritaður kjósandi í',
+      defaultMessage: 'Ég kjósandi í',
       description: 'Part 1 of signature disclaimer',
     },
     messagePt2: {
       id: 'pa.application:endorsement.disclaimer.message.pt2',
       defaultMessage:
-        'lýsi hér með yfir stuðningi eftirfarandi lista vegna alþingiskosninganna 25. september 2021.',
+        'lýsi hér með yfir stuðningi við neðangreindan lista vegna alþingiskosninganna 25.september 2021.',
       description: 'Part 2 of signature disclaimer',
     },
     descriptionPt1: {
       id: 'pa.application:endorsement.disclaimer.description.pt1',
       defaultMessage:
-        'Með því að mæla með framboði tiltekinna stjórnmálasamtaka til tilgreinds kjördæmis samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, yfirkjörstjórn í kjördæmi, landskjörstjórn og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt, heimilsfang og kjördæmi. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Part 1 of message disclaimer',
     },
     descriptionPt2: {
       id: 'pa.application:endorsement.disclaimer.description.pt2',
       defaultMessage:
-        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+        'Þjóðskrá Íslands er heimilt að samkeyra upplýsingar úr meðmælendalista við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga.',
       description: 'Part 2 of message disclaimer',
     },
     partyLetter: {
@@ -489,6 +489,18 @@ export const m: MessageDir = {
       description: 'Name of organization',
     },
   }),
+  partyLetterFailed: defineMessages({
+    title: {
+      id: 'pa.application:partyletter.failed.title',
+      defaultMessage: 'Listabókstafur ekki á skrá',
+      description: 'Title for party letter failed',
+    },
+    description: {
+      id: 'pa.application:partyletter.failed.description',
+      defaultMessage: 'Þú ert ekki á skrá sem umsjónarmaður stjórnmálasamtaka vinsamlegast hafðu samband við postur@dmr.is',
+      description: 'Description for party letter failed',
+    },
+  }),
   supremeCourt: defineMessages({
     title: {
       id: 'pa.application:supreme.court.title',
@@ -553,7 +565,7 @@ export const m: MessageDir = {
     },
     csvButton: {
       id: 'pa.application:supreme.court.csv.button',
-      defaultMessage: 'Hlaða niður atkvæðum',
+      defaultMessage: 'Hlaða niður meðmælum',
       description: 'Download endorsements button',
     },
     noEndorsementsMessage: {
