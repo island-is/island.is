@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
+import { useRef } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
+import { Animated } from 'react-native'
 import { Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
@@ -123,6 +125,21 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const loading = res.loading
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    if (loaded) {
+      Animated.timing(
+        fadeAnim,
+        {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }
+      ).start();
+    }
+  }, [loaded])
+
   return (
     <>
       <Host>
@@ -144,25 +161,28 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         {visible &&
           Platform.select({
             android: (
-              <PDFReader
-                onLoadEnd={() => {
-                  setLoaded(true)
-                }}
-                style={{
-                  opacity: loaded ? 1 : 0,
-                }}
-                source={{
-                  base64: `data:application/pdf;base64,${Document.content!}`,
-                }}
-              />
+              <Animated.View style={{
+                flex: 1,
+                opacity: fadeAnim,
+              }}>
+                <PDFReader
+                  onLoadEnd={() => {
+                    setLoaded(true)
+                  }}
+                  source={{
+                    base64: `data:application/pdf;base64,${Document.content!}`,
+                  }}
+                />
+              </Animated.View>
             ),
             ios: (
+              <Animated.View style={{
+                flex: 1,
+                opacity: fadeAnim,
+              }}>
               <WebView
                 onLoadEnd={() => {
                   setLoaded(true)
-                }}
-                style={{
-                  opacity: loaded ? 1 : 0,
                 }}
                 source={{
                   uri: Document.url!,
@@ -173,6 +193,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   method: 'POST',
                 }}
               />
+              </Animated.View>
             ),
           })}
         {!loaded && (
