@@ -5,7 +5,7 @@ import {
   GenericUserLicenseFields,
 } from './licenceService.type'
 import { LicenseServiceApi } from './client'
-import { drivingLicenseToGeneric } from './util/licenseMappers'
+import { drivingLicensesToSingleGenericLicense } from './util/licenseMappers'
 
 export type GetGenericDrivingLicenseOptions = {
   includedProviders?: Array<string>
@@ -36,8 +36,13 @@ export class LicenseServiceService {
       throw Error(`unable to get drivers license for nationalId ${nationalId}`)
     }
 
-    const genericDrivingLicense = drivingLicenseToGeneric(drivingLicense)
-    console.log({ drivingLicense })
+    const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
+      drivingLicense,
+    )
+
+    if (!genericDrivingLicense) {
+      return []
+    }
 
     return [genericDrivingLicense]
   }
@@ -47,7 +52,7 @@ export class LicenseServiceService {
     providerId: string,
     licenseType: string, // TODO actual type/enum
     licenseId: string,
-  ): Promise<GenericUserLicenseFields> {
+  ): Promise<GenericUserLicenseFields | null> {
     const drivingLicense = await this.licenseService.getGenericDrivingLicense(
       nationalId,
     )
@@ -57,7 +62,9 @@ export class LicenseServiceService {
       throw Error(`unable to get drivers license for nationalId ${nationalId}`)
     }
 
-    const genericDrivingLicense = drivingLicenseToGeneric(drivingLicense)
+    const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
+      drivingLicense,
+    )
     console.log({ drivingLicense })
 
     return genericDrivingLicense

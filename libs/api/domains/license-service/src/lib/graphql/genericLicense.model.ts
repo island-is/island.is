@@ -1,13 +1,25 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class GenericLicense {
-  @Field()
-  name!: string
+export class Payload {
+  @Field(() => [String])
+  data!: string[]
 
   @Field()
-  type!: string
+  rawData?: string
+}
+
+@ObjectType()
+export class GenericUserLicenseFields {
+  @Field()
+  licenseType!: string
+
+  @Field()
+  nationalId!: string
 
   @Field({ nullable: true })
-  issuer?: string
+  expidationDate!: Date
+
+  @Field(() => Payload)
+  payload!: Payload
 }

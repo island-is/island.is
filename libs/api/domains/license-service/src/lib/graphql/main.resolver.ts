@@ -1,11 +1,4 @@
-import {
-  Args,
-  Query,
-  Mutation,
-  Resolver,
-  InputType,
-  Field,
-} from '@nestjs/graphql'
+import { Args, Query, Resolver, InputType, Field } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -14,18 +7,10 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-import {
-  IsBoolean,
-  IsArray,
-  IsEnum,
-  IsISO8601,
-  IsOptional,
-  Length,
-  Matches,
-} from 'class-validator'
+import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 
 import { LicenseServiceService } from '../licenseService.service'
-import { GenericLicense } from './genericLicense.model'
+import { GenericUserLicenseFields } from './genericLicense.model'
 
 // TODO move these types
 @InputType()
@@ -69,20 +54,20 @@ export class GetGenericLicenseInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [GenericLicense])
+  @Query(() => [GenericUserLicenseFields])
   genericLicenses(
     @CurrentUser() user: User,
-    @Args('input') input: GetGenericLicensesInput,
+    @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     return this.licenseServiceService.getAllLicenses(user.nationalId, {
-      includedProviders: input.includedProviders,
-      excludedProviders: input.excludedProviders,
-      force: input.force,
-      onlyList: input.onlyList,
+      includedProviders: input?.includedProviders,
+      excludedProviders: input?.excludedProviders,
+      force: input?.force,
+      onlyList: input?.onlyList,
     })
   }
 
-  @Query(() => GenericLicense)
+  @Query(() => GenericUserLicenseFields)
   genericLicense(
     @CurrentUser() user: User,
     @Args('input') input: GetGenericLicenseInput,

@@ -1,25 +1,17 @@
 import fetch, { Response } from 'node-fetch'
 
-import { Injectable, Inject } from '@nestjs/common'
-
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+// TODO correct way to include logger? inject?
+import { logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
-import { GenericLicenseFields } from '../licenceService.type'
 
-@Injectable()
 export class LicenseServiceApi {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly secret: string
 
-  constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    xroadBaseUrl: string,
-    xroadClientId: string,
-    secret: string,
-  ) {
+  constructor(xroadBaseUrl: string, xroadClientId: string, secret: string) {
     this.xroadApiUrl = xroadBaseUrl
     this.xroadClientId = xroadClientId
     this.secret = secret
@@ -48,7 +40,7 @@ export class LicenseServiceApi {
       }
     } catch (e) {
       // TODO correct way to log this?
-      this.logger.error('Unable to query for drivers licence', {
+      logger.error('Unable to query for drivers licence', {
         exception: e,
         url,
       })
@@ -60,7 +52,7 @@ export class LicenseServiceApi {
       json = await res.json()
     } catch (e) {
       // TODO correct way to log this?
-      this.logger.error('Unable to parse JSON for drivers licence', {
+      logger.error('Unable to parse JSON for drivers licence', {
         exception: e,
         url,
       })
@@ -82,7 +74,7 @@ export class LicenseServiceApi {
     const xroadDrivingLicensePath =
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
 
-    const response = this.requestApi(
+    const response = await this.requestApi(
       `${xroadDrivingLicensePath}/api/Okuskirteini/${nationalId}`,
     )
 
@@ -92,11 +84,35 @@ export class LicenseServiceApi {
     }
 
     if (!Array.isArray(response)) {
-      this.logger.warn('Expected drivers license response to be an array')
+      logger.warn('Expected drivers license response to be an array')
       return null
     }
 
     // TODO map and validate every field?
-    return response as GenericDrivingLicenseResponse[]
+    const licenses = response as GenericDrivingLicenseResponse[]
+
+    // If we get more than one license, sort in descending order so we can pick the first one as the
+    // newest license later on
+    licenses.sort(
+      (
+        a?: GenericDrivingLicenseResponse,
+        b?: GenericDrivingLicenseResponse,
+      ) => {
+        const timeA = a?.utgafuDagsetning
+          ? new Date(a.utgafuDagsetning).getTime()
+          : 0
+        const timeB = b?.utgafuDagsetning
+          ? new Date(b.utgafuDagsetning).getTime()
+          : 0
+
+        if (isNaN(timeA) || isNaN(timeB)) {
+          return 0
+        }
+
+        return timeB - timeA
+      },
+    )
+
+    return licenses
   }
 }

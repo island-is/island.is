@@ -1,18 +1,20 @@
 import { GenericDrivingLicenseResponse } from '../client'
-import {
-  GenericUserLicenseFields,
-  LICENSE_TYPE,
-  LICENSE_TITLES,
-  LICENSE_PROVIDERS,
-} from '../licenceService.type'
+import { GenericUserLicenseFields, LICENSE_TYPE } from '../licenceService.type'
 
-export const drivingLicenseToGeneric = (
-  license: GenericDrivingLicenseResponse[],
-): GenericUserLicenseFields => {
+export const drivingLicensesToSingleGenericLicense = (
+  licenses: GenericDrivingLicenseResponse[],
+): GenericUserLicenseFields | null => {
+  if (licenses.length === 0) {
+    return null
+  }
+
+  // TODO we're only handling the first driving license, we get them ordered so pick first
+  const license = licenses[0]
+
   const licenseid: LICENSE_TYPE = 'DRIVERS_LICENSE'
   const out: GenericUserLicenseFields = {
     licenseType: licenseid,
-    nationalId: '',
+    nationalId: license.kennitala,
     expidationDate: new Date(),
     issueDate: new Date(),
     licenseStatus: 'HAS_LICENSE',
@@ -20,7 +22,7 @@ export const drivingLicenseToGeneric = (
     pkpassUrl: '',
     payload: {
       data: [],
-      rawData: null,
+      rawData: JSON.stringify(license),
     },
   }
 
