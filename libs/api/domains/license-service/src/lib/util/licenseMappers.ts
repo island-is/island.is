@@ -1,13 +1,24 @@
 import { GenericDrivingLicenseResponse } from '../client'
-import { GenericLicense } from '../licenceService.type'
+import {
+  GenericUserLicenseFields,
+  LICENSE_TYPE,
+  LICENSE_TITLES,
+  LICENSE_PROVIDERS,
+} from '../licenceService.type'
 
 export const drivingLicenseToGeneric = (
   license: GenericDrivingLicenseResponse[],
 ) => {
-  const out: GenericLicense = {
-    name: license[0].nafn,
-    type: 'driving-license',
-    issuer: 'rls',
+  const licenseid: LICENSE_TYPE = 'DRIVERS_LICENSE'
+  const out: GenericUserLicenseFields = {
+    licenseType: licenseid,
+    nationalId: '',
+    expidationDate: new Date(),
+    issueDate: new Date(),
+    licenseStatus: 'HAS_LICENSE',
+    fetchStatus: 'FETCHED',
+    pkpassUrl: '',
+    payload: '',
   }
 
   return out
