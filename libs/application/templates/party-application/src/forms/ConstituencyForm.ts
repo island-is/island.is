@@ -104,7 +104,7 @@ export const ConstituencyForm: Form = buildForm({
         const partyLetter = externalData.partyLetterRegistry
           ?.data as PartyLetterRegistryPartyLetter
 
-        return !Boolean(partyLetter && partyLetter.partyLetter)
+        return !partyLetter?.partyLetter
       },
       children: [
         buildMultiField({
