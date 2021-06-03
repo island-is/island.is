@@ -234,6 +234,18 @@ export const application: Form = buildForm({
           space: 1,
           description: m.overviewMultiFieldDescription,
           children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: 'Panta ökuskírteini',
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
+              ],
+            }),
             buildKeyValueField({
               label: m.overviewSubType,
               value: ({ answers: { subType } }) => subType as string[],
@@ -318,7 +330,7 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewPaymentCharge,
-              width: 'half',
+              width: 'full',
               value: () => '' as string,
             }),
             buildKeyValueField({
@@ -330,39 +342,6 @@ export const application: Form = buildForm({
               },
               width: 'half',
               value: () => '',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: 'Greiðsla',
-      children: [
-        buildMultiField({
-          id: 'paymentFinal',
-          title: 'Greiðsla',
-          children: [
-            buildKeyValueField({
-              label: 'money',
-              value: ({ externalData }) => {
-                /// needs a lot of refactoring
-                let str = Object.values(externalData.payment.data as object)
-                /// more refactoring
-                return (str[1].toString() + ' kr.') as StaticText
-              },
-            }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Panta ökuskírteini',
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
-                  type: 'primary',
-                },
-              ],
             }),
           ],
         }),
