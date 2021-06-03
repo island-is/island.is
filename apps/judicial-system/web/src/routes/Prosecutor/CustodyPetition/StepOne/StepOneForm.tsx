@@ -36,25 +36,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
   } = props
 
   const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
-
-  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
-    '',
-  )
-
-  const [
-    accusedNameErrorMessage,
-    setAccusedNameErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    accusedAddressErrorMessage,
-    setAccusedAddressErrorMessage,
-  ] = useState<string>('')
-
-  const [
     defenderEmailErrorMessage,
     setDefenderEmailErrorMessage,
   ] = useState<string>('')
@@ -72,23 +53,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
-      errorMessage: policeCaseNumberErrorMessage,
-      setErrorMessage: setPoliceCaseNumberErrorMessage,
     },
     accusedNationalId: {
       validations: ['empty', 'national-id'],
-      errorMessage: nationalIdErrorMessage,
-      setErrorMessage: setNationalIdErrorMessage,
     },
     accusedName: {
       validations: ['empty'],
-      errorMessage: accusedNameErrorMessage,
-      setErrorMessage: setAccusedNameErrorMessage,
     },
     accusedAddress: {
       validations: ['empty'],
-      errorMessage: accusedAddressErrorMessage,
-      setErrorMessage: setAccusedAddressErrorMessage,
     },
     defenderEmail: {
       validations: ['email-format'],
@@ -127,8 +100,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
           <LokeCaseNumber
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            policeCaseNumberErrorMessage={policeCaseNumberErrorMessage}
-            setPoliceCaseNumberErrorMessage={setPoliceCaseNumberErrorMessage}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -140,12 +111,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
           <DefendantInfo
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            nationalIdErrorMessage={nationalIdErrorMessage}
-            setNationalIdErrorMessage={setNationalIdErrorMessage}
-            accusedNameErrorMessage={accusedNameErrorMessage}
-            setAccusedNameErrorMessage={setAccusedNameErrorMessage}
-            accusedAddressErrorMessage={accusedAddressErrorMessage}
-            setAccusedAddressErrorMessage={setAccusedAddressErrorMessage}
           />
         </Box>
         <Box component="section" marginBottom={7}>

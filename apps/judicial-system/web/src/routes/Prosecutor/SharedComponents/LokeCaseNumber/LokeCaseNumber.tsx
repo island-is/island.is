@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
@@ -16,14 +16,12 @@ interface Props {
 }
 
 const LokeCaseNumber: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
+  const { workingCase, setWorkingCase } = props
+  const { updateCase } = useCase()
+  const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
-  } = props
-
-  const { updateCase } = useCase()
+  ] = useState<string>('')
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { Case, CaseGender } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
@@ -14,26 +14,25 @@ import * as styles from './DefendantInfo.treat'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  nationalIdErrorMessage?: string
-  setNationalIdErrorMessage?: React.Dispatch<React.SetStateAction<string>>
-  accusedNameErrorMessage?: string
-  setAccusedNameErrorMessage?: React.Dispatch<React.SetStateAction<string>>
-  accusedAddressErrorMessage?: string
-  setAccusedAddressErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    nationalIdErrorMessage,
-    setNationalIdErrorMessage,
+  const { workingCase, setWorkingCase } = props
+  const { updateCase } = useCase()
+
+  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
+    '',
+  )
+
+  const [
     accusedNameErrorMessage,
     setAccusedNameErrorMessage,
+  ] = useState<string>('')
+
+  const [
     accusedAddressErrorMessage,
     setAccusedAddressErrorMessage,
-  } = props
-  const { updateCase } = useCase()
+  ] = useState<string>('')
 
   return (
     <BlueBox>
