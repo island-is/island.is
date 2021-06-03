@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Param,
+  NotFoundException,
+} from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
@@ -8,7 +16,7 @@ import { ApplicationModel } from './models'
 import { CreateApplicationDto } from './dto'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
-import { User } from '@island.is/financial-aid/shared'
+import { User, Application } from '@island.is/financial-aid/shared'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -24,6 +32,21 @@ export class ApplicationController {
   })
   getAll(): Promise<ApplicationModel[]> {
     return this.applicationService.getAll()
+  }
+
+  @Get('applications/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Get applicant',
+  })
+  async getById(@Param('id') id: string) {
+    const applicant = await this.applicationService.findById(id)
+
+    if (!applicant) {
+      throw new NotFoundException(`applicant ${id} not found`)
+    }
+
+    return applicant
   }
 
   @Post('application')

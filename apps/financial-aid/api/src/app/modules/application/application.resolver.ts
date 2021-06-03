@@ -10,6 +10,8 @@ import { ApplicationModel } from './models'
 import { CreateApplicationInput } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
+import { ApplicationInput } from './dto'
+
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
@@ -25,6 +27,17 @@ export class ApplicationResolver {
     this.logger.debug('Getting all applications')
 
     return backendApi.getApplications()
+  }
+
+  @Query(() => ApplicationModel, { nullable: false })
+  application(
+    @Args('input', { type: () => ApplicationInput })
+    input: ApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApplicationModel> {
+    this.logger.debug(`Getting applicant ${input.id}`)
+
+    return backendApi.getApplicant(input.id)
   }
 
   @Mutation(() => ApplicationModel, { nullable: true })

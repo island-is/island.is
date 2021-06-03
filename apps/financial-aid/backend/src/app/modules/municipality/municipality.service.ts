@@ -20,9 +20,9 @@ export class MunicipalityService {
       name: 'Hafnarfjörður',
       settings: {
         aid: {
-          ownApartmentOrLease: 300000,
-          withOthersOrUnknow: 200000,
-          withParents: 100000,
+          ownApartmentOrLease: 197200,
+          withOthersOrUnknow: 157760,
+          withParents: 98600,
         },
       },
     }

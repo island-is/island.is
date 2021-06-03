@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ApplicationModel } from './models'
 
 import { CreateApplicationDto } from './dto'
-import { User } from '@island.is/financial-aid/shared'
+import { User, Application } from '@island.is/financial-aid/shared'
 
 @Injectable()
 export class ApplicationService {
@@ -15,6 +15,12 @@ export class ApplicationService {
 
   getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll()
+  }
+
+  findById(id: string): Promise<ApplicationModel | null> {
+    return this.applicationModel.findOne({
+      where: { id },
+    })
   }
 
   create(
