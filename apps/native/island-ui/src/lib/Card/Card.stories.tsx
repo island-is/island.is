@@ -1,10 +1,11 @@
+import { theme } from '@island.is/island-ui/theme'
 import { boolean, number, text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { ImageSourcePropType, View } from 'react-native'
 import { LicenseType } from '../../../../app/src/types/license-type'
 import agencyLogo from '../../assets/card/agency-logo.png'
-import illustrationSrc from '../../assets/card/digital-services-m2.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
 import logo from '../../assets/card/logo-64w.png'
 import { Badge } from '../Badge/Badge'
 import { LicenceCard } from './LicenceCard'
@@ -29,16 +30,18 @@ storiesOf('Cards', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Welcome Card', () => {
-    const number = text('Number', '1')
     const description = text(
       'Description',
       'Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna.',
     )
     return (
       <WelcomeCard
-        number={number}
         description={description}
         imgSrc={illustrationSrc as ImageSourcePropType}
+        backgroundColor={{
+          dark: '#1C1D53',
+          light: theme.color.purple100,
+        }}
       />
     )
   })
@@ -87,7 +90,7 @@ storiesOf('Cards', module)
         message={message}
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
-        actions={[{ text: 'Action', onPress: console.log('Action press') }]}
+        actions={[{ text: 'Action', onPress: () => console.log('Action press') }]}
       />
     )
   })

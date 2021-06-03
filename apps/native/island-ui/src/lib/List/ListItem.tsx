@@ -10,6 +10,7 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.SafeAreaView<{ background: boolean }>`
+  width: 100%;
   margin-right: 16px;
   flex-direction: row;
   background-color: ${dynamicColor((props) =>

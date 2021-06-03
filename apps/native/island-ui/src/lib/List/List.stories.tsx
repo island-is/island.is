@@ -10,7 +10,6 @@ const CenterView = ({ children }: any) => (
     style={{
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
       width: '100%',
     }}
   >

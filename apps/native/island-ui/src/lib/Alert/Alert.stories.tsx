@@ -29,20 +29,20 @@ storiesOf('Alert', module)
     const message = text('Success Alert meassage', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in');
 
     return (
-      <Alert key="alert3" type="success" message={message} hideIcon={true} />
+      <Alert key="alert3" type="success" message={message} />
     );
   })
   .add('Error', () => {
     const message = text('Error Alert meassage', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in');
 
     return (
-      <Alert key="alert4" type="error" message={message} hideIcon={true} />
+      <Alert key="alert4" type="error" message={message} />
     );
   })
   .add('Warning', () => {
     const message = text('Warning Alert meassage', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in');
 
     return (
-      <Alert key="alert5" type="warning" message={message} hideIcon={true} />
+      <Alert key="alert5" type="warning" message={message} />
     );
   })
