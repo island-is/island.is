@@ -9,7 +9,7 @@ registerEnumType(GenericLicenseDataFieldType, {
 
 @ObjectType()
 // TODO(osk) document this since the difference between name, label and value is very vague
-export class DataField {
+export class GenericLicenseDataField {
   @Field(() => GenericLicenseDataFieldType, {
     description: 'Type of data field',
   })
@@ -24,19 +24,19 @@ export class DataField {
   @Field({ nullable: true, description: 'Value of data field' })
   value?: string
 
-  @Field(() => [DataField], {
+  @Field(() => [GenericLicenseDataField], {
     nullable: true,
     description: 'Name of data field',
   })
-  fields?: DataField[]
+  fields?: GenericLicenseDataField[]
 }
 
 @ObjectType()
 export class Payload {
-  @Field(() => [DataField], {
+  @Field(() => [GenericLicenseDataField], {
     description: 'Data parsed into a standard format',
   })
-  data!: DataField[]
+  data!: GenericLicenseDataField[]
 
   // TODO(osk) how do we represent json?
   @Field({ nullable: true, description: 'Raw JSON data' })

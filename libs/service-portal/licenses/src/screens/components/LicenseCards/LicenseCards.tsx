@@ -3,11 +3,15 @@ import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 
-import { DataField, GenericLicenseDataFieldType, Query } from '@island.is/api/schema'
+import {
+  GenericLicenseDataField,
+  GenericLicenseDataFieldType,
+  Query,
+} from '@island.is/api/schema'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 const GenericLicensesQuery = gql`
-  fragment dataFieldFragment on DataField {
+  fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
     name
     label
@@ -43,7 +47,7 @@ const GenericLicensesQuery = gql`
       }
       payload {
         data {
-          ...dataFieldFragment
+          ...genericLicenseDataFieldFragment
         }
         rawData
       }
@@ -51,7 +55,7 @@ const GenericLicensesQuery = gql`
   }
 `
 
-const DataFields = ({ fields }: { fields: DataField[] }) => {
+const DataFields = ({ fields }: { fields: GenericLicenseDataField[] }) => {
   if (!fields || fields.length === 0) {
     return null
   }
