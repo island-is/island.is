@@ -33,13 +33,15 @@ const UserProvider: React.FC = ({ children }) => {
   )
   const [user, setUser] = useState<User>()
 
-  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
+  const { data } = useQuery(CurrentUserQuery, {
+    fetchPolicy: 'no-cache',
+    skip: !isAuthenticated || Boolean(user),
+  })
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
     if (loggedInUser && !user) {
       setUser(loggedInUser)
-      setIsAuthenticated(true)
     }
   }, [setUser, loggedInUser, user])
 
