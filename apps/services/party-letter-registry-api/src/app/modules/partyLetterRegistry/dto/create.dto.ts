@@ -1,5 +1,5 @@
 import { IsArray, IsString, Length } from 'class-validator'
-import { IsNationalId } from '@island.is/shared/nestjs'
+import { IsNationalId } from '@island.is/nest/validators'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDto {

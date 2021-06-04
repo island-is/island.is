@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
-import { IsNationalId } from '@island.is/shared/nestjs'
+import { IsNationalId } from '@island.is/nest/validators'
 
 @InputType()
 export class CreatePartyLetterDto {
