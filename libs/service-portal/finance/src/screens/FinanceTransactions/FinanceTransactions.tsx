@@ -34,6 +34,7 @@ const GetCustomerChargeTypeQuery = gql`
     }
   }
 `
+
 const GetCustomerRecordsQuery = gql`
   query GetCustomerRecordsQuery($input: GetCustomerRecordsInput!) {
     getCustomerRecords(input: $input) {
@@ -73,7 +74,6 @@ const FinanceTransactions = () => {
   )
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
-  console.log({ chargeTypeData })
 
   const [loadCustomerRecords, { data, loading, called }] = useLazyQuery(
     GetCustomerRecordsQuery,

@@ -27,6 +27,11 @@ export const financeModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/FinanceTransactions')),
       },
       {
+        name: 'Greiðsluseðlar og Greiðslukvittanir',
+        path: ServicePortalPath.FinanceBills,
+        render: () => lazy(() => import('./screens/FinanceBills')),
+      },
+      {
         name: 'Laungreiðendakröfur',
         path: ServicePortalPath.FinanceSalary,
         render: () => lazy(() => import('./screens/FinanceSalary')),

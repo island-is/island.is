@@ -2,9 +2,13 @@ import { Query, Resolver, Args } from '@nestjs/graphql'
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { ExcelSheetInput } from './dto/getExcelSheet.input'
+import { GetBillReceiptsInput } from './dto/getBillReceipts.input'
+import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
+import { FinanceDocumentModel } from './models/financeDocument.model'
+import { BillReceiptModel } from './models/billReceipts.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
 import {
@@ -52,6 +56,29 @@ export class FinanceResolver {
       input.chargeTypeID,
       input.dayFrom,
       input.dayTo,
+    )
+  }
+
+  @Query(() => BillReceiptModel)
+  async getBillReceipts(
+    @CurrentUser() user: User,
+    @Args('input') input: GetBillReceiptsInput,
+  ) {
+    return this.FinanceService.getBillReceipts(
+      user.nationalId,
+      input.dayFrom,
+      input.dayTo,
+    )
+  }
+
+  @Query(() => FinanceDocumentModel, { nullable: true })
+  async getFinanceDocument(
+    @CurrentUser() user: User,
+    @Args('input') input: GetFinanceDocumentInput,
+  ) {
+    return this.FinanceService.getFinanceDocument(
+      user.nationalId,
+      input.documentID,
     )
   }
 

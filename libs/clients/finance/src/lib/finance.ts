@@ -9,8 +9,9 @@ import {
   FinanceStatusDetails,
   CustomerChargeType,
   CustomerRecords,
+  DocumentTypes,
+  BillReceiptTypes,
 } from './finance.types'
-import { DocumentModule } from '@island.is/api/domains/documents'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
@@ -91,6 +92,33 @@ export class FinanceService extends RESTDataSource {
     const chargeTypeString = chargeTypeArray.join('')
     const response = await this.get<CustomerRecords | null>(
       `/customerRecords?nationalID=${process.env.FINANCE_TEST_USER}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
+  async getBillReceipts(
+    nationalID: string,
+    dayFrom: string,
+    dayTo: string,
+  ): Promise<BillReceiptTypes> {
+    const response = await this.get<BillReceiptTypes>(
+      `/documentsList/billReceipt?nationalID=${process.env.FINANCE_TEST_USER}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
+  async getFinanceDocument(
+    nationalID: string,
+    documentID: string,
+  ): Promise<DocumentTypes> {
+    const response = await this.get<DocumentTypes>(
+      `/document?nationalID=${process.env.FINANCE_TEST_USER}&documentID=${documentID}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

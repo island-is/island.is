@@ -190,6 +190,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
           {
             name: defineMessage({
+              id: 'service.portal:financeBills',
+              defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+            }),
+            path: ServicePortalPath.FinanceBills,
+          },
+          {
+            name: defineMessage({
               id: 'service.portal:financeSalary',
               defaultMessage: 'Laungreiðendakröfur',
             }),
