@@ -28,7 +28,7 @@
     "serviceProvider": "Þjóðskrá Íslands",
     "title": "Vegabréf",
     "type": "PASSPORT",
-    "status": "WARNING",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -44,7 +44,7 @@
     "serviceProvider": "Ríkissaksóknari",
     "title": "Sakavottorð",
     "type": "CRIMINAL_RECORD_CERTIFICATE",
-    "status": "NOT_VALID",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -52,7 +52,7 @@
     "serviceProvider": "Vinnueftirlitið",
     "title": "Vinnuvélaskírteini",
     "type": "MACHINE_CERTIFICATE",
-    "status": "VALID",
+    "status": "NOT_VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {
@@ -60,7 +60,7 @@
     "serviceProvider": "Vinnueftirlitið",
     "title": "ADR skírteini",
     "type": "ADR_LICENSE",
-    "status": "WARNING",
+    "status": "VALID",
     "dateTime": "16:24 - 14.03.2021"
   },
   {

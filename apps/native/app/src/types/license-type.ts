@@ -13,5 +13,4 @@ export enum LicenseType {
 export enum LicenseStatus {
   VALID = 'VALID',
   NOT_VALID = 'NOT_VALID',
-  WARNING = 'WARNING'
 }

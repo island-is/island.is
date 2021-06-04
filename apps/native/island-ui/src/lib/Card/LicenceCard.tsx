@@ -104,11 +104,7 @@ const statusIcon: StatusStyles = {
   VALID: {
     text: 'Í gildi',
     icon: isVerifiedLogo,
-  },
-  WARNING: {
-    text: 'Þarf að endurnýja',
-    icon: warning,
-  },
+  }
 }
 
 export function LicenceCard({
