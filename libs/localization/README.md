@@ -205,7 +205,9 @@ The first time a namespace is encountered a new Contentful entry is created (eve
 **Notes on the `extract-strings` script's behavior**:
 
 - Adding a new id automatically creates it in Contentful.
-- Removing an id from the project will automatically remove that id from the Contentful Namespace entry.
+- Removing an id from the project will automatically remove\* that id from the Contentful Namespace entry.
 - `defaultMessage` will be used as the initial "Icelandic" translation.
 - Updating or removing a `defaultMessage` **does not** affect the "Icelandic" translation that was initially based on it.
 - If multiple instances of the same id are found, but with different defaults/description, the script throws an error.
+
+\*) Technically, missing ids are not removed from the Contentful entry but marked as deprecated. If the id is used again, the deprecation flag is removed.
