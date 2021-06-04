@@ -711,9 +711,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
-      return Roles.APPLICANT
-    }
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
