@@ -589,7 +589,15 @@ export const opacity = styleMap({
 })
 
 export const zIndex = styleMap({
-  1: { zIndex: 1 },
+  10: { zIndex: 10 },
+  20: { zIndex: 20 },
+  30: { zIndex: 30 },
+  40: { zIndex: 40 },
+  50: { zIndex: 50 },
+  60: { zIndex: 60 },
+  70: { zIndex: 70 },
+  80: { zIndex: 80 },
+  90: { zIndex: 90 },
 })
 
 export const printHidden = style({

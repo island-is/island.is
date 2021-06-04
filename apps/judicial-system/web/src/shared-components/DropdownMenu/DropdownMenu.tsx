@@ -45,7 +45,7 @@ export const DropdownMenu = ({
     display: 'flex',
     flexDirection: 'column',
     borderRadius: 'large',
-    zIndex: 1,
+    zIndex: 10,
   })
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',
