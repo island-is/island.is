@@ -5,6 +5,7 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { CaseType } from '@island.is/judicial-system/types'
@@ -22,7 +23,11 @@ describe('/krafa with an id', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -78,7 +83,11 @@ describe('/krafa with an id', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -108,7 +117,11 @@ describe('/krafa without ID', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -135,7 +148,11 @@ describe('/krafa without ID', () => {
 
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -179,7 +196,11 @@ describe('/krafa without ID', () => {
 
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -211,6 +232,11 @@ describe('/krafa without ID', () => {
         'Lögheimili/dvalarstaður *',
       )) as HTMLInputElement,
       'Harringvej 2',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText(/Sláðu inn stjórnanda rannsóknar/),
+      'Ben 10',
     )
 
     expect(

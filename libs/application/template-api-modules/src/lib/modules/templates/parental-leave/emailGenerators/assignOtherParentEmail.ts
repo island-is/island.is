@@ -12,7 +12,9 @@ export const generateAssignOtherParentApplicationEmail: AssignmentEmailTemplateG
     options: { email, locale },
   } = props
 
-  const applicantEmail = get(application.answers, 'person.email')
+  const applicantEmail =
+    get(application.answers, 'applicant.email') ||
+    get(application.externalData, 'userProfile.data.email')
 
   // TODO translate using locale
   const subject =

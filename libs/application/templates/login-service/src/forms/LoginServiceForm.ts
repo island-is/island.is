@@ -7,7 +7,6 @@ import {
   buildMultiField,
   buildTextField,
   buildSelectField,
-  buildCheckboxField,
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
@@ -21,6 +20,7 @@ import {
   overview,
   submitted,
 } from '../lib/messages'
+import { TYPE_OF_OPERATION } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -62,6 +62,7 @@ export const LoginServiceForm: Form = buildForm({
             buildTextField({
               id: 'applicant.nationalId',
               title: applicant.labels.nationalId,
+              format: '######-####',
               backgroundColor: 'blue',
               width: 'half',
               required: true,
@@ -70,10 +71,10 @@ export const LoginServiceForm: Form = buildForm({
               id: 'applicant.typeOfOperation',
               title: applicant.labels.typeOfOperation,
               backgroundColor: 'blue',
-              options: [
-                { label: 'Einn', value: 'Einn' },
-                { label: 'Tveir', value: 'Tveir' },
-              ],
+              options: TYPE_OF_OPERATION.map((value) => ({
+                label: value,
+                value: value,
+              })),
             }),
             buildCustomField(
               {
@@ -125,12 +126,14 @@ export const LoginServiceForm: Form = buildForm({
               id: 'technicalContact.name',
               title: technicalContact.labels.name,
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'technicalContact.email',
               title: technicalContact.labels.email,
               variant: 'email',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
@@ -138,17 +141,18 @@ export const LoginServiceForm: Form = buildForm({
               variant: 'tel',
               backgroundColor: 'blue',
               format: '###-####',
+              required: true,
             }),
-            buildCheckboxField({
-              id: 'technicalContact.sameAsResponsibleParty',
-              title: '',
-              options: [
-                {
-                  label: technicalContact.labels.sameAsResponsibleParty,
-                  value: 'yes',
-                },
-              ],
-            }),
+            buildCustomField(
+              {
+                id: 'technicalContact.techAnnouncementsEmailTitle',
+                title: technicalContact.labels.techAnnouncementsEmailTitle,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: [3, 5],
+              },
+            ),
             buildTextField({
               id: 'technicalContact.techAnnouncementsEmail',
               title: technicalContact.labels.techAnnouncementsEmail,
@@ -195,13 +199,6 @@ export const LoginServiceForm: Form = buildForm({
               title: technicalInfo.labels.prodReturnUrl,
               backgroundColor: 'blue',
               required: true,
-            }),
-            buildTextField({
-              id: 'technicalInfo.clientId',
-              title: technicalInfo.labels.clientId,
-              description: technicalInfo.labels.clientIdDescription,
-              placeholder: technicalInfo.labels.clientIdPlaceholder,
-              backgroundColor: 'blue',
             }),
           ],
         }),

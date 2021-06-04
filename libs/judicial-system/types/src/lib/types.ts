@@ -1,21 +1,30 @@
 export enum Feature {
-  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
-  CASE_FILES = 'CASE_FILES',
-  CREATE_COURT_CASE = 'CREATE_COURT_CASE',
+  NONE = 'NONE',
 }
 
-export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+export enum InstitutionType {
+  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
+  COURT = 'COURT',
 }
 
 export interface Institution {
   id: string
   created: string
   modified: string
+  type: InstitutionType
   name: string
+}
+
+export const IntegratedCourts = [
+  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
+  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d',
+]
+
+export enum UserRole {
+  PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
+  JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {
@@ -139,7 +148,8 @@ export interface Case {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  court?: Institution
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -155,10 +165,11 @@ export interface Case {
   comments?: string
   caseFilesComments?: string
   prosecutor?: User
+  sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -167,6 +178,8 @@ export interface Case {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
@@ -180,7 +193,8 @@ export interface Case {
   prosecutorAppealAnnouncement?: string
   accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
-  isCaseAppealable?: boolean
+  isAppealDeadlineExpired?: boolean
+  isAppealGracePeriodExpired?: boolean
   rulingDate?: string
   judge?: User
   registrar?: User
@@ -218,7 +232,8 @@ export interface CreateCase {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
 }
 
 export interface UpdateCase {
@@ -231,7 +246,8 @@ export interface UpdateCase {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
@@ -243,10 +259,11 @@ export interface UpdateCase {
   comments?: string
   caseFilesComments?: string
   prosecutorId?: string
+  sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
@@ -255,6 +272,8 @@ export interface UpdateCase {
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
@@ -265,7 +284,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
+  accusedPostponedAppealDate?: string | null
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
@@ -293,10 +312,6 @@ export interface SignatureConfirmationResponse {
   documentSigned: boolean
   code?: number
   message?: string
-}
-
-export interface CreateCustodyCourtCase {
-  policeCaseNumber: string
 }
 
 export interface CreateCourtCase {

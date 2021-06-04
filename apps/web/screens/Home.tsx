@@ -25,7 +25,7 @@ import {
   Categories,
   SearchInput,
   FrontpageSlider,
-  LatestNewsSection,
+  LatestNewsSectionSlider,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
@@ -139,9 +139,9 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
         />
       </Section>
       <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
-        <LatestNewsSection
+        <LatestNewsSectionSlider
           label={gn('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
+          readMoreText={gn('seeMore')}
           items={news}
         />
       </Section>

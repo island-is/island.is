@@ -8,42 +8,13 @@ import {
   NationalRegistryUserResponse,
   NationalRegistryUserService,
 } from './providers/nationalRegistryUser.service'
-
-interface MetadataInput {
-  fields: EndorsementMetaField[]
-  nationalId: string
-}
-type MetadataProviderField = {
-  [providerKey in EndorsementMetaField]: {
-    provider: MetadataProvider
-    dataResolver: (input: MetadataProviderResponse) => any
-  }
-}
-type MetadataProviderService = {
-  [providerKey in EndorsementMetaField]: MetadataProvider
-}
-export interface MetadataProvider {
-  metadataKey: string
-  getData: (
-    input: MetadataInput,
-  ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
-}
-
-// TODO: Fix this type
-// add types for new metadata providers here
-type MetadataProviderResponse = {
-  [key: string]:
-    | NationalRegistryUserResponse
-    | EndorsementSystemSignedListsResponse
-}
-
-// add types for new metadata fields here
-export enum EndorsementMetaField {
-  FULL_NAME = 'fullName',
-  ADDRESS = 'address',
-  SIGNED_TAGS = 'signedTags',
-}
-
+import {
+  EndorsementMetaField,
+  MetadataInput,
+  MetadataProviderField,
+  MetadataProviderResponse,
+  MetadataProviderService,
+} from './types'
 @Injectable()
 export class EndorsementMetadataService {
   fieldToProviderMap: MetadataProviderField

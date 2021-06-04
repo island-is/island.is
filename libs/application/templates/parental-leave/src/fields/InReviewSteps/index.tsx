@@ -1,29 +1,29 @@
 import React, { FC, useState } from 'react'
+import format from 'date-fns/format'
+import { useMutation } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { dateFormat } from '@island.is/shared/constants'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
-
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES } from '../../constants'
-
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
-import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../constants'
-import { dateFormat } from '@island.is/shared/constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
+
 type StatesMap = {
   otherParent: StateMapEntry
   employer: StateMapEntry
   vinnumalastofnun: StateMapEntry
 }
+
 const statesMap: StatesMap = {
   otherParent: {
     [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
@@ -48,9 +48,11 @@ const statesMap: StatesMap = {
 
 const InReviewSteps: FC<FieldBaseProps> = ({
   application,
+  field,
   refetch,
   errors,
 }) => {
+  const { isRequestingRights } = useApplicationAnswers(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -62,12 +64,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
-
-  const isRequestingRights =
-    (getValueViaPath(
-      application.answers,
-      'requestRights.isRequestingRights',
-    ) as string) === YES
 
   const steps = [
     {
@@ -185,7 +181,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
         </Box>
       </Box>
 
-      {(screenState === 'steps' && (
+      {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => {
             return (
@@ -198,9 +194,14 @@ const InReviewSteps: FC<FieldBaseProps> = ({
             )
           })}
         </Box>
-      )) || (
+      ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review application={application} editable={false} errors={errors} />
+          <Review
+            application={application}
+            field={field}
+            errors={errors}
+            editable={false}
+          />
         </Box>
       )}
     </Box>

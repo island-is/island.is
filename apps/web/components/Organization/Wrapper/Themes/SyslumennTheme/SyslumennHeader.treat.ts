@@ -14,7 +14,7 @@ export const headerBg = style({
     lg: {
       background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
         linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
-        url('https://images.ctfassets.net/8k0h54kbe6bj/rYkrllUrk89zvS2jhUuz5/4eb31ac72ac754df5c220e0324f451e4/Vector__1_.svg')`,
+        url('https://images.ctfassets.net/8k0h54kbe6bj/47lCoLCMeg5tCuc6HXbKyg/dc0ca3f94f536ad62e40398baa90db04/Group.svg')`,
       backgroundRepeat: 'no-repeat !important',
       backgroundPosition: '5% 25% !important',
       backgroundSize: '100%, 100%, 60% !important',

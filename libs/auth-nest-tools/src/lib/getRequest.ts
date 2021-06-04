@@ -1,14 +1,21 @@
+import { Request } from 'express'
 import { ExecutionContext } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
+import { Auth } from './auth'
+import { User } from './user'
 
-export const getRequest = (context: ExecutionContext) => {
-  const request = context.switchToHttp().getRequest()
+export type AuthRequest = Request & {
+  auth?: Auth
+  user?: User
+}
 
-  if (request) {
-    return request
-  } else {
+export const getRequest = (
+  context: ExecutionContext & { contextType?: string },
+): AuthRequest => {
+  if (context.contextType === 'graphql') {
     const ctx = GqlExecutionContext.create(context)
-
     return ctx.getContext().req
   }
+
+  return context.switchToHttp().getRequest()
 }

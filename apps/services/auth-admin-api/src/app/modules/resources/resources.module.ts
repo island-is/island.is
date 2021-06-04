@@ -14,6 +14,8 @@ import {
   AccessService,
   ApiScopeUserAccess,
   ApiScopeUser,
+  ApiScopeGroup,
+  Domain,
 } from '@island.is/auth-api-lib'
 
 @Module({
@@ -29,6 +31,8 @@ import {
       ApiResourceSecret,
       ApiScopeUserAccess,
       ApiScopeUser,
+      ApiScopeGroup,
+      Domain,
     ]),
   ],
   controllers: [ResourcesController],

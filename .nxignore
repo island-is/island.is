@@ -27,12 +27,18 @@ libs/api-catalogue/README.md
 libs/api/domains/README.md
 libs/api/README.md
 libs/application/README.md
+libs/contentful-extensions/README.md
 libs/island-ui/README.md
 libs/nest/README.md
 libs/service-portal/README.md
+libs/service-portal/settings/README.md
 libs/shared/README.md
 libs/utils/README.md
 libs/clients/README.md
+libs/application/templates/family-matters/README.md
+libs/auth/README.md
+libs/clients/national-registry/README.md
+libs/application/templates/README.md
 
 # Shared
 libs/shared/webpack

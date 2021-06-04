@@ -11,8 +11,36 @@ import {
   IsObject,
   IsString,
   IsArray,
-  IsBoolean,
 } from 'class-validator'
+
+class ActionCardTag {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  label?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  variant?: string
+}
+
+class ActionCardMetaData {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  title?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  description?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsObject()
+  tag?: ActionCardTag
+}
 
 export class ApplicationResponseDto {
   @ApiProperty()
@@ -47,13 +75,8 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   @Expose()
-  @IsString()
-  stateTitle?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  stateDescription?: string
+  @IsObject()
+  actionCard?: ActionCardMetaData
 
   @ApiPropertyOptional()
   @Expose()
@@ -79,6 +102,11 @@ export class ApplicationResponseDto {
   @Expose()
   @IsString()
   name?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  institution?: string
 
   @ApiPropertyOptional()
   @Expose()

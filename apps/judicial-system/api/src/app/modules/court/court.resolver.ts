@@ -1,8 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { User } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
@@ -14,7 +15,7 @@ import {
 
 import { BackendAPI } from '../../../services'
 import { Case } from '../case'
-import { CreateCustodyCourtCaseInput, CreateCourtCaseInput } from './dto'
+import { CreateCourtCaseInput } from './dto'
 import { CourtService } from './court.service'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -28,44 +29,22 @@ export class CourtResolver {
   ) {}
 
   @Mutation(() => Case, { nullable: true })
-  async createCustodyCourtCase(
-    @Args('input', { type: () => CreateCustodyCourtCaseInput })
-    input: CreateCustodyCourtCaseInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Case> {
-    const { caseId, policeCaseNumber } = input
-
-    this.logger.debug(`Creating custody court case for case ${caseId}`)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CREATE_CUSTODY_COURT_CASE,
-      backendApi.updateCase(caseId, {
-        courtCaseNumber: await this.courtService.createCustodyCourtCase(
-          policeCaseNumber,
-        ),
-      }),
-      caseId,
-    )
-  }
-
-  @Mutation(() => Case, { nullable: true })
   async createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    const { caseId, type, policeCaseNumber, isExtension } = input
+    const { caseId, courtId, type, policeCaseNumber, isExtension } = input
 
     this.logger.debug(`Creating custody court case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CREATE_CUSTODY_COURT_CASE,
+      AuditedAction.CREATE_COURT_CASE,
       backendApi.updateCase(caseId, {
         courtCaseNumber: await this.courtService.createCourtCase(
+          courtId,
           type,
           policeCaseNumber,
           isExtension,

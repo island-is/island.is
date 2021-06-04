@@ -98,7 +98,7 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
               event={event}
               offset={offset}
               index={i}
-              detailed={!!event.label}
+              detailed={!!event.body}
             />
             <BulletLine
               offset={offset}
@@ -129,7 +129,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       setPosition(
         Math.min(
           position + 500,
-          frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+          frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
     } else {
@@ -147,7 +147,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   useEffect(() => {
     setPosition(frameRef.current.scrollWidth - frameRef.current.offsetWidth)
     frameRef.current.scrollTo({
-      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
     })
   }, [frameRef])
 
@@ -170,26 +170,44 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
-        <Box>
+        <Box paddingLeft={1}>
           <GridContainer>
             <GridRow>
               <GridColumn
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box borderTopWidth="standard" borderColor="standard"></Box>
+                <Box
+                  borderTopWidth="standard"
+                  borderColor="standard"
+                  paddingTop={6}
+                >
+                  <Text variant="h2" paddingBottom={3}>
+                    {slice.title}
+                  </Text>
+                  <Text>{slice.intro}</Text>
+                </Box>
               </GridColumn>
             </GridRow>
           </GridContainer>
           <Hidden below="lg">
             <div className={timelineStyles.timelineContainer}>
               <ArrowButtonShadow type="prev">
-                <ArrowButton type="prev" onClick={() => moveTimeline('left')} />
+                <ArrowButton
+                  type="prev"
+                  onClick={() => moveTimeline('left')}
+                  disabled={position === 0}
+                />
               </ArrowButtonShadow>
               <ArrowButtonShadow type="next">
                 <ArrowButton
                   type="next"
                   onClick={() => moveTimeline('right')}
+                  disabled={
+                    frameRef.current?.scrollWidth -
+                      frameRef.current?.offsetWidth ===
+                    position
+                  }
                 />
               </ArrowButtonShadow>
               <div className={timelineStyles.timelineGradient} />
@@ -219,7 +237,6 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                   }
                 />
               </ArrowButtonShadow>
-              <div className={timelineStyles.timelineGradient} />
               <div className={timelineStyles.monthItem}>
                 <Text color="blue600" variant="h2">
                   {months[month].year}
@@ -234,7 +251,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.label}
+                    detailed={!!event.body}
                     mobile={true}
                   />
                 ))}
@@ -262,10 +279,15 @@ const ArrowButtonShadow: React.FC<ArrowButtonShadowProps> = ({
 
 interface ArrowButtonProps {
   type: 'prev' | 'next'
+  disabled?: boolean
   onClick: () => void
 }
 
-const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
+const ArrowButton = ({
+  type = 'prev',
+  disabled = false,
+  onClick,
+}: ArrowButtonProps) => {
   return (
     <Box
       className={cn(
@@ -274,9 +296,10 @@ const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
       )}
     >
       <Button
-        colorScheme="negative"
+        colorScheme="light"
         circle
         icon="arrowBack"
+        disabled={disabled}
         onClick={onClick}
       />
     </Box>
@@ -293,7 +316,7 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
   const style = mobile
     ? {}
     : {
-        left: offset - 158,
+        left: offset - 208,
         alignItems: index % 2 ? 'flex-end' : 'flex-start',
         ...positionStyles[index % 4],
       }
@@ -324,8 +347,9 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
           <ModalBase
             baseId="eventDetails"
             isVisible={true}
-            hideOnClickOutside={false}
-            hideOnEsc={false}
+            initialVisibility={true}
+            onVisibilityChange={(isVisible) => !isVisible && setVisible(false)}
+            hideOnEsc={true}
           >
             <EventModal event={event} onClose={() => setVisible(false)} />
           </ModalBase>,
@@ -459,7 +483,7 @@ const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
           />
         </Box>
         <Stack space={2}>
-          <Text variant="h2" as="h3" color="purple400">
+          <Text variant="h2" as="h3">
             {event.title}
           </Text>
           {event.tags && (

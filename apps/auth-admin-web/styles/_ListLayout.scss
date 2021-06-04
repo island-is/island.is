@@ -6,7 +6,9 @@
 .idp-providers-list,
 .grant-type-list,
 .language-list,
-.translation-list {
+.translation-list,
+.api-scope-group-list,
+.domain-list {
   &__wrapper {
     max-width: 1024px;
   }

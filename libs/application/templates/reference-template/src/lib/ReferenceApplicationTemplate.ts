@@ -81,6 +81,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
+  institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
@@ -119,8 +120,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
-          title: m.draftTitle,
-          description: m.draftDescription,
+          actionCard: {
+            title: m.draftTitle,
+            description: m.draftDescription,
+          },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [

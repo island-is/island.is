@@ -1,37 +1,57 @@
-import React, { FC, createContext, useState } from 'react'
+import React, { FC, createContext, useContext, useMemo } from 'react'
 import { createClient } from './feature-flags'
-import { FeatureFlagClient } from './types'
+import { FeatureFlagClient, User } from './types'
+import { useAuth } from '@island.is/auth/react'
 
-export interface FeatureFlagContextProps {
-  featureFlagClient?: FeatureFlagClient
-  setFeatureFlagClient: (client: FeatureFlagClient) => void
-}
-
-export const FeatureFlagContext = createContext<FeatureFlagContextProps>({
-  featureFlagClient: undefined,
-  setFeatureFlagClient: () => null,
+const FeatureFlagContext = createContext<FeatureFlagClient>({
+  getValue: (_, defaultValue) => Promise.resolve(defaultValue),
 })
 
 export interface FeatureFlagContextProviderProps {
-  sdkKey?: string
+  sdkKey: string
+  defaultUser?: User
 }
 
-export const FeatureFlagContextProvider: FC<FeatureFlagContextProviderProps> = ({
+export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
   children,
   sdkKey,
+  defaultUser: userProp,
 }) => {
-  const [state, setState] = useState({
-    featureFlagClient: createClient({ sdkKey }),
-    setFeatureFlagClient: (featureFlagClient: FeatureFlagClient) => {
-      setState({ ...state, featureFlagClient })
-    },
-  })
+  const { userInfo } = useAuth()
+  const featureFlagClient = useMemo(() => {
+    return createClient({ sdkKey })
+  }, [sdkKey])
+
+  const context = useMemo<FeatureFlagClient>(() => {
+    const userAuth =
+      userInfo && userInfo.profile.sid !== undefined
+        ? {
+            id: userInfo.profile.sid,
+            attributes: {
+              nationalId: userInfo.profile.nationalId as string,
+            },
+          }
+        : undefined
+    const defaultUser = userProp ?? userAuth
+
+    return {
+      getValue(
+        key: string,
+        defaultValue: boolean | string,
+        user: User | undefined = defaultUser,
+      ) {
+        return featureFlagClient.getValue(key, defaultValue, user)
+      },
+    }
+  }, [featureFlagClient, userInfo, userProp])
 
   return (
-    <FeatureFlagContext.Provider value={state}>
+    <FeatureFlagContext.Provider value={context}>
       {children}
     </FeatureFlagContext.Provider>
   )
 }
 
-export default FeatureFlagContext
+export const useFeatureFlagClient = () => {
+  return useContext(FeatureFlagContext)
+}

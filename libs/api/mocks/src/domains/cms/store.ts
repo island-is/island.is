@@ -7,7 +7,6 @@ import {
   news,
   lifeEvent,
   frontPageSlider,
-  homepage as createHomepage,
   articleGroup,
   articleSubgroup,
   featured,
@@ -62,20 +61,10 @@ export const store = createStore(() => {
     ...{ namespace: { namespace: 'homepage', fields: '{}' } },
   }
 
-  const frontPageSliders = frontPageSlider.list(3)
-
-  const homepage = createHomepage({
-    featuredThings: featured.list(3, {
-      thing: () => referenceLink(),
-    }),
-  })
-
   const genericPages = [genericPage({ title: 'Loftbrú', slug: 'loftbru' })]
 
   return {
-    homepage,
     frontpage,
-    frontPageSliders,
     lifeEvents,
     newsList,
     alertBanner,

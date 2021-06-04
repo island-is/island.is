@@ -1,12 +1,12 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
@@ -17,7 +17,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { CreatePdfInput } from './dto/createPdf.input'
+import { GeneratePdfInput } from './dto/generatePdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
@@ -113,11 +113,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async createPdfPresignedUrl(
-    @Args('input') input: CreatePdfInput,
+  async generatePdfPresignedUrl(
+    @Args('input') input: GeneratePdfInput,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
-    return this.applicationService.createPdfPresignedUrl(input, user)
+    return this.applicationService.generatePdfPresignedUrl(input, user)
   }
 
   @Mutation(() => RequestFileSignatureResponse, { nullable: true })

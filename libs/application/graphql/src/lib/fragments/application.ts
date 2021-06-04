@@ -8,13 +8,21 @@ export const ApplicationFragment = gql`
     applicant
     assignees
     state
-    stateDescription
+    actionCard {
+      title
+      description
+      tag {
+        label
+        variant
+      }
+    }
     attachments
     typeId
     answers
     externalData
     progress
     name
+    institution
     status
   }
 `

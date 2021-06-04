@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import React, { useContext, useEffect, useState } from 'react'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
@@ -33,22 +40,36 @@ import {
 import {
   setCheckboxAndSendToServer,
   newSetAndSendDateToServer,
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState(true)
-  const [isolationToIsValid, setIsolationToIsValid] = useState(true)
+  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState<boolean>(
+    true,
+  )
+  const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
+  const [
+    courtCaseFactsErrorMessage,
+    setCourtCaseFactsErrorMessage,
+  ] = useState<string>('')
+  const [
+    courtLegalArgumentsErrorMessage,
+    setCourtLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase } = useCase()
+  const { user } = useContext(UserContext)
+  const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -77,33 +98,25 @@ export const RulingStepOne: React.FC = () => {
         )
       }
 
-      if (!theCase.custodyEndDate) {
-        theCase = {
-          ...theCase,
-          custodyEndDate: theCase.requestedCustodyEndDate,
-        }
-
-        updateCase(
-          theCase.id,
-          parseString('custodyEndDate', theCase.requestedCustodyEndDate || ''),
-        )
+      if (theCase.requestedCustodyEndDate) {
+        autofill('custodyEndDate', theCase.requestedCustodyEndDate, theCase)
       }
 
-      if (!theCase.isolationTo) {
-        theCase = {
-          ...theCase,
-          isolationTo: theCase.custodyEndDate,
-        }
+      if (theCase.custodyEndDate) {
+        autofill('isolationTo', theCase.custodyEndDate, theCase)
+      }
 
-        updateCase(
-          theCase.id,
-          parseString('isolationTo', theCase.custodyEndDate || ''),
-        )
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
+
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data, updateCase, autofill])
 
   /**
    * Prefills the ruling of extension cases with the parent case ruling
@@ -136,6 +149,7 @@ export const RulingStepOne: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -160,9 +174,99 @@ export const RulingStepOne: React.FC = () => {
                   <CaseFileList
                     caseId={workingCase.id}
                     files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
+                    }
                   />
                 </AccordionItem>
               </Accordion>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Greinargerð um málsatvik{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtCaseFacts"
+                  name="courtCaseFacts"
+                  label="Málsatvik"
+                  defaultValue={workingCase.courtCaseFacts}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtCaseFacts',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtCaseFactsErrorMessage,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtCaseFacts',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtCaseFactsErrorMessage}
+                  hasError={courtCaseFactsErrorMessage !== ''}
+                  textarea
+                  rows={16}
+                  required
+                />
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Greinargerð um lagarök{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtLegalArguments"
+                  name="courtLegalArguments"
+                  label="Lagarök"
+                  defaultValue={workingCase.courtLegalArguments}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLegalArguments',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtLegalArgumentsErrorMessage,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLegalArguments',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtLegalArgumentsErrorMessage}
+                  hasError={courtLegalArgumentsErrorMessage !== ''}
+                  textarea
+                  rows={16}
+                  required
+                />
+              </Box>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
@@ -306,6 +410,8 @@ export const RulingStepOne: React.FC = () => {
               previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
               nextIsDisabled={
+                !workingCase.courtCaseFacts ||
+                !workingCase.courtLegalArguments ||
                 !workingCase.decision ||
                 !validate(workingCase.ruling || '', 'empty').isValid ||
                 (workingCase.decision !== CaseDecision.REJECTING &&

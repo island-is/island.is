@@ -952,6 +952,9 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
 export interface IGenericTagFields {
   /** Title */
   title: string
+
+  /** Slug */
+  slug: string
 }
 
 /** A generic uniquely named tag that can be used for tag miscellaneous things. */
@@ -1438,6 +1441,9 @@ export interface IMailingListSignupFields {
 
   /** Submit button text */
   buttonText: string
+
+  /** Signup URL */
+  signupUrl: string
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1965,6 +1971,7 @@ export interface IOrganizationSubpageFields {
         | IAccordionSlice
         | IContactUs
         | IDistricts
+        | IMailingListSignup
         | IOffices
         | IOneColumnText
         | ITeamList
@@ -2022,6 +2029,31 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
     contentType: {
       sys: {
         id: 'organizationTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOverviewLinksFields {
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'overviewLinks'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2955,6 +2987,9 @@ export interface ITestHomepage extends Entry<ITestHomepageFields> {
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
+
+  /** Intro */
+  intro?: string | undefined
 
   /** Events */
   events: ITimelineEvent[]

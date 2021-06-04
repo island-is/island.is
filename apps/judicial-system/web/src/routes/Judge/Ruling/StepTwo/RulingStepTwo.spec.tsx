@@ -21,7 +21,7 @@ describe('/domari-krafa/urskurdarord', () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_2' },
+      query: { id: 'test_id_5' },
     }))
 
     // Act and Assert
@@ -30,14 +30,20 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              accusedAppealDecision: CaseAppealDecision.APPEAL,
-            } as UpdateCase,
-            {
-              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                accusedAppealDecision: CaseAppealDecision.APPEAL,
+              } as UpdateCase,
+              {
+                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+              } as UpdateCase,
+              {
+                courtEndTime: '2020-09-16T15:55:000Z',
+              } as UpdateCase,
+            ],
+            'test_id_5',
+          ),
         ]}
         addTypename={false}
       >
@@ -53,16 +59,21 @@ describe('/domari-krafa/urskurdarord', () => {
       })) as HTMLInputElement,
     )
 
+    userEvent.click(
+      await screen.findByRole('radio', {
+        name: 'Sækjandi tekur sér lögboðinn frest',
+      }),
+    )
+
     expect(
       await screen.findByRole('button', {
         name: /Halda áfram/i,
       }),
     ).toBeDisabled()
 
-    userEvent.click(
-      await screen.findByRole('radio', {
-        name: 'Sækjandi tekur sér lögboðinn frest',
-      }),
+    userEvent.type(
+      await screen.findByLabelText('Þinghaldi lauk (kk:mm) *'),
+      '15:55',
     )
 
     expect(
@@ -112,14 +123,17 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              accusedAppealDecision: CaseAppealDecision.POSTPONE,
-            } as UpdateCase,
-            {
-              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                accusedAppealDecision: CaseAppealDecision.POSTPONE,
+              } as UpdateCase,
+              {
+                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+              } as UpdateCase,
+            ],
+            'test_id_2',
+          ),
         ]}
         addTypename={false}
       >
@@ -164,14 +178,17 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              accusedAppealDecision: CaseAppealDecision.APPEAL,
-            } as UpdateCase,
-            {
-              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                accusedAppealDecision: CaseAppealDecision.APPEAL,
+              } as UpdateCase,
+              {
+                prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
@@ -204,15 +221,17 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              custodyRestrictions: [
-                CaseCustodyRestrictions.ISOLATION,
-                CaseCustodyRestrictions.MEDIA,
-              ],
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                custodyRestrictions: [
+                  CaseCustodyRestrictions.ISOLATION,
+                  CaseCustodyRestrictions.MEDIA,
+                ],
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >

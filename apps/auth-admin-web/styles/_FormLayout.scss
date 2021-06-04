@@ -28,7 +28,10 @@
 .translation-create-form,
 .user-claim-create-form,
 .translation-create-form,
-.translation-create-form-dropdown {
+.translation-create-form-dropdown,
+.api-scope-resource-form,
+.api-scope-group-create-form,
+.domain-create-form {
   position: relative;
 
   &__help {

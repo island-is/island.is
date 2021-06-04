@@ -1,8 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
-import { RefetchProvider } from '../context/RefetchContext'
 
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
   Application,
   ApplicationTemplateHelper,
@@ -17,8 +16,9 @@ import {
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
 
+import { RefetchProvider } from '../context/RefetchContext'
+import { FieldProvider, useFields } from '../context/FieldContext'
 import { FormShell } from './FormShell'
-import { FieldProvider, useFields } from '../components/FieldContext'
 import { NotFound } from './NotFound'
 import * as styles from './FormShell.treat'
 

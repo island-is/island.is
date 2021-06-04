@@ -1,14 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-
+import type { IcelandicNamesRegistryOptions } from '@island.is/icelandic-names-registry-types'
 import {
   IcelandicName,
   ICELANDIC_NAMES_REGISTRY_OPTIONS,
-  IcelandicNamesRegistryOptions,
 } from '@island.is/icelandic-names-registry-types'
 
-import { CreateIcelandicNameInput } from '../dto/icelandic-name.input'
+import { CreateIcelandicNameInput } from '../dto/icelandic-name.input.dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -56,8 +55,8 @@ class BackendAPI extends RESTDataSource {
     return this.post(`/`, body, { headers: { authorization } })
   }
 
-  deleteById(id: number, authorization: string): Promise<void> {
-    return this.delete(`/${id}`, { headers: { authorization } })
+  deleteById(id: number, authorization: string): Promise<number> {
+    return this.delete(`/${id}`, undefined, { headers: { authorization } })
   }
 }
 

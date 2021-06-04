@@ -9,23 +9,24 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata.service'
+import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { ValidationRuleDto } from './dto/validationRule.dto'
 
 export enum EndorsementTag {
   PARTY_LETTER_2021 = 'partyLetter2021',
-  PARTY_LETTER_NORDAUSTURKJORDAEMI_2021 = 'partyLetterNordausturkjordaemi2021',
-  PARTY_LETTER_NORDVESTURKJORDAEMI_2021 = 'partyLetterNordvesturkjordaemi2021',
-  PARTY_LETTER_REYKJAVIKURKJORDAEMI_NORDUR_2021 = 'partyLetterReykjavikurkjordaemiNordur2021',
-  PARTY_LETTER_REYKJAVIKURKJORDAEMI_SUDUR_2021 = 'partyLetterReykjavikurkjordaemiSudur2021',
-  PARTY_LETTER_SUDURKJORDAEMI_2021 = 'partyLetterSudurkjordaemi2021',
-  PARTY_LETTER_SUDVESTURKJORDAEMI_2021 = 'partyLetterSudvesturkjordaemi2021',
+  PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021 = 'partyApplicationNordausturkjordaemi2021',
+  PARTY_APPLICATION_NORDVESTURKJORDAEMI_2021 = 'partyApplicationNordvesturkjordaemi2021',
+  PARTY_APPLICATION_REYKJAVIKURKJORDAEMINORDUR_2021 = 'partyApplicationReykjavikurkjordaemiNordur2021',
+  PARTY_APPLICATION_REYKJAVIKURKJORDAEMISUDUR_2021 = 'partyApplicationReykjavikurkjordaemiSudur2021',
+  PARTY_APPLICATION_SUDURKJORDAEMI_2021 = 'partyApplicationSudurkjordaemi2021',
+  PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021 = 'partyApplicationSudvesturkjordaemi2021',
 }
 
 @Table({
   tableName: 'endorsement_list',
 })
 export class EndorsementList extends Model<EndorsementList> {
+  @ApiProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -33,6 +34,7 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -57,28 +59,33 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   closedDate!: Date | null
 
+  @ApiProperty({ enum: EndorsementMetaField, isArray: true })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   endorsementMeta!: EndorsementMetaField[]
 
+  @ApiProperty({ enum: EndorsementTag, isArray: true })
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   tags!: EndorsementTag[]
 
+  @ApiProperty({ type: [ValidationRuleDto] })
   @Column({
     type: DataType.JSONB,
     defaultValue: '[]',
   })
   validationRules!: ValidationRuleDto[]
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   owner!: string
 
+  @ApiProperty({ type: () => [Endorsement] })
   @HasMany(() => Endorsement)
   readonly endorsements?: Endorsement[]
 

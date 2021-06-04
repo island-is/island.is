@@ -6,6 +6,7 @@ import {
   Employer,
   Union,
   PensionFund,
+  Attachment,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
@@ -44,8 +45,11 @@ export const getPersonalAllowance = (
     : 'personalAllowance.usage'
 
   const willUsePersonalAllowance =
-    extractAnswer(application.answers, usePersonalAllowanceGetter) ===
-    formConstants.boolean.true
+    get(
+      application.answers,
+      usePersonalAllowanceGetter,
+      formConstants.boolean.false,
+    ) === formConstants.boolean.true
 
   if (!willUsePersonalAllowance) {
     return 0
@@ -76,16 +80,16 @@ export const getEmployer = (
     : extractAnswer(application.answers, 'employer.nationalRegistryId'),
 })
 
-export const getOtherParentId = (application: Application): string => {
+export const getOtherParentId = (application: Application): string | null => {
   const otherParent = extractAnswer<string>(
     application.answers,
     'otherParent',
     null,
   )
-  const otherParentId = extractAnswer<string>(
+  const otherParentId = extractAnswer<string | null>(
     application.answers,
     'otherParentId',
-    '',
+    null,
   )
 
   if (otherParent === formConstants.spouseSelection.spouse) {
@@ -162,8 +166,32 @@ export const getPrivatePensionFundRatio = (application: Application) => {
   return privatePensionFundRatio
 }
 
+export const getApplicantContactInfo = (application: Application) => {
+  const email =
+    get(application.answers, 'applicant.email') ||
+    get(application.externalData, 'userProfile.data.email')
+
+  const phoneNumber =
+    get(application.answers, 'applicant.phoneNumber') ||
+    get(application.externalData, 'userProfile.data.mobilePhoneNumber')
+
+  if (!email) {
+    throw new Error('Missing applicant email')
+  }
+
+  if (!phoneNumber) {
+    throw new Error('Missing applicant phone number')
+  }
+
+  return {
+    email: email as string,
+    phoneNumber: phoneNumber as string,
+  }
+}
+
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
+  attachments?: Attachment[],
 ): ParentalLeave => {
   const periodsAnswer = extractAnswer<
     {
@@ -203,6 +231,8 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
+  const { email, phoneNumber } = getApplicantContactInfo(application)
+
   return {
     applicationId: application.id,
     applicant: application.applicant,
@@ -211,8 +241,8 @@ export const transformApplicationToParentalLeaveDTO = (
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
     dateOfBirth: selectedChild.expectedDateOfBirth,
-    email: extractAnswer(application.answers, 'applicant.email'),
-    phoneNumber: extractAnswer(application.answers, 'applicant.phoneNumber'),
+    email,
+    phoneNumber,
     paymentInfo: {
       bankAccount: extractAnswer(application.answers, 'payments.bank'),
       personalAllowance: getPersonalAllowance(application),
@@ -229,5 +259,6 @@ export const transformApplicationToParentalLeaveDTO = (
     // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
     // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
     rightsCode: 'M-L-GR',
+    attachments,
   }
 }

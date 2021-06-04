@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize-typescript'
 import { Translation } from '../entities/models/translation.model'
 import { Language } from '../entities/models/language.model'
@@ -27,7 +28,7 @@ export class TranslationService {
   ): Promise<{
     rows: Translation[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.translationModel.findAndCountAll({
@@ -56,12 +57,12 @@ export class TranslationService {
   }
 
   /** Get's all translations */
-  async findAllTranslations(): Promise<Translation[] | null> {
+  async findAllTranslations(): Promise<Translation[]> {
     return this.translationModel.findAll()
   }
 
   /** Get's all languages */
-  async findAllLanguages(): Promise<Language[] | null> {
+  async findAllLanguages(): Promise<Language[]> {
     return this.langugeModel.findAll()
   }
 
@@ -72,7 +73,7 @@ export class TranslationService {
   ): Promise<{
     rows: Language[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.langugeModel.findAndCountAll({

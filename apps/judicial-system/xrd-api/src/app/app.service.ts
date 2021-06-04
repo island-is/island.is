@@ -2,7 +2,8 @@ import fetch from 'isomorphic-fetch'
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Case as TCase } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
@@ -32,7 +33,7 @@ export class AppService {
     })
 
     if (!res.ok) {
-      console.log('Could not create a new case', res)
+      this.logger.error('Could not create a new case', res)
 
       throw new BadGatewayException('Could not create a new case')
     }

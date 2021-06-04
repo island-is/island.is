@@ -9,12 +9,13 @@ import {
 } from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -22,11 +23,7 @@ import {
 
 import { BackendAPI } from '../../../services'
 import { CaseFile } from '../file'
-import {
-  CaseInterceptor,
-  CasesInterceptor,
-  UpdateCaseInterceptor,
-} from './interceptors'
+import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -107,7 +104,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(UpdateCaseInterceptor)
+  @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,

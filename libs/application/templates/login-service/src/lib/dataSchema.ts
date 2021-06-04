@@ -12,18 +12,16 @@ export const LoginServiceSchema = z.object({
     responsiblePartyTel: z.string().nonempty(),
   }),
   technicalContact: z.object({
-    name: z.string().optional(),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
-    sameAsResponsibleParty: z.array(z.string()).optional(),
+    name: z.string().nonempty(),
+    email: z.string().nonempty(),
+    phoneNumber: z.string().nonempty(),
     techAnnouncementsEmail: z.string().nonempty(),
   }),
   technicalInfo: z.object({
-    type: z.string(),
+    type: z.string().nonempty(),
     devReturnUrl: z.string().optional(),
     stagingReturnUrl: z.string().optional(),
-    prodReturnUrl: z.string(),
-    clientId: z.string().optional(),
+    prodReturnUrl: z.string().nonempty(),
   }),
 })
 

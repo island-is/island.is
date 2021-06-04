@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
-import { RepeaterScreen } from '../types'
 import {
   RepeaterProps,
   getValueViaPath,
   Application,
   RecordObject,
 } from '@island.is/application/core'
-import { useFields } from './FieldContext'
+
+import { useFields } from '../context/FieldContext'
+import { RepeaterScreen } from '../types'
 
 type RepeaterItems = unknown[]
 

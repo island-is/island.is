@@ -14,58 +14,85 @@ function getBlockedStates(role: UserRole) {
   return blockedStates
 }
 
-function prosecutorInstitutionMustMatchUserInstitution(role: UserRole) {
+function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
   return role === UserRole.PROSECUTOR
 }
 
-export function isStateHiddenFromRole(
-  state: CaseState,
-  role: UserRole,
-): boolean {
+function courtMustMatchUserIInstitution(role: UserRole): boolean {
+  return role === UserRole.REGISTRAR || role === UserRole.JUDGE
+}
+
+function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
   return getBlockedStates(role).includes(state)
 }
 
-export function isProsecutorInstitutionHiddenFromUser(
+function isProsecutorsOfficeHiddenFromUser(
   prosecutorInstitutionId: string,
   user: User,
+  forUpdate: boolean,
+  sharedWithProsecutorsOfficeId: string,
 ): boolean {
   return (
-    prosecutorInstitutionMustMatchUserInstitution(user?.role) &&
+    prosecutorsOfficeMustMatchUserInstitution(user.role) &&
     prosecutorInstitutionId &&
-    prosecutorInstitutionId !== user?.institution?.id
+    prosecutorInstitutionId !== user.institution.id &&
+    (forUpdate ||
+      !sharedWithProsecutorsOfficeId ||
+      sharedWithProsecutorsOfficeId !== user.institution.id)
   )
 }
 
-export function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
+function isCourtHiddenFromUser(courtId: string, user: User): boolean {
   return (
-    isStateHiddenFromRole(theCase?.state, user?.role) ||
-    isProsecutorInstitutionHiddenFromUser(
-      theCase?.prosecutor?.institutionId,
+    courtMustMatchUserIInstitution(user.role) &&
+    courtId &&
+    courtId !== user.institution.id
+  )
+}
+
+export function isCaseBlockedFromUser(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  return (
+    isStateHiddenFromRole(theCase.state, user.role) ||
+    isProsecutorsOfficeHiddenFromUser(
+      theCase.prosecutor?.institutionId,
       user,
-    )
+      forUpdate,
+      theCase.sharedWithProsecutorsOfficeId,
+    ) ||
+    isCourtHiddenFromUser(theCase.courtId, user)
   )
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: {
-      state: getBlockedStates(user?.role),
+      state: getBlockedStates(user.role),
     },
   }
 
-  return prosecutorInstitutionMustMatchUserInstitution(user?.role)
-    ? {
-        [Op.and]: [
-          blockStates,
-          {
-            [Op.or]: [
-              { prosecutor_id: { [Op.is]: null } },
-              {
-                '$prosecutor.institution_id$': user?.institution?.id,
-              },
-            ],
-          },
-        ],
-      }
-    : blockStates
+  const blockInstitutions =
+    user.role === UserRole.PROSECUTOR
+      ? {
+          [Op.or]: [
+            { prosecutor_id: { [Op.is]: null } },
+            {
+              '$prosecutor.institution_id$': user.institution.id,
+            },
+            { shared_with_prosecutors_office_id: user.institution.id },
+          ],
+        }
+      : {
+          [Op.or]: [
+            { court_id: { [Op.is]: null } },
+            {
+              court_id: user.institution.id,
+            },
+          ],
+        }
+
+  return { [Op.and]: [blockStates, blockInstitutions] }
 }

@@ -5,7 +5,6 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
-import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
@@ -23,7 +22,13 @@ interface FormOutput {
 }
 
 const ClientCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    setValue,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -32,7 +37,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
   const [client, setClient] = useState<ClientDTO>(props.client)
-  const [requireConsent, setRequireConsent] = useState(false)
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
@@ -76,12 +80,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setIsEditing(true)
       setAvailable(true)
       setClientTypeSelected(true)
-      setClientType(props.client.clientType)
-      if (props.client.requireConsent) {
-        setRequireConsent(true)
-      } else {
-        setRequireConsent(false)
-      }
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
@@ -164,34 +162,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
-      if (clientType === 'spa') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('spa'))
+      if (clientType === 'spa' || clientType === 'native') {
+        setValue('client.requireClientSecret', false)
+        setValue('client.requirePkce', true)
       }
 
-      if (clientType === 'native') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('native'))
+      if (clientType === 'web' || clientType === 'machine') {
+        setValue('client.requireClientSecret', true)
+        setValue('client.requirePkce', false)
       }
 
-      if (clientType === 'web') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('web'))
-      }
-
-      if (clientType === 'machine') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('machine'))
-      }
-
+      setClientTypeInfo(getClientTypeHTML(clientType))
       setClientTypeSelected(true)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
@@ -372,7 +353,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientId"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateIdentifier,
+                        validate: ValidationUtils.validateScope,
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
@@ -441,7 +422,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: ValidationUtils.validateUrl,
+                          validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
@@ -567,7 +548,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.requireConsent"
                       ref={register}
                       title={localization.fields['requireConsent'].helpText}
-                      onChange={(e) => setRequireConsent(e.target.checked)}
                     />
                     <HelpBox
                       helpText={localization.fields['requireConsent'].helpText}

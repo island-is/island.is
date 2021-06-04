@@ -38,6 +38,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
   name: 'Umsókn um fjármögnun ríkisverkefnis',
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   ],
@@ -48,8 +49,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -77,8 +80,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {

@@ -1,5 +1,4 @@
 import React from 'react'
-import format from 'date-fns/format'
 import {
   ActionCardLoader,
   ServicePortalModuleComponent,
@@ -10,17 +9,11 @@ import {
   Stack,
   GridRow,
   GridColumn,
-  ActionCard,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
-import {
-  Application,
-  ApplicationStatus,
-  getSlugFromType,
-} from '@island.is/application/core'
+import { ApplicationList as List } from '@island.is/application/ui-components'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
-import { dateFormat } from '@island.is/shared/constants'
 
 import { m } from '../../lib/messages'
 
@@ -38,12 +31,12 @@ const baseUrlForm = isLocalhost
 
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
+  useNamespaces('application.system')
 
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
-  const { formatMessage, lang: locale } = useLocale()
+  const { formatMessage } = useLocale()
   const { data: applications, loading, error } = useApplications()
-  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   return (
     <>
@@ -73,50 +66,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         </Box>
       )}
 
-      <Stack space={2}>
-        {applications.map((application: Application, index: number) => {
-          const isCompleted = application.status === ApplicationStatus.COMPLETED
-          const isRejected = application.status === ApplicationStatus.REJECTED
-          const slug = getSlugFromType(application.typeId)
-
-          if (!slug) {
-            return null
+      {applications && (
+        <List
+          applications={applications}
+          onClick={(applicationUrl) =>
+            window.open(`${baseUrlForm}/${applicationUrl}`)
           }
-
-          return (
-            <ActionCard
-              key={`${application.id}-${index}`}
-              date={format(new Date(application.modified), formattedDate)}
-              heading={application.name || application.typeId}
-              tag={{
-                label: isRejected
-                  ? formatMessage(m.cardStatusRejected)
-                  : isCompleted
-                  ? formatMessage(m.cardStatusDone)
-                  : formatMessage(m.cardStatusInProgress),
-                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
-                outlined: false,
-              }}
-              cta={{
-                label: isCompleted
-                  ? formatMessage(m.cardButtonComplete)
-                  : formatMessage(m.cardButtonInProgress),
-                variant: 'ghost',
-                size: 'small',
-                icon: undefined,
-                onClick: () =>
-                  window.open(`${baseUrlForm}/${slug}/${application.id}`),
-              }}
-              text={application.stateDescription}
-              progressMeter={{
-                active: true,
-                progress: application.progress,
-                variant: isRejected ? 'red' : isCompleted ? 'mint' : 'blue',
-              }}
-            />
-          )
-        })}
-      </Stack>
+        />
+      )}
     </>
   )
 }

@@ -6,6 +6,7 @@ import {
   CaseGender,
   CaseState,
   CaseType,
+  InstitutionType,
   UpdateCase,
   User,
   UserRole,
@@ -15,13 +16,33 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import {
+  InstitutionsQuery,
+  UsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mutations'
+
+export const mockCourt = {
+  id: 'court_id',
+  type: InstitutionType.COURT,
+  name: 'Héraðsdómur Reykjavíkur',
+}
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
   institution: {
+    id: '1337',
+    name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  },
+} as User
+
+export const mockProsecutorWonderWoman = {
+  role: UserRole.PROSECUTOR,
+  name: 'Wonder Woman',
+  title: 'saksóknari',
+  institution: {
+    id: '1338',
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
@@ -31,9 +52,7 @@ export const mockJudge = {
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
-  institution: {
-    name: 'Héraðsdómur Reykjavíkur',
-  },
+  institution: mockCourt,
 } as User
 
 export const mockJudgeBatman = {
@@ -41,9 +60,7 @@ export const mockJudgeBatman = {
   role: UserRole.JUDGE,
   name: 'Batman',
   title: 'héraðsdómari',
-  institution: {
-    name: 'Héraðsdómur Reykjavíkur',
-  },
+  institution: mockCourt,
 } as User
 
 export const mockRegistrar = {
@@ -51,6 +68,7 @@ export const mockRegistrar = {
   role: UserRole.REGISTRAR,
   name: 'Alfred Thaddeus Crane Pennyworth',
   title: 'dómritari',
+  institution: mockCourt,
 } as User
 
 export const mockAdmin = {
@@ -68,7 +86,7 @@ const testCase1 = {
   accusedNationalId: 'string',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-16T19:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
@@ -83,10 +101,15 @@ const testCase1 = {
   investigationProgress: 'string',
   legalArguments: 'string',
   comments: 'string',
-  prosecutor: null,
+  prosecutor: {
+    name: 'Áki Ákærandi',
+    institution: {
+      id: '1338',
+    },
+  },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
@@ -127,7 +150,7 @@ const testCase2 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedCustodyEndDate: null,
@@ -145,7 +168,7 @@ const testCase2 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
@@ -175,7 +198,8 @@ const testCase3 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
+  leadInvestigator: 'ben10',
   arrestDate: null,
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-10-24T12:31:00Z',
@@ -190,13 +214,15 @@ const testCase3 = {
   prosecutor: null,
   courtCaseNumber: null,
   courtDate: '2020-09-16T19:51:28.224Z',
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: '2020-09-16T19:51:00.000Z',
   courtAttendees: null,
   courtRoom: '999',
   policeDemands: null,
   accusedPleaAnnouncement: null,
   litigationPresentations: null,
+  courtCaseFacts: null,
+  courtLegalArguments: null,
   ruling: null,
   decision: null,
   custodyEndDate: null,
@@ -222,7 +248,7 @@ const testCase4 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
@@ -240,7 +266,7 @@ const testCase4 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
@@ -284,7 +310,7 @@ const testCase5 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16',
@@ -302,12 +328,14 @@ const testCase5 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
-  courtEndTime: '2020-09-16',
+  courtStartDate: '2020-09-16',
+  courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
   accusedPleaAnnouncement: null,
   litigationPresentations: null,
+  courtCaseFacts: null,
+  courtLegalArguments: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-25T19:50:08.033Z',
@@ -346,7 +374,7 @@ const testCase6 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
@@ -364,7 +392,7 @@ const testCase6 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
@@ -395,7 +423,7 @@ const testCase7 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16',
@@ -413,7 +441,7 @@ const testCase7 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
@@ -443,7 +471,7 @@ const testCase8 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
@@ -461,7 +489,7 @@ const testCase8 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: null,
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
@@ -476,7 +504,8 @@ const testCase8 = {
   prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
   prosecutorAppealAnnouncement: null,
   isCustodyEndDateInThePast: true,
-  isCaseAppealable: true,
+  isAppealDeadlineExpired: true,
+  isAppealGracePeriodExpired: true,
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
@@ -528,7 +557,7 @@ const testCase9 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16T00:00:00.000Z',
@@ -545,8 +574,8 @@ const testCase9 = {
     title: 'saksóknari',
   },
   courtCaseNumber: null,
-  courtDate: null,
-  courtStartTime: null,
+  courtDate: '2020-09-16T19:51:28.000Z',
+  courtStartDate: '2020-09-16T19:51:28.000Z',
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
@@ -576,7 +605,7 @@ const testCase10 = {
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
-  court: 'string',
+  court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
@@ -594,7 +623,7 @@ const testCase10 = {
   },
   courtCaseNumber: null,
   courtDate: null,
-  courtStartTime: null,
+  courtStartDate: '2020-09-16T19:51:28.000Z',
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
@@ -614,6 +643,19 @@ const testCase10 = {
   defenderEmail: 'saul@goodman.com',
 }
 
+export const mockInstitutionsQuery = [
+  {
+    request: {
+      query: InstitutionsQuery,
+    },
+    result: {
+      data: {
+        institutions: [mockCourt],
+      },
+    },
+  },
+]
+
 export const mockJudgeQuery = [
   {
     request: {
@@ -622,6 +664,19 @@ export const mockJudgeQuery = [
     result: {
       data: {
         currentUser: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockProsecutorWonderWomanQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockProsecutorWonderWoman,
       },
     },
   },
@@ -788,12 +843,12 @@ export const mockCaseQueries = [
   },
 ]
 
-export const mockUpdateCaseMutation = (updateCases: UpdateCase[]) =>
+export const mockUpdateCaseMutation = (updateCases: UpdateCase[], id: string) =>
   updateCases.map((updateCase) => {
     return {
       request: {
         query: UpdateCaseMutation,
-        variables: { input: { id: 'test_id_2', ...updateCase } },
+        variables: { input: { id, ...updateCase } },
       },
       result: {
         data: {

@@ -1,18 +1,24 @@
-export default {
+import { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
+
+const devConfig = {
   production: false,
   auth: {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-token',
   },
   notifications: {
-    courtMobileNumbers: process.env.COURT_MOBILE_NUMBERS,
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
+    courtsMobileNumbers: JSON.parse(
+      process.env.COURTS_MOBILE_NUMBERS || '{}',
+    ) as {
+      [key: string]: string
+    },
   },
   email: {
-    fromEmail: 'gudjon@kolibri.is',
+    fromEmail: 'ben10@omnitrix.is',
     fromName: 'Guðjón Guðjónsson',
-    replyToEmail: 'gudjon@kolibri.is',
+    replyToEmail: 'ben10@omnitrix.is',
     replyToName: 'Guðjón Guðjónsson',
   },
   smsOptions: {
@@ -37,4 +43,168 @@ export default {
     timeToLivePost: '15',
     timeToLiveGet: '5',
   },
+  xRoad: {
+    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV || '',
+    clientId: process.env.XROAD_CLIENT_ID || '',
+    clientCert: process.env.XROAD_CLIENT_CERT || '',
+    clientKey: process.env.XROAD_CLIENT_KEY || '',
+    clientCa: process.env.XROAD_CLIENT_PEM || '',
+  },
+  courtClientOptions: {
+    apiPath: process.env.XROAD_COURT_API_PATH || '',
+    memberCode: process.env.XROAD_COURT_MEMBER_CODE || '',
+    serviceOptions: JSON.parse(
+      process.env.COURTS_CREDENTIALS || '{}',
+    ) as CourtClientServiceOptions,
+  },
 }
+
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.AUTH_JWT_SECRET) {
+    throw new Error('Missing AUTH_JWT_SECRET environment.')
+  }
+  if (!process.env.SECRET_TOKEN) {
+    throw new Error('Missing SECRET_TOKEN environment.')
+  }
+  if (!process.env.COURTS_MOBILE_NUMBERS) {
+    throw new Error('Missing COURTS_MOBILE_NUMBERS environment.')
+  }
+  if (!process.env.PRISON_EMAIL) {
+    throw new Error('Missing PRISON_EMAIL environment.')
+  }
+  if (!process.env.PRISON_ADMIN_EMAIL) {
+    throw new Error('Missing PRISON_ADMIN_EMAIL environment.')
+  }
+  if (!process.env.EMAIL_FROM) {
+    throw new Error('Missing EMAIL_FROM environment.')
+  }
+  if (!process.env.EMAIL_FROM_NAME) {
+    throw new Error('Missing EMAIL_FROM_NAME environment.')
+  }
+  if (!process.env.EMAIL_REPLY_TO) {
+    throw new Error('Missing EMAIL_REPLY_TO environment.')
+  }
+  if (!process.env.EMAIL_REPLY_TO_NAME) {
+    throw new Error('Missing EMAIL_REPLY_TO_NAME environment.')
+  }
+  if (!process.env.NOVA_URL) {
+    throw new Error('Missing NOVA_URL environment.')
+  }
+  if (!process.env.NOVA_USERNAME) {
+    throw new Error('Missing NOVA_USERNAME environment.')
+  }
+  if (!process.env.NOVA_PASSWORD) {
+    throw new Error('Missing NOVA_PASSWORD environment.')
+  }
+  if (!process.env.DOKOBIT_URL) {
+    throw new Error('Missing DOKOBIT_URL environment.')
+  }
+  if (!process.env.DOKOBIT_ACCESS_TOKEN) {
+    throw new Error('Missing DOKOBIT_ACCESS_TOKEN environment.')
+  }
+  if (!process.env.EMAIL_REGION) {
+    throw new Error('Missing EMAIL_REGION environment.')
+  }
+  if (!process.env.ADMIN_USERS) {
+    throw new Error('Missing ADMIN_USERS environment.')
+  }
+  if (!process.env.S3_REGION) {
+    throw new Error('Missing S3_REGION environment.')
+  }
+  if (!process.env.S3_BUCKET) {
+    throw new Error('Missing S3_BUCKET environment.')
+  }
+  if (!process.env.S3_TIME_TO_LIVE_POST) {
+    throw new Error('Missing S3_TIME_TO_LIVE_POST environment.')
+  }
+  if (!process.env.S3_TIME_TO_LIVE_GET) {
+    throw new Error('Missing S3_TIME_TO_LIVE_GET environment.')
+  }
+  if (!process.env.XROAD_BASE_PATH_WITH_ENV) {
+    throw new Error('Missing XROAD_BASE_PATH_WITH_ENV environment.')
+  }
+  if (!process.env.XROAD_CLIENT_ID) {
+    throw new Error('Missing XROAD_CLIENT_ID environment.')
+  }
+  if (!process.env.XROAD_CLIENT_CERT) {
+    throw new Error('Missing XROAD_CLIENT_CERT environment.')
+  }
+  if (!process.env.XROAD_CLIENT_KEY) {
+    throw new Error('Missing XROAD_CLIENT_KEY environment.')
+  }
+  if (!process.env.XROAD_CLIENT_PEM) {
+    throw new Error('Missing XROAD_CLIENT_PEM environment.')
+  }
+  if (!process.env.XROAD_COURT_API_PATH) {
+    throw new Error('Missing XROAD_COURT_API_PATH environment.')
+  }
+  if (!process.env.XROAD_COURT_MEMBER_CODE) {
+    throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
+  }
+  if (!process.env.COURTS_CREDENTIALS) {
+    throw new Error('Missing COURTS_CREDENTIALS environment.')
+  }
+}
+
+const prodConfig = {
+  production: true,
+  auth: {
+    jwtSecret: process.env.AUTH_JWT_SECRET,
+    secretToken: process.env.SECRET_TOKEN,
+  },
+  notifications: {
+    courtsMobileNumbers: JSON.parse(
+      process.env.COURTS_MOBILE_NUMBERS || '{}',
+    ) as {
+      [key: string]: string
+    },
+    prisonEmail: process.env.PRISON_EMAIL,
+    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
+  },
+  email: {
+    fromEmail: process.env.EMAIL_FROM,
+    fromName: process.env.EMAIL_FROM_NAME,
+    replyToEmail: process.env.EMAIL_REPLY_TO,
+    replyToName: process.env.EMAIL_REPLY_TO_NAME,
+  },
+  smsOptions: {
+    url: process.env.NOVA_URL,
+    username: process.env.NOVA_USERNAME,
+    password: process.env.NOVA_PASSWORD,
+  },
+  signingOptions: {
+    url: process.env.DOKOBIT_URL,
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
+  },
+  admin: {
+    users: process.env.ADMIN_USERS,
+  },
+  files: {
+    region: process.env.S3_REGION,
+    bucket: process.env.S3_BUCKET,
+    timeToLivePost: process.env.S3_TIME_TO_LIVE_POST,
+    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET,
+  },
+  xRoad: {
+    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV,
+    clientId: process.env.XROAD_CLIENT_ID,
+    clientCert: process.env.XROAD_CLIENT_CERT,
+    clientKey: process.env.XROAD_CLIENT_KEY,
+    clientCa: process.env.XROAD_CLIENT_PEM,
+  },
+  courtClientOptions: {
+    apiPath: process.env.XROAD_COURT_API_PATH,
+    memberCode: process.env.XROAD_COURT_MEMBER_CODE,
+    serviceOptions: JSON.parse(
+      process.env.COURTS_CREDENTIALS || '{}',
+    ) as CourtClientServiceOptions,
+  },
+}
+
+export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

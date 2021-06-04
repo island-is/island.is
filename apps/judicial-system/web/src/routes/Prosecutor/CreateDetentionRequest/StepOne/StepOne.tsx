@@ -15,6 +15,7 @@ import {
 
 import { StepOneForm } from './StepOneForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 interface Props {
   type?: CaseType
@@ -32,8 +33,13 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     skip: !id,
   })
 
+  const { defaultCourt, loading: institutionLoading } = useInstitution()
+
   const handleNextButtonClick = async (theCase: Case) => {
-    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
+    const caseId =
+      theCase.id === ''
+        ? await createCase({ ...theCase, court: defaultCourt })
+        : theCase.id
 
     router.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
   }
@@ -77,8 +83,9 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
-      {workingCase && (
+      {workingCase && !institutionLoading && (
         <StepOneForm
           case={workingCase}
           loading={isCreatingCase}

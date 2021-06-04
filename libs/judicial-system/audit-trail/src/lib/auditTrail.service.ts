@@ -4,7 +4,8 @@ import { createHash } from 'crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export enum AuditedAction {
   LOGIN = 'LOGIN',
@@ -21,7 +22,7 @@ export enum AuditedAction {
   GET_USER = 'GET_USER',
   CREATE_USER = 'CREATE_USER',
   UPDATE_USER = 'UPDATE_USER',
-  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
+  CREATE_COURT_CASE = 'CREATE_COURT_CASE',
   GET_REQUEST_PDF = 'GET_REQUEST_PDF',
   GET_RULING_PDF = 'GET_RULING_PDF',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',

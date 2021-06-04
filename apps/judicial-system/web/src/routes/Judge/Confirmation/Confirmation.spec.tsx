@@ -1,21 +1,16 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import {
-  CaseAppealDecision,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockJudgeQuery,
-  mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import userEvent from '@testing-library/user-event'
 import { Confirmation } from './Confirmation'
 
 describe('Confirmation route', () => {
-  test(`should not allow users to continue unless every required field has been filled out`, async () => {
+  test(`should allow users to continue if the user is the assigned judge`, async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -25,15 +20,7 @@ describe('Confirmation route', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              courtStartTime: '2020-09-16T15:55:000Z',
-            } as UpdateCase,
-          ]),
-        ]}
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
         <UserProvider>
@@ -43,17 +30,6 @@ describe('Confirmation route', () => {
     )
 
     // Assert
-    expect(
-      await screen.findByRole('button', {
-        name: /Staðfesta og hefja undirritun/i,
-      }),
-    ).toBeDisabled()
-
-    userEvent.type(
-      await screen.findByLabelText('Þinghaldi lauk (kk:mm) *'),
-      '15:55',
-    )
-
     expect(
       await screen.findByRole('button', {
         name: /Staðfesta og hefja undirritun/i,
@@ -71,15 +47,7 @@ describe('Confirmation route', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              courtStartTime: '2020-09-16T15:55:000Z',
-            } as UpdateCase,
-          ]),
-        ]}
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
         <UserProvider>

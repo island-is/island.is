@@ -1,7 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
@@ -42,8 +43,18 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementsByNationalId(nationalId: string) {
-    this.logger.debug(`Finding endorsements for single national id`)
-    return this.endorsementModel.findAll({ where: { endorser: nationalId } })
+    this.logger.debug(
+      `Finding endorsements for single national id ${nationalId}`,
+    )
+    return this.endorsementModel.findAll({
+      where: { endorser: nationalId },
+      include: [
+        {
+          model: EndorsementList,
+          attributes: ['id', 'title', 'description'],
+        },
+      ],
+    })
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {

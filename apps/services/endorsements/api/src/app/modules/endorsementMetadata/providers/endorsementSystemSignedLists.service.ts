@@ -5,7 +5,7 @@ import {
   EndorsementList,
   EndorsementTag,
 } from '../../endorsementList/endorsementList.model'
-import { MetadataProvider } from '../endorsementMetadata.service'
+import { MetadataProvider } from '../types'
 
 export interface EndorsementSystemSignedListsInput {
   nationalId: string
@@ -29,7 +29,7 @@ export class EndorsementSystemSignedListsService implements MetadataProvider {
     })
     const tags = endorsements.reduce(
       (uniqueTags: EndorsementTag[], endorsement) => {
-        return [...uniqueTags, ...endorsement.endorsementList.tags]
+        return [...uniqueTags, ...(endorsement.endorsementList?.tags ?? [])]
       },
       [],
     )

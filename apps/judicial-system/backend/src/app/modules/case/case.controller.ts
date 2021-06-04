@@ -25,9 +25,10 @@ import {
 import {
   CaseState,
   CaseTransition,
-  User,
+  IntegratedCourts,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -67,7 +68,8 @@ const prosecutorUpdateRule = {
     'defenderEmail',
     'defenderPhoneNumber',
     'sendRequestToDefender',
-    'court',
+    'courtId',
+    'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
     'requestedCustodyEndDate',
@@ -81,6 +83,7 @@ const prosecutorUpdateRule = {
     'comments',
     'caseFilesComments',
     'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
   ],
 } as RolesRule
 
@@ -91,7 +94,7 @@ const courtFields = [
   'courtCaseNumber',
   'courtDate',
   'courtRoom',
-  'courtStartTime',
+  'courtStartDate',
   'courtEndTime',
   'courtAttendees',
   'policeDemands',
@@ -99,6 +102,8 @@ const courtFields = [
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
+  'courtCaseFacts',
+  'courtLegalArguments',
   'ruling',
   'additionToConclusion',
   'decision',
@@ -170,48 +175,27 @@ export class CaseController {
     private readonly userService: UserService,
   ) {}
 
-  private async validateProsecutor(prosecutorId: string, existingCase: Case) {
-    const user = await this.userService.findById(prosecutorId)
+  private async validateAssignedUser(
+    assignedUserId: string,
+    assignedUserRole: UserRole,
+    institutionId: string,
+  ) {
+    const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (!user) {
-      throw new NotFoundException(`User ${prosecutorId} does not exist`)
+    if (!assignedUser) {
+      throw new NotFoundException(`User ${assignedUserId} does not exist`)
     }
 
-    if (user.role !== UserRole.PROSECUTOR) {
-      throw new ForbiddenException(`User ${prosecutorId} is not a prosecutor}`)
-    }
-
-    if (
-      existingCase.prosecutor &&
-      user.institutionId !== existingCase.prosecutor.institutionId
-    ) {
+    if (assignedUser.role !== assignedUserRole) {
       throw new ForbiddenException(
-        `User ${prosecutorId} belongs to the wrong institution`,
+        `User ${assignedUserId} is not a ${assignedUserRole}}`,
       )
     }
-  }
 
-  private async validateJudge(judgeId: string) {
-    const user = await this.userService.findById(judgeId)
-
-    if (!user) {
-      throw new NotFoundException(`User ${judgeId} does not exist`)
-    }
-
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException(`User ${judgeId} is not a judge}`)
-    }
-  }
-
-  private async validateRegistrar(registratId: string) {
-    const user = await this.userService.findById(registratId)
-
-    if (!user) {
-      throw new NotFoundException(`User ${registratId} does not exist`)
-    }
-
-    if (user.role !== UserRole.REGISTRAR) {
-      throw new ForbiddenException(`User ${registratId} is not a registrar}`)
+    if (institutionId && assignedUser.institutionId !== institutionId) {
+      throw new ForbiddenException(
+        `User ${assignedUserId} belongs to the wrong institution`,
+      )
     }
   }
 
@@ -245,16 +229,27 @@ export class CaseController {
     // Make sure the user has access to this case
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
-    // Make sure a valid users are assigned to the case's roles
-    // TODO: move user role verification to an interceptor
+    // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
-      await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
+      await this.validateAssignedUser(
+        caseToUpdate.prosecutorId,
+        UserRole.PROSECUTOR,
+        existingCase.prosecutor?.institutionId,
+      )
     }
     if (caseToUpdate.judgeId) {
-      await this.validateJudge(caseToUpdate.judgeId)
+      await this.validateAssignedUser(
+        caseToUpdate.judgeId,
+        UserRole.JUDGE,
+        existingCase.courtId,
+      )
     }
     if (caseToUpdate.registrarId) {
-      await this.validateRegistrar(caseToUpdate.registrarId)
+      await this.validateAssignedUser(
+        caseToUpdate.registrarId,
+        UserRole.REGISTRAR,
+        existingCase.courtId,
+      )
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -265,6 +260,16 @@ export class CaseController {
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      IntegratedCourts.includes(existingCase.courtId) &&
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase
@@ -333,7 +338,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     return existingCase
   }
@@ -351,7 +356,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
@@ -379,7 +384,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRulingPdf(existingCase)
 
@@ -467,12 +472,12 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     if (existingCase.childCase) {
       return existingCase.childCase
     }
 
-    return this.caseService.extend(existingCase)
+    return this.caseService.extend(existingCase, user)
   }
 }

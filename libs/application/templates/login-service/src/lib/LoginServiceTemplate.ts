@@ -38,6 +38,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.LOGIN_SERVICE,
   name: application.name,
+  readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.LoginService.translation],
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {
@@ -46,8 +47,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -77,8 +80,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
-          title: application.name,
-          description: application.description,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
