@@ -61,7 +61,7 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
-    return this.licenseServiceService.getAllLicenses(user.nationalId, {
+    return this.licenseServiceService.getAllLicenses(user.nationalId, locale, {
       includedProviders: input?.includedProviders,
       excludedProviders: input?.excludedProviders,
       force: input?.force,
@@ -78,6 +78,7 @@ export class MainResolver {
   ) {
     return this.licenseServiceService.getLicense(
       user.nationalId,
+      locale,
       input.providerId,
       input.licenseType,
       input.licenseId,

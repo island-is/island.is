@@ -30,10 +30,7 @@ const GenericLicensesQuery = gql`
     }
   }
 
-  query GenericLicensesQuery(
-    $input: GetGenericLicensesInput!
-    $locale: String!
-  ) {
+  query GenericLicensesQuery($input: GetGenericLicensesInput, $locale: String) {
     genericLicenses(input: $input, locale: $locale) {
       nationalId
       license {

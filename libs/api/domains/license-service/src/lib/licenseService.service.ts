@@ -3,6 +3,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { GenericUserLicense } from './licenceService.type'
 import { LicenseServiceApi } from './client/driving-license-client'
 import { drivingLicensesToSingleGenericLicense } from './client/driving-license-client/drivingLicenseMappers'
+import { Locale } from '@island.is/shared/types'
 
 export type GetGenericDrivingLicenseOptions = {
   includedProviders?: Array<string>
@@ -17,6 +18,7 @@ export class LicenseServiceService {
 
   async getAllLicenses(
     nationalId: User['nationalId'],
+    locale: Locale,
     {
       includedProviders,
       excludedProviders,
@@ -46,6 +48,7 @@ export class LicenseServiceService {
 
   async getLicense(
     nationalId: User['nationalId'],
+    locale: Locale,
     providerId: string,
     licenseType: string, // TODO(osk) actual type/enum
     licenseId: string,
