@@ -104,6 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: parentalLeaveFormMessages.shared.introductionProvider,
+              checkboxLabel: parentalLeaveFormMessages.shared.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
                   id: 'userProfile',
