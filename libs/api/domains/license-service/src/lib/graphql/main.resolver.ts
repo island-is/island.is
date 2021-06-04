@@ -6,8 +6,8 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
+import { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
 import { GenericUserLicense } from './genericLicense.model'
@@ -57,6 +57,8 @@ export class MainResolver {
   @Query(() => [GenericUserLicense])
   genericLicenses(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     return this.licenseServiceService.getAllLicenses(user.nationalId, {
@@ -70,6 +72,8 @@ export class MainResolver {
   @Query(() => GenericUserLicense)
   genericLicense(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
     return this.licenseServiceService.getLicense(

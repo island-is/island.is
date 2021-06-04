@@ -1,5 +1,7 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
+import { Locale } from '@island.is/shared/types'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 
 import { DataField, GenericLicenseDataFieldType, Query } from '@island.is/api/schema'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
@@ -24,8 +26,11 @@ const GenericLicensesQuery = gql`
     }
   }
 
-  query GenericLicensesQuery {
-    genericLicenses {
+  query GenericLicensesQuery(
+    $input: GetGenericLicensesInput!
+    $locale: String!
+  ) {
+    genericLicenses(input: $input, locale: $locale) {
       nationalId
       license {
         type
@@ -65,7 +70,9 @@ const DataFields = ({ fields }: { fields: DataField[] }) => {
             )}
             {field.type === GenericLicenseDataFieldType.Category && (
               <>
-                <h3>{field.name} - {field.label}</h3>
+                <h3>
+                  {field.name} - {field.label}
+                </h3>
                 <DataFields fields={field.fields ?? []} />
               </>
             )}
@@ -83,14 +90,31 @@ const DataFields = ({ fields }: { fields: DataField[] }) => {
 }
 
 const LicenseCards = () => {
-  const { data, loading: queryLoading } = useQuery<Query>(GenericLicensesQuery)
+  const { data: userProfile } = useUserProfile()
+  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const { data, loading: queryLoading } = useQuery<Query>(
+    GenericLicensesQuery,
+    {
+      variables: {
+        locale,
+        input: {
+          // includedProviders: [],
+          // excludedProviders?: [],
+          // force: false,
+          // onlyList: false,
+        },
+      },
+    },
+  )
   const { genericLicenses = [] } = data || {}
+
+  console.log(genericLicenses)
 
   if (queryLoading) {
     return <SkeletonLoader width="100%" height={158} />
   }
 
-  console.log('genericLicenses :>> ', genericLicenses);
+  console.log('genericLicenses :>> ', genericLicenses)
 
   return (
     <>
@@ -116,9 +140,9 @@ const LicenseCards = () => {
           <h2>Staða á að sækja skilríki</h2>
           <dl>
             <dt>Staða</dt>
-            <dd>{license.fetch.status}</dd>
+            <dd>{license.fetch?.status}</dd>
             <dt>Uppfært</dt>
-            <dd>{license.fetch.updated}</dd>
+            <dd>{license.fetch?.updated}</dd>
           </dl>
           <DataFields fields={license.payload?.data ?? []} />
         </Box>
