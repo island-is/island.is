@@ -67,7 +67,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <RequestedCourtDate
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
@@ -77,7 +77,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={Constants.NEW_R_CASE_ROUTE}
-          nextUrl={Constants.R_CASE_POLICE_DEMANDS_ROUTE}
+          nextUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
           nextIsLoading={false}
         />
