@@ -43,7 +43,7 @@ jobs:
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
-          GIT_BRANCH_DEPLOY=$GIT_BRANCH
+          export GIT_BRANCH_DEPLOY=$GIT_BRANCH
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
               # If event is pull request but branch is not prefixed with feature/
