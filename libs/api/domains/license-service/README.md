@@ -1,4 +1,4 @@
-# api-domains-license-service
+# API Domains License Service
 
 ## Adding licenses
 
