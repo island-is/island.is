@@ -1,8 +1,10 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
 import { LicenseServiceService } from './licenseService.service'
-import { LicenseServiceApi } from './client'
+
 import { MainResolver } from './graphql/main.resolver'
+
+import { LicenseServiceApi } from './client/driving-license-client/drivingLicenseService.api'
 
 export interface Config {
   xroad: {

@@ -1,6 +1,6 @@
 import fetch, { Response } from 'node-fetch'
 
-// TODO correct way to include logger? inject?
+// TODO(osk) correct way to include logger? inject?
 import { logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
@@ -39,7 +39,7 @@ export class LicenseServiceApi {
         )
       }
     } catch (e) {
-      // TODO correct way to log this?
+      // TODO(osk) correct way to log this?
       logger.error('Unable to query for drivers licence', {
         exception: e,
         url,
@@ -51,7 +51,7 @@ export class LicenseServiceApi {
     try {
       json = await res.json()
     } catch (e) {
-      // TODO correct way to log this?
+      // TODO(osk) correct way to log this?
       logger.error('Unable to parse JSON for drivers licence', {
         exception: e,
         url,
@@ -71,6 +71,7 @@ export class LicenseServiceApi {
   async getGenericDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<GenericDrivingLicenseResponse[] | null> {
+    // TODO(osk) Move into env
     const xroadDrivingLicensePath =
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
 
@@ -78,7 +79,7 @@ export class LicenseServiceApi {
       `${xroadDrivingLicensePath}/api/Okuskirteini/${nationalId}`,
     )
 
-    // TODO should this throw or return null? What's the general pattern
+    // TODO(osk) should this throw or return null? What's the general pattern
     if (!response) {
       return null
     }
@@ -88,7 +89,7 @@ export class LicenseServiceApi {
       return null
     }
 
-    // TODO map and validate every field?
+    // TODO(osk) map and validate every field?
     const licenses = response as GenericDrivingLicenseResponse[]
 
     // If we get more than one license, sort in descending order so we can pick the first one as the

@@ -10,7 +10,7 @@ import {
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 
 import { LicenseServiceService } from '../licenseService.service'
-import { GenericUserLicenseFields } from './genericLicense.model'
+import { GenericUserLicense } from './genericLicense.model'
 
 // TODO move these types
 @InputType()
@@ -54,7 +54,7 @@ export class GetGenericLicenseInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [GenericUserLicenseFields])
+  @Query(() => [GenericUserLicense])
   genericLicenses(
     @CurrentUser() user: User,
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
@@ -67,7 +67,7 @@ export class MainResolver {
     })
   }
 
-  @Query(() => GenericUserLicenseFields)
+  @Query(() => GenericUserLicense)
   genericLicense(
     @CurrentUser() user: User,
     @Args('input') input: GetGenericLicenseInput,

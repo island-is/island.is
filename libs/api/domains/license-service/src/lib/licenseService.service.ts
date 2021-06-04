@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  GenericLicenseFields,
-  GenericUserLicenseFields,
-} from './licenceService.type'
-import { LicenseServiceApi } from './client'
-import { drivingLicensesToSingleGenericLicense } from './util/licenseMappers'
+import { GenericUserLicense } from './licenceService.type'
+import { LicenseServiceApi } from './client/driving-license-client'
+import { drivingLicensesToSingleGenericLicense } from './client/driving-license-client/drivingLicenseMappers'
 
 export type GetGenericDrivingLicenseOptions = {
   includedProviders?: Array<string>
@@ -26,13 +23,13 @@ export class LicenseServiceService {
       force,
       onlyList,
     }: GetGenericDrivingLicenseOptions = {},
-  ): Promise<GenericUserLicenseFields[]> {
+  ): Promise<GenericUserLicense[]> {
     const drivingLicense = await this.licenseService.getGenericDrivingLicense(
       nationalId,
     )
 
     if (!drivingLicense) {
-      // TODO how do we handle null?
+      // TODO(osk) how do we handle null?
       throw Error(`unable to get drivers license for nationalId ${nationalId}`)
     }
 
@@ -50,15 +47,15 @@ export class LicenseServiceService {
   async getLicense(
     nationalId: User['nationalId'],
     providerId: string,
-    licenseType: string, // TODO actual type/enum
+    licenseType: string, // TODO(osk) actual type/enum
     licenseId: string,
-  ): Promise<GenericUserLicenseFields | null> {
+  ): Promise<GenericUserLicense | null> {
     const drivingLicense = await this.licenseService.getGenericDrivingLicense(
       nationalId,
     )
 
     if (!drivingLicense) {
-      // TODO how do we handle null?
+      // TODO(osk) how do we handle null?
       throw Error(`unable to get drivers license for nationalId ${nationalId}`)
     }
 
