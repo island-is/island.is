@@ -38,32 +38,28 @@ const EmployerApprovalExtraInformation: FC<ScreenProps> = ({ application }) => {
     options.find((option) => option.value === id)?.label
 
   return (
-    <>
-      <Box>
-        <GridRow marginBottom={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-              )}
-              value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
-            />
-          </GridColumn>
+    <GridRow marginTop={2}>
+      <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <DataValue
+          label={formatMessage(
+            parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+          )}
+          value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+        />
+      </GridColumn>
 
-          <GridColumn
-            paddingTop={[2, 2, 2, 0]}
-            span={['12/12', '12/12', '12/12', '5/12']}
-          >
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.salaryLabelUnion,
-              )}
-              value={getSelectOptionLabel(unionOptions, union)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-    </>
+      <GridColumn
+        paddingTop={[2, 2, 2, 0]}
+        span={['12/12', '12/12', '12/12', '5/12']}
+      >
+        <DataValue
+          label={formatMessage(
+            parentalLeaveFormMessages.shared.salaryLabelUnion,
+          )}
+          value={getSelectOptionLabel(unionOptions, union)}
+        />
+      </GridColumn>
+    </GridRow>
   )
 }
 
