@@ -13,6 +13,7 @@ import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateApplicationApprovedEmail,
+  generateOtherParentRejected,
 } from './emailGenerators'
 import { transformApplicationToParentalLeaveDTO } from './parental-leave.utils'
 import { apiConstants, formConstants } from './constants'
@@ -32,8 +33,17 @@ export class ParentalLeaveService {
   ) {}
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+    await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
+      application,
+    )
+  }
+
+  async notifyApplicantOfRejectionFromOtherParent({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateOtherParentRejected,
       application,
     )
   }
