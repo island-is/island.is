@@ -19,6 +19,8 @@ export const STEP_SIX_ROUTE = '/krafa/stadfesta'
 export const NEW_R_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const R_CASE_HEARING_ARRANGEMENTS_ROUTE =
   '/krafa/rannsoknarheimild/fyrirtaka'
+export const R_CASE_POLICE_DEMANDS_ROUTE =
+  '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'
