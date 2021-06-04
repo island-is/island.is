@@ -1,21 +1,14 @@
 import React, { FC } from 'react'
 
 import { Application, RecordObject, Field } from '@island.is/application/core'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  DataValue,
-  Label,
-  RadioValue,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { DataValue } from '@island.is/application/ui-components'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL } from '../../constants'
-import { Boolean } from '../../hooks/useApplicationAnswers'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
-import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface ScreenProps {
   application: Application
@@ -32,7 +25,7 @@ const EmployerApprovalExtraInformation: FC<ScreenProps> = ({ application }) => {
   const pensionFundOptions = usePensionFundOptions()
   const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()
-  const [{ pensionFund, union }, setStateful] = useStatefulAnswers(application)
+  const { pensionFund, union } = useApplicationAnswers(application)
 
   const getSelectOptionLabel = (options: selectOption[], id: string) =>
     options.find((option) => option.value === id)?.label
