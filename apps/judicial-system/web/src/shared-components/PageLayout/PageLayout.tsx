@@ -18,6 +18,10 @@ import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
 import * as styles from './PageLayout.treat'
+import {
+  getCustodyAndTravelBanProsecutorSection,
+  getRCaseProsecutorSection,
+} from './Sections'
 
 interface PageProps {
   children: ReactNode
@@ -73,55 +77,13 @@ const PageLayout: React.FC<PageProps> = ({
   }
 
   const sections = [
-    {
-      name:
-        caseType === CaseType.CUSTODY
-          ? 'Krafa um gæsluvarðhald'
-          : 'Krafa um farbann',
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: 'Sakborningur',
-          href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Óskir um fyrirtöku',
-          href:
-            activeSubSection && activeSubSection > 1
-              ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
-          href:
-            activeSubSection && activeSubSection > 2
-              ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Greinargerð',
-          href:
-            activeSubSection && activeSubSection > 3
-              ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Rannsóknargögn',
-          href:
-            activeSubSection && activeSubSection > 4
-              ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
-        },
-      ],
-    },
+    caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+      ? getCustodyAndTravelBanProsecutorSection(
+          caseId,
+          caseType,
+          activeSubSection,
+        )
+      : getRCaseProsecutorSection(caseId, caseType, activeSubSection),
     {
       name: 'Úrskurður Héraðsdóms',
       children: [
