@@ -178,7 +178,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
-            defaultMessage: 'Rafræn skjöl',
+            defaultMessage: 'Pósthólf',
           })}
         </Text>
         <Columns collapseBelow="sm">

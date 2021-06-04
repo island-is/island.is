@@ -21,6 +21,7 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
+  SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',

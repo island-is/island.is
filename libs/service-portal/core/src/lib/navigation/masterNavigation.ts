@@ -27,7 +27,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: defineMessage({
           id: 'service.portal:documents',
-          defaultMessage: 'Rafræn skjöl',
+          defaultMessage: 'Pósthólf',
         }),
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
@@ -37,17 +37,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       // Umsoknir
-      {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
-        path: ServicePortalPath.ApplicationRoot,
-        icon: {
-          type: 'outline',
-          icon: 'fileTrayFull',
-        },
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:applications',
+      //     defaultMessage: 'Umsóknir',
+      //   }),
+      //   path: ServicePortalPath.ApplicationRoot,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'fileTrayFull',
+      //   },
+      // },
 
       // Min Gogn
       {
@@ -167,33 +167,33 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       // Stillingar
-      {
-        name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
-        }),
-        path: ServicePortalPath.SettingsRoot,
-        icon: {
-          type: 'outline',
-          icon: 'settings',
-        },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:personalInformation',
-              defaultMessage: 'Persónuupplýsingar',
-            }),
-            path: ServicePortalPath.SettingsPersonalInformation,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:accessControl',
-              defaultMessage: 'Aðgangsstýring',
-            }),
-            path: ServicePortalPath.SettingsAccessControl,
-          },
-        ],
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:settings',
+      //     defaultMessage: 'Stillingar',
+      //   }),
+      //   path: ServicePortalPath.SettingsRoot,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'settings',
+      //   },
+      //   children: [
+      //     {
+      //       name: defineMessage({
+      //         id: 'service.portal:personalInformation',
+      //         defaultMessage: 'Persónuupplýsingar',
+      //       }),
+      //       path: ServicePortalPath.SettingsPersonalInformation,
+      //     },
+      //     {
+      //       name: defineMessage({
+      //         id: 'service.portal:accessControl',
+      //         defaultMessage: 'Aðgangsstýring',
+      //       }),
+      //       path: ServicePortalPath.SettingsAccessControl,
+      //     },
+      //   ],
+      // },
     ],
   },
   {
@@ -204,23 +204,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
     }),
     children: [
       // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        path: ServicePortalPath.FinanceExternal,
-        external: true,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:finance',
+      //     defaultMessage: 'Fjármál',
+      //   }),
+      //   heading: defineMessage({
+      //     id: 'service.portal:coming-soon',
+      //     defaultMessage: 'Annað',
+      //   }),
+      //   path: ServicePortalPath.FinanceExternal,
+      //   external: true,
+      //   systemRoute: true,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'cellular',
+      //   },
+      // },
 
       // Fasteignir
       {
@@ -234,6 +234,36 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'home',
+        },
+      },
+
+      // Ökutæki
+      {
+        name: defineMessage({
+          id: 'service.portal:vehicles',
+          defaultMessage: 'Ökutæki',
+        }),
+        path: ServicePortalPath.FinanceVehicles,
+        external: true,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'car',
+        },
+      },
+
+      // Stillingar
+      {
+        name: defineMessage({
+          id: 'service.portal:settings',
+          defaultMessage: 'Stillingar',
+        }),
+        path: ServicePortalPath.SettingsExternal,
+        external: true,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'settings',
         },
       },
 

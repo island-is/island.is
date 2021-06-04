@@ -4,14 +4,14 @@ import { documentsModule } from '@island.is/service-portal/documents'
 import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
-import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
+// import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
-import { educationDegreeModule } from '@island.is/service-portal/education-degree'
+// import { educationDegreeModule } from '@island.is/service-portal/education-degree'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
-import { applicationsModule } from '@island.is/service-portal/applications'
+// import { applicationsModule } from '@island.is/service-portal/applications'
 
 /**
  * NOTE:
@@ -31,12 +31,12 @@ export type ModuleKeys =
   | 'family'
   | 'finance'
   | 'icelandicNamesRegistry'
-  | 'personalInformation'
+  // | 'personalInformation'
   | 'education'
   | 'educationLicense'
   | 'educationCareer'
   | 'educationStudentAssessment'
-  | 'applications'
+// | 'applications'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
@@ -54,11 +54,11 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   family: familyModule,
   finance: financeModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
-  personalInformation: personalInformationModule,
+  // personalInformation: personalInformationModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
-  applications: applicationsModule,
+  // applications: applicationsModule,
   accessControl: accessControlModule,
 }
