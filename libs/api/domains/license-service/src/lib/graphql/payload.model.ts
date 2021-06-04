@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { IsOptional } from 'class-validator'
+import { IsObject, IsOptional } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
+import graphqlTypeJson from 'graphql-type-json'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
@@ -38,7 +39,10 @@ export class Payload {
   })
   data!: GenericLicenseDataField[]
 
-  // TODO(osk) how do we represent json?
-  @Field({ nullable: true, description: 'Raw JSON data' })
-  rawData?: string
+  @Field(() => graphqlTypeJson, {
+    nullable: true,
+    description: 'Raw JSON data',
+  })
+  @IsObject()
+  rawData?: object
 }
