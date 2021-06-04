@@ -403,6 +403,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Mánuður',
       description: 'Month',
     },
+    salaryLabelUnion: {
+      id: 'pl.application:salary.label.union',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Union',
+    },
     salaryLabelPensionFund: {
       id: 'pl.application:salary.label.pensionfund',
       defaultMessage: 'Lífeyrissjóður',
