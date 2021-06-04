@@ -49,8 +49,8 @@ export const coreMessages = defineMessages({
   },
   externalDataAgreement: {
     id: 'application.system:externalData.agreement',
-    defaultMessage: 'Ég samþykki',
-    description: 'I agree',
+    defaultMessage: 'Ég hef kynnt mér ofangreint',
+    description: 'I understand',
   },
   updateOrSubmitError: {
     id: 'application.system:submit.error',

@@ -42,6 +42,7 @@ export const application: Form = buildForm({
         buildExternalDataProvider({
           title: 'Umsókn um fullnaðarskírteini',
           id: 'approveExternalData',
+          checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -71,7 +72,7 @@ export const application: Form = buildForm({
             buildDataProviderItem({
               id: 'payment',
               type: 'PaymentCatalogProvider',
-              title: 'Borga meira. + VSK',
+              title: '',
             }),
           ],
         }),
