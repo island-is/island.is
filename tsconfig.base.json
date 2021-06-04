@@ -75,6 +75,9 @@
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
+      "@island.is/api/domains/freshdesk": [
+        "libs/api/domains/freshdesk/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],

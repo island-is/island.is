@@ -1038,6 +1038,27 @@
         }
       }
     },
+    "api-domains-freshdesk": {
+      "root": "libs/api/domains/freshdesk",
+      "sourceRoot": "libs/api/domains/freshdesk/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/freshdesk/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/freshdesk"],
+          "options": {
+            "jestConfig": "libs/api/domains/freshdesk/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
