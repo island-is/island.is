@@ -4,6 +4,9 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
       .createTable('payment', {
+        id: {
+          type: Sequelize.UUID,
+        },
         applicationId: {
           type: Sequelize.UUID,
           allowNull: false,
@@ -13,7 +16,7 @@ module.exports = {
           },
         },
         fulfilled: {
-          type: boolean,
+          type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false
         },
@@ -21,7 +24,7 @@ module.exports = {
           type: Sequelize.UUID,
           allowNull: false,
         },
-        arkUrl: {
+        user4: {
           type: Sequelize.STRING,
           allowNull: false,
         },
@@ -31,14 +34,14 @@ module.exports = {
         amount: {
           type: Sequelize.STRING,
         },
+        /// maybe remove.
         expiresAt: {
           type: 'TIMESTAMP WITH TIME ZONE',
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
           allowNull: false,
         },
       })
       .then(() => 
-        queryInterface.addIndex('payment', ['applicationId', 'fulfilled']),
+        queryInterface.addIndex('payment', ['applicationId']),
       )
   },
 

@@ -67,6 +67,8 @@ import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
+import { CreatePaymentDto } from './dto/createPayment.dto'
+import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -95,7 +97,7 @@ import {
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
-import { Application } from './application.model'
+import { Application, Payment } from './application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -999,5 +1001,73 @@ export class ApplicationController {
     })
 
     return { url }
+  }
+
+
+  @Scopes(ApplicationScope.write)
+  @ApiParam({
+    name: 'applicationId',
+    type: String,
+    required: true,
+    description: 'The id of the application to submit payment for.',
+    allowEmptyValue: false,
+  })
+  @Post('applications/:applicationId/payment')
+  @ApiCreatedResponse({ type: CreatePaymentResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async paymentApplication(
+    @Body()
+    application: CreatePaymentDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<CreatePaymentResponseDto> {
+    const { applicationId } = application
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      applicationId,
+      user.nationalId,
+    )
+
+    if (existingApplication === null) {
+      throw new BadRequestException(
+        `No application found for application id: ${applicationId}`,
+      )
+    }
+
+    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+
+    // TODO: initial state should be required --------- IS INITIAL STATE REQUIRED FOR PAYMENT?
+
+    const paymentDto: Pick<
+      Payment,
+       'id',
+      | 'applicationId'
+      | 'fulfilled'
+      | 'referenceId'
+      | 'user4'
+      | 'definition'
+      | 'amount'
+      | 'expiresAt'
+    > = {
+      id: application.id,
+      applicationId: application.applicationId,
+      fulfilled: false,
+      referenceId: "mad ID - Where is this generated???",
+      user4: "gief url",
+      definition: {},
+      amount: application.amount,
+      expiresAt: application.expiresAt,
+    }
+
+    const createdPayment = await this.applicationService.createPayment(
+      paymentDto,
+    )
+
+    this.auditService.audit({
+      user,
+      action: 'create',
+      resources: createdPayment.id,
+      meta: { type: application.applicationId },
+    })
+    return createdPayment
   }
 }

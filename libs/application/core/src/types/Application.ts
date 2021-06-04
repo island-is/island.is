@@ -45,3 +45,13 @@ export interface Application {
   progress?: number
   status: ApplicationStatus
 }
+
+export interface Payment {
+  applicationId: string,
+  fulfilled: boolean,
+  referenceId: string,
+  arkUrl: string,
+  definition: object,
+  amount: number,
+  expiresAt: Date,
+}
