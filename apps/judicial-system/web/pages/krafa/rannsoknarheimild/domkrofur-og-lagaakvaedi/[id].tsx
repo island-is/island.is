@@ -1,8 +1,8 @@
 import React from 'react'
-import PoliceRequest from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/PoliceRequest/PoliceRequest'
+import PoliceDemands from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/PoliceDemands/PoliceDemands'
 
-const PoliceRequestRoute = () => {
-  return <PoliceRequest />
+const PoliceDemandsRoute = () => {
+  return <PoliceDemands />
 }
 
-export default PoliceRequestRoute
+export default PoliceDemandsRoute

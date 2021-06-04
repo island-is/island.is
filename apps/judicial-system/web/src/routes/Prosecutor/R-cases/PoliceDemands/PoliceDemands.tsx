@@ -9,8 +9,9 @@ import {
 import { Case } from '@island.is/judicial-system/types'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import PoliceDemandsForm from './PoliceDemandsForm'
 
-const PoliceRequest: React.FC = () => {
+const PoliceDemands: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
@@ -25,12 +26,18 @@ const PoliceRequest: React.FC = () => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
+  useEffect(() => {
+    if (!workingCase && data) {
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
+
   return (
     <PageLayout
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_ONE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_THREE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
@@ -39,9 +46,14 @@ const PoliceRequest: React.FC = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      <p>sdjkfnnksfd</p>
+      {workingCase && (
+        <PoliceDemandsForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      )}
     </PageLayout>
   )
 }
 
-export default PoliceRequest
+export default PoliceDemands

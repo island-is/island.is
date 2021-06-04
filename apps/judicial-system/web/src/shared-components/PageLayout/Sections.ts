@@ -78,14 +78,14 @@ export const getRCaseProsecutorSection = (
             ? `${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
             : undefined,
       },
-      // {
-      //   type: 'SUB_SECTION',
-      //   name: 'Dómkröfur og lagagrundvöllur',
-      //   href:
-      //     activeSubSection && activeSubSection > 2
-      //       ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
-      //       : undefined,
-      // },
+      {
+        type: 'SUB_SECTION',
+        name: 'Dómkröfur og lagagrundvöllur',
+        href:
+          activeSubSection && activeSubSection > 2
+            ? `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${caseId}`
+            : undefined,
+      },
       // {
       //   type: 'SUB_SECTION',
       //   name: 'Greinargerð',

@@ -67,7 +67,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_ONE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_TWO}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
