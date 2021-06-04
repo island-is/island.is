@@ -21,4 +21,4 @@ COPY --from=build /app/dist/ /app
 COPY infra/scripts/container-scripts/* ./app/
 WORKDIR /app
 
-CMD [ "node", "feature-env" ]
+ENTRYPOINT [ "node", "feature-env" ]
