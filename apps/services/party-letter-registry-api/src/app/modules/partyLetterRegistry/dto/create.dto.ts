@@ -4,10 +4,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDto {
   @ApiProperty()
-  @IsNationalId()
-  owner!: string
-
-  @ApiProperty()
   @Length(1, 2)
   partyLetter!: string
 

@@ -3,6 +3,8 @@ import { environment } from './environments'
 import {
   ApplicationScope,
   NationalRegistryScope,
+  PartyLetterRegistry,
+  TemporaryVoterRegistry,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 
@@ -19,7 +21,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
     client_id: 'island-is-1',
-    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${ApplicationScope.write} ${UserProfileScope.read} ${NationalRegistryScope.individuals}`,
+    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${ApplicationScope.write} ${UserProfileScope.read} ${TemporaryVoterRegistry.read} ${PartyLetterRegistry.read} ${NationalRegistryScope.individuals}`,
     post_logout_redirect_uri: `${window.location.origin}`,
   })
 }
