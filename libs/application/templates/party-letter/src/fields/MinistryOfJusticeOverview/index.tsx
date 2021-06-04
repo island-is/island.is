@@ -51,7 +51,7 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{'528'}</Text>
+          <Text marginBottom={1}>{answers.endorsements?.length}</Text>
         </Box>
       </Box>
       <Box marginBottom={5}>

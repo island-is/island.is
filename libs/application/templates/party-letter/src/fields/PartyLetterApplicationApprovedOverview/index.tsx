@@ -55,7 +55,7 @@ const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text>{'528'}</Text>
+          <Text>{answers.endorsements?.length}</Text>
         </Box>
       </Box>
       <Box display="flex">

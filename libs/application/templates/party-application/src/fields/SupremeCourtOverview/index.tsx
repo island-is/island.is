@@ -59,7 +59,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{'528'}</Text>
+          <Text marginBottom={1}>{answers.endorsements?.length}</Text>
           <ExportAsCSV
             data={answers.endorsements as object[]}
             filename={csvFileName(answers.partyLetter, answers.partyName)}

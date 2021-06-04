@@ -17,6 +17,8 @@ import { toast } from '@island.is/island-ui/core'
 import { Constituencies } from '../../types'
 import { constituencyMapper } from '../../constants'
 import sortBy from 'lodash/sortBy'
+import cloneDeep from 'lodash/cloneDeep'
+import set from 'lodash/set'
 
 const ENDORSEMENTS: Endorsement[] = [
   {
@@ -148,8 +150,8 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   ) => {
     const updatedAnswers = {
       ...answers,
-      endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
+      endorsements: cloneDeep(newEndorsements),
+      endorsementsWithWarning: cloneDeep(newEndorsements.filter((e) => e.hasWarning)),
     }
 
     await updateApplication({
@@ -163,7 +165,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         locale,
       },
     }).then((response) => {
-      application.answers = response.data?.updateApplication?.answers
+      set(answers, 'endorsements', cloneDeep(newEndorsements))
     })
   }
 
