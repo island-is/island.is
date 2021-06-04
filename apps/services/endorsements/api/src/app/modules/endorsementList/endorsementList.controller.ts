@@ -22,11 +22,11 @@ import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { User } from '@island.is/auth-nest-tools'
 import { BypassAuth, CurrentUser } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
+import type { User } from '@island.is/auth-nest-tools'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
 
