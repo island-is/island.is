@@ -13,11 +13,13 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import HearingArrangementsForms from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 const HearingArrangements = () => {
   const router = useRouter()
   const id = router.query.id
   const { user } = useContext(UserContext)
+  const { courts } = useInstitution()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
 
@@ -79,6 +81,7 @@ const HearingArrangements = () => {
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           prosecutors={prosecutors}
+          courts={courts}
         />
       )}
     </PageLayout>
