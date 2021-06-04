@@ -30,6 +30,7 @@ jobs:
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       LABELED_FOR_DEPLOY: ${{ steps.should-run.outputs.LABELED_FOR_DEPLOY }}
     steps:
@@ -53,7 +54,7 @@ jobs:
           fi
           echo "::set-output name=GIT_BRANCH_DEPLOY::${GIT_BRANCH_DEPLOY}"
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d\"/\" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_ENV
+          echo "::set-output name=FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d\"/\" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
 
       - name: Check if we want to run workflow
         id: should-run
@@ -344,6 +345,8 @@ jobs:
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
+    env:
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
     steps:
       - uses: actions/checkout@v2
 
@@ -417,6 +420,7 @@ jobs:
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
     strategy:
