@@ -160,6 +160,11 @@
                 "glob": "migrations/**",
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/air-discount-scheme/backend",
+                "output": "./"
               }
             ],
             "maxWorkers": 2
@@ -6106,7 +6111,7 @@
       "prefix": "services-auth-public-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/auth-public-api",
@@ -6118,13 +6123,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/auth-public-api/src/environments/environment.ts",
-                  "with": "apps/services/auth-public-api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
