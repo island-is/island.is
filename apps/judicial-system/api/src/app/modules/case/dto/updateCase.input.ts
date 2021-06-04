@@ -20,7 +20,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   readonly type?: CaseType
 
   @Allow()
