@@ -446,13 +446,6 @@ export const requiresOtherParentApproval = (
     isRequestingRights,
     usePersonalAllowanceFromSpouse,
   } = applicationAnswers
-  console.log('requires other')
-  console.log({
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-    result:
-      isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES,
-  })
 
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
 }
