@@ -5,10 +5,15 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { Endorsement } from '../../lib/dataSchema'
+import { GetEndorsements } from '../../graphql/queries'
 import BulkUpload from '../BulkUpload'
-import { useEndorsements } from '../../hooks/useFetchEndorsements'
+import { Endorsement as SchemaEndorsements } from '../../types/schema'
 
+interface EndorsementData {
+  endorsementSystemGetEndorsements?: Endorsement[]
+}
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -16,29 +21,50 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
-  const endorsementsHook = useEndorsements(endorsementListId, true)
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
+
+  const {
+    data: endorsementsData,
+    loading,
+    error,
+    refetch,
+  } = useQuery<EndorsementData>(GetEndorsements, {
+    variables: {
+      input: {
+        listId: endorsementListId,
+      },
+    },
+    pollInterval: 20000,
+  })
 
   useEffect(() => {
-    const mapToEndorsementList: Endorsement[] | undefined =
-      endorsementsHook && endorsementsHook.length > 0
-        ? endorsementsHook.map((x: any) => ({
-            date: x.created,
-            name: x.meta.fullName,
-            nationalId: x.endorser,
-            address: x.meta.address ? x.meta.address.streetAddress : '',
-            hasWarning: x.meta.invalidated ?? false,
-            bulkImported: x.bulkEndorsement ?? false,
-            id: x.id,
-          }))
-        : undefined
+    console.log('useEffect')
+    refetch()
+    const mapToEndorsementList:
+      | Endorsement[]
+      | undefined = endorsementsData?.endorsementSystemGetEndorsements?.map(
+      (x: any) => ({
+        date: x.created,
+        name: x.meta.fullName,
+        nationalId: x.endorser,
+        address: x.meta.address ? x.meta.address.streetAddress : '',
+        hasWarning: x.meta?.invalidated ?? false,
+        id: x.id,
+        bulkImported: x.meta?.bulkEndorsement ?? false,
+      }),
+    )
+
+    console.log('update endorsements with', endorsementsData, mapToEndorsementList)
     setEndorsements(mapToEndorsementList)
-  }, [endorsementsHook])
+  }, [endorsementsData, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
+
+  console.log('rendering')
 
   return (
     <Box marginBottom={8}>
@@ -104,7 +130,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             application={application}
             onSuccess={() => {
               console.log('done success')
-              // setUpdateOnBulkImport(true)
+              setUpdateOnBulkImport(true)
             }}
           />
         </Box>
