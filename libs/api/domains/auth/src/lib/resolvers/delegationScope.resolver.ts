@@ -2,7 +2,7 @@ import { Parent, Resolver, ResolveField } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
+import type { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
 
 import { DelegationScope } from '../models'
 
