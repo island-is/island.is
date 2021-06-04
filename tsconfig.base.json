@@ -197,6 +197,7 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/freshdesk": ["libs/clients/freshdesk/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"

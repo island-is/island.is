@@ -80,6 +80,7 @@ module.exports = {
     '<rootDir>/libs/auth-nest-tools',
     '<rootDir>/libs/cache',
     '<rootDir>/libs/clients/auth-public-api',
+    '<rootDir>/libs/clients/freshdesk',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/national-registry',
     '<rootDir>/libs/clients/regulations',

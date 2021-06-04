@@ -2802,6 +2802,27 @@
         }
       }
     },
+    "clients-freshdesk": {
+      "root": "libs/clients/freshdesk",
+      "sourceRoot": "libs/clients/freshdesk/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/freshdesk/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/freshdesk"],
+          "options": {
+            "jestConfig": "libs/clients/freshdesk/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",
