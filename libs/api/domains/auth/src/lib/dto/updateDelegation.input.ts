@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
-class Scopes {
+@InputType('AuthDelegationScopeInput')
+class Scope {
   @Field((_) => String)
   name!: string
 
@@ -14,6 +14,6 @@ export class UpdateDelegationInput {
   @Field((_) => String)
   id!: string
 
-  @Field((_) => [Scopes])
-  scopes!: Scopes[]
+  @Field((_) => [Scope])
+  scopes!: Scope[]
 }

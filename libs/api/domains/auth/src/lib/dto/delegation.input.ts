@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
+@InputType('AuthDelegationInput')
 export class DelegationInput {
   @Field((_) => String)
   name!: string

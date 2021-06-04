@@ -69,5 +69,5 @@ export class CustomDelegation extends Delegation {
   scopesNames!: string[]
 
   @Field((type) => [DelegationScope])
-  scopes!: typeof DelegationScope[]
+  scopes!: DelegationScope[]
 }
