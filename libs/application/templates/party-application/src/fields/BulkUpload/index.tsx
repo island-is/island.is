@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Box, Text, Button, LoadingIcon } from '@island.is/island-ui/core'
+import { Box, Text, Button, LoadingIcon, Checkbox } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { BulkEndorse } from '../../graphql/mutations'
@@ -66,7 +66,6 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
           mapArray.push(d.nationalIds)
         })
 
-        console.log(mapArray)
         onBulkUpload(mapArray)
       } catch (e) {
         setBulkUploadFailed(true)
@@ -77,20 +76,15 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
 
   return (
     <Box>
-      <CheckboxController
-        id="papers"
-        name="includePapers"
-        defaultValue={[]}
-        onSelect={() => {
-          setUsePapers(!usePapers)
-        }}
-        options={[
-          {
-            value: 'agree',
-            label: formatMessage(m.collectEndorsements.includePapers),
-          },
-        ]}
-      />
+      <Box marginY={3}>
+        <Checkbox
+          label={formatMessage(m.collectEndorsements.includePapers)}
+          checked={usePapers}
+          onChange={() => {
+            setUsePapers(!usePapers)
+          }}
+        />
+      </Box>
       <FileUploadDisclaimer />
       {usePapers && (
         <Box
