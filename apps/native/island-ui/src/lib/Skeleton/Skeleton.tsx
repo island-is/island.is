@@ -3,6 +3,7 @@ import {
   Animated,
   ColorValue,
   Dimensions,
+  DynamicColorIOS,
   LayoutChangeEvent,
   Platform,
   ViewStyle,
@@ -44,12 +45,28 @@ export function Skeleton(props: SkeletonProps) {
   const av = useRef(new Animated.Value(0))
   const mounted = useRef(true);
 
+  const baseDynamicColor = ({ dark, light }: any) => {
+    if (Platform.OS === 'android') {
+      return theme.isDark ? dark : light;
+    }
+    return DynamicColorIOS({
+      light,
+      dark,
+    });
+  }
+
   const {
     active,
     error,
     height = 20,
-    overlayColor = theme.shade.foreground,
-    backgroundColor = theme.shade.shade100,
+    overlayColor = baseDynamicColor({
+      light: theme.shades.light.foreground,
+      dark: theme.shades.dark.shade600,
+    }),
+    backgroundColor = baseDynamicColor({
+      light: theme.shades.light.shade100,
+      dark: theme.shades.dark.shade200,
+    }),
     style,
   } = props
   const { overlayOpacity = height / aw.current } = props
@@ -110,7 +127,7 @@ export function Skeleton(props: SkeletonProps) {
           shadowColor: overlayColor,
           shadowRadius: Math.floor(height),
           shadowOpacity: overlayOpacity,
-          transform: [{ translateX: av.current }, { rotate: '5deg' }],
+          transform: [{ translateX: av.current },{ rotate: '5deg' }],
           opacity: props.error ? 0 : 1,
           ...Platform.select({
             android: {

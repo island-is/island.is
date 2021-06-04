@@ -69,9 +69,9 @@ export const authStore = create<AuthStore>((set, get) => ({
     ).then(async (res) => {
       if (res.status === 401) {
         // Attempt to refresh the access token
-        if (!_refresh && await this.refresh()) {
+        if (!_refresh && await get().refresh()) {
           // Retry the userInfo call
-          return this.fetchUserInfo(true)
+          return get().fetchUserInfo(true)
         }
         throw new Error('Unauthorized')
       } else if (res.status === 200) {
@@ -177,7 +177,7 @@ export async function checkIsAuthenticated() {
 
 
   fetchUserInfo()
-  .catch(async () => {
+  .catch(async (err) => {
     await logout();
     await Navigation.dismissAllModals()
     await Navigation.dismissAllOverlays()

@@ -8,9 +8,8 @@ import { evaluateUrl, navigateTo } from '../deep-linking'
 import { showLockScreenOverlay } from '../lock-screen-helpers'
 import { isOnboarded } from '../onboarding'
 import SpotlightSearch from 'react-native-spotlight-search'
-import { setStatusBar } from '../../contexts/theme-provider'
 
-let backgroundAppLockTimeout: number
+let backgroundAppLockTimeout: NodeJS.Timeout;
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
@@ -116,18 +115,4 @@ export function setupEventHandlers() {
       }
     },
   )
-
-  Navigation.events().registerCommandListener((command) => {
-    if (command === 'showModal' || command === 'dismissModal') {
-      const { modalsOpen, theme } = uiStore.getState();
-      if (command === 'showModal') {
-        uiStore.setState({ modalsOpen: modalsOpen + 1 });
-      } else if (command === 'dismissModal') {
-        uiStore.setState({ modalsOpen: Math.max(0, modalsOpen - 1) });
-      }
-      if (theme) {
-        setStatusBar(theme!);
-      }
-    }
-  })
 }

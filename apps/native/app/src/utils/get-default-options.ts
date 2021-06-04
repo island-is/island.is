@@ -1,4 +1,4 @@
-import { Platform } from 'react-native'
+import { DynamicColorIOS, Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
@@ -28,13 +28,16 @@ export function getDefaultOptions(
       borderColor: 'transparent',
       rightButtonColor: theme.color.blue400,
     },
-    statusBar: {
-      animated: true,
-      style: theme.isDark ? 'light' : 'dark',
-      backgroundColor: theme.shade.background,
-    },
+    // statusBar: {
+    //   animated: true,
+    //   style: theme.isDark ? 'light' : 'dark',
+    //   backgroundColor: theme.shade.background,
+    // },
     window: {
-      backgroundColor: '#222222',
+      backgroundColor: Platform.OS === 'android' ? theme.shade.background : DynamicColorIOS({
+        dark: theme.shades.dark.background,
+        light: theme.shades.light.background
+      }),
     },
     layout:
       Platform.OS === 'android'

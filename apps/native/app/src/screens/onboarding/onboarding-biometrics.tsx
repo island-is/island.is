@@ -46,7 +46,6 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
   supportedAuthenticationTypes: AuthenticationType[]
 }> = (props) => {
   const [isEnrolled, setIsEnrolled] = useState(props.isEnrolled)
-  const { setUseBiometrics } = usePreferencesStore()
   const biometricType = useBiometricType(props.supportedAuthenticationTypes)
   const intl = useIntl()
 
@@ -65,8 +64,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
     // check to see if we want to prompt
     authenticateAsync().then((authenticate) => {
       if (authenticate.success) {
-        setUseBiometrics(true)
-        preferencesStore.setState(() => ({ hasOnboardedBiometrics: true }))
+        preferencesStore.setState(() => ({ hasOnboardedBiometrics: true, hasAcceptedBiometrics: true }))
         nextOnboardingStep()
       }
     })

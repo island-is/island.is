@@ -22,8 +22,10 @@ import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
   // dev only
-  registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
-  registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
+  if (__DEV__) {
+    registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
+    registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
+  }
 
   // screens
   registerComponent(CR.LoginScreen, LoginScreen)

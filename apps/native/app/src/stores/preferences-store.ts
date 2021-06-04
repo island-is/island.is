@@ -15,6 +15,7 @@ export interface PreferencesStore extends State {
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
   hasAcceptedNotifications: boolean
+  hasAcceptedBiometrics: boolean
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
   notificationsApplicationStatusUpdates: boolean
@@ -43,6 +44,7 @@ const defaultPreferences = {
   hasOnboardedPinCode: false,
   hasOnboardedNotifications: false,
   hasAcceptedNotifications: false,
+  hasAcceptedBiometrics: false,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
   notificationsApplicationStatusUpdates: true,

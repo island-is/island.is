@@ -5,10 +5,6 @@ import {
   TableViewGroup
 } from '@island.is/island-ui-native'
 import * as Sentry from '@sentry/react-native'
-import {
-  AuthenticationType,
-  supportedAuthenticationTypesAsync
-} from 'expo-local-authentication'
 import { getDevicePushTokenAsync } from 'expo-notifications'
 import React, { useEffect, useRef, useState } from 'react'
 import {
@@ -17,7 +13,9 @@ import {
   Pressable,
   ScrollView,
   Switch,
-  View
+  View,
+  Alert as RNAlert,
+  AppState,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
@@ -38,6 +36,12 @@ import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { showPicker } from '../../utils/show-picker'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import {
+  authenticateAsync,
+  AuthenticationType,
+  supportedAuthenticationTypesAsync,
+  isEnrolledAsync
+} from 'expo-local-authentication'
 
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
@@ -76,13 +80,15 @@ export function TabSettings() {
     dismissed,
     locale,
     setLocale,
+    hasAcceptedBiometrics,
     appearanceMode,
     setAppearanceMode,
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
-
+  const offsetY = useRef(new Animated.Value(0)).current
+  const [isEnrolled, setIsEnrolled] = useState(false)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const [pushToken, setPushToken] = useState('loading...')
@@ -92,7 +98,6 @@ export function TabSettings() {
 
   const viewRef = useRef<View>()
   const [offset, setOffset] = useState(!isInfoDismissed)
-  const offsetY = useRef(new Animated.Value(0)).current
 
   const [
     supportedAuthenticationTypes,
@@ -131,6 +136,7 @@ export function TabSettings() {
   useEffect(() => {
     // @todo move to ui store, persist somehow
     setTimeout(() => {
+      isEnrolledAsync().then(setIsEnrolled)
       supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
       setLoadingCP(true)
       CodePush.getUpdateMetadata().then((p) => {
@@ -145,6 +151,11 @@ export function TabSettings() {
           setPushToken('no token in simulator')
         })
     }, 330)
+    AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        isEnrolledAsync().then(setIsEnrolled)
+      }
+    })
   }, [])
 
   return (
@@ -229,7 +240,6 @@ export function TabSettings() {
               clearTimeout(efficient.ts)
               efficient.count = (efficient.count ?? 0) + 1
               if (efficient.count === 11) {
-                console.log('tab appearance')
                 setAppearanceMode('efficient')
               }
               efficient.ts = setTimeout(() => {
@@ -243,7 +253,6 @@ export function TabSettings() {
               })}
               accessory={
                 <Switch
-                  disabled={appearanceMode === 'automatic'}
                   onValueChange={(value) =>
                     setAppearanceMode(value ? 'dark' : 'light')
                   }
@@ -311,12 +320,27 @@ export function TabSettings() {
                 biometricType,
               },
             )}
-            subtitle={intl.formatMessage({
+            subtitle={isEnrolled ?
+              intl.formatMessage({
               id: 'settings.security.useBiometricsDescription',
-            })}
+            }) : intl.formatMessage({
+              id: 'onboarding.biometrics.notEnrolled',
+            }, { biometricType })}
             accessory={
               <Switch
-                onValueChange={setUseBiometrics}
+                onValueChange={(value) => {
+                  if (value === true && !hasAcceptedBiometrics) {
+                    authenticateAsync().then((authenticate) => {
+                      if (authenticate.success) {
+                        setUseBiometrics(true);
+                        preferencesStore.setState({ hasAcceptedBiometrics: true });
+                      }
+                    });
+                  } else {
+                    setUseBiometrics(value);
+                  }
+                }}
+                disabled={!isEnrolled}
                 value={useBiometrics}
                 thumbColor={Platform.select({ android: theme.color.dark100 })}
                 trackColor={{

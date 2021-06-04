@@ -1,5 +1,10 @@
 import { useQuery } from '@apollo/client'
-import { dynamicColor, EmptyList, ListItem, SearchHeader } from '@island.is/island-ui-native'
+import {
+  dynamicColor,
+  EmptyList,
+  ListItem,
+  SearchHeader,
+} from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -10,12 +15,12 @@ import {
   Platform,
   RefreshControl,
   StyleSheet,
-  View
+  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate
+  useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
@@ -25,7 +30,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY
+  LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -42,7 +47,7 @@ interface IndexedDocument extends IDocument {
 const TopLine = styled(Animated.View)`
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue200,
-    dark: theme.shades.dark.shade600
+    dark: theme.shades.dark.shade600,
   }))};
   position: absolute;
   top: 0px;
@@ -128,15 +133,15 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   const ui = useUiStore()
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
+  const [searchLoading, setSearchLoading] = useState(false)
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
-  const scrollY = useRef(new Animated.Value(0)).current
-  const intl = useIntl()
 
-  const [searchLoading, setSearchLoading] = useState(false)
+  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
@@ -157,25 +162,29 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     ui.setQuery('')
   })
 
+  // when res data is loaded
   useEffect(() => {
-    const items = res?.data?.listDocuments ?? []
-    const indexedItems = items.map((item) => ({
-      ...item,
-      fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`,
-    }))
-    setIndexedItems(indexedItems)
-    setInboxItems(indexedItems)
-  }, [res.data])
+    if (res.data && !res.loading) {
+      const items = res?.data?.listDocuments ?? []
+      setIndexedItems(
+        items.map((item) => ({
+          ...item,
+          fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`,
+        })),
+      )
+    }
+  }, [res.data, res.loading])
 
+  // search query updates
   useEffect(() => {
     setSearchLoading(false)
     const q = ui.query.toLocaleLowerCase().trim()
     if (q !== '') {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
-      setInboxItems(indexedItems)
+      setInboxItems([...indexedItems])
     }
-  }, [ui.query])
+  }, [ui.query, indexedItems])
 
   const keyExtractor = useCallback((item) => {
     return item.id
@@ -265,10 +274,12 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       <TopLine
         style={{
           height: StyleSheet.hairlineWidth,
-          opacity: isSearch ? 0 : scrollY.interpolate({
-            inputRange: [0, 32],
-            outputRange: [0, 1],
-          }),
+          opacity: isSearch
+            ? 0
+            : scrollY.interpolate({
+                inputRange: [0, 32],
+                outputRange: [0, 1],
+              }),
         }}
       />
     </View>

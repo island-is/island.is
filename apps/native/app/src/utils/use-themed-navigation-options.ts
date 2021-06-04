@@ -25,6 +25,13 @@ const defaultOptions = (
 ): Options => {
   const options: Options = {}
 
+  options.window = {
+    backgroundColor: Platform.OS === 'android' ? theme.shade.background : DynamicColorIOS({
+      dark: theme.shades.dark.background,
+      light: theme.shades.light.background
+    }),
+  };
+
   if (Platform.OS === 'android') {
     options.layout = {
       backgroundColor: theme.shade.background,

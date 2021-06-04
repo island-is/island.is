@@ -121,7 +121,7 @@ export function Alert({
   const offsetY = sharedAnimatedValue ?? useRef(new Animated.Value(0)).current
   const alertRef = useRef<View>(null)
   const variant = variantStyles[type]
-  const [height, setHeight] = useState(0)
+  const [height, setHeight] = useState(70)
   const [isVisible, setIsVisible] = useState(visible)
 
   const animateOut = () => {
