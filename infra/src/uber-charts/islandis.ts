@@ -17,7 +17,7 @@ import { serviceSetup as serviceDocumentsSetup } from '../../../apps/services/do
 import { serviceSetup as serviceNameRegistryBackendSetup } from '../../../apps/icelandic-names-registry/backend/infra/icelandic-names-registry-backend'
 
 import { serviceSetup as storybookSetup } from '../../../libs/island-ui/storybook/infra/storybook'
-import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../libs/contentful-translation-extension/infra/contentful-translation-extension'
+import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../libs/contentful-extensions/translation/infra/contentful-translation-extension'
 
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
