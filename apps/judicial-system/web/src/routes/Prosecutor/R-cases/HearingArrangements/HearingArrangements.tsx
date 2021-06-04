@@ -76,7 +76,7 @@ const HearingArrangements = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && (
+      {workingCase && prosecutors && courts && (
         <HearingArrangementsForms
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}

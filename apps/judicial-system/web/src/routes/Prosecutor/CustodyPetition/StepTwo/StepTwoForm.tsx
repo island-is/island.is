@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
 import { Case, Institution } from '@island.is/judicial-system/types'
-import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
-import {
-  newSetAndSendDateToServer,
-  setAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { ValueType } from 'react-select'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   DateTime,
@@ -14,8 +10,8 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { Option } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 
 interface Props {
   workingCase: Case
@@ -42,19 +38,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
 
-  const selectCourts = courts.map((court) => ({
-    label: court.name,
-    value: court.id,
-  }))
-
-  const defaultProsecutor = prosecutors.find(
-    (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
-  )
-
-  const defaultCourt = selectCourts.find(
-    (court) => court.label === workingCase.court?.name,
-  )
-
   return (
     <>
       <FormContentContainer>
@@ -71,25 +54,10 @@ const StepTwoForm: React.FC<Props> = (props) => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Dómstóll
-            </Text>
-          </Box>
-          <Select
-            name="court"
-            label="Veldu dómstól"
-            defaultValue={defaultCourt}
-            options={selectCourts}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setAndSendToServer(
-                'courtId',
-                (selectedOption as ReactSelectOption).value as string,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+          <SelectCourt
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            courts={courts}
           />
         </Box>
         {!workingCase.parentCase && (

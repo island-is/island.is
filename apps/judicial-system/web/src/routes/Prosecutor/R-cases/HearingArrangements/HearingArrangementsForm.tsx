@@ -9,8 +9,8 @@ import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  prosecutors?: ReactSelectOption[]
-  courts?: Institution[]
+  prosecutors: ReactSelectOption[]
+  courts: Institution[]
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
