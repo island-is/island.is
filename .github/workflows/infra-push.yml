@@ -128,7 +128,7 @@ jobs:
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           FEATURE_NAME=$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)
-          echo "COMMENT=$(docker run --rm -it ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=api,web --chart=islandis --feature=$FEATURE_NAME)" >> $GITHUB_ENV
+          echo "COMMENT=$(docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=api,web --chart=islandis --feature=$FEATURE_NAME)" >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
 
