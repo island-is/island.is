@@ -7,7 +7,7 @@ const Dots = styled.View`
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  height: ${({ theme }) => theme.spacing[6]}px;
+  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const Dot = styled(Animated.View)<{ active?: boolean }>`

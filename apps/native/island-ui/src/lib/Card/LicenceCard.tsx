@@ -1,8 +1,10 @@
 import React from 'react'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { LicenseType } from '../../../../app/src/types/license-type'
+import { LicenseType, LicenseStatus } from '../../../../app/src/types/license-type'
 import isVerifiedLogo from '../../assets/card/is-verified.png'
+import danger from '../../assets/card/danger.png'
+import warning from '../../assets/card/warning.png'
 import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import driverLicence from '../../assets/card/okuskyrteini.png'
 import fishingCard from '../../assets/card/veidikort.png'
@@ -76,12 +78,33 @@ const ImgWrap = styled.View`
 
 interface LicenceCardProps {
   title: string
-  status?: string
+  status: LicenseStatus
   date?: string
   agencyLogo: ImageSourcePropType
   type: LicenseType
   nativeID?: string
   style?: any
+}
+
+type StatusStyle = {
+  text: string
+  icon: ImageSourcePropType
+}
+
+type StatusStyles = {
+  [Type in LicenseStatus]: StatusStyle
+}
+
+// Todo when we know the status type add to intl
+const statusIcon: StatusStyles = {
+  NOT_VALID: {
+    text: 'Ekki í gildi',
+    icon: danger,
+  },
+  VALID: {
+    text: 'Í gildi',
+    icon: isVerifiedLogo,
+  }
 }
 
 export function LicenceCard({
@@ -93,7 +116,9 @@ export function LicenceCard({
   date,
   status,
 }: LicenceCardProps) {
+
   const theme = useTheme()
+  const variant = statusIcon[status];
   let textColor = {
     dark: theme.shades.dark.foreground,
     light: theme.shades.light.foreground,
@@ -138,10 +163,11 @@ export function LicenceCard({
         </Title>
         <ValidationWrap>
           <Image
-            source={isVerifiedLogo as ImageSourcePropType}
+            source={variant.icon as ImageSourcePropType}
+            resizeMode="contain"
             style={{ width: 13, height: 13, marginRight: 8 }}
           />
-          <Validation color={textColor}>{status}</Validation>
+          <Validation color={textColor}>{variant.text}</Validation>
         </ValidationWrap>
         <TimeStamp color={textColor}>{date}</TimeStamp>
       </Content>

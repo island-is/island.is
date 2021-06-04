@@ -7,7 +7,6 @@ import {
 import React from 'react'
 import { SafeAreaView, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components/native'
-import illustrationDarkSrc from '../../assets/illustrations/digital-services-m2-dark.png'
 import illustration1 from '../../assets/illustrations/digital-services-m3.png'
 import illustration2 from '../../assets/illustrations/le-retirement-s3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
@@ -41,7 +40,7 @@ export const OnboardingModule = React.memo(() => {
         <WelcomeCard
           key="card-1"
           description={intl.formatMessage({ id: 'home.onboardingModule.card1' })}
-          imgSrc={theme.isDark ? illustrationDarkSrc : illustration1}
+          imgSrc={illustration1}
           backgroundColor={{
             dark: '#2A1240',
             light: theme.color.purple100,
@@ -50,7 +49,7 @@ export const OnboardingModule = React.memo(() => {
         <WelcomeCard
           key="card-2"
           description={intl.formatMessage({ id: 'home.onboardingModule.card2' })}
-          imgSrc={theme.isDark ? illustrationDarkSrc : illustration2}
+          imgSrc={illustration2}
           backgroundColor={{
             dark: '#1C1D53',
             light: theme.color.purple100,
@@ -59,7 +58,7 @@ export const OnboardingModule = React.memo(() => {
         <WelcomeCard
           key="card-3"
           description={intl.formatMessage({ id: 'home.onboardingModule.card3' })}
-          imgSrc={theme.isDark ? illustrationDarkSrc : illustration3}
+          imgSrc={illustration3}
           backgroundColor={{
             dark: '#3E002E',
             light: theme.color.purple100,
