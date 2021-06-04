@@ -12,7 +12,6 @@ import {
   ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/core'
-import { CreatePaymentDto } from './dto/createPayment.dto'
 
 @Table({
   tableName: 'application',
