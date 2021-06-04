@@ -9,4 +9,5 @@ bootstrap({
   name: 'auth-public-api',
   openApi,
   port: environment.port,
+  globalPrefix: 'public',
 })
