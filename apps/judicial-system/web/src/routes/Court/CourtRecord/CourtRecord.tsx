@@ -321,7 +321,6 @@ export const CourtRecord: React.FC = () => {
                         AccusedPleaDecision.REJECT,
                         workingCase,
                         setWorkingCase,
-                        updateCase,
                       )
                     }}
                     large
@@ -343,7 +342,6 @@ export const CourtRecord: React.FC = () => {
                         AccusedPleaDecision.ACCEPT,
                         workingCase,
                         setWorkingCase,
-                        updateCase,
                       )
                     }}
                     large

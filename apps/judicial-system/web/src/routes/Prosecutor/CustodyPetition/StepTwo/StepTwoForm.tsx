@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { Option } from '@island.is/island-ui/core'
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 
 interface Props {
   workingCase: Case
@@ -63,29 +64,10 @@ const StepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Ákærandi{' '}
-              <Box component="span" data-testid="prosecutor-tooltip">
-                <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
-              </Box>
-            </Text>
-          </Box>
-          <Select
-            name="prosecutor"
-            label="Veldu saksóknara"
-            defaultValue={defaultProsecutor}
-            options={prosecutors}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setAndSendToServer(
-                'prosecutorId',
-                (selectedOption as ReactSelectOption).value.toString(),
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
-            required
+          <SelectProsecutor
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            prosecutors={prosecutors}
           />
         </Box>
         <Box component="section" marginBottom={5}>

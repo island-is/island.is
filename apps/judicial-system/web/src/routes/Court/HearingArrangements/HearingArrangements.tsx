@@ -177,7 +177,7 @@ export const HearingArrangements: React.FC = () => {
 
   const setJudge = (id: string) => {
     if (workingCase) {
-      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
+      setAndSendToServer('judgeId', id, workingCase, setWorkingCase)
 
       const judge = userData?.users.find((j) => j.id === id)
 
@@ -187,13 +187,7 @@ export const HearingArrangements: React.FC = () => {
 
   const setRegistrar = (id: string) => {
     if (workingCase) {
-      setAndSendToServer(
-        'registrarId',
-        id,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
+      setAndSendToServer('registrarId', id, workingCase, setWorkingCase)
 
       const registrar = userData?.users.find((r) => r.id === id)
 

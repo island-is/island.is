@@ -10,6 +10,7 @@ import {
   replaceTabs,
 } from './formatters'
 import { validate, Validation } from './validate'
+import useCase from './hooks/useCase'
 
 export const removeTabsValidateAndSet = (
   field: string,
@@ -234,13 +235,13 @@ export const setAndSendToServer = (
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
+  console.log(theCase)
   let stringValue = ''
 
   setCase({
     ...theCase,
     [field]: value,
   })
-
   if (theCase.id !== '') {
     if (typeof value === 'string') {
       stringValue = value
