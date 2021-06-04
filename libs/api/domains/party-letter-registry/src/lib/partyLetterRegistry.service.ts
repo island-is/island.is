@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import {
   PartyLetterRegistryApi,
@@ -7,30 +8,28 @@ import {
 } from '../../gen/fetch/apis'
 import { CreateDto } from '../../gen/fetch'
 
-const handleError = async (error: any) => {
-  logger.error(JSON.stringify(error))
-
-  if (error.json) {
-    const json = await error.json()
-
-    logger.error(json)
-
-    throw new ApolloError(JSON.stringify(json), error.status)
-  }
-
-  throw new ApolloError('Failed to resolve request', error.status)
-}
-
 @Injectable()
 export class PartyLetterRegistryService {
   constructor(
     private readonly partyLetterRegistryApi: PartyLetterRegistryApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
+  private async handleError(error: any) {
+    this.logger.error(JSON.stringify(error))
+
+    if (error.json) {
+      const json = await error.json()
+      this.logger.error(json)
+      throw new ApolloError(JSON.stringify(json), error.status)
+    }
+
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
 
   async partyLetterRegistryControllerCreate(input: CreateDto) {
     return await this.partyLetterRegistryApi
       .partyLetterRegistryControllerCreate({ createDto: input })
-      .catch(handleError)
+      .catch(this.handleError)
   }
 
   async partyLetterRegistryControllerFindByManager(
@@ -38,6 +37,6 @@ export class PartyLetterRegistryService {
   ) {
     return await this.partyLetterRegistryApi
       .partyLetterRegistryControllerFindByManager(input)
-      .catch(handleError)
+      .catch(this.handleError)
   }
 }

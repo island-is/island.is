@@ -10,7 +10,6 @@ import { PartyLetterRegistryService } from './partyLetterRegistry.service'
 import { CreatePartyLetterDto } from './dto/create.input'
 import type { User } from '@island.is/auth-nest-tools'
 
-// TODO: Add correct scopes
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('PartyLetterRegistryResolver')
 export class PartyLetterRegistryResolver {
