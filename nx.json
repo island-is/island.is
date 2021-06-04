@@ -70,6 +70,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-auth": {
+      "tags": []
+    },
     "api-domains-cms": {
       "tags": []
     },
@@ -244,6 +247,10 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-auth-public-api": {
+      "implicitDependencies": ["services-auth-public-api"],
       "tags": []
     },
     "clients-document-provider": {
