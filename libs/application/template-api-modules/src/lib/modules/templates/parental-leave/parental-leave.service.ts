@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
+import { get } from 'lodash'
 
 import type { Attachment } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
@@ -12,9 +13,12 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
-  generateApplicationApprovedEmail,
+  generateApplicationApprovedByEmployerEmail,
 } from './emailGenerators'
-import { transformApplicationToParentalLeaveDTO } from './parental-leave.utils'
+import {
+  getEmployer,
+  transformApplicationToParentalLeaveDTO,
+} from './parental-leave.utils'
 import { apiConstants, formConstants } from './constants'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -103,13 +107,20 @@ export class ParentalLeaveService {
         },
       )
 
-      if (response.id !== null) {
+      if (!response.id) {
+        throw new Error(`Failed to send application: ${response.status}`)
+      }
+
+      const employer = getEmployer(application)
+      const isEmployed = employer.nationalRegistryId !== application.applicant
+
+      if (isEmployed) {
+        // Only needs to send an email if being approved by employer
+        // If self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedEmail,
+          generateApplicationApprovedByEmployerEmail,
           application,
         )
-      } else {
-        throw new Error(`Failed to send application: ${response.status}`)
       }
 
       return response
