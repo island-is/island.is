@@ -5,11 +5,10 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { Endorsement } from '../../lib/dataSchema'
 import { GetEndorsements } from '../../graphql/queries'
 import BulkUpload from '../BulkUpload'
-import { Endorsement as SchemaEndorsements } from '../../types/schema'
 
 interface EndorsementData {
   endorsementSystemGetEndorsements?: Endorsement[]
@@ -38,7 +37,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   })
 
   useEffect(() => {
-    console.log('useEffect')
     refetch()
     const mapToEndorsementList:
       | Endorsement[]
@@ -54,7 +52,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       }),
     )
 
-    console.log('update endorsements with', endorsementsData, mapToEndorsementList)
     setEndorsements(mapToEndorsementList)
   }, [endorsementsData, updateOnBulkImport])
 
@@ -63,8 +60,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
-
-  console.log('rendering')
 
   return (
     <Box marginBottom={8}>
@@ -129,7 +124,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           <BulkUpload
             application={application}
             onSuccess={() => {
-              console.log('done success')
               setUpdateOnBulkImport(true)
             }}
           />

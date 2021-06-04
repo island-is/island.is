@@ -15,17 +15,19 @@ interface BulkUploadProps {
 }
 
 const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
+  const { formatMessage } = useLocale()
   const [usePapers, setUsePapers] = useState(false)
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
-  const { formatMessage } = useLocale()
+  const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
   const hiddenFileInput = React.createRef<HTMLInputElement>()
   const [createBulkEndorsements, { loading: submitLoad }] = useMutation(
     BulkEndorse,
   )
 
   const onBulkUpload = async (array: string[]) => {
-    console.log("kennitölur",array)
+    setBulkUploadDone(false)
+    setBulkUploadFailed(false)
     setBulkUploading(true)
     const success = await createBulkEndorsements({
       variables: {
@@ -35,13 +37,15 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
           nationalIds: array,
         },
       },
+    }).catch(() => {
+      setBulkUploadFailed(true)
     })
+
     if (success) {
-      console.log('successfully updated')
-      setBulkUploading(false)
       setBulkUploadDone(true)
       onSuccess()
     }
+    setBulkUploading(false)
   }
 
   const onImportExcel = (file: any) => {
@@ -65,7 +69,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
         console.log(mapArray)
         onBulkUpload(mapArray)
       } catch (e) {
-        console.log('Upload failed!')
+        setBulkUploadFailed(true)
       }
     }
     fileReader.readAsBinaryString(files[0])
@@ -77,7 +81,9 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
         id="papers"
         name="includePapers"
         defaultValue={[]}
-        onSelect={() => setUsePapers(!usePapers)}
+        onSelect={() => {
+          setUsePapers(!usePapers)
+        }}
         options={[
           {
             value: 'agree',
@@ -101,7 +107,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
             icon="attach"
             onClick={() => hiddenFileInput?.current?.click()}
           >
-            {'Bæta við pappírsmeðmælum'}
+            {formatMessage(m.bulkUpload.uploadButton)}
           </Button>
           <input
             ref={hiddenFileInput}
@@ -112,12 +118,19 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
             onChange={onImportExcel}
           />
           <Text marginTop={2} variant="small">
-            {'Tekið er við skjölum með endingu: .xlsx'}
+            {formatMessage(m.bulkUpload.fileFormatText)}
           </Text>
           <Box marginTop={4}>
             {bulkUploading && <LoadingIcon animate size={35} />}
             {bulkUploadDone && (
-              <Text variant="h4">{'Pappírsmeðmælin hlaðin upp!'}</Text>
+              <Text variant="h4">
+                {formatMessage(m.bulkUpload.uploadSuccess)}
+              </Text>
+            )}
+            {bulkUploadFailed && (
+              <Text variant="h4" color="red400">
+                {formatMessage(m.bulkUpload.uploadFail)}
+              </Text>
             )}
           </Box>
         </Box>
