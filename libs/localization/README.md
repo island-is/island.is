@@ -131,7 +131,7 @@ const greeting = defineMessage({
   description: 'This is a default greeting in the global namespace',
 })
 
-const messages = defineMessages([
+const messages = defineMessages({
   header: {
     id: 'global:title',
     defaultMessage: 'Default title',
@@ -142,14 +142,14 @@ const messages = defineMessages([
     defaultMessage: 'Default description',
     description: 'This is a default description in the global namespace',
   },
-])
+})
 
 const MyComponent = () => {
   const { formatMessage } = useLocale()
   return (
     <div>
       <p>{formatMessage(greeting)}</p>
-      <h1>{formatMessage(messages.title)}</h1>
+      <h1>{formatMessage(messages.header)}</h1>
       <p>{formatMessage(messages.summary)}</p>
     </div>
   )
@@ -183,7 +183,7 @@ Add the `extract-strings` script to `workspace.json`.
 
 ```json
 {
-  "your-project": {
+  "<your-project>": {
     "architect": {
       "lint": {...},
       "test": {...},
@@ -198,9 +198,11 @@ Add the `extract-strings` script to `workspace.json`.
 }
 ```
 
-Running `yarn nx run your-project:extract-strings` will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.
+Running `yarn nx run <your-project>:extract-strings` will extract messages from the project and create or update a Namespace entry in Contentful.
 
-**Notes**:
+The first time a namespace is encountered a new Contentful entry is created (even if you manually created one with that name already) and you will need to find and "publish" it Contentful before the client can query that entry.
+
+**Notes on the `extract-strings` script's behavior**:
 
 - Adding a new id automatically creates it in Contentful.
 - Removing an id from the project will automatically remove that id from the Contentful Namespace entry.
