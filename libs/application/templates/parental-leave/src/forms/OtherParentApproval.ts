@@ -47,6 +47,8 @@ export const OtherParentApproval: Form = buildForm({
                 'Að nýta daga af þínum rétti til töku fæðingarorlofs, við það minnkar hámarksréttur þinn',
               condition: (answers) =>
                 getApplicationAnswers(answers).isRequestingRights === YES,
+              // TODO: update when requested days are no longer a binary choice
+              // defaultValue: (application: Application) => getApplicationAnswers(application.answers).requestDays
               defaultValue: 45,
               disabled: true,
             }),
