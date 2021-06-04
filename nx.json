@@ -574,9 +574,6 @@
     "shared-mocking": {
       "tags": []
     },
-    "shared-nestjs": {
-      "tags": []
-    },
     "shared-types": {
       "tags": []
     },
