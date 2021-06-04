@@ -3,8 +3,8 @@ import { UseGuards } from '@nestjs/common'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { AuthService } from './auth.service'
-import { AuthScope } from './models'
+import { AuthService } from '../auth.service'
+import { AuthScope } from '../models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => AuthScope)

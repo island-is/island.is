@@ -4,7 +4,7 @@ import { UseGuards } from '@nestjs/common'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
 
-import { DelegationScope } from './models'
+import { DelegationScope } from '../models'
 
 @Resolver(() => DelegationScope)
 export class DelegationScopeResolver {

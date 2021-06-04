@@ -5,10 +5,12 @@ import {
   AuthPublicApiClientModuleConfig,
 } from '@island.is/clients/auth-public-api'
 
-import { AuthScopeResolver } from './authScope.resolver'
+import {
+  AuthScopeResolver,
+  DelegationScopeResolver,
+  MainResolver,
+} from './resolvers'
 import { AuthService } from './auth.service'
-import { DelegationScopeResolver } from './delegationScope.resolver'
-import { MainResolver } from './main.resolver'
 
 export type Config = AuthPublicApiClientModuleConfig
 

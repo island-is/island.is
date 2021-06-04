@@ -4,9 +4,9 @@ import { UseGuards } from '@nestjs/common'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
-import { UpdateDelegationInput, DelegationInput } from './dto'
-import { Delegation, AuthScope } from './models'
-import { AuthService } from './auth.service'
+import { UpdateDelegationInput, DelegationInput } from '../dto'
+import { Delegation, AuthScope } from '../models'
+import { AuthService } from '../auth.service'
 
 const ignore404 = (e: Error) => {
   if ((e as any).status !== 404) {
