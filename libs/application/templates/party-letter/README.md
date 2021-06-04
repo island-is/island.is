@@ -4,7 +4,7 @@ This application allows governmental parties to get assigned a party letter for 
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/handbook/apps/application-system)
+Application System setup: [Setup](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 

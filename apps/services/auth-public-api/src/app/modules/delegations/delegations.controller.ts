@@ -3,11 +3,11 @@ import {
   DelegationDTO,
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
   CurrentActor,
   CurrentUser,
   ActorScopes,
