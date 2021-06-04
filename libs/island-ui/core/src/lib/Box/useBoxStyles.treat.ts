@@ -588,6 +588,10 @@ export const opacity = styleMap({
   1: { opacity: 1 },
 })
 
+export const zIndex = styleMap({
+  1: { zIndex: 1 },
+})
+
 export const printHidden = style({
   '@media': {
     print: {
