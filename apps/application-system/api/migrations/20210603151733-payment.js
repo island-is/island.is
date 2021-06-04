@@ -36,7 +36,7 @@ module.exports = {
         },
         /// maybe remove.
         expiresAt: {
-          type: 'TIMESTAMP WITH TIME ZONE',
+          type: Sequelize.DATE,
           allowNull: false,
         },
       })

@@ -188,8 +188,6 @@ export class Payment extends Model<Application> {
 
   @Column({
       type: DataType.DATE,
-      allowNull: false,
-      defaultValue: DataType.NOW,
   })
   @ApiProperty()
   expiresAt!: Date
