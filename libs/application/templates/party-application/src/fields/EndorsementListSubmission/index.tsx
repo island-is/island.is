@@ -20,58 +20,58 @@ import sortBy from 'lodash/sortBy'
 
 const ENDORSEMENTS: Endorsement[] = [
   {
-    id: 1,
+    id: '1',
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: false,
-    bulkImported: false
+    bulkImported: false,
   },
   {
-    id: 2,
+    id: '2',
     date: '21.06.2021',
     name: 'Þórhildur Tyrfingsdóttir',
     nationalId: '1991921335',
     address: 'Miðskógar 17',
     hasWarning: true,
-    bulkImported: false
+    bulkImported: false,
   },
   {
-    id: 3,
+    id: '3',
     date: '21.05.2021',
     name: 'Stefán Haukdal',
     nationalId: '1991921335',
     address: 'Skúr hjá mömmu',
     hasWarning: false,
-    bulkImported: false
+    bulkImported: false,
   },
   {
-    id: 4,
+    id: '4',
     date: '21.03.2021',
     name: 'Brian Johannesen',
     nationalId: '1991921335',
     address: 'Reykjavík',
     hasWarning: false,
-    bulkImported: false
+    bulkImported: false,
   },
   {
-    id: 5,
+    id: '5',
     date: '21.02.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: false,
-    bulkImported: false
+    bulkImported: false,
   },
   {
-    id: 6,
+    id: '6',
     date: '21.04.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
     address: 'Baugholt 15',
     hasWarning: true,
-    bulkImported: false
+    bulkImported: false,
   },
 ]
 

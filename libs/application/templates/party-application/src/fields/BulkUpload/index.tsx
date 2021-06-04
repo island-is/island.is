@@ -25,6 +25,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
   )
 
   const onBulkUpload = async (array: string[]) => {
+    console.log("kennitölur",array)
     setBulkUploading(true)
     const success = await createBulkEndorsements({
       variables: {
@@ -36,6 +37,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
       },
     })
     if (success) {
+      console.log('successfully updated')
       setBulkUploading(false)
       setBulkUploadDone(true)
       onSuccess()
@@ -113,13 +115,9 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
             {'Tekið er við skjölum með endingu: .xlsx'}
           </Text>
           <Box marginTop={4}>
-            {bulkUploading && (
-              <LoadingIcon animate size={35} />
-            )}
+            {bulkUploading && <LoadingIcon animate size={35} />}
             {bulkUploadDone && (
-              <Text variant="h4">
-                {'Pappírsmeðmælin hlaðin upp!'}
-              </Text>
+              <Text variant="h4">{'Pappírsmeðmælin hlaðin upp!'}</Text>
             )}
           </Box>
         </Box>

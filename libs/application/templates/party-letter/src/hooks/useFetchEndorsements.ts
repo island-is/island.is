@@ -22,8 +22,5 @@ export const useEndorsements = (
       pollInterval: shouldPoll ? 20000 : 0,
     },
   )
-
-  if (endorsementsData && endorsementsData.endorsementSystemGetEndorsements)
-    return endorsementsData.endorsementSystemGetEndorsements
-  else return undefined
+  return endorsementsData?.endorsementSystemGetEndorsements
 }
