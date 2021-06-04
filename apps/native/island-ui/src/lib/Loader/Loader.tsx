@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useRef } from 'react';
+import React, { useEffect, useRef } from 'react'
 import { Animated, View } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor, spacing } from '../../utils';
-import { font } from '../../utils/font';
+import { dynamicColor, spacing } from '../../utils'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
@@ -18,7 +17,7 @@ const Text = styled.Text`
     lineHeight: 24,
   })}
   text-align: center;
-`;
+`
 
 const Wrapper = styled.View`
   display: flex;
@@ -28,7 +27,7 @@ const Wrapper = styled.View`
 
   width: ${spacing(5)};
   height: ${spacing(2)};
-`;
+`
 
 const AnimatedCircle = styled(Animated.View)`
   height: ${spacing(1)};
@@ -41,11 +40,11 @@ const AnimatedCircle = styled(Animated.View)`
 `
 
 interface LoaderProps {
-  text?: string;
+  text?: string
 }
 
-export function Loader({ text }: LoaderProps ) {
-  const animRef = useRef<Animated.CompositeAnimation>();
+export function Loader({ text }: LoaderProps) {
+  const animRef = useRef<Animated.CompositeAnimation>()
   const scales = useRef<Animated.Value[]>([
     new Animated.Value(0),
     new Animated.Value(0),
@@ -54,12 +53,12 @@ export function Loader({ text }: LoaderProps ) {
 
   const animation = () => {
     if (animRef.current) {
-      scales.forEach(scale => scale.setValue(0));
-      animRef.current.stop();
+      scales.forEach((scale) => scale.setValue(0))
+      animRef.current.stop()
     }
 
-    const duration = 1400;
-    const delay = 400;
+    const duration = 1400
+    const delay = 400
 
     function seq(i: number) {
       return Animated.loop(
@@ -78,14 +77,14 @@ export function Loader({ text }: LoaderProps ) {
       )
     }
     animRef.current = Animated.stagger(delay, [seq(0), seq(1), seq(2)])
-    animRef.current.start();
+    animRef.current.start()
   }
 
   useEffect(() => {
-    animation();
+    animation()
     return () => {
       if (animRef.current) {
-        animRef.current.reset();
+        animRef.current.reset()
       }
     }
   }, [])
@@ -114,9 +113,7 @@ export function Loader({ text }: LoaderProps ) {
 
   return (
     <Host>
-      <View>
-        {text && <Text>{text}</Text>}
-      </View>
+      <View>{text && <Text>{text}</Text>}</View>
       <Wrapper>
         {renderCircle(0)}
         {renderCircle(1)}

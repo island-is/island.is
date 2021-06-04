@@ -26,4 +26,3 @@ storiesOf('Loader', module)
   .add('Default With Text', () => {
     return <Loader text="Sæki skjal" />
   })
-

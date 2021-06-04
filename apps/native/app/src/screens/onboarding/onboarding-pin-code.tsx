@@ -4,15 +4,15 @@ import { Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
+import { FormattedMessage, useIntl } from '../../lib/intl'
 import { preferencesStore } from '../../stores/preferences-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
@@ -179,11 +179,13 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           >
             {(confirmPin || replacePin) && (
               <CancelButton
-                title={confirmPin ? (
-                  <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
-                ) : (
-                  <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
-                )}
+                title={
+                  confirmPin ? (
+                    <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
+                  ) : (
+                    <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
+                  )
+                }
                 onPress={onCancelPress}
                 testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
               />

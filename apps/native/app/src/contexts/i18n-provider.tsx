@@ -1,7 +1,7 @@
 import React from 'react'
-import { IntlProvider } from 'react-intl'
-import { is } from '../messages/is';
-import { en } from '../messages/en';
+import { IntlProvider } from '../lib/intl'
+import { en } from '../messages/en'
+import { is } from '../messages/is'
 import { usePreferencesStore } from '../stores/preferences-store'
 
 export const I18nProvider = ({ children }: { children: React.ReactNode }) => {

@@ -1,9 +1,9 @@
+import { selectionAsync } from 'expo-haptics'
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { selectionAsync } from 'expo-haptics'
-import { font } from '../../utils/font'
 import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
 
 interface TabBarValue {
   label: string
@@ -42,7 +42,7 @@ const Line = styled.View`
   height: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade200,
-    light: theme.color.blue200
+    light: theme.color.blue200,
   }))};
 `
 
@@ -60,13 +60,13 @@ export function TabBar(props: TabBarProps) {
   const animatedIndex = useRef(new Animated.Value(selectedIndex))
   const indexes = useRef(new Map<number, Animated.Value>())
   const tabWidth = width / props.values.length
-  const animRef = useRef<Animated.CompositeAnimation>();
+  const animRef = useRef<Animated.CompositeAnimation>()
 
   const animateIndex = (toValue: number) => {
     animRef.current = Animated.spring(animatedIndex.current, {
       toValue,
       useNativeDriver: true,
-    });
+    })
     animRef.current.start()
   }
 
@@ -77,10 +77,10 @@ export function TabBar(props: TabBarProps) {
   useEffect(() => {
     return () => {
       if (animRef.current) {
-        animRef.current.stop();
+        animRef.current.stop()
       }
     }
-  }, []);
+  }, [])
 
   const inputRange = [-1, 0, 1]
 

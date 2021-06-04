@@ -1,15 +1,10 @@
-import React, { useEffect } from 'react'
-import { useRef } from 'react';
-import { StatusBarProps } from 'react-native';
+import React from 'react'
 import {
   ImageSourcePropType,
   Platform,
   SafeAreaView,
-  StatusBar,
   useWindowDimensions,
 } from 'react-native'
-import { Navigation } from 'react-native-navigation';
-import { useNavigation, useNavigationComponentDidAppear, useNavigationComponentDidDisappear, useNavigationModalDismiss } from 'react-native-navigation-hooks';
 import styled, { useTheme } from 'styled-components/native'
 import { testIDs } from '../../../../app/src/utils/test-ids'
 import closeIcon from '../../assets/icons/close.png'
@@ -68,7 +63,7 @@ export function NavigationBarSheet({
   style,
 }: {
   title: string
-  componentId: string;
+  componentId: string
   onClosePress(): void
   style?: any
 }) {

@@ -1,10 +1,8 @@
 import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
-import React, { useState } from 'react'
-import { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Animated } from 'react-native'
-import { Platform, Share, StyleSheet, View } from 'react-native'
+import { Animated, Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
@@ -23,10 +21,10 @@ import {
   ListDocumentsResponse,
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { authStore, useAuthStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -125,18 +123,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const loading = res.loading
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
     if (loaded) {
-      Animated.timing(
-        fadeAnim,
-        {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }
-      ).start();
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start()
     }
   }, [loaded])
 
@@ -161,10 +156,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         {visible &&
           Platform.select({
             android: (
-              <Animated.View style={{
-                flex: 1,
-                opacity: fadeAnim,
-              }}>
+              <Animated.View
+                style={{
+                  flex: 1,
+                  opacity: fadeAnim,
+                }}
+              >
                 <PDFReader
                   onLoadEnd={() => {
                     setLoaded(true)
@@ -176,23 +173,25 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               </Animated.View>
             ),
             ios: (
-              <Animated.View style={{
-                flex: 1,
-                opacity: fadeAnim,
-              }}>
-              <WebView
-                onLoadEnd={() => {
-                  setLoaded(true)
+              <Animated.View
+                style={{
+                  flex: 1,
+                  opacity: fadeAnim,
                 }}
-                source={{
-                  uri: Document.url!,
-                  headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
-                  },
-                  body: `documentId=${Document.id}&__accessToken=${authorizeResult?.accessToken}`,
-                  method: 'POST',
-                }}
-              />
+              >
+                <WebView
+                  onLoadEnd={() => {
+                    setLoaded(true)
+                  }}
+                  source={{
+                    uri: Document.url!,
+                    headers: {
+                      'content-type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `documentId=${Document.id}&__accessToken=${authorizeResult?.accessToken}`,
+                    method: 'POST',
+                  }}
+                />
               </Animated.View>
             ),
           })}

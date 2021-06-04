@@ -1,16 +1,15 @@
 import { defaultsDeep } from 'lodash'
 import { useEffect } from 'react'
-import { Platform } from 'react-native'
-import { DynamicColorIOS } from 'react-native'
+import { DynamicColorIOS, Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
+import { createIntl, TypedIntlShape, useIntl } from '../lib/intl'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
 import { preferencesStore } from '../stores/preferences-store'
 import { uiStore, useUiStore } from '../stores/ui-store'
-import { createIntl, TypedIntlShape, useIntl } from '../utils/intl'
-import { getThemeWithPreferences } from './get-theme-with-preferences'
+import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 
 type ApplyNavigationOptionsCallback = (
   theme: DefaultTheme,
@@ -26,39 +25,49 @@ const defaultOptions = (
   const options: Options = {}
 
   options.window = {
-    backgroundColor: Platform.OS === 'android' ? theme.shade.background : DynamicColorIOS({
-      dark: theme.shades.dark.background,
-      light: theme.shades.light.background
-    }),
-  };
+    backgroundColor:
+      Platform.OS === 'android'
+        ? theme.shade.background
+        : DynamicColorIOS({
+            dark: theme.shades.dark.background,
+            light: theme.shades.light.background,
+          }),
+  }
 
   if (Platform.OS === 'android') {
     options.layout = {
       backgroundColor: theme.shade.background,
       componentBackgroundColor: theme.shade.background,
-    };
+    }
   }
 
   if (staticOptions.bottomTab) {
     options.bottomTab = {
-      iconColor: !initialized
-        ? theme.shade.background
-        : theme.shade.foreground,
+      iconColor: !initialized ? theme.shade.background : theme.shade.foreground,
       selectedIconColor: theme.color.blue400,
-      textColor: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
-      selectedTextColor: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
+      textColor:
+        Platform.OS === 'android'
+          ? theme.shade.foreground
+          : DynamicColorIOS({ light: 'black', dark: 'white' }),
+      selectedTextColor:
+        Platform.OS === 'android'
+          ? theme.shade.foreground
+          : DynamicColorIOS({ light: 'black', dark: 'white' }),
     }
     if (Platform.OS === 'android') {
       options.bottomTabs = {
         backgroundColor: theme.shade.background,
-      };
+      }
     }
   }
 
   if (staticOptions.topBar) {
     options.topBar = {
       title: {
-        color: Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }),
+        color:
+          Platform.OS === 'android'
+            ? theme.shade.foreground
+            : DynamicColorIOS({ light: 'black', dark: 'white' }),
       },
       noBorder: true,
     }

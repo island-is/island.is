@@ -7,7 +7,7 @@ const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shade.shade500,
-    light : theme.color.blue200
+    light: theme.color.blue200,
   }))};
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -19,7 +19,7 @@ const Header = styled.View`
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shade.shade500,
-    light: theme.color.blue200
+    light: theme.color.blue200,
   }))};
   padding: ${({ theme }) => theme.spacing[2]}px;
 `

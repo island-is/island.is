@@ -17,7 +17,7 @@ const Host = styled.View<{ color: any }>`
 const Image = styled.Image`
   width: 100%;
   height: 262px;
-`;
+`
 
 const Description = styled.Text`
   padding: 0 24px 0;

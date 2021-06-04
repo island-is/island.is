@@ -2,19 +2,19 @@ import {
   Button,
   CancelButton,
   Illustration,
-  Onboarding
+  Onboarding,
 } from '@island.is/island-ui-native'
 import {
   AndroidImportance,
   getPermissionsAsync,
   requestPermissionsAsync,
-  setNotificationChannelAsync
+  setNotificationChannelAsync,
 } from 'expo-notifications'
 import React from 'react'
 import { Platform } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { FormattedMessage, useIntl } from '../../lib/intl'
 import { preferencesStore } from '../../stores/preferences-store'
-import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
@@ -77,7 +77,9 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
       }
       buttonCancel={
         <CancelButton
-          title={<FormattedMessage id="onboarding.notifications.decideLaterButtonText" />}
+          title={
+            <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
+          }
           onPress={onSkipPress}
           testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
         />

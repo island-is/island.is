@@ -13,7 +13,8 @@ const Host = styled.SafeAreaView<{ background: boolean }>`
   margin-right: 16px;
   flex-direction: row;
   background-color: ${dynamicColor((props) =>
-    props.background ? 'background' : 'transparent')};
+    props.background ? 'background' : 'transparent',
+  )};
 `
 
 const Icon = styled.View`
@@ -57,7 +58,7 @@ const TitleText = styled.Text`
     color: ({ theme }) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
-    })
+    }),
   })}
 `
 
@@ -74,7 +75,7 @@ const DateText = styled.Text<{ unread?: boolean }>`
     color: ({ theme }) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
-    })
+    }),
   })}
 `
 
@@ -95,7 +96,7 @@ const Message = styled.Text`
     color: ({ theme }) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
-    })
+    }),
   })}
 `
 
@@ -125,9 +126,9 @@ const ButtonText = styled.Text`
 `
 const Action = styled(Animated.View)`
   position: absolute;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: '#001333',
-    light: props.theme.color.blue200
+    light: props.theme.color.blue200,
   }))};
   top: 0;
   right: 100%;
@@ -155,7 +156,7 @@ const Cell = styled.View``
 const Divider = styled.View`
   background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
-    light: theme.color.blue200
+    light: theme.color.blue200,
   }))};
 `
 

@@ -7,7 +7,6 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
 import { WelcomeCard } from '../Card/WelcomeCard'
 import { ViewPager } from './ViewPager'
 
-
 const CenterView = ({ children }: any) => (
   <View
     style={{

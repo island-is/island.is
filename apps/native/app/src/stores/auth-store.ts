@@ -69,7 +69,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     ).then(async (res) => {
       if (res.status === 401) {
         // Attempt to refresh the access token
-        if (!_refresh && await get().refresh()) {
+        if (!_refresh && (await get().refresh())) {
           // Retry the userInfo call
           return get().fetchUserInfo(true)
         }
@@ -79,7 +79,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         set({ userInfo })
         return userInfo
       }
-      return undefined;
+      return undefined
     })
   },
   async refresh() {
@@ -145,10 +145,10 @@ export const authStore = create<AuthStore>((set, get) => ({
 export const useAuthStore = createUse(authStore)
 
 export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
-  const { authorizeResult } = authStore.getState();
+  const { authorizeResult } = authStore.getState()
 
   if (authorizeResult) {
-    return authorizeResult as AuthorizeResult;
+    return authorizeResult as AuthorizeResult
   }
 
   try {
@@ -156,37 +156,35 @@ export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
       service: KEYCHAIN_AUTH_KEY,
     })
     if (res) {
-      const authRes = JSON.parse(res.password);
+      const authRes = JSON.parse(res.password)
       authStore.setState({ authorizeResult: authRes })
-      return authRes;
+      return authRes
     }
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
 
-  return null;
+  return null
 }
 
 export async function checkIsAuthenticated() {
-  const { authorizeResult, fetchUserInfo, logout } = authStore.getState();
+  const { authorizeResult, fetchUserInfo, logout } = authStore.getState()
 
   if (!authorizeResult) {
     console.log('no auth result')
-    return false;
+    return false
   }
 
-
-  fetchUserInfo()
-  .catch(async (err) => {
-    await logout();
+  fetchUserInfo().catch(async (err) => {
+    await logout()
     await Navigation.dismissAllModals()
     await Navigation.dismissAllOverlays()
     await Navigation.setRoot({
       root: await getAppRoot(),
-    });
-  });
+    })
+  })
 
-  return true;
+  return true
 }
 
-zustandFlipper(authStore, 'AuthStore');
+zustandFlipper(authStore, 'AuthStore')

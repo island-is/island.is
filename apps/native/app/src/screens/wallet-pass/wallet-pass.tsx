@@ -16,7 +16,7 @@ import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -36,10 +36,6 @@ const {
 } = useThemedNavigationOptions(
   (theme, intl) => ({
     topBar: {
-      // background: {
-      //   color: theme.shade.background,
-      // },
-      // barStyle: theme.isDark ? 'black' : 'default',
       title: {
         text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
       },

@@ -3,7 +3,7 @@ import {
   addNotificationResponseReceivedListener,
   setNotificationHandler,
 } from 'expo-notifications'
-import { navigateToNotification } from '../deep-linking'
+import { navigateToNotification } from '../../lib/deep-linking'
 
 export function setupNotifications() {
   setNotificationHandler({

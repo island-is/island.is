@@ -1,12 +1,12 @@
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native'
 import { LogBox } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
-import { config } from "../config";
-import { ReactNativeNavigationInstrumentation } from "../react-native-navigation-instrumentation";
+import { config } from '../config'
+import { ReactNativeNavigationInstrumentation } from '../../lib/react-native-navigation-instrumentation'
 
 if (__DEV__) {
-  require('../devtools/index');
+  require('../devtools/index')
 }
 
 // uncomment polyfills that are needed.
@@ -46,26 +46,22 @@ if (!__DEV__) {
         routingInstrumentation: new ReactNativeNavigationInstrumentation(),
       }),
     ],
-  });
+  })
 }
 
 // ignore expo warnings
-LogBox.ignoreLogs([
-  /^Constants\.manifest is null/,
-  /RCTRootView cancelTouches/,
-]);
+LogBox.ignoreLogs([/^Constants\.manifest is null/, /RCTRootView cancelTouches/])
 
 // set default timezone
 if (!!(global as any).HermesInternal) {
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
-    (Intl.DateTimeFormat as any).__setDefaultTimeZone('Atlantic/Reykjavik')
+    ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('Atlantic/Reykjavik')
   }
 }
 
 // overwrite global Intl
-global.Intl = (global as any).IntlPolyfill;
-(global.Intl as any).__disableRegExpRestore()
-
+global.Intl = (global as any).IntlPolyfill
+;(global.Intl as any).__disableRegExpRestore()
 
 export function setupGlobals() {
   if (Platform.OS === 'ios') {

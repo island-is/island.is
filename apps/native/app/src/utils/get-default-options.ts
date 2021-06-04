@@ -28,16 +28,14 @@ export function getDefaultOptions(
       borderColor: 'transparent',
       rightButtonColor: theme.color.blue400,
     },
-    // statusBar: {
-    //   animated: true,
-    //   style: theme.isDark ? 'light' : 'dark',
-    //   backgroundColor: theme.shade.background,
-    // },
     window: {
-      backgroundColor: Platform.OS === 'android' ? theme.shade.background : DynamicColorIOS({
-        dark: theme.shades.dark.background,
-        light: theme.shades.light.background
-      }),
+      backgroundColor:
+        Platform.OS === 'android'
+          ? theme.shade.background
+          : DynamicColorIOS({
+              dark: theme.shades.dark.background,
+              light: theme.shades.light.background,
+            }),
     },
     layout:
       Platform.OS === 'android'
@@ -47,8 +45,7 @@ export function getDefaultOptions(
             fitSystemWindows: true,
             topMargin: 0,
           }
-        : {
-        },
+        : {},
     bottomTabs: {
       animateTabSelection: false,
       elevation: 0,

@@ -3,10 +3,10 @@ import { boolean, number, text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { ImageSourcePropType, View } from 'react-native'
-import { LicenseType } from '../../../../app/src/types/license-type'
+import { LicenseStatus, LicenseType } from '../../../../app/src/types/license-type'
 import agencyLogo from '../../assets/card/agency-logo.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
 import logo from '../../assets/card/logo-64w.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
 import { Badge } from '../Badge/Badge'
 import { LicenceCard } from './LicenceCard'
 import { NotificationCard } from './NotificationCard'
@@ -50,7 +50,7 @@ storiesOf('Cards', module)
     return (
       <LicenceCard
         title={title}
-        status="Í gildi"
+        status={LicenseStatus.VALID}
         date="16:24 - 14.03.2022"
         agencyLogo={agencyLogo as ImageSourcePropType}
         type={LicenseType.DRIVERS_LICENSE}
@@ -90,7 +90,9 @@ storiesOf('Cards', module)
         message={message}
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
-        actions={[{ text: 'Action', onPress: () => console.log('Action press') }]}
+        actions={[
+          { text: 'Action', onPress: () => console.log('Action press') },
+        ]}
       />
     )
   })

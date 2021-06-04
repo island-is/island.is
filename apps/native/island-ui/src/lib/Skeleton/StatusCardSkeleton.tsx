@@ -1,9 +1,9 @@
 import React from 'react'
-import { dynamicColor } from '../../utils/dynamic-color'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
-import { Loader } from '../Loader/Loader'
 import { spacing } from '../../utils'
+import { dynamicColor } from '../../utils/dynamic-color'
+import { Loader } from '../Loader/Loader'
 
 const Host = styled.View`
   width: 100%;
@@ -40,7 +40,7 @@ const TimeSkeleton = styled.View`
     light: theme.color.blue100,
   }))};
   border-radius: 4px;
-`;
+`
 
 const Bar = styled.View`
   height: 12px;
@@ -48,7 +48,7 @@ const Bar = styled.View`
   overflow: hidden;
   background-color: ${dynamicColor(({ theme }) => ({
     dark: 'shade200',
-    light : theme.color.blue100
+    light: theme.color.blue100,
   }))};
   border-radius: 6px;
 
@@ -62,14 +62,14 @@ const Progress = styled.View<{ width?: number }>`
   width: 30%;
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue200,
-    dark: 'shade300'
+    dark: 'shade300',
   }))};
 `
 
 const Loading = styled.View`
   margin-top: ${spacing(2)};
   margin-bottom: 10px;
-`;
+`
 
 const BadgeSkeleton = styled.View`
   width: 49px;
@@ -77,9 +77,9 @@ const BadgeSkeleton = styled.View`
   border-radius: 8px;
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue100,
-    dark: 'shade200'
+    dark: 'shade200',
   }))};
-`;
+`
 
 const Flex = styled.View`
   flex: 1;

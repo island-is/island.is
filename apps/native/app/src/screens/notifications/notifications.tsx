@@ -24,10 +24,10 @@ import {
   ListNotificationsResponse,
   LIST_NOTIFICATIONS_QUERY,
 } from '../../graphql/queries/list-notifications.query'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { navigateToNotification } from '../../lib/deep-linking'
 import { useNotificationsStore } from '../../stores/notifications-store'
-import { navigateToNotification } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const {
   getNavigationOptions,

@@ -19,16 +19,23 @@ const Text = styled.Text`
 `
 
 interface SearchHeaderProps {
-  count: number;
-  loading: boolean;
-  loadingText: string;
-  resultText: string;
+  count: number
+  loading: boolean
+  loadingText: string
+  resultText: string
 }
 
-export function SearchHeader({ count, loading, loadingText, resultText }: SearchHeaderProps) {
+export function SearchHeader({
+  count,
+  loading,
+  loadingText,
+  resultText,
+}: SearchHeaderProps) {
   return (
     <Host>
-      <Text>{loading ? loadingText : `${count > 0 ? count : ''} ${resultText}`}</Text>
+      <Text>
+        {loading ? loadingText : `${count > 0 ? count : ''} ${resultText}`}
+      </Text>
     </Host>
   )
 }

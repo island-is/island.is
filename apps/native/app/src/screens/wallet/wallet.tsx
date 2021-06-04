@@ -15,7 +15,6 @@ import {
   RefreshControl,
   SafeAreaView,
   TouchableHighlight,
-  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
@@ -25,12 +24,12 @@ import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { navigateTo } from '../../lib/deep-linking'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
-import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
-import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 const {
   useNavigationOptions,
@@ -111,10 +110,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const licenseItems = res?.data?.listLicenses ?? []
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')
-  const [offset, setOffset] = useState(alertVisible)
   const [loading, setLoading] = useState(res.loading)
   const isSkeleton = res.loading && !res.data
-  const loadingTimeout = useRef<number>()
+  const loadingTimeout = useRef<NodeJS.Timeout>()
   const intl = useIntl()
 
   useActiveTabItemPress(2, () => {
@@ -176,35 +174,17 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       <BottomTabsIndicator index={2} total={3} />
       {licenseItems.length > 0 ? (
         <>
-          {offset && Platform.OS === 'ios' && (
+          {Platform.OS === 'ios' && (
             <Alert
               visible={alertVisible}
               type="info"
               message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-              onClose={() => {
-                dismiss('howToUseCertificates')
-                flatListRef.current?.scrollToOffset({
-                  offset: 0,
-                  animated: true,
-                })
-              }}
-              onClosed={() => {
-                setOffset(false)
-              }}
+              onClose={() => dismiss('howToUseCertificates')}
             />
           )}
           <Animated.FlatList
             ref={flatListRef}
             testID={testIDs.SCREEN_HOME}
-            automaticallyAdjustContentInsets={false}
-            contentInsetAdjustmentBehavior="never"
-            contentInset={{
-              top: offset ? 70 : 0,
-            }}
-            contentOffset={{
-              x: 0,
-              y: offset ? -70 : 0,
-            }}
             style={{
               paddingTop: 16,
               paddingHorizontal: 16,
@@ -215,7 +195,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
                 refreshing={loading}
                 onRefresh={() => {
                   try {
-                    clearTimeout(loadingTimeout.current)
+                    if (loadingTimeout.current) {
+                      clearTimeout(loadingTimeout.current)
+                    }
                     setLoading(true)
                     res.refetch().then(() => {
                       loadingTimeout.current = setTimeout(() => {
@@ -240,7 +222,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       ) : (
         <EmptyList
           title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-          description={intl.formatMessage({ id: 'wallet.emptyListDescription' })}
+          description={intl.formatMessage({
+            id: 'wallet.emptyListDescription',
+          })}
           image={<Image source={illustrationSrc} height={198} width={146} />}
         />
       )}

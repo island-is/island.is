@@ -1,8 +1,6 @@
 import { Linking, NativeModules, Platform } from 'react-native'
-import { CustomTabs } from 'react-native-custom-tabs';
-import { authStore } from '../stores/auth-store';
-
-console.log(CustomTabs)
+import { CustomTabs } from 'react-native-custom-tabs'
+import { authStore } from '../stores/auth-store'
 
 const { RNIsland } = NativeModules
 
@@ -29,11 +27,13 @@ export function openBrowser(url: string, componentId?: string) {
       showPageTitle: true,
       enableDefaultShare: true,
       headers: {
-        Authorization: `Bearer ${authStore.getState().authorizeResult?.accessToken}`
+        Authorization: `Bearer ${
+          authStore.getState().authorizeResult?.accessToken
+        }`,
       },
     })
-    .then(() => null)
-    .catch(() => null);
+      .then(() => null)
+      .catch(() => null)
   }
 
   // Fallback to default openURL

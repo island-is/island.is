@@ -67,7 +67,7 @@ export function getThemeWithPreferences(
 
   const themeObj = {
     ...theme,
-  };
+  }
 
   const shades = {
     dark: themes.dark.shade,
@@ -76,11 +76,11 @@ export function getThemeWithPreferences(
   }
 
   if (themeKey === 'efficient') {
-    shades.dark = shades.efficient;
+    shades.dark = shades.efficient
     themeObj.color = {
       ...themeObj.color,
       blue400: shades.dark.foreground as any,
-    };
+    }
   }
 
   return {

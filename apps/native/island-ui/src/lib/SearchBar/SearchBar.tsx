@@ -14,7 +14,7 @@ const SearchIcon = styled.Image`
   z-index: 100;
   position: absolute;
   right: 12px;
-  top: ${({ theme }) => theme.spacing[1]}px;;
+  top: ${({ theme }) => theme.spacing[1]}px;
   width: ${({ theme }) => theme.spacing[3]}px;
   height: ${({ theme }) => theme.spacing[3]}px;
 `
@@ -22,16 +22,13 @@ const SearchIcon = styled.Image`
 const Input = styled.TextInput`
   flex: 1;
   background-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.shade.shade100
-      : theme.color.blue100};
+    theme.isDark ? theme.shade.shade100 : theme.color.blue100};
   border-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.shade.shade300
-      : theme.color.blue200};
+    theme.isDark ? theme.shade.shade300 : theme.color.blue200};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-radius: ${({ theme }) => theme.spacing[1]}px;
-  padding: ${({ theme }) => theme.spacing[1]}px ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme }) => theme.spacing[1]}px
+    ${({ theme }) => theme.spacing[2]}px;
 
   ${font()}
 `
@@ -77,7 +74,9 @@ export function SearchBar(props: SearchBarProps) {
             return props?.onBlur?.(e)
           }}
           keyboardType="web-search"
-          placeholderTextColor={theme.isDark ? theme.shade.shade700 : theme.color.dark300}
+          placeholderTextColor={
+            theme.isDark ? theme.shade.shade700 : theme.color.dark300
+          }
           keyboardAppearance={theme.isDark ? 'dark' : 'light'}
           style={{ color: theme.shade.foreground }}
         />

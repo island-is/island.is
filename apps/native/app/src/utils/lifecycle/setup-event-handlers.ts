@@ -1,15 +1,15 @@
 import { AppState, AppStateStatus, Linking, Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
+import SpotlightSearch from 'react-native-spotlight-search'
+import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
+import { hideAppLockOverlay, showAppLockOverlay } from '../app-lock'
 import { ButtonRegistry } from '../component-registry'
-import { evaluateUrl, navigateTo } from '../deep-linking'
-import { showLockScreenOverlay } from '../lock-screen-helpers'
 import { isOnboarded } from '../onboarding'
-import SpotlightSearch from 'react-native-spotlight-search'
 
-let backgroundAppLockTimeout: NodeJS.Timeout;
+let backgroundAppLockTimeout: NodeJS.Timeout
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
@@ -23,12 +23,12 @@ export function setupEventHandlers() {
 
   if (Platform.OS === 'ios') {
     SpotlightSearch.searchItemTapped((url) => {
-      navigateTo(url);
-    });
+      navigateTo(url)
+    })
 
-    SpotlightSearch.getInitialSearchItem().then(url => {
-      navigateTo(url);
-    });
+    SpotlightSearch.getInitialSearchItem().then((url) => {
+      navigateTo(url)
+    })
   }
 
   // Get initial url and pass to the opener
@@ -61,7 +61,7 @@ export function setupEventHandlers() {
     }
 
     if (noLockScreenUntilNextAppStateActive) {
-      authStore.setState({ noLockScreenUntilNextAppStateActive: false });
+      authStore.setState({ noLockScreenUntilNextAppStateActive: false })
       return
     }
 
@@ -70,14 +70,14 @@ export function setupEventHandlers() {
         // Add a small delay for those accidental backgrounds in iOS
         backgroundAppLockTimeout = setTimeout(() => {
           if (!lockScreenComponentId) {
-            showLockScreenOverlay({ status })
+            showAppLockOverlay({ status })
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }, 100)
       } else {
         if (!lockScreenComponentId) {
-          showLockScreenOverlay({ status })
+          showAppLockOverlay({ status })
         } else {
           Navigation.updateProps(lockScreenComponentId, { status })
         }
@@ -92,11 +92,7 @@ export function setupEventHandlers() {
           lockScreenActivatedAt !== undefined &&
           lockScreenActivatedAt + appLockTimeout > Date.now()
         ) {
-          Navigation.dismissAllOverlays()
-          authStore.setState(() => ({
-            lockScreenActivatedAt: undefined,
-            lockScreenComponentId: undefined,
-          }))
+          hideAppLockOverlay();
         } else {
           Navigation.updateProps(lockScreenComponentId, { status })
         }

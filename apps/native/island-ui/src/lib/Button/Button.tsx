@@ -1,6 +1,6 @@
 import React from 'react'
-import styled, { useTheme } from 'styled-components/native'
 import { TouchableHighlightProps } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 

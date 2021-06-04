@@ -7,7 +7,7 @@ import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
 import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
-import { showLockScreenOverlay } from './utils/lock-screen-helpers'
+import { showAppLockOverlay } from './utils/app-lock'
 import { readAuthorizeResult } from './stores/auth-store'
 
 async function startApp() {
@@ -44,7 +44,7 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    await showLockScreenOverlay({ enforceActivated: true })
+    await showAppLockOverlay({ enforceActivated: true })
 
     // Dismiss all modals
     await Navigation.dismissAllModals()

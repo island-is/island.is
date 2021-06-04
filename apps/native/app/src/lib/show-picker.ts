@@ -1,6 +1,6 @@
-import DialogAndroid from 'react-native-dialogs'
+import { theme } from '@island.is/island-ui/theme'
 import { ActionSheetIOS, Platform } from 'react-native'
-import { theme } from '@island.is/island-ui/theme';
+import DialogAndroid from 'react-native-dialogs'
 
 /**
  * ShowPickerItem
@@ -9,51 +9,53 @@ export interface ShowPickerItem {
   /**
    * ID of item
    */
-  id: string;
+  id: string
   /**
    * Label of item
    */
-  label: string;
+  label: string
 }
 
 export interface ShowPickerOptions {
   /**
    * Dialog title
    */
-  title: string;
+  title: string
   /**
    * Message to show below title
    * (iOS only)
    */
-  message?: string;
+  message?: string
   /**
    * Items
    */
-  items: ShowPickerItem[];
+  items: ShowPickerItem[]
   /**
    * Selected item ID
    */
-  selectedId?: string;
+  selectedId?: string
   /**
    * Radio or list
    * Default: 'radio'
    * (Android only)
    */
-  type?: 'radio' | 'list';
+  type?: 'radio' | 'list'
 
   /**
    * Show cancel button or not
    */
-  cancel?: boolean;
-  cancelLabel?: string;
+  cancel?: boolean
+  cancelLabel?: string
 }
 
 interface ShowPickerResponse {
-  action: 'select' | 'negative' | 'neutral' | 'dismiss';
-  selectedItem?: ShowPickerItem;
+  action: 'select' | 'negative' | 'neutral' | 'dismiss'
+  selectedItem?: ShowPickerItem
 }
 
-export function showPicker(options: ShowPickerOptions): Promise<ShowPickerResponse> {
+export function showPicker(
+  options: ShowPickerOptions,
+): Promise<ShowPickerResponse> {
   const {
     type,
     title,
@@ -62,7 +64,7 @@ export function showPicker(options: ShowPickerOptions): Promise<ShowPickerRespon
     items,
     cancel,
     cancelLabel = 'Cancel',
-  } = options;
+  } = options
 
   if (Platform.OS === 'ios') {
     return new Promise((resolve) => {
@@ -78,41 +80,41 @@ export function showPicker(options: ShowPickerOptions): Promise<ShowPickerRespon
         },
         (index: number) => {
           if (index < items.length) {
-            resolve({ action: 'select', selectedItem: items[index] });
+            resolve({ action: 'select', selectedItem: items[index] })
           } else {
             resolve({
               action: 'dismiss',
-            });
+            })
           }
         },
-      );
-    });
+      )
+    })
   } else if (Platform.OS === 'android') {
     return DialogAndroid.showPicker(title, message, {
       selectedId,
       cancelable: cancel,
       negativeText: cancel ? cancelLabel : undefined,
-      type: type === 'radio' ? DialogAndroid.listRadio : DialogAndroid.listPlain,
+      type:
+        type === 'radio' ? DialogAndroid.listRadio : DialogAndroid.listPlain,
       items,
       negativeColor: theme.color.dark400,
       positiveColor: theme.color.blue400,
       widgetColor: theme.color.blue400,
-    })
-    .then(({ action, selectedItem }: any) => {
-      let actn: ShowPickerResponse["action"]  = 'neutral';
+    }).then(({ action, selectedItem }: any) => {
+      let actn: ShowPickerResponse['action'] = 'neutral'
       if (action === 'actionDismiss') {
-        actn = 'dismiss';
+        actn = 'dismiss'
       } else if (action === 'actionNegative') {
-        actn = 'negative';
+        actn = 'negative'
       } else if (action === 'actionSelect') {
-        actn = 'select';
+        actn = 'select'
       }
 
-      return ({
+      return {
         action: actn,
-        selectedItem
-      })
-    });
+        selectedItem,
+      }
+    })
   }
-  return Promise.resolve({ action: 'neutral' });
+  return Promise.resolve({ action: 'neutral' })
 }

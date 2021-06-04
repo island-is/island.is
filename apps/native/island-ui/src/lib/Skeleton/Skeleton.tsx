@@ -43,16 +43,16 @@ export function Skeleton(props: SkeletonProps) {
   const ar = useRef<Animated.CompositeAnimation>()
   const aw = useRef(Dimensions.get('window').width)
   const av = useRef(new Animated.Value(0))
-  const mounted = useRef(true);
+  const mounted = useRef(true)
 
   const baseDynamicColor = ({ dark, light }: any) => {
     if (Platform.OS === 'android') {
-      return theme.isDark ? dark : light;
+      return theme.isDark ? dark : light
     }
     return DynamicColorIOS({
       light,
       dark,
-    });
+    })
   }
 
   const {
@@ -74,7 +74,7 @@ export function Skeleton(props: SkeletonProps) {
   const offset = aw.current
   const animate = useCallback(() => {
     if (!mounted.current) {
-      return;
+      return
     }
     ar.current = Animated.timing(av.current, {
       duration: 1660,
@@ -86,7 +86,7 @@ export function Skeleton(props: SkeletonProps) {
       av.current.setValue(-(aw.current + offset))
       animate()
     })
-  }, [ar.current, props.active]);
+  }, [ar.current, props.active])
 
   const onLayout = (e: LayoutChangeEvent) => {
     aw.current = e.nativeEvent.layout.width
@@ -102,10 +102,10 @@ export function Skeleton(props: SkeletonProps) {
   }, [active])
 
   useEffect(() => {
-    mounted.current = true;
+    mounted.current = true
     return () => {
-      mounted.current = false;
-      ar.current?.reset();
+      mounted.current = false
+      ar.current?.reset()
     }
   }, [])
 
@@ -127,7 +127,7 @@ export function Skeleton(props: SkeletonProps) {
           shadowColor: overlayColor,
           shadowRadius: Math.floor(height),
           shadowOpacity: overlayOpacity,
-          transform: [{ translateX: av.current },{ rotate: '5deg' }],
+          transform: [{ translateX: av.current }, { rotate: '5deg' }],
           opacity: props.error ? 0 : 1,
           ...Platform.select({
             android: {

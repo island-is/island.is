@@ -7,9 +7,9 @@ import { font } from '../../utils/font'
 
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: 'shade100',
-    light: props.theme.color.blueberry100
+    light: props.theme.color.blueberry100,
   }))};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -27,9 +27,9 @@ const Title = styled.View`
 
 const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor(props => ({
+  border-top-color: ${dynamicColor((props) => ({
     dark: 'shade200',
-    light: props.theme.color.blueberry200
+    light: props.theme.color.blueberry200,
   }))};
   flex-direction: row;
 `
@@ -40,9 +40,9 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor(props => ({
+  border-left-color: ${dynamicColor((props) => ({
     dark: !props.border ? 'transparent' : 'shade200',
-    light: !props.border ? 'transparent' : props.theme.color.blueberry200
+    light: !props.border ? 'transparent' : props.theme.color.blueberry200,
   }))};
 `
 

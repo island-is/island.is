@@ -24,6 +24,7 @@ storiesOf('Navigation Bar Sheet', module)
     return (
       <View style={{ width: '100%' }}>
         <NavigationBarSheet
+          componentId="none"
           title="Notandi"
           onClosePress={() => console.log('close')}
           style={{ marginHorizontal: 16 }}

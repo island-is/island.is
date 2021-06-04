@@ -20,11 +20,11 @@ const Text = styled.Text`
 
   ${font({
     fontWeight: '300',
-    lineHeight: 24
+    lineHeight: 24,
   })}
 `
 
-const Img = styled.View``;
+const Img = styled.View``
 
 interface EmptyCardProps {
   text: string

@@ -25,17 +25,19 @@ const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
 
   border-radius: 8px;
 
-  background-color: ${dynamicColor(props => ({
-    dark: props.state === 'active'
-      ? props.theme.color.blue400
-      : props.state === 'inactive'
-      ? props.theme.shades.dark.shade400
-      : props.theme.color.red400,
-    light: props.state === 'active'
-      ? props.theme.color.blue400
-      : props.state === 'inactive'
-      ? props.theme.color.blue100
-      : props.theme.color.red400,
+  background-color: ${dynamicColor((props) => ({
+    dark:
+      props.state === 'active'
+        ? props.theme.color.blue400
+        : props.state === 'inactive'
+        ? props.theme.shades.dark.shade400
+        : props.theme.color.red400,
+    light:
+      props.state === 'active'
+        ? props.theme.color.blue400
+        : props.state === 'inactive'
+        ? props.theme.color.blue100
+        : props.theme.color.red400,
   }))};
   z-index: ${(props) =>
     props.state === 'inactive' ? 2 : props.state === 'active' ? 3 : 4};

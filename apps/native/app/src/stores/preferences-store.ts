@@ -6,7 +6,7 @@ import create, { State } from 'zustand/vanilla'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 
 export type Locale = 'en-US' | 'is-IS'
-export type ThemeMode = 'dark' | 'light' | 'efficient';
+export type ThemeMode = 'dark' | 'light' | 'efficient'
 export type AppearanceMode = ThemeMode | 'automatic'
 
 export interface PreferencesStore extends State {
@@ -89,4 +89,4 @@ export const preferencesStore = create<PreferencesStore>(
 
 export const usePreferencesStore = createUse(preferencesStore)
 
-zustandFlipper(preferencesStore, 'PreferencesStore');
+zustandFlipper(preferencesStore, 'PreferencesStore')

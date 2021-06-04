@@ -47,7 +47,7 @@ const FooterText = styled.Text`
   ${font()}
 `
 
-export function TableViewGroup(props: TableViewGroupProps) {
+export const TableViewGroup = React.memo((props: TableViewGroupProps) => {
   const { header, footer, children, type = TableViewGroupType.PLAIN } = props
 
   return (
@@ -73,4 +73,4 @@ export function TableViewGroup(props: TableViewGroupProps) {
       )}
     </Host>
   )
-}
+});

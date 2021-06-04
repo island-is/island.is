@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native"
 import logo from '../../assets/logo/logo-64w.png'
 import { INotification } from '../../graphql/fragments/notification.fragment'
 import { useNotificationsStore } from '../../stores/notifications-store'
-import { navigateToNotification } from '../../utils/deep-linking'
-import { useIntl } from "../../utils/intl"
+import { navigateToNotification } from '../../lib/deep-linking'
+import { useIntl } from "../../lib/intl"
 
 interface NotificationsModuleProps {
   items: INotification[];

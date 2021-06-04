@@ -1,5 +1,5 @@
-import React from 'react'
 import { dynamicColor } from '@island.is/island-ui-native'
+import React from 'react'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 

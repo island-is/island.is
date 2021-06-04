@@ -12,7 +12,7 @@ import illustration2 from '../../assets/illustrations/le-retirement-s3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
 import { authStore, useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { useIntl } from '../../utils/intl'
+import { useIntl } from '../../lib/intl'
 
 export const OnboardingModule = React.memo(() => {
   const theme = useTheme()

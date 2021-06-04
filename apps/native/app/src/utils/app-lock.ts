@@ -1,3 +1,4 @@
+import { Keyboard } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../stores/auth-store'
 import { preferencesStore } from '../stores/preferences-store'
@@ -9,16 +10,17 @@ export function skipAppLock() {
   const { authorizeResult } = authStore.getState()
   const { dev__useLockScreen } = preferencesStore.getState()
 
-  const skip = !authorizeResult || !isOnboarded() || dev__useLockScreen === false;
+  const skip =
+    !authorizeResult || !isOnboarded() || dev__useLockScreen === false
 
   if (skip) {
-    uiStore.setState({ initializedApp: true });
+    uiStore.setState({ initializedApp: true })
   }
 
   return skip
 }
 
-export function showLockScreenOverlay({
+export function showAppLockOverlay({
   enforceActivated = false,
   status = 'active',
 }: {
@@ -28,6 +30,9 @@ export function showLockScreenOverlay({
   if (skipAppLock()) {
     return Promise.resolve()
   }
+
+  // dismiss keyboard
+  Keyboard.dismiss()
 
   // set now
   let lockScreenActivatedAt = Date.now()
@@ -47,13 +52,13 @@ export function showLockScreenOverlay({
   })
 }
 
-export function hideLockScreenOverlay() {
+export function hideAppLockOverlay() {
+  // Dismiss all overlays
+  Navigation.dismissAllOverlays()
+
   // reset lockscreen parameters
   authStore.setState({
     lockScreenActivatedAt: undefined,
     lockScreenComponentId: undefined,
   })
-
-  // Dismiss all overlays
-  Navigation.dismissAllOverlays()
 }

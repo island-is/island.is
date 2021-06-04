@@ -1,17 +1,18 @@
 import React from 'react'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { LicenseType, LicenseStatus } from '../../../../app/src/types/license-type'
-import isVerifiedLogo from '../../assets/card/is-verified.png'
+import {
+  LicenseStatus,
+  LicenseType,
+} from '../../../../app/src/types/license-type'
 import danger from '../../assets/card/danger.png'
-import warning from '../../assets/card/warning.png'
-import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
+import isVerifiedLogo from '../../assets/card/is-verified.png'
 import driverLicence from '../../assets/card/okuskyrteini.png'
-import fishingCard from '../../assets/card/veidikort.png'
+import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import ust from '../../assets/card/ust.png'
-import { font } from '../../utils/font'
+import fishingCard from '../../assets/card/veidikort.png'
 import { dynamicColor } from '../../utils'
-
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
@@ -32,8 +33,8 @@ const BackgroundImage = styled.ImageBackground<{ color: any }>`
   bottom: 0;
   z-index: 0;
   flex: 1;
-  background-color: ${dynamicColor(props => props.color)};
-`;
+  background-color: ${dynamicColor((props) => props.color)};
+`
 
 const Content = styled.View`
   justify-content: center;
@@ -44,7 +45,7 @@ const Title = styled.Text<{ color: any }>`
 
   ${font({
     fontWeight: '600',
-    color: props => props.color,
+    color: (props) => props.color,
   })}
 `
 
@@ -59,14 +60,14 @@ const Validation = styled.Text<{ color: any }>`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
-    color: props => props.color,
+    color: (props) => props.color,
   })}
 `
 
 const TimeStamp = styled.Text<{ color: any }>`
   ${font({
     fontSize: 13,
-    color: props => props.color,
+    color: (props) => props.color,
   })}
 `
 
@@ -104,7 +105,7 @@ const statusIcon: StatusStyles = {
   VALID: {
     text: 'Í gildi',
     icon: isVerifiedLogo,
-  }
+  },
 }
 
 export function LicenceCard({
@@ -116,9 +117,8 @@ export function LicenceCard({
   date,
   status,
 }: LicenceCardProps) {
-
   const theme = useTheme()
-  const variant = statusIcon[status];
+  const variant = statusIcon[status]
   let textColor = {
     dark: theme.shades.dark.foreground,
     light: theme.shades.light.foreground,
@@ -126,30 +126,30 @@ export function LicenceCard({
   let backgroundColor = {
     dark: theme.shades.dark.shade400,
     light: theme.shades.light.shade400,
-  };
-  let backgroundImage = null;
-  let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />;
+  }
+  let backgroundImage = null
+  let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
   switch (type) {
     case LicenseType.DRIVERS_LICENSE:
-      textColor = { dark: '#000000', light: '#000000' };
-      backgroundColor = { dark: '#5F414E', light: '#f5e4ec' };
+      textColor = { dark: '#000000', light: '#000000' }
+      backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
       backgroundImage = driverLicence
       break
     case LicenseType.IDENTIDY_CARD:
-      backgroundColor = { dark: '#403E3B', light: '#fff7e7' };
+      backgroundColor = { dark: '#403E3B', light: '#fff7e7' }
       break
     case LicenseType.PASSPORT:
-      backgroundColor = { dark: '#283139', light: '#ddefff' };
+      backgroundColor = { dark: '#283139', light: '#ddefff' }
       break
     case LicenseType.FISHING_CARD:
-      textColor = { dark: '#000000', light: '#000000' };
-      backgroundColor = { dark: '#283139', light: '#ddefff' };
+      textColor = { dark: '#000000', light: '#000000' }
+      backgroundColor = { dark: '#283139', light: '#ddefff' }
       backgroundImage = fishingCard
       logo = <Image source={ust} style={{ width: 58, height: 41 }} />
       break
     case LicenseType.WEAPON_LICENSE:
-      textColor = { dark: '#000000', light: '#000000' };
-      backgroundColor = { dark: '#474421', light: '#fffce0' };
+      textColor = { dark: '#000000', light: '#000000' }
+      backgroundColor = { dark: '#474421', light: '#fffce0' }
       backgroundImage = weaponLicense
       break
   }
@@ -171,9 +171,7 @@ export function LicenceCard({
         </ValidationWrap>
         <TimeStamp color={textColor}>{date}</TimeStamp>
       </Content>
-      <ImgWrap>
-        {logo}
-      </ImgWrap>
+      <ImgWrap>{logo}</ImgWrap>
     </Host>
   )
 }

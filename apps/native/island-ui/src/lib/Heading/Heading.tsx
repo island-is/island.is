@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
 const Host = styled.View`

@@ -6,7 +6,7 @@ import {
   TouchableHighlight,
   TouchableHighlightProps,
 } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 interface PressableHighlightProps extends PressableProps {
   highlightColor?: string

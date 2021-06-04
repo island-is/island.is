@@ -103,7 +103,7 @@ export const TableViewAccessory = styled.Text`
   })}
 `
 
-export function TableViewCell(props: TableViewCellProps) {
+export const TableViewCell = React.memo((props: TableViewCellProps) => {
   const {
     title,
     subtitle,
@@ -154,4 +154,4 @@ export function TableViewCell(props: TableViewCellProps) {
       </Cell>
     </SafeAreaView>
   )
-}
+});

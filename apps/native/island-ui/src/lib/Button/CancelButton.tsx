@@ -5,7 +5,7 @@ import arrow from '../../assets/icons/arrow.png'
 import { dynamicColor, font } from '../../utils'
 
 interface CancelProps extends TouchableOpacityProps {
-  title: React.ReactNode;
+  title: React.ReactNode
 }
 
 const Host = styled.TouchableOpacity`
@@ -17,7 +17,7 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-content: center;
   align-items: center;
-`;
+`
 
 const Title = styled.Text`
   margin-right: 7px;
@@ -27,15 +27,14 @@ const Title = styled.Text`
     fontSize: 16,
     color: (props) => props.theme.color.blue400,
   })}
-`;
-
+`
 
 export function CancelButton({ title, ...rest }: CancelProps) {
   return (
-    <Host {...rest as any}>
+    <Host {...(rest as any)}>
       <Wrapper>
         <Title>{title}</Title>
-        <Image source={arrow}  style={{ width: 10, height: 10 }} />
+        <Image source={arrow} style={{ width: 10, height: 10 }} />
       </Wrapper>
     </Host>
   )

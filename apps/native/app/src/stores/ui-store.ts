@@ -4,7 +4,7 @@ import create, { State } from 'zustand/vanilla'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 
 export interface UIStore extends State {
-  theme?: DefaultTheme;
+  theme?: DefaultTheme
   selectedTab: number
   unselectedTab: number
   modalsOpen: number
@@ -27,5 +27,4 @@ export const uiStore = create<UIStore>((set, get) => ({
 
 export const useUiStore = createUse(uiStore)
 
-zustandFlipper(uiStore, 'UIStore');
-
+zustandFlipper(uiStore, 'UIStore')

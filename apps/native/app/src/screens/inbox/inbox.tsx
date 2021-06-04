@@ -10,6 +10,8 @@ import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Animated,
+  AppState,
+  AppStateStatus,
   FlatList,
   Image,
   Platform,
@@ -17,7 +19,11 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import KeyboardManager from 'react-native-keyboard-manager'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
   useNavigationSearchBarUpdate,
@@ -32,13 +38,13 @@ import {
   ListDocumentsResponse,
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { navigateTo } from '../../utils/deep-linking'
 import { testIDs } from '../../utils/test-ids'
-import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 interface IndexedDocument extends IDocument {
   fulltext: string
@@ -136,12 +142,47 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
+  const keyboardRef = useRef(false)
   const [loading, setLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
+
+  const onAppStateBlur = useCallback((status: AppStateStatus) => {
+    if (status !== 'inactive') {
+      if (keyboardRef.current) {
+        Navigation.mergeOptions(componentId, {
+          topBar: {
+            searchBar: {
+              visible: true,
+              focus: true,
+              placeholder: intl.formatMessage({
+                id: 'inbox.searchPlaceholder',
+              }),
+            },
+          },
+        })
+      }
+    } else {
+      KeyboardManager.isKeyboardShowing().then((value) => {
+        if (value === true) {
+          keyboardRef.current = value
+          Navigation.mergeOptions(componentId, {
+            topBar: {
+              searchBar: {
+                visible: false,
+                placeholder: intl.formatMessage({
+                  id: 'inbox.searchPlaceholder',
+                }),
+              },
+            },
+          })
+        }
+      })
+    }
+  }, [])
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
@@ -185,6 +226,15 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       setInboxItems([...indexedItems])
     }
   }, [ui.query, indexedItems])
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      AppState.addEventListener('change', onAppStateBlur)
+      return () => {
+        AppState.removeEventListener('change', onAppStateBlur)
+      }
+    }
+  }, [])
 
   const keyExtractor = useCallback((item) => {
     return item.id

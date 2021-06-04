@@ -5,14 +5,14 @@ import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 import { Skeleton } from '../Skeleton/Skeleton'
 
-const Host = styled.View<{ hasBorder?: boolean}>`
+const Host = styled.View<{ hasBorder?: boolean }>`
   padding-bottom: 16px;
-  border-bottom-width: ${({ hasBorder }) => hasBorder ? '1px' : 0};
-  border-bottom-color: ${dynamicColor(props => ({
+  border-bottom-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
+  border-bottom-color: ${dynamicColor((props) => ({
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
-  margin-bottom: ${({ hasBorder }) => hasBorder ? '16px' : 0};
+  margin-bottom: ${({ hasBorder }) => (hasBorder ? '16px' : 0)};
   margin-top: 16px;
 `
 
@@ -70,7 +70,14 @@ interface HeaderProps {
   hasBorder?: boolean
 }
 
-export function Header({ title, logo, date, message, isLoading, hasBorder = true }: HeaderProps) {
+export function Header({
+  title,
+  logo,
+  date,
+  message,
+  isLoading,
+  hasBorder = true,
+}: HeaderProps) {
   return (
     <Host hasBorder={hasBorder}>
       <Row>
@@ -92,7 +99,7 @@ export function Header({ title, logo, date, message, isLoading, hasBorder = true
       </Row>
       {message && isLoading ? (
         <Skeleton active style={{ borderRadius: 4 }} height={32} />
-      ) : (message && !isLoading) ? (
+      ) : message && !isLoading ? (
         <Message>{message}</Message>
       ) : null}
     </Host>

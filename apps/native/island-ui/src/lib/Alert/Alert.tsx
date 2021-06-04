@@ -1,18 +1,19 @@
-import { Colors, theme } from '@island.is/island-ui/theme'
-import React, { useEffect, useRef, useState } from 'react'
+import { Colors } from '@island.is/island-ui/theme'
+import React, { useEffect, useState } from 'react'
 import {
   Animated,
   Image,
   ImageSourcePropType,
+  LayoutAnimation,
   SafeAreaView,
   View,
 } from 'react-native'
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'
-import warning from '../../assets/icons/warning.png'
-import error from '../../assets/icons/error.png'
 import check from '../../assets/icons/check.png'
+import error from '../../assets/icons/error.png'
+import warning from '../../assets/icons/warning.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -48,19 +49,18 @@ const darkBackgroundColor = (color: string, colors: any) => {
   if (color === colors.blue100) {
     return '#001333'
   }
-  return color;
+  return color
 }
 
 const Host = styled(Animated.View)<HostProps>`
-  position: absolute;
-  left: 0;
-  right: 0;
   padding: 20px 18px;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.backgroundColor],
-    dark: darkBackgroundColor(props.theme.color[props.backgroundColor], props.theme.color),
+    dark: darkBackgroundColor(
+      props.theme.color[props.backgroundColor],
+      props.theme.color,
+    ),
   }))};
-  z-index: 10;
 `
 
 const Icon = styled.View`
@@ -118,59 +118,40 @@ export function Alert({
   sharedAnimatedValue,
   ...rest
 }: AlertProps) {
-  const offsetY = sharedAnimatedValue ?? useRef(new Animated.Value(0)).current
-  const alertRef = useRef<View>(null)
-  const variant = variantStyles[type]
+  const [hidden, setHidden] = useState<boolean>()
   const [height, setHeight] = useState(70)
-  const [isVisible, setIsVisible] = useState(visible)
-
-  const animateOut = () => {
-    if (offsetY) {
-      Animated.spring(offsetY, {
-        toValue: -height,
-        overshootClamping: true,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (finished) {
-          setIsVisible(false)
-          onClosed && onClosed()
-          if (offsetY) {
-            offsetY.setValue(1)
-          }
-        }
-      })
-    }
-  }
+  const variant = variantStyles[type]
 
   useEffect(() => {
-    if (!visible) {
-      animateOut()
+    if (typeof hidden !== 'undefined') {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.Presets.easeInEaseOut,
+        () => {
+          setHidden(!visible)
+        },
+      )
+    } else {
+      setHidden(!visible)
     }
   }, [visible])
 
-  if (!isVisible) {
+  if (hidden) {
     return null
   }
 
   return (
-    <>
+    <View style={!visible ? { height: 0 } : { height }}>
       <Host
-        ref={alertRef as any}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
         onLayout={(e) => setHeight(e.nativeEvent.layout.height)}
         backgroundColor={variant.background}
         borderColor={variant.borderColor}
         {...rest}
-        style={{
-          opacity: offsetY?.interpolate({
-            inputRange: [-height, 0],
-            outputRange: [0, 1],
-          }),
-          transform: [
-            {
-              translateY: offsetY,
-            },
-          ],
-        }}
       >
         <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
           {!hideIcon && (
@@ -196,6 +177,6 @@ export function Alert({
           )}
         </SafeAreaView>
       </Host>
-    </>
+    </View>
   )
 }

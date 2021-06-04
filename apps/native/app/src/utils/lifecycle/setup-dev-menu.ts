@@ -60,7 +60,7 @@ export function setupDevMenu() {
 
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
     const { dev__useLockScreen } = preferencesStore.getState()
-    const { cognitoAuthUrl } = authStore.getState();
+    const { cognitoAuthUrl } = authStore.getState()
 
     const options = {
       STORYBOOK: devMenuOptions.storybook
@@ -69,9 +69,11 @@ export function setupDevMenu() {
       TOGGLE_LOCKSCREEN: dev__useLockScreen
         ? 'Disable lockscreen'
         : 'Enable Lockscreen',
-      ...(cognitoAuthUrl ? {
-        LOGIN_COGNITO: 'Login with cognito',
-      } : {}),
+      ...(cognitoAuthUrl
+        ? {
+            LOGIN_COGNITO: 'Login with cognito',
+          }
+        : {}),
       TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
       LOGOUT: 'Logout',

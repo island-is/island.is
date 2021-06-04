@@ -1,6 +1,5 @@
 import { dynamicColor } from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet } from 'react-native'
 import { Animated, SafeAreaView, useWindowDimensions, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -14,11 +13,11 @@ const Host = styled.View`
   height: 30px;
   z-index: 101;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Active = styled(Animated.View)`
-  background-color: ${props => props.theme.color.blue400};
-`;
+  background-color: ${(props) => props.theme.color.blue400};
+`
 
 export function BottomTabsIndicator({
   index,
@@ -52,20 +51,21 @@ export function BottomTabsIndicator({
   }, [selectedTab, unselectedTab])
 
   return (
-    <Host style={{
-      shadowColor: theme.color.blue400,
-      shadowOffset: {
-        width: 0,
-        height: -26,
-      },
-      shadowOpacity: 0.08,
-      shadowRadius: 30.0,
-      elevation: 1,
-    }}>
+    <Host
+      style={{
+        shadowColor: theme.color.blue400,
+        shadowOffset: {
+          width: 0,
+          height: -26,
+        },
+        shadowOpacity: 0.08,
+        shadowRadius: 30.0,
+        elevation: 1,
+      }}
+    >
       <SafeAreaView>
         <View
-          style={{
-          }}
+          style={{}}
           onLayout={(e) => {
             setWidth(e.nativeEvent.layout.width)
           }}

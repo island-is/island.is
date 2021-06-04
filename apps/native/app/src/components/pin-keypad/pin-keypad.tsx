@@ -9,8 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
-import { useTheme } from 'styled-components'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
 
 interface PinKeypadProps {
@@ -145,7 +144,7 @@ export function PinKeypad({
   const r = invlerp(512, 1024, height)
   const size = 50 + 32 * r
   const gutter = 8 + 8 * r
-  const intl = useIntl();
+  const intl = useIntl()
 
   return (
     <View>
@@ -242,7 +241,9 @@ export function PinKeypad({
             value="face_id"
             onPress={onFaceIdPress}
             icon={require('../../assets/icons/face-id.png')}
-            accessibilityLabel={intl.formatMessage({ id: 'onboarding.pinKeypad.accessibilityLabel.faceId' })}
+            accessibilityLabel={intl.formatMessage({
+              id: 'onboarding.pinKeypad.accessibilityLabel.faceId',
+            })}
             testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
             size={size}
             gutter={gutter}
@@ -264,7 +265,9 @@ export function PinKeypad({
             value="delete"
             onPress={onBackPress}
             icon={require('../../assets/icons/keyboard-delete.png')}
-            accessibilityLabel={intl.formatMessage({ id: 'onboarding.pinKeypad.accessibilityLabel.delete' })}
+            accessibilityLabel={intl.formatMessage({
+              id: 'onboarding.pinKeypad.accessibilityLabel.delete',
+            })}
             testID={testIDs.PIN_KEYPAD_BUTTON_DELETE}
             size={size}
             gutter={gutter}

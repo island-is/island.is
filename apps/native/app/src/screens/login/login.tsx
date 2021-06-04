@@ -1,4 +1,9 @@
-import { Button, dynamicColor, font, Illustration } from '@island.is/island-ui-native'
+import {
+  Button,
+  dynamicColor,
+  font,
+  Illustration,
+} from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -8,16 +13,16 @@ import {
   SafeAreaView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
+import { FormattedMessage, useIntl } from '../../lib/intl'
+import { openBrowser } from '../../lib/rn-island'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
-import { FormattedMessage, useIntl } from '../../utils/intl'
 import { nextOnboardingStep } from '../../utils/onboarding'
-import { openBrowser } from '../../utils/rn-island'
 import { testIDs } from '../../utils/test-ids'
 
 const Host = styled.View`

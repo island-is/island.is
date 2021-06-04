@@ -17,22 +17,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" image="SplashScreenBackground" translatesAutoresizingMaskIntoConstraints="NO" id="EXPO-SplashScreenBackground" userLabel="SplashScreenBackground">
-                                <rect key="frame" x="0.0" y="44" width="428" height="848"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashScreen" translatesAutoresizingMaskIntoConstraints="NO" id="EXPO-SplashScreen" userLabel="SplashScreen">
-                                <rect key="frame" x="176" y="425" width="76" height="76"/>
+                                <rect key="frame" x="182" y="431" width="64" height="64"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Rmq-lb-GrQ"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="EXPO-SplashScreenBackground" firstAttribute="top" secondItem="Rmq-lb-GrQ" secondAttribute="top" id="1gX-mQ-vu6"/>
-                            <constraint firstItem="EXPO-SplashScreenBackground" firstAttribute="leading" secondItem="Rmq-lb-GrQ" secondAttribute="leading" id="6tX-OG-Sck"/>
-                            <constraint firstItem="EXPO-SplashScreenBackground" firstAttribute="trailing" secondItem="Rmq-lb-GrQ" secondAttribute="trailing" id="ABX-8g-7v4"/>
                             <constraint firstItem="EXPO-SplashScreen" firstAttribute="centerY" secondItem="EXPO-ContainerView" secondAttribute="centerY" id="AHZ-4I-05Q"/>
-                            <constraint firstItem="EXPO-SplashScreenBackground" firstAttribute="bottom" secondItem="Rmq-lb-GrQ" secondAttribute="bottom" id="jkI-2V-eW5"/>
                             <constraint firstItem="EXPO-SplashScreen" firstAttribute="centerX" secondItem="EXPO-ContainerView" secondAttribute="centerX" id="rUG-5L-cfb"/>
                         </constraints>
                     </view>
@@ -43,8 +35,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="SplashScreen" width="76" height="76"/>
-        <image name="SplashScreenBackground" width="1" height="1"/>
+        <image name="SplashScreen" width="64" height="64"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

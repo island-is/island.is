@@ -41,7 +41,7 @@ export function getMainRoot(): Layout {
         bottomTabs: {
           testID: testIDs.TABBAR_MAIN,
           currentTabIndex: 1,
-          tabsAttachMode: 'together'
+          tabsAttachMode: 'together',
         },
       },
       children: [

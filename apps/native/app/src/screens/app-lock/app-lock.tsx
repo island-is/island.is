@@ -3,7 +3,7 @@ import { selectionAsync } from 'expo-haptics'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Animated, Image, Keyboard, SafeAreaView, View } from 'react-native'
+import { Animated, Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import {
   Navigation,
@@ -66,7 +66,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const [invalidCode, setInvalidCode] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
-  const intl = useIntl();
+  const intl = useIntl()
 
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({
@@ -118,7 +118,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
       lockScreenComponentId: componentId,
     }))
     uiStore.setState({ initializedApp: true })
-    Keyboard.dismiss()
   })
 
   useNavigationComponentDidDisappear(() => {
@@ -202,7 +201,11 @@ export const AppLockScreen: NavigationFunctionComponent<{
           />
           <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
           <Subtitle>
-            {attempts > 0 ? `${MAX_ATTEMPTS - attempts} ${intl.formatMessage({ id: 'applock.attempts' })}` : ''}
+            {attempts > 0
+              ? `${MAX_ATTEMPTS - attempts} ${intl.formatMessage({
+                  id: 'applock.attempts',
+                })}`
+              : ''}
           </Subtitle>
         </View>
         <Center>

@@ -9,7 +9,7 @@ const Host = styled.SafeAreaView`
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue100,
-    dark: theme.shades.dark.shade200
+    dark: theme.shades.dark.shade200,
   }))};
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;

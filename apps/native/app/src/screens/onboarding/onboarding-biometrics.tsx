@@ -2,24 +2,20 @@ import {
   Button,
   CancelButton,
   Illustration,
-  Onboarding
+  Onboarding,
 } from '@island.is/island-ui-native'
 import {
   authenticateAsync,
   AuthenticationType,
-  isEnrolledAsync
+  isEnrolledAsync,
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
 import { AppState, Platform } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import {
-  preferencesStore,
-  usePreferencesStore
-} from '../../stores/preferences-store'
-import { FormattedMessage, useIntl } from '../../utils/intl'
+import { FormattedMessage, useIntl } from '../../lib/intl'
+import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-
 
 export function useBiometricType(type: AuthenticationType[]) {
   const intl = useIntl()
@@ -64,7 +60,10 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
     // check to see if we want to prompt
     authenticateAsync().then((authenticate) => {
       if (authenticate.success) {
-        preferencesStore.setState(() => ({ hasOnboardedBiometrics: true, hasAcceptedBiometrics: true }))
+        preferencesStore.setState(() => ({
+          hasOnboardedBiometrics: true,
+          hasAcceptedBiometrics: true,
+        }))
         nextOnboardingStep()
       }
     })

@@ -5,9 +5,9 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useIntl } from '../../utils/intl'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { useIntl } from '../../lib/intl'
 import { testIDs } from '../../utils/test-ids'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 import { TabPersonalInfo } from './tab-personal-info'
 import { TabSettings } from './tab-settings'
 

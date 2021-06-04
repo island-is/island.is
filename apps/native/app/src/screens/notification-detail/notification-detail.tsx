@@ -22,9 +22,9 @@ import {
   GetNotificationResponse,
   GET_NOTIFICATION_QUERY,
 } from '../../graphql/queries/get-notification.query'
-import { useIntl } from '../../utils/intl'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { useIntl } from '../../lib/intl'
 import { testIDs } from '../../utils/test-ids'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 
 interface NotificationDetailScreenProps {
   id: string

@@ -1,11 +1,13 @@
 import { useQuery } from '@apollo/client'
 import React, { useCallback, useRef, useState } from 'react'
-import { Platform } from 'react-native'
-import { DynamicColorIOS } from 'react-native'
-import { FlatList, RefreshControl } from 'react-native'
+import {
+  DynamicColorIOS,
+  FlatList,
+  Platform,
+  RefreshControl,
+} from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { AppLoading } from '../../components/app-loading/app-loading'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
@@ -16,11 +18,11 @@ import {
   ListNotificationsResponse,
   LIST_NOTIFICATIONS_QUERY,
 } from '../../graphql/queries/list-notifications.query'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { useUiStore } from '../../stores/ui-store'
 import { rightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import { useActiveTabItemPress } from '../../utils/use-active-tab-item-press'
-import { useThemedNavigationOptions } from '../../utils/use-themed-navigation-options'
 import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
@@ -42,13 +44,17 @@ const {
       } as any),
       selectedIconColor: null as any,
       iconColor: null as any,
-      textColor: initialized ? Platform.OS === 'android' ? theme.shade.foreground : DynamicColorIOS({ light: 'black', dark: 'white' }) : theme.shade.background,
+      textColor: initialized
+        ? Platform.OS === 'android'
+          ? theme.shade.foreground
+          : DynamicColorIOS({ light: 'black', dark: 'white' })
+        : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
         : undefined,
       selectedIcon: initialized
-      ? require('../../assets/icons/tabbar-home-selected.png')
-      : undefined,
+        ? require('../../assets/icons/tabbar-home-selected.png')
+        : undefined,
     },
   }),
   {
@@ -92,8 +98,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const [loading, setLoading] = useState(false)
 
-  const renderItem = useCallback(({ item }: any) => item.component, []);
-  const keyExtractor = useCallback((item) => item.id, []);
+  const renderItem = useCallback(({ item }: any) => item.component, [])
+  const keyExtractor = useCallback((item) => item.id, [])
 
   const refetch = async () => {
     setLoading(true)
@@ -107,7 +113,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   }
 
   if (!ui.initializedApp) {
-    return <AppLoading />
+    return null
   }
 
   const data = [

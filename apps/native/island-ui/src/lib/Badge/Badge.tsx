@@ -20,7 +20,7 @@ const Text = styled.Text`
     color: ({ theme }) => ({
       light: theme.color.roseTinted400,
       dark: theme.color.roseTinted200,
-    })
+    }),
   })}
 `
 

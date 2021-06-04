@@ -1,14 +1,14 @@
 import type {
   FormatXMLElementFn,
   Options as IntlMessageFormatOptions,
-  PrimitiveType,
+  PrimitiveType
 } from 'intl-messageformat'
 import React from 'react'
 import {
   FormattedMessage as IntlFormattedMessage,
   IntlShape,
   MessageDescriptor,
-  useIntl as intlUseIntl,
+  useIntl as intlUseIntl
 } from 'react-intl'
 import { Props } from 'react-intl/src/components/message'
 import { TranslatedMessage } from '../messages'

@@ -4,7 +4,6 @@ import React from 'react'
 import { View } from 'react-native'
 import { Button } from '../Button/Button'
 import { CancelButton } from '../Button/CancelButton'
-import { Close } from '../Button/Close'
 import { Illustration } from '../Illustration/Illustration'
 import { Onboarding } from './Onboarding'
 
