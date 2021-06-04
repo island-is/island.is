@@ -20,7 +20,10 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      title: '',
+      title: (application) =>
+        application.state === 'approved'
+          ? parentalLeaveFormMessages.reviewScreen.titleApproved
+          : parentalLeaveFormMessages.reviewScreen.titleInReview,
       children: [
         buildCustomField({
           id: 'InReviewSteps',
