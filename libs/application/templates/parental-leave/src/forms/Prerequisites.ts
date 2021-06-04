@@ -20,7 +20,6 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
 import { NO, ParentalRelations, YES } from '../constants'
-import { maxDaysToGiveOrReceive } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
