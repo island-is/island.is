@@ -7,7 +7,7 @@ export class PaymentService {
   private baseUrl: string
 
   constructor(private readonly paymentApi: PaymentAPI) {
-    this.baseUrl = 'https://birtint.ebp.solutions'
+    this.baseUrl = 'https://uat.arkid.is'
   }
 
   private makePaymentUrl(docNum: string, returnUrl: string): string {
