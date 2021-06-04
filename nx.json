@@ -444,6 +444,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-validators": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
