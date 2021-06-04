@@ -17,7 +17,6 @@ import {
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
-import { env } from 'yargs'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -292,10 +291,9 @@ function serializeIngress(
       `Missing ingress host info for service:${serviceDef.name}, ingress:${ingressName} in env:${env.type}`,
     )
   }
-  const hosts = (
-    typeof ingress === 'string'
-      ? [ingressConf.host[env.type] as string]
-      : (ingressConf.host[env.type] as string[])
+  const hosts = (typeof ingress === 'string'
+    ? [ingressConf.host[env.type] as string]
+    : (ingressConf.host[env.type] as string[])
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)

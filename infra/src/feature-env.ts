@@ -67,7 +67,6 @@ const parseArguments = (argv: Arguments) => {
   return { ch, habitat, affectedServices }
 }
 
-const getFeatureYaml = (argv: Arguments) => {}
 const buildIngressComment = (data: ServiceHelm[]): string =>
   data
     .filter((obj) => obj.ingress)
