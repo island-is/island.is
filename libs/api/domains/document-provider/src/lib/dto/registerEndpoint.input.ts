@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class UpdateEndpointInput {
@@ -14,4 +14,8 @@ export class UpdateEndpointInput {
   @Field(() => String)
   @IsString()
   providerId!: string
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  xroad?: boolean
 }

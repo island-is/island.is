@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euxo pipefail
 
-yarn run e2e $1 --headless --production --record --group=$1
+yarn nx run $1:e2e-ci

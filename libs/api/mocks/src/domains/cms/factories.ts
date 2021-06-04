@@ -6,15 +6,16 @@ import {
   ArticleSubgroup,
   Author,
   Featured,
+  Frontpage,
   FrontpageSlider,
   GenericPage,
   GroupedMenu,
-  Homepage,
   Html,
   Image,
   LifeEventPage,
   Link,
   Menu,
+  MenuLinkWithChildren,
   News,
   ReferenceLink,
   SectionWithImage,
@@ -30,6 +31,11 @@ import {
   title,
 } from '@island.is/shared/mocking'
 import { SystemMetadata } from '@island.is/shared/types'
+
+export const referenceLink = factory<ReferenceLink>({
+  slug: () => faker.lorem.slug(),
+  type: () => 'article',
+})
 
 export const image = factory<SystemMetadata<Image>>({
   typename: 'Image',
@@ -108,17 +114,23 @@ export const link = factory<Link>({
   url: () => faker.internet.url(),
 })
 
+export const menuLink = factory<MenuLinkWithChildren>({
+  title: () => title(),
+  link: () => referenceLink(),
+  childLinks: () => [],
+})
+
 export const menu = factory<Menu>({
   id: faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
-  menuLinks: () => [],
+  menuLinks: () => menuLink.list(4),
 })
 
 export const groupedMenu = factory<GroupedMenu>({
   id: faker.random.uuid(),
   title: () => title(),
-  menus: () => menu.list(2),
+  menus: () => menu.list(5),
 })
 
 export const alertBannerVariant = () =>
@@ -130,7 +142,7 @@ export const alertBanner = factory<AlertBanner>({
   description: () => faker.lorem.sentence(),
   isDismissable: () => faker.random.boolean(),
   dismissedForDays: 7,
-  link: () => link(),
+  link: () => referenceLink(),
   bannerVariant: () => alertBannerVariant(),
   showAlertBanner: () => faker.random.boolean(),
 })
@@ -172,23 +184,21 @@ export const frontPageSlider = factory<FrontpageSlider>({
   content: () => faker.lorem.paragraph(),
 })
 
-export const referenceLink = factory<ReferenceLink>({
-  slug: () => faker.lorem.slug(),
-  type: () => 'article',
-})
-
 export const featured = factory<Featured>({
   thing: () => referenceLink(),
   title: ({ thing }) => title(),
   attention: () => faker.random.boolean(),
 })
 
-export const homepage = factory<Homepage>({
-  id: () => faker.random.uuid(),
-  featuredThings: () => featured.list(3),
-})
-
 export const genericPage = factory<GenericPage>({
   slug: slugify('title'),
   title: () => title(),
+})
+
+export const frontpage = factory<Frontpage>({
+  id: () => faker.random.uuid(),
+  title: () => title(),
+  featured: () => featured.list(3),
+  slides: () => frontPageSlider.list(2),
+  lifeEvents: () => lifeEvent.list(6),
 })

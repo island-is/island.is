@@ -49,12 +49,12 @@ interface Props {
   handleClose: () => void
 }
 
-export const SideMenu: FC<Props> = ({
+export const SideMenu = ({
   tabs = [],
   isVisible,
   searchBarFocus = false,
   handleClose,
-}) => {
+}: Props) => {
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)

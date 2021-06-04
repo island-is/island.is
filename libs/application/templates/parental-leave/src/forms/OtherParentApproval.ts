@@ -6,46 +6,54 @@ import {
   buildSubmitField,
   Form,
   FormModes,
+  coreMessages,
 } from '@island.is/application/core'
+
 import Logo from '../assets/Logo'
+import { otherParentApprovalFormMessages } from '../lib/messages'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
-  title: 'Other parent approval for parental leave application',
+  title: otherParentApprovalFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      title: 'Other parent approval',
+      title: otherParentApprovalFormMessages.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          title:
-            'Do you want to give away one month of your parental leave rights?',
+          title: otherParentApprovalFormMessages.multiTitle,
           children: [
             buildDescriptionField({
               id: 'intro',
               title: '',
-              description:
-                'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
+              description: otherParentApprovalFormMessages.introDescription,
             }),
             buildSubmitField({
               id: 'submit',
-              title: 'submit',
+              title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
-                { name: 'Reject', type: 'reject', event: 'REJECT' },
-                { name: 'Approve', type: 'primary', event: 'APPROVE' },
+                {
+                  name: coreMessages.buttonReject,
+                  type: 'reject',
+                  event: 'REJECT',
+                },
+                {
+                  name: coreMessages.buttonApprove,
+                  type: 'primary',
+                  event: 'APPROVE',
+                },
               ],
             }),
           ],
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Takk fyrir',
-          description:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

@@ -4,10 +4,10 @@ import { IUiConfiguration } from '../generated/contentfulTypes'
 @ObjectType()
 export class Namespace {
   @Field()
-  namespace: string
+  namespace!: string
 
   @Field()
-  fields: string
+  fields?: string
 }
 
 export const mapNamespace = ({ fields }: IUiConfiguration): Namespace => ({

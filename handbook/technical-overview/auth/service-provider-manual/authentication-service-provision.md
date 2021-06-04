@@ -3,9 +3,9 @@
 [GitHub](https://github.com/) is used for source code management while [Amazon Web Service](https://aws.amazon.com/) is the hosting provider.
 Further information regarding the development- and service provider-environments can be found following these links:
 
-- [https://docs.devland.is/handbook/technical-overview/devops](https://docs.devland.is/handbook/technical-overview/devops)
-- [https://docs.devland.is/handbook/projects/services/auth-api](https://docs.devland.is/handbook/projects/services/auth-api)
-- [https://docs.devland.is/handbook/projects/services/auth-admin-api](https://docs.devland.is/handbook/projects/services/auth-admin-api)
+- [https://docs.devland.is/technical-overview/devops](https://docs.devland.is/technical-overview/devops)
+- [https://docs.devland.is/apps/services/auth-api](https://docs.devland.is/apps/services/auth-api)
+- [https://docs.devland.is/apps/services/auth-admin-api](https://docs.devland.is/apps/services/auth-admin-api)
 - [https://github.com/island-is/identity-server.web](https://github.com/island-is/identity-server.web)
 
 ## IdentityServer

@@ -4,9 +4,11 @@ import {
   servicePortalMasterNavigation,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
-import { useStore } from '../../store/stateProvider'
 import cloneDeep from 'lodash/cloneDeep'
 import { User } from 'oidc-client'
+import { useAuth } from '@island.is/auth/react'
+
+import { useStore } from '../../store/stateProvider'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
@@ -40,7 +42,8 @@ const filterNavigationTree = (
  * Returns an active navigation that matches all defined module routes
  */
 const useNavigation = () => {
-  const [{ userInfo, routes }] = useStore()
+  const { userInfo } = useAuth()
+  const [{ routes }] = useStore()
   const [activeNavigation, setActiveNavigation] = useState<
     ServicePortalNavigationItem[]
   >([])

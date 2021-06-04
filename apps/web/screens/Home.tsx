@@ -5,26 +5,17 @@ import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  QueryGetFrontpageSliderListArgs,
   ContentLanguage,
-  GetFrontpageSliderListQuery,
   QueryGetArticleCategoriesArgs,
   GetArticleCategoriesQuery,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  GetLifeEventsQuery,
-  GetHomepageQuery,
-  QueryGetLifeEventsArgs,
-  QueryGetHomepageArgs,
+  GetFrontpageQuery,
+  QueryGetFrontpageArgs,
   GetNewsQuery,
   FrontpageSlider as FrontpageSliderType,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
-  GET_FRONTPAGE_SLIDES_QUERY,
-  GET_LIFE_EVENTS_QUERY,
-  GET_HOMEPAGE_QUERY,
+  GET_FRONTPAGE_QUERY,
   GET_NEWS_QUERY,
 } from './queries'
 import {
@@ -34,39 +25,27 @@ import {
   Categories,
   SearchInput,
   FrontpageSlider,
-  LatestNewsSection,
+  LatestNewsSectionSlider,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
-  frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
-  namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsQuery['getNews']['items']
-  lifeEvents: GetLifeEventsQuery['getLifeEvents']
-  page: GetHomepageQuery['getHomepage']
+  page: GetFrontpageQuery['getFrontpage']
 }
 
-const Home: Screen<HomeProps> = ({
-  categories,
-  frontpageSlides,
-  namespace,
-  news,
-  lifeEvents,
-  page,
-}) => {
+const Home: Screen<HomeProps> = ({ categories, news, page }) => {
+  const namespace = JSON.parse(page.namespace.fields)
   const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
-
-  if (!lifeEvents || !lifeEvents.length) {
-    return null
-  }
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -90,18 +69,30 @@ const Home: Screen<HomeProps> = ({
             size="medium"
             colored={false}
             activeLocale={activeLocale}
+            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             placeholder={n('heroSearchPlaceholder')}
           />
         </Box>
         <Inline space={2}>
-          {page.featuredThings.map(({ title, attention, thing }) => {
+          {page.featured.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
-              <Link key={title} {...cardUrl} skipTab>
-                <Tag variant="darkerBlue" attention={attention}>
-                  {title}
-                </Tag>
-              </Link>
+              <Tag
+                key={title}
+                {...(cardUrl.href.startsWith('/')
+                  ? {
+                      CustomLink: ({ children, ...props }) => (
+                        <Link key={title} {...props} {...cardUrl}>
+                          {children}
+                        </Link>
+                      ),
+                    }
+                  : { href: cardUrl.href })}
+                variant="darkerBlue"
+                attention={attention}
+              >
+                {title}
+              </Tag>
             ) : (
               <Tag key={title} variant="darkerBlue" attention={attention}>
                 {title}
@@ -113,29 +104,26 @@ const Home: Screen<HomeProps> = ({
     </Box>
   )
   return (
-    <div id="main-content">
-      <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
+    <div id="main-content" style={{ overflow: 'hidden' }}>
+      <Section aria-label={t.carouselTitle}>
         <FrontpageSlider
-          slides={frontpageSlides as FrontpageSliderType[]}
+          slides={page.slides as FrontpageSliderType[]}
           searchContent={searchContent}
         />
       </Section>
       <Section
         aria-labelledby="lifeEventsTitle"
-        paddingTop={4}
         backgroundBleed={{
-          bleedAmount: 100,
-          mobileBleedAmount: 50,
+          bleedAmount: 150,
           bleedDirection: 'bottom',
           fromColor: 'white',
           toColor: 'purple100',
-          bleedInMobile: true,
         }}
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
-          titleId="lifeEventsTitle"
-          lifeEvents={lifeEvents}
+          linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
+          lifeEvents={page.lifeEvents}
         />
       </Section>
       <Section
@@ -151,9 +139,9 @@ const Home: Screen<HomeProps> = ({
         />
       </Section>
       <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
-        <LatestNewsSection
+        <LatestNewsSectionSlider
           label={gn('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
+          readMoreText={gn('seeMore')}
           items={news}
         />
       </Section>
@@ -175,11 +163,6 @@ const Home: Screen<HomeProps> = ({
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
-      data: {
-        getFrontpageSliderList: { items },
-      },
-    },
-    {
       data: { getArticleCategories },
     },
     {
@@ -188,24 +171,9 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     },
     {
-      data: { getLifeEvents },
+      data: { getFrontpage },
     },
-    {
-      data: { getHomepage },
-    },
-    namespace,
   ] = await Promise.all([
-    apolloClient.query<
-      GetFrontpageSliderListQuery,
-      QueryGetFrontpageSliderListArgs
-    >({
-      query: GET_FRONTPAGE_SLIDES_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
     apolloClient.query<
       GetArticleCategoriesQuery,
       QueryGetArticleCategoriesArgs
@@ -223,45 +191,25 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
+          tag: FRONTPAGE_NEWS_TAG_ID,
         },
       },
     }),
-    apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
-      query: GET_LIFE_EVENTS_QUERY,
+    apolloClient.query<GetFrontpageQuery, QueryGetFrontpageArgs>({
+      query: GET_FRONTPAGE_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          pageIdentifier: 'frontpage',
         },
       },
     }),
-    apolloClient.query<GetHomepageQuery, QueryGetHomepageArgs>({
-      query: GET_HOMEPAGE_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Homepage',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     news,
-    lifeEvents: getLifeEvents,
-    frontpageSlides: items,
     categories: getArticleCategories,
-    page: getHomepage,
-    namespace,
+    page: getFrontpage,
     showSearchInHeader: false,
   }
 }

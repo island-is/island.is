@@ -34,6 +34,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           subArticles {
             title
             slug
+            parent {
+              id
+              title
+              intro
+            }
           }
         }
 
@@ -78,6 +83,16 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           seoDescription
           slug
         }
+
+        ... on SubArticle {
+          id
+          title
+          slug
+          parent {
+            id
+            title
+          }
+        }
       }
     }
   }
@@ -112,6 +127,14 @@ export const GET_SEARCH_RESULTS_NEWS_QUERY = gql`
           slug
         }
       }
+    }
+  }
+`
+
+export const GET_SEARCH_RESULTS_TOTAL = gql`
+  query GetSearchResultsTotal($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
     }
   }
 `
@@ -208,6 +231,27 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           description
           slug
+        }
+
+        ... on SubArticle {
+          id
+          title
+          slug
+          parent {
+            id
+            slug
+            title
+            intro
+            group {
+              title
+            }
+            organization {
+              id
+              title
+              description
+              slug
+            }
+          }
         }
       }
       tagCounts {

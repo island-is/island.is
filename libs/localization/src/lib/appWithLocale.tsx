@@ -1,7 +1,9 @@
 import React from 'react'
-import { Locale, LocaleProvider, MessagesDict } from './LocaleContext'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { Locale } from '@island.is/shared/types'
+
+import { LocaleProvider, MessagesDict } from './LocaleContext'
 
 interface Props {
   pageProps: { locale: Locale; messages: MessagesDict }

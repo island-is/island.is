@@ -13,7 +13,7 @@ import {
   Input,
   GridRow,
   GridColumn,
-  LoadingIcon,
+  LoadingDots,
   Hidden,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
@@ -365,7 +365,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             </Hidden>
             {loading && (
               <Box display="flex" justifyContent="center" padding={4}>
-                <LoadingIcon size={40} />
+                <LoadingDots large />
               </Box>
             )}
             {!loading && !error && filteredDocuments?.length === 0 && (
@@ -395,7 +395,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
                   <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
-                    <DocumentLine document={document} />
+                    <DocumentLine documentLine={document} userInfo={userInfo} />
                   </Box>
                 ))}
             </Box>

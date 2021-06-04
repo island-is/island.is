@@ -51,7 +51,7 @@ async function getContentTypes(
   contentType: ContentType,
   environment: Environment,
   array: LinkContentType[],
-) {
+): Promise<any> {
   // We don't generate twice the same model if the type has itself as linkContentType
   const linkTypes = getLinkContentTypes(contentType).filter(
     (type) => type !== contentType.sys.id,
@@ -87,7 +87,7 @@ async function main() {
   const overwriteRaw = process.argv?.[4]
 
   if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
-    logger.error('Missing content management access token')
+    logger.error('Missing CONTENTFUL_MANAGEMENT_ACCESS_TOKEN')
     process.exit()
   }
 

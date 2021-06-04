@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Text, Inline } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 interface Props {
   name: string
@@ -7,26 +9,31 @@ interface Props {
 }
 
 export const StatisticBox: FC<Props> = ({ name, value }) => {
+  const { formatMessage } = useLocale()
+
+  let displayValue = value.toString()
+  let displayText = ''
+
+  if (value > 1000000) {
+    displayValue = (value / 1000000).toFixed(1)
+    displayText = formatMessage(m.statisticsBoxMillions)
+  } else if (value > 10000) {
+    displayValue = (value / 1000).toFixed(0)
+    displayText = formatMessage(m.statisticsBoxThousands)
+  }
+
   return (
-    <Box
-      marginRight={1}
-      paddingY={2}
-      paddingX={2}
-      border="standard"
-      borderRadius="large"
-    >
-      <Box marginBottom={2}>
-        <Inline alignY="bottom" space={1}>
-          <Text variant="h2" as="h2" color="blue400">
-            {value}
-          </Text>
-          <Text fontWeight="semiBold" color="dark300" lineHeight="lg">
-            Þús
-          </Text>
-        </Inline>
-      </Box>
+    <Box padding={2} border="standard" borderRadius="large">
       <Box>
-        <Text fontWeight="semiBold">{name}</Text>
+        <Box>
+          <Text variant={'eyebrow'}>{name}</Text>
+        </Box>
+        <Inline alignY="bottom" space={1}>
+          <Text variant="h2" as="h2">
+            {displayValue}
+          </Text>
+          <Text variant={'eyebrow'}>{displayText}</Text>
+        </Inline>
       </Box>
     </Box>
   )

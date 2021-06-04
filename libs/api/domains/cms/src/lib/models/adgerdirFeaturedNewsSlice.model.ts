@@ -9,13 +9,13 @@ export class AdgerdirFeaturedNewsSlice {
   }
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [News])
-  featured: News[]
+  featured!: News[]
 }
 
 export const mapAdgerdirFeaturedNewsSlice = ({

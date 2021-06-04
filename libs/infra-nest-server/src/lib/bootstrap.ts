@@ -1,3 +1,4 @@
+import '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
 import {
@@ -7,14 +8,14 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
-import { collectDefaultMetrics } from 'prom-client'
+import { startMetricServer } from '@island.is/infra-metrics'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
+import { NestExpressApplication } from '@nestjs/platform-express'
 
 type RunServerOptions = {
   /**
@@ -47,15 +48,37 @@ type RunServerOptions = {
    * Hook up global interceptors to app
    */
   interceptors?: NestInterceptor[]
+
+  /**
+   * Global url prefix for the app
+   */
+  globalPrefix?: string
 }
 
 export const createApp = async (options: RunServerOptions) => {
-  const app = await NestFactory.create(InfraModule.forRoot(options.appModule), {
-    logger: LoggingModule.createLogger(),
-  })
+  const app = await NestFactory.create<NestExpressApplication>(
+    InfraModule.forRoot(options.appModule),
+    {
+      logger: LoggingModule.createLogger(),
+    },
+  )
+
+  // Configure "X-Requested-For" handling.
+  // Internal services should trust the X-Forwarded-For header (EXPRESS_TRUST_PROXY=1)
+  // Public services (eg API Gateway) should trust our own reverse proxies
+  // (eg Elastic Load Balancer, Kubernetes Ingress, CloudFront CDN) and trim
+  // the X-Forwarded-For header before passing to internal services.
+  app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
+
+  // Enable validation of request DTOs globally.
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   )
+
+  if (options.globalPrefix) {
+    app.setGlobalPrefix(options.globalPrefix)
+  }
+
   app.use(httpRequestDurationMiddleware())
   app.use(cookieParser())
 
@@ -70,7 +93,7 @@ const startServer = async (app: INestApplication, port = 3333) => {
       context: 'Bootstrap',
     })
   })
-  await runMetricServer(metricsPort)
+  await startMetricServer(metricsPort)
 }
 
 function setupOpenApi(
@@ -93,8 +116,6 @@ export const bootstrap = async (options: RunServerOptions) => {
     description: 'Generate OpenAPI schema into the specified file',
     type: 'string',
   }).argv
-
-  collectDefaultMetrics()
 
   const app = await createApp(options)
 

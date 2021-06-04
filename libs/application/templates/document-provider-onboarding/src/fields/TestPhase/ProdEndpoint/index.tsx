@@ -38,11 +38,27 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [prodEndPointExists, setprodEndPointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )
-  const [updateEndpoint] = useMutation(updateEndpointMutation)
+  const [updateEndpoint, { loading }] = useMutation(updateEndpointMutation, {
+    onError: (error) => {
+      if (error.message.includes('Unique key violation')) {
+        setprodEndPointError(
+          formatText(
+            m.testEndPointErrorMessageUniqueKeyViolation,
+            application,
+            formatMessage,
+          ),
+        )
+      } else {
+        setprodEndPointError(
+          formatText(m.prodEndPointErrorMessage, application, formatMessage),
+        )
+      }
+    },
+  })
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -68,22 +84,18 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-
-      if (!result.data) {
-        setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage)
+      if (result) {
+        setendPointVariables([
+          {
+            id: '1',
+            name: 'Audience',
+            value: result.data.updateEndpoint.audience,
+          },
+          { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
+        ])
+        setprodEndPointExists('true')
+        clearErrors()
       }
-
-      //TODO: Needs new call to API
-      setendPointVariables([
-        {
-          id: '1',
-          name: 'Audience',
-          value: result.data.updateEndpoint.audience,
-        },
-        { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
-      ])
-      setprodEndPointExists('true')
-      clearErrors()
     }
   }
 
@@ -141,6 +153,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           onClick={() => {
             trigger(['productionEndPointObject.prodEndPoint']).then((answer) =>
               onUpdateEndpoint(answer),

@@ -1,19 +1,22 @@
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
 
+import { useRouter } from 'next/router'
+import InfoBox from '../InfoBox/InfoBox'
 interface Props {
+  previousUrl?: string
+  previousIsDisabled?: boolean
   nextUrl?: string
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
   nextButtonText?: string
   onNextButtonClick?: () => void
-  previousIsDisabled?: boolean
   hideNextButton?: boolean
+  infoBoxText?: string
 }
 
 const FormFooter: React.FC<Props> = (props: Props) => {
-  const history = useHistory()
+  const router = useRouter()
 
   return (
     <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
@@ -21,7 +24,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         variant="ghost"
         disabled={props.previousIsDisabled}
         onClick={() => {
-          history.goBack()
+          router.push(props.previousUrl || '')
         }}
       >
         Til baka
@@ -36,13 +39,14 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             if (props.onNextButtonClick) {
               props.onNextButtonClick()
             } else if (props.nextUrl) {
-              history.push(props.nextUrl)
+              router.push(props.nextUrl)
             }
           }}
         >
           {props.nextButtonText ?? 'Halda áfram'}
         </Button>
       )}
+      {props.infoBoxText && <InfoBox text={props.infoBoxText} />}
     </Box>
   )
 }

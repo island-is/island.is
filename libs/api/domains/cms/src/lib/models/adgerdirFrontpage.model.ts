@@ -12,25 +12,25 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class AdgerdirFrontpage {
   @Field(() => ID)
-  id: string = ''
+  id!: string
 
   @Field()
-  slug: string = ''
+  slug!: string
 
   @Field()
-  title: string = ''
+  title!: string
 
   @Field({ nullable: true })
   description?: string
 
   @Field(() => [SliceUnion])
-  content: Array<typeof SliceUnion> = []
+  content?: Array<typeof SliceUnion>
 
   @Field(() => [AdgerdirSliceUnion])
-  slices: Array<typeof AdgerdirSliceUnion> = []
+  slices!: Array<typeof AdgerdirSliceUnion>
 
   @Field(() => Image, { nullable: true })
-  featuredImage?: Image
+  featuredImage?: Image | null
 }
 
 export const mapAdgerdirFrontpage = ({
@@ -42,7 +42,7 @@ export const mapAdgerdirFrontpage = ({
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',
   description: fields?.description ?? '',
-  featuredImage: mapImage(fields.featuredImage),
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   content:
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys?.id + ':content')

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import { useRouter } from 'next/router'
-import ResourceListDisplay from './ListDisplay'
+import ResourceListDisplay from './ResourceListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const IdentityResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -13,7 +15,9 @@ const IdentityResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
-
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('IdentityResourcesList'),
+  )
   const edit = (resource: IdentityResourceDTO) => {
     router.push(
       `/resource/identity-resource/${encodeURIComponent(resource.name)}`,
@@ -66,7 +70,7 @@ const IdentityResourcesList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to archive this Identity resource:{' '}
+        {localization.removeConfirmation}
         <span>{resourceToRemove}</span>
       </p>
     )
@@ -76,8 +80,9 @@ const IdentityResourcesList: React.FC = () => {
     <div>
       <ResourceListDisplay
         list={resources}
-        header={'Identity resources'}
-        linkHeader={'Create new Identity Resource'}
+        header={localization.title}
+        linkHeader={localization.buttons['new'].text}
+        linkHeaderHelp={localization.buttons['new'].helpText}
         createUri={'/resource/identity-resource'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
@@ -89,7 +94,7 @@ const IdentityResourcesList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Archive"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

@@ -1,39 +1,64 @@
 import { ServicePortalModule } from '@island.is/service-portal/core'
-import { applicationsModule } from '@island.is/service-portal/applications'
-import { documentsModule } from '@island.is/service-portal/documents'
-import { settingsModule } from '@island.is/service-portal/settings'
-import { financeModule } from '@island.is/service-portal/finance'
-import { familyModule } from '@island.is/service-portal/family'
-import { healthModule } from '@island.is/service-portal/health'
-import { educationModule } from '@island.is/service-portal/education'
-import { assetsModule } from '@island.is/service-portal/assets'
-import { eligibilityModule } from '@island.is/service-portal/eligibility'
-import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
-import { environment as env } from '../environments'
 import { documentProviderModule } from '@island.is/service-portal/document-provider'
+import { documentsModule } from '@island.is/service-portal/documents'
+import { familyModule } from '@island.is/service-portal/family'
+import { financeModule } from '@island.is/service-portal/finance'
+import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
+import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
+import { accessControlModule } from '@island.is/service-portal/settings/access-control'
+import { educationModule } from '@island.is/service-portal/education'
+import { educationLicenseModule } from '@island.is/service-portal/education-license'
+import { educationDegreeModule } from '@island.is/service-portal/education-degree'
+import { educationCareerModule } from '@island.is/service-portal/education-career'
+import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
+import { applicationsModule } from '@island.is/service-portal/applications'
 
-type ModuleFeatureFlag = keyof typeof env.featureFlags
+/**
+ * NOTE:
+ * Modules should only be here if they are production ready
+ * or if they are ready for beta testing. Modules that are ready
+ * for beta testing should be feature flagged.
+ *
+ * To feature flag a module add it to the featureFlaggedModules below
+ * and create a feature flag in ConfigCat called
+ * `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
+ */
 
-const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
-  applications: applicationsModule,
-  documents: documentsModule,
-  settings: settingsModule,
-  finance: financeModule,
-  family: familyModule,
-  health: healthModule,
-  education: educationModule,
-  delegation: eligibilityModule,
-  assets: assetsModule,
-  drivingLicense: drivingLicenseModule,
+export type ModuleKeys =
+  | 'accessControl'
+  | 'documentProvider'
+  | 'documents'
+  | 'family'
+  | 'finance'
+  | 'icelandicNamesRegistry'
+  | 'personalInformation'
+  | 'education'
+  | 'educationLicense'
+  | 'educationCareer'
+  | 'educationStudentAssessment'
+  | 'applications'
+
+export const featureFlaggedModules: ModuleKeys[] = [
+  'accessControl',
+  'documentProvider',
+  'education',
+  'educationLicense',
+  'educationCareer',
+  'educationStudentAssessment',
+  'icelandicNamesRegistry',
+]
+
+export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
-}
-
-export const modules = () => {
-  const arr: ServicePortalModule[] = []
-  Object.keys(env.featureFlags).forEach((k) => {
-    const key = k as ModuleFeatureFlag
-    if (env.featureFlags[key]) arr.push(mapper[key])
-  })
-
-  return arr
+  documents: documentsModule,
+  family: familyModule,
+  finance: financeModule,
+  icelandicNamesRegistry: icelandicNamesRegistryModule,
+  personalInformation: personalInformationModule,
+  education: educationModule,
+  educationLicense: educationLicenseModule,
+  educationCareer: educationCareerModule,
+  educationStudentAssessment: educationStudentAssessmentModule,
+  applications: applicationsModule,
+  accessControl: accessControlModule,
 }

@@ -19,9 +19,7 @@ import { IdentityResource } from './identity-resource.model'
     },
   ],
 })
-export class IdentityResourceUserClaim extends Model<
-  IdentityResourceUserClaim
-> {
+export class IdentityResourceUserClaim extends Model<IdentityResourceUserClaim> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

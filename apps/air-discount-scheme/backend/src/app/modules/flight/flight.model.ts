@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
-import {
+import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
   UserInfo,
@@ -99,6 +99,14 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   })
   @ApiProperty()
   destination!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  isConnectingFlight!: boolean
 
   @Column({
     type: DataType.INTEGER,
@@ -189,4 +197,10 @@ export class Flight extends Model<Flight> implements TFlight {
   @UpdatedAt
   @ApiProperty()
   readonly modified!: Date
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+  })
+  readonly connectable!: boolean
 }

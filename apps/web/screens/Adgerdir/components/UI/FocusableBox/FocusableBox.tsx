@@ -16,7 +16,7 @@ import {
 import * as styles from './FocusableBox.treat'
 
 // TODO fix strict typing
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 interface Props
   extends Omit<UseBoxStylesProps, 'component'>,

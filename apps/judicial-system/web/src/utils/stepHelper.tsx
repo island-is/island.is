@@ -20,6 +20,9 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
+import addDays from 'date-fns/addDays'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
@@ -54,20 +57,20 @@ export const getAppealDecisionText = (
   }
 }
 
-export const getConclusion = (wc: Case) => {
+export const getConclusion = (wc: Case, isLarge?: boolean) => {
   switch (wc.decision) {
     case CaseDecision.REJECTING:
-      return getRejectingConclusion(wc)
+      return getRejectingConclusion(wc, isLarge)
     case CaseDecision.ACCEPTING:
-      return getAcceptingConclusion(wc)
+      return getAcceptingConclusion(wc, isLarge)
     case CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN:
-      return getAcceptingAlternativeTravelBanConclusion(wc)
+      return getAcceptingAlternativeTravelBanConclusion(wc, isLarge)
     default:
       return <Text />
   }
 }
 
-const getRejectingConclusion = (wc: Case) => {
+const getRejectingConclusion = (wc: Case, large?: boolean) => {
   const genderFormattedAccusedName = formatAccusedByGender(
     wc.accusedGender || CaseGender.OTHER,
   )
@@ -82,9 +85,14 @@ const getRejectingConclusion = (wc: Case) => {
   const isTravelBan = wc.type === CaseType.TRAVEL_BAN
 
   return (
-    <Text variant="intro">
+    <Text variant={large ? 'intro' : 'default'}>
       {`Kröfu um að ${genderFormattedAccusedName}, `}
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text
+        as="span"
+        variant={large ? 'intro' : 'default'}
+        color={large ? 'blue400' : 'dark400'}
+        fontWeight="semiBold"
+      >
         {accusedNameAndNationalId}
       </Text>
       {`, sæti${isExtension ? ' áframhaldandi' : ''} ${
@@ -94,7 +102,7 @@ const getRejectingConclusion = (wc: Case) => {
   )
 }
 
-const getAcceptingConclusion = (wc: Case) => {
+const getAcceptingConclusion = (wc: Case, large?: boolean) => {
   const genderFormattedAccusedName = capitalize(
     formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
   )
@@ -115,43 +123,85 @@ const getAcceptingConclusion = (wc: Case) => {
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
+  const formattedIsolationToDateAndTime = `${formatDate(wc.isolationTo, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
   const accusedShouldBeInIsolation =
     wc.type === CaseType.CUSTODY &&
     wc.custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
 
+  const isolationIsSameAsCustodyEndDate =
+    wc.custodyEndDate &&
+    wc.isolationTo &&
+    compareAsc(parseISO(wc.custodyEndDate), parseISO(wc.isolationTo)) === 0
+
   return (
-    <Text variant="intro">
+    <Text variant={large ? 'intro' : 'default'}>
       {genderFormattedAccusedName},
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text
+        as="span"
+        variant={large ? 'intro' : 'default'}
+        color={large ? 'blue400' : 'dark400'}
+        fontWeight="semiBold"
+      >
         {` ${accusedNameAndNationalId}`}
       </Text>
-      <Text as="span" variant="intro">
+      <Text as="span" variant={large ? 'intro' : 'default'}>
         {`, skal sæta${isExtension ? ' áframhaldandi' : ''} ${
           isTravelBan ? 'farbanni' : 'gæsluvarðhaldi'
         }, þó ekki lengur en til`}
       </Text>
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text
+        as="span"
+        variant={large ? 'intro' : 'default'}
+        color={large ? 'blue400' : 'dark400'}
+        fontWeight="semiBold"
+      >
         {` ${formattedCustodyEndDateAndTime}.`}
       </Text>
       {accusedShouldBeInIsolation && (
         <>
-          <Text as="span" variant="intro">
-            {` ${genderFormattedAccusedName} skal `}
-          </Text>
-          <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+          <Text
+            as="span"
+            variant={large ? 'intro' : 'default'}
+          >{` ${genderFormattedAccusedName} skal `}</Text>
+          <Text
+            as="span"
+            variant={large ? 'intro' : 'default'}
+            color={large ? 'blue400' : 'dark400'}
+            fontWeight="semiBold"
+          >
             sæta einangrun
           </Text>
-          <Text as="span" variant="intro">
-            {' '}
-            á meðan á gæsluvarðhaldinu stendur.
-          </Text>
+          {isolationIsSameAsCustodyEndDate ? (
+            <Text
+              as="span"
+              variant={large ? 'intro' : 'default'}
+            >{` á meðan á gæsluvarðhaldinu stendur.`}</Text>
+          ) : (
+            <Text as="span" variant={large ? 'intro' : 'default'}>
+              {` ekki lengur en til`}
+              <Text
+                as="span"
+                variant={large ? 'intro' : 'default'}
+                color={large ? 'blue400' : 'dark400'}
+                fontWeight="semiBold"
+              >
+                {` ${formattedIsolationToDateAndTime}.`}
+              </Text>
+            </Text>
+          )}
         </>
       )}
     </Text>
   )
 }
 
-const getAcceptingAlternativeTravelBanConclusion = (wc: Case): JSX.Element => {
+const getAcceptingAlternativeTravelBanConclusion = (
+  wc: Case,
+  large?: boolean,
+): JSX.Element => {
   const genderFormattedAccusedName = capitalize(
     formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
   )
@@ -172,18 +222,23 @@ const getAcceptingAlternativeTravelBanConclusion = (wc: Case): JSX.Element => {
     ?.replace(' kl.', ', kl.')}`
 
   return (
-    <Text variant="intro">
+    <Text variant={large ? 'intro' : 'default'}>
       {genderFormattedAccusedName},
       <Text
         as="span"
-        variant="intro"
-        color="blue400"
+        variant={large ? 'intro' : 'default'}
+        color={large ? 'blue400' : 'dark400'}
         fontWeight="semiBold"
       >{` ${accusedNameAndNationalId}`}</Text>
       {`, skal sæta${
         isExtension ? ' áframhaldandi' : ''
       } farbanni, þó ekki lengur en til`}
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text
+        as="span"
+        variant={large ? 'intro' : 'default'}
+        color={large ? 'blue400' : 'dark400'}
+        fontWeight="semiBold"
+      >
         {` ${formattedCustodyEndDateAndTime}.`}
       </Text>
     </Text>
@@ -209,17 +264,7 @@ export const constructProsecutorDemands = (
           : ''
       } ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      }${
-        workingCase.alternativeTravelBan
-          ? `,${
-              workingCase.parentCase &&
-              workingCase.parentCase?.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? ' áframhaldandi'
-                : ''
-            } farbanni til vara,`
-          : ''
-      } með úrskurði ${workingCase.court?.replace(
+      } með úrskurði ${workingCase.court?.name?.replace(
         'Héraðsdómur',
         'Héraðsdóms',
       )}, til`}
@@ -325,4 +370,14 @@ export const getRestrictionTagVariant = (
       return 'darkerBlue'
     }
   }
+}
+
+export const kb = (bytes?: number) => {
+  return bytes ? Math.ceil(bytes / 1024) : ''
+}
+
+export const getAppealEndDate = (rulingDate: string) => {
+  const rulingDateToDate = parseISO(rulingDate)
+  const appealEndDate = addDays(rulingDateToDate, 3)
+  return formatDate(appealEndDate, 'PPPp')
 }

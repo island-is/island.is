@@ -1,32 +1,23 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, Args } from '@nestjs/graphql'
+import { Resolver, Query } from '@nestjs/graphql'
 
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { HealthTest } from './models'
+// import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { BucketService } from './bucket.service'
+// import { VistaSkjalInput } from '@island.is/health-insurance'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
-@Resolver(() => HealthTest)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly bucketService: BucketService,
   ) {}
-
-  @Query(() => HealthTest, {
-    name: 'healthTest',
-    nullable: true,
-  })
-  healthTest(): Promise<HealthTest> {
-    return this.healthInsuranceService.getTest('1234567890')
-  }
 
   @Query(() => String, {
     name: 'healthInsuranceGetProfun',
@@ -55,10 +46,15 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
-  /* TESTING */
-  @Query(() => String)
-  async healthInsuranceBtest(): Promise<string | undefined> {
-    console.log('testing...')
-    return this.bucketService.btest()
-  }
+  // TODO remove so this function will not be public exposed
+  // @Mutation(() => VistaSkjalModel, {
+  //   name: 'healthInsuranceApplyInsurance',
+  // })
+  // async healthInsuranceApplyInsurance(
+  //   @Args({ name: 'inputs', type: () => VistaSkjalInput })
+  //   inputs: VistaSkjalInput,
+  //   @CurrentUser() user: AuthUser,
+  // ): Promise<VistaSkjalModel> {
+  //   return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
+  // }
 }

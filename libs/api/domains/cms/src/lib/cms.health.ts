@@ -8,6 +8,8 @@ import {
 } from '@nestjs/terminus'
 import dns from 'dns'
 
+import { environment } from './environments'
+
 @Injectable()
 export class CmsHealthIndicator extends HealthIndicator {
   constructor(
@@ -39,8 +41,8 @@ export class CmsHealthIndicator extends HealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     const requiredUrls = {
-      contentful: process.env.CONTENTFUL_HOST,
-      elasticsearch: new URL(process.env.ELASTIC_NODE).hostname,
+      contentful: environment.contentful.host,
+      elasticsearch: new URL(environment.elastic.node).hostname,
     }
 
     const response = await this.health.check(

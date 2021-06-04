@@ -9,6 +9,7 @@ type Tag = {
   label: string
   href?: string
   onClick?: () => void
+  disabled?: boolean
 }
 
 type CategoryCardProps = {
@@ -51,7 +52,7 @@ export const CategoryCard = ({
       flexDirection="column"
       paddingY={3}
       paddingX={4}
-      borderRadius="standard"
+      borderRadius="large"
       borderColor={borderColor}
       borderWidth="standard"
       height="full"
@@ -73,10 +74,12 @@ export const CategoryCard = ({
             {tags.map((tag) => (
               <Tag
                 key={tag.label}
+                disabled={tag.disabled}
                 outlined={!tag.href}
                 variant={tagVariant}
                 href={tag.href}
                 onClick={tag.onClick}
+                truncate={true}
               >
                 {tag.label}
               </Tag>

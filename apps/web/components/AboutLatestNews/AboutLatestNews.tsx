@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Text,
   Box,
@@ -8,19 +8,19 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
+import { NewsCard } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   AllSlicesImageFragment as Image,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
-
-import * as styles from './AboutLatestNews.treat'
-import NewsCard from '../NewsCard/NewsCard'
 import {
   useLinkResolver,
   LinkResolverResponse,
 } from '@island.is/web/hooks/useLinkResolver'
+
+import * as styles from './AboutLatestNews.treat'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
@@ -42,11 +42,11 @@ export interface LatestNewsProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-export const AboutLatestNews: FC<LatestNewsProps> = ({
+export const AboutLatestNews = ({
   title,
   news,
   namespace,
-}) => {
+}: LatestNewsProps) => {
   const { linkResolver } = useLinkResolver()
   const [first, ...rest] = news
   const n = useNamespace(namespace)
@@ -79,9 +79,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
             <NewsCard
               key={index}
               title={newsItem.title}
-              subtitle={newsItem.subtitle}
               introduction={newsItem.intro}
-              slug={newsItem.slug}
               image={newsItem.image}
               {...linkResolver('news', [newsItem.slug])}
               readMoreText={n('readMore', 'Lesa nánar')}
@@ -125,6 +123,7 @@ const BigNewsItem = ({
       <Text variant="intro">{news.intro}</Text>
       <Link {...link}>
         <Button
+          as="span"
           icon="arrowForward"
           iconType="filled"
           type="button"

@@ -7,7 +7,7 @@ import { lazy } from 'react'
 export const educationModule: ServicePortalModule = {
   name: 'Menntun',
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: 'Menntun',
       path: ServicePortalPath.EducationRoot,

@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetSubpageHeaderInput {
   @Field()
   @IsString()
-  id: string
+  id!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

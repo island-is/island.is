@@ -1,29 +1,14 @@
 'use strict'
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('client_redirect_uri', [
-      {
-        client_id: 'island-is-1',
-        redirect_uri: 'https://island.is/minarsidur/signin-oidc',
-      },
-      {
-        client_id: 'island-is-1',
-        redirect_uri: 'https://island.is/minarsidur/silent/signin-oidc',
-      },
-    ])
+    return Promise.resolve([1])
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('client_redirect_uri', [
-      {
-        client_id: 'island-is-1',
-        redirect_uri: 'https://island.is/minarsidur/signin-oidc',
-      },
-      {
-        client_id: 'island-is-1',
-        redirect_uri: 'https://island.is/minarsidur/silent/signin-oidc',
-      },
-    ])
+    return Promise.resolve([1])
   },
 }

@@ -11,7 +11,7 @@ import {
 export const eligibilityModule: ServicePortalModule = {
   name: 'Mín réttindi',
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: defineMessage({
         id: 'service.portal:eligibility',

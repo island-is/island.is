@@ -1,10 +1,9 @@
 # Fallback. If there is no owner, assign to core maintainers.
-# Remove fallback rule while graphql files are in the way.
-# *                                                       @island-is/core
+*                                                                                             @island-is/core
 
-/*                                                        @island-is/core
-/.github/                                                 @island-is/core
-/handbook/                                                @island-is/core
+/*                                                                                            @island-is/core
+/.github/                                                                                     @island-is/core
+/handbook/                                                                                    @island-is/core
 
 # Add new projects here.
 # Project folders are usually owned by the team assigned.
@@ -13,83 +12,143 @@
 # Make sure that team names are correct or everything stops working.
 # Organisation name is @island-is, not @island.is
 
-/apps/web*/                                               @island-is/kosmos-kaos @island-is/aranja
-/libs/api/domains/cms/                                    @island-is/kosmos-kaos @island-is/aranja
 
-/*/air-discount-scheme/                                   @island-is/vice-versa
-/*/gjafakort/                                             @island-is/vice-versa @island-is/kosmos-kaos
-/libs/application/templates/driving-license/              @island-is/vice-versa
-/libs/application/templates/passport/                     @island-is/vice-versa
-/libs/api/domains/driving-license/                        @island-is/vice-versa
-/libs/service-portal/driving-license/                     @island-is/vice-versa
-/libs/service-portal/eligibility/                         @island-is/vice-versa
+/apps/web*/                                                                                   @island-is/kosmos-kaos
+/apps/services/endorsements/                                                                  @island-is/kosmos-kaos
+/apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
+/apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
+/apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
+/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
+/libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
+/libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
+/libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
+/libs/application/templates/party-application/                                                @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
+/libs/clients/rsk/                                                                            @island-is/kosmos-kaos
+/libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
+/libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
+/*/gjafakort/                                                                                 @island-is/kosmos-kaos
+/libs/service-portal/education/                                                               @island-is/kosmos-kaos
+/libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
+/libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
+/libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
 
-/apps/application-system/                                 @island-is/aranja
-/apps/reference-next-app/                                 @island-is/aranja
-/libs/api/domains/application/                            @island-is/aranja
-/libs/application/core/                                   @island-is/aranja
-/libs/application/data-providers/                         @island-is/aranja
-/libs/application/graphql/                                @island-is/aranja
-/libs/application/ui-fields/                              @island-is/aranja
-/libs/application/ui-shell/                               @island-is/aranja
-/libs/application/template-loader/                        @island-is/aranja
-/libs/application/templates/meta-application/             @island-is/aranja
-/libs/application/templates/parental-leave/               @island-is/aranja
-/libs/application/templates/reference-template/           @island-is/aranja
-/libs/utils/api/                                          @island-is/aranja
-/libs/vmst-client/                                        @island-is/aranja
+/apps/reference-next-app/                                                                     @island-is/aranja-core
+/libs/api/domains/translations/                                                               @island-is/aranja-core
+/libs/contentful-extensions/                                                                  @island-is/aranja-core @island-is/kosmos-kaos
+/libs/contentful-extensions/translation/                                                      @island-is/aranja-core
+/libs/localization/                                                                           @island-is/aranja-core
+/libs/utils/api/                                                                              @island-is/aranja-core
+/libs/utils/shared/                                                                           @island-is/aranja-core
+/libs/service-portal/settings/access-control                                                  @island-is/aranja-core @island-is/vice-versa
 
-/libs/application/templates/children-residence-change/    @island-is/kolibri-modern-family
+/apps/application-system/                                                                     @island-is/aranja-applications
+/libs/api/domains/application/                                                                @island-is/aranja-applications
+/libs/application/core/                                                                       @island-is/aranja-applications
+/libs/application/data-providers/                                                             @island-is/aranja-applications
+/libs/application/graphql/                                                                    @island-is/aranja-applications
+/libs/application/ui-components/                                                              @island-is/aranja-applications
+/libs/application/ui-fields/                                                                  @island-is/aranja-applications
+/libs/application/ui-shell/                                                                   @island-is/aranja-applications
+/libs/application/template-api-modules/                                                       @island-is/aranja-applications
+/libs/application/template-loader/                                                            @island-is/aranja-applications
+/libs/application/templates/meta-application/                                                 @island-is/aranja-applications
+/libs/application/templates/parental-leave/                                                   @island-is/aranja-applications
+/libs/application/templates/reference-template/                                               @island-is/aranja-applications
+/libs/clients/vmst/                                                                           @island-is/aranja-applications
+/libs/shared/form-fields/                                                                     @island-is/aranja-applications
 
-/apps/judicial-system/                                    @island-is/kolibri-justice-league
-/libs/judicial-system/                                    @island-is/kolibri-justice-league
-/libs/nova-sms/                                           @island-is/kolibri-justice-league
-/libs/dokobit-signing/                                    @island-is/kolibri-justice-league
-/libs/email-service/                                      @island-is/kolibri-justice-league
+/libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
+/apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
+/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
+/libs/clients/national-registry/v2/                                                           @island-is/kolibri-modern-family
+/libs/api/domains/national-registry-x-road/                                                   @island-is/kolibri-modern-family
 
-/apps/service-portal*/                                    @island-is/sendiradid
-/apps/services/user-profile/                              @island-is/sendiradid
-/libs/api/domains/documents/                              @island-is/sendiradid
-/libs/api/domains/national-registry/                      @island-is/sendiradid
-/libs/service-portal/applications/                        @island-is/sendiradid
-/libs/service-portal/assets/                              @island-is/sendiradid
-/libs/service-portal/constants/                           @island-is/sendiradid
-/libs/service-portal/core/                                @island-is/sendiradid
-/libs/service-portal/documents/                           @island-is/sendiradid
-/libs/service-portal/education/                           @island-is/sendiradid
-/libs/service-portal/family/                              @island-is/sendiradid
-/libs/service-portal/finance/                             @island-is/sendiradid
-/libs/service-portal/graphql/                             @island-is/sendiradid
-/libs/service-portal/health/                              @island-is/sendiradid
-/libs/service-portal/settings/                            @island-is/sendiradid
+/apps/judicial-system/                                                                        @island-is/kolibri-justice-league
+/libs/judicial-system/                                                                        @island-is/kolibri-justice-league
+/libs/nova-sms/                                                                               @island-is/kolibri-justice-league
+/libs/dokobit-signing/                                                                        @island-is/kolibri-justice-league
+/libs/email-service/                                                                          @island-is/kolibri-justice-league
 
-/apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/content-search-toolkit/                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/api/domains/content-search/                         @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+/apps/financial-aid/                                                                          @island-is/kolibri-robin-hood
+/libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
 
-/libs/island-ui/                                          @island-is/island-ui
+/apps/service-portal*/                                                                        @island-is/hugsmidjan
+/apps/services/user-profile/                                                                  @island-is/hugsmidjan
+/libs/api/domains/documents/                                                                  @island-is/hugsmidjan
+/libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
+/libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
+/libs/service-portal/applications/                                                            @island-is/hugsmidjan
+/libs/service-portal/assets/                                                                  @island-is/hugsmidjan
+/libs/service-portal/constants/                                                               @island-is/hugsmidjan
+/libs/service-portal/core/                                                                    @island-is/hugsmidjan
+/libs/service-portal/documents/                                                               @island-is/hugsmidjan
+/libs/service-portal/family/                                                                  @island-is/hugsmidjan
+/libs/service-portal/finance/                                                                 @island-is/hugsmidjan
+/libs/service-portal/graphql/                                                                 @island-is/hugsmidjan
+/libs/service-portal/health/                                                                  @island-is/hugsmidjan
+/libs/service-portal/settings/personal-information                                            @island-is/hugsmidjan
 
-/.github/actions/                                         @island-is/devops
-/.github/workflows/                                       @island-is/devops
-/apps/reference-backend/                                  @island-is/devops
-/libs/infra*/                                             @island-is/devops
-/libs/logging/                                            @island-is/devops
-/scripts/                                                 @island-is/devops
-/scripts/postinstall.js                                   @island-is/devops @jeremybarbet
-/scripts/schemas.js                                       @island-is/devops @jeremybarbet
+/libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
+/libs/application/templates/login-service/                                                    @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
+/apps/download-service/                                                                       @island-is/sendiradid
+/libs/clients/documents/                                                                      @island-is/sendiradid
+/libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
+/libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 
-/libs/api/domains/api-catalogue/                          @island-is/advania
-/libs/api/domains/document-provider/                      @island-is/advania
-/libs/api-catalogue/                                      @island-is/advania
-/libs/application/templates/document-provider-onboarding/ @island-is/advania
-/libs/service-portal/document-provider/                   @island-is/advania
-/apps/services/xroad-collector/                           @island-is/advania
-/apps/services/documents                                  @island-is/advania
+/apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-index-manager/                                                           @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-metrics/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos
+/libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos
+/libs/api/domains/syslumenn/                                                                  @island-is/stefna
+/apps/web/screens/Organization/                                                               @island-is/stefna
+/apps/web/components/Organization/                                                            @island-is/stefna
 
-/apps/skilavottord/                                       @island-is/deloitte
-/libs/skilavottord/                                       @island-is/deloitte
+/libs/island-ui/                                                                              @island-is/island-ui
 
-/apps/auth-admin-web/                                     @island-is/fuglar
-/apps/auth-admin-web-e2e/                                 @island-is/fuglar
-/libs/auth-api-lib/                                       @island-is/fuglar
-/libs/auth-nest-tools/                                    @island-is/fuglar
+/.github/actions/                                                                             @island-is/devops
+/.github/workflows/                                                                           @island-is/devops
+/apps/reference-backend/                                                                      @island-is/devops
+/libs/infra*/                                                                                 @island-is/devops
+/libs/logging/                                                                                @island-is/devops
+/scripts/                                                                                     @island-is/devops
+/scripts/postinstall.js                                                                       @island-is/devops @jeremybarbet
+/scripts/schemas.js                                                                           @island-is/devops @jeremybarbet
+
+/libs/api/domains/api-catalogue/                                                              @island-is/advania
+/libs/api/domains/document-provider/                                                          @island-is/advania
+/libs/api-catalogue/                                                                          @island-is/advania
+/libs/application/templates/document-provider-onboarding/                                     @island-is/advania
+/libs/service-portal/document-provider/                                                       @island-is/advania
+/apps/services/xroad-collector/                                                               @island-is/advania
+/apps/services/documents                                                                      @island-is/advania @island-is/core
+/libs/clients/document-provider                                                               @island-is/advania @island-is/core
+
+/apps/skilavottord/                                                                           @island-is/deloitte
+/libs/application/templates/health-insurance/                                                 @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/deloitte
+/libs/skilavottord/                                                                           @island-is/deloitte
+/libs/api/domains/health-insurance/                                                           @island-is/deloitte
+/libs/health-insurance/                                                                       @island-is/deloitte
+
+/apps/services/auth-api/                                                                      @island-is/fuglar
+/apps/services/auth-admin-api/                                                                @island-is/fuglar
+/apps/services/auth-public-api/                                                               @island-is/fuglar
+/apps/auth-admin-web/                                                                         @island-is/fuglar
+/apps/auth-admin-web-e2e/                                                                     @island-is/fuglar
+/libs/auth-api-lib/                                                                           @island-is/fuglar
+/libs/auth-nest-tools/                                                                        @island-is/fuglar
+
+/libs/clients/regulations/                                                                    @island-is/hugsmidjan
+/libs/api/domains/regulations/                                                                @island-is/hugsmidjan
+/apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
+/apps/web/components/Regulations/                                                             @island-is/hugsmidjan
+
+/libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
+/libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos

@@ -3,7 +3,8 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
 

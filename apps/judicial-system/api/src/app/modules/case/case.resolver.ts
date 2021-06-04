@@ -9,17 +9,21 @@ import {
 } from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
-import { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
+import { CaseFile } from '../file'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
-import { CaseAuditService } from './case.audit'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -42,8 +46,7 @@ import {
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
-    @Inject(CaseAuditService)
-    private readonly caseAuditService: CaseAuditService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -56,9 +59,9 @@ export class CaseResolver {
   ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.OVERVIEW,
+      AuditedAction.GET_CASES,
       backendApi.getCases(),
       (cases: Case[]) => cases.map((aCase) => aCase.id),
     )
@@ -74,9 +77,9 @@ export class CaseResolver {
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.VIEW_DETAILS,
+      AuditedAction.GET_CASE,
       backendApi.getCase(input.id),
       input.id,
     )
@@ -90,11 +93,11 @@ export class CaseResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    this.logger.debug('Creating case')
+    this.logger.debug('Creating a new case')
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CREATE,
+      AuditedAction.CREATE_CASE,
       backendApi.createCase(input),
       (theCase) => theCase.id,
     )
@@ -112,9 +115,9 @@ export class CaseResolver {
 
     this.logger.debug(`Updating case ${id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.UPDATE,
+      AuditedAction.UPDATE_CASE,
       backendApi.updateCase(id, updateCase),
       id,
     )
@@ -132,9 +135,9 @@ export class CaseResolver {
 
     this.logger.debug(`Transitioning case ${id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.TRANSITION,
+      AuditedAction.TRANSITION_CASE,
       backendApi.transitionCase(id, transitionCase),
       id,
     )
@@ -149,7 +152,7 @@ export class CaseResolver {
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_SIGNATURE,
       backendApi.requestSignature(input.caseId),
@@ -168,7 +171,7 @@ export class CaseResolver {
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_SIGNATURE,
       backendApi.getSignatureConfirmation(caseId, documentToken),
@@ -187,7 +190,7 @@ export class CaseResolver {
 
     this.logger.debug(`Sending notification for case ${caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
       AuditedAction.SEND_NOTIFICATION,
       backendApi.sendNotification(caseId, sendNotification),
@@ -196,6 +199,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   extendCase(
     @Args('input', { type: () => ExtendCaseInput })
     input: ExtendCaseInput,
@@ -204,9 +208,9 @@ export class CaseResolver {
   ): Promise<Case> {
     this.logger.debug(`Extending case ${input.id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditTrailService.audit(
       user.id,
-      AuditedAction.EXTEND,
+      AuditedAction.EXTEND_CASE,
       backendApi.extendCase(input.id),
       (theCase) => theCase.id,
     )
@@ -220,5 +224,15 @@ export class CaseResolver {
     const { id } = existingCase
 
     return backendApi.getCaseNotifications(id)
+  }
+
+  @ResolveField(() => [CaseFile])
+  async files(
+    @Parent() existingCase: Case,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<CaseFile[]> {
+    const { id } = existingCase
+
+    return backendApi.getCaseFiles(id)
   }
 }

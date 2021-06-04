@@ -1,11 +1,13 @@
 import React, { useContext, useEffect } from 'react'
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
-import * as styles from './Login.treat'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
+import { useRouter } from 'next/router'
+import * as styles from './Login.treat'
 
-export const Login = () => {
-  const urlParams = new URLSearchParams(window.location.search)
+const Login = () => {
+  const router = useRouter()
   const { user } = useContext(UserContext)
 
   useEffect(() => {
@@ -22,16 +24,44 @@ export const Login = () => {
     }
   }, [user])
 
+  const getErrorAlert = (errorCode: LoginErrorCodes): JSX.Element | null => {
+    switch (errorCode) {
+      case LoginErrorCodes.LOGIN_FAILED:
+        return (
+          <AlertMessage
+            type="warning"
+            title="Innskráning ógild"
+            message="Innskráning tókst ekki. Ertu viss um að þú hafir slegið inn rétt símanúmer?"
+          />
+        )
+      case LoginErrorCodes.UNAUTHENTICATED:
+        return (
+          <AlertMessage
+            type="info"
+            title="Innskráning tókst ekki"
+            message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
+          />
+        )
+      case LoginErrorCodes.UNAUTHORIZED:
+        return (
+          <AlertMessage
+            type="warning"
+            title="Þú ert ekki með aðgang"
+            message="Þú hefur ekki fengið aðgang að Réttarvörslugátt. Ef þú telur þig eiga að hafa aðgang þarft þú að hafa samband við viðeigandi stjórnanda eða notendaþjónustu hjá þinni starfsstöð."
+          />
+        )
+
+      default:
+        return null
+    }
+  }
+
   return (
     <div className={styles.loginContainer}>
-      {urlParams.has('error') && (
+      {router.query.villa && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            <AlertMessage
-              type="info"
-              title="Innskráning ógild"
-              message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
-            />
+            {getErrorAlert(router.query.villa as LoginErrorCodes)}
           </Box>
         </div>
       )}

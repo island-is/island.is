@@ -1,15 +1,14 @@
 'use strict'
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      "UPDATE api_resource SET national_id = '5501692829' WHERE name IN ('swagger_api', 'postman_resource', 'api_resource')",
-    )
+    return Promise.resolve([1])
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      "UPDATE api_resource SET national_id = null WHERE name IN ('swagger_api', 'postman_resource', 'api_resource')",
-    )
+    return Promise.resolve([1])
   },
 }

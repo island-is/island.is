@@ -1,36 +1,44 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
-import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
-  APPLICANT_APPLICATIONS,
+  APPLICATION_APPLICATIONS,
 } from '@island.is/application/graphql'
-import useAuth from '../hooks/useAuth'
 import {
   Text,
   Box,
-  Stack,
-  ActionCard,
   Page,
   Button,
+  GridContainer,
 } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import { ApplicationList } from '@island.is/application/ui-components'
 import { NotFound } from '@island.is/application/ui-shell'
+import {
+  useApplicationNamespaces,
+  useLocale,
+  useLocalizedQuery,
+} from '@island.is/localization'
+
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
 export const Applications: FC = () => {
-  const { type } = useParams()
+  const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { userInfo } = useAuth()
-  const nationalRegistryId = userInfo?.profile?.nationalId
+  const { formatMessage } = useLocale()
+  const type = getTypeFromSlug(slug)
 
-  const { data, loading, error: applicationsError } = useQuery(
-    APPLICANT_APPLICATIONS,
+  useApplicationNamespaces(type)
+
+  const { data, loading, error: applicationsError } = useLocalizedQuery(
+    APPLICATION_APPLICATIONS,
     {
       variables: {
-        typeId: type,
+        input: { typeId: type },
       },
+      skip: !type,
     },
   )
 
@@ -38,84 +46,86 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        history.push(`../umsokn/${createApplication.id}`)
+        history.push(`../${slug}/${createApplication.id}`)
       },
     },
   )
 
-  function createApplication() {
+  const createApplication = () => {
     createApplicationMutation({
       variables: {
         input: {
-          applicant: nationalRegistryId,
-          state: 'draft',
-          attachments: {},
           typeId: type,
-          assignees: [nationalRegistryId],
-          answers: {},
         },
       },
     })
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.getApplicationsByApplicant)) {
+    if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [data])
+  }, [type, data])
 
-  if (applicationsError)
+  if (loading) {
+    return <ApplicationLoading />
+  }
+
+  if (!type || applicationsError) {
     return (
       <NotFound
-        title="Þessi gerð umsókna er ekki til"
-        subTitle={`Engin umsókn er til af gerðinni: ${type}`}
+        title={formatMessage(coreMessages.notFoundApplicationType)}
+        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
+          type,
+        })}
       />
     )
-  if (createError)
+  }
+
+  if (createError) {
     return (
       <NotFound
-        title="Eitthvað fór úrskeiðis"
-        subTitle={`Ekki tókst að búa til umsókn af gerðinni: ${type}`}
+        title={formatMessage(coreMessages.createErrorApplication)}
+        subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
+          type,
+        })}
       />
     )
+  }
 
   return (
     <Page>
-      {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
-        <Box padding="containerGutter">
-          <Box marginTop={5} marginBottom={5}>
-            <Text variant="h1">Þínar umsóknir</Text>
-          </Box>
-          <Stack space={2}>
-            {data?.getApplicationsByApplicant?.map(
-              (application: Application) => (
-                <ActionCard
-                  key={application.id}
-                  heading={application.name || application.typeId}
-                  text={format(new Date(application.modified), 'do MMMM yyyy')}
-                  cta={{
-                    label: 'Halda áfram',
-                    variant: 'secondary',
-                    onClick: () => history.push(`../umsokn/${application.id}`),
-                  }}
-                  progressMeter={{
-                    active: true,
-                    progress: application.progress,
-                  }}
-                />
-              ),
+      <GridContainer>
+        {!loading && !isEmpty(data?.applicationApplications) && (
+          <Box>
+            <Box marginTop={5} marginBottom={5}>
+              <Text variant="h1">
+                {formatMessage(coreMessages.applications)}
+              </Text>
+            </Box>
+
+            {data?.applicationApplications && (
+              <ApplicationList
+                applications={data.applicationApplications}
+                onClick={(applicationUrl) =>
+                  history.push(`../${applicationUrl}`)
+                }
+              />
             )}
-          </Stack>
-          <Box
-            marginTop={5}
-            marginBottom={5}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            <Button onClick={createApplication}>Ný umsókn</Button>
+
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button onClick={createApplication}>
+                {formatMessage(coreMessages.newApplication)}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
+      </GridContainer>
     </Page>
   )
 }

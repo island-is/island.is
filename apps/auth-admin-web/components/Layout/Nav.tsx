@@ -1,17 +1,47 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { isLoggedIn } from '../../utils/auth.utils'
 import { useSession } from 'next-auth/client'
 import { SessionInfo } from './../../entities/common/SessionInfo'
+import { Localization } from '../../entities/common/Localization'
+import LocalizationUtils from '../../utils/localization.utils'
+import { RoleUtils } from './../../utils/role.utils'
 
 const Nav: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+  useEffect(() => {
+    async function resolveRoles() {
+      const response = await RoleUtils.isUserAdmin()
+      setIsAdmin(response)
+    }
+
+    resolveRoles()
+  }, [])
 
   if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>
+  }
+
+  const adminRoute = () => {
+    if (isAdmin) {
+      return (
+        <li className={`nav__container ${isAdmin ? 'hide' : 'show'}`}>
+          <Link href="/admin">
+            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
+              {localization.navigations['navigation'].items['admin'].text}
+            </a>
+          </Link>
+        </li>
+      )
+    }
   }
 
   return (
@@ -19,7 +49,9 @@ const Nav: React.FC = () => {
       <ul>
         <li className="nav__container">
           <Link href="/">
-            <a className={router?.pathname === '/' ? 'active' : ''}>Home</a>
+            <a className={router?.pathname === '/' ? 'active' : ''}>
+              {localization.navigations['navigation'].items['home'].text}
+            </a>
           </Link>
         </li>
         <li className="nav__container">
@@ -32,7 +64,7 @@ const Nav: React.FC = () => {
                   : ''
               }
             >
-              Clients
+              {localization.navigations['navigation'].items['clients'].text}
             </a>
           </Link>
         </li>
@@ -41,24 +73,12 @@ const Nav: React.FC = () => {
             <a
               className={router?.pathname.includes('resource') ? 'active' : ''}
             >
-              Resources
+              {localization.navigations['navigation'].items['resources'].text}
             </a>
           </Link>
         </li>
-        <li className="nav__container">
-          <Link href="/users">
-            <a className={router?.pathname === '/users' ? 'active' : ''}>
-              Users
-            </a>
-          </Link>
-        </li>
-        <li className="nav__container">
-          <Link href="/admin">
-            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
-              Admin control
-            </a>
-          </Link>
-        </li>
+
+        {adminRoute()}
       </ul>
     </nav>
   )

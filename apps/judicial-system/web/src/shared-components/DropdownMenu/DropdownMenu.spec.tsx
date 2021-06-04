@@ -1,11 +1,11 @@
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
 
 import DropdownMenu from './DropdownMenu'
 
 describe('DropdownMenu', () => {
   it('Dropdown should open and contain a button and a link', () => {
-    const { queryByRole, queryByText } = render(
+    render(
       <DropdownMenu
         title="Innskráning"
         icon="person"
@@ -13,15 +13,15 @@ describe('DropdownMenu', () => {
         items={[{ title: 'Einstaklingur' }, { title: 'Fyrirtæki', href: '#' }]}
       />,
     )
-    const menuButton = queryByText('Innskráning')
+    const menuButton = screen.queryByText('Innskráning')
     expect(menuButton).toBeTruthy()
     if (menuButton) {
       fireEvent.click(menuButton)
     }
-    const menu = queryByRole('menu')
+    const menu = screen.queryByRole('menu')
     expect(menu).toBeTruthy()
-    const menuItemButton = queryByText('Einstaklingur')
-    const menuItemLink = queryByText('Fyrirtæki')
+    const menuItemButton = screen.queryByText('Einstaklingur')
+    const menuItemLink = screen.queryByText('Fyrirtæki')
     expect(menuItemButton?.tagName).toBe('BUTTON')
     expect(menuItemLink?.tagName).toBe('A')
   })

@@ -9,6 +9,7 @@ import {
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
 import { ArticleSyncService } from './importers/article.service'
+import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
@@ -20,6 +21,9 @@ import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { OrganizationPageSyncService } from './importers/organizationPage.service'
+import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { FrontpageSyncService } from './importers/frontpage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -33,10 +37,9 @@ interface UpdateLastHashOptions {
 }
 
 export type processSyncDataInput<T> = (Entry<any> | T)[]
-export type doMappingInput<T> = T[]
-export interface CmsSyncProvider<T> {
-  processSyncData: (entries: processSyncDataInput<T>) => T[]
-  doMapping: (entries: doMappingInput<T>) => MappedData[]
+export interface CmsSyncProvider<T, ProcessOutput = any> {
+  processSyncData: (entries: processSyncDataInput<T>) => ProcessOutput
+  doMapping: (entries: ProcessOutput) => MappedData[]
 }
 
 @Injectable()
@@ -47,15 +50,20 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
+    private readonly subArticleSyncService: SubArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
     private readonly menuSyncService: MenuSyncService,
     private readonly groupedMenuSyncService: GroupedMenuSyncService,
+    private readonly organizationPageSyncService: OrganizationPageSyncService,
+    private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
+    private readonly frontpageSyncService: FrontpageSyncService,
     private readonly elasticService: ElasticService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
+      this.subArticleSyncService,
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
@@ -63,6 +71,9 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.adgerdirPageSyncService,
       this.menuSyncService,
       this.groupedMenuSyncService,
+      this.organizationPageSyncService,
+      this.organizationSubpageSyncService,
+      this.frontpageSyncService,
     ]
   }
 

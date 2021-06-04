@@ -1,10 +1,18 @@
-/* eslint-disable */
-const TreatPlugin = require('treat/webpack-plugin')
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const nrwlConfig = require('./../../libs/shared/webpack/nrwl-config')
 
-module.exports = (config, context) => {
+module.exports = (config) => {
+  // Add our common webpack config
   nrwlConfig(config)
-  config.plugins.push(new TreatPlugin())
+
+  // App specific config
+  config.stats.chunks = false
+  config.stats.modules = false
+
+  if (process.env.NODE_ENV === 'development') {
+    config.devServer.noInfo = true
+  }
+
   return {
     ...config,
     node: {

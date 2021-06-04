@@ -1,21 +1,7 @@
-import {
-  insertAt,
-  padTimeWithZero,
-  parseArray,
-  parseString,
-  parseTime,
-  parseTransition,
-  replaceTabs,
-  replaceTabsOnChange,
-} from './formatters'
-import * as formatters from './formatters'
-import {
-  getConclusion,
-  constructProsecutorDemands,
-  getShortGender,
-  isDirty,
-  isNextDisabled,
-} from './stepHelper'
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
 import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import {
   CaseTransition,
@@ -25,10 +11,17 @@ import {
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import {
+  getConclusion,
+  constructProsecutorDemands,
+  getShortGender,
+  isDirty,
+  isNextDisabled,
+} from './stepHelper'
 import { validate } from './validate'
-import { render, screen } from '@testing-library/react'
-import React from 'react'
-import userEvent from '@testing-library/user-event'
+
+import * as formatters from './formatters'
+import { mockCourt } from './mocks'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -38,7 +31,7 @@ describe('Formatters utils', () => {
       const array = ['lorem', 'ipsum']
 
       // Act
-      const parsedArray = parseArray(property, array)
+      const parsedArray = formatters.parseArray(property, array)
 
       // Assert
       expect(parsedArray).not.toEqual(null)
@@ -53,7 +46,7 @@ describe('Formatters utils', () => {
       const value = 'lorem'
 
       // Act
-      const parsedString = parseString(property, value)
+      const parsedString = formatters.parseString(property, value)
 
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
@@ -66,7 +59,7 @@ describe('Formatters utils', () => {
 ipsum`
 
       // Act
-      const parsedString = parseString(property, value)
+      const parsedString = formatters.parseString(property, value)
 
       // Assert
       expect(parsedString).toEqual({
@@ -82,7 +75,7 @@ ipsum`
       const transition = CaseTransition.SUBMIT
 
       // Act
-      const parsedTransition = parseTransition(modified, transition)
+      const parsedTransition = formatters.parseTransition(modified, transition)
 
       // Assert
       expect(parsedTransition).toEqual({
@@ -99,7 +92,7 @@ ipsum`
       const time = '13:37'
 
       // Act
-      const d = parseTime(date, time)
+      const d = formatters.parseTime(date, time)
 
       // Assert
       expect(d).toEqual('2020-10-24T13:37:00Z')
@@ -112,8 +105,8 @@ ipsum`
       const time2 = ''
 
       // Act
-      const d = parseTime(date, time)
-      const dd = parseTime(date, time2)
+      const d = formatters.parseTime(date, time)
+      const dd = formatters.parseTime(date, time2)
 
       // Assert
       expect(d).toEqual('2020-10-24')
@@ -127,7 +120,7 @@ ipsum`
       const val = '1:15'
 
       // Act
-      const result = padTimeWithZero(val)
+      const result = formatters.padTimeWithZero(val)
 
       // Assert
       expect(result).toEqual('01:15')
@@ -138,7 +131,7 @@ ipsum`
       const val = '01:15'
 
       // Act
-      const result = padTimeWithZero(val)
+      const result = formatters.padTimeWithZero(val)
 
       // Assert
       expect(result).toEqual('01:15')
@@ -149,7 +142,7 @@ ipsum`
     test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
       const spy = jest.spyOn(formatters, 'replaceTabs')
-      render(<input onChange={(evt) => replaceTabsOnChange(evt)} />)
+      render(<input onChange={(evt) => formatters.replaceTabsOnChange(evt)} />)
 
       // Act
       userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
@@ -307,6 +300,31 @@ describe('Validation', () => {
       expect(validation.isValid).toEqual(true)
     })
   })
+
+  describe('Validate phonenumber format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const phonenumber = '00292'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Dæmi: 555-5555')
+    })
+
+    test('should pass if in correct form', () => {
+      // Arrange
+      const phonenumber = '555-5555'
+
+      // Act
+      const r = validate(phonenumber, 'phonenumber')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    })
+  })
 })
 
 describe('Step helper', () => {
@@ -317,7 +335,7 @@ describe('Step helper', () => {
       const insertion = ' lara'
 
       // Act
-      const result = insertAt(str, insertion, 5)
+      const result = formatters.insertAt(str, insertion, 5)
 
       // Assert
       expect(result).toEqual('Lorem lara ipsum dolum kara')
@@ -330,7 +348,7 @@ describe('Step helper', () => {
       const wc = {
         decision: CaseDecision.REJECTING,
         accusedName: 'Mikki Refur',
-        accusedNationalId: '1212121299',
+        accusedNationalId: '0000000000',
         accusedGender: CaseGender.MALE,
       }
 
@@ -343,14 +361,18 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
+            'Kröfu um að kærði, Mikki Refur, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -383,12 +405,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -403,6 +429,7 @@ describe('Step helper', () => {
         accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
         type: CaseType.CUSTODY,
+        isolationTo: '2020-10-22T12:31:00.000Z',
       }
 
       // Act
@@ -416,12 +443,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -447,12 +478,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -482,12 +517,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -517,12 +556,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -554,12 +597,16 @@ describe('Step helper', () => {
           const hasText = (node: Element) =>
             node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -578,7 +625,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         parentCase: {
           id: 'TEST_EXTENSION',
           decision: CaseDecision.ACCEPTING,
@@ -596,12 +643,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -620,7 +671,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 
@@ -635,12 +686,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -659,7 +714,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        court: 'Héraðsdómur Reykjavíkur',
+        court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
 
@@ -674,12 +729,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeInTheDocument()
     })
@@ -732,7 +791,7 @@ describe('Step helper', () => {
       const str = '\t'
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual(' ')
@@ -743,7 +802,7 @@ describe('Step helper', () => {
       const str = '\t\t\t'
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual(' ')
@@ -754,7 +813,7 @@ describe('Step helper', () => {
       const str = ' \t\t\t'
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual(' ')
@@ -765,7 +824,7 @@ describe('Step helper', () => {
       const str = '\t\t\t '
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual(' ')
@@ -777,7 +836,7 @@ describe('Step helper', () => {
         'Lorem\t ipsum dolor \t\tsit amet,\t\t\t\tconsectetur \t\t\t adipiscing elit.'
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual(
@@ -789,7 +848,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = replaceTabs((undefined as unknown) as string)
+      const res = formatters.replaceTabs((undefined as unknown) as string)
 
       // Assert
       expect(res).toBeUndefined()
@@ -800,7 +859,7 @@ describe('Step helper', () => {
       const str = '020-0202-2929'
 
       // Act
-      const res = replaceTabs(str)
+      const res = formatters.replaceTabs(str)
 
       // Assert
       expect(res).toEqual('020-0202-2929')

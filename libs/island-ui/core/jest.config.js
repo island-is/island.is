@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'island-ui-core',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
@@ -8,4 +7,5 @@ module.exports = {
   coverageDirectory: '../../../coverage/libs/island-ui/core',
   setupFilesAfterEnv: ['./jest.setup.ts'],
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'island-ui-core',
 }

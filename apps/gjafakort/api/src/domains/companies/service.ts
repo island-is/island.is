@@ -12,9 +12,10 @@ export const getApplication = async (
   companySSN: string,
   { applicationApi, ferdalagApi }: DataSource,
 ) => {
-  const application = await applicationApi.getApplicationByType<
-    CompanyApplication
-  >(APPLICATION_TYPE, companySSN)
+  const application = await applicationApi.getApplicationByType<CompanyApplication>(
+    APPLICATION_TYPE,
+    companySSN,
+  )
   if (application) {
     return application
   }

@@ -4,19 +4,35 @@ import { createHash } from 'crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export enum AuditedAction {
-  OVERVIEW = 'OVERVIEW',
-  VIEW_DETAILS = 'VIEW_DETAILS',
-  CREATE = 'CREATE',
-  UPDATE = 'UPDATE',
-  TRANSITION = 'TRANSITION',
+  LOGIN = 'LOGIN',
+  GET_CASES = 'GET_CASES',
+  GET_CASE = 'GET_CASE',
+  CREATE_CASE = 'CREATE_CASE',
+  UPDATE_CASE = 'UPDATE_CASE',
+  TRANSITION_CASE = 'TRANSITION_CASE',
   REQUEST_SIGNATURE = 'REQUEST_SIGNATURE',
   CONFIRM_SIGNATURE = 'CONFIRM_SIGNATURE',
   SEND_NOTIFICATION = 'SEND_NOTIFICATION',
-  EXTEND = 'EXTEND',
+  EXTEND_CASE = 'EXTEND_CASE',
+  GET_USERS = 'GET_USERS',
+  GET_USER = 'GET_USER',
+  CREATE_USER = 'CREATE_USER',
+  UPDATE_USER = 'UPDATE_USER',
+  CREATE_COURT_CASE = 'CREATE_COURT_CASE',
+  GET_REQUEST_PDF = 'GET_REQUEST_PDF',
+  GET_RULING_PDF = 'GET_RULING_PDF',
+  GET_INSTITUTIONS = 'GET_INSTITUTIONS',
+  CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
+  CREATE_FILE = 'CREATE_FILE',
+  GET_SIGNED_URL = 'GET_SIGNED_URL',
+  DELETE_FILE = 'DELETE_FILE',
 }
+
+export const AUDIT_TRAIL_OPTIONS = 'AUDIT_TRAIL_OPTIONS'
 
 export interface AuditTrailOptions {
   useGenericLogger: boolean // should be false in production environments
@@ -27,7 +43,14 @@ export interface AuditTrailOptions {
 
 @Injectable()
 export class AuditTrailService {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(
+    @Inject(AUDIT_TRAIL_OPTIONS)
+    private readonly options: AuditTrailOptions,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {
+    this.initTrail()
+  }
 
   private trail?: Logger
   private useGenericLogger = true
@@ -35,20 +58,20 @@ export class AuditTrailService {
   private formatMessage(
     userId: string,
     action: AuditedAction,
-    caseIds: string | string[],
+    ids: string | string[],
   ) {
     const message = {
       user: userId,
       action,
-      cases: caseIds,
+      entities: ids,
     }
 
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
     return this.useGenericLogger ? JSON.stringify(message) : message
   }
 
-  initTrail(options: AuditTrailOptions) {
-    this.useGenericLogger = options.useGenericLogger
+  private initTrail() {
+    this.useGenericLogger = this.options.useGenericLogger
 
     if (this.useGenericLogger) {
       this.logger.info('Using generic logger for audit trail')
@@ -56,23 +79,24 @@ export class AuditTrailService {
       this.trail = this.logger
     } else {
       this.logger.info(
-        `Creating a dedicated logger for audit trail ${options.groupName}<<<${options.serviceName}`,
+        `Creating a dedicated logger for audit trail ${this.options.groupName}<<<${this.options.serviceName}`,
       )
 
       // Create a log stream with a randomized (time-based) hash so that multiple
       // instances of the service don't log to the same stream.
+      const serviceName = this.options.serviceName
       const startTime = new Date().toISOString()
       this.trail = winston.createLogger({
         transports: [
           new WinstonCloudWatch({
-            logGroupName: options.groupName,
+            logGroupName: this.options.groupName,
             logStreamName: function () {
               // Spread log streams across dates
-              return `${options.serviceName}-${
+              return `${serviceName}-${
                 new Date().toISOString().split('T')[0]
               }-${createHash('md5').update(startTime).digest('hex')}`
             },
-            awsRegion: options.region,
+            awsRegion: this.options.region,
             jsonMessage: true,
           }),
         ],
@@ -80,11 +104,32 @@ export class AuditTrailService {
     }
   }
 
-  audit(userId: string, action: AuditedAction, caseIds: string | string[]) {
+  private writeToTrail(
+    userId: string,
+    actionType: AuditedAction,
+    ids: string | string[],
+  ) {
     if (!this.trail) {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail?.info(this.formatMessage(userId, action, caseIds))
+    this.trail?.info(this.formatMessage(userId, actionType, ids))
+  }
+
+  async audit<R>(
+    userId: string,
+    actionType: AuditedAction,
+    action: Promise<R> | R,
+    auditedResult: string | ((result: R) => string | string[]),
+  ): Promise<R> {
+    const result = action instanceof Promise ? await action : action
+
+    this.writeToTrail(
+      userId,
+      actionType,
+      typeof auditedResult === 'string' ? auditedResult : auditedResult(result),
+    )
+
+    return result
   }
 }

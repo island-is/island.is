@@ -1,18 +1,25 @@
 # Search Indexer Migration
 
-The code inside the migration folder is built into a single file which is run
-on `initContainer` inside the cluster. The migration file has several tasks:
+The files inside the migration folder are build into multiple entry files an run in series inside separate `initContainers` in the cluster.  
+The migration files have several tasks:
 
-- Keep the dictionaries inside AWS up to date with `elasticsearch-dictionaries`
-  - Manage files inside S3 buckets
-  - Create packages inside AWS ES
-  - Associate and disassociate packages with AWS ES domains
-  - Cleanup old packages inside AWS ES
+**migrateAws.ts**:
+
+- Keep the dictionaries inside AWS up to date with the `island.is/elasticsearch-dictionaries` repo
+- Manage files inside S3 buckets
+- Create packages inside AWS ES
+- Associate and disassociate packages with AWS ES domains
+
+**migrateElastic.ts**:
+
 - Keep ES indexes up to date
-  - Create new indexes
-  - Migrate data from one index to another
-  - Manage aliases
-  - Rollback to last deployed version on failure
+- Create new indices when dictionary or index templates are updated
+- Migrate data from datasources into current index
+- Ensure builds with a faulty index don't spin up
+
+**migrateKibana.ts**:
+
+- Ensure content status dashboard is up to date
 
 You can run the migration script locally to manage your `dev-service` instance
 of elasticsearch. **The migrate script assumes you have dictionary files inside
@@ -29,8 +36,8 @@ You can run the migration with
 yarn nx run services-search-indexer:migrate
 ```
 
-This migrates the ES indexes to the latest version defined in the
-`./config/template-{LOCALE}.json` files. It also imports all kibana saved
+This migrates the ES indexes to the latest version defined by the
+`content-search-index-manager` library. It also imports all kibana saved
 objects that are in `./config/kibana` folder.
 
 #### Sync Kibana

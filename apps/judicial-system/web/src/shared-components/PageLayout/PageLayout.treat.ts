@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const processContainer = style({
   minHeight: 'calc(100vh - 112px)',
@@ -6,6 +7,8 @@ export const processContainer = style({
 
 export const processContent = style({
   minHeight: '644px',
+  paddingTop: theme.spacing[10],
+  paddingBottom: theme.spacing[5],
 })
 
 export const loadingWrapper = style({

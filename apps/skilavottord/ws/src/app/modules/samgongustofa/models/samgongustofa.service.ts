@@ -1,8 +1,9 @@
 import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
-import xml2js from 'xml2js'
+import * as xml2js from 'xml2js'
 import { environment } from '../../../../environments'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
 
 @Injectable()
@@ -17,9 +18,7 @@ export class SamgongustofaService {
 
   async getVehicleInformation(nationalId: string) {
     try {
-      this.logger.info(
-        `---- Starting getVehicleInformation call on ${nationalId} ----`,
-      )
+      this.logger.info('Starting getVehicleInformation call on ${nationalId}')
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()
@@ -226,16 +225,52 @@ export class SamgongustofaService {
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
                 .then(function (basicInfo) {
-                  // If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
+                  //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
-                    !(
-                      basicInfo['vehicle']['updatelocks'][0] == '' &&
-                      basicInfo['vehicle']['stolens'][0] == '' &&
-                      basicInfo['vehicle']['ownerregistrationerrors'][0] == ''
-                    )
+                    typeof basicInfo.vehicle.ownerregistrationerrors[0]
+                      .ownerregistrationerror != 'undefined'
                   ) {
-                    newVehicleArr[i]['isRecyclable'] = false
+                    //Handle registrationerror
+                    loggerReplacement.info(
+                      'vehicle has ownerregistrationerrors',
+                    )
+                    newVehicleArr[i].isRecyclable = false
                   }
+                  if (
+                    //Handle stolen
+                    typeof basicInfo.vehicle.stolens[0].stolen != 'undefined'
+                  ) {
+                    for (const stolenEndDate of basicInfo.vehicle.stolens[0]
+                      .stolen) {
+                      if (!stolenEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is stolen')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (
+                    typeof basicInfo.vehicle.updatelocks[0].updatelock !=
+                    'undefined'
+                  ) {
+                    //Handle lock
+                    for (const lockEndDate of basicInfo.vehicle.updatelocks[0]
+                      .updatelock) {
+                      if (!lockEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is locked')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (newVehicleArr[i].isRecyclable) {
+                    loggerReplacement.info(
+                      'vehicle is clean. not stolen, not locked, no registrationerror',
+                    )
+                  }
+                  loggerReplacement.info(
+                    'isRecycleble=' + newVehicleArr[i].isRecyclable,
+                  )
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
@@ -289,5 +324,10 @@ export class SamgongustofaService {
       )
       throw new Error('Failed on getting vehicles information...')
     }
+  }
+
+  /* test */
+  static test(): any {
+    return 'test'
   }
 }

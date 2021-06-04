@@ -1,0 +1,47 @@
+.toggle-button {
+  position: absolute;
+  left: -15px;
+  top: 25px;
+  &__button__show {
+    display: block;
+    font-size: 1rem;
+    cursor: pointer;
+    color: $color-link;
+
+    span {
+      visibility: hidden;
+    }
+  }
+}
+
+.translation-create-form-dropdown {
+  position: absolute;
+  z-index: 3;
+  left: -10px;
+  top: 50px;
+  width: 800px;
+
+  &__container {
+    h1 {
+      font-size: 1rem;
+    }
+  }
+
+  .customErrorMessage {
+    color: $color-error;
+  }
+
+  &__wrapper {
+    background: $color-bg-content;
+    padding: 25px;
+    border: solid 2px $color-border;
+
+    h1 {
+      font-size: 1.3rem;
+    }
+  }
+
+  &__container__form {
+    padding: 10px !important;
+  }
+}

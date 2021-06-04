@@ -1,10 +1,13 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Input, Stack, Button } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
+import { Organisation } from '@island.is/api/schema'
+import {
+  OrganisationInput,
+  useUpdateOrganisation,
+} from '../../shared/useUpdateOrganisation'
 
 export interface InstitutionFormData {
   name: string
@@ -15,14 +18,23 @@ export interface InstitutionFormData {
 }
 
 interface Props {
-  onSubmit: (data: InstitutionFormData) => void
-  renderBackButton?: () => JSX.Element
-  renderSubmitButton?: () => JSX.Element
+  organisation: Organisation
 }
 
-export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
+export const InstitutionForm: FC<Props> = ({ organisation }) => {
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
+  const { updateOrganisation, loading } = useUpdateOrganisation()
+
+  const onSubmit = (formData: Organisation) => {
+    if (formData) {
+      const input: OrganisationInput = {
+        ...formData,
+        id: organisation?.id || '',
+      }
+      updateOrganisation(input)
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -38,7 +50,7 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
               ),
             },
           }}
-          defaultValue=""
+          defaultValue={organisation?.name || ''}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -54,7 +66,7 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
         <Controller
           control={control}
           name="nationalId"
-          defaultValue=""
+          defaultValue={organisation?.nationalId || ''}
           rules={{
             required: {
               value: true,
@@ -84,7 +96,7 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
         <Controller
           control={control}
           name="address"
-          defaultValue=""
+          defaultValue={organisation?.address || ''}
           rules={{
             required: {
               value: true,
@@ -108,7 +120,7 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
         <Controller
           control={control}
           name="email"
-          defaultValue=""
+          defaultValue={organisation?.email || ''}
           rules={{
             required: {
               value: true,
@@ -137,8 +149,8 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
         />
         <Controller
           control={control}
-          name="tel"
-          defaultValue=""
+          name="phoneNumber"
+          defaultValue={organisation?.phoneNumber || ''}
           rules={{
             required: {
               value: true,
@@ -160,8 +172,8 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
               value={value}
               onChange={onChange}
-              hasError={errors.tel}
-              errorMessage={errors.tel?.message}
+              hasError={errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}
         />
@@ -174,13 +186,18 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
         marginTop={4}
       >
         <Box marginTop={[1, 0]}>
-          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+          {/* <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
             <Button variant="ghost">
               {formatMessage(m.SettingsEditInstitutionBackButton)}
             </Button>
-          </Link>
+          </Link> */}
         </Box>
-        <Button type="submit" variant="primary" icon="arrowForward">
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          loading={loading}
+        >
           {formatMessage(m.SettingsEditInstitutionSaveButton)}
         </Button>
       </Box>

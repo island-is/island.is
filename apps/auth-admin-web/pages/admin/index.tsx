@@ -3,16 +3,33 @@ import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import AdminTabNav from './../../components/Admin/nav/AdminTabNav'
 import { AdminTab } from './../../entities/common/AdminTab'
-import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
-import IdpProvidersList from './../../components/Admin/lists/IdpProviderList'
+import ApiScopeUsersList from '../../components/Admin/lists/ApiScopeUsersList'
+import IdpProvidersList from '../../components/Admin/lists/IdpProvidersList'
+import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
+import LanguageList from './../../components/Admin/lists/LanguageList'
+import TranslationList from './../../components/Admin/lists/TranslationList'
+import LocalizationUtils from '../../utils/localization.utils'
+import { RoleUtils } from './../../utils/role.utils'
+import UsersList from './../../components/Admin/lists/UsersList'
+import ApiScopeGroupList from './../../components/Resource/lists/ApiScopeGroupList'
+import DomainList from './../../components/Admin/lists/DomainList'
 
 const Index: React.FC = () => {
+  const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab
-  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.AdminUsers)
+  const [activeTab, setActiveTab] = useState<AdminTab>(AdminTab.ApiScopeUsers)
 
   useEffect(() => {
+    async function resolveRoles() {
+      const isAdmin = await RoleUtils.isUserAdmin()
+      if (!isAdmin) {
+        router.push('/')
+      }
+    }
+    resolveRoles()
     setActiveTab(+tabQuery)
+    document.title = LocalizationUtils.getPageTitle('admin.index')
   }, [tabQuery])
 
   const handleTabChange = (tab: AdminTab) => {
@@ -20,11 +37,20 @@ const Index: React.FC = () => {
   }
 
   switch (activeTab) {
-    case AdminTab.AdminUsers: {
+    case AdminTab.Users: {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <UsersList></UsersList>
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.ApiScopeUsers: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )
@@ -43,6 +69,15 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
             <div className="temp-page">Not yet implemented</div>
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.GrantTypes: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <GrantTypesList />
           </AdminTabNav>
         </ContentWrapper>
       )
@@ -75,11 +110,48 @@ const Index: React.FC = () => {
         </ContentWrapper>
       )
     }
+    case AdminTab.Language: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <LanguageList />
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.Translation: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <TranslationList />
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.ApiScopeGroups: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <ApiScopeGroupList />
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+
+    case AdminTab.Domains: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <DomainList />
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
     default: {
       return (
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
-            <AdminUsersList />
+            <ApiScopeUsersList />
           </AdminTabNav>
         </ContentWrapper>
       )

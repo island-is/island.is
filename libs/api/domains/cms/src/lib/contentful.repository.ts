@@ -9,7 +9,7 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 type ContentfulQuery = any
 
 const validLocales = ['is-IS', 'en', '*']
-export const localeMap = {
+export const localeMap: { [key: string]: string } = {
   is: 'is-IS',
   en: 'en',
 }
@@ -18,7 +18,7 @@ type Result<T> = Promise<EntryCollection<T>>
 
 @Injectable()
 export class ContentfulRepository {
-  private client: ContentfulClientApi
+  private client!: ContentfulClientApi
 
   constructor() {
     logger.debug('Created Contentful repository')
@@ -57,6 +57,7 @@ export class ContentfulRepository {
     query: ContentfulQuery,
   ): Result<Fields> {
     let code = languageCode ?? 'is-IS'
+
     if (localeMap[code]) {
       code = localeMap[code]
     }

@@ -14,14 +14,19 @@ import {
   Req,
 } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
@@ -61,9 +66,8 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
-    @Inject(AuthService)
+    private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
-    @Inject(SharedAuthService)
     private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
     private readonly loginIS: IslandisLogin,
@@ -84,10 +88,11 @@ export class AuthController {
       verifyResult = await this.loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
@@ -96,7 +101,8 @@ export class AuthController {
           userAuthId: user?.authId,
         },
       })
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
     return this.redirectAuthenticatedUser(
@@ -105,19 +111,14 @@ export class AuthController {
         name: user.fullname,
         mobile: user.mobile,
       },
-      returnUrl ?? '/krofur',
       res,
       new Entropy({ bits: 128 }).string(),
     )
   }
 
   @Get('login')
-  login(
-    @Res() res: Response,
-    @Query('returnUrl') returnUrl: string,
-    @Query('nationalId') nationalId: string,
-  ) {
-    this.logger.debug(`Received login request with return url ${returnUrl}`)
+  login(@Res() res: Response, @Query('nationalId') nationalId: string) {
+    this.logger.debug('Received login request')
 
     const { name, options } = REDIRECT_COOKIE
 
@@ -125,14 +126,14 @@ export class AuthController {
 
     // Local development
     if (environment.auth.allowAuthBypass && nationalId) {
-      this.logger.debug(`Logging in as ${nationalId} in development mode`)
+      this.logger.debug(`Logging in using development mode`)
+
       return this.redirectAuthenticatedUser(
         {
           nationalId,
           name: '',
           mobile: '',
         },
-        returnUrl ?? '/krofur',
         res,
       )
     }
@@ -141,11 +142,7 @@ export class AuthController {
     const electronicIdOnly = '&qaa=4'
 
     return res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: EXPIRES_IN_MILLISECONDS },
-      )
+      .cookie(name, { authId }, { ...options, maxAge: EXPIRES_IN_MILLISECONDS })
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
@@ -161,42 +158,46 @@ export class AuthController {
 
   private async redirectAuthenticatedUser(
     authUser: AuthUser,
-    returnUrl: string,
     res: Response,
     csrfToken?: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
-    const valid = this.authService.validateUser(user)
 
-    if (!valid) {
+    if (!user || !this.authService.validateUser(user)) {
       this.logger.error('Unknown user', {
         extra: {
           authUser,
         },
       })
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
     const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.redirect('/error=true')
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
-    return res
-      .cookie(
-        CSRF_COOKIE.name,
-        csrfToken as string,
-        {
-          ...CSRF_COOKIE.options,
+    this.auditTrailService.audit(
+      user.id,
+      AuditedAction.LOGIN,
+      res
+        .cookie(
+          CSRF_COOKIE.name,
+          csrfToken as string,
+          {
+            ...CSRF_COOKIE.options,
+            maxAge: EXPIRES_IN_MILLISECONDS,
+          } as CookieOptions,
+        )
+        .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+          ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
-        } as CookieOptions,
-      )
-      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-        ...ACCESS_TOKEN_COOKIE.options,
-        maxAge: EXPIRES_IN_MILLISECONDS,
-      })
-      .redirect(returnUrl)
+        })
+        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : '/krofur'),
+      user.id,
+    )
   }
 }

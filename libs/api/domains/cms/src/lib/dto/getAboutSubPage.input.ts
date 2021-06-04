@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetAboutSubPageInput {
   @Field()
   @IsString()
-  url: string
+  url!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

@@ -37,12 +37,8 @@ export const variants = styleMap({
     backgroundColor: theme.color.red100,
   },
   mint: {
-    color: theme.color.dark400,
+    color: theme.color.mint600,
     backgroundColor: theme.color.mint100,
-  },
-  darkerMint: {
-    color: theme.color.dark400,
-    backgroundColor: theme.color.mint200,
   },
   rose: {
     color: theme.color.roseTinted400,
@@ -77,14 +73,6 @@ export const outlined = style({
     [`&${variants.red}`]: {
       borderColor: theme.color.red200,
       color: theme.color.red600,
-    },
-    [`&${variants.mint}`]: {
-      borderColor: theme.color.mint200,
-      color: theme.color.mint400,
-    },
-    [`&${variants.darkerMint}`]: {
-      borderColor: theme.color.mint200,
-      color: theme.color.mint600,
     },
     [`&${variants.rose}`]: {
       borderColor: theme.color.roseTinted200,

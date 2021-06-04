@@ -12,8 +12,14 @@ export const head = style({
 })
 
 export const tag = style({
-  marginTop: -theme.spacing[7],
-  marginBottom: theme.spacing[2],
+  marginLeft: theme.spacing[3],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginLeft: 0,
+      marginTop: -theme.spacing[7],
+      marginBottom: theme.spacing[2],
+    },
+  },
 })
 
 export const list = style({

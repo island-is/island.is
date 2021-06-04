@@ -3,49 +3,31 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { UserProfileController } from './userProfile.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { DataSourceConfig } from 'apollo-datasource'
+import { SmsModule } from '@island.is/nova-sms'
 import environment from '../../environments/environment'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 import { SmsVerification } from './smsVerification.model'
 import { EmailVerification } from './emailVerification.model'
 import { VerificationService } from './verification.service'
 import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { AuditModule } from '@island.is/nest/audit'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     SequelizeModule.forFeature([
       EmailVerification,
       SmsVerification,
       UserProfile,
     ]),
+    EmailModule.register(environment.emailOptions),
+    SmsModule.register(environment.smsOptions),
   ],
   controllers: [UserProfileController, UserProfileInfraController],
-  providers: [
-    UserProfileService,
-    VerificationService,
-    EmailService,
-    SequelizeConfigService,
-    {
-      provide: SMS_OPTIONS,
-      useValue: environment.smsOptions,
-    },
-    {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
-    },
-    {
-      provide: SmsService,
-      useFactory: (options: SmsServiceOptions, logger: Logger) => {
-        const smsService = new SmsService(options, logger)
-        smsService.initialize({} as DataSourceConfig<{}>)
-        return smsService
-      },
-      inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    },
-  ],
+  providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
 })
 export class UserProfileModule {}

@@ -5,17 +5,10 @@ import {
   getValueViaPath,
   formatText,
 } from '@island.is/application/core'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Text,
-  Checkbox,
-} from '@island.is/island-ui/core'
+import { Box, Checkbox, Button, Link } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
-import * as styles from './TermsOfAgreement.treat'
 import { m } from '../../../forms/messages'
 
 //TODO: Finish error messages.
@@ -44,44 +37,47 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
         />
       </Box>
       <Box marginBottom={3}>
-        <Accordion singleExpand={false}>
-          <AccordionItem
-            id="id_1"
-            label={formatText(
-              m.termsUserAgreementTitle,
-              application,
-              formatMessage,
-            )}
-          >
-            <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>
+        <Box>
+          <Box background="blue100" padding={3} borderRadius="large">
+            <Link
+              href={formatText(
+                m.termsUserAgreementUrl,
+                application,
+                formatMessage,
+              )}
+            >
+              <Button icon="open" iconType="outline" variant="text">
                 {formatText(
-                  m.termsUserAgreementMessage,
+                  m.termsUserAgreementTitle,
                   application,
                   formatMessage,
                 )}
-              </Text>
-            </Box>
-          </AccordionItem>
-          <AccordionItem
-            id="id_2"
-            label={formatText(
-              m.termsSafetyAgreementTitle,
-              application,
-              formatMessage,
-            )}
+              </Button>
+            </Link>
+          </Box>
+          <Box
+            marginTop={3}
+            background="blue100"
+            padding={3}
+            borderRadius="large"
           >
-            <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>
+            <Link
+              href={formatText(
+                m.termsSafetyAgreementUrl,
+                application,
+                formatMessage,
+              )}
+            >
+              <Button icon="open" iconType="outline" variant="text">
                 {formatText(
-                  m.termsSafetyAgreementMessage,
+                  m.termsSafetyAgreementTitle,
                   application,
                   formatMessage,
                 )}
-              </Text>
-            </Box>
-          </AccordionItem>
-        </Accordion>
+              </Button>
+            </Link>
+          </Box>
+        </Box>
       </Box>
       <Box marginBottom={1}>
         <Controller
@@ -101,7 +97,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.userTerms"
                 hasError={
-                  errors['termsOfAgreement.userTerms'] &&
+                  errors?.termsOfAgreement?.userTerms &&
                   getValues('termsOfAgreement.userTerms') === false
                 }
                 errorMessage={formatText(
@@ -138,7 +134,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.securityTerms"
                 hasError={
-                  errors['termsOfAgreement.securityTerms'] &&
+                  errors?.termsOfAgreement?.securityTerms &&
                   getValues('termsOfAgreement.securityTerms') === false
                 }
                 errorMessage={formatText(

@@ -1,5 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useRef, useEffect, useState } from 'react'
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  FC,
+  useLayoutEffect,
+  useMemo,
+} from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -21,6 +28,7 @@ import {
   SidebarAccordion,
   Pagination,
   Link,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -28,6 +36,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -47,11 +56,14 @@ import {
   SearchableContentTypes,
   SearchableTags,
   AdgerdirPage,
+  SubArticle,
+  GetSearchResultsTotalQuery,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { typenameResolver } from '@island.is/web/utils/typenameResolver'
+import { useLazyQuery } from '@apollo/client'
 
 const PERPAGE = 10
 
@@ -183,15 +195,30 @@ const Search: Screen<CategoryProps> = ({
       labels.push(item.organization[0].title)
     }
 
+    if (item.parent) {
+      if (item.parent.group) {
+        labels.push(item.parent.group.title)
+      }
+
+      if (item.parent.organization?.length) {
+        labels.push(item.parent.organization[0].title)
+      }
+    }
+
     return labels
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News & AdgerdirPage
+    Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
   >).map((item) => ({
     title: item.title,
-    description: item.intro ?? item.seoDescription ?? item.description,
-    link: linkResolver(typenameResolver(item.__typename), [item.slug]),
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ??
+      item.seoDescription ??
+      item.description ??
+      item.parent.intro,
+    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -208,7 +235,7 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
-    Router.replace({
+    Router.push({
       pathname: linkResolver('search').href,
       query: { q, [type]: key },
     })
@@ -246,6 +273,9 @@ const Search: Screen<CategoryProps> = ({
       n('allCategories', 'Allir flokkar'),
     value: filters.category ?? '',
   }
+
+  const isServer = typeof window === 'undefined'
+  console.log('sidebarDataTypes', sidebarDataTypes)
 
   return (
     <>
@@ -338,6 +368,7 @@ const Search: Screen<CategoryProps> = ({
             id="search_input_search_page"
             ref={searchRef}
             size="large"
+            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             activeLocale={activeLocale}
             initialInputValue={q}
           />
@@ -348,7 +379,7 @@ const Search: Screen<CategoryProps> = ({
                 placeholder={n('sidebarHeader', 'Flokkar')}
                 defaultValue={defaultSelectedCategory}
                 options={categorySelectOptions}
-                name="content-overview"
+                name="results-by-category"
                 isSearchable={false}
                 onChange={({ value }: Option) => {
                   onSelectSidebarTag('category', value as string)
@@ -367,52 +398,63 @@ const Search: Screen<CategoryProps> = ({
               <Text variant="intro" as="p">
                 {n('nothingFoundExtendedExplanation')}
               </Text>
+
+              {q.length &&
+              searchResultsItems.length === 0 &&
+              activeLocale === 'is' ? (
+                <EnglishResultsLink q={q} />
+              ) : null}
             </>
           ) : (
-            <Text variant="intro" as="p">
-              {totalSearchResults}{' '}
-              {totalSearchResults === 1
-                ? n('searchResult', 'leitarniðurstaða')
-                : n('searchResults', 'leitarniðurstöður')}{' '}
-              {(filters.category || filters.type) && (
-                <>
-                  {n('inCategory', 'í flokki')}
-                  {
-                    <>
-                      {': '}
-                      <strong>
-                        {sidebarData.tags[filters.category]?.title ??
-                          sidebarData.types[filters.type]?.title}
-                      </strong>
-                    </>
-                  }
-                </>
-              )}
-            </Text>
+            <Box marginBottom={2}>
+              <Text variant="intro" as="p">
+                {totalSearchResults}{' '}
+                {totalSearchResults === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}{' '}
+                {(filters.category || filters.type) && (
+                  <>
+                    {n('inCategory', 'í flokki')}
+                    {
+                      <>
+                        {': '}
+                        <strong>
+                          {sidebarData.tags[filters.category]?.title ??
+                            sidebarData.types[filters.type]?.title}
+                        </strong>
+                      </>
+                    }
+                  </>
+                )}
+              </Text>
+            </Box>
           )}
         </Stack>
         <Stack space={2}>
-          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
-            const tags: Array<CardTagsProps> = []
+          {filteredItems.map(
+            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+              const tags: Array<CardTagsProps> = []
 
-            labels.forEach((label) => {
-              tags.push({
-                title: label,
-                tagProps: {
-                  outlined: true,
-                },
+              labels.forEach((label) => {
+                tags.push({
+                  title: label,
+                  tagProps: {
+                    outlined: true,
+                  },
+                })
               })
-            })
 
-            return (
-              <Card
-                key={index}
-                tags={tags}
-                image={thumbnail ? thumbnail : image}
-                {...rest}
-              />
-            )
-          })}{' '}
+              return (
+                <Card
+                  key={index}
+                  tags={tags}
+                  image={thumbnail ? thumbnail : image}
+                  subTitle={parentTitle}
+                  {...rest}
+                />
+              )
+            },
+          )}{' '}
           {totalSearchResults > 0 && (
             <Box paddingTop={8}>
               <Pagination
@@ -431,6 +473,25 @@ const Search: Screen<CategoryProps> = ({
               />
             </Box>
           )}
+          <Hidden above="sm">
+            <Box paddingTop={4}>
+              <Sidebar title={n('otherCategories')}>
+                <Stack space={[1, 1, 2]}>
+                  {sidebarDataTypes.map(([key, { title, total }]) => (
+                    <Filter
+                      key={key}
+                      selected={filters.type === key}
+                      onClick={() => {
+                        onSelectSidebarTag('type', key)
+                        !isServer && window.scrollTo(0, 0)
+                      }}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
+                </Stack>
+              </Sidebar>
+            </Box>
+          </Hidden>
         </Stack>
       </SidebarLayout>
     </>
@@ -462,6 +523,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAboutPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
+      'webSubArticle' as SearchableContentTypes,
     ]
   }
 
@@ -546,6 +608,54 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
       </Text>
     </Box>
   )
+}
+
+interface EnglishResultsLinkProps {
+  q: string
+}
+
+const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+  const { linkResolver } = useLinkResolver()
+  const [getCount, { data }] = useLazyQuery<
+    GetSearchResultsTotalQuery,
+    QuerySearchResultsArgs
+  >(GET_SEARCH_RESULTS_TOTAL)
+
+  useMemo(() => {
+    getCount({
+      variables: {
+        query: {
+          queryString: q,
+          language: 'en' as ContentLanguage,
+        },
+      },
+    })
+  }, [q])
+
+  const total = data?.searchResults?.total ?? 0
+
+  if (total > 0) {
+    return (
+      <LinkContext.Provider
+        value={{
+          linkRenderer: (href, children) => (
+            <Link color="blue600" underline="normal" href={href}>
+              {children}
+            </Link>
+          ),
+        }}
+      >
+        <Text variant="intro" as="p">
+          <a href={linkResolver('search', [], 'en').href + `?q=${q}`}>
+            {total} niðurstöður
+          </a>{' '}
+          fundust á ensku.
+        </Text>
+      </LinkContext.Provider>
+    )
+  }
+
+  return null
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })

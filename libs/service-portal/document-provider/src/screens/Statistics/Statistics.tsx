@@ -3,6 +3,7 @@ import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import { StatisticsSearch } from '../../components/StatisticsSearch'
 
 const Statistics: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
@@ -15,6 +16,7 @@ const Statistics: ServicePortalModuleComponent = ({ userInfo }) => {
         </Text>
       </Box>
       <Text as="p">{formatMessage(m.StatisticsDescription)}</Text>
+      <StatisticsSearch />
     </Box>
   )
 }

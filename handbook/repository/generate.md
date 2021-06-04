@@ -2,7 +2,7 @@
 
 ## Generate a component
 
-To generate a new component in island-ui-core.
+To generate a new React component in island-ui-core.
 
 ```bash
 yarn generate @nrwl/react:component MyComponent --project=island-ui-core
@@ -28,6 +28,14 @@ To create a service, you can get started with NestJS like this:
 yarn generate @nrwl/nest:app services/my-service
 ```
 
+{% hint style="info" %}
+You might want to check out our reference [NextJS](https://github.com/island-is/island.is/tree/main/apps/reference-next-app) and [NestJS](https://github.com/island-is/island.is/tree/main/apps/reference-backend) projects.
+{% endhint %}
+
+{% hint style="info" %}
+For NextJS projects, be sure to configure our [custom NextJS server](../technical-overview/devops/next-server.md).
+{% endhint %}
+
 ## Generate a library
 
 To generate a React library.
@@ -39,7 +47,7 @@ yarn generate @nrwl/react:lib my-lib --linter eslint
 To create a NestJS module:
 
 ```bash
-yarn generate @nrwl/node:lib my-lib
+yarn generate @nrwl/nest:lib my-lib
 ```
 
 To create a JS library that can be used both on the frontend and the backend:

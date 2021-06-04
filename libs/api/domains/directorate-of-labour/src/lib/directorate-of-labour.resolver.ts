@@ -1,34 +1,45 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-// import { UseGuards } from '@nestjs/common'
-import { DirectorateOfLabourService } from './directorate-of-labour.service'
+import { UseGuards } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
-  // IdsAuthGuard,
-  // ScopesGuard,
+  IdsAuthGuard,
+  IdsUserGuard,
+  ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
-import { Union } from './union.model'
-import { PensionFund } from './pensionFund.model'
-import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
-import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
-import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
-import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
-import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+import { Union } from '../models/union.model'
+import { PensionFund } from '../models/pensionFund.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { ParentalLeave } from '../models/parentalLeaves.model'
+import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
+import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
+import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
+import { DirectorateOfLabourService } from './directorate-of-labour.service'
+
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
 
-  @Query(() => [ParentalLeaveEntitlement], { nullable: true })
+  @Query(() => ParentalLeaveEntitlement, { nullable: true })
   async getParentalLeavesEntitlements(
     @Args('input') input: GetParentalLeavesEntitlementsInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeaveEntitlement[] | null> {
+  ): Promise<ParentalLeaveEntitlement | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
       input.dateOfBirth,
       user.nationalId,
     )
+  }
+
+  @Query(() => [ParentalLeave], { nullable: true })
+  async getParentalLeaves(
+    @CurrentUser() user: User,
+  ): Promise<ParentalLeave[] | null> {
+    return this.directorateOfLabourService.getParentalLeaves(user.nationalId)
   }
 
   @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
@@ -56,19 +67,23 @@ export class DirectorateOfLabourResolver {
 
   @Query(() => [Union], { nullable: true })
   async getUnions(): Promise<Union[] | null> {
-    // Generated API types have nullables which our types do not have, ignore
-    // until that has been fixed in the source config that is used to generate API code
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
     return this.directorateOfLabourService.getUnions()
   }
 
   @Query(() => [PensionFund], { nullable: true })
   async getPensionFunds(): Promise<PensionFund[] | null> {
-    // Generated API types have nullables which our types do not have, ignore
-    // until that has been fixed in the source config that is used to generate API code
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
     return this.directorateOfLabourService.getPensionFunds()
+  }
+
+  @Query(() => [PensionFund], { nullable: true })
+  async getPrivatePensionFunds(): Promise<PensionFund[] | null> {
+    return this.directorateOfLabourService.getPrivatePensionFunds()
+  }
+
+  @Query(() => PregnancyStatus, { nullable: true })
+  async getPregnancyStatus(
+    @CurrentUser() user: User,
+  ): Promise<PregnancyStatus | null> {
+    return this.directorateOfLabourService.getPregnancyStatus(user.nationalId)
   }
 }

@@ -143,45 +143,55 @@ export const Order = () => (
 )
 
 export const Offsets = () => (
-  <>
-    <Box paddingY={1}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span="1/12" offset="11/12">
-            <DemoBox text="offset 11" />
-          </GridColumn>
-          <GridColumn span="2/12" offset="10/12">
-            <DemoBox text="offset 10" />
-          </GridColumn>
-          <GridColumn span="3/12" offset="9/12">
-            <DemoBox text="offset 9" />
-          </GridColumn>
-          <GridColumn span="4/12" offset="8/12">
-            <DemoBox text="offset 8" />
-          </GridColumn>
-          <GridColumn span="5/12" offset="7/12">
-            <DemoBox text="offset 7" />
-          </GridColumn>
-          <GridColumn span="6/12" offset="6/12">
-            <DemoBox text="offset 6" />
-          </GridColumn>
-          <GridColumn span="7/12" offset="5/12">
-            <DemoBox text="offset 5" />
-          </GridColumn>
-          <GridColumn span="8/12" offset="4/12">
-            <DemoBox text="offset 4" />
-          </GridColumn>
-          <GridColumn span="9/12" offset="3/12">
-            <DemoBox text="offset 3" />
-          </GridColumn>
-          <GridColumn span="10/12" offset="2/12">
-            <DemoBox text="offset 2" />
-          </GridColumn>
-          <GridColumn span="11/12" offset="1/12">
-            <DemoBox text="offset 1" />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
-  </>
+  <Box paddingY={1}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span="1/12" offset="11/12">
+          <DemoBox text="offset 11" />
+        </GridColumn>
+        <GridColumn span="2/12" offset="10/12">
+          <DemoBox text="offset 10" />
+        </GridColumn>
+        <GridColumn span="3/12" offset="9/12">
+          <DemoBox text="offset 9" />
+        </GridColumn>
+        <GridColumn span="4/12" offset="8/12">
+          <DemoBox text="offset 8" />
+        </GridColumn>
+        <GridColumn span="5/12" offset="7/12">
+          <DemoBox text="offset 7" />
+        </GridColumn>
+        <GridColumn span="6/12" offset="6/12">
+          <DemoBox text="offset 6" />
+        </GridColumn>
+        <GridColumn span="7/12" offset="5/12">
+          <DemoBox text="offset 5" />
+        </GridColumn>
+        <GridColumn span="8/12" offset="4/12">
+          <DemoBox text="offset 4" />
+        </GridColumn>
+        <GridColumn span="9/12" offset="3/12">
+          <DemoBox text="offset 3" />
+        </GridColumn>
+        <GridColumn span="10/12" offset="2/12">
+          <DemoBox text="offset 2" />
+        </GridColumn>
+        <GridColumn span="11/12" offset="1/12">
+          <DemoBox text="offset 1" />
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  </Box>
+)
+
+export const ResponsiveOffset = () => (
+  <Box paddingY={1}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span="5/12" offset={['7/12', '4/12', '0']}>
+          <DemoBox text="['7/12', '4/12', '0']" />
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  </Box>
 )

@@ -26,28 +26,39 @@ export const input = style({
   left: 0,
   opacity: 0,
   position: 'absolute',
-  top: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
   width: checkboxSize,
 })
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
-  fontWeight: theme.typography.light,
+  alignItems: 'center',
 })
-export const labelChecked = style({
-  fontWeight: theme.typography.medium,
+export const labelText = style({
+  display: 'flex',
+  flexDirection: 'column',
 })
 export const checkboxDisabled = style({
   background: 'transparent',
   borderColor: theme.color.blue200,
 })
 export const largeLabel = style({
-  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+  alignItems: 'center',
+  padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+    },
+  },
 })
+
 export const checkbox = style({
   alignItems: 'center',
+  alignSelf: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
   display: 'flex',
   flexShrink: 0,
   height: checkboxSize,

@@ -4,10 +4,10 @@ import { IGenericPage } from '../generated/contentfulTypes'
 @ObjectType()
 export class GenericPage {
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
   intro?: string

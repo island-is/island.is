@@ -1,4 +1,4 @@
-import React, { ReactNode, FC, useContext } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import {
   Box,
   GridContainer,
@@ -6,25 +6,23 @@ import {
   GridColumn,
   FormStepper,
   AlertBanner,
-  LinkContext,
 } from '@island.is/island-ui/core'
-import * as styles from './PageLayout.treat'
-import { ProsecutorLogo } from '../Logos'
-import { JudgeLogo } from '../Logos'
-import Loading from '../Loading/Loading'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseDecision,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { Link } from 'react-router-dom'
-import { UserContext } from '../UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '../UserProvider/UserProvider'
+import Logo from '../Logo/Logo'
+import Loading from '../Loading/Loading'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
-  activeSection: number
+  caseId?: string
+  activeSection?: number
   isLoading: boolean
   notFound: boolean
   caseType?: CaseType
@@ -33,10 +31,12 @@ interface PageProps {
   parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
+  showSidepanel?: boolean
 }
 
-const PageLayout: FC<PageProps> = ({
+const PageLayout: React.FC<PageProps> = ({
   children,
+  caseId,
   activeSection,
   activeSubSection,
   isLoading,
@@ -45,6 +45,7 @@ const PageLayout: FC<PageProps> = ({
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
+  showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -78,15 +79,42 @@ const PageLayout: FC<PageProps> = ({
           ? 'Krafa um gæsluvarðhald'
           : 'Krafa um farbann',
       children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Sakborningur',
+          href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Óskir um fyrirtöku',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         {
           type: 'SUB_SECTION',
           name: 'Dómkröfur og lagagrundvöllur',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
           name: 'Greinargerð',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Rannsóknargögn',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
@@ -97,11 +125,43 @@ const PageLayout: FC<PageProps> = ({
     {
       name: 'Úrskurður Héraðsdóms',
       children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+          href: `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Fyrirtökutími',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Þingbók',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.COURT_RECORD_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurður',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.RULING_STEP_ONE_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurðarorð',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.RULING_STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
       ],
     },
@@ -111,15 +171,42 @@ const PageLayout: FC<PageProps> = ({
     {
       name: 'Krafa um framlengingu',
       children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Sakborningur',
+          href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Óskir um fyrirtöku',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         {
           type: 'SUB_SECTION',
           name: 'Dómkröfur og lagagrundvöllur',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
           name: 'Greinargerð',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Rannsóknargögn',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
@@ -130,11 +217,43 @@ const PageLayout: FC<PageProps> = ({
     {
       name: 'Úrskurður Héraðsdóms',
       children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+          href: `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Fyrirtökutími',
+          href:
+            activeSubSection && activeSubSection > 1
+              ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Þingbók',
+          href:
+            activeSubSection && activeSubSection > 2
+              ? `${Constants.COURT_RECORD_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurður',
+          href:
+            activeSubSection && activeSubSection > 3
+              ? `${Constants.RULING_STEP_ONE_ROUTE}/${caseId}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Úrskurðarorð',
+          href:
+            activeSubSection && activeSubSection > 4
+              ? `${Constants.RULING_STEP_TWO_ROUTE}/${caseId}`
+              : undefined,
+        },
         { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
       ],
     },
@@ -150,47 +269,35 @@ const PageLayout: FC<PageProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
-              paddingY={[0, 0, 10, 10]}
               background="white"
               borderColor="white"
               borderRadius="large"
               className={styles.processContent}
             >
-              <GridColumn
-                span={['9/9', '9/9', '7/9', '7/9']}
-                offset={['0', '0', '1/9', '1/9']}
-              >
-                {children}
-              </GridColumn>
+              {children}
             </Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>
-            <Box marginLeft={2}>
-              {user?.role === UserRole.JUDGE ? (
-                <Box marginBottom={7}>
-                  <JudgeLogo />
-                </Box>
-              ) : user?.role === UserRole.PROSECUTOR ? (
-                <Box marginBottom={7}>
-                  <ProsecutorLogo />
-                </Box>
-              ) : null}
-              <FormStepper
-                // Remove the extension parts of the formstepper if the user is not applying for an extension
-                sections={
-                  activeSection === Sections.EXTENSION ||
-                  activeSection === Sections.JUDGE_EXTENSION
-                    ? sections
-                    : sections.filter((_, index) => index <= 2)
-                }
-                formName={
-                  caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-                }
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-            </Box>
-          </GridColumn>
+          {showSidepanel && (
+            <GridColumn span={['0', '0', '3/12', '3/12']}>
+              <Box marginLeft={2}>
+                <Logo />
+                <FormStepper
+                  // Remove the extension parts of the formstepper if the user is not applying for an extension
+                  sections={
+                    activeSection === Sections.EXTENSION ||
+                    activeSection === Sections.JUDGE_EXTENSION
+                      ? sections
+                      : sections.filter((_, index) => index <= 2)
+                  }
+                  formName={
+                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                  }
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </GridContainer>
     </Box>
@@ -198,29 +305,28 @@ const PageLayout: FC<PageProps> = ({
     <Box className={styles.loadingWrapper}>
       <Loading />
     </Box>
-  ) : (
-    <LinkContext.Provider
-      value={{
-        linkRenderer: (href, children) => (
-          <Link to={href} color="blue400" className={styles.link}>
-            {children}
-          </Link>
-        ),
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? 'Notandi fannst ekki'
+          : 'Mál fannst ekki'
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+      }
+      variant="error"
+      link={{
+        href:
+          user?.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE,
+        title: 'Fara á yfirlitssíðu',
       }}
-    >
-      {notFound && (
-        <AlertBanner
-          title="Mál fannst ekki"
-          description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
-          variant="error"
-          link={{
-            href: Constants.REQUEST_LIST_ROUTE,
-            title: 'Fara á yfirlitssíðu',
-          }}
-        />
-      )}
-    </LinkContext.Provider>
-  )
+    />
+  ) : null
 }
 
 export default PageLayout

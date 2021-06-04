@@ -1,17 +1,17 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 import { IAlertBanner } from '../generated/contentfulTypes'
-import { Link, mapLink } from './link.model'
+import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class AlertBanner {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  showAlertBanner: boolean
+  showAlertBanner!: boolean
 
   @Field()
-  bannerVariant: string
+  bannerVariant!: string
 
   @Field({ nullable: true })
   title?: string
@@ -19,14 +19,17 @@ export class AlertBanner {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => Link, { nullable: true })
-  link?: Link
+  @Field({ nullable: true })
+  linkTitle?: string
+
+  @Field(() => ReferenceLink, { nullable: true })
+  link?: ReferenceLink | null
 
   @Field()
-  isDismissable: boolean
+  isDismissable!: boolean
 
   @Field(() => Int)
-  dismissedForDays: number
+  dismissedForDays!: number
 }
 
 export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
@@ -35,7 +38,8 @@ export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
   bannerVariant: fields.bannerVariant ?? 'default',
   title: fields.title ?? '',
   description: fields.description ?? '',
-  link: fields.link ? mapLink(fields.link) : null,
+  linkTitle: fields.linkTitle ?? '',
+  link: fields.link ? mapReferenceLink(fields.link) : null,
   isDismissable: fields.isDismissable ?? true,
   dismissedForDays: fields.dismissedForDays ?? 7,
 })

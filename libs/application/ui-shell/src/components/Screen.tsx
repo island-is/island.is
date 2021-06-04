@@ -18,6 +18,8 @@ import {
   formatText,
   MessageFormatter,
   mergeAnswers,
+  coreMessages,
+  BeforeSubmitCallback,
 } from '@island.is/application/core'
 import {
   Box,
@@ -36,7 +38,7 @@ import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
-import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
+import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -68,16 +70,7 @@ type ScreenProps = {
 }
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -96,18 +89,18 @@ const Screen: FC<ScreenProps> = ({
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
-    resolver,
+    resolver: (formValue, context) =>
+      resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
-
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION,
@@ -120,7 +113,6 @@ const Screen: FC<ScreenProps> = ({
       },
     },
   )
-
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -152,10 +144,13 @@ const Screen: FC<ScreenProps> = ({
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
 
+    setIsSubmitting(true)
+
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue] = await beforeSubmitCallback.current()
 
       if (!canContinue) {
+        setIsSubmitting(false)
         // TODO set error message
         return
       }
@@ -186,6 +181,14 @@ const Screen: FC<ScreenProps> = ({
           },
         },
       })
+
+      if (response?.data) {
+        addExternalData(response.data?.submitApplication.externalData)
+
+        if (submitField.refetchApplicationAfterSubmit) {
+          refetch()
+        }
+      }
     } else {
       response = await updateApplication({
         variables: {
@@ -196,6 +199,7 @@ const Screen: FC<ScreenProps> = ({
               screen,
             ),
           },
+          locale,
         },
       })
     }
@@ -204,12 +208,8 @@ const Screen: FC<ScreenProps> = ({
       answerAndGoToNextScreen(data)
       setBeforeSubmitCallback(null)
     }
-  }
 
-  function canProceed(): boolean {
-    const isLoadingOrPending = loading || loadingSubmit
-
-    return !isLoadingOrPending
+    setIsSubmitting(false)
   }
 
   const [isMobile, setIsMobile] = useState(false)
@@ -228,6 +228,8 @@ const Screen: FC<ScreenProps> = ({
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
 
+  const isLoadingOrPending = loading || loadingSubmit || isSubmitting
+
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -240,10 +242,10 @@ const Screen: FC<ScreenProps> = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <GridColumn
-          span={['12/12', '12/12', '7/9', '7/9']}
-          offset={['0', '0', '1/9']}
+          span={['12/12', '12/12', '10/12', '7/9']}
+          offset={['0', '0', '1/12', '1/9']}
         >
-          <Text variant="h2" marginBottom={1}>
+          <Text variant="h2" as="h2" marginBottom={1}>
             {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
@@ -260,6 +262,7 @@ const Screen: FC<ScreenProps> = ({
                         id: applicationId,
                         answers: { [screen.id]: newRepeaterItems },
                       },
+                      locale,
                     },
                   })
                   if (!newData.errors) {
@@ -270,6 +273,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
@@ -284,10 +288,12 @@ const Screen: FC<ScreenProps> = ({
                 externalData={externalData}
                 externalDataProvider={screen}
                 formValue={formValue}
+                errors={dataSchemaOrApiErrors}
               />
             ) : (
               <FormField
                 autoFocus
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}
@@ -307,7 +313,7 @@ const Screen: FC<ScreenProps> = ({
           goBack={goBack}
           submitField={submitField}
           loading={loading}
-          canProceed={canProceed()}
+          canProceed={!isLoadingOrPending}
         />
       </Box>
     </FormProvider>

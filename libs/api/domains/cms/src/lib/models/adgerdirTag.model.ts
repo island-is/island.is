@@ -4,10 +4,10 @@ import { IVidspyrnaTag } from '../generated/contentfulTypes'
 @ObjectType()
 export class AdgerdirTag {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 }
 
 export const mapAdgerdirTag = ({

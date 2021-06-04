@@ -1,7 +1,8 @@
 import { callDataProviders } from './dataProviderUtils'
 import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
-import { Application } from '../types/Application'
+import { Application, ApplicationStatus } from '../types/Application'
+
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 
@@ -29,7 +30,11 @@ const application: Application = {
   attachments: {},
   answers: {},
   externalData: {},
+  status: ApplicationStatus.IN_PROGRESS,
 }
+
+const mockTemplateFindQuery = async () => []
+const mockFormatMessage = () => 'message'
 
 describe('dataProviderUtils', () => {
   it('should return results in place', async () => {
@@ -37,7 +42,12 @@ describe('dataProviderUtils', () => {
       new ExampleProviderThatAlwaysSucceeds(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, application)
+    const result = await callDataProviders(
+      dataProviders,
+      application,
+      mockTemplateFindQuery,
+      mockFormatMessage,
+    )
     expect(result).toEqual([
       expect.objectContaining({
         data: true,
@@ -55,7 +65,12 @@ describe('dataProviderUtils', () => {
       new ExampleProviderThatAlwaysFails(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, application)
+    const result = await callDataProviders(
+      dataProviders,
+      application,
+      mockTemplateFindQuery,
+      mockFormatMessage,
+    )
     expect(result).toEqual([
       expect.objectContaining({
         data: true,

@@ -38,6 +38,17 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
                 lineHeight: 'lg',
               },
             },
+            h1: {
+              component: Text,
+              props: {
+                fontWeight: 'semiBold',
+                color,
+                variant,
+                lineHeight: 'lg',
+                paddingBottom: '2',
+                paddingTop: '6',
+              },
+            },
             ul: {
               component: BulletList,
               props: {
@@ -50,7 +61,7 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
           },
         }}
       >
-        {children}
+        {(children as string).replace(/\n/gi, '<br>')}
       </Markdown>
     </div>
   )

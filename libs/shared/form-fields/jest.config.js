@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'shared-form-fields',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -10,4 +9,5 @@ module.exports = {
   setupFilesAfterEnv: ['./jest.setup.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/shared/form-fields',
+  displayName: 'shared-form-fields',
 }

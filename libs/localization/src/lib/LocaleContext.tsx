@@ -4,12 +4,10 @@ import { useApolloClient } from '@apollo/client/react'
 import gql from 'graphql-tag'
 import difference from 'lodash/difference'
 import isEmpty from 'lodash/isEmpty'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage, supportedLocales } from '@island.is/shared/constants'
+
 import { polyfill } from './polyfills'
-
-export type Locale = 'is' | 'en'
-
-export const supportedLocales: Locale[] = ['is', 'en']
-export const defaultLanguage: Locale = 'is'
 
 export const isLocale = (value: string): value is Locale => {
   return supportedLocales.includes(value as Locale)
@@ -21,11 +19,11 @@ export interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | string[]) => void
-  changeLanguage: (lang: Locale) => void
   loadingMessages: boolean
   loadedNamespaces: string[]
   messages: MessagesDict
+  loadMessages(namespaces: string | string[]): void
+  changeLanguage(lang: Locale): void
 }
 
 interface LocaleProviderProps {
@@ -40,11 +38,11 @@ type Query = {
 
 export const LocaleContext = createContext<LocaleContextType>({
   lang: 'is',
-  loadMessages: () => undefined,
-  changeLanguage: () => undefined,
   loadingMessages: true,
   loadedNamespaces: [],
   messages: {},
+  loadMessages: () => undefined,
+  changeLanguage: () => undefined,
 })
 
 const GET_TRANSLATIONS = gql`
@@ -102,6 +100,7 @@ export const LocaleProvider = ({
     setLoadingMessages(true)
     await polyfill(lang)
     setActiveLocale(lang)
+
     const { data } = await apolloClient.query<Query>({
       query: GET_TRANSLATIONS,
       variables: {

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'services-xroad-collector',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/services/xroad-collector',
+  displayName: 'services-xroad-collector',
 }

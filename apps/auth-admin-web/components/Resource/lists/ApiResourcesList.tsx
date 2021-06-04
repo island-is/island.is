@@ -8,6 +8,8 @@ import ConfirmModal from '../../common/ConfirmModal'
 import Link from 'next/link'
 import Paginator from '../../common/Paginator'
 import { downloadCSV } from '../../../utils/csv.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -18,6 +20,9 @@ const ApiResourcesList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ApiResourcesList'),
+  )
 
   const edit = (apiResource: ApiResourcesDTO) => {
     router.push(
@@ -91,8 +96,7 @@ const ApiResourcesList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to archive this Api resource:{' '}
-        <span>{resourceToRemove}</span>
+        {localization.removeConfirmation}:<span>{resourceToRemove}</span>
       </p>
     )
   }
@@ -114,20 +118,23 @@ const ApiResourcesList: React.FC = () => {
       <div className="api-resources-list">
         <div className="api-resources-list__wrapper">
           <div className="api-resources-list__container">
-            <h1>Api resources</h1>
+            <h1>{localization.title}</h1>
             <div className="api-resources-list__container__options">
               <div className="api-resources-list__container__options__button">
                 <Link href={'/resource/api-resource'}>
-                  <a className="api-resources-list__button__new">
+                  <a
+                    className="api-resources-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
                     <i className="icon__new"></i>
-                    Create new Api resource
+                    {localization.buttons['new'].text}
                   </a>
                 </Link>
               </div>
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
                   <label htmlFor="search" className="api-resources-list__label">
-                    National Id or Resource name
+                    {localization.search.label}
                   </label>
                   <input
                     id="search"
@@ -138,8 +145,9 @@ const ApiResourcesList: React.FC = () => {
                   <button
                     type="submit"
                     className="api-resources-list__button__search"
+                    title={localization.buttons['search'].helpText}
                   >
-                    Search
+                    {localization.buttons['search'].text}
                   </button>
                 </div>
               </form>
@@ -148,9 +156,9 @@ const ApiResourcesList: React.FC = () => {
               <table className="api-resources-list__table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>National Id</th>
-                    <th>Contact Email</th>
+                    <th>{localization.columns['name'].headerText}</th>
+                    <th>{localization.columns['nationalId'].headerText}</th>
+                    <th>{localization.columns['contactEmail'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -171,10 +179,10 @@ const ApiResourcesList: React.FC = () => {
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => edit(resource)}
-                            title="Edit"
+                            title={localization.buttons['edit'].helpText}
                           >
                             <i className="icon__edit"></i>
-                            <span>Edit</span>
+                            <span>{localization.buttons['edit'].text}</span>
                           </button>
                         </td>
                         <td className="api-resources-list__table__button">
@@ -184,10 +192,10 @@ const ApiResourcesList: React.FC = () => {
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => confirmRemove(resource.name)}
-                            title="Delete"
+                            title={localization.buttons['remove'].helpText}
                           >
                             <i className="icon__delete"></i>
-                            <span>Delete</span>
+                            <span>{localization.buttons['edit'].text}</span>
                           </button>
                         </td>
                       </tr>
@@ -199,9 +207,13 @@ const ApiResourcesList: React.FC = () => {
             <div>
               <div className="api-resources-list__container__export">
                 <div className="api-resources-list__container__export__container__button">
-                  <button type="button" onClick={() => exportCsv()}>
+                  <button
+                    type="button"
+                    onClick={() => exportCsv()}
+                    title={localization.buttons['export'].helpText}
+                  >
                     <i className="icon__export__csv" aria-hidden="true"></i>
-                    <span>Export</span>
+                    <span>{localization.buttons['export'].text}</span>
                   </button>
                 </div>
               </div>
@@ -215,7 +227,7 @@ const ApiResourcesList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Archive"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

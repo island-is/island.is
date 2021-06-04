@@ -7,7 +7,7 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { setContext } from '@apollo/client/link/context'
+import { authLink } from '@island.is/auth/react'
 
 const uri =
   process.env.NODE_ENV === 'development'
@@ -18,12 +18,6 @@ const httpLink = new HttpLink({
   uri,
   fetch,
 })
-
-let token = ''
-
-export const setClientAuthToken = (value: string) => {
-  token = value
-}
 
 const retryLink = new RetryLink()
 
@@ -36,15 +30,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     )
 
   if (networkError) console.log(`[Network error]: ${networkError}`)
-})
-
-const authLink = setContext((_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }
 })
 
 export const client = new ApolloClient({

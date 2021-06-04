@@ -1,25 +1,25 @@
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
-import Login from './Login'
+import fetchMock from 'fetch-mock'
+import { MockedProvider } from '@apollo/client/testing'
+
 import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { api } from '@island.is/judicial-system-web/src/services'
-import fetchMock from 'fetch-mock'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import { MockedProvider } from '@apollo/client/testing'
+import Login from './Login'
 
 describe('Login route', () => {
   fetchMock.mock('/api/auth/logout', 200)
 
   test('should render successfully', () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
 
     // Act
-    const { baseElement } = render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>,
-    )
+    const { baseElement } = render(<Login />)
 
     // Assert
     expect(baseElement).toBeTruthy()
@@ -27,13 +27,13 @@ describe('Login route', () => {
 
   test('should have a title set', () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
 
     // Act
-    render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>,
-    )
+    render(<Login />)
 
     // Assert
     expect(document.title).toEqual('Réttarvörslugátt')
@@ -41,18 +41,18 @@ describe('Login route', () => {
 
   test('should logout a logged in user', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
     const spy = jest.spyOn(api, 'logOut')
 
     // Act
     render(
       <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
-        <MemoryRouter initialEntries={['/']}>
-          <Route path="/">
-            <UserProvider>
-              <Login />
-            </UserProvider>
-          </Route>
-        </MemoryRouter>
+        <UserProvider>
+          <Login />
+        </UserProvider>
       </MockedProvider>,
     )
 

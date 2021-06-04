@@ -5,6 +5,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -27,16 +28,12 @@ const dataSchema = z.object({
   }),
   service: z.object({
     type: z.enum(['regular', 'express']),
-    comment: z.string(),
     dropLocation: z.enum(['1', '2', '3']),
     extraOptions: z
       .array(z.union([z.enum(['bringOwnPhoto']), z.undefined()]))
       .nonempty(),
   }),
-  timeSchedule: z.object({
-    location: z.enum(['1', '2', '3']),
-  }),
-  approveExternalData: z.boolean().refine((v) => v),
+  fetchData: z.boolean().refine((v) => v),
 })
 
 const PassportTemplate: ApplicationTemplate<
@@ -54,6 +51,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn um vegabréf',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -78,6 +76,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

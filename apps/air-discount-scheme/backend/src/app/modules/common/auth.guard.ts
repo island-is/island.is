@@ -37,6 +37,10 @@ export class AuthGuard implements CanActivate {
     }
 
     const apiKey = authorization.slice(AUTH_TYPE.length + 1)
+    if (!apiKey) {
+      return false
+    }
+
     const airline = Object.keys(airlineApiKeys).find(
       (airline: string) => airlineApiKeys[airline] === apiKey,
     )

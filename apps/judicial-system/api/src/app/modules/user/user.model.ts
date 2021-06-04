@@ -2,6 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { User as TUser, UserRole } from '@island.is/judicial-system/types'
 
+import { Institution } from '../institution'
+
 @ObjectType()
 export class User implements TUser {
   @Field(() => ID)
@@ -31,8 +33,8 @@ export class User implements TUser {
   @Field(() => String)
   readonly role!: UserRole
 
-  @Field()
-  readonly institution!: string
+  @Field(() => Institution, { nullable: true })
+  readonly institution?: Institution
 
   @Field()
   readonly active!: boolean

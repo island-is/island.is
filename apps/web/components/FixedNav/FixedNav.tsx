@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import * as styles from './FixedNav.treat'
 import {
-  ContentBlock,
+  GridContainer,
   Box,
   Button,
   FocusableBox,
@@ -39,8 +39,8 @@ export const FixedNav: FC = () => {
   )
 
   return (
-    <Box className={cn(styles.container, { [styles.show]: show })}>
-      <ContentBlock>
+    <div className={cn(styles.wrapper, { [styles.show]: show })}>
+      <GridContainer className={styles.container}>
         <Box
           paddingX={[2, 2, 6]}
           paddingY={1}
@@ -53,7 +53,7 @@ export const FixedNav: FC = () => {
         >
           <Link {...linkResolver('homepage')}>
             <FocusableBox marginRight={2}>
-              <Logo iconOnly solid={true} />
+              <Logo id="fixed-nav-logo-icon" iconOnly solid={true} />
             </FocusableBox>
           </Link>
 
@@ -90,8 +90,8 @@ export const FixedNav: FC = () => {
             </Box>
           </Box>
         </Box>
-      </ContentBlock>
-    </Box>
+      </GridContainer>
+    </div>
   )
 }
 

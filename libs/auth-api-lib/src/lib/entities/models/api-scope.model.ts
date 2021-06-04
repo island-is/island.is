@@ -7,9 +7,12 @@ import {
   UpdatedAt,
   HasMany,
   PrimaryKey,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
+import { ApiScopeGroup } from './api-scope-group.model'
 
 @Table({
   tableName: 'api_scope',
@@ -50,6 +53,14 @@ export class ApiScope extends Model<ApiScope> {
   description!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ForeignKey(() => ApiScopeGroup)
+  @ApiProperty()
+  groupId?: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
@@ -59,12 +70,71 @@ export class ApiScope extends Model<ApiScope> {
   })
   showInDiscoveryDocument!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToLegalGuardians!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToProcuringHolders!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  allowExplicitDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  automaticDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  alsoForDelegatedUser!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  isAccessControlled?: boolean
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
   userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
-
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -102,4 +172,8 @@ export class ApiScope extends Model<ApiScope> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @ApiPropertyOptional()
+  @BelongsTo(() => ApiScopeGroup)
+  group?: ApiScopeGroup
 }

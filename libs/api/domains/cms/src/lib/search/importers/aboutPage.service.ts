@@ -3,13 +3,9 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
-import { IPage } from '../../generated/contentfulTypes'
+import { IAboutSubPage, IPage } from '../../generated/contentfulTypes'
 import { mapAboutPage } from '../../models/aboutPage.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 import {
   createTerms,
@@ -18,30 +14,72 @@ import {
   numberOfLinks,
 } from './utils'
 
+interface ProcessedData {
+  aboutPages: IPage[]
+  aboutSubPages: { [parentId: string]: IAboutSubPage[] }
+}
+
 @Injectable()
-export class AboutPageSyncService implements CmsSyncProvider<IPage> {
-  processSyncData(entries: processSyncDataInput<IPage>) {
+export class AboutPageSyncService
+  implements CmsSyncProvider<IPage | IAboutSubPage, ProcessedData> {
+  processSyncData(
+    entries: processSyncDataInput<IPage | IAboutSubPage>,
+  ): ProcessedData {
     // only process pages that we consider not to be empty and dont have circular structures
-    return entries.filter(
+    const aboutPages = entries.filter(
       (entry: Entry<any>): entry is IPage =>
         entry.sys.contentType.sys.id === 'page' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
+    const aboutSubPages = entries
+      .filter(
+        (entry: Entry<any>): entry is IAboutSubPage =>
+          entry.sys.contentType.sys.id === 'aboutSubPage' &&
+          !!entry.fields.title &&
+          !isCircular(entry),
+      )
+      .reduce(
+        (subPageMap: { [parentId: string]: IAboutSubPage[] }, subPage) => {
+          const parentId = subPage.fields.parent?.sys.id
+          if (parentId) {
+            return {
+              ...subPageMap,
+              [parentId]: [...(subPageMap[parentId] ?? []), subPage],
+            }
+          } else {
+            return subPageMap
+          }
+        },
+        {},
+      )
+
+    return { aboutPages, aboutSubPages }
   }
 
-  doMapping(entries: doMappingInput<IPage>) {
-    logger.info('Mapping about page', { count: entries.length })
+  doMapping(entries: ProcessedData) {
+    logger.info('Mapping about page', { count: entries.aboutPages.length })
 
-    return entries
+    return entries.aboutPages
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAboutPage(entry)
+
           const content = extractStringsFromObject({ ...mapped.slices }) // this function only accepts plain js objects
+          // add content from child pages to have this parent page match searches
+          const subAboutPageContent = (entries.aboutSubPages[mapped.id] ?? [])
+            .map((subAboutPage) =>
+              extractStringsFromObject({
+                intro: `${subAboutPage.fields.title} ${subAboutPage.fields.intro}`,
+                content: subAboutPage.fields.content,
+              }),
+            )
+            .join(' ')
+
           return {
             _id: mapped.id,
             title: mapped.title,
-            content,
+            content: `${content} ${subAboutPageContent}`,
             contentWordCount: content.split(/\s+/).length,
             processEntryCount: numberOfProcessEntries(mapped.slices),
             ...numberOfLinks(mapped.slices),

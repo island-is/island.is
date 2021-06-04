@@ -50,7 +50,7 @@ const variantStyles: VariantStyles = {
 export interface AlertMessageProps {
   type: AlertMessageType
   title: string
-  message?: string
+  message?: string | React.ReactNode
 }
 
 export const AlertMessage: React.FC<AlertMessageProps> = ({
@@ -84,7 +84,11 @@ export const AlertMessage: React.FC<AlertMessageProps> = ({
         </Box>
         {message && (
           <Box className={styles.messageWrap}>
-            <Text variant="small">{message}</Text>
+            {React.isValidElement(message) ? (
+              message
+            ) : (
+              <Text variant="small">{message}</Text>
+            )}
           </Box>
         )}
       </Stack>

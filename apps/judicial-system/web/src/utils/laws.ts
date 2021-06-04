@@ -32,6 +32,12 @@ export const custodyProvisions = [
       'Einnig má úrskurða sakborning í gæsluvarðhald þótt skilyrði a–d-liðar 1. mgr. séu ekki fyrir hendi ef sterkur grunur leikur á að hann hafi framið afbrot sem að lögum getur varðað 10 ára fangelsi, enda sé brotið þess eðlis að ætla megi varðhald nauðsynlegt með tilliti til almannahagsmuna.',
   },
   {
+    title: '2. mgr. 98. gr',
+    id: CaseCustodyProvisions._98_2,
+    info:
+      'Nú er þess krafist að sakborningur skuli sæta einangrun í gæsluvarðhaldi skv. b-lið 1. mgr. 99. gr. og á dómari þá að taka afstöðu til þeirrar kröfu í úrskurði. Ekki má úrskurða sakborning til að sæta einangrun nema hún sé nauðsynleg af þeim ástæðum sem greindar eru í a- eða d-lið 1. mgr. 95. gr. Hún má ekki standa samfleytt lengur en í fjórar vikur nema sá sem henni sætir sé sakaður um brot sem varðað getur að lögum 10 ára fangelsi. Enn fremur tekur dómari í úrskurði afstöðu til kröfu um hver tilhögun gæsluvarðhaldsvistar skuli vera að öðru leyti, sbr. 3. mgr. 99. gr.',
+  },
+  {
     title: 'b-lið 1. mgr. 99. gr.',
     id: CaseCustodyProvisions._99_1_B,
     info:

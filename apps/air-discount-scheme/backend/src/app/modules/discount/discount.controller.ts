@@ -1,4 +1,12 @@
-import { Controller, Param, Post, Get, NotFoundException } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Post,
+  Get,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common'
 import { ApiExcludeEndpoint } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
@@ -8,12 +16,15 @@ import {
 } from './dto'
 import { DiscountService } from './discount.service'
 import { NationalRegistryService } from '../nationalRegistry'
+import { FlightService } from '../flight'
 
 @Controller('api/private')
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
+    @Inject(forwardRef(() => FlightService))
+    private readonly flightService: FlightService,
   ) {}
 
   @Get('users/:nationalId/discounts/current')
@@ -34,6 +45,13 @@ export class PrivateDiscountController {
       throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
 
-    return this.discountService.createDiscountCode(params.nationalId)
+    const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
+      params.nationalId,
+    )
+
+    return this.discountService.createDiscountCode(
+      params.nationalId,
+      unConnectedFlights,
+    )
   }
 }

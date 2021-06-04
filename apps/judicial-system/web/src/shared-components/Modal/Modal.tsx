@@ -1,12 +1,13 @@
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import { motion } from 'framer-motion'
 
 import * as styles from './Modal.treat'
 
 interface ModalProps {
   title: string
-  text: string | JSX.Element
+  text: string | ReactNode
   primaryButtonText: string
   secondaryButtonText?: string
   handleClose?: () => void
@@ -25,9 +26,33 @@ const Modal: React.FC<ModalProps> = ({
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
 }: ModalProps) => {
+  const modalVariants = {
+    open: {
+      translateY: 0,
+      opacity: 1,
+    },
+    closed: {
+      translateY: 50,
+      opacity: 0,
+      transition: { duration: 0.2 },
+    },
+  }
   return (
-    <div className={styles.container} test-id="modal">
-      <div className={styles.modalContainer}>
+    <motion.div
+      key="modal"
+      className={styles.container}
+      test-id="modal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className={styles.modalContainer}
+        initial="closed"
+        animate="open"
+        exit="closed"
+        variants={modalVariants}
+      >
         {handleClose && (
           <Box position="absolute" top={0} right={0}>
             <button className={styles.closeButton} onClick={handleClose}>
@@ -35,10 +60,10 @@ const Modal: React.FC<ModalProps> = ({
             </button>
           </Box>
         )}
-        <Box marginBottom={4}>
+        <Box marginBottom={3}>
           <Text variant="h1">{title}</Text>
         </Box>
-        <Box marginBottom={6}>
+        <Box marginBottom={6} className={styles.breakSpaces}>
           {
             // Check if text is a string or Element
             React.isValidElement(text) ? text : <Text>{text}</Text>
@@ -47,13 +72,18 @@ const Modal: React.FC<ModalProps> = ({
         <Box display="flex">
           {secondaryButtonText && (
             <Box marginRight={3}>
-              <Button onClick={handleSecondaryButtonClick} variant="ghost">
+              <Button
+                data-testid="modalSecondaryButton"
+                variant="ghost"
+                onClick={handleSecondaryButtonClick}
+              >
                 {secondaryButtonText}
               </Button>
             </Box>
           )}
           {primaryButtonText !== '' && (
             <Button
+              data-testid="modalPrimaryButton"
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}
             >
@@ -61,8 +91,8 @@ const Modal: React.FC<ModalProps> = ({
             </Button>
           )}
         </Box>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 

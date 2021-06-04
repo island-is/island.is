@@ -1,15 +1,17 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
+import { IdentityServer } from '../../../utils/ids.constants'
 import { TokenService } from '../../../services/TokenService'
 
 const providers = [
   Providers.IdentityServer4({
-    id: process.env.IDENTITYSERVER_ID,
-    name: process.env.IDENTITYSERVER_NAME,
-    scope: process.env.IDENTITYSERVER_SCOPE,
+    id: IdentityServer.id,
+    name: IdentityServer.name,
+    scope: IdentityServer.scope,
+    clientId: IdentityServer.clientId,
     domain: process.env.IDENTITYSERVER_DOMAIN,
-    clientId: process.env.IDENTITYSERVER_CLIENT_ID,
     clientSecret: process.env.IDENTITYSERVER_SECRET,
+    protection: 'pkce',
   }),
 ]
 
@@ -20,7 +22,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
     user.nationalId = profile.nationalId
     user.accessToken = account.accessToken
     user.refreshToken = account.refreshToken
-    user.idToken = profile.idToken
+    user.idToken = account.idToken
     return true
   }
 
@@ -71,6 +73,7 @@ callbacks.session = async function session(session, token) {
   session.idToken = token.idToken
   const decoded = parseJwt(session.accessToken)
   session.expires = new Date(decoded.exp * 1000)
+  session.scope = decoded.scope
   return session
 }
 

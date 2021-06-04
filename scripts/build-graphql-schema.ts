@@ -7,7 +7,7 @@ const argv = yargs(process.argv.slice(2))
 const args = argv.string('_').help().argv
 
 const main = () => {
-  const { AppModule } = require(args._[0])
+  const { AppModule } = require('../' + args._[0])
 
   createApp({ appModule: AppModule, name: 'graphql-generator' }).then((app) => {
     app.init()

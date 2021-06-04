@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNotEmpty, IsDate } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopesDTO {
@@ -29,6 +29,13 @@ export class ApiScopesDTO {
   })
   readonly description!: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  readonly groupId?: string
+
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
@@ -47,4 +54,46 @@ export class ApiScopesDTO {
     example: false,
   })
   readonly emphasize!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly grantToLegalGuardians!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly grantToProcuringHolders!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly allowExplicitDelegationGrant!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly automaticDelegationGrant!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly alsoForDelegatedUser!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly isAccessControlled!: boolean
 }

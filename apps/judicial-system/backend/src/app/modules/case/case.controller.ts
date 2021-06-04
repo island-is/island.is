@@ -9,7 +9,6 @@ import {
   Param,
   Post,
   Put,
-  Inject,
   ForbiddenException,
   Query,
   ConflictException,
@@ -24,10 +23,12 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseState,
   CaseTransition,
-  User,
+  IntegratedCourts,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -35,19 +36,23 @@ import {
   RolesGuard,
   RolesRule,
   RulesType,
+  TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
+import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-import { CaseValidationPipe } from './pipes'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
 
 // Allows judges to perform any action
 const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows registrars to perform any action
+const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
@@ -61,10 +66,12 @@ const prosecutorUpdateRule = {
     'accusedGender',
     'defenderName',
     'defenderEmail',
-    'court',
+    'defenderPhoneNumber',
+    'sendRequestToDefender',
+    'courtId',
+    'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
-    'alternativeTravelBan',
     'requestedCustodyEndDate',
     'otherDemands',
     'lawsBroken',
@@ -74,37 +81,58 @@ const prosecutorUpdateRule = {
     'caseFacts',
     'legalArguments',
     'comments',
+    'caseFilesComments',
     'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
   ],
 } as RolesRule
+
+const courtFields = [
+  'defenderName',
+  'defenderEmail',
+  'defenderPhoneNumber',
+  'courtCaseNumber',
+  'courtDate',
+  'courtRoom',
+  'courtStartDate',
+  'courtEndTime',
+  'courtAttendees',
+  'policeDemands',
+  'courtDocuments',
+  'accusedPleaDecision',
+  'accusedPleaAnnouncement',
+  'litigationPresentations',
+  'courtCaseFacts',
+  'courtLegalArguments',
+  'ruling',
+  'additionToConclusion',
+  'decision',
+  'custodyEndDate',
+  'custodyRestrictions',
+  'otherRestrictions',
+  'isolationTo',
+  'accusedAppealDecision',
+  'accusedAppealAnnouncement',
+  'prosecutorAppealDecision',
+  'prosecutorAppealAnnouncement',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
+  'judgeId',
+  'registrarId',
+]
 
 // Allows judges to update a specific set of fields
 const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
-  dtoFields: [
-    'defenderName',
-    'defenderEmail',
-    'courtCaseNumber',
-    'courtDate',
-    'courtRoom',
-    'courtStartTime',
-    'courtEndTime',
-    'courtAttendees',
-    'policeDemands',
-    'courtDocuments',
-    'accusedPlea',
-    'litigationPresentations',
-    'ruling',
-    'decision',
-    'custodyEndDate',
-    'custodyRestrictions',
-    'otherRestrictions',
-    'accusedAppealDecision',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealDecision',
-    'prosecutorAppealAnnouncement',
-  ],
+  dtoFields: courtFields,
+} as RolesRule
+
+// Allows registrars to update a specific set of fields
+const registrarUpdateRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD,
+  dtoFields: courtFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases
@@ -131,57 +159,128 @@ const judgeTransitionRule = {
   ],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
+// Allows registrars to receive cases
+const registrarTransitionRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.RECEIVE],
+} as RolesRule
+
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    @Inject(CaseService)
     private readonly caseService: CaseService,
+    private readonly userService: UserService,
   ) {}
 
-  private async findCaseById(id: string) {
-    const existingCase = await this.caseService.findById(id)
+  private async validateAssignedUser(
+    assignedUserId: string,
+    assignedUserRole: UserRole,
+    institutionId: string,
+  ) {
+    const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
+    if (!assignedUser) {
+      throw new NotFoundException(`User ${assignedUserId} does not exist`)
     }
 
-    return existingCase
+    if (assignedUser.role !== assignedUserRole) {
+      throw new ForbiddenException(
+        `User ${assignedUserId} is not a ${assignedUserRole}}`,
+      )
+    }
+
+    if (institutionId && assignedUser.institutionId !== institutionId) {
+      throw new ForbiddenException(
+        `User ${assignedUserId} belongs to the wrong institution`,
+      )
+    }
   }
 
+  @UseGuards(TokenGuaard)
+  @Post('internal/case')
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
+  internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+    return this.caseService.create(caseToCreate)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @CurrentHttpUser() user: User,
-    @Body(new CaseValidationPipe())
-    caseToCreate: CreateCaseDto,
+    @Body() caseToCreate: CreateCaseDto,
   ): Promise<Case> {
     return this.caseService.create(caseToCreate, user)
   }
 
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
+    // Make sure the user has access to this case
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
+
+    // Make sure valid users are assigned to the case's roles
+    if (caseToUpdate.prosecutorId) {
+      await this.validateAssignedUser(
+        caseToUpdate.prosecutorId,
+        UserRole.PROSECUTOR,
+        existingCase.prosecutor?.institutionId,
+      )
+    }
+    if (caseToUpdate.judgeId) {
+      await this.validateAssignedUser(
+        caseToUpdate.judgeId,
+        UserRole.JUDGE,
+        existingCase.courtId,
+      )
+    }
+    if (caseToUpdate.registrarId) {
+      await this.validateAssignedUser(
+        caseToUpdate.registrarId,
+        UserRole.REGISTRAR,
+        existingCase.courtId,
+      )
+    }
+
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
       caseToUpdate,
     )
 
     if (numberOfAffectedRows === 0) {
+      // TODO: Find a more suitable exception to throw
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (
+      IntegratedCourts.includes(existingCase.courtId) &&
+      Boolean(caseToUpdate.courtCaseNumber) &&
+      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+    ) {
+      // TODO: Find a better place for this
+      // No need to wait for the upload
+      this.caseService.uploadRequestPdfToCourt(id)
     }
 
     return updatedCase
   }
 
-  @RolesRules(prosecutorTransitionRule, judgeTransitionRule)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(
+    prosecutorTransitionRule,
+    judgeTransitionRule,
+    registrarTransitionRule,
+  )
   @Put('case/:id/state')
   @ApiOkResponse({
     type: Case,
@@ -194,30 +293,20 @@ export class CaseController {
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    let update: UpdateCaseDto
+    // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
+    const update = { state }
 
-    // Remove when client has started assigned a judge to each case
-    if (
-      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
-        transition.transition,
-      ) &&
-      user.role === UserRole.JUDGE
-    ) {
-      update = {
-        state,
-        judgeId: user.id,
-      } as UpdateCaseDto
-    } else {
-      update = { state } as UpdateCaseDto
+    if (state === CaseState.DELETED) {
+      update['parentCaseId'] = null
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
-      update,
+      update as UpdateCaseDto,
     )
 
     if (numberOfAffectedRows === 0) {
@@ -229,37 +318,47 @@ export class CaseController {
     return updatedCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
     isArray: true,
     description: 'Gets all existing cases',
   })
-  getAll(): Promise<Case[]> {
-    return this.caseService.getAll()
+  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
+    return this.caseService.getAll(user)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  async getById(@Param('id') id: string): Promise<Case> {
-    return this.findCaseById(id)
+  async getById(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<Case> {
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
+
+    return existingCase
   }
 
-  @RolesRules(judgeRule)
-  @Get('case/:id/ruling')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Gets the ruling for an existing case as a pdf document',
+    description: 'Gets the request for an existing case as a pdf document',
   })
-  async getRulingPdf(
+  async getRequestPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase, user)
+    const pdf = await this.caseService.getRequestPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -272,6 +371,35 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:id/ruling')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the ruling for an existing case as a pdf document',
+  })
+  async getRulingPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Res() res: Response,
+  ) {
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
+
+    const pdf = await this.caseService.getRulingPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
@@ -283,17 +411,16 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     try {
-      const response = await this.caseService.requestSignature(
-        existingCase,
-        user,
-      )
+      const response = await this.caseService.requestSignature(existingCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -307,6 +434,7 @@ export class CaseController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Get('case/:id/signature')
   @ApiOkResponse({
@@ -319,32 +447,37 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     return this.caseService.getSignatureConfirmation(
       existingCase,
-      user,
       documentToken,
     )
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case/:id/extend')
   @ApiCreatedResponse({
     type: Case,
     description: 'Clones a new case based on an existing case',
   })
-  async extend(@Param('id') id: string): Promise<Case> {
-    const existingCase = await this.findCaseById(id)
+  async extend(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<Case> {
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     if (existingCase.childCase) {
       return existingCase.childCase
     }
 
-    return this.caseService.extend(existingCase)
+    return this.caseService.extend(existingCase, user)
   }
 }

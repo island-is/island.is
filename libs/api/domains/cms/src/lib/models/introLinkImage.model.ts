@@ -7,22 +7,22 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class IntroLinkImage {
   @Field()
-  title: string
+  title?: string
 
   @Field(() => Html)
-  intro: Html
+  intro?: Html
 
   @Field(() => Image, { nullable: true })
-  image?: Image
+  image!: Image
 
   @Field(() => Boolean)
-  leftImage: boolean
+  leftImage?: boolean
 
   @Field()
-  linkTitle: string
+  linkTitle!: string
 
   @Field(() => ReferenceLink)
-  link: ReferenceLink
+  link!: ReferenceLink | null
 }
 
 export const mapIntroLinkImage = ({

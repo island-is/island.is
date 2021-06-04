@@ -1,17 +1,22 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
-  Box,
   Checkbox,
   InputError,
+  GridRow,
+  GridColumn,
   Stack,
-  Tooltip,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
+
+type CheckboxProps = React.ComponentProps<typeof Checkbox>
 
 interface Option {
   value: string
   label: React.ReactNode
+  subLabel?: string
   tooltip?: React.ReactNode
+  disabled?: boolean
   excludeOthers?: boolean
 }
 interface CheckboxControllerProps {
@@ -19,18 +24,30 @@ interface CheckboxControllerProps {
   disabled?: boolean
   error?: string
   id: string
+  labelVariant?: CheckboxProps['labelVariant']
   name?: string
   large?: boolean
+  spacing?: 0 | 1 | 2
+  strong?: boolean
   options?: Option[]
+  split?: '1/1' | '1/2' | '1/3' | '1/4'
+  backgroundColor?: InputBackgroundColor
+  onSelect?: (s: string[]) => void
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
   disabled = false,
+  labelVariant,
+  spacing = 2,
   error,
   id,
   name = id,
   large,
+  strong,
   options = [],
+  split = '1/1',
+  backgroundColor,
+  onSelect = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -57,33 +74,45 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => {
-        return (
-          <Stack space={2}>
-            {options.map((option, index) => (
-              <Box display="block" key={`${id}-${index}`}>
-                <Checkbox
-                  disabled={disabled}
-                  large={large}
-                  onChange={() => {
-                    clearErrors(id)
-                    const newChoices = handleSelect(option, value || [])
-                    onChange(newChoices)
-                    setValue(id, newChoices)
-                  }}
-                  checked={value && value.includes(option.value)}
-                  name={`${id}[${index}]`}
-                  label={option.label}
-                  value={option.value}
-                  hasError={error !== undefined}
-                  tooltip={option.tooltip}
-                />
-              </Box>
-            ))}
-            {error !== undefined && <InputError errorMessage={error} />}
-          </Stack>
-        )
-      }}
+      render={({ value, onChange }) => (
+        <GridRow>
+          {options.map((option, index) => (
+            <GridColumn
+              span={['1/1', split]}
+              paddingBottom={spacing}
+              key={`option-${option.value}`}
+            >
+              <Checkbox
+                disabled={disabled || option.disabled}
+                large={large}
+                onChange={() => {
+                  clearErrors(id)
+                  const newChoices = handleSelect(option, value || [])
+                  onChange(newChoices)
+                  setValue(id, newChoices)
+                  onSelect(newChoices)
+                }}
+                checked={value && value.includes(option.value)}
+                name={`${id}[${index}]`}
+                label={option.label}
+                strong={strong}
+                labelVariant={labelVariant}
+                subLabel={option.subLabel}
+                value={option.value}
+                hasError={error !== undefined}
+                tooltip={option.tooltip}
+                backgroundColor={backgroundColor}
+              />
+            </GridColumn>
+          ))}
+
+          {error && (
+            <GridColumn span={['1/1', split]} paddingBottom={2}>
+              <InputError errorMessage={error} />
+            </GridColumn>
+          )}
+        </GridRow>
+      )}
     />
   )
 }

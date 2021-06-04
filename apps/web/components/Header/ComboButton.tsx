@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Box, Icon, ColorSchemeContext } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './ComboButton.treat'
@@ -13,11 +13,11 @@ interface ComboButtonProps {
   showSearch: boolean
 }
 
-export const ComboButton: FC<ComboButtonProps> = ({
+export const ComboButton = ({
   sideBarMenuOpen,
   sideMenuSearchFocus,
   showSearch,
-}) => {
+}: ComboButtonProps) => {
   const { t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
   const colorSchemeIsWhite = colorScheme === 'white'

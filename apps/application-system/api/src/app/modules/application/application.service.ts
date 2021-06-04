@@ -1,40 +1,110 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FindOptions } from 'sequelize/types'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Op, WhereOptions } from 'sequelize'
+import {
+  ExternalData,
+  FormValue,
+  ApplicationStatus,
+} from '@island.is/application/core'
+
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import {
-  ApplicationTypes,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/core'
+
+import { ApplicationLifecycle } from './types'
+
+const applicationIsNotSetToBePruned = () => ({
+  [Op.or]: [
+    {
+      pruneAt: {
+        [Op.is]: null,
+      },
+    },
+    {
+      pruneAt: {
+        [Op.gt]: new Date(),
+      },
+    },
+  ],
+})
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
-  async findById(id: string): Promise<Application | null> {
-    this.logger.debug(`Finding application by id - "${id}"`)
+  async findOneById(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
     return this.applicationModel.findOne({
-      where: { id },
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { assignees: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+        ...applicationIsNotSetToBePruned(),
+      },
     })
   }
 
-  async findAll(options?: FindOptions): Promise<Application[]> {
-    return this.applicationModel.findAll(options)
-  }
+  async findAllByNationalIdAndFilters(
+    nationalId: string,
+    typeId?: string,
+    status?: string,
+  ): Promise<Application[]> {
+    const typeIds = typeId?.split(',')
+    const statuses = status?.split(',')
 
-  async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
     return this.applicationModel.findAll({
-      where: { typeId },
+      where: {
+        ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { applicant: nationalId },
+              { assignees: { [Op.contains]: [nationalId] } },
+            ],
+          },
+          applicationIsNotSetToBePruned(),
+        ],
+        isListed: {
+          [Op.eq]: true,
+        },
+      },
+      order: [['modified', 'DESC']],
     })
+  }
+
+  /**
+   * A function to pass to data providers / template api modules to be able to
+   * query applications of their respective type in order to infer some data to
+   * use in an application
+   */
+  customTemplateFindQuery(
+    templateTypeId: string,
+  ): (whereQueryOptions: WhereOptions) => Promise<Application[]> {
+    return (whereQueryOptions: WhereOptions) => {
+      return this.applicationModel.findAll({
+        where: {
+          ...whereQueryOptions,
+          typeId: {
+            [Op.eq]: templateTypeId,
+          },
+          ...applicationIsNotSetToBePruned(),
+        },
+        order: [['modified', 'DESC']],
+        raw: true,
+      })
+    }
   }
 
   async create(application: CreateApplicationDto): Promise<Application> {
@@ -58,12 +128,14 @@ export class ApplicationService {
     state: string,
     answers: FormValue,
     assignees: string[],
+    status: ApplicationStatus,
+    lifecycle: ApplicationLifecycle,
   ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state, answers, assignees },
+      { state, answers, assignees, status, ...lifecycle },
       {
         where: { id },
         returning: true,

@@ -1,3 +1,7 @@
+import { assign } from 'xstate'
+import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -5,55 +9,84 @@ import {
   ApplicationTypes,
   ApplicationTemplate,
   Application,
+  DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
-import * as z from 'zod'
+import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+enum States {
+  DRAFT = 'draft',
+  REVIEWER_WAITING_TO_ASSIGN = 'reviewerWaitingToAssign',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+  TEST_PHASE = 'testPhase',
+  REJECTED = 'rejected',
+  FINISHED = 'finished',
+}
 
 const contact = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmerið þarf að vera gilt' },
+  ),
 })
 
 const helpDeskContact = z.object({
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
 })
 
 //TODO: extend contact. Couldn't get it to work easily with contact.extend
 const applicant = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
-  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false), {
-    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks', //Question: how should error messages be translated?
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
+  nationalId: z.string().refine((k) => kennitala.isValid(k), {
+    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
   }),
-  address: z.string().nonempty(),
-  zipCode: z.string().nonempty(),
+  // .refine((k) => kennitala.isCompany(k), {
+  //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
+  // }),
+  address: z
+    .string()
+    .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
+  zipCode: z
+    .string()
+    .nonempty({ message: 'Póstnúmer og staður þarf að vera útfyllt' }),
 })
 
 const termsOfAgreement = z.object({
-  userTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    message: 'Þú verður að samþykkja notendaskilmála',
-  }),
-  securityTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    message: 'Þú verður að samþykkja öryggisskilmála ',
-  }),
+  userTerms: z.boolean().refine((v) => v, {}),
+  securityTerms: z.boolean().refine((v) => v, {}),
 })
 
 const endPoint = z.object({
@@ -98,14 +131,16 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   name: 'Umsókn um að gerast skjalaveitandi',
+  readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn skjalaveitu',
           progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -114,31 +149,51 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.DocumentProviderOnboarding),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'inReview',
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEWER_WAITING_TO_ASSIGN,
           },
         },
       },
-      inReview: {
-        entry: assign((context) => {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: ['2311637949'],
-            },
-          }
-        }),
+      [States.REVIEWER_WAITING_TO_ASSIGN]: {
         meta: {
-          name: 'In Review',
+          name: 'Waiting to assign reviewer',
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PendingReview').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: { target: States.IN_REVIEW },
+        },
+      },
+      [States.IN_REVIEW]: {
+        exit: 'clearAssignees',
+        meta: {
+          name: States.IN_REVIEW,
           progress: 0.5,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -147,8 +202,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.ReviewApplication),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
               ],
               read: 'all',
               write: { answers: ['rejectionReason'] },
@@ -164,14 +223,18 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'testPhase' },
-          REJECT: { target: 'rejected' },
+          [DefaultEvents.APPROVE]: { target: States.TEST_PHASE },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
-      rejected: {
+      [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -184,10 +247,14 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
       },
-      testPhase: {
+      [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
           progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -201,15 +268,16 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'finished',
+          [DefaultEvents.SUBMIT]: {
+            target: [States.FINISHED],
           },
         },
       },
-      finished: {
+      [States.FINISHED]: {
         meta: {
           name: 'Finished',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -224,13 +292,25 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
+
+  stateMachineOptions: {
+    actions: {
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
   mapUserToRole(
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
 
-    //This if statement might change depending on the "umboðskerfi"
+    // This if statement might change depending on the "umboðskerfi"
     if (
       process.env.NODE_ENV === 'development' &&
       application.state === 'inReview'
@@ -240,10 +320,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    if (
-      application.state === 'inReview' &&
-      application.assignees.includes(id)
-    ) {
+    if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes

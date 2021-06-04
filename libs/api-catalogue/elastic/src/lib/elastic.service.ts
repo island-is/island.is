@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
-import * as AwsConnector from 'aws-elasticsearch-connector'
+import AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'

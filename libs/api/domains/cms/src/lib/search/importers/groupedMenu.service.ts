@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import { IGroupedMenu } from '../../generated/contentfulTypes'
 import { mapGroupedMenu } from '../../models/groupedMenu.model'
 
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 @Injectable()
 export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
@@ -20,7 +16,7 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
     )
   }
 
-  doMapping(entries: doMappingInput<IGroupedMenu>) {
+  doMapping(entries: IGroupedMenu[]) {
     logger.info('Mapping grouped menu', { count: entries.length })
 
     return entries

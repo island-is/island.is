@@ -7,6 +7,7 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { FlightService } from '../../../flight'
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
@@ -30,6 +31,13 @@ describe('DiscountController', () => {
             getUser: () => ({}),
           })),
         },
+        {
+          provide: FlightService,
+          useClass: jest.fn(() => ({
+            countThisYearsConnectedFlightsByNationalId: () => 0,
+            findThisYearsConnectableFlightsByNationalId: () => 0,
+          })),
+        },
       ],
     }).compile()
 
@@ -46,7 +54,7 @@ describe('DiscountController', () => {
     it('should return discount', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, nationalId, 0)
+      const discount = new Discount(discountCode, [], nationalId, 0)
       const getDiscountByNationalIdSpy = jest
         .spyOn(discountService, 'getDiscountByNationalId')
         .mockImplementation(() => Promise.resolve(discount))
@@ -64,7 +72,7 @@ describe('DiscountController', () => {
     it('should return discount', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, nationalId, 0)
+      const discount = new Discount(discountCode, [], nationalId, 0)
       const user: NationalRegistryUser = {
         nationalId,
         firstName: 'Jón',
@@ -87,7 +95,7 @@ describe('DiscountController', () => {
       })
 
       expect(getUserSpy).toHaveBeenCalledWith(nationalId)
-      expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId)
+      expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId, 0)
       expect(result).toEqual(discount)
     })
 

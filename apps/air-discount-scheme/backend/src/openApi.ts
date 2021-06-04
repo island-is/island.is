@@ -7,25 +7,24 @@ export const openApi = new DocumentBuilder()
   This documentation is provided to airline booking sites for
   integration purposes.
 
-  WARNING: While you are developing this integration the Discounts
-  endpoint POST /api/public/users/{nationalId}/discounts is
-  available to create a discount for any national id. We will
-  remove it when we go live. This functionality of creating
-  discounts should only be available to the user who is registered
-  for it.
-
   If there exists an ID attribute on any object, that ID refers
   to a unique identifier of the object it is in. If the object
   has an additional ID, something like flightId that refers to
   an unique identifier of an object that is related to the
   current one.
 
+  DEV:     https://loftbru.dev01.devland.is/min-rettindi
+
+  STAGING: https://loftbru.staging01.devland.is/min-rettindi
+
+  PROD:    https://loftbru.island.is/min-rettindi
+
   The flow is like this:
 
-    1.  First create a discount through the
-        POST /api/public/users/{nationalId}/discounts endpoint.
-        Any valid nationalId will work. Notice the warning above
-        about this endpoint.
+    1.  Contact anyone at Stafrænt Ísland about access to our Github
+        organization and credentials for Gervimadur. Then navigate to
+        min-rettindi on dev or staging, there you will be able to access
+        the discountCodes and use them in the next steps.
 
 
     2.  Use the discount to book a flight on your end:

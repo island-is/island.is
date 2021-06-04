@@ -1,13 +1,16 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-
 import { useLocale } from '@island.is/localization'
-import { Application, formatText } from '@island.is/application/core'
+import {
+  Application,
+  formatText,
+  coreMessages,
+} from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
 
-export enum reviewSectionState {
+export enum ReviewSectionState {
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
@@ -18,7 +21,7 @@ type ReviewSectionProps = {
   index: number
   title: string
   description: string
-  state?: reviewSectionState
+  state?: ReviewSectionState
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -47,13 +50,13 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         className={cn(styles.sectionNumber, {
           [styles.sectionNumberNotStarted]: state === undefined,
           [styles.sectionNumberInProgress]:
-            state === reviewSectionState.inProgress,
+            state === ReviewSectionState.inProgress,
           [styles.sectionNumberRequiresAction]:
-            state === reviewSectionState.requiresAction,
-          [styles.sectionNumberComplete]: state === reviewSectionState.complete,
+            state === ReviewSectionState.requiresAction,
+          [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
         })}
       >
-        {(state === reviewSectionState.complete && (
+        {(state === ReviewSectionState.complete && (
           <Icon color="white" size="small" icon="checkmark" />
         )) || <span className={styles.sectionNumberText}>{index}</span>}
       </Box>
@@ -72,30 +75,22 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Text>
         </Box>
 
-        {state === reviewSectionState.inProgress && (
+        {state === ReviewSectionState.inProgress && (
           <Box pointerEvents="none">
             <Tag variant="blue">
               {formatText(
-                {
-                  id: 'application.system:tags.inProgress',
-                  defaultMessage: 'In progress',
-                  description: 'In progress tag text',
-                },
+                coreMessages.tagsInProgress,
                 application,
                 formatMessage,
               )}
             </Tag>
           </Box>
         )}
-        {state === reviewSectionState.requiresAction && (
+        {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
             <Tag variant="red">
               {formatText(
-                {
-                  id: 'application.system:tags.inProgress',
-                  defaultMessage: 'Requires action',
-                  description: 'Requires action tag text',
-                },
+                coreMessages.tagsRequiresAction,
                 application,
                 formatMessage,
               )}

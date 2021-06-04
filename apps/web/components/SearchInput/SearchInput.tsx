@@ -1,5 +1,4 @@
 import React, {
-  FC,
   useState,
   useEffect,
   useCallback,
@@ -24,7 +23,7 @@ import {
   Stack,
   Link,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,
@@ -32,6 +31,7 @@ import {
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
+  SubArticle,
   SearchableContentTypes,
   LifeEventPage,
   AboutPage,
@@ -120,6 +120,7 @@ const useSearch = (
                 SearchableContentTypes['WebLifeEventPage'],
                 SearchableContentTypes['WebAboutPage'],
                 SearchableContentTypes['WebNews'],
+                SearchableContentTypes['WebSubArticle'],
               ],
             },
           },
@@ -210,6 +211,7 @@ interface SearchInputProps {
   id?: string
   onRouting?: () => void
   skipContext?: boolean
+  quickContentLabel?: string
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -227,6 +229,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       id = 'downshift',
       onRouting,
       skipContext,
+      quickContentLabel,
     },
     ref,
   ) => {
@@ -325,6 +328,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             >
               {isOpen && !isEmpty(search) && (
                 <Results
+                  quickContentLabel={quickContentLabel}
                   search={search}
                   highlightedIndex={highlightedIndex}
                   getItemProps={getItemProps}
@@ -344,14 +348,24 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   },
 )
 
-const Results: FC<{
+type ResultsProps = {
   search: SearchState
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
   autosuggest: boolean
   onRouting?: () => void
-}> = ({ search, highlightedIndex, getItemProps, autosuggest, onRouting }) => {
+  quickContentLabel?: string
+}
+
+const Results = ({
+  search,
+  highlightedIndex,
+  getItemProps,
+  autosuggest,
+  onRouting,
+  quickContentLabel = 'Beint að efninu',
+}: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
   if (!search.term) {
@@ -411,29 +425,35 @@ const Results: FC<{
           <div className={styles.menuRow}>
             <Stack space={2}>
               <Text variant="eyebrow" color="purple400">
-                Beint að efninu
+                {quickContentLabel}
               </Text>
               {(search.results.items as Article[] &
                 LifeEventPage[] &
                 AboutPage[] &
-                News[])
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
-                .map(({ id, title, slug, __typename }) => {
+                .map((item) => {
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
                   return (
                     <div
-                      key={id}
+                      key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
                     >
-                      <Link {...linkResolver(__typename as LinkType, [slug])}>
+                      <Link
+                        {...linkResolver(
+                          item.__typename as LinkType,
+                          item.slug.split('/'),
+                        )}
+                      >
                         <Text variant="h5" color="blue400">
-                          {title}
+                          {item.title}
                         </Text>
                       </Link>
                     </div>

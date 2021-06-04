@@ -5,9 +5,10 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Text,
 } from '@island.is/island-ui/core'
-import { MarkdownText } from '@island.is/web/components'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: TwoColumnText
@@ -24,14 +25,22 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingBottom={[4, 5, 10]}
         >
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={2}>
-              <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
+            <GridColumn
+              span={['12/12', '12/12', '6/12']}
+              paddingBottom={2}
+              hiddenBelow="md"
+            >
+              <Text variant="h2" as="h2" id={'sliceTitle-' + slice.id}>
                 {slice.leftTitle}
               </Text>
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={2}>
+            <GridColumn
+              span={['12/12', '12/12', '6/12']}
+              paddingBottom={2}
+              hiddenBelow="md"
+            >
               {slice.rightTitle && (
-                <Text variant="h3" as="h2">
+                <Text variant="h2" as="h2">
                   {slice.rightTitle}
                 </Text>
               )}
@@ -39,10 +48,23 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <MarkdownText>{slice.leftContent}</MarkdownText>
+              <Hidden above="sm">
+                <Text variant="h2" as="h2">
+                  {slice.leftTitle}
+                </Text>
+              </Hidden>
+              {richText(slice.leftContent as SliceType[])}
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '6/12']}>
-              <MarkdownText>{slice.leftContent}</MarkdownText>
+            <GridColumn
+              span={['12/12', '12/12', '6/12']}
+              paddingTop={[4, 4, 0]}
+            >
+              <Hidden above="sm">
+                <Text variant="h2" as="h2">
+                  {slice.rightTitle}
+                </Text>
+              </Hidden>
+              {richText(slice.rightContent as SliceType[])}
             </GridColumn>
           </GridRow>
         </Box>

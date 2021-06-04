@@ -1,7 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { GrantType } from '../entities/models/grant-type.model'
+import { GrantTypeDTO } from '../entities/dto/grant-type.dto'
 
 @Injectable()
 export class GrantTypeService {
@@ -14,7 +16,7 @@ export class GrantTypeService {
 
   /** Get's all Grant Types  */
   async findAll(): Promise<GrantType[] | null> {
-    return this.grantTypeModel.findAll()
+    return this.grantTypeModel.findAll({ where: { archived: null } })
   }
 
   /** Get's all Grant Types and count */
@@ -33,6 +35,24 @@ export class GrantTypeService {
     })
   }
 
+  /** Get's all Grant Types and count by searchstring */
+  async find(
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: GrantType[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.grantTypeModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      where: { name: searchString },
+    })
+  }
+
   /** Get's a grant type by name */
   async getGrantType(name: string): Promise<GrantType | null> {
     this.logger.debug(`Finding grant type for name - "${name}"`)
@@ -42,5 +62,51 @@ export class GrantTypeService {
     }
 
     return await this.grantTypeModel.findByPk(name)
+  }
+
+  /** Creat a new grant type */
+  async create(grantType: GrantTypeDTO): Promise<GrantType | null> {
+    this.logger.debug(`Creating grant type with name - "${grantType.name}"`)
+
+    return this.grantTypeModel.create({ ...grantType })
+  }
+
+  /** Updates an existing grant */
+  async update(
+    grantType: GrantTypeDTO,
+    name: string,
+  ): Promise<GrantType | null> {
+    this.logger.debug('Updating grantType with name ', name)
+
+    if (!name) {
+      throw new BadRequestException('name must be provided')
+    }
+
+    await this.grantTypeModel.update(
+      { ...grantType },
+      {
+        where: { name: name },
+      },
+    )
+
+    return await this.grantTypeModel.findByPk(grantType.name)
+  }
+
+  /** Soft delete on a grant type by name */
+  async delete(name: string): Promise<number> {
+    this.logger.debug('Soft deleting a grant type with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('name must be provided')
+    }
+
+    const result = await this.grantTypeModel.update(
+      { archived: new Date() },
+      {
+        where: { name: name },
+      },
+    )
+
+    return result[0]
   }
 }

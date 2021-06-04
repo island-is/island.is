@@ -7,10 +7,11 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { StartDateOptions } from '../../constants'
 
-type ValidAnswers = 'dateOfBirth' | 'specificDate' | undefined
+type ValidAnswers = StartDateOptions | undefined
 
 const FirstPeriodStart: FC<FieldBaseProps> = ({
   error,
@@ -37,7 +38,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   return (
     <Box marginY={3} key={field.id}>
       <FieldDescription
-        description={formatMessage(mm.firstPeriodStart.description)}
+        description={formatMessage(
+          parentalLeaveFormMessages.firstPeriodStart.description,
+        )}
       />
       <Box paddingTop={3} marginBottom={3}>
         <RadioController
@@ -48,18 +51,27 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           }
           options={[
             {
-              label: formatMessage(mm.firstPeriodStart.dateOfBirthOption),
-              tooltip: formatMessage(
-                mm.firstPeriodStart.dateOfBirthOptionTooltip,
+              label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart
+                  .estimatedDateOfBirthOption,
               ),
-              value: 'dateOfBirth',
+              value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
             },
             {
-              label: formatMessage(mm.firstPeriodStart.specificDateOption),
-              tooltip: formatMessage(
-                mm.firstPeriodStart.specificDateOptionTooltip,
+              label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
-              value: 'specificDate',
+              value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+            },
+            {
+              label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart.specificDateOption,
+              ),
+              tooltip: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart
+                  .specificDateOptionTooltip,
+              ),
+              value: StartDateOptions.SPECIFIC_DATE,
             },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
@@ -68,7 +80,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         <input
           type="hidden"
           value={
-            statefulAnswer === 'dateOfBirth'
+            statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+            statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
               ? expectedDateOfBirth
               : currentStartDateAnswer
           }

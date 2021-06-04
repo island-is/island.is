@@ -57,26 +57,27 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         title={`${title} | Ísland.is`}
         description={intro}
         imageUrl={image.url}
+        imageContentType={image.contentType}
         imageWidth={image.width.toString()}
         imageHeight={image.height.toString()}
       />
-      <GridRow>
-        <Box
-          marginBottom={[4, 4, 4, 8]}
-          display="inlineBlock"
-          width="full"
-          printHidden
-        >
-          <BackgroundImage
-            ratio="12:4"
-            background="transparent"
-            boxProps={{ background: 'white' }}
-            image={image}
-          />
-        </Box>
-      </GridRow>
 
       <GridContainer id="main-content">
+        <GridRow>
+          <Box
+            marginBottom={[4, 4, 4, 8]}
+            display="inlineBlock"
+            width="full"
+            printHidden
+          >
+            <BackgroundImage
+              ratio="12:4"
+              background="transparent"
+              boxProps={{ background: 'white' }}
+              image={image}
+            />
+          </Box>
+        </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <GridRow>
@@ -90,15 +91,16 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                       {
                         title: 'Ísland.is',
                         href: '/',
+                        typename: 'homepage',
                       },
                       {
-                        isTag: true,
-                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                        title: n('lifeEvents', 'Lífsviðburðir'),
+                        href: linkResolver('lifeevents').href,
                       },
                     ]}
-                    renderLink={(link) => {
+                    renderLink={(link, { href }) => {
                       return (
-                        <NextLink {...linkResolver('homepage')} passHref>
+                        <NextLink href={href} passHref>
                           {link}
                         </NextLink>
                       )

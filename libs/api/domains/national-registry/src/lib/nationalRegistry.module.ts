@@ -2,13 +2,13 @@ import { DynamicModule } from '@nestjs/common'
 
 import { FamilyMemberResolver, UserResolver } from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
-import { NationalRegistryApi, SoapClient } from './soap'
+import {
+  NationalRegistryApi,
+  NationalRegistryConfig,
+} from '@island.is/clients/national-registry-v1'
 
 export interface Config {
-  baseSoapUrl: string
-  host: string
-  user: string
-  password: string
+  nationalRegistry: NationalRegistryConfig
 }
 
 export class NationalRegistryModule {
@@ -22,11 +22,7 @@ export class NationalRegistryModule {
         {
           provide: NationalRegistryApi,
           useFactory: async () =>
-            new NationalRegistryApi(
-              await SoapClient.generateClient(config.baseSoapUrl, config.host),
-              config.password,
-              config.user,
-            ),
+            NationalRegistryApi.instanciateClass(config.nationalRegistry),
         },
       ],
       exports: [],

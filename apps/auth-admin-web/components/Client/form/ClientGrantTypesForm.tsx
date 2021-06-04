@@ -4,7 +4,9 @@ import { GrantType } from '../../../entities/models/grant-type.model'
 import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
-import { GrantService } from '../../../services/GrantService'
+import { GrantTypeService } from '../../../services/GrantTypeService'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -16,13 +18,15 @@ interface Props {
 
 const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
-
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientGrantTypesForm'),
+  )
   useEffect(() => {
     getGrantTypes()
   }, [])
 
   const getGrantTypes = async () => {
-    const response = await GrantService.findAll()
+    const response = await GrantTypeService.findAll()
     if (response) {
       setGrantTypes(response)
     }
@@ -66,13 +70,10 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     <div className="client-grant-types">
       <div className="client-grant-types__wrapper">
         <div className="client-grant-types__container">
-          <h1>Select the appropriate grant type</h1>
+          <h1>{localization.title}</h1>
 
           <div className="client-grant-types__container__form">
-            <div className="client-grant-types__help">
-              Select the types of authentication that are allowed for this
-              Client
-            </div>
+            <div className="client-grant-types__help">{localization.help}</div>
             <div className="client-grant-types__container__fields">
               {grantTypes?.map((grantType: GrantType) => {
                 return (
@@ -105,9 +106,9 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title="No grant types are defined"
+              title={localization.noActiveConnections?.title}
               show={!props.grantTypes || props.grantTypes.length === 0}
-              helpText="Check the appropriate grant type(s) for the client"
+              helpText={localization.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="client-grant-types__buttons__container">
@@ -116,18 +117,19 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="client-grant-types__button__cancel"
                   onClick={props.handleBack}
+                  title={localization.buttons['cancel'].helpText}
                 >
-                  Back
+                  {localization.buttons['cancel'].text}
                 </button>
               </div>
               <div className="client-grant-types__button__container">
                 <button
                   type="button"
                   className="client-grant-types__button__save"
-                  value="Next"
                   onClick={props.handleNext}
+                  title={localization.buttons['save'].helpText}
                 >
-                  Next
+                  {localization.buttons['save'].text}
                 </button>
               </div>
             </div>

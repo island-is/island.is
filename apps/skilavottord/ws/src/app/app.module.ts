@@ -12,6 +12,7 @@ import { VehicleOwnerModule } from './modules/vehicle.owner/vehicle.owner.module
 import { SamgongustofaModule } from './modules/samgongustofa/samgongustofa.module'
 import { FjarsyslaModule } from './modules/fjarsysla/fjarsysla.module'
 import { environment } from '../environments'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -25,7 +26,7 @@ const autoSchemaFile = environment.production
       debug,
       playground,
       autoSchemaFile,
-      path: '/skilavottord/api/graphql',
+      path: `${BASE_PATH}/api/graphql`,
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

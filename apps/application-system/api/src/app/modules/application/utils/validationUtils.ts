@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationTemplateHelper,
+  FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
@@ -9,36 +10,79 @@ import {
   HttpException,
   UnauthorizedException,
 } from '@nestjs/common'
-
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { Unwrap } from '@island.is/shared/types'
+import { NestIntl } from '@island.is/api/domains/translations'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
 
+const isRunningOnProductionEnvironment =
+  environment.production === true &&
+  environment.name !== 'local' &&
+  environment.name !== 'dev' &&
+  environment.name !== 'staging'
+
+export async function validateThatApplicationIsReady(application: Application) {
+  const applicationTemplate = await getApplicationTemplateByTypeId(
+    application.typeId,
+  )
+
+  if (!applicationTemplate) {
+    throw new BadRequestException(
+      `No template exists for type: ${application.typeId}`,
+    )
+  }
+
+  validateThatTemplateIsReady(applicationTemplate)
+}
+
+export function isTemplateReady(
+  template: Pick<
+    Unwrap<typeof getApplicationTemplateByTypeId>,
+    'readyForProduction'
+  >,
+) {
+  if (isRunningOnProductionEnvironment && !template.readyForProduction) {
+    return false
+  }
+
+  return true
+}
+
+export function validateThatTemplateIsReady(
+  template: Unwrap<typeof getApplicationTemplateByTypeId>,
+) {
+  if (!isTemplateReady(template)) {
+    throw new BadRequestException(
+      `Template ${template.type} is not ready for production`,
+    )
+  }
+}
+
 export async function validateApplicationSchema(
   application: Pick<Application, 'typeId'>,
   newAnswers: FormValue,
+  formatMessage: FormatMessage,
 ) {
   const applicationTemplate = await getApplicationTemplateByTypeId(
     application.typeId,
   )
+
   if (applicationTemplate === null) {
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
     )
-  } else if (
-    environment.environment === 'production' &&
-    !applicationTemplate.readyForProduction
-  ) {
-    throw new BadRequestException(
-      `Template ${application.typeId} is not ready for production`,
-    )
   }
-  const schemaFormValidationError = validateAnswers(
-    applicationTemplate.dataSchema,
-    newAnswers,
-    false,
-  )
+
+  validateThatTemplateIsReady(applicationTemplate)
+
+  const schemaFormValidationError = validateAnswers({
+    dataSchema: applicationTemplate.dataSchema,
+    answers: newAnswers,
+    isFullSchemaValidation: false,
+    formatMessage,
+  })
 
   if (schemaFormValidationError) {
     // TODO improve error message
@@ -51,6 +95,7 @@ export async function validateIncomingAnswers(
   newAnswers: FormValue | undefined,
   nationalId: string,
   isStrict = true,
+  formatMessage: FormatMessage,
 ): Promise<FormValue> {
   if (!newAnswers) {
     return {}
@@ -107,7 +152,7 @@ export async function validateIncomingAnswers(
   }
 
   try {
-    await helper.applyAnswerValidators(newAnswers)
+    await helper.applyAnswerValidators(newAnswers, formatMessage)
   } catch (error) {
     throw new HttpException(error, 403)
   }

@@ -1,11 +1,11 @@
 import React, {
-  FC,
   ReactNode,
   useRef,
   useState,
   useCallback,
   useEffect,
   useContext,
+  useLayoutEffect,
 } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -20,17 +20,17 @@ import {
   GridColumn,
   Link,
 } from '@island.is/island-ui/core'
-import { renderHtml } from '@island.is/island-ui/contentful'
-import { Document } from '@contentful/rich-text-types'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import LottieLoader from './LottiePlayer/LottieLoader'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+import LottieLoader from './LottiePlayer/LottieLoader'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
+import fetch from 'isomorphic-fetch'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
@@ -41,9 +41,9 @@ export interface TabBulletProps {
   selected?: boolean
 }
 
-const TabBullet: FC<TabBulletProps> = ({ selected }) => {
+const TabBullet = ({ selected }: TabBulletProps) => {
   return (
-    <div
+    <span
       className={cn(styles.tabBullet, {
         [styles.tabBulletSelected]: selected,
       })}
@@ -51,10 +51,10 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
   )
 }
 
-export const FrontpageSlider: FC<FrontpageSliderProps> = ({
+export const FrontpageSlider = ({
   slides,
   searchContent,
-}) => {
+}: FrontpageSliderProps) => {
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
 
@@ -70,7 +70,10 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   })
 
   const { t } = useI18n()
+
   const { width } = useWindowSize()
+
+  const isMobile = width < theme.breakpoints.md
 
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
@@ -113,14 +116,23 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
     }
   }
 
-  useEffect(() => {
-    if (!animationData.length) {
-      const data = slides.map((x) =>
-        x.animationJson ? JSON.parse(x.animationJson) : null,
-      )
-      setAnimationData(data)
+  useLayoutEffect(() => {
+    if (!isMobile && !animationData.length) {
+      const requests = slides.reduce((all, slide) => {
+        if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
+          all.push(
+            fetch(slide.animationJsonAsset.url).then((res) => res.json()),
+          )
+        }
+
+        return all
+      }, [])
+
+      Promise.all(requests).then((res) => {
+        setAnimationData(res)
+      })
     }
-  }, [slides, animationData])
+  }, [isMobile, slides, animationData])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -205,65 +217,77 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                         [styles.tabPanelVisible]: visible,
                       })}
                     >
-                      <Box
-                        marginY={3}
-                        ref={(el) => (itemRefs.current[index] = el)}
-                        style={{ minHeight: `${minHeight}px` }}
-                      >
-                        <Stack space={3}>
-                          <Text variant="eyebrow" color="purple400">
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              {subtitle}
-                            </span>
-                          </Text>
-                          <Text variant="h1" as="h1" id={tabTitleId}>
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              {deorphanize(title)}
-                            </span>
-                          </Text>
-
-                          {intro ? (
-                            <Box marginBottom={4}>
-                              {renderHtml(intro.document as Document)}
-                            </Box>
-                          ) : (
-                            <Text>
+                      {visible && (
+                        <Box
+                          marginY={3}
+                          ref={(el) => (itemRefs.current[index] = el)}
+                          style={{ minHeight: `${minHeight}px` }}
+                        >
+                          <Stack space={3}>
+                            <Text variant="eyebrow" color="purple400">
                               <span
                                 className={cn(styles.textItem, {
                                   [styles.textItemVisible]: visible,
                                 })}
                               >
-                                {content}
+                                {subtitle}
                               </span>
                             </Text>
-                          )}
-                          {linkUrls?.href && visible ? (
-                            <span
-                              className={cn(styles.textItem, {
-                                [styles.textItemVisible]: visible,
-                              })}
-                            >
-                              <Link {...linkUrls} skipTab>
-                                <Button
-                                  variant="text"
-                                  icon="arrowForward"
-                                  aria-labelledby={tabTitleId}
+                            <Text variant="h1" as="h1" id={tabTitleId}>
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
+                              >
+                                {deorphanize(title)}
+                              </span>
+                            </Text>
+
+                            {intro ? (
+                              <Box marginBottom={4}>
+                                {richText(
+                                  [
+                                    {
+                                      __typename: 'Html',
+                                      id: intro.id,
+                                      document: intro.document,
+                                    },
+                                  ] as SliceType[],
+                                  undefined,
+                                )}
+                              </Box>
+                            ) : (
+                              <Text>
+                                <span
+                                  className={cn(styles.textItem, {
+                                    [styles.textItemVisible]: visible,
+                                  })}
                                 >
-                                  {gn('seeMore')}
-                                </Button>
-                              </Link>
-                            </span>
-                          ) : null}
-                        </Stack>
-                      </Box>
+                                  {content}
+                                </span>
+                              </Text>
+                            )}
+                            {linkUrls?.href && visible ? (
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
+                              >
+                                <Link {...linkUrls} skipTab>
+                                  <Button
+                                    variant="text"
+                                    icon="arrowForward"
+                                    aria-labelledby={tabTitleId}
+                                    as="span"
+                                  >
+                                    {gn('seeMore')}
+                                  </Button>
+                                </Link>
+                              </span>
+                            ) : null}
+                          </Stack>
+                        </Box>
+                      )}
                     </TabPanel>
                   )
                 },
@@ -328,10 +352,12 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             height="full"
             justifyContent="center"
           >
-            <LottieLoader
-              animationData={animationData}
-              selectedIndex={selectedIndex}
-            />
+            {!isMobile && animationData.length > 0 && (
+              <LottieLoader
+                animationData={animationData}
+                selectedIndex={selectedIndex}
+              />
+            )}
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />

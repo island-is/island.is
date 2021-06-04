@@ -1,43 +1,87 @@
-import { setup } from '../../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import * as tokenUtils from '../utils/tokenUtils'
+import { EmailService } from '@island.is/email-service'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { ApplicationScope } from '@island.is/auth/scopes'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
+import { ContentfulRepository } from '@island.is/api/domains/cms'
+
+import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
+import { FileService } from '../files/file.service'
 
 let app: INestApplication
 
-const nationalId = '123456-4321'
+const sendMail = () => ({
+  messageId: 'some id',
+})
+
+class MockEmailService {
+  getTransport() {
+    return { sendMail }
+  }
+
+  sendEmail() {
+    return sendMail()
+  }
+}
+
+class MockContentfulRepository {
+  async getLocalizedEntries() {
+    return {
+      items: [
+        {
+          fields: [
+            {
+              fields: {
+                strings: {
+                  en: {},
+                  'is-IS': {},
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }
+  }
+}
+
+const nationalId = '1234564321'
+let server: request.SuperTest<request.Test>
+
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder
+        .overrideProvider(ContentfulRepository)
+        .useClass(MockContentfulRepository)
+        .overrideProvider(EmailService)
+        .useClass(MockEmailService)
+        .overrideGuard(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId,
+            scope: [ApplicationScope.read, ApplicationScope.write],
+          }),
+        )
+        .compile()
+    },
+  })
+
+  server = request(app.getHttpServer())
 })
 
 describe('Application system API', () => {
-  let spy: jest.SpyInstance<
-    string | undefined,
-    [import('@nestjs/common').ExecutionContext]
-  >
-  beforeEach(() => {
-    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
-    spy.mockImplementation(() => {
-      return nationalId
-    })
-  })
-  afterAll(() => {
-    spy.mockRestore()
-  })
   it(`POST /application should register application`, async () => {
     // Act
-    const response = await request(app.getHttpServer())
+    const response = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ParentalLeave',
-        assignees: ['123456-1234'],
-        answers: {
-          usage: 3,
-        },
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
       })
       .expect(201)
 
@@ -45,22 +89,24 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
-  it('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  // This template does not have readyForProduction: false
+  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
-    const failedResponse = await request(app.getHttpServer())
+    const failedResponse = await server
       .post('/applications')
       .send({
         applicant: nationalId,
         state: 'draft',
         attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.EXAMPLE,
+        assignees: [nationalId],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(400)
 
@@ -71,45 +117,26 @@ describe('Application system API', () => {
     environment.environment = envBefore
   })
 
-  it('should fail when trying to POST when not logged in', async () => {
-    spy.mockRestore()
-    const failedResponse = await request(app.getHttpServer())
-      .post('/applications')
-      .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
-        answers: {
-          careerHistoryCompanies: ['government'],
-          dreamJob: 'pilot',
-        },
-      })
-      .expect(401)
-
-    expect(failedResponse.body.message).toBe('You are not authenticated')
-  })
-
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
-        answers: {
-          careerHistoryCompanies: ['government'],
-          dreamJob: 'pilot',
-        },
+        typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
 
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
     const putResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
@@ -122,31 +149,38 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
       })
-      .expect(201)
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const newStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
           dreamJob: 'firefighter',
@@ -160,21 +194,28 @@ describe('Application system API', () => {
   })
 
   it('should be able to PUT answers when updating the state of the application', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
       })
-      .expect(201)
+      .expect(200)
 
     const newStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
@@ -194,21 +235,28 @@ describe('Application system API', () => {
   })
 
   it('should not update non-writable answers when PUT-ing answers while updating the state', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
       })
-      .expect(201)
+      .expect(200)
 
     await server
       .put(`/applications/${response.body.id}/submit`)
@@ -236,20 +284,27 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
         },
       })
-      .expect(201)
+      .expect(200)
 
     const newStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
@@ -271,12 +326,9 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing an application that does not exist', async () => {
-    const response = await request(app.getHttpServer())
+    const response = await server
       .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
-        applicant: nationalId,
-        attachments: {},
-        assignees: ['123456-1234'],
         answers: {
           usage: 4,
         },
@@ -291,17 +343,20 @@ describe('Application system API', () => {
   })
 
   it('should successfully PUT answers to an existing application if said answers comply to the schema', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
-      answers: {
-        usage: 4,
-      },
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          usage: 4,
+        },
+      })
     expect(response.body.answers.usage).toBe(4)
     expect(response.body.answers.spread).toBe(undefined)
 
@@ -322,17 +377,20 @@ describe('Application system API', () => {
   })
 
   it('PUT /applications/:id should not be able to overwrite external data', async () => {
-    const server = request(app.getHttpServer())
-    const response = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
-      answers: {
-        usage: 4,
-      },
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          usage: 4,
+        },
+      })
 
     const { id } = response.body
     const putResponse = await server
@@ -348,21 +406,62 @@ describe('Application system API', () => {
     expect(putResponse.body.error).toBe('Bad Request')
   })
 
-  it('GET /applicants/:nationalRegistryId/applications should return a list of applications for applicant', async () => {
-    const server = request(app.getHttpServer())
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
+  it('GET /users/:nationalId/applications should not return applications that are in an unlisted state', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const getResponse = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    expect(getResponse.body).toEqual([])
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const updatedGetResponse = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    expect(updatedGetResponse.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.EXAMPLE,
+        }),
+      ]),
+    )
+  })
+
+  it('GET /users/:nationalId/applications should return a list of applications of the user', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server.put(`/applications/${creationResponse.body.id}`).send({
       answers: {
         usage: 4,
       },
     })
 
     const getResponse = await server
-      .get('/applicants/123456-4321/applications')
+      .get(`/users/${nationalId}/applications`)
       .expect(200)
 
     // Assert
@@ -373,28 +472,258 @@ describe('Application system API', () => {
     )
   })
 
-  it('GET /assignees/:nationalRegistryId/applications should return a list of applications for assignee', async () => {
-    const server = request(app.getHttpServer())
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
-      answers: {
-        usage: 4,
-      },
-    })
+  it(`GET /users/:nationalId/applications?typeId=ParentalLeave should return the list of applications of the user by typeId`, async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const getResponse = await server
-      .get('/assignees/123456-1234/applications')
+      .get(
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}`,
+      )
       .expect(200)
 
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignees: ['123456-1234'] }),
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.PARENTAL_LEAVE,
+        }),
       ]),
     )
   })
+
+  it('GET /users/:nationalId/applications?typeId=ParentalLeave&status=inprogress should return the list of applications of the user by typeId and status', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const getResponse = await server
+      .get(
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+      )
+      .expect(200)
+
+    // Assert
+    expect(getResponse.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.PARENTAL_LEAVE,
+          status: ApplicationStatus.IN_PROGRESS,
+        }),
+      ]),
+    )
+  })
+
+  it('PUT /applications/:id/generatePdf should return a presigned url', async () => {
+    const expectPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'generatePdf')
+      .mockImplementation(() => Promise.resolve(expectPresignedUrl))
+
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
+
+    const res = await server
+      .put(`/applications/${creationResponse.body.id}/generatePdf`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ url: 'presignedurl' })
+  })
+
+  it('PUT /applications/:id/requestFileSignature should return a documentToken and controlCode', async () => {
+    const expectedControlCode = '0000'
+    const expectedDocumentToken = 'token'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest.spyOn(fileService, 'requestFileSignature').mockImplementation(() =>
+      Promise.resolve({
+        controlCode: expectedControlCode,
+        documentToken: expectedDocumentToken,
+      }),
+    )
+
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
+
+    const res = await server
+      .put(`/applications/${creationResponse.body.id}/requestFileSignature`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({
+      controlCode: expectedControlCode,
+      documentToken: expectedDocumentToken,
+    })
+  })
+
+  it('GET /applications/:id/presignedUrl should return a presigned url', async () => {
+    const expectedPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'getPresignedUrl')
+      .mockImplementation(() => Promise.resolve(expectedPresignedUrl))
+
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
+
+    const res = await server
+      .get(`/applications/${creationResponse.body.id}/${type}/presignedUrl`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ url: expectedPresignedUrl })
+  })
+
+  it('PUT /applications/:id/uploadSignedFile should return that document has been signed', async () => {
+    const type = 'ChildrenResidenceChange'
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'uploadSignedFile')
+      .mockImplementation(() => Promise.resolve())
+
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
+
+    const res = await server
+      .put(`/applications/${creationResponse.body.id}/uploadSignedFile`)
+      .send({
+        type: type,
+        documentToken: '0000',
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ documentSigned: true })
+  })
+
+  it('should update external data with template api module action response', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const answers = {
+      person: {
+        name: 'Tester',
+        nationalId: '1234567890',
+        age: '30',
+        email: 'tester@island.is',
+        phoneNumber: '8234567',
+      },
+      dreamJob: 'Yes',
+      attachments: [],
+      careerHistory: 'yes',
+      careerHistoryCompanies: ['aranja'],
+    }
+
+    const draftStateResponse = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers,
+      })
+      .expect(200)
+
+    expect(draftStateResponse.body.state).toBe('draft')
+    expect(draftStateResponse.body.externalData).toEqual({})
+
+    const inReviewStateResponse = await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(inReviewStateResponse.body.state).toBe('inReview')
+
+    const inReviewExternalDataKeys = Object.keys(
+      inReviewStateResponse.body.externalData,
+    )
+    expect(inReviewExternalDataKeys).toContain('createApplication')
+    expect(
+      inReviewStateResponse.body.externalData.createApplication.data,
+    ).toEqual({ id: 1337 })
+
+    const approvedStateResponse = await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({
+        event: 'APPROVE',
+        answers: {
+          ...answers,
+          approvedByReviewer: 'APPROVE',
+        },
+      })
+      .expect(200)
+
+    expect(approvedStateResponse.body.state).toBe('approved')
+
+    const approvedExternalDataKeys = Object.keys(
+      approvedStateResponse.body.externalData,
+    )
+    expect(approvedExternalDataKeys).toContain('completeApplication')
+    expect(
+      approvedStateResponse.body.externalData.completeApplication.data,
+    ).toEqual({ id: 1337 })
+  })
+
+  // TODO: Validate that an application that is in a state that should be pruned
+  // is not listed when (mocked) Date.now > application.pruneAt
 })

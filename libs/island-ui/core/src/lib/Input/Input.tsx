@@ -1,62 +1,18 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
+
 import * as styles from './Input.treat'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
-import { Icon as IconType, Type } from '../IconRC/iconMap'
-import {
-  resolveResponsiveProp,
-  ResponsiveProp,
-} from '../../utils/responsiveProp'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
-
-export type InputBackgroundColor = 'white' | 'blue'
-
-interface InputComponentProps {
-  name: string
-  value?: string | number
-  defaultValue?: string | number
-  id?: string
-  className?: string
-  disabled?: boolean
-  required?: boolean
-  placeholder?: string
-  autoFocus?: boolean
-  size?: keyof typeof styles.inputSize
-  onFocus?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onBlur?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onChange?: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  onClick?: (
-    event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>,
-  ) => void
-  onKeyDown?: (
-    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  rows?: number
-  type?: 'text' | 'number' | 'email' | 'tel'
-  icon?: IconType
-  iconType?: Type
-  /**
-   * While true hover state will not show and focus state will be allways on
-   */
-  fixedFocusState?: boolean
-}
-
-export interface InputProps extends InputComponentProps {
-  label?: string
-  hasError?: boolean
-  errorMessage?: string
-  tooltip?: string
-  backgroundColor?: ResponsiveProp<InputBackgroundColor>
-  textarea?: boolean
-}
+import {
+  InputBackgroundColor,
+  InputComponentProps,
+  InputProps,
+  AriaError,
+} from './types'
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
   if (typeof ref === 'function') {
@@ -101,6 +57,7 @@ export const Input = forwardRef(
       name,
       label,
       errorMessage = '',
+      maxLength,
       hasError = Boolean(errorMessage),
       value,
       defaultValue,
@@ -124,10 +81,11 @@ export const Input = forwardRef(
     } = props
     const [hasFocus, setHasFocus] = useState(false)
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+    const errorId = `${id}-error`
     const ariaError = hasError
       ? {
           'aria-invalid': true,
-          'aria-describedby': id,
+          'aria-describedby': errorId,
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
@@ -167,7 +125,12 @@ export const Input = forwardRef(
               })}
             >
               {label}
-              {required && <span className={styles.isRequiredStar}> *</span>}
+              {required && (
+                <span aria-hidden="true" className={styles.isRequiredStar}>
+                  {' '}
+                  *
+                </span>
+              )}
               {tooltip && (
                 <Box marginLeft={1} display="inlineBlock">
                   <Tooltip text={tooltip} />
@@ -196,6 +159,7 @@ export const Input = forwardRef(
               ref={mergedRefs}
               placeholder={placeholder}
               value={value}
+              maxLength={maxLength}
               defaultValue={defaultValue}
               onFocus={(e) => {
                 setHasFocus(true)
@@ -220,8 +184,9 @@ export const Input = forwardRef(
                 }
               }}
               type={type}
-              {...ariaError}
+              {...(ariaError as AriaError)}
               {...inputProps}
+              {...(required && { 'aria-required': true })}
             />
           </Box>
           {hasError && !icon && (
@@ -229,6 +194,7 @@ export const Input = forwardRef(
               icon="warning"
               skipPlaceholderSize
               className={cn(styles.icon, styles.iconError)}
+              ariaHidden
             />
           )}
           {icon && (
@@ -239,11 +205,17 @@ export const Input = forwardRef(
               className={cn(styles.icon, {
                 [styles.iconError]: hasError,
               })}
+              ariaHidden
             />
           )}
         </Box>
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+            data-testid="inputErrorMessage"
+          >
             {errorMessage}
           </div>
         )}

@@ -7,7 +7,9 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
-
+import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   clientId: string
   scopes?: string[]
@@ -16,15 +18,21 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientAllowedScopeDTO
-  >()
+const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientAllowedScopeDTO>()
   const { isSubmitting } = formState
   const [scopes, setScopes] = useState<ApiScope[]>([])
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientAllowedScopesForm'),
+  )
 
   const add = async (data: ClientAllowedScopeDTO) => {
     const allowedScope = new ClientAllowedScopeDTO()
@@ -44,7 +52,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAvailableScopes = async () => {
-    const response = await ClientService.FindAvailabeScopes()
+    const response = await ClientService.findAvailabeScopes()
     if (response) {
       setScopes(response)
     }
@@ -83,7 +91,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this scope: <span>{scopeForDelete}</span>
+        {localization.removeConfirmation}: <span>{scopeForDelete}</span>
       </p>
     )
   }
@@ -92,11 +100,10 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     <div className="client-allowed-scopes">
       <div className="client-allowed-scopes__wrapper">
         <div className="client-allowed-scopes__container">
-          <h1>Allowed scopes</h1>
+          <h1>{localization.title}</h1>
           <div className="client-allowed-scopes__container__form">
             <div className="client-allowed-scopes__help">
-              By default a client has no access to any resources. Specify the
-              allowed resources by adding the corresponding scopes names
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
@@ -105,31 +112,37 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     className="client-allowed-scopes__label"
                     htmlFor="scopeName"
                   >
-                    Scope Name
+                    {localization.fields['scopeName'].label}
                   </label>
                   <select
                     id="scopeName"
                     className="client-allowed-scopes__select"
                     name="scopeName"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateScope,
+                    })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
                       return <option value={scope.name}>{scope.name}</option>
                     })}
                   </select>
-                  <HelpBox helpText="Select an allowed scope" />
+                  <HelpBox
+                    helpText={localization.fields['scopeName'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="scopeName"
-                    message="Scope Name is required"
+                    message={localization.fields['scopeName'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="client-allowed-scopes__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    title={localization.buttons['add'].helpText}
+                    value={localization.buttons['add'].text}
                   />
                 </div>
                 <div
@@ -137,9 +150,13 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     selectedScope?.name ? 'show' : 'hidden'
                   }`}
                 >
+                  <h3>{localization.sections['selectedItem'].title}</h3>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Scope Name
+                      {
+                        localization.sections['selectedItem'].properties['name']
+                          .name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.name}
@@ -147,7 +164,11 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Display name
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'displayName'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.displayName}
@@ -155,7 +176,11 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                   </div>
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">
-                      Description
+                      {
+                        localization.sections['selectedItem'].properties[
+                          'description'
+                        ].name
+                      }
                     </div>
                     <div className="selected-item-property-value">
                       {selectedScope?.description}
@@ -165,9 +190,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title="No active scopes"
+                title={localization.noActiveConnections?.title}
                 show={!props.scopes || props.scopes.length === 0}
-                helpText="Select a scope and push the Add button to add a scope"
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -175,7 +200,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                   props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active scopes</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.scopes?.map((scope: string) => {
                   return (
                     <div
@@ -188,10 +213,10 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(scope)}
                           className="client-allowed-scopes__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -205,8 +230,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-allowed-scopes__button__cancel"
                     onClick={props.handleBack}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Back
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client-allowed-scopes__button__container">
@@ -214,8 +240,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-allowed-scopes__button__save"
                     onClick={props.handleNext}
+                    title={localization.buttons['save'].helpText}
                   >
-                    Next
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -228,9 +255,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeConfirmModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )
 }
-export default ClientAllowedScopes
+export default ClientAllowedScopesForm

@@ -1,23 +1,48 @@
-import React, { FC } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import React from 'react'
+import {
+  Text,
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+} from '@island.is/island-ui/core'
 import * as styles from './LogoList.treat'
+import cn from 'classnames'
 
 export interface LogoListProps {
   title: string
   body: string
   images: string[]
+  variant?: 'light' | 'dark'
 }
 
-export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
+export const LogoList = ({
+  title,
+  body,
+  images,
+  variant = 'light',
+}: LogoListProps) => (
   <div>
-    <Text variant="h1" as="h2" color="white">
+    <Text
+      variant="h1"
+      as="h2"
+      color={variant === 'light' ? 'white' : 'dark400'}
+    >
       {title}
     </Text>
-    <Box paddingTop={3} marginBottom={7}>
-      <Text variant="intro" as="p" color="white">
-        {body}
-      </Text>
-    </Box>
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          paddingTop={3}
+          paddingBottom={7}
+          span={['12/12', '12/12', '12/12', '6/12']}
+        >
+          <Text as="p" color={variant === 'light' ? 'white' : 'dark400'}>
+            {body}
+          </Text>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
     <Box
       display="flex"
       flexWrap="wrap"
@@ -25,7 +50,15 @@ export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
       justifyContent="spaceBetween"
     >
       {images.map((src, i) => (
-        <Box marginBottom={5} className={styles.logo} key={i}>
+        <Box
+          marginBottom={5}
+          className={
+            variant === 'light'
+              ? styles.logo
+              : cn(styles.logo, styles.invertedLogo)
+          }
+          key={i}
+        >
           <img src={src} alt="" />
         </Box>
       ))}

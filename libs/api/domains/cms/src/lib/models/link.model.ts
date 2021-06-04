@@ -4,10 +4,10 @@ import { ILink } from '../generated/contentfulTypes'
 @ObjectType()
 export class Link {
   @Field()
-  text: string
+  text!: string
 
   @Field()
-  url: string
+  url!: string
 }
 
 export const mapLink = ({ fields }: ILink): Link => {

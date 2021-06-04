@@ -4,9 +4,9 @@ API documentation should be targeted towards the developer that will consume the
 
 To help with keeping documentation up to date consider using automatic generation tools that during build time can, for example, gather comments in predefined syntax and generate the [Open API Specification](https://swagger.io/specification/) (OAS), this means that the OAS lives bundled with the code and should be easier for developers to maintain.
 
-**Note** - To be able to register a **REST** service to _Viskuausan_ the service **MUST** provide an **OPENAPI 3** service description.
+**Note** - To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
 
-The following fields are required for services to be automatically imported to _Viskuausan_:
+The following fields, not marked as (_Optional_), are required for services to be automatically imported to the _API Catalogue_:
 
 - info
   - description — short but proper description of the API.
@@ -14,18 +14,26 @@ The following fields are required for services to be automatically imported to _
   - title — descriptive name of the API.
   - contact — information on who to contact about an issue with the service.
     - name — of the person or a department.
+    - url (_Optional_) — containing information on the person or department to contact.
     - email — fully qualified email.
   - x-category — What kind of data does this service work with.
     - Possible values: `open`, `official`, `personal`, `health`, `financial`.
+    - These values are displayed in the service view.
   - x-pricing — Cost of using this service.
     - Possible values: `free`, `paid`.
+    - These values are displayed in the service view.
   - x-links — Links regarding the service.
-    - responsibleParty — a fully qualified url to an online page containing information about the responsible party/owner of the service.
-    - documentation — (_Optional_) a fully qualified url to the API documentation page.
-    - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service.
-    - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service.
+    - responsibleParty — a fully qualified url to an online page containing information about the responsible party/owner of the service. This is linked to in the service view.
+    - documentation — (_Optional_) a fully qualified url to the API documentation page. This is linked to in the service view.
+    - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service. This is linked to in the service view.
+    - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service. This is linked to in the service view.
 
 Example can be found [here](documentation.md#example).
+
+Setup example for NSwag in .NET core can be found [here](documentation.md#Setup-example).
+
+This picture shows where each OpenApi extension (x-\*) is displayed or linked in the service view.
+![openapi-extensions-map](assets/extensions_map.png)
 
 ## Describe error handling
 
@@ -257,4 +265,40 @@ components:
           type: string
         param:
           type: string
+```
+
+## Setup example
+
+```text
+public void ConfigureServices(IServiceCollection services)
+{
+	services.AddControllers();
+	services.AddRouting(options => options.LowercaseUrls = true);
+
+	services.AddOpenApiDocument(config =>
+	{
+		//Registers all the required information for the API catalogue
+		config.PostProcess = document =>
+		{
+			//Basic information for the service, what it does and who is responsible for it
+			document.Info.Version = "v1";
+			document.Info.Title = "National Registry";
+			document.Info.Description = "Provides access to an example service that retrieves individuals.";
+			document.Info.Contact = new NSwag.OpenApiContact { Name = "Digital Iceland", Email = "stafraentisland@fjr.is", Url = "https://stafraent.island.is/" };
+
+			//The extension fields specifically used for API catalogue to help filter services
+			document.Info.ExtensionData = new Dictionary<string, object>();
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-category", new string[] { "personal", "official" }));
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-pricing", new string[] { "free", "paid" }));
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-links", new Dictionary<string, string>()
+			{
+				{ "documentation", "https://docs.my-service.island.is" },
+				{ "responsibleParty", "https://www.skra.is/um-okkur" },
+				{ "bugReport", "https://github.com/island-is/island.is/issues/new" },
+				{ "featureRequest", "https://github.com/island-is/island.is/issues/new" },
+			}));
+
+		};
+	});
+}
 ```

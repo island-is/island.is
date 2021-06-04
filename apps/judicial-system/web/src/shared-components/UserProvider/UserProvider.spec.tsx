@@ -1,37 +1,36 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   UserProvider,
   Header,
 } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const mockJudgeQuery = {
   request: {
-    query: UserQuery,
+    query: CurrentUserQuery,
   },
   result: {
     data: {
-      user: mockJudge,
+      currentUser: mockJudge,
     },
   },
 }
 
 describe('UserProvider', () => {
   test('should load the user', async () => {
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      pathname: 'test',
+    }))
+
     render(
       <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
-        <MemoryRouter initialEntries={[Constants.REQUEST_LIST_ROUTE]}>
-          <Route path={Constants.REQUEST_LIST_ROUTE}>
-            <UserProvider>
-              <Header pathname={Constants.REQUEST_LIST_ROUTE} />
-            </UserProvider>
-          </Route>
-        </MemoryRouter>
+        <UserProvider>
+          <Header />
+        </UserProvider>
       </MockedProvider>,
     )
 

@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
-  sortDirection,
+  elasticTagField,
+  SortDirection,
+  SortField,
+  sortRule,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
@@ -15,6 +18,8 @@ import { AboutPage } from './models/aboutPage.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
+import { OrganizationSubpage } from './models/organizationSubpage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -26,7 +31,7 @@ export class CmsElasticsearchService {
   ): Promise<ArticleCategory[]> {
     const query = {
       types: ['webArticleCategory'],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size,
     }
     const categoryResponse = await this.elasticService.getDocumentsByMetaData(
@@ -35,7 +40,7 @@ export class CmsElasticsearchService {
     )
 
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
@@ -45,9 +50,16 @@ export class CmsElasticsearchService {
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
-      tags: [],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      tags: [] as elasticTagField[],
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size: input.size,
+    }
+
+    if (input.sort === SortField.POPULAR) {
+      query.sort = [
+        { popularityScore: { order: SortDirection.DESC } },
+        ...query.sort,
+      ]
     }
 
     if (input.category) {
@@ -63,7 +75,7 @@ export class CmsElasticsearchService {
       query,
     )
     return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
@@ -97,7 +109,7 @@ export class CmsElasticsearchService {
 
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: order as sortDirection },
+      sort: [{ dateCreated: { order } }] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
@@ -112,7 +124,7 @@ export class CmsElasticsearchService {
     return {
       total: articlesResponse.hits.total.value,
       items: articlesResponse.hits.hits.map<News>((response) =>
-        JSON.parse(response._source.response),
+        JSON.parse(response._source.response ?? '[]'),
       ),
     }
   }
@@ -147,9 +159,13 @@ export class CmsElasticsearchService {
     )
 
     // we return dates as array of strings on the format y-M
-    return newsDatesResponse.aggregations.dates.buckets.map(
-      (aggregationResult) => aggregationResult.key_as_string,
-    )
+    if (newsDatesResponse.aggregations) {
+      return newsDatesResponse.aggregations.dates.buckets.map(
+        (aggregationResult) => aggregationResult.key_as_string,
+      )
+    } else {
+      return []
+    }
   }
 
   async getSingleDocumentTypeBySlug<RequestedType>(
@@ -158,11 +174,32 @@ export class CmsElasticsearchService {
   ): Promise<RequestedType | null> {
     // return a single news item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getDocumentsByMetaData(
+    const newsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )
     const response = newsResponse.hits.hits?.[0]?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getSingleOrganizationSubpage(
+    index: string,
+    { slug, organizationSlug }: GetOrganizationSubpageInput,
+  ): Promise<OrganizationSubpage | null> {
+    // return an organization page by organization slug and subpage slug
+    const query = {
+      types: ['webOrganizationSubpage'],
+      tags: [
+        { type: 'slug', key: slug },
+        { type: 'organization', key: organizationSlug },
+      ],
+    }
+    const subpageResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    const response = subpageResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
   }
 
@@ -191,8 +228,13 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage(index: string, id: string): Promise<AboutPage> {
+  async getSingleAboutPage(
+    index: string,
+    id: string,
+  ): Promise<AboutPage | null> {
     const aboutPageDocument = await this.elasticService.findById(index, id)
-    return JSON.parse(aboutPageDocument.body?._source?.response)
+    return aboutPageDocument.body?._source?.response
+      ? JSON.parse(aboutPageDocument.body?._source?.response)
+      : null
   }
 }

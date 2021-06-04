@@ -8,16 +8,12 @@ The service currently supports AWS SES and nodemailer's test account as transpor
 
 ### NestJS Standalone - not recommended
 
-Add the service to your Module providers:
+Assuming `environment.emailOptions` implements `EmailServiceOptions`, add the module to your Module imports:
 
 ```typescript
 @Module({
-  providers: [
-    {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
-    },
-    EmailService,
+  imports: [
+    EmailModule.register(environment.emailOptions),
   ],
 })
 ```

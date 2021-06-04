@@ -3,15 +3,24 @@ import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
+import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+import { AuthModule } from '@island.is/auth-nest-tools'
+import { TranslationsModule } from '@island.is/api/domains/translations'
+import { SigningModule } from '@island.is/dokobit-signing'
+import { AuditModule } from '@island.is/nest/audit'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
+import { FileService } from './files/file.service'
+import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
-
-// import { AuthModule } from '@island.is/auth-nest-tools'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from './application.configuration'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -19,40 +28,43 @@ if (process.env.INIT_SCHEMA === 'true') {
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   const bullModuleName = 'application_system_api_bull_module'
-  const redisClient = createRedisCluster({
-    name: bullModuleName,
-    ssl: environment.production,
-    nodes: environment.redis.urls,
-  })
   BullModule = NestBullModule.registerQueueAsync({
     name: 'upload',
     useFactory: () => ({
       prefix: `{${bullModuleName}}`,
-      createClient: () => redisClient,
+      createClient: () =>
+        createRedisCluster({
+          name: bullModuleName,
+          ssl: environment.production,
+          nodes: environment.redis.urls,
+          noPrefix: true,
+        }),
     }),
   })
 }
 
 @Module({
   imports: [
-    // AuthModule.register({
-    //   audience: environment.identityServer.audience,
-    //   issuer: environment.identityServer.issuer,
-    //   jwksUri: `${environment.identityServer.jwksUri}`,
-    // }),
+    AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
+    TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
-    FileStorageModule,
+    FileStorageModule.register(environment.fileStorage),
     BullModule,
+    SigningModule.register(environment.signingOptions),
+    TranslationsModule,
   ],
   controllers: [ApplicationController],
   providers: [
     ApplicationService,
+    FileService,
     UploadProcessor,
     {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
+      provide: APPLICATION_CONFIG,
+      useValue: environment.application as ApplicationConfig,
     },
-    EmailService,
+    AwsService,
+    ApplicationAccessService,
   ],
 })
 export class ApplicationModule {}

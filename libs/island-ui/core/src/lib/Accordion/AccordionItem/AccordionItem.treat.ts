@@ -101,12 +101,6 @@ const iconWrapSizes = {
   sidebar: 20,
 }
 
-const iconSizes = {
-  default: 20,
-  small: 9,
-  sidebar: 12,
-}
-
 export const iconWrapVariants = styleMap({
   default: {
     backgroundColor: theme.color.blue100,
@@ -128,40 +122,30 @@ export const iconWrapVariants = styleMap({
   },
 })
 
-export const plusIcon = style({
+export const icon = style({
+  position: 'absolute',
   display: 'flex',
-  transform: 'rotateZ(0)',
-  transformOrigin: 'center',
-  transition: 'transform 300ms',
+  left: '50%',
 })
 
-export const iconVariants = styleMap({
-  default: {
-    width: iconSizes.default,
-    height: iconSizes.default,
-  },
-  small: {
-    width: iconSizes.small,
-    height: iconSizes.small,
-  },
-  sidebar: {
-    width: iconSizes.sidebar,
-    height: iconSizes.sidebar,
-  },
+export const addIcon = style({
+  transform: 'translateX(-50%) rotateZ(0deg)',
+  opacity: 1,
+  transition: 'opacity 150ms ease, transform 300ms ease',
 })
 
-export const plusIconActive = style({
-  transform: 'rotateZ(90deg)',
-})
-
-export const plusIconX = style({
-  fill: 'currentColor',
-})
-
-export const plusIconXActive = style({
+export const removeIcon = style({
+  transform: 'translateX(-50%) rotateZ(-90deg)',
   opacity: 0,
+  transition: 'opacity 150ms ease, transform 300ms ease',
 })
 
-export const plusIconY = style({
-  fill: 'currentColor',
+export const showRemoveIcon = style({
+  transform: 'translateX(-50%) rotateZ(0deg)',
+  opacity: 1,
+})
+
+export const hideAddIcon = style({
+  transform: 'translateX(-50%) rotateZ(90deg)',
+  opacity: 0,
 })

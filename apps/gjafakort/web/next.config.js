@@ -12,6 +12,16 @@ const {
 
 module.exports = withSourceMaps(
   withTreat({
+    redirects() {
+      return [
+        {
+          source: '/',
+          destination: 'https://island.is/ferdagjof',
+          permanent: true,
+        },
+      ]
+    },
+
     webpack: (config, options) => {
       if (!options.isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
@@ -38,6 +48,9 @@ module.exports = withSourceMaps(
       // Will be available on both server and client
       apiUrl: `${WEB_PUBLIC_URL}/api`,
       SENTRY_DSN,
+    },
+    env: {
+      API_MOCKS: process.env.API_MOCKS || '',
     },
   }),
 )

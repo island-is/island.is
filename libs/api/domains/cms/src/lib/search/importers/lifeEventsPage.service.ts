@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { ILifeEventPage } from '../../generated/contentfulTypes'
 import { mapLifeEventPage } from '../../models/lifeEventPage.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
@@ -27,7 +23,7 @@ export class LifeEventsPageSyncService
     )
   }
 
-  doMapping(entries: doMappingInput<ILifeEventPage>) {
+  doMapping(entries: ILifeEventPage[]) {
     logger.info('Mapping life event pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {

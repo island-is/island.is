@@ -45,6 +45,9 @@ module.exports = withSourceMaps(
         SENTRY_DSN,
         graphqlEndpoint: graphqlPath,
       },
+      env: {
+        API_MOCKS: process.env.API_MOCKS || '',
+      },
     }),
   ),
 )

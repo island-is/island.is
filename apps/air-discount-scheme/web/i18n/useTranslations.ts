@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
+import { Locale } from '@island.is/shared/types'
 
 import useI18n from './useI18n'
-import { Locale } from '../types'
 import { TranslationsContext } from './appWithTranslation'
 
 const getLocale = (defaultLocale: Locale): Locale => {

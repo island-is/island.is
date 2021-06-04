@@ -2,34 +2,8 @@ import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {
-  describe('alternativeTravelBan', () => {
-    it('should not change a true value', () => {
-      // Arrange
-      const theCase = {
-        alternativeTravelBan: true,
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.alternativeTravelBan).toBe(true)
-    })
-
-    it('should not change a false value', () => {
-      // Arrange
-      const theCase = {
-        alternativeTravelBan: false,
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.alternativeTravelBan).toBe(false)
-    })
-
-    it('should should change a null value to false', () => {
+  describe('sendRequestToDefender', () => {
+    it('should set undefined to false', () => {
       // Arrange
       const theCase = {} as Case
 
@@ -37,60 +11,29 @@ describe('transformCase', () => {
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.alternativeTravelBan).toBe(false)
+      expect(res.sendRequestToDefender).toBe(false)
     })
-  })
-  describe('isCourtDateInThePast', () => {
-    it('should not set court date in the past if no court date', () => {
+
+    it('should leave false unchanged', () => {
       // Arrange
-      const theCase = {} as Case
+      const theCase = { sendRequestToDefender: false } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isCourtDateInThePast).toBeUndefined()
+      expect(res.sendRequestToDefender).toBe(false)
     })
 
-    it('should set court date in the past to false if court date in the future', () => {
+    it('should leave true unchanged', () => {
       // Arrange
-      const courtDate = new Date()
-      courtDate.setSeconds(courtDate.getSeconds() + 1)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
+      const theCase = { sendRequestToDefender: true } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isCourtDateInThePast).toBe(false)
-    })
-
-    it('should set court date in the past to true if court date is more than five minutes in the past', () => {
-      // Arrange
-      const courtDate = new Date()
-      courtDate.setMinutes(courtDate.getMinutes() - 5)
-      courtDate.setSeconds(courtDate.getSeconds() - 1)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBe(true)
-    })
-
-    it('should set court date in the past to false if court date less than five minutes in the past', () => {
-      // Arrange
-      const courtDate = new Date()
-      courtDate.setMinutes(courtDate.getMinutes() - 4)
-      courtDate.setSeconds(courtDate.getSeconds() - 59)
-      const theCase = { courtDate: courtDate.toISOString() } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isCourtDateInThePast).toBe(false)
+      expect(res.sendRequestToDefender).toBe(true)
     })
   })
 
@@ -130,6 +73,86 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.isCustodyEndDateInThePast).toBe(true)
+    })
+  })
+
+  describe('isAppealDeadlineExpired', () => {
+    it('should be false when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(false)
+    })
+
+    it('should be false while the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(false)
+    })
+
+    it('should be true when the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealDeadlineExpired).toBe(true)
+    })
+  })
+
+  describe('isAppealGracePeriodExpired', () => {
+    it('should be false when no ruling date is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(false)
+    })
+
+    it('should be false while the appeal window is open', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 7)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(false)
+    })
+
+    it('should be true when the appeal window has closed', () => {
+      // Arrange
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 7)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAppealGracePeriodExpired).toBe(true)
     })
   })
 })

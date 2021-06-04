@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -42,7 +45,7 @@
     "air-discount-scheme-web": {
       "tags": []
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
     },
@@ -67,6 +70,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-auth": {
+      "tags": []
+    },
     "api-domains-cms": {
       "tags": []
     },
@@ -88,13 +94,34 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-education": {
+      "tags": []
+    },
+    "api-domains-endorsement-system": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-national-registry-x-road": {
+      "tags": []
+    },
+    "api-domains-regulations": {
+      "tags": []
+    },
+    "api-domains-rsk": {
+      "tags": []
+    },
+    "api-domains-syslumenn": {
       "tags": []
     },
     "api-domains-translations": {
@@ -107,9 +134,6 @@
       "tags": []
     },
     "api-schema": {
-      "tags": []
-    },
-    "application-api-template-utils": {
       "tags": []
     },
     "application-core": {
@@ -131,13 +155,22 @@
       "tags": [],
       "implicitDependencies": ["application-system-form"]
     },
+    "application-template-api-modules": {
+      "tags": []
+    },
     "application-template-loader": {
       "tags": []
     },
     "application-templates-children-residence-change": {
       "tags": []
     },
+    "application-templates-data-protection-complaint": {
+      "tags": []
+    },
     "application-templates-document-provider-onboarding": {
+      "tags": []
+    },
+    "application-templates-driving-assessment-approval": {
       "tags": []
     },
     "application-templates-driving-lessons": {
@@ -146,7 +179,22 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-family-matters-core": {
+      "tags": []
+    },
+    "application-templates-funding-government-projects": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
+      "tags": []
+    },
+    "application-templates-institution-collaboration": {
+      "tags": []
+    },
+    "application-templates-joint-custody-agreement": {
+      "tags": []
+    },
+    "application-templates-login-service": {
       "tags": []
     },
     "application-templates-meta-application": {
@@ -155,10 +203,22 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-application": {
+      "tags": []
+    },
+    "application-templates-party-letter": {
+      "tags": []
+    },
     "application-templates-passport": {
       "tags": []
     },
+    "application-templates-public-debt-payment-plan": {
+      "tags": []
+    },
     "application-templates-reference-template": {
+      "tags": []
+    },
+    "application-ui-components": {
       "tags": []
     },
     "application-ui-fields": {
@@ -180,7 +240,47 @@
     "auth-nest-tools": {
       "tags": []
     },
+    "auth-react": {
+      "tags": []
+    },
+    "auth-scopes": {
+      "tags": []
+    },
     "cache": {
+      "tags": []
+    },
+    "clients-auth-public-api": {
+      "implicitDependencies": ["services-auth-public-api"],
+      "tags": []
+    },
+    "clients-document-provider": {
+      "tags": []
+    },
+    "clients-documents": {
+      "tags": []
+    },
+    "clients-mms": {
+      "tags": []
+    },
+    "clients-national-registry-v1": {
+      "tags": []
+    },
+    "clients-national-registry-v2": {
+      "tags": []
+    },
+    "clients-regulations": {
+      "tags": []
+    },
+    "clients-rsk-v1": {
+      "tags": []
+    },
+    "clients-rsk-v2": {
+      "tags": []
+    },
+    "clients-vmst": {
+      "tags": []
+    },
+    "clients-zendesk": {
       "tags": []
     },
     "content-search-index-manager": {
@@ -198,10 +298,19 @@
     "content-search-toolkit": {
       "tags": []
     },
-    "contentful-importer": {
+    "contentful-mideind-extension": {
+      "tags": []
+    },
+    "contentful-parent-slug-extension": {
+      "tags": []
+    },
+    "contentful-translation-extension": {
       "tags": []
     },
     "dokobit-signing": {
+      "tags": []
+    },
+    "download-service": {
       "tags": []
     },
     "email-service": {
@@ -236,13 +345,28 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
+    "icelandic-names-registry-backend": {
+      "tags": []
+    },
+    "icelandic-names-registry-types": {
+      "tags": []
+    },
     "infra-express-server": {
+      "tags": []
+    },
+    "infra-metrics": {
       "tags": []
     },
     "infra-monitoring": {
       "tags": []
     },
     "infra-nest-server": {
+      "tags": []
+    },
+    "infra-next-server": {
       "tags": []
     },
     "infra-tracing": {
@@ -259,7 +383,8 @@
       "tags": []
     },
     "island-ui-storybook": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
       "tags": []
@@ -282,6 +407,9 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "judicial-system-court-client": {
+      "tags": []
+    },
     "judicial-system-formatters": {
       "tags": []
     },
@@ -291,9 +419,12 @@
     "judicial-system-web": {
       "tags": []
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
+    },
+    "judicial-system-xrd-api": {
+      "tags": []
     },
     "localization": {
       "tags": []
@@ -302,6 +433,9 @@
       "tags": []
     },
     "message-queue": {
+      "tags": []
+    },
+    "nest-audit": {
       "tags": []
     },
     "nova-sms": {
@@ -347,6 +481,18 @@
     "service-portal-education": {
       "tags": []
     },
+    "service-portal-education-career": {
+      "tags": []
+    },
+    "service-portal-education-degree": {
+      "tags": []
+    },
+    "service-portal-education-license": {
+      "tags": []
+    },
+    "service-portal-education-student-assessment": {
+      "tags": []
+    },
     "service-portal-eligibility": {
       "tags": []
     },
@@ -362,7 +508,13 @@
     "service-portal-health": {
       "tags": []
     },
-    "service-portal-settings": {
+    "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
+    "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-personal-information": {
       "tags": []
     },
     "services-auth-admin-api": {
@@ -371,10 +523,22 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-auth-public-api": {
+      "tags": []
+    },
     "services-documents": {
       "tags": []
     },
+    "services-endorsements-api": {
+      "tags": []
+    },
+    "services-party-letter-registry-api": {
+      "tags": []
+    },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-temporary-voter-registry-api": {
       "tags": []
     },
     "services-user-profile": {
@@ -389,13 +553,13 @@
     "shared-connected": {
       "tags": []
     },
+    "shared-constants": {
+      "tags": []
+    },
     "shared-form-fields": {
       "tags": []
     },
     "shared-mocking": {
-      "tags": []
-    },
-    "shared-table": {
       "tags": []
     },
     "shared-types": {
@@ -410,17 +574,23 @@
     "skilavottord-web": {
       "tags": []
     },
+    "skilavottord-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
+    },
     "skilavottord-ws": {
       "tags": []
     },
-    "skilavottord/web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["skilavottord-web"]
+    "system-e2e": {
+      "tags": []
     },
     "utils-api": {
       "tags": []
     },
-    "vmst-client": {
+    "utils-environment": {
+      "tags": []
+    },
+    "utils-shared": {
       "tags": []
     },
     "web": {
@@ -430,8 +600,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }

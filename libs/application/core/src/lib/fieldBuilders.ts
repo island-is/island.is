@@ -3,8 +3,10 @@ import { Colors } from '@island.is/island-ui/theme'
 import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
-} from '@island.is/island-ui/core'
+  BoxProps,
+} from '@island.is/island-ui/core/types'
 
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -23,10 +25,12 @@ import {
   SelectField,
   TextField,
   TextFieldVariant,
-  MaybeWithApplication,
+  MaybeWithApplicationAndField,
   AsyncSelectField,
   Context,
   RecordObject,
+  Field,
+  TitleVariants,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -41,11 +45,13 @@ export function buildCheckboxField(data: {
   id: string
   title: FormText
   description?: FormText
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   disabled?: boolean
   width?: FieldWidth
   large?: boolean
-  defaultValue?: MaybeWithApplication<unknown>
+  strong?: boolean
+  backgroundColor?: InputBackgroundColor
+  defaultValue?: MaybeWithApplicationAndField<unknown>
 }): CheckboxField {
   const {
     condition,
@@ -55,7 +61,9 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    strong = false,
     large,
+    backgroundColor,
     defaultValue,
   } = data
   return {
@@ -64,6 +72,8 @@ export function buildCheckboxField(data: {
     disabled,
     width,
     large,
+    strong,
+    backgroundColor,
     condition,
     id,
     title,
@@ -81,11 +91,12 @@ export function buildDateField(data: {
   placeholder?: FormText
   description?: FormText
   maxDate?: Date
-  minDate?: Date
+  minDate?: MaybeWithApplicationAndField<Date>
+  excludeDates?: MaybeWithApplicationAndField<Date[]>
   disabled?: boolean
   width?: FieldWidth
   backgroundColor?: DatePickerBackgroundColor
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
 }): DateField {
   const {
     condition,
@@ -95,6 +106,7 @@ export function buildDateField(data: {
     defaultValue,
     maxDate,
     minDate,
+    excludeDates,
     disabled = false,
     width = 'full',
     placeholder,
@@ -112,6 +124,7 @@ export function buildDateField(data: {
     description,
     maxDate,
     minDate,
+    excludeDates,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
     backgroundColor,
@@ -122,13 +135,27 @@ export function buildDescriptionField(data: {
   condition?: Condition
   id: string
   title: FormText
+  titleVariant?: TitleVariants
   description: FormText
+  space?: BoxProps['paddingTop']
+  tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description } = data
+  const {
+    condition,
+    id,
+    titleVariant = 'h2',
+    title,
+    description,
+    tooltip,
+    space,
+  } = data
   return {
     children: undefined,
     condition,
     description,
+    titleVariant,
+    tooltip,
+    space,
     id,
     title,
     type: FieldTypes.DESCRIPTION,
@@ -141,12 +168,12 @@ export function buildRadioField(data: {
   id: string
   title: FormText
   description?: FormText
-  options: MaybeWithApplication<Option[]>
-  emphasize?: boolean
+  options: MaybeWithApplicationAndField<Option[]>
   largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
+  backgroundColor?: InputBackgroundColor
 }): RadioField {
   const {
     condition,
@@ -155,15 +182,14 @@ export function buildRadioField(data: {
     description,
     defaultValue,
     options,
-    emphasize = false,
-    largeButtons = false,
+    largeButtons = true,
     disabled = false,
     width = 'full',
+    backgroundColor,
   } = data
   return {
     children: undefined,
     defaultValue,
-    emphasize,
     largeButtons,
     disabled,
     width,
@@ -172,6 +198,7 @@ export function buildRadioField(data: {
     title,
     description,
     options,
+    backgroundColor,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -183,11 +210,12 @@ export function buildSelectField(data: {
   title: FormText
   description?: FormText
   placeholder?: FormText
-  options: MaybeWithApplication<Option[]>
+  options: MaybeWithApplicationAndField<Option[]>
   disabled?: boolean
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
+  backgroundColor?: InputBackgroundColor
 }): SelectField {
   const {
     condition,
@@ -200,6 +228,7 @@ export function buildSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -215,6 +244,7 @@ export function buildSelectField(data: {
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -229,7 +259,8 @@ export function buildAsyncSelectField(data: {
   disabled?: boolean
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
+  backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
     condition,
@@ -243,6 +274,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -259,6 +291,7 @@ export function buildAsyncSelectField(data: {
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -274,7 +307,9 @@ export function buildTextField(data: {
   format?: string | FormatInputValueFunction
   backgroundColor?: InputBackgroundColor
   suffix?: string
-  defaultValue?: MaybeWithApplication<unknown>
+  defaultValue?: MaybeWithApplicationAndField<unknown>
+  rows?: number
+  required?: boolean
 }): TextField {
   const {
     condition,
@@ -289,6 +324,8 @@ export function buildTextField(data: {
     variant = 'text',
     format,
     suffix,
+    rows,
+    required,
   } = data
   return {
     children: undefined,
@@ -304,6 +341,8 @@ export function buildTextField(data: {
     variant,
     format,
     suffix,
+    rows,
+    required,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -313,20 +352,33 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
+    childInputIds?: string[]
     title: FormText
     description?: FormText
     component: string
-    defaultValue?: MaybeWithApplication<unknown>
+    defaultValue?: MaybeWithApplicationAndField<unknown>
+    width?: FieldWidth
   },
   props?: RecordObject,
 ): CustomField {
-  const { condition, defaultValue, id, title, description, component } = data
+  const {
+    condition,
+    defaultValue,
+    id,
+    title,
+    description,
+    component,
+    childInputIds,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     defaultValue,
     condition,
     id,
+    childInputIds,
     title,
+    width,
     description,
     type: FieldTypes.CUSTOM,
     component,
@@ -339,9 +391,9 @@ export function buildFileUploadField(data: {
   id: string
   title: FormText
   introduction: FormText
-  uploadHeader?: string
-  uploadDescription?: string
-  uploadButtonLabel?: string
+  uploadHeader?: FormText
+  uploadDescription?: FormText
+  uploadButtonLabel?: FormText
   uploadMultiple?: boolean
   uploadAccept?: string
   maxSize?: number
@@ -376,10 +428,11 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
+  condition?: Condition
   title?: FormText
   color?: Colors
 }): DividerField {
-  const { title, color } = data
+  const { title, color, condition } = data
   return {
     id: '',
     children: undefined,
@@ -387,6 +440,7 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+    condition,
   }
 }
 
@@ -413,16 +467,39 @@ export function buildSubmitField(data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
+  refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField {
-  const { id, placement = 'footer', title, actions } = data
+  const {
+    id,
+    placement = 'footer',
+    title,
+    actions,
+    refetchApplicationAfterSubmit,
+  } = data
   return {
     children: undefined,
     id,
     title,
     actions,
     placement,
+    refetchApplicationAfterSubmit:
+      typeof refetchApplicationAfterSubmit !== 'undefined'
+        ? refetchApplicationAfterSubmit
+        : false,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
+}
+
+export function buildFieldOptions(
+  maybeOptions: MaybeWithApplicationAndField<Option[]>,
+  application: Application,
+  field: Field,
+): Option[] {
+  if (typeof maybeOptions === 'function') {
+    return maybeOptions(application, field)
+  }
+
+  return maybeOptions
 }

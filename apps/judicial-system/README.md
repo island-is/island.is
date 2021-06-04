@@ -56,15 +56,15 @@ You can serve this service locally by running:
 yarn start judicial-system-backend
 ```
 
-To enable SMS notifications to an on-call judge provide a password for the SMS service and a judge mobile number:
+To enable SMS notifications to an on-call judge provide a password for the SMS service and court mobile numbers:
 
 ```bash
-NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number> yarn start judicial-system-backend
+NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: { mobileNumbers: <judge mobile number> } }' yarn start judicial-system-backend
 ```
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
-To enable email sending you can modify `emailOptions` in `environment.ts` as follows:
+To enable email sending via AWS SES you can modify `emailOptions` in `environment.ts` as follows:
 
 ```typescript
 emailOptions: {
@@ -75,9 +75,13 @@ emailOptions: {
 },
 ```
 
-You need to be authenticated against AWS for this to work.
+You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
 
-Finally, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
+To enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL=<prison administration email>`
+
+To enable writing to AWS S3 you need to be authenticated against AWS.
+
+Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
 ### Graphql
 
@@ -86,6 +90,8 @@ Make sure you are serving the graphql client as well in order for you to make gr
 ```bash
 yarn start judicial-system-api
 ```
+
+You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
 ### OpenApi and Swagger
 

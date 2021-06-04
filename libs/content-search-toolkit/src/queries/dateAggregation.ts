@@ -1,5 +1,5 @@
-import { DateAggregationInput } from '../types'
-import { tagQuery } from './tagQuery'
+import { DateAggregationInput, elasticTagField } from '../types'
+import { TagQuery, tagQuery } from './tagQuery'
 
 export const dateAggregationQuery = ({
   types = [],
@@ -26,7 +26,8 @@ export const dateAggregationQuery = ({
       format: 'y-M-d',
     },
   }
-  const tagFilters = []
+  const tagFilters: TagQuery[] = []
+
   if (tags.length) {
     tags.forEach((tag) => {
       tagFilters.push(tagQuery(tag))
@@ -48,13 +49,10 @@ export const dateAggregationQuery = ({
     },
     aggs: {
       dates: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         date_histogram: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           calendar_interval: intervalMap[resolution].interval,
           format: intervalMap[resolution].format,
           order: { _key: order },
-          // eslint-disable-next-line @typescript-eslint/camelcase
           min_doc_count: 1,
           field,
         },

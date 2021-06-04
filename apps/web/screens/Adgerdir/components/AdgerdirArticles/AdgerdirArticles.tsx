@@ -16,7 +16,6 @@ import {
   Inline,
   Icon,
   LoadingIcon,
-  SleeveContext,
 } from '@island.is/island-ui/core'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -59,7 +58,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
   const { linkResolver } = useLinkResolver()
   const [filterString, setFilterString] = useState<string>('')
   const [usableFilters, setUsableFilters] = useState<Array<AdgerdirTag['id']>>(
@@ -129,10 +127,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     })
 
     setIndexesFilteredByTag(arr)
-
-    if (!sleeveIsOpen && arr.length) {
-      setIsOpen(true)
-    }
   }, [visibleItems, tagIds])
 
   const doUpdate = useCallback(() => {

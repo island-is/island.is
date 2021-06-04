@@ -1,6 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isUuid } from 'uuidv4'
 
 import { Provider } from './models/provider.model'
 import { CreateProviderDto } from './dto/createProvider.dto'
@@ -15,6 +17,7 @@ import { TechnicalContact } from './models/technicalContact.model'
 import { Helpdesk } from './models/helpdesk.model'
 import { CreateHelpdeskDto } from './dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from './dto/updateHelpdesk.dto'
+import { Changelog } from './models/changelog.model'
 
 @Injectable()
 export class DocumentProviderService {
@@ -29,6 +32,8 @@ export class DocumentProviderService {
     private technicalContactModel: typeof TechnicalContact,
     @InjectModel(Helpdesk)
     private helpdeskModel: typeof Helpdesk,
+    @InjectModel(Changelog)
+    private changelogModel: typeof Changelog,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -38,30 +43,62 @@ export class DocumentProviderService {
     return await this.organisationModel.findAll()
   }
 
+  async getOrganisationById(id: string): Promise<Organisation | null> {
+    return await this.organisationModel.findOne({
+      where: { id },
+    })
+  }
+
   async findOrganisationByNationalId(
     nationalId: string,
   ): Promise<Organisation | null> {
     this.logger.debug(`Finding organisation for nationalId - "${nationalId}"`)
     return this.organisationModel.findOne({
       where: { nationalId },
-      include: [Provider, AdministrativeContact],
+      include: [Provider, AdministrativeContact, TechnicalContact, Helpdesk],
     })
   }
 
   async createOrganisation(
     organisation: CreateOrganisationDto,
+    modifiedBy: string,
   ): Promise<Organisation> {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
-    return this.organisationModel.create(organisation, {
-      include: [AdministrativeContact],
-    })
+
+    // Add modified by to sub-objects, but only if they exists in the CreateOrganisationDto
+    // since it is allowed to add organisation without sub-objects
+    const org = organisation as Organisation
+
+    if (
+      org &&
+      'administrativeContact' in organisation &&
+      org.administrativeContact
+    ) {
+      org.administrativeContact.modifiedBy = modifiedBy
+    }
+
+    if (org && 'technicalContact' in organisation && org.technicalContact) {
+      org.technicalContact.modifiedBy = modifiedBy
+    }
+
+    if (org && 'helpdesk' in organisation && org.helpdesk) {
+      org.helpdesk.modifiedBy = modifiedBy
+    }
+
+    return this.organisationModel.create(
+      { ...org, modifiedBy },
+      {
+        include: [AdministrativeContact, TechnicalContact, Helpdesk],
+      },
+    )
   }
 
   async updateOrganisation(
     id: string,
     update: UpdateOrganisationDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedOrganisation: Organisation
@@ -71,12 +108,27 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedOrganisation],
-    ] = await this.organisationModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.organisationModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedOrganisation }
+  }
+
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    modifier: string,
+  ): Promise<boolean> {
+    const org = this.organisationModel.findOne({
+      where: { nationalId: organisationNationalId, modifiedBy: modifier },
+    })
+
+    return org ? true : false
   }
 
   // PROVIDER
@@ -86,14 +138,27 @@ export class DocumentProviderService {
 
   async findProviderById(id: string): Promise<Provider | null> {
     this.logger.debug(`Finding provider with id "${id}"`)
+    if (!isUuid(id)) return null
+
     return this.providerModel.findOne({
       where: { id },
     })
   }
 
-  async createProvider(provider: CreateProviderDto): Promise<Provider> {
+  async findProviderByExternalProviderId(
+    externalProviderId: string,
+  ): Promise<Provider | null> {
+    return this.providerModel.findOne({
+      where: { externalProviderId },
+    })
+  }
+
+  async createProvider(
+    provider: CreateProviderDto,
+    modifiedBy: string,
+  ): Promise<Provider> {
     this.logger.debug(
-      `Creating provider with id ${provider.id} for organisation ${provider.organisationId}`,
+      `Creating provider for organisation ${provider.organisationId}`,
     )
 
     const organisation = await this.organisationModel.findOne({
@@ -105,13 +170,13 @@ export class DocumentProviderService {
         `Organisation with id ${provider.organisationId} doesn't exist`,
       )
     }
-
-    return await this.providerModel.create(provider)
+    return await this.providerModel.create({ ...provider, modifiedBy })
   }
 
   async updateProvider(
     id: string,
     update: UpdateProviderDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedProvider: Provider
@@ -121,30 +186,46 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedProvider],
-    ] = await this.providerModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.providerModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedProvider }
+  }
+
+  async getOrganisationsProviders(id: string): Promise<Provider[]> {
+    const organisation = await this.organisationModel.findOne({
+      where: { id },
+      include: [Provider],
+    })
+
+    return organisation?.providers ?? []
   }
 
   // ADMINISTRATIVE CONTACT
   async createAdministrativeContact(
     organisationId: string,
     contact: CreateContactDto,
+    modifiedBy: string,
   ): Promise<AdministrativeContact> {
     this.logger.debug(`Creating administrative contact`)
 
     return await this.administrativeContactModel.create({
       organisationId,
       ...contact,
+      modifiedBy,
     })
   }
 
   async updateAdministrativeContact(
     id: string,
     update: UpdateContactDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedContact: AdministrativeContact
@@ -154,10 +235,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedContact],
-    ] = await this.administrativeContactModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.administrativeContactModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -166,18 +251,21 @@ export class DocumentProviderService {
   async createTechnicalContact(
     organisationId: string,
     contact: CreateContactDto,
+    modifiedBy: string,
   ): Promise<TechnicalContact> {
     this.logger.debug(`Creating technical contact`)
 
     return await this.technicalContactModel.create({
       organisationId,
       ...contact,
+      modifiedBy,
     })
   }
 
   async updateTechnicalContact(
     id: string,
     update: UpdateContactDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedContact: TechnicalContact
@@ -187,10 +275,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedContact],
-    ] = await this.technicalContactModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.technicalContactModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -199,18 +291,21 @@ export class DocumentProviderService {
   async createHelpdesk(
     organisationId: string,
     helpdesk: CreateHelpdeskDto,
+    modifiedBy: string,
   ): Promise<Helpdesk> {
     this.logger.debug(`Creating helpdesk`)
 
-    return await this.technicalContactModel.create({
+    return await this.helpdeskModel.create({
       organisationId,
       ...helpdesk,
+      modifiedBy,
     })
   }
 
   async updateHelpdesk(
     id: string,
     update: UpdateHelpdeskDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedHelpdesk: Helpdesk
@@ -220,11 +315,31 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedHelpdesk],
-    ] = await this.helpdeskModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.helpdeskModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedHelpdesk }
+  }
+
+  // CHANGELOGS
+  async getChangelogsByOrganisationId(
+    organisationId: string,
+  ): Promise<Changelog[] | null> {
+    return await this.changelogModel.findAll({ where: { organisationId } })
+  }
+
+  async getChangelogsByOrganisationIdAndEntityId(
+    organisationId: string,
+    entityId: string,
+  ): Promise<Changelog[] | null> {
+    return await this.changelogModel.findAll({
+      where: { organisationId, entityId },
+    })
   }
 }

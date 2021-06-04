@@ -1,0 +1,534 @@
+x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v12.0.0.0))
+openapi: 3.0.0
+info:
+  title: FOS - Parental Leaves API
+  version: 1.0.0
+servers:
+  - url: 'https://vmst-paternity-leave.azurewebsites.net'
+paths:
+  '/users/{nationalRegistryId}/parental-leaves':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetParentalLeaves
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: dateOfBirth
+          in: query
+          schema:
+            type: string
+            format: date-time
+            nullable: true
+          x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParentalLeavesResponse'
+    post:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_SetParentalLeave
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: parentalLeave
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParentalLeave'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostParentalLeaveResponse'
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/periods':
+    put:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_UpdatePeriods
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 2
+      requestBody:
+        x-name: periods
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Period'
+        required: true
+        x-position: 3
+      responses:
+        '200':
+          description: ''
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  '/users/{nationalRegistryId}/parental-leaves/rights':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetRights
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: dateOfBirth
+          in: query
+          schema:
+            type: string
+            format: date-time
+            nullable: true
+          x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Right'
+  '/users/{nationalRegistryId}/parental-leaves/estimated-payment-plan':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetEstimatedPaymentPlan
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: dateOfBirth
+          in: query
+          schema:
+            type: string
+            format: date-time
+            nullable: true
+          x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimatedPaymentPlan'
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPaymentPlan
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentPlansResponse'
+  /pension-funds:
+    get:
+      tags:
+        - Pension
+      operationId: Pension_GetPensionFunds
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PensionFundsResponse'
+  '/users/{nationalRegistryId}/pregnancy-status':
+    get:
+      tags:
+        - Pregnancy
+      operationId: Pregnancy_GetPregnancyStatus
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PregnancyStatus'
+  /unions:
+    get:
+      tags:
+        - Union
+      operationId: Union_GetUnions
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnionsResponse'
+components:
+  schemas:
+    ParentalLeavesResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        parentalLeaves:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParentalLeave'
+    ParentalLeave:
+      type: object
+      additionalProperties: false
+      required:
+        - applicationId
+        - applicant
+        - expectedDateOfBirth
+        - dateOfBirth
+        - email
+        - phoneNumber
+        - paymentInfo
+        - periods
+        - employers
+        - status
+        - rightsCode
+      properties:
+        applicationId:
+          type: string
+          minLength: 1
+        applicant:
+          type: string
+          minLength: 1
+          pattern: '^\d{10}$'
+        otherParentId:
+          type: string
+          nullable: true
+        expectedDateOfBirth:
+          type: string
+          minLength: 1
+        dateOfBirth:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          minLength: 1
+        phoneNumber:
+          type: string
+          minLength: 1
+        paymentInfo:
+          $ref: '#/components/schemas/PaymentInfo'
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/Period'
+        employers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employer'
+        status:
+          type: string
+          minLength: 1
+        rightsCode:
+          type: string
+          minLength: 1
+        attachments:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Attachment'
+    PaymentInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - bankAccount
+        - personalAllowance
+        - personalAllowanceFromSpouse
+        - union
+        - pensionFund
+        - privatePensionFund
+        - privatePensionFundRatio
+      properties:
+        bankAccount:
+          type: string
+          minLength: 1
+        personalAllowance:
+          type: number
+          format: float
+        personalAllowanceFromSpouse:
+          type: number
+          format: float
+        union:
+          $ref: '#/components/schemas/Union'
+        pensionFund:
+          $ref: '#/components/schemas/PensionFund'
+        privatePensionFund:
+          $ref: '#/components/schemas/PensionFund'
+        privatePensionFundRatio:
+          type: number
+          format: float
+    Union:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+    PensionFund:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+    Period:
+      type: object
+      additionalProperties: false
+      required:
+        - from
+        - to
+        - ratio
+        - approved
+        - paid
+      properties:
+        from:
+          type: string
+          minLength: 1
+        to:
+          type: string
+          minLength: 1
+        ratio:
+          type: number
+          format: float
+        approved:
+          type: boolean
+        paid:
+          type: boolean
+        rightsCodePeriod:
+          type: string
+          nullable: true
+    Employer:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - nationalRegistryId
+      properties:
+        email:
+          type: string
+          minLength: 1
+        nationalRegistryId:
+          type: string
+          minLength: 1
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - attachmentType
+        - attachmentBytes
+      properties:
+        attachmentType:
+          type: string
+          minLength: 1
+        attachmentBytes:
+          type: string
+          format: byte
+          minLength: 1
+    PostParentalLeaveResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+    Right:
+      type: object
+      additionalProperties: false
+      properties:
+        independentMonths:
+          type: integer
+          format: int32
+        transferableMonths:
+          type: integer
+          format: int32
+    EstimatedPaymentPlan:
+      type: object
+      additionalProperties: false
+      properties:
+        dateOfBirth:
+          type: string
+        workPeriodFrom:
+          type: string
+        workPeriodTo:
+          type: string
+        wageDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/WageDetail'
+        totalWages:
+          type: number
+          format: float
+        estimatedMonthlyWagesGross:
+          type: number
+          format: float
+    WageDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        employer:
+          type: string
+        employerPeriod:
+          type: string
+        employerWages:
+          type: number
+          format: float
+        employerJobRatio:
+          type: number
+          format: float
+        employerTaxAmount:
+          type: number
+          format: float
+        employerIncomeAmount:
+          type: number
+          format: float
+        employerIncomeAmountJobRatio:
+          type: number
+          format: float
+        employerSelfEmploymentAmount:
+          type: number
+          format: float
+        employerSelfEmploymentAmountJobRatio:
+          type: number
+          format: float
+    PaymentPlansResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        paymentPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentPlan'
+    PaymentPlan:
+      type: object
+      additionalProperties: false
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        estimatedAmount:
+          type: number
+          format: float
+        pensionAmount:
+          type: number
+          format: float
+        privatePensionAmount:
+          type: number
+          format: float
+        unionAmount:
+          type: number
+          format: float
+        taxAmount:
+          type: number
+          format: float
+        estimatedPayment:
+          type: number
+          format: float
+    PensionFundsResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        pensionFunds:
+          type: array
+          items:
+            $ref: '#/components/schemas/PensionFund'
+    PregnancyStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        hasActivePregnancy:
+          type: boolean
+        pregnancyDueDate:
+          type: string
+          format: date-time
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+        errorCode:
+          type: integer
+          format: int32
+        hasError:
+          type: boolean
+    UnionsResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        unions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Union'

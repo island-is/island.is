@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
@@ -19,6 +21,12 @@ import { HealthController } from './health.controller'
 import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { RSKModule } from '@island.is/api/domains/rsk'
+import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -47,6 +55,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
+    AuthDomainModule.register(environment.authPublicApi),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
@@ -54,16 +63,38 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
     }),
+    EducationModule.register({
+      xroad: {
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        services: {
+          license: environment.education.xroadLicenseServiceId,
+          grade: environment.education.xroadGradeServiceId,
+        },
+      },
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
+      fileDownloadBucket: environment.education.fileDownloadBucket,
+    }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
     DirectorateOfLabourModule.register(),
-    FileUploadModule,
+    FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
+      documentClientConfig: {
+        basePath: environment.documentService.basePath,
+        clientId: environment.documentService.clientId,
+        clientSecret: environment.documentService.clientSecret,
+        tokenUrl: environment.documentService.tokenUrl,
+      },
+      downloadServiceConfig: {
+        downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      },
     }),
     DocumentProviderModule.register({
       test: {
@@ -78,20 +109,28 @@ const autoSchemaFile = environment.production
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins,
     }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
-      baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-      user: environment.nationalRegistry.user,
-      password: environment.nationalRegistry.password,
-      host: environment.nationalRegistry.host,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     HealthInsuranceModule.register({
       wsdlUrl: environment.healthInsurance.wsdlUrl,
       baseUrl: environment.healthInsurance.baseUrl,
       username: environment.healthInsurance.username,
       password: environment.healthInsurance.password,
+      clientID: environment.healthInsurance.clientID,
+      xroadID: environment.healthInsurance.xroadID,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:
@@ -99,10 +138,31 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: `${environment.identityServer.jwksUri}`,
+    AuthModule.register(environment.auth),
+    SyslumennModule.register({
+      url: environment.syslumennService.url,
+      username: environment.syslumennService.username,
+      password: environment.syslumennService.password,
+    }),
+    RSKModule.register({
+      password: environment.rskDomain.password,
+      url: environment.rskDomain.url,
+      username: environment.rskDomain.username,
+    }),
+    IcelandicNamesModule.register({
+      backendUrl: environment.icelandicNamesRegistry.backendUrl,
+    }),
+    EndorsementSystemModule.register({
+      baseApiUrl: environment.endorsementSystem.baseApiUrl,
+    }),
+    RegulationsModule.register({
+      url: environment.regulationsDomain.url,
+    }),
+    NationalRegistryXRoadModule.register({
+      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+      xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
   ],
 })

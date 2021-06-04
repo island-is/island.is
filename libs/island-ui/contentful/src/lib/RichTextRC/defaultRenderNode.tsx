@@ -24,28 +24,39 @@ const componentMargins: {
 } = { marginBottom: [5, 5, 5, 6], marginTop: [5, 5, 5, 6] }
 
 // Searches render node children recursively for the text
-const getInnerText = (node) => {
+const getInnerText = (node: any): string => {
   if (typeof node === 'string') {
     return node
   }
 
+  // we check all entries of this array for a valid string value
   if (Array.isArray(node)) {
-    return getInnerText(node[0])
+    // check all array entries and return the first non empty string
+    for (const entry of node) {
+      // if the array entry is a non empty string return it
+      if (typeof entry === 'string' && entry.length) {
+        return entry
+      } else {
+        // the entry is an array or an object, try and find an embedded string
+        const foundValue = getInnerText(entry)
+        if (foundValue.length) {
+          return foundValue
+        }
+      }
+    }
   }
 
-  if (typeof node === 'object') {
+  if (typeof node === 'object' && node) {
     const inner = node?.props?.children ?? null
-
     return getInnerText(inner)
   }
 
   return ''
 }
-
 export const defaultRenderNode: RenderNode = {
   [BLOCKS.HEADING_1]: (_node, children) => (
     <Box
-      id={slugify(String(getInnerText(children)))}
+      id={slugify(getInnerText(children))}
       component="h1"
       className={getTextStyles({ variant: 'h1' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -55,7 +66,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_2]: (_node, children) => (
     <Box
-      id={slugify(String(getInnerText(children)))}
+      id={slugify(getInnerText(children))}
       component="h2"
       className={getTextStyles({ variant: 'h2' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -65,7 +76,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_3]: (_node, children) => (
     <Box
-      id={slugify(String(getInnerText(children)))}
+      id={slugify(getInnerText(children))}
       component="h3"
       className={getTextStyles({ variant: 'h3' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -75,7 +86,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_4]: (_node, children) => (
     <Box
-      id={slugify(String(getInnerText(children)))}
+      id={slugify(getInnerText(children))}
       component="h4"
       className={getTextStyles({ variant: 'h4' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}

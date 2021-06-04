@@ -1,41 +1,38 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Route, MemoryRouter } from 'react-router-dom'
-import StepOne from './StepOne'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
-  mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
-import {
-  CaseGender,
-  CaseType,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import StepOne from './StepOne'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -52,7 +49,7 @@ describe('/krafa with an id', () => {
 
     expect(
       ((await screen.findByLabelText('Kennitala *')) as HTMLInputElement).value,
-    ).toEqual('111111-1110')
+    ).toEqual('000000-0000')
 
     expect(
       ((await screen.findByLabelText('Fullt nafn *')) as HTMLInputElement)
@@ -78,22 +75,24 @@ describe('/krafa with an id', () => {
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
 
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -110,43 +109,55 @@ describe('/krafa with an id', () => {
 describe('/krafa without ID', () => {
   test('should have a create case button', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: undefined },
+    }))
 
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
-          <UserProvider>
-            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
-              <StepOne type={CaseType.CUSTODY} />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepOne type={CaseType.CUSTODY} />
+        </UserProvider>
       </MockedProvider>,
     )
 
     // Assert
+    // Wierd enough, this expect has to be here. Otherwise, an "was not wrapped in act" warning is shown
     expect(
-      await screen.findByRole('button', { name: /Stofna kröfu/ }),
+      await screen.findByLabelText('Slá inn LÖKE málsnúmer *'),
     ).toBeInTheDocument()
+
+    expect(await screen.findByText('Stofna kröfu')).toBeTruthy()
   })
 
-  test('should display an empty form if there is no id in url', async () => {
+  test('should display an empty form if the user goes to /ny/[type]', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: undefined },
+    }))
+
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
-          <UserProvider>
-            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
-              <StepOne type={CaseType.CUSTODY} />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepOne type={CaseType.CUSTODY} />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -178,35 +189,23 @@ describe('/krafa without ID', () => {
 
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: undefined },
+    }))
+
     render(
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
           ...mockProsecutorQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'testid',
-              accusedName: 'Jon Harring',
-            } as UpdateCase,
-            {
-              id: 'testid',
-              accusedAddress: 'Harringvej 2',
-            } as UpdateCase,
-            {
-              id: 'testid',
-              accusedGender: CaseGender.FEMALE,
-            } as UpdateCase,
-          ]),
+          ...mockInstitutionsQuery,
         ]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
-          <UserProvider>
-            <Route path={Constants.STEP_ONE_ROUTE}>
-              <StepOne type={CaseType.CUSTODY} />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepOne type={CaseType.CUSTODY} />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -218,7 +217,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '000000-0000')
 
     userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 
@@ -233,6 +232,11 @@ describe('/krafa without ID', () => {
         'Lögheimili/dvalarstaður *',
       )) as HTMLInputElement,
       'Harringvej 2',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText(/Sláðu inn stjórnanda rannsóknar/),
+      'Ben 10',
     )
 
     expect(

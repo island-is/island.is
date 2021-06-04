@@ -1,10 +1,11 @@
+import addDays from 'date-fns/addDays'
+
 import {
   Application,
   buildAsyncSelectField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -14,82 +15,82 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  ExternalData,
+  Field,
   Form,
   FormModes,
+  SelectField,
 } from '@island.is/application/core'
-import { m, mm } from '../lib/messages'
-import { formatIsk, getEstimatedMonthlyPay } from '../parentalLeaveUtils'
-import { GetPensionFunds, GetUnions } from '../graphql/queries'
-import { NO, YES } from '../constants'
 
+import { parentalLeaveFormMessages } from '../lib/messages'
+import {
+  getOtherParentOptions,
+  getAllPeriodDates,
+  getSelectedChild,
+  createRange,
+  calculatePeriodPercentage,
+} from '../parentalLeaveUtils'
+import {
+  GetPensionFunds,
+  GetUnions,
+  GetPrivatePensionFunds,
+} from '../graphql/queries'
+import {
+  FILE_SIZE_LIMIT,
+  MANUAL,
+  NO,
+  SPOUSE,
+  StartDateOptions,
+  YES,
+} from '../constants'
 import Logo from '../assets/Logo'
-import { defaultMonths } from '../config'
+import { defaultMonths, minPeriodDays } from '../config'
+import {
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../types/schema'
+import { Period } from '../types'
 
-interface SelectItem {
-  id: string
-  name: string
-}
+const percentOptions = createRange<{ label: string; value: string }>(
+  10,
+  (i) => {
+    const ii = (i + 1) * 10
 
-type UnionQuery = {
-  getUnions: Array<SelectItem>
-}
-
-type PensionFundsQuery = {
-  getPensionFunds: Array<SelectItem>
-}
+    return {
+      label: `${ii}%`,
+      value: `${ii}`,
+    }
+  },
+).sort((a, b) => Number(b.value) - Number(a.value))
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
-  title: 'Fæðingarorlof',
+  title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'prerequisites',
+      title: parentalLeaveFormMessages.shared.prerequisitesSection,
+      children: [],
+    }),
+    buildSection({
       id: 'theApplicant',
-      title: m.applicantSection,
+      title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
         buildSubSection({
-          id: 'externalData',
-          title: m.externalDataSubSection,
-          children: [
-            buildExternalDataProvider({
-              title: m.introductionProvider,
-              id: 'approveExternalData',
-              dataProviders: [
-                buildDataProviderItem({
-                  id: 'userProfile',
-                  type: 'UserProfileProvider',
-                  title: m.userProfileInformationTitle,
-                  subTitle: m.userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'pregnancyStatus',
-                  type: 'PregnancyStatus',
-                  title: m.expectedDateOfBirthTitle,
-                  subTitle: m.expectedDateOfBirthSubtitle,
-                }),
-                buildDataProviderItem({
-                  id: 'parentalLeaves',
-                  type: 'ParentalLeaves',
-                  title: m.existingParentalLeavesTitle,
-                  subTitle: m.existingParentalLeavesSubTitle,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'emailAndPhoneNumber',
-          title: mm.applicant.subSection,
+          title: parentalLeaveFormMessages.applicant.subSection,
           children: [
             buildMultiField({
               id: 'contactInfo',
-              title: mm.applicant.title,
-              description: mm.applicant.description,
+              title: parentalLeaveFormMessages.applicant.title,
+              description: parentalLeaveFormMessages.applicant.description,
               children: [
                 buildTextField({
                   width: 'half',
-                  title: mm.applicant.email,
+                  title: parentalLeaveFormMessages.applicant.email,
                   id: 'applicant.email',
                   variant: 'email',
                   defaultValue: (application: Application) =>
@@ -99,7 +100,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   width: 'half',
-                  title: mm.applicant.phoneNumber,
+                  title: parentalLeaveFormMessages.applicant.phoneNumber,
                   defaultValue: (application: Application) =>
                     (application.externalData.userProfile?.data as {
                       mobilePhoneNumber?: string
@@ -115,32 +116,38 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'otherParent',
-          title: m.otherParentSubSection,
+          title: parentalLeaveFormMessages.shared.otherParentSubSection,
+          condition: (answers, externalData) => {
+            const selectedChild = getSelectedChild(answers, externalData)
+
+            if (selectedChild !== null) {
+              return selectedChild.parentalRelation === 'primary'
+            }
+
+            return true
+          },
           children: [
             buildMultiField({
               id: 'otherParent',
-              title: m.otherParentTitle,
-              description: m.otherParentDescription,
-              condition: () => {
-                // TODO this screen is only for the primary parent
-                return true
-              },
+              title: parentalLeaveFormMessages.shared.otherParentTitle,
+              description:
+                parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
-                buildCustomField({
+                buildRadioField({
                   id: 'otherParent',
-                  title: '',
-                  component: 'OtherParent',
+                  title: 'Other parent',
+                  options: (application) => getOtherParentOptions(application),
                 }),
                 buildTextField({
                   id: 'otherParentName',
-                  condition: (answers) => answers.otherParent === 'manual',
-                  title: m.otherParentName,
+                  condition: (answers) => answers.otherParent === MANUAL,
+                  title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'otherParentId',
-                  condition: (answers) => answers.otherParent === 'manual',
-                  title: m.otherParentID,
+                  condition: (answers) => answers.otherParent === MANUAL,
+                  title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
                   placeholder: '000000-0000',
@@ -149,45 +156,51 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              largeButtons: true,
-              emphasize: true,
-              condition: (answers) => answers.otherParent === 'manual',
-              title: mm.rightOfAccess.title,
-              description: mm.rightOfAccess.description,
+              condition: (answers) => answers.otherParent === MANUAL,
+              title: parentalLeaveFormMessages.rightOfAccess.title,
+              description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
-                { label: mm.rightOfAccess.yesOption, value: YES },
-                { label: m.noOptionLabel, value: NO },
+                {
+                  label: parentalLeaveFormMessages.rightOfAccess.yesOption,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
               ],
             }),
           ],
         }),
         buildSubSection({
           id: 'payments',
-          title: m.paymentInformationSubSection,
+          title: parentalLeaveFormMessages.shared.paymentInformationSubSection,
           children: [
             buildMultiField({
-              title: m.paymentInformationName,
+              title: parentalLeaveFormMessages.shared.paymentInformationName,
               id: 'payments',
               children: [
                 buildTextField({
-                  title: m.paymentInformationBank,
+                  title:
+                    parentalLeaveFormMessages.shared.paymentInformationBank,
                   id: 'payments.bank',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                 }),
                 buildAsyncSelectField({
-                  title: m.pensionFund,
+                  title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
                   width: 'half',
+                  loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<
-                      PensionFundsQuery
-                    >({
+                    const {
+                      data,
+                    } = await apolloClient.query<GetPensionFundsQuery>({
                       query: GetPensionFunds,
                     })
 
                     return (
-                      data?.getPensionFunds.map(({ id, name }) => ({
+                      data?.getPensionFunds?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -195,17 +208,17 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildAsyncSelectField({
-                  title: m.union,
+                  title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   width: 'half',
-                  loadingError: mm.errors.loading,
+                  loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<UnionQuery>({
+                    const { data } = await apolloClient.query<GetUnionsQuery>({
                       query: GetUnions,
                     })
 
                     return (
-                      data?.getUnions.map(({ id, name }) => ({
+                      data?.getUnions?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -213,27 +226,50 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  emphasize: true,
-                  largeButtons: false,
                   id: 'usePrivatePensionFund',
-                  title: m.privatePensionFundName,
-                  description: m.privatePensionFundDescription,
+                  title:
+                    parentalLeaveFormMessages.shared.privatePensionFundName,
+                  description:
+                    parentalLeaveFormMessages.shared
+                      .privatePensionFundDescription,
+                  width: 'half',
                   options: [
-                    { label: m.yesOptionLabel, value: YES },
-                    { label: m.noOptionLabel, value: NO },
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFund',
-                  title: m.privatePensionFund,
+                  title: parentalLeaveFormMessages.shared.privatePensionFund,
                   width: 'half',
-                  options: [{ label: 'Frjalsi', value: 'frjalsi' }],
+                  loadingError: parentalLeaveFormMessages.errors.loading,
+                  loadOptions: async ({ apolloClient }) => {
+                    const {
+                      data,
+                    } = await apolloClient.query<GetPrivatePensionFundsQuery>({
+                      query: GetPrivatePensionFunds,
+                    })
+
+                    return (
+                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
+                  },
                 }),
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFundPercentage',
-                  title: m.privatePensionFundRatio,
+                  title:
+                    parentalLeaveFormMessages.shared.privatePensionFundRatio,
                   width: 'half',
                   options: [
                     { label: '2%', value: '2' },
@@ -246,38 +282,53 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'personalAllowanceSubSection',
-          title: mm.personalAllowance.title,
+          title: parentalLeaveFormMessages.personalAllowance.title,
           children: [
             buildRadioField({
               id: 'usePersonalAllowance',
-              title: mm.personalAllowance.useYours,
-              largeButtons: true,
+              title: parentalLeaveFormMessages.personalAllowance.useYours,
               width: 'half',
               options: [
-                { label: m.yesOptionLabel, value: YES },
-                { label: m.noOptionLabel, value: NO },
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
               ],
             }),
             buildMultiField({
               id: 'personalAllowance',
               condition: (answers) => answers.usePersonalAllowance === YES,
-              title: mm.personalAllowance.title,
-              description: mm.personalAllowance.description,
+              title: parentalLeaveFormMessages.personalAllowance.title,
+              description:
+                parentalLeaveFormMessages.personalAllowance.description,
               children: [
                 buildRadioField({
                   id: 'personalAllowance.useAsMuchAsPossible',
-                  title: mm.personalAllowance.useAsMuchAsPossible,
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossible,
                   width: 'half',
-                  largeButtons: true,
                   options: [
-                    { label: m.yesOptionLabel, value: YES },
-                    { label: m.noOptionLabel, value: NO },
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
                   ],
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
-                  title: mm.personalAllowance.zeroToHundred,
-                  description: mm.personalAllowance.manual,
+                  title:
+                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                  description:
+                    parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
                   condition: (answers) =>
                     (answers as {
@@ -291,39 +342,54 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
-              title: mm.personalAllowance.useFromSpouse,
-              condition: (answers) => {
-                // TODO add check if this person has a spouse...
-                return true
-              },
-              largeButtons: true,
+              title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
+              condition: (answers) =>
+                answers.otherParent === SPOUSE ||
+                (answers.otherParent === MANUAL &&
+                  answers.otherParentRightOfAccess === YES),
               width: 'half',
               options: [
-                { label: m.yesOptionLabel, value: YES },
-                { label: m.noOptionLabel, value: NO },
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
               ],
             }),
             buildMultiField({
               id: 'personalAllowanceFromSpouse',
               condition: (answers) =>
                 answers.usePersonalAllowanceFromSpouse === YES,
-              title: mm.personalAllowance.spouseTitle,
-              description: mm.personalAllowance.spouseDescription,
+              title: parentalLeaveFormMessages.personalAllowance.spouseTitle,
+              description:
+                parentalLeaveFormMessages.personalAllowance.spouseDescription,
               children: [
                 buildRadioField({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
-                  title: mm.personalAllowance.useAsMuchAsPossible,
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossibleFromSpouse,
                   width: 'half',
-                  largeButtons: true,
                   options: [
-                    { label: m.yesOptionLabel, value: YES },
-                    { label: m.noOptionLabel, value: NO },
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
                   ],
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
-                  title: mm.personalAllowance.zeroToHundred,
-                  description: mm.personalAllowance.manual,
+                  title:
+                    parentalLeaveFormMessages.personalAllowance.zeroToHundred,
+                  description:
+                    parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
                   condition: (answers) =>
                     (answers as {
@@ -341,23 +407,53 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'employer',
-          title: mm.employer.subSection,
+          title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildRadioField({
               id: 'employer.isSelfEmployed',
-              title: mm.selfEmployed.title,
-              description: mm.selfEmployed.description,
-              largeButtons: true,
+              title: parentalLeaveFormMessages.selfEmployed.title,
+              description: parentalLeaveFormMessages.selfEmployed.description,
               width: 'half',
               options: [
-                { label: m.yesOptionLabel, value: YES },
-                { label: m.noOptionLabel, value: NO },
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
               ],
             }),
             buildMultiField({
-              id: 'employer',
-              title: mm.employer.title,
-              description: mm.employer.description,
+              id: 'employer.selfEmployed.attachment',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              condition: (answers) =>
+                (answers as {
+                  employer: {
+                    isSelfEmployed: string
+                  }
+                })?.employer?.isSelfEmployed === YES,
+              children: [
+                buildFileUploadField({
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'employer.information',
+              title: parentalLeaveFormMessages.employer.title,
+              description: parentalLeaveFormMessages.employer.description,
               condition: (answers) =>
                 (answers as {
                   employer: {
@@ -366,7 +462,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 })?.employer?.isSelfEmployed !== YES,
               children: [
                 buildTextField({
-                  title: mm.employer.email,
+                  title: parentalLeaveFormMessages.employer.email,
                   width: 'full',
                   id: 'employer.email',
                 }),
@@ -378,16 +474,16 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'rights',
-      title: m.rightsSection,
+      title: parentalLeaveFormMessages.shared.rightsSection,
       children: [
         buildSubSection({
           id: 'rightsQuestions',
-          title: m.yourRights,
+          title: parentalLeaveFormMessages.shared.yourRights,
           children: [
             buildMultiField({
               id: 'rightsIntro',
-              title: m.theseAreYourRights,
-              description: m.rightsDescription,
+              title: parentalLeaveFormMessages.shared.theseAreYourRights,
+              description: parentalLeaveFormMessages.shared.rightsDescription,
               children: [
                 buildCustomField(
                   {
@@ -402,7 +498,8 @@ export const ParentalLeaveForm: Form = buildForm({
                     keys: [
                       {
                         label: () => ({
-                          ...m.yourRightsInMonths,
+                          ...parentalLeaveFormMessages.shared
+                            .yourRightsInMonths,
                           values: { months: defaultMonths },
                         }),
                         bulletStyle: 'blue',
@@ -412,10 +509,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'requestRights.isRequestingRights',
-              title: m.requestRightsName,
-              description: m.requestRightsDescription,
+              title: parentalLeaveFormMessages.shared.requestRightsName,
+              description:
+                parentalLeaveFormMessages.shared.requestRightsDescription,
               children: [
                 buildCustomField({
                   id: 'requestRights.isRequestingRights',
@@ -435,17 +535,49 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'requestRights.isRequestingRights',
+              title: parentalLeaveFormMessages.shared.requestRightsName,
+              description:
+                parentalLeaveFormMessages.shared.requestRightsDescription,
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            /*
+            TODO: move back to days picker later on
             buildMultiField({
               id: 'giveRights.isGivingRights',
-              title: m.giveRightsName,
-              description: m.giveRightsDescription,
-              condition: (answers) =>
-                (answers as {
-                  requestRights: {
-                    isRequestingRights: string
-                  }
-                })?.requestRights?.isRequestingRights === NO,
+              title: parentalLeaveFormMessages.shared.giveRightsName,
+              description:
+                parentalLeaveFormMessages.shared.giveRightsDescription,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
 
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
@@ -465,15 +597,53 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
+            */
+            buildRadioField({
+              id: 'giveRights.isGivingRights',
+              title: parentalLeaveFormMessages.shared.giveRightsName,
+              description:
+                parentalLeaveFormMessages.shared.giveRightsDescription,
+              condition: (answers, externalData: ExternalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                if (
+                  !selectedChild?.hasRights ||
+                  selectedChild?.remainingDays === 0
+                ) {
+                  return false
+                }
+
+                return (
+                  (answers as {
+                    requestRights: {
+                      isRequestingRights: string
+                    }
+                  })?.requestRights?.isRequestingRights === NO
+                )
+              },
+              width: 'half',
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
           ],
         }),
+        /*
+        TODO: add back once payment plan is implemented
         buildSubSection({
           id: 'rightsReview',
-          title: m.rightsSummarySubSection,
+          title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
           children: [
             buildMultiField({
               id: 'reviewRights',
-              title: m.rightsSummaryName,
+              title: parentalLeaveFormMessages.shared.rightsSummaryName,
               description: (application) =>
                 `${formatIsk(
                   getEstimatedMonthlyPay(application),
@@ -488,66 +658,69 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        */
       ],
     }),
     buildSection({
       id: 'leavePeriods',
-      title: m.periodsSection,
+      title: parentalLeaveFormMessages.shared.periodsSection,
       children: [
         buildCustomField({
           id: 'periodsImageScreen',
-          title: m.periodsImageTitle,
+          title: parentalLeaveFormMessages.shared.periodsImageTitle,
           component: 'PeriodsSectionImage',
         }),
         buildSubSection({
           id: 'firstPeriod',
-          title: m.firstPeriodName,
+          title: parentalLeaveFormMessages.shared.firstPeriodName,
           children: [
             buildRadioField({
               id: 'singlePeriod',
-              title: m.periodAllAtOnce,
-              description: m.periodAllAtOnceDescription,
-              largeButtons: true,
+              title: parentalLeaveFormMessages.shared.periodAllAtOnce,
+              description:
+                parentalLeaveFormMessages.shared.periodAllAtOnceDescription,
               options: [
                 {
-                  label: m.periodAllAtOnceYes,
+                  label: parentalLeaveFormMessages.shared.periodAllAtOnceYes,
                   value: YES,
                 },
                 {
-                  label: m.periodAllAtOnceNo,
+                  label: parentalLeaveFormMessages.shared.periodAllAtOnceNo,
                   value: NO,
                 },
               ],
             }),
             buildCustomField({
               id: 'firstPeriodStart',
-              title: mm.firstPeriodStart.title,
+              title: parentalLeaveFormMessages.firstPeriodStart.title,
               component: 'FirstPeriodStart',
             }),
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
-                formValue.firstPeriodStart === 'specificDate',
-              title: mm.startDate.title,
-              description: mm.startDate.description,
+                formValue.firstPeriodStart === StartDateOptions.SPECIFIC_DATE,
+              title: parentalLeaveFormMessages.startDate.title,
+              description: parentalLeaveFormMessages.startDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].startDate',
                   width: 'half',
-                  title: mm.startDate.label,
-                  placeholder: mm.startDate.placeholder,
+                  title: parentalLeaveFormMessages.startDate.label,
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
               ],
             }),
             buildRadioField({
               id: 'confirmLeaveDuration',
-              title: mm.duration.title,
-              description: mm.duration.description,
-              largeButtons: true,
+              title: parentalLeaveFormMessages.duration.title,
+              description: parentalLeaveFormMessages.duration.description,
               options: [
-                { label: mm.duration.monthsOption, value: 'duration' },
                 {
-                  label: mm.duration.specificDateOption,
+                  label: parentalLeaveFormMessages.duration.monthsOption,
+                  value: 'duration',
+                },
+                {
+                  label: parentalLeaveFormMessages.duration.specificDateOption,
                   value: 'specificDate',
                 },
               ],
@@ -556,14 +729,14 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'endDate',
               condition: (formValue) =>
                 formValue.confirmLeaveDuration === 'specificDate',
-              title: mm.endDate.title,
-              description: mm.endDate.description,
+              title: parentalLeaveFormMessages.endDate.title,
+              description: parentalLeaveFormMessages.endDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].endDate',
                   width: 'half',
-                  title: mm.endDate.label,
-                  placeholder: mm.endDate.placeholder,
+                  title: parentalLeaveFormMessages.endDate.label,
+                  placeholder: parentalLeaveFormMessages.endDate.placeholder,
                 }),
               ],
             }),
@@ -572,28 +745,49 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'periods[0].endDate',
                 condition: (formValue) =>
                   formValue.confirmLeaveDuration === 'duration',
-                title: mm.duration.title,
-                component: 'ParentalLeaveDuration',
+                title: parentalLeaveFormMessages.duration.title,
+                component: 'Duration',
               },
               {},
             ),
             buildMultiField({
               id: 'periods[0].ratio',
-              title: mm.ratio.title,
-              description: mm.ratio.description,
+              title: parentalLeaveFormMessages.ratio.title,
+              description: parentalLeaveFormMessages.ratio.description,
               children: [
                 buildSelectField({
                   id: 'periods[0].ratio',
                   width: 'half',
-                  title: mm.ratio.label,
-                  placeholder: mm.ratio.placeholder,
-                  defaultValue: '100',
-                  options: [
-                    { label: '100%', value: '100' },
-                    { label: '75%', value: '75' },
-                    { label: '50%', value: '50' },
-                    { label: '25%', value: '25' },
-                  ],
+                  title: parentalLeaveFormMessages.ratio.label,
+                  placeholder: parentalLeaveFormMessages.ratio.placeholder,
+                  defaultValue: (
+                    application: Application,
+                    field: SelectField,
+                  ) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+
+                    return `${percentage}`
+                  },
+                  options: (application: Application, field: Field) => {
+                    const percentage = calculatePeriodPercentage(
+                      application,
+                      field,
+                    )
+                    const existingOptions = percentOptions.filter(
+                      (option) => Number(option.value) < percentage,
+                    )
+
+                    return [
+                      {
+                        label: `${percentage}%`,
+                        value: `${percentage}`,
+                      },
+                      ...existingOptions,
+                    ]
+                  },
                 }),
               ],
             }),
@@ -601,59 +795,86 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'addMorePeriods',
-          title: mm.leavePlan.subSection,
+          title: parentalLeaveFormMessages.leavePlan.subSection,
           children: [
             buildRepeater({
               id: 'periods',
-              title: mm.leavePlan.title,
+              title: parentalLeaveFormMessages.leavePlan.title,
               component: 'PeriodsRepeater',
               children: [
                 buildDateField({
                   id: 'startDate',
-                  title: mm.startDate.title,
-                  description: mm.startDate.description,
-                  placeholder: mm.startDate.placeholder,
+                  title: parentalLeaveFormMessages.startDate.title,
+                  description: parentalLeaveFormMessages.startDate.description,
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  excludeDates: (application) =>
+                    getAllPeriodDates(application.answers.periods as Period[]),
                 }),
                 buildMultiField({
                   id: 'endDate',
-                  title: mm.endDate.title,
-                  description: mm.endDate.description,
+                  title: parentalLeaveFormMessages.endDate.title,
+                  description: parentalLeaveFormMessages.endDate.description,
                   children: [
                     buildDateField({
                       id: 'endDate',
-                      title: mm.endDate.label,
-                      placeholder: mm.endDate.placeholder,
+                      title: parentalLeaveFormMessages.endDate.label,
+                      placeholder:
+                        parentalLeaveFormMessages.endDate.placeholder,
+                      minDate: (application) => {
+                        const periods = application.answers.periods as Period[]
+                        const latestStartDate =
+                          periods[periods.length - 1].startDate
+
+                        return addDays(new Date(latestStartDate), minPeriodDays)
+                      },
+                      excludeDates: (application) => {
+                        const {
+                          answers: { periods },
+                        } = application
+
+                        return getAllPeriodDates(periods as Period[])
+                      },
                     }),
                   ],
                 }),
-                // buildCustomField(
-                //   {
-                //     id: 'endDate',
-                //     name: m.duration,
-                //     description: mm.duration.description,
-                //     component: 'ParentalLeaveDuration',
-                //   },
-                //   {
-                //     showTimeline: true,
-                //   },
-                // ),
                 buildMultiField({
                   id: 'ratio',
-                  title: mm.ratio.title,
-                  description: mm.ratio.description,
+                  title: parentalLeaveFormMessages.ratio.title,
+                  description: parentalLeaveFormMessages.ratio.description,
                   children: [
                     buildSelectField({
                       id: 'ratio',
                       width: 'half',
-                      title: mm.ratio.label,
-                      defaultValue: '100',
-                      placeholder: mm.ratio.placeholder,
-                      options: [
-                        { label: '100%', value: '100' },
-                        { label: '75%', value: '75' },
-                        { label: '50%', value: '50' },
-                        { label: '25%', value: '25' },
-                      ],
+                      title: parentalLeaveFormMessages.ratio.label,
+                      placeholder: parentalLeaveFormMessages.ratio.placeholder,
+                      defaultValue: (
+                        application: Application,
+                        field: SelectField,
+                      ) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+
+                        return `${percentage}`
+                      },
+                      options: (application: Application, field: Field) => {
+                        const percentage = calculatePeriodPercentage(
+                          application,
+                          field,
+                        )
+                        const existingOptions = percentOptions.filter(
+                          (option) => Number(option.value) < percentage,
+                        )
+
+                        return [
+                          {
+                            label: `${percentage}%`,
+                            value: `${percentage}`,
+                          },
+                          ...existingOptions,
+                        ]
+                      },
                     }),
                   ],
                 }),
@@ -661,55 +882,60 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'paymentPlan',
-          title: mm.paymentPlan.subSection,
-          children: [
-            buildCustomField(
-              {
-                id: 'paymentPlan',
-                title: mm.paymentPlan.title,
-                description: mm.paymentPlan.description,
-                component: 'PaymentSchedule',
-              },
-              {},
-            ),
-          ],
-        }),
-        buildSubSection({
-          id: 'shareInformation',
-          title: mm.shareInformation.subSection,
-          condition: (answers) => answers.otherParent !== NO,
-          children: [
-            buildRadioField({
-              id: 'shareInformationWithOtherParent',
-              title: mm.shareInformation.title,
-              description: mm.shareInformation.description,
-              emphasize: false,
-              largeButtons: true,
-              options: [
-                {
-                  label: mm.shareInformation.yesOption,
-                  value: YES,
-                },
-                {
-                  label: mm.shareInformation.noOption,
-                  value: NO,
-                },
-              ],
-            }),
-          ],
-        }),
+
+        // TODO: Bring back payment calculation info, once we have an api
+        // app.asana.com/0/1182378413629561/1200214178491335/f
+        // buildSubSection({
+        //   id: 'paymentPlan',
+        //   title: parentalLeaveFormMessages.paymentPlan.subSection,
+        //   children: [
+        //     buildCustomField(
+        //       {
+        //         id: 'paymentPlan',
+        //         title: parentalLeaveFormMessages.paymentPlan.title,
+        //         description: parentalLeaveFormMessages.paymentPlan.description,
+        //         component: 'PaymentSchedule',
+        //       },
+        //       {},
+        //     ),
+        //   ],
+        // }),
+
+        // TODO: Bring back this feature post v1 launch
+        // https://app.asana.com/0/1182378413629561/1200214178491339/f
+        // buildSubSection({
+        //   id: 'shareInformation',
+        //   title: parentalLeaveFormMessages.shareInformation.subSection,
+        //   condition: (answers) => answers.otherParent !== NO,
+        //   children: [
+        //     buildRadioField({
+        //       id: 'shareInformationWithOtherParent',
+        //       title: parentalLeaveFormMessages.shareInformation.title,
+        //       description:
+        //         parentalLeaveFormMessages.shareInformation.description,
+        //       options: [
+        //         {
+        //           label: parentalLeaveFormMessages.shareInformation.yesOption,
+        //           value: YES,
+        //         },
+        //         {
+        //           label: parentalLeaveFormMessages.shareInformation.noOption,
+        //           value: NO,
+        //         },
+        //       ],
+        //     }),
+        //   ],
+        // }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      title: mm.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.section,
       children: [
         buildMultiField({
           id: 'confirmation',
-          title: mm.confirmation.title,
-          description: mm.confirmation.description,
+          title: parentalLeaveFormMessages.confirmation.title,
+          description: parentalLeaveFormMessages.confirmation.description,
           children: [
             buildCustomField({
               id: 'confirmationScreen',
@@ -719,11 +945,11 @@ export const ParentalLeaveForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: mm.confirmation.title,
+              title: parentalLeaveFormMessages.confirmation.title,
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: mm.confirmation.title,
+                  name: parentalLeaveFormMessages.confirmation.title,
                   type: 'primary',
                 },
               ],
@@ -732,7 +958,7 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildCustomField({
           id: 'thankYou',
-          title: mm.finalScreen.title,
+          title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',
         }),
       ],

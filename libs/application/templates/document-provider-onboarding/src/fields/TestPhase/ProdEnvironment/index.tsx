@@ -24,7 +24,7 @@ export const createProviderMutation = gql`
 `
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
 
   interface Key {
     name: string
@@ -38,11 +38,11 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   >(null)
   const { answers: formValue } = application
   const [currentAnswer, setCurrentAnswer] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     (formValue.prodProviderId as string) || '',
   )
-  const [createProvider] = useMutation(createProviderMutation)
+  const [createProvider, { loading }] = useMutation(createProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -91,11 +91,11 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
             ...application.answers,
           },
         },
+        locale,
       },
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers
     })
-
     clearErrors('prodProviderId')
   }
 
@@ -118,6 +118,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           disabled={currentAnswer !== ''}
           onClick={() => {
             onCreateProvider()

@@ -1,14 +1,21 @@
 import { OnQueueCompleted, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import * as AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationService } from './application.service'
 import { FileStorageService } from '@island.is/file-storage'
+import { Inject } from '@nestjs/common'
+import type { ApplicationConfig } from './application.configuration'
+import { APPLICATION_CONFIG } from './application.configuration'
+import AmazonS3URI from 'amazon-s3-uri'
 
 interface JobData {
   applicationId: string
+  nationalId: string
   attachmentUrl: string
+}
+
+interface JobResult {
+  attachmentKey: string
+  resultUrl: string
 }
 
 @Processor('upload')
@@ -16,49 +23,57 @@ export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    @Inject(APPLICATION_CONFIG)
+    private readonly config: ApplicationConfig,
   ) {}
 
   @Process('upload')
-  async handleUpload(job: Job) {
-    const { attachmentUrl }: JobData = job.data
-    console.log('Start uploading...')
-    const { bucket, key } = AmazonS3URI(attachmentUrl)
-    const destinationBucket = 'testing-islandis-copy'
-    const region = 'eu-west-1'
+  async handleUpload(job: Job<JobData>): Promise<JobResult> {
+    const { attachmentUrl, applicationId } = job.data
+    const destinationBucket = this.config.attachmentBucket
 
-    return await this.fileStorageService.copyObjectFromUploadBucket(
-      key,
+    if (!destinationBucket) {
+      throw new Error('Application attachment bucket not configured.')
+    }
+
+    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+    const destinationKey = `${applicationId}/${sourceKey}`
+    const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
+      sourceKey,
       destinationBucket,
-      region,
-      bucket,
+      destinationKey,
     )
+
+    return {
+      attachmentKey: sourceKey,
+      resultUrl,
+    }
   }
 
   @OnQueueCompleted()
-  async onCompleted(job: Job, url: string) {
-    console.log('On completed: job ', job.id, ' -> result: ', url)
-    const { applicationId }: JobData = job.data
-    const { key } = AmazonS3URI(url)
+  async onCompleted(job: Job, result: JobResult) {
+    const { applicationId, nationalId }: JobData = job.data
 
-    const existingApplication = await this.applicationService.findById(
+    const existingApplication = await this.applicationService.findOneById(
       applicationId,
+      nationalId,
     )
 
     if (
       existingApplication &&
       !Object.prototype.hasOwnProperty.call(
         existingApplication.attachments,
-        key,
+        result.attachmentKey,
       )
     ) {
       return
     }
 
-    // Update application attatchments
+    // Update application attachments
     return await this.applicationService.update(job.data.applicationId, {
       attachments: {
         ...(existingApplication?.attachments ?? {}),
-        [key]: url,
+        [result.attachmentKey]: result.resultUrl,
       },
     })
   }

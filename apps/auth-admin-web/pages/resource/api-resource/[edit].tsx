@@ -10,8 +10,9 @@ import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
 import StepEnd from '../../../components/common/StepEnd'
 import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourceSecretForm'
 import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm'
-import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm'
+import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimsForm'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -34,6 +35,9 @@ const Index: React.FC = () => {
     }
     loadResource()
     setStep(1)
+    document.title = LocalizationUtils.getPageTitle(
+      'resource.api-resource.[edit]',
+    )
   }, [resourceId])
 
   const getResource = async (resourceId: string) => {
@@ -68,6 +72,11 @@ const Index: React.FC = () => {
       getResource(resourceId as string)
       handleNext()
     }
+  }
+
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(resourceId as string)
+    await getResource(decode)
   }
 
   switch (step) {
@@ -140,6 +149,7 @@ const Index: React.FC = () => {
               handleChanges={changesMade}
               handleNext={handleNext}
               handleBack={handleBack}
+              handleNewClaimsAdded={refreshClaims}
             ></ApiResourceUserClaimForm>
           </ApiResourceStepNav>
         </ContentWrapper>
@@ -155,11 +165,20 @@ const Index: React.FC = () => {
             handleStepChange={handleStepChange}
           >
             <StepEnd
-              buttonText="Go back"
-              title="Steps completed"
+              buttonText={
+                LocalizationUtils.getPage('resource.api-resource.[edit]')
+                  .endStep.buttonText
+              }
+              title={
+                LocalizationUtils.getPage('resource.api-resource.[edit]')
+                  .endStep.title
+              }
               handleButtonFinishedClick={() => setStep(1)}
             >
-              The steps needed, to create the Api resource, have been completed
+              {
+                LocalizationUtils.getPage('resource.api-resource.[edit]')
+                  .endStep.infoTitle
+              }
             </StepEnd>
           </ApiResourceStepNav>
         </ContentWrapper>

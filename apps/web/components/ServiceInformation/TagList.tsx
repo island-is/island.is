@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import capitalize from 'lodash/capitalize'
+import React from 'react'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
@@ -9,27 +8,26 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  DialogPrompt,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   DataCategory,
   TypeCategory,
   AccessCategory,
 } from '@island.is/web/graphql/schema'
+import ServiceTag from './ServiceTag'
 
 interface TagListProps {
   data: Array<DataCategory>
-  type: Array<TypeCategory>
+  type: TypeCategory
   access: Array<AccessCategory>
   namespace?: object
 }
 
-export const TagList: FC<TagListProps> = ({
-  data,
-  type,
-  access,
-  namespace,
-}) => {
+export const TagList = ({ data, type, access, namespace }: TagListProps) => {
   const n = useNamespace(namespace)
+
   return (
     <Box paddingX={3}>
       <GridContainer>
@@ -38,14 +36,15 @@ export const TagList: FC<TagListProps> = ({
             paddingBottom={[3, 3, 0]}
             span={['12/12', '12/12', '6/12']}
           >
-            <Text variant="eyebrow" color="blue600" marginBottom={1}>
-              {n('data')}
-            </Text>
+            <Inline space={1}>
+              <Text variant="eyebrow" color="blue600" marginBottom={1}>
+                {n('data')}
+              </Text>
+              <Tooltip placement="right" text={n('dataTooltipText')} />
+            </Inline>
             <Inline space={1}>
               {data?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`data${capitalize(item)}`)}
-                </Tag>
+                <ServiceTag category="data" item={item} namespace={namespace} />
               ))}
             </Inline>
           </GridColumn>
@@ -53,26 +52,30 @@ export const TagList: FC<TagListProps> = ({
             paddingBottom={[3, 3, 0]}
             span={['12/12', '12/12', '3/12']}
           >
-            <Text variant="eyebrow" color="blue600" marginBottom={1}>
-              {n('type')}
-            </Text>
             <Inline space={1}>
-              {type?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`type${capitalize(item)}`)}
-                </Tag>
-              ))}
+              <Text variant="eyebrow" color="blue600" marginBottom={1}>
+                {n('type')}
+              </Text>
+              <Tooltip placement="right" text={n('typeTooltipText')} />
+            </Inline>
+            <Inline space={1}>
+              <ServiceTag category="type" item={type} namespace={namespace} />
             </Inline>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12']}>
-            <Text variant="eyebrow" color="blue600" marginBottom={1}>
-              {n('access')}
-            </Text>
+            <Inline space={1}>
+              <Text variant="eyebrow" color="blue600" marginBottom={1}>
+                {n('access')}
+              </Text>
+              <Tooltip placement="right" text={n('accessTooltipText')} />
+            </Inline>
             <Inline space={1}>
               {access?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`access${capitalize(item)}`)}
-                </Tag>
+                <ServiceTag
+                  category="access"
+                  item={item}
+                  namespace={namespace}
+                />
               ))}
             </Inline>
           </GridColumn>

@@ -6,24 +6,26 @@ import {
   GridRow,
   GridColumn,
   InputError,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
 interface Option {
   value: string
   label: React.ReactNode
+  subLabel?: string
   tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
 interface Props {
-  defaultValue?: string[]
+  defaultValue?: any
   disabled?: boolean
   error?: string
   id: string
   name?: string
   options?: Option[]
   largeButtons?: boolean
-  split?: '1/1' | '1/2' | '1/3' | '1/4'
-  emphasize?: boolean
+  split?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
+  backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
 }
 export const RadioController: FC<Props> = ({
@@ -33,9 +35,9 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
-  largeButtons = false,
-  emphasize = false,
+  largeButtons = true,
   onSelect = () => undefined,
+  backgroundColor = 'blue',
   split = '1/1',
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -53,8 +55,7 @@ export const RadioController: FC<Props> = ({
               key={`option-${option.value}`}
             >
               <RadioButton
-                large={largeButtons || emphasize}
-                filled={emphasize}
+                large={largeButtons}
                 tooltip={option.tooltip}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
@@ -67,9 +68,11 @@ export const RadioController: FC<Props> = ({
                 id={`${id}-${index}`}
                 name={`${id}`}
                 label={option.label}
+                subLabel={option.subLabel}
                 value={option.value}
                 disabled={disabled}
                 hasError={error !== undefined}
+                backgroundColor={backgroundColor}
               />
             </GridColumn>
           ))}

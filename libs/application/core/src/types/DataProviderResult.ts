@@ -1,18 +1,18 @@
-export type SuccessfulDataProviderResult = {
-  date: Date
-  data: object | string | boolean | number
-  status: 'success'
-  statusCode?: number
-}
+import { StaticText } from './Form'
 
-export type FailedDataProviderResult = {
+export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
-  reason: string
-  status: 'failure'
+  reason?: StaticText
+  status: 'failure' | 'success'
   statusCode?: number
 }
 
-export type DataProviderResult =
-  | SuccessfulDataProviderResult
-  | FailedDataProviderResult
+export interface FailedDataProviderResult extends DataProviderResult {
+  reason: StaticText
+  status: 'failure'
+}
+
+export interface SuccessfulDataProviderResult extends DataProviderResult {
+  status: 'success'
+}

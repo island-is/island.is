@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'services-search-indexer',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/services/search-indexer',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'services-search-indexer',
 }

@@ -1,19 +1,23 @@
 import { Case } from '../models'
 
-const fiveMinutes = 5 * 60 * 1000
+const threeDays = 3 * 24 * 60 * 60 * 1000
+const sevenDays = 7 * 24 * 60 * 60 * 1000
 
-export function transformCase(theCase: Case) {
-  theCase.alternativeTravelBan = theCase.alternativeTravelBan ?? false
-
-  if (theCase.courtDate) {
-    theCase.isCourtDateInThePast =
-      Date.now() - fiveMinutes > new Date(theCase.courtDate).getTime()
-  }
+export function transformCase(theCase: Case): Case {
+  theCase.sendRequestToDefender = theCase.sendRequestToDefender ?? false
 
   if (theCase.custodyEndDate) {
     theCase.isCustodyEndDateInThePast =
       Date.now() > new Date(theCase.custodyEndDate).getTime()
   }
+
+  theCase.isAppealDeadlineExpired = theCase.rulingDate
+    ? Date.now() >= new Date(theCase.rulingDate).getTime() + threeDays
+    : false
+
+  theCase.isAppealGracePeriodExpired = theCase.rulingDate
+    ? Date.now() >= new Date(theCase.rulingDate).getTime() + sevenDays
+    : false
 
   return theCase
 }

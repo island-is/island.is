@@ -2,27 +2,54 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
   const basePath = '/minarsidur/assets/images/'
-  let imgName = 'jobsGrid.svg'
-  if (
-    path === ServicePortalPath.FinanceRoot ||
-    path === ServicePortalPath.FinanceExternal
-  )
-    imgName = 'payment.svg'
-  if (path === ServicePortalPath.MyInfoRoot) imgName = 'myInfo.svg'
-  if (path === ServicePortalPath.FamilyRoot) imgName = 'familyGrid.svg'
-  if (path === ServicePortalPath.HealthRoot) imgName = 'health.svg'
-  if (
-    path === ServicePortalPath.EducationRoot ||
-    path === ServicePortalPath.EducationExternal
-  )
-    imgName = 'education.svg'
-  if (path === ServicePortalPath.AssetsRoot) imgName = 'school.svg'
-  if (path === ServicePortalPath.ApplicationIntroduction)
-    imgName = 'jobsGrid.svg'
-  if (path === ServicePortalPath.ElectronicDocumentsRoot)
-    imgName = 'myDocuments.svg'
-  if (path === ServicePortalPath.MyLicensesRoot) imgName = 'myRights.svg'
-  if (path === ServicePortalPath.SettingsRoot) imgName = 'settings.svg'
+  let imgName
 
-  return basePath + imgName
+  switch (path) {
+    case ServicePortalPath.FinanceRoot:
+    case ServicePortalPath.FinanceExternal:
+      imgName = 'payment.svg'
+      break
+
+    case ServicePortalPath.MyInfoRoot:
+      imgName = 'myInfo.svg'
+      break
+
+    case ServicePortalPath.FamilyRoot:
+      imgName = 'familyGrid.svg'
+      break
+
+    case ServicePortalPath.HealthRoot:
+      imgName = 'health.svg'
+      break
+
+    case ServicePortalPath.EducationRoot:
+    case ServicePortalPath.EducationExternal:
+      imgName = 'education.svg'
+      break
+
+    case ServicePortalPath.AssetsRoot:
+      imgName = 'school.svg'
+      break
+
+    case ServicePortalPath.ApplicationRoot:
+      imgName = 'jobsGrid.svg'
+      break
+
+    case ServicePortalPath.ElectronicDocumentsRoot:
+      imgName = 'myDocuments.svg'
+      break
+
+    case ServicePortalPath.MyLicensesRoot:
+      imgName = 'myRights.svg'
+      break
+
+    case ServicePortalPath.SettingsRoot:
+      imgName = 'settings.svg'
+      break
+
+    default:
+      imgName = 'jobsGrid.svg'
+  }
+
+  return `${basePath}${imgName}`
 }

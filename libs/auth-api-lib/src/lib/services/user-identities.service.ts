@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { UserIdentity } from '../entities/models/user-identity.model'
@@ -106,6 +107,50 @@ export class UserIdentitiesService {
       where: { providerName: provider, providerSubjectId: subjectId },
       include: [Claim],
     })
+  }
+
+  /** Gets a delegation identity by a provider, subjectid and actor subject id */
+  async findDelegationIdentity(
+    provider: string,
+    subjectId: string,
+    actorSubjectId: string,
+  ): Promise<UserIdentity | null> {
+    this.logger.debug(
+      `Finding user identity for provider "${provider}", subjectId - "${subjectId}" and actorSubjectId - "${actorSubjectId}"`,
+    )
+
+    if (!provider) {
+      throw new BadRequestException('Provider must be provided')
+    }
+
+    if (!subjectId) {
+      throw new BadRequestException('SubjectId must be provided')
+    }
+
+    if (!actorSubjectId) {
+      throw new BadRequestException('Actor SubjectId must be provided')
+    }
+
+    const result = await this.sequelize.query(
+      `select subject_id from user_identity
+        where provider_name = $provider and provider_subject_id = $subjectId
+        and exists (select 0 from claim where claim.subject_id = user_identity.subject_id
+          and "type" = 'actorSubjectId' and "value" = $actorSubjectId)`,
+      {
+        bind: {
+          provider: provider,
+          subjectId: subjectId,
+          actorSubjectId: actorSubjectId,
+        },
+        plain: true,
+      },
+    )
+
+    if (result) {
+      return await this.findBySubjectId(result.subject_id as string)
+    } else {
+      return null
+    }
   }
 
   /** Updates an existing user identity */

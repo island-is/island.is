@@ -17,24 +17,24 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
-  getAvailableRights,
+  calculatePeriodPercentage,
   getExpectedDateOfBirth,
 } from '../../parentalLeaveUtils'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
+import { StartDateOptions } from '../../constants'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
+const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentRepeaterIndex = extractRepeaterIndexFromField(field)
+  const currentIndex = currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
   const currentStartDateAnswer = getValueViaPath(
     answers,
-    `periods[${
-      currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
-    }].startDate`,
+    `periods[${currentIndex}].startDate`,
     expectedDateOfBirth,
   ) as string
   const currentEndDateAnswer = getValueViaPath(
@@ -53,23 +53,22 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
-  const { months } = getAvailableRights(application)
 
   useEffect(() => {
-    if (chosenDuration > months) {
-      const newPercent = Math.min(
-        100,
-        Math.round((months / chosenDuration) * 100),
-      )
-      setPercent(newPercent)
-    } else {
-      setPercent(100)
-    }
-  }, [chosenDuration, monthsToUse])
+    const percentage = calculatePeriodPercentage(application, field, {
+      startDate: currentStartDateAnswer,
+      endDate: chosenEndDate,
+    })
+
+    setPercent(percentage)
+  }, [chosenEndDate])
+
   return (
     <Box>
       <FieldDescription
-        description={formatMessage(mm.duration.monthsDescription)}
+        description={formatMessage(
+          parentalLeaveFormMessages.duration.monthsDescription,
+        )}
       />
       <Box
         background="blue100"
@@ -98,8 +97,13 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
             className={styles.percentLabel}
           >
             <Text variant="h4" as="span">
-              {formatMessage(mm.duration.paymentsRatio)}&nbsp;&nbsp;
-              <Tooltip text={formatMessage(mm.paymentPlan.description)} />
+              {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
+              &nbsp;&nbsp;
+              <Tooltip
+                text={formatMessage(
+                  parentalLeaveFormMessages.paymentPlan.description,
+                )}
+              />
             </Text>
           </Box>
           <Box
@@ -131,28 +135,43 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
                 showMinMaxLabels
                 showToolTip
                 label={{
-                  singular: formatMessage(m.month),
-                  plural: formatMessage(m.months),
+                  singular: formatMessage(
+                    parentalLeaveFormMessages.shared.month,
+                  ),
+                  plural: formatMessage(
+                    parentalLeaveFormMessages.shared.months,
+                  ),
                 }}
-                rangeDates={{
-                  start: {
-                    date: formatDateFns(currentStartDateAnswer),
-                    message: formatMessage(m.rangeStartDate),
-                  },
-                  end: {
-                    date: formatDateFns(chosenEndDate),
-                    message: formatMessage(m.rangeEndDate),
-                  },
-                }}
+                rangeDates={
+                  currentIndex === 0 &&
+                  answers.firstPeriodStart !==
+                    StartDateOptions.ACTUAL_DATE_OF_BIRTH
+                    ? {
+                        start: {
+                          date: formatDateFns(currentStartDateAnswer),
+                          message: formatMessage(
+                            parentalLeaveFormMessages.shared.rangeStartDate,
+                          ),
+                        },
+                        end: {
+                          date: formatDateFns(chosenEndDate),
+                          message: formatMessage(
+                            parentalLeaveFormMessages.shared.rangeEndDate,
+                          ),
+                        },
+                      }
+                    : undefined
+                }
                 currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)
-                  const newEndDate = addMonths(
-                    parseISO(currentStartDateAnswer),
-                    selectedMonths,
+
+                  const newEndDate = formatISO(
+                    addMonths(parseISO(currentStartDateAnswer), selectedMonths),
                   )
-                  onChange(formatISO(newEndDate))
-                  setChosenEndDate(formatISO(newEndDate))
+
+                  onChange(newEndDate)
+                  setChosenEndDate(newEndDate)
                   setChosenDuration(selectedMonths)
                 }}
               />
@@ -164,4 +183,4 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default ParentalLeaveUsage
+export default Duration

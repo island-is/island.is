@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   documentProviders: {
     id: 'service.portal:document-provider-document-providers',
-    defaultMessage: 'Skjalaveitendur',
+    defaultMessage: 'Skjalaveitur',
   },
   documentProviderSingle: {
     id: 'service.portal:document-provider-document-provider-single',
@@ -89,18 +89,58 @@ export const m = defineMessages({
   //DocumentProviders
   documentProvidersTitle: {
     id: 'sp.document-provider:document-providers-title',
-    defaultMessage: 'Skjalaveitendur',
+    defaultMessage: 'Skjalaveitur',
   },
   documentProvidersDescription: {
     id: 'sp.document-provider:document-providers-description',
     defaultMessage:
-      'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
+      'Hér getur þú fundið alla þá skjalaveitur sem nota pósthólf á island.is',
   },
+  documentProvidersSearchPlaceholder: {
+    id: 'sp.document-provider:document-providers-search-placeholder',
+    defaultMessage: 'Leitaðu að skjalaveitu',
+  },
+  documentProvidersNumberOfSearchResultsFoundMessage: {
+    id:
+      'sp.document-provider:document-providers-number-of-search-results-found-message',
+    defaultMessage: 'Skjalaveitur fundust',
+  },
+  documentProvidersSearchResultsActionCardLabel: {
+    id:
+      'sp.document-provider:document-providers-search-results-action-card-label',
+    defaultMessage: 'Skoða nánar',
+  },
+  documentProvidersDateFromLabel: {
+    id: 'sp.document-provider:document-providers-datefrom-label',
+    defaultMessage: 'Dagsetning frá',
+  },
+  documentProvidersDateFromPlaceholderText: {
+    id: 'sp.document-provider:document-providers-datefrom-placeholder-text',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  documentProvidersDateToLabel: {
+    id: 'sp.document-provider:document-providers-datefrom-label',
+    defaultMessage: 'Dagsetning til',
+  },
+  documentProvidersDateToPlaceholderText: {
+    id: 'sp.document-provider:document-providers-dateto-placeholder-text',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  documentProvidersDateToErrorMessage: {
+    id: 'sp.document-provider:document-providers-dateto-error-message',
+    defaultMessage: 'Dagsetning til þarf að vera stærri en dagsetning frá',
+  },
+
   //DocumentProvidersSingle
   //DocumentProvidersSingleInstitution
   SingleProviderDescription: {
     id: 'sp.document-provider:document-providers-single-description',
     defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
+  },
+  SingleProviderOrganisationNameNotFoundMessage: {
+    id:
+      'sp.document-provider:single-provider-organistion-name-not-found-message',
+    defaultMessage: 'Heiti stofnunar fannst ekki',
   },
   SingleProviderInstitutionHeading: {
     id: 'sp.document-provider:document-providers-single-institution-name',
@@ -108,26 +148,26 @@ export const m = defineMessages({
   },
   SingleProviderInstitutionNameLabel: {
     id: 'sp.document-provider:document-providers-single-institution-name-label',
-    defaultMessage: 'Nafn stofnunar',
+    defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNamePlaceholder: {
     id:
       'sp.document-provider:document-providers-single-institution-name-placeholder',
-    defaultMessage: 'Nafn stofnunar',
+    defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNameError: {
     id: 'sp.document-provider:document-providers-single-institution-name-error',
-    defaultMessage: 'Nafn er skilyrt',
+    defaultMessage: 'Nafn á stofnun er skilyrt',
   },
   SingleProviderInstitutionNationalIdLabel: {
     id:
       'sp.document-provider:document-providers-single-institution-nationalid-label',
-    defaultMessage: 'Kennitala stofnunar',
+    defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdPlaceholder: {
     id:
       'sp.document-provider:document-providers-single-institution-nationalid-placeholder',
-    defaultMessage: 'Kennitala stofnunar',
+    defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdError: {
     id:
@@ -199,20 +239,15 @@ export const m = defineMessages({
       'sp.document-provider:document-providers-single-institution-address-error',
     defaultMessage: 'Heimilisfang er skilyrt',
   },
-  SingleProviderInstitutionZipcodeLabel: {
+  SingleProviderUpdateInformationError: {
     id:
-      'sp.document-provider:document-providers-single-institution-zipcode-label',
-    defaultMessage: 'Póstnúmer',
+      'sp.document-provider:document-providers-single-update-information-error',
+    defaultMessage: 'Ekki tókst að uppfæra upplýsingar',
   },
-  SingleProviderInstitutionZipcodePlaceholder: {
+  SingleProviderUpdateInformationSuccess: {
     id:
-      'sp.document-provider:document-providers-single-institution-zipcode-placeholder',
-    defaultMessage: 'Póstnúmer',
-  },
-  SingleProviderInstitutionZipcodeError: {
-    id:
-      'sp.document-provider:document-providers-single-institution-zipcode-error',
-    defaultMessage: 'Póstnúmer er skilyrt',
+      'sp.document-provider:document-providers-single-update-information-success',
+    defaultMessage: 'Upplýsingar uppfærðar!',
   },
 
   //DocumentProvidersSingleResponsibleContact
@@ -280,6 +315,10 @@ export const m = defineMessages({
     id:
       'sp.document-provider:document-providers-single-responsible-contact-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+  SingleProviderGetOrganisationError: {
+    id: 'sp.document-provider:document-providers-single-get-organisation-error',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um stofnun með kt.',
   },
 
   //DocumentProvidersSingleTechnicalContact
@@ -812,6 +851,40 @@ export const m = defineMessages({
   },
   StatisticsDescription: {
     id: 'sp.document-provider:statistics-information-description',
-    defaultMessage: 'Á þessari síðu sérð þú upplýsingar um tölfræði',
+    defaultMessage: 'Hér er tölfræði yfir rafrænar skjalasendingar ',
+  },
+  StatisticsSearchPlaceholder: {
+    id: 'sp.document-provider:statistics-search-placeholder',
+    defaultMessage: 'Leitaðu eftir skjalaveitanda',
+  },
+
+  //Statistics boxes
+  statisticsBoxOrganisationsCount: {
+    id: 'sp.document-provider:statistics-box-organisations-count',
+    defaultMessage: 'Fjöldi skjalaveitna',
+  },
+  statisticsBoxPublishedDocuments: {
+    id: 'sp.document-provider:statistics-box-published-documents',
+    defaultMessage: 'Send skjöl',
+  },
+  statisticsBoxOpenedDocuments: {
+    id: 'sp.document-provider:statistics-box-opened-documents',
+    defaultMessage: 'Opnuð skjöl',
+  },
+  statisticsBoxNotifications: {
+    id: 'sp.document-provider:statistics-box-notifications',
+    defaultMessage: 'Hnipp',
+  },
+  statisticsBoxMillions: {
+    id: 'sp.document-provider:statistics-box-millions',
+    defaultMessage: 'milljón',
+  },
+  statisticsBoxThousands: {
+    id: 'sp.document-provider:statistics-box-thousands',
+    defaultMessage: 'þúsund',
+  },
+  statisticsBoxNetworkError: {
+    id: 'sp.document-provider:statistics-box-network-error',
+    defaultMessage: 'Ekki tókst að sækja tölfræði',
   },
 })

@@ -38,17 +38,17 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
-              offset={['0', '0', '0', '0', '1/9']}
+              offset={['0', '0', '0', '1/9']}
               span={[
                 '9/9',
                 '9/9',
                 '9/9',
-                '9/9',
+                '8/9',
                 fullWidthContent ? '8/9' : '7/9',
               ]}
             >
               <Box
-                paddingLeft={[0, 0, 6, 6, 0]}
+                paddingLeft={[0, 0, 6, 6, 3]}
                 paddingTop={hideSidebarInMobile ? 0 : [4, 4, 0]}
               >
                 {children}

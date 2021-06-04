@@ -5,13 +5,22 @@ import { Injectable } from '@nestjs/common'
 import {
   Case,
   CreateCase,
+  CreateFile,
+  CreatePresignedPost,
+  CreateUser,
+  DeleteFileResponse,
+  CaseFile,
+  Institution,
   Notification,
+  PresignedPost,
   RequestSignatureResponse,
   SendNotification,
   SendNotificationResponse,
   SignatureConfirmationResponse,
+  SignedUrl,
   TransitionCase,
   UpdateCase,
+  UpdateUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -19,15 +28,31 @@ import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backendUrl}/api`
+  baseURL = `${environment.backend.url}/api`
 
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
+  getInstitutions(): Promise<Institution[]> {
+    return this.get('institutions')
+  }
+
   getUsers(): Promise<User[]> {
-    return this.get(`users`)
+    return this.get('users')
+  }
+
+  getUser(id: string): Promise<User> {
+    return this.get(`user/${id}`)
+  }
+
+  createUser(createUser: CreateUser): Promise<User> {
+    return this.post('user', createUser)
+  }
+
+  updateUser(id: string, updateUser: UpdateUser): Promise<User> {
+    return this.put(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<Case[]> {
@@ -74,6 +99,29 @@ class BackendAPI extends RESTDataSource {
 
   getCaseNotifications(id: string): Promise<Notification[]> {
     return this.get(`case/${id}/notifications`)
+  }
+
+  createCasePresignedPost(
+    id: string,
+    createPresignedPost: CreatePresignedPost,
+  ): Promise<PresignedPost> {
+    return this.post(`case/${id}/file/url`, createPresignedPost)
+  }
+
+  createCaseFile(id: string, createFile: CreateFile): Promise<CaseFile> {
+    return this.post(`case/${id}/file`, createFile)
+  }
+
+  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
+    return this.get(`case/${caseId}/file/${id}/url`)
+  }
+
+  deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/file/${id}`)
+  }
+
+  getCaseFiles(id: string): Promise<CaseFile[]> {
+    return this.get(`case/${id}/files`)
   }
 }
 

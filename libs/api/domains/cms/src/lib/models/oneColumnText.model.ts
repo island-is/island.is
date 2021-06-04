@@ -4,20 +4,21 @@ import { IOneColumnText } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
 import { SystemMetadata } from 'api-cms-domain'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OneColumnText {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
-
-  @Field({ nullable: true })
-  content?: string
+  title!: string
 
   @Field(() => Link, { nullable: true })
-  link?: Link
+  link?: Link | null
+
+  @Field(() => [SliceUnion], { nullable: true })
+  content?: Array<typeof SliceUnion>
 }
 
 export const mapOneColumnText = ({
@@ -27,6 +28,8 @@ export const mapOneColumnText = ({
   typename: 'OneColumnText',
   id: sys.id,
   title: fields.title ?? '',
-  content: fields.content ?? '',
   link: fields.link ? mapLink(fields.link) : null,
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
+    : [],
 })

@@ -7,6 +7,7 @@ type Options = {
   name: string
   nodes: string[]
   ssl: boolean
+  noPrefix?: boolean
 }
 
 const DEFAULT_PORT = 6379
@@ -50,8 +51,7 @@ const getRedisClusterOptions = (
     redisOptions['tls'] = {}
   }
   return {
-    ...options,
-    keyPrefix: `${options.name}:`,
+    keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
     slotsRefreshTimeout: 2000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls

@@ -60,13 +60,6 @@ export type ServicePortalRoute = {
    */
   path: ServicePortalPath | ServicePortalPath[]
   /**
-   * Describes a number of notifications assigned to grab the user's attention to this route
-   * TODO: Docs on notifications, current architecture includes a bug where notification counters
-   * will never update during a session. Look into option of setting up a notification hub library for the service portal
-   * if we go further with this.
-   */
-  notifications?: number
-  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
@@ -121,7 +114,7 @@ export interface ServicePortalModule {
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: ServicePortalModuleProps) => Promise<ServicePortalRoute[]>
+  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

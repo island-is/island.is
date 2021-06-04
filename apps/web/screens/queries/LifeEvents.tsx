@@ -28,9 +28,11 @@ export const GET_LIFE_EVENTS_QUERY = gql`
       intro
       thumbnail {
         url
+        title
       }
       image {
         url
+        title
       }
     }
   }
@@ -49,9 +51,11 @@ export const GET_LIFE_EVENTS_IN_CATEGORY_QUERY = gql`
       }
       thumbnail {
         url
+        title
       }
       image {
         url
+        title
       }
     }
   }

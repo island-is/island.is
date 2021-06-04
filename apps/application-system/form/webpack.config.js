@@ -1,17 +1,23 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const TreatPlugin = require('treat/webpack-plugin')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
+const nrwlConfig = require('./../../../libs/shared/webpack/nrwl-config')
 
 module.exports = (config) => {
-  nrwlConfig(config) // first call it so that it @nrwl/react plugin adds its configs,
+  // Add our common webpack config
+  nrwlConfig(config)
+
+  // App specific config
   config.stats.chunks = false
   config.stats.modules = false
+
   if (process.env.NODE_ENV === 'development') {
     config.devServer.noInfo = true
   }
+
   return {
     ...config,
-    plugins: [...config.plugins, new TreatPlugin()],
+    node: {
+      process: true,
+      global: true,
+    },
   }
 }

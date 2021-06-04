@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { CheckboxController } from './CheckboxController'
 
 const Wrapper: React.FC = ({ children }) => {
@@ -14,13 +14,13 @@ describe('CheckboxController', () => {
       { label: 'some checkbox', value: 'off' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
         <CheckboxController id="values" options={options} />
       </Wrapper>,
     )
-    expect(getByText('some checkbox')).toBeInTheDocument()
-    expect(getByText('another checkbox')).toBeInTheDocument()
+    expect(screen.getByText('some checkbox')).toBeInTheDocument()
+    expect(screen.getByText('another checkbox')).toBeInTheDocument()
   })
 
   it('should render an error message', () => {
@@ -28,7 +28,7 @@ describe('CheckboxController', () => {
       { label: 'some checkbox', value: 'off' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
         <CheckboxController
           id="values"
@@ -37,7 +37,7 @@ describe('CheckboxController', () => {
         />
       </Wrapper>,
     )
-    expect(getByText('error indeed')).toBeInTheDocument()
+    expect(screen.getByText('error indeed')).toBeInTheDocument()
   })
 
   it('should render a tooltip next to an option if wished', () => {
@@ -45,15 +45,37 @@ describe('CheckboxController', () => {
       { label: 'some checkbox', value: 'off', tooltip: 'nice tooltip' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
-        <CheckboxController
-          id="values"
-          error="error indeed"
-          options={options}
-        />
+        <CheckboxController id="values" options={options} />
       </Wrapper>,
     )
-    expect(getByText('nice tooltip')).toBeInTheDocument()
+    expect(screen.getByText('nice tooltip')).toBeInTheDocument()
+  })
+
+  it('should render a sublabel below an option if wished and when large set to true', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    render(
+      <Wrapper>
+        <CheckboxController id="values" large={true} options={options} />
+      </Wrapper>,
+    )
+    expect(screen.getByText('nice sublabel')).toBeInTheDocument()
+  })
+
+  it('should NOT render a sublabel below an option if wished and when large is set to false or undefined', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    render(
+      <Wrapper>
+        <CheckboxController id="values" options={options} />
+      </Wrapper>,
+    )
+    expect(screen.queryByText('nice sublabel')).not.toBeInTheDocument()
   })
 })

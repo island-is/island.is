@@ -3,6 +3,7 @@ import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { DatePicker } from './DatePicker'
+import { Text } from '../Text/Text'
 
 export default {
   title: 'Form/DatePicker',
@@ -64,16 +65,26 @@ export const LocaleIS = () => {
     </>
   )
 }
-export const LocalePL = () => {
+
+export const SelectYear = () => {
+  const toDay = new Date()
   return (
-    <Wrap>
-      <DatePicker
-        label="Data"
-        placeholderText="Wybierz datę"
-        locale="pl"
-        handleChange={(date: Date) => console.log(date)}
-      />
-    </Wrap>
+    <>
+      <Wrap>
+        <DatePicker
+          label="Date"
+          placeholderText="Pick a year"
+          minYear={toDay.getFullYear() - 10}
+          maxYear={toDay.getFullYear() + 2}
+          handleChange={(date: Date) => console.log(date)}
+        />
+        <Text variant="small" marginTop={3}>
+          Selecting a year will only work if <code>minYear</code> and{' '}
+          <code>maxYear</code> are set and <code>maxYear</code> is higher then{' '}
+          <code>minYear</code>
+        </Text>
+      </Wrap>
+    </>
   )
 }
 

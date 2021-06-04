@@ -9,13 +9,13 @@ import {
 @ObjectType()
 export class FaqList {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => [QuestionAndAnswer])
-  questions: QuestionAndAnswer[]
+  questions?: QuestionAndAnswer[]
 }
 
 export const mapFaqList = ({

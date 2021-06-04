@@ -1,5 +1,5 @@
 import { FeatureFlagClient, User, FeatureFlagClientProps } from './types'
-import { createClient } from 'configcat-js'
+import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
 
 export class Client implements FeatureFlagClient {
   private configcat: ReturnType<typeof createClient>
@@ -11,10 +11,20 @@ export class Client implements FeatureFlagClient {
         'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
       )
     }
+    const ccConfig: IJSAutoPollOptions = {
+      dataGovernance: DataGovernance.EuOnly,
+    }
     if (typeof window === 'undefined') {
-      this.configcat = require('configcat-node').createClient(resolvedSdkKey)
+      this.configcat = eval('require')('configcat-node').createClient(
+        resolvedSdkKey,
+        ccConfig,
+      )
     } else {
-      this.configcat = require('configcat-js').createClient(resolvedSdkKey)
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      this.configcat = require('configcat-js').createClient(
+        resolvedSdkKey,
+        ccConfig,
+      )
     }
   }
 
@@ -22,7 +32,7 @@ export class Client implements FeatureFlagClient {
     return await this.configcat.getValueAsync(
       key,
       defaultValue,
-      user ? { identifier: user.uuid, custom: user.attributes } : undefined,
+      user ? { identifier: user.id, custom: user.attributes } : undefined,
     )
   }
 }

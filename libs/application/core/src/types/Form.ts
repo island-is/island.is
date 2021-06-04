@@ -1,11 +1,24 @@
 import { ZodObject } from 'zod'
-import { Condition } from './Condition'
-import { Field } from './Fields'
 import { MessageDescriptor } from 'react-intl'
-import { BoxProps } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core/types'
+import { Field, RecordObject } from '@island.is/application/core'
+
+import { Condition } from './Condition'
 import { Application } from './Application'
 
-export type StaticText = (MessageDescriptor & { values?: object }) | string
+export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+export type SetBeforeSubmitCallback = (
+  callback: BeforeSubmitCallback | null,
+) => void
+
+export type StaticTextObject = MessageDescriptor & {
+  values?: RecordObject<any>
+}
+export type StaticText = StaticTextObject | string
+export type FormatMessage = (
+  descriptor: StaticText,
+  values?: RecordObject<any>,
+) => string
 
 export type FormText =
   | StaticText
@@ -28,6 +41,7 @@ export type Schema = ZodObject<any>
 
 export enum FormModes {
   APPLYING = 'applying',
+  EDITING = 'editing',
   APPROVED = 'approved',
   PENDING = 'pending',
   REVIEW = 'review',
@@ -91,6 +105,7 @@ export interface ExternalDataProvider extends FormItem {
   dataProviders: DataProviderItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
+  description?: StaticText
 }
 
 export interface DataProviderItem {
@@ -104,11 +119,13 @@ export interface DataProviderItem {
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
+  errors?: RecordObject
   field: Field
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
 }
 
 export type RepeaterProps = {

@@ -23,7 +23,6 @@ export const parseString = (
     const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
     return json
   } catch (e) {
-    console.log(e)
     return null
   }
 }
@@ -38,7 +37,6 @@ export const parseTransition = (
     )
     return json
   } catch (e) {
-    console.log(e)
     return null
   }
 }
@@ -70,6 +68,15 @@ export const parseTime = (date: string, time: string) => {
     return dateMinutes
   } else {
     return date.indexOf('T') > -1 ? date.substring(0, date.indexOf('T')) : date
+  }
+}
+
+export const parseNull = (property: string) => {
+  try {
+    const json = JSON.parse(`{"${property}": ${null}}`)
+    return json
+  } catch (e) {
+    return null
   }
 }
 

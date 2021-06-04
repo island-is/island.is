@@ -24,11 +24,9 @@ import {
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
-  QueryGetMenuArgs,
-  GetMenuQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
@@ -38,20 +36,28 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
+  Menu,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { Locale } from '../i18n/I18n'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { Locale } from '@island.is/shared/types'
+import {
+  LinkType,
+  useLinkResolver,
+  linkResolver as LinkResolver,
+} from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
+
+const IS_MOCK =
+  process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -174,10 +180,29 @@ const Layout: NextComponentType<
     JSON.stringify(alertBannerContent),
   )}`
 
+  const preloadedFonts = [
+    '/fonts/ibm-plex-sans-v7-latin-300.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-italic.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-500.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-600.woff2',
+  ]
+
   return (
     <GlobalContextProvider namespace={namespace}>
       <Page component="div">
         <Head>
+          {preloadedFonts.map((href, index) => {
+            return (
+              <link
+                rel="preload"
+                href={href}
+                as="font"
+                type="font/woff2"
+                crossOrigin="true"
+              />
+            )
+          })}
           <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -198,16 +223,13 @@ const Layout: NextComponentType<
           <link rel="manifest" href="/site.webmanifest" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
-
           <title>{n('title')}</title>
-
           <meta name="title" content={n('title')} key="title" />
           <meta
             name="description"
             content={n('description')}
             key="description"
           />
-
           <meta property="og:title" content={n('title')} key="ogTitle" />
           <meta
             property="og:description"
@@ -223,7 +245,6 @@ const Layout: NextComponentType<
           />
           <meta property="og:image:width" content="1200" key="ogImageWidth" />
           <meta property="og:image:height" content="630" key="ogImageHeight" />
-
           <meta
             property="twitter:card"
             content="summary_large_image"
@@ -254,8 +275,13 @@ const Layout: NextComponentType<
             title={alertBannerContent.title}
             description={alertBannerContent.description}
             link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
+              ...(!!alertBannerContent.link &&
+                !!alertBannerContent.linkTitle && {
+                  href: linkResolver(alertBannerContent.link.type as LinkType, [
+                    alertBannerContent.link.slug,
+                  ]).href,
+                  title: alertBannerContent.linkTitle,
+                }),
             }}
             variant={alertBannerContent.bannerVariant as AlertBannerVariants}
             dismissable={alertBannerContent.isDismissable}
@@ -369,13 +395,9 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const [
     categories,
     alertBanner,
-    upperMenuInfo,
-    upperMenuContact,
-    lowerMenu,
-    middleMenu,
-    tagsMenu,
     namespace,
     megaMenuData,
+    footerMenuData,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -395,46 +417,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper info', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper contact', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer lower', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer middle', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer tags', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -457,9 +439,78 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
   ])
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+
+  const mapLinks = (item: Menu) =>
+    item.menuLinks.map((x) => {
+      const href = LinkResolver(
+        x.link.type as LinkType,
+        [x.link.slug],
+        lang as Locale,
+      ).href.trim()
+
+      // If a link type is an url string and the url has the same origin, strip the origin part out
+      // so that the Link component does not treat it as an external url.
+      return {
+        title: x.title,
+        href: href.startsWith(origin) ? href.replace(origin, '') : href,
+      }
+    })
+
+  const initialFooterMenu = {
+    footerUpperInfo: [],
+    footerUpperContact: [],
+    footerLowerMenu: [],
+    footerTagsMenu: [],
+    footerMiddleMenu: [],
+  }
+
+  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
+    if (IS_MOCK) {
+      const key = Object.keys(menus)[idx]
+      if (key) {
+        menus[key] = mapLinks(menu as Menu)
+      }
+      return menus
+    }
+
+    switch (menu.id) {
+      // Footer lower
+      case '6vTuiadpCKOBhAlSjYY8td':
+        menus.footerLowerMenu = mapLinks(menu as Menu)
+        break
+      // Footer middle
+      case '7hSbSQm5F5EBc0KxPTFVAS':
+        menus.footerMiddleMenu = mapLinks(menu as Menu)
+        break
+      // Footer tags
+      case '6oGQDyWos4xcKX9BdMHd5R':
+        menus.footerTagsMenu = mapLinks(menu as Menu)
+        break
+      // Footer upper
+      case '62Zh6hUc3bi0JwNRnqV8Nm':
+        menus.footerUpperInfo = mapLinks(menu as Menu)
+        break
+      // Footer upper contact
+      case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        menus.footerUpperContact = mapLinks(menu as Menu)
+        break
+      default:
+        break
+    }
+
+    return menus
+  }, initialFooterMenu)
 
   return {
     categories,
@@ -470,26 +521,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
-    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
+    ...footerMenu,
     namespace,
     respOrigin,
     megaMenuData: {
@@ -529,12 +561,25 @@ export const withMainLayout = <T,>(
   }
 
   WithMainLayout.getInitialProps = async (ctx) => {
+    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
+      typeof Layout.getInitialProps,
+      undefined
+    >
+
     const [layoutProps, componentProps] = await Promise.all([
-      Layout.getInitialProps(ctx),
-      Component.getInitialProps(ctx),
+      getLayoutInitialProps(ctx),
+      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
 
-    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+    const themeConfig: Partial<LayoutProps> =
+      'darkTheme' in componentProps
+        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
+        : {}
+
+    return {
+      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
+      componentProps,
+    }
   }
 
   return WithMainLayout

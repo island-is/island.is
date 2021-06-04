@@ -1,29 +1,39 @@
+import { SystemMetadata } from '@island.is/shared/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { ArticleReference, mapArticleReference } from './articleReference'
 
 @ObjectType()
 export class SubArticle {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
+
+  @Field(() => ArticleReference, { nullable: true })
+  parent?: ArticleReference
 
   @Field(() => [SliceUnion])
-  body: Array<typeof SliceUnion>
+  body: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })
   showTableOfContents?: boolean
 }
 
-export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
+export const mapSubArticle = ({
+  sys,
+  fields,
+}: ISubArticle): SystemMetadata<SubArticle> => ({
+  typename: 'SubArticle',
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.url || fields.slug) ?? '',
+  parent: fields.parent?.fields && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,
 })

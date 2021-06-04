@@ -1,70 +1,21 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { Route, Router } from 'react-router-dom'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import Overview from './Overview'
-import { UpdateCase } from '@island.is/judicial-system/types'
-import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockJudgeQuery,
-  mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import Overview from './Overview'
 
 describe('/domari-krafa with an ID', () => {
-  test('should not allow users to continue unless every required field has been filled out', async () => {
-    // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id_2`
-    history.push(route)
-
-    // Act and Assert
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              courtCaseNumber: '000-0000-000',
-            } as UpdateCase,
-          ]),
-        ]}
-        addTypename={false}
-      >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
-      </MockedProvider>,
-    )
-    userEvent.type(
-      await screen.findByLabelText('Slá inn málsnúmer *'),
-      '000-0000-000',
-    )
-
-    expect(
-      (await screen.findByRole('button', {
-        name: /Halda áfram/i,
-      })) as HTMLButtonElement,
-    ).not.toBeDisabled()
-  })
-
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id_2`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
@@ -72,13 +23,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -90,11 +37,10 @@ describe('/domari-krafa with an ID', () => {
 
   test('should display the approprieate custody restrictions if there are any', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -102,29 +48,23 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
     // Assert
-    expect(
-      await screen.findByText('B - Einangrun, E - Fjölmiðlabann'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('B - Einangrun')).toBeInTheDocument()
+    expect(await screen.findByText('E - Fjölmiðlabann')).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -132,18 +72,82 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
     // Assert
     expect(await screen.findByText('a-lið 1. mgr. 95. gr.')).toBeInTheDocument()
     expect(await screen.findByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
+  })
+
+  test('should not show the "Open file" button if a judge has not been set', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_8' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
+  })
+
+  test('should not show the "Open file" button if the currently logged in judge is not the judge that is assigned to the case', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_4' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(screen.queryAllByRole('button', { name: 'Opna' })).toHaveLength(0)
+  })
+
+  test('should show the "Open file" button if the currently logged in judge is the same as is assigned to the case', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_5' },
+    }))
+
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Overview />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(await screen.findAllByRole('button', { name: 'Opna' })).toHaveLength(
+      2,
+    )
   })
 })

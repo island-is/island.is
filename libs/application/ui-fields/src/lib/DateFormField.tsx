@@ -1,8 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   FieldBaseProps,
   DateField,
   formatText,
+  MaybeWithApplicationAndField,
+  Application,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -23,8 +25,54 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     description,
     placeholder,
     backgroundColor,
+    excludeDates,
+    minDate,
   } = field
   const { formatMessage, lang } = useLocale()
+
+  const computeMinDate = (
+    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    memoApplication: Application,
+    memoField: DateField,
+  ) => {
+    if (typeof maybeMinDate === 'function') {
+      return maybeMinDate(memoApplication, memoField)
+    }
+
+    return maybeMinDate
+  }
+
+  const computeExcludeDates = (
+    maybeExcludeDates: MaybeWithApplicationAndField<Date[]>,
+    memoApplication: Application,
+    memoField: DateField,
+  ) => {
+    if (typeof maybeExcludeDates === 'function') {
+      return maybeExcludeDates(memoApplication, memoField)
+    }
+
+    return maybeExcludeDates
+  }
+
+  const finalMinDate = useMemo(
+    () =>
+      computeMinDate(
+        minDate as MaybeWithApplicationAndField<Date>,
+        application,
+        field,
+      ),
+    [minDate, application, field],
+  )
+
+  const finalExcludeDates = useMemo(
+    () =>
+      computeExcludeDates(
+        excludeDates as MaybeWithApplicationAndField<Date[]>,
+        application,
+        field,
+      ),
+    [excludeDates, application],
+  )
 
   return (
     <div>
@@ -40,6 +88,8 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           id={id}
           name={`${id}`}
           locale={lang}
+          excludeDates={finalExcludeDates}
+          minDate={finalMinDate}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={

@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   createTerms,
   extractStringsFromObject,
@@ -38,13 +34,36 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.relatedArticles) {
               return undefined
             }
-            const { relatedArticles, ...prunedRelatedArticlesFields } = fields
+            const {
+              relatedArticles,
+              subArticles,
+              ...prunedRelatedArticlesFields
+            } = fields
             return {
               sys,
               fields: prunedRelatedArticlesFields,
             }
           })
           .filter((relatedArticle) => Boolean(relatedArticle))
+
+        const subArticles = (entry.fields.subArticles || [])
+          .map(({ sys, fields }) => {
+            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+            if (!fields?.parent || !fields?.title) {
+              return undefined
+            }
+            const { title, url, content, showTableOfContents } = fields
+            return {
+              sys,
+              fields: {
+                title,
+                slug: url,
+                content,
+                showTableOfContents,
+              },
+            }
+          })
+          .filter((subArticle) => Boolean(subArticle))
 
         // relatedArticles can include nested articles that point back to this entry
         const processedEntry = {
@@ -54,17 +73,24 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             relatedArticles: (relatedArticles.length
               ? relatedArticles
               : undefined) as IArticleFields['relatedArticles'],
+            subArticles: (subArticles.length
+              ? subArticles
+              : undefined) as IArticleFields['subArticles'],
           },
         }
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
+        } else {
+          logger.warn('Circular reference found in article', {
+            id: entry.sys.id,
+          })
         }
       }
       return processedEntries
     }, [])
   }
 
-  doMapping(entries: doMappingInput<IArticle>) {
+  doMapping(entries: IArticle[]) {
     logger.info('Mapping articles', { count: entries.length })
 
     return entries
@@ -73,12 +99,18 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
         try {
           mapped = mapArticle(entry)
-          const content = extractStringsFromObject(mapped.body)
+          // get the searchable content of this article
+          const parentContent = extractStringsFromObject(mapped.body)
+          // get searchable content of all sub articles
+          const searchableContent = mapped.subArticles.map((subArticle) =>
+            extractStringsFromObject(subArticle.body),
+          )
+          searchableContent.push(parentContent)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content,
-            contentWordCount: content.split(/\s+/).length,
+            content: searchableContent.join(' '), // includes all searchable content in parent and children
+            contentWordCount: parentContent.split(/\s+/).length,
             processEntryCount: numberOfProcessEntries(mapped.body),
             ...numberOfLinks(mapped.body),
             type: 'webArticle',

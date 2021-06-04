@@ -6,13 +6,13 @@ import { TabContent, mapTabContent } from './tabContent.model'
 @ObjectType()
 export class TabSection {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [TabContent])
-  tabs: Array<TabContent>
+  tabs?: Array<TabContent>
 }
 
 export const mapTabSection = ({

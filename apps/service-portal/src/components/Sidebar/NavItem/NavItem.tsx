@@ -11,7 +11,6 @@ interface Props {
   external?: boolean
   variant?: 'blue' | 'blueberry'
   onClick?: () => void
-  notifications?: number
 }
 
 const NavItemContent: FC<Props> = ({
@@ -19,7 +18,6 @@ const NavItemContent: FC<Props> = ({
   active,
   onClick,
   variant = 'blue',
-  notifications,
   children,
 }) => {
   return (
@@ -58,28 +56,13 @@ const NavItemContent: FC<Props> = ({
           {children}
         </Text>
       </Box>
-      {notifications ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          marginLeft={1}
-          borderRadius="circle"
-          className={styles.notification}
-          background={variant === 'blue' ? 'blue400' : 'blueberry400'}
-        >
-          <Text variant="small" fontWeight="semiBold" color="white">
-            {notifications}
-          </Text>
-        </Box>
-      ) : null}
     </Box>
   )
 }
 
 const NavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank">
+    <a href={props.path} target="_blank" rel="noreferrer noopener">
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (

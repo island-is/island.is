@@ -20,7 +20,6 @@ const renderConnectedComponent = (slice) => {
       if (Array.isArray(data)) {
         return <CompanyList recyclingPartners={data} />
       }
-
       break
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
@@ -28,6 +27,7 @@ const renderConnectedComponent = (slice) => {
 
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
+      break
     default:
       break
   }

@@ -1,22 +1,18 @@
 import { ReactDatePickerProps } from 'react-datepicker'
-import { Icon as IconType, Type } from '../IconRC/iconMap'
-
-import pl from 'date-fns/locale/pl'
+import { dateFormat } from '@island.is/shared/constants'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
+import { Icon as IconType, Type } from '../IconRC/iconMap'
+
 const languageConfig = {
   is: {
-    format: 'dd.MM.yyyy',
+    format: dateFormat.is,
     locale: is,
   },
   en: {
-    format: 'MM/dd/yyyy',
+    format: dateFormat.en,
     locale: en,
-  },
-  pl: {
-    format: 'dd.MM.yyyy',
-    locale: pl,
   },
 }
 
@@ -31,6 +27,7 @@ export interface DatePickerProps {
   locale?: LocaleKeys
   minDate?: ReactDatePickerProps['minDate']
   maxDate?: ReactDatePickerProps['maxDate']
+  excludeDates?: ReactDatePickerProps['excludeDates']
   selected?: ReactDatePickerProps['selected']
   disabled?: boolean
   hasError?: boolean
@@ -46,6 +43,14 @@ export interface DatePickerProps {
   backgroundColor?: DatePickerBackgroundColor
   icon?: IconType
   iconType?: Type
+  /**
+   * Minimum selectable year inside datepicker
+   */
+  minYear?: number
+  /**
+   * Maximum selectable year inside datepicker
+   */
+  maxYear?: number
 }
 
 export interface DatePickerCustomHeaderProps {
@@ -61,4 +66,6 @@ export interface DatePickerCustomHeaderProps {
   prevYearButtonDisabled: boolean
   nextYearButtonDisabled: boolean
   locale: Locale
+  minYear?: number
+  maxYear?: number
 }

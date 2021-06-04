@@ -65,7 +65,7 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'service',
+      id: 'serviceSection',
       title: m.serviceSection,
       children: [
         buildMultiField({

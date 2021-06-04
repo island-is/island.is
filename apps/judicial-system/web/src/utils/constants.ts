@@ -1,5 +1,8 @@
 // Routes
 export const REQUEST_LIST_ROUTE = '/krofur'
+export const USER_LIST_ROUTE = '/notendur'
+export const USER_NEW_ROUTE = '/notendur/nyr'
+export const USER_CHANGE_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW = '/krafa/yfirlit'
 
 // Prosicution
@@ -9,7 +12,8 @@ export const STEP_ONE_ROUTE = '/krafa/sakborningur'
 export const STEP_TWO_ROUTE = '/krafa/fyrirtaka'
 export const STEP_THREE_ROUTE = '/krafa/domkrofur-og-lagaakvaedi'
 export const STEP_FOUR_ROUTE = '/krafa/greinargerd'
-export const STEP_FIVE_ROUTE = '/krafa/stadfesta'
+export const STEP_FIVE_ROUTE = '/krafa/rannsoknargogn'
+export const STEP_SIX_ROUTE = '/krafa/stadfesta'
 
 // Judge
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'

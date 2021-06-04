@@ -1,71 +1,62 @@
 import React, { FC, useState } from 'react'
+import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
+
 import { useLocale } from '@island.is/localization'
-
-import {
-  FieldBaseProps,
-  getValueViaPath,
-  MessageFormatter,
-} from '@island.is/application/core'
-import {
-  Box,
-  Button,
-  DialogPrompt,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import ReviewSection, { reviewSectionState } from './ReviewSection'
-import Review from '../Review'
-
-import { mm } from '../../lib/messages'
-import { YES } from '../../constants'
-
+import { dateFormat } from '@island.is/shared/constants'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
+import Review from '../Review'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { handleSubmitError } from '../../parentalLeaveClientUtils'
+import { States as ApplicationStates } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+
+type StateMapEntry = { [key: string]: ReviewSectionState }
+
+type StatesMap = {
+  otherParent: StateMapEntry
+  employer: StateMapEntry
+  vinnumalastofnun: StateMapEntry
 }
 
-type stateMapEntry = { [key: string]: reviewSectionState }
-type statesMap = {
-  otherParent: stateMapEntry
-  employer: stateMapEntry
-  vinnumalastofnun: stateMapEntry
-}
-const statesMap: statesMap = {
+const statesMap: StatesMap = {
   otherParent: {
-    otherParentApproval: reviewSectionState.inProgress,
-    otherParentRequiresAction: reviewSectionState.requiresAction,
-    employerApproval: reviewSectionState.complete,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]: ReviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
   employer: {
-    employerWaitingToAssign: reviewSectionState.inProgress,
-    employerApproval: reviewSectionState.inProgress,
-    employerRequiresAction: reviewSectionState.requiresAction,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
+      ReviewSectionState.inProgress,
+    [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.inProgress,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: reviewSectionState.inProgress,
-    vinnumalastofnunRequiresAction: reviewSectionState.requiresAction,
-    approved: reviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
+      ReviewSectionState.inProgress,
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+const InReviewSteps: FC<FieldBaseProps> = ({
+  application,
+  field,
+  refetch,
+  errors,
+}) => {
+  const { isRequestingRights } = useApplicationAnswers(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleError(e.message, formatMessage),
+      onError: (e) => handleSubmitError(e.message, formatMessage),
     },
   )
 
@@ -74,41 +65,64 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
     'steps',
   )
 
-  const isRequestingRights =
-    (getValueViaPath(
-      application.answers,
-      'requestRights.isRequestingRights',
-    ) as string) === YES
-
   const steps = [
     {
       state: statesMap['otherParent'][application.state],
-      title: formatMessage(mm.reviewScreen.otherParentTitle),
-      description: formatMessage(mm.reviewScreen.otherParentDesc),
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.otherParentTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.otherParentDesc,
+      ),
     },
     {
       state: statesMap['employer'][application.state],
-      title: formatMessage(mm.reviewScreen.employerTitle),
-      description: formatMessage(mm.reviewScreen.employerDesc),
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerDesc,
+      ),
     },
     {
       state: statesMap['vinnumalastofnun'][application.state],
-      title: formatMessage(mm.reviewScreen.deptTitle),
-      description: formatMessage(mm.reviewScreen.deptDesc),
+      title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.deptDesc,
+      ),
     },
   ]
 
-  if (!isRequestingRights) steps.shift()
+  if (!isRequestingRights) {
+    steps.shift()
+  }
+
+  const dob = getExpectedDateOfBirth(application)
+  const dobDate = dob ? new Date(dob) : null
 
   return (
     <Box marginBottom={10}>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Text>
-          {(screenState === 'steps' && formatMessage(mm.reviewScreen.desc)) ||
-            formatMessage(mm.reviewScreen.descReview)}
-        </Text>
+      <Box
+        display={['block', 'block', 'block', 'flex']}
+        justifyContent="spaceBetween"
+      >
+        {dobDate && (
+          <Text variant="h4" color="blue400">
+            {formatMessage(
+              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+            )}
+            <br />
+            {format(dobDate, dateFormat.is)}
+          </Text>
+        )}
         <Box>
-          <Box display="inlineBlock" marginLeft={1} marginRight={2}>
+          <Box
+            display={['block', 'inlineBlock']}
+            marginLeft={[0, 0, 0, 0]}
+            marginRight={2}
+            marginTop={[2, 2, 2, 0]}
+            marginBottom={[1, 0]}
+          >
             <Button
               colorScheme="default"
               iconType="filled"
@@ -122,62 +136,52 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
               variant="text"
             >
               {(screenState === 'steps' &&
-                formatMessage(mm.reviewScreen.buttonsView)) ||
-                formatMessage(mm.reviewScreen.buttonsViewProgress)}
+                formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsView,
+                )) ||
+                formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsViewProgress,
+                )}
             </Button>
           </Box>
-          <Box display="inlineBlock">
-            <DialogPrompt
-              baseId="editApplicationDialog"
-              title={formatMessage(mm.reviewScreen.editApplicationModalTitle)}
-              description={formatMessage(
-                mm.reviewScreen.editApplicationModalDesc,
-              )}
-              ariaLabel={formatMessage(
-                mm.reviewScreen.editApplicationModalAria,
-              )}
-              disclosureElement={
-                <Button
-                  colorScheme="default"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  icon="pencil"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                >
-                  {formatMessage(mm.reviewScreen.buttonsEdit)}
-                </Button>
-              }
-              onConfirm={async () => {
-                const res = await submitApplication({
-                  variables: {
-                    input: {
-                      id: application.id,
-                      event: 'EDIT',
-                      answers: application.answers,
+          {application.state === ApplicationStates.APPROVED && (
+            <Box display="inlineBlock">
+              <Button
+                colorScheme="default"
+                iconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                icon="pencil"
+                loading={loadingSubmit}
+                disabled={loadingSubmit}
+                onClick={async () => {
+                  const res = await submitApplication({
+                    variables: {
+                      input: {
+                        id: application.id,
+                        event: 'EDIT',
+                        answers: application.answers,
+                      },
                     },
-                  },
-                })
+                  })
 
-                if (res?.data) {
-                  // Takes them back to the editable Review screen
-                  refetch?.()
-                }
-              }}
-              buttonTextConfirm={formatMessage(
-                mm.reviewScreen.editApplicationModalConfirmButton,
-              )}
-              buttonTextCancel={formatMessage(
-                mm.reviewScreen.editApplicationModalCancelButton,
-              )}
-            />
-          </Box>
+                  if (res?.data) {
+                    // Takes them to the next state (which loads the relevant form)
+                    refetch?.()
+                  }
+                }}
+              >
+                {formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
 
-      {(screenState === 'steps' && (
+      {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => {
             return (
@@ -190,9 +194,14 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
             )
           })}
         </Box>
-      )) || (
+      ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review application={application} editable={false} />
+          <Review
+            application={application}
+            field={field}
+            errors={errors}
+            editable={false}
+          />
         </Box>
       )}
     </Box>

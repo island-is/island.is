@@ -35,7 +35,7 @@ type typeOfSync = { initial: boolean } | { nextSyncToken: string }
 @Injectable()
 export class ContentfulService {
   private limiter: Bottleneck
-  private defaultIncludeDepth = 10
+  private defaultIncludeDepth = 4
   private contentfulClient: ContentfulClientApi
   // TODO: Make the contentful locale reflect the api locale
   // contentful locale does not always reflect the api locale so we need this map
@@ -194,7 +194,6 @@ export class ContentfulService {
   ): Promise<Entry<any>[]> {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       links_to_entry: linkId,
       locale: this.contentfulLocaleMap[locale],
     })
@@ -216,7 +215,7 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    const nestedEntries = entries
+    let nestedEntries = entries
       .filter((entry) =>
         environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
       )
@@ -234,22 +233,33 @@ export class ContentfulService {
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (syncType !== 'full' && nestedEntries) {
       logger.info('Finding root entries from nestedEntries')
-      const alreadyProcessedIds = items.map((entry) => entry.sys.id)
-      for (const entryId of nestedEntries) {
-        // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
-        // with regular sync, triggered by a webhook, these calls 1 - 2 at most
-        const linkedEntries = await this.limiter.schedule(() => {
-          return this.linksToEntry(entryId, locale)
-        })
-        linkedEntries.forEach((entry) => {
-          // No need to import the same document twice
-          if (
-            !alreadyProcessedIds.includes(entry.sys.id) &&
-            environment.indexableTypes.includes(entry.sys.contentType.sys.id)
-          ) {
-            items.push(entry)
-          }
-        })
+
+      // For now we will look for linked entries up to depth 2
+      for (let i = 1; i <= 3; i++) {
+        const linkedEntries = []
+        for (const entryId of nestedEntries) {
+          // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
+          // with regular sync, triggered by a webhook, these calls 1 - 2 at most
+          linkedEntries.push(
+            ...(
+              await this.limiter.schedule(() => {
+                return this.linksToEntry(entryId, locale)
+              })
+            ).filter(
+              (entry) => !items.some((item) => item.sys.id === entry.sys.id),
+            ),
+          )
+        }
+        items.push(
+          ...linkedEntries.filter((entry) =>
+            environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+          ),
+        )
+        // Next round of the loop will only find linked entries to these entries
+        nestedEntries = linkedEntries.map((entry) => entry.sys.id)
+        logger.info(
+          `Found ${linkedEntries.length} nested entries at depth ${i}`,
+        )
       }
     }
 

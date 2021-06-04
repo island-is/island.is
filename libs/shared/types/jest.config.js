@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'shared-types',
-  preset: '../../../jest.config.js',
+  displayName: 'shared-types',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',

@@ -42,6 +42,10 @@ module.exports = async ({ config }) => {
       ...config.resolve.alias,
       '@island.is/island-ui/theme': path.resolve(__dirname, '../../theme/src'),
       '@island.is/island-ui/utils': path.resolve(__dirname, '../../utils/src'),
+      '@island.is/shared/constants': path.resolve(
+        __dirname,
+        '../../../shared/constants/src',
+      ),
     },
   }
 

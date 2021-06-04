@@ -4,10 +4,10 @@ import { IOrganizationTag } from '../generated/contentfulTypes'
 @ObjectType()
 export class OrganizationTag {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 }
 
 export const mapOrganizationTag = ({

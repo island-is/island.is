@@ -7,6 +7,7 @@ import {
   FormValue,
   FieldTypes,
   RecordObject,
+  SetBeforeSubmitCallback,
 } from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -24,6 +25,7 @@ const FormMultiField: FC<{
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
   refetch: () => void
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
 }> = ({
   application,
   answerQuestions,
@@ -31,6 +33,7 @@ const FormMultiField: FC<{
   goToScreen,
   multiField,
   refetch,
+  setBeforeSubmitCallback,
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
@@ -51,7 +54,7 @@ const FormMultiField: FC<{
         </GridColumn>
       )}
 
-      {/* Todo: 
+      {/* Todo:
           We need a better approach for overall field spacing and control of spacing.
           For now I'm setting this based on the Parental Leave comps:
           https://www.figma.com/file/xXSz5E9SRRs6Me0vtpgimH/F%C3%A6%C3%B0ingarorlof-Ums%C3%B3kn?node-id=465%3A0
@@ -80,6 +83,7 @@ const FormMultiField: FC<{
                 errors={errors}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
               />
             </Box>
           </GridColumn>

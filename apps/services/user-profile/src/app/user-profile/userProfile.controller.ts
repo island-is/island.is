@@ -1,3 +1,12 @@
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
@@ -7,11 +16,15 @@ import {
   Param,
   Post,
   ConflictException,
+  UseGuards,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
@@ -21,20 +34,23 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { EmailVerification } from './emailVerification.model'
-import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
 import { SmsVerification } from './smsVerification.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
   constructor(
-    private userProfileService: UserProfileService,
-    private verificationService: VerificationService,
+    private readonly userProfileService: UserProfileService,
+    private readonly verificationService: VerificationService,
+    private readonly auditService: AuditService,
   ) {}
 
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
   @Get('userProfile/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -44,18 +60,45 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: UserProfile })
+  @Audit<UserProfile>({
+    resources: (profile) => profile.nationalId,
+  })
   async findOneByNationalId(
-    @Param('nationalId', UserProfileByNationalIdPipe) profile: UserProfile,
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser()
+    user: User,
   ): Promise<UserProfile> {
-    return profile
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException(
+        `A user profile with nationalId ${nationalId} does not exist`,
+      )
+    }
+
+    return userProfile
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('userProfile/')
   @ApiCreatedResponse({ type: UserProfile })
   async create(
     @Body()
     userProfileDto: CreateUserProfileDto,
+    @CurrentUser()
+    user: User,
   ): Promise<UserProfile> {
+    if (userProfileDto.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     if (
       await this.userProfileService.findByNationalId(userProfileDto.nationalId)
     ) {
@@ -86,9 +129,18 @@ export class UserProfileController {
       }
     }
 
-    return await this.userProfileService.create(userProfileDto)
+    const userProfile = await this.userProfileService.create(userProfileDto)
+    this.auditService.audit({
+      user,
+      action: 'create',
+      resources: userProfileDto.nationalId,
+      meta: { fields: Object.keys(userProfileDto) },
+    })
+    return userProfile
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Put('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   @ApiParam({
@@ -99,10 +151,17 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   async update(
-    @Param('nationalId', UserProfileByNationalIdPipe) profile: UserProfile,
-    @Body() userProfileToUpdate: UpdateUserProfileDto,
+    @Param('nationalId')
+    nationalId: string,
+    @Body()
+    userProfileToUpdate: UpdateUserProfileDto,
+    @CurrentUser()
+    user: User,
   ): Promise<UserProfile> {
-    const { nationalId } = profile
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
+    const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
       emailVerified: profile.emailVerified,
@@ -141,9 +200,17 @@ export class UserProfileController {
         `A user profile with nationalId ${nationalId} does not exist`,
       )
     }
+    this.auditService.audit({
+      user,
+      action: 'update',
+      resources: updatedUserProfile.nationalId,
+      meta: { fields: updatedFields },
+    })
     return updatedUserProfile
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('emailVerification/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -153,12 +220,22 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   @ApiCreatedResponse({ type: EmailVerification })
+  @Audit<EmailVerification>({
+    resources: (emailVerification) => emailVerification?.nationalId ?? '',
+  })
   async recreateVerification(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
-  ): Promise<EmailVerification | null> {
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<EmailVerification> {
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
     if (!profile.email) {
-      return null
+      throw new BadRequestException(
+        'Profile does not have a configured email address.',
+      )
     }
 
     return await this.verificationService.createEmailVerification(
@@ -167,6 +244,8 @@ export class UserProfileController {
     )
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('confirmEmail/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -177,13 +256,29 @@ export class UserProfileController {
   })
   @ApiCreatedResponse({ type: ConfirmationDtoResponse })
   async confirmEmail(
-    @Param('nationalId', UserProfileByNationalIdPipe)
-    profile: UserProfile,
-    @Body() confirmEmailDto: ConfirmEmailDto,
+    @Param('nationalId')
+    nationalId: string,
+    @Body()
+    confirmEmailDto: ConfirmEmailDto,
+    @CurrentUser()
+    user: User,
   ): Promise<ConfirmationDtoResponse> {
-    return await this.verificationService.confirmEmail(confirmEmailDto, profile)
+    // findOneByNationalId must be first as it implictly checks if the
+    // route param matches the authenticated user.
+    const profile = await this.findOneByNationalId(nationalId, user)
+
+    return await this.auditService.auditPromise(
+      {
+        user,
+        action: 'confirmEmail',
+        resources: profile.nationalId,
+      },
+      this.verificationService.confirmEmail(confirmEmailDto, profile),
+    )
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('confirmSms/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -196,15 +291,41 @@ export class UserProfileController {
   async confirmSms(
     @Param('nationalId')
     nationalId: string,
-    @Body() confirmSmsDto: ConfirmSmsDto,
+    @Body()
+    confirmSmsDto: ConfirmSmsDto,
+    @CurrentUser()
+    user: User,
   ): Promise<ConfirmationDtoResponse> {
-    return await this.verificationService.confirmSms(confirmSmsDto, nationalId)
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'confirmSms',
+        resources: nationalId,
+      },
+      this.verificationService.confirmSms(confirmSmsDto, nationalId),
+    )
   }
 
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('smsVerification/')
+  @Audit<SmsVerification>({
+    resources: (smsVerification) => smsVerification.nationalId,
+  })
   async createSmsVerification(
-    @Body() createSmsVerification: CreateSmsVerificationDto,
+    @Body()
+    createSmsVerification: CreateSmsVerificationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<SmsVerification | null> {
+    if (createSmsVerification.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     return await this.verificationService.createSmsVerification(
       createSmsVerification,
     )

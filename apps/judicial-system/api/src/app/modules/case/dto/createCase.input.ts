@@ -11,7 +11,7 @@ import {
 @InputType()
 export class CreateCaseInput implements CreateCase {
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   readonly type!: CaseType
 
   @Allow()
@@ -44,5 +44,17 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly court?: string
+  readonly defenderPhoneNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly sendRequestToDefender?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly courtId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly leadInvestigator?: string
 }

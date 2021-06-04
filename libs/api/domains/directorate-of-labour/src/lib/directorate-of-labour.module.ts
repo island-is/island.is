@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { VMSTClientModule } from '@island.is/vmst-client'
+import { VMSTModule } from '@island.is/clients/vmst'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
@@ -10,8 +10,7 @@ const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
 const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
-const XROAD_VMST_CLIENT_ID = process.env.XROAD_VMST_CLIENT_ID ?? ''
-
+const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const XROAD_VMST_MEMBER_CLASS = XRoadMemberClass.GovernmentInstitution
 
 @Module({})
@@ -25,14 +24,14 @@ export class DirectorateOfLabourModule {
         DirectorateOfLabourRepository,
       ],
       imports: [
-        VMSTClientModule.register({
+        VMSTModule.register({
           xRoadPath: createXRoadAPIPath(
             XROAD_BASE_PATH_WITH_ENV,
             XROAD_VMST_MEMBER_CLASS,
             XROAD_VMST_MEMBER_CODE,
             XROAD_VMST_API_PATH,
           ),
-          xRoadClient: XROAD_VMST_CLIENT_ID,
+          xRoadClient: XROAD_CLIENT_ID,
           apiKey: VMST_API_KEY,
         }),
       ],

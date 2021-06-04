@@ -65,4 +65,26 @@ export class UserIdentitiesController {
 
     return userIdentity
   }
+
+  /** Gets Delegation User Identity by provider, subject id and actor subject id */
+  @Scopes('@identityserver.api/authentication')
+  @Get('/delegation/:provider/:subjectId/:actorSubjectId')
+  @ApiOkResponse({ type: UserIdentity })
+  async findDelegationIdentity(
+    @Param('provider') provider: string,
+    @Param('subjectId') subjectId: string,
+    @Param('actorSubjectId') actorSubjectId: string,
+  ): Promise<UserIdentity> {
+    const userIdentity = await this.userIdentityService.findDelegationIdentity(
+      provider,
+      subjectId,
+      actorSubjectId,
+    )
+
+    if (!userIdentity) {
+      throw new NotFoundException("This delegation identity doesn't exist")
+    }
+
+    return userIdentity
+  }
 }

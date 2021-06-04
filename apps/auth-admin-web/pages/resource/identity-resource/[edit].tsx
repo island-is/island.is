@@ -10,6 +10,7 @@ import { IdentityResourceStep } from '../../../entities/common/IdentityResources
 import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm'
 import StepEnd from '../../../components/common/StepEnd'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -34,6 +35,9 @@ const Index: React.FC = () => {
     }
     loadResource()
     setStep(1)
+    document.title = LocalizationUtils.getPageTitle(
+      'resource.identity-resource.[edit]',
+    )
   }, [resourceId])
 
   const getResource = async (resourceId: string) => {
@@ -72,6 +76,11 @@ const Index: React.FC = () => {
     }
   }
 
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(resourceId as string)
+    await getResource(decode)
+  }
+
   switch (step) {
     case IdentityResourceStep.IdentityResource: {
       return (
@@ -104,6 +113,7 @@ const Index: React.FC = () => {
               handleNext={handleNext}
               claims={identityResource.userClaims?.map((x) => x.claimName)}
               handleChanges={changesMade}
+              handleNewClaimsAdded={refreshClaims}
             />
           </IdentityResourceStepNav>
         </ContentWrapper>
@@ -118,12 +128,20 @@ const Index: React.FC = () => {
             handleStepChange={handleStepChange}
           >
             <StepEnd
-              buttonText="Go back"
-              title="Steps completed"
+              buttonText={
+                LocalizationUtils.getPage('resource.identity-resource.[edit]')
+                  .endStep.buttonText
+              }
+              title={
+                LocalizationUtils.getPage('resource.identity-resource.[edit]')
+                  .endStep.title
+              }
               handleButtonFinishedClick={() => setStep(1)}
             >
-              The steps needed, to create the Identity Resource, have been
-              completed
+              {
+                LocalizationUtils.getPage('resource.identity-resource.[edit]')
+                  .endStep.infoTitle
+              }
             </StepEnd>
           </IdentityResourceStepNav>
         </ContentWrapper>

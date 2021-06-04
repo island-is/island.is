@@ -1,5 +1,5 @@
 import React, { ReactNode, Fragment, useEffect } from 'react'
-import { ErrorPageQuery, Html } from '@island.is/web/graphql/schema'
+import { ErrorPageQuery } from '@island.is/web/graphql/schema'
 import {
   Text,
   Box,
@@ -7,14 +7,14 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { renderHtml } from '@island.is/island-ui/contentful'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { Document } from '@contentful/rich-text-types'
 import { useRouter } from 'next/router'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
 
 type MessageType = {
   title: string
-  description?: Html
+  description?: { __typename: 'Html'; id: string; document: Document }
   body?: string
 }
 
@@ -84,7 +84,7 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
             </Text>
             <Text variant="intro" as="p">
               {errorMessages.description
-                ? renderHtml(errorMessages.description.document as Document)
+                ? richText([errorMessages.description] as SliceType[])
                 : formatBody(errorMessages.body, asPath)}
             </Text>
           </Box>

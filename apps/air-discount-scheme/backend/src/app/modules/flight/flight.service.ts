@@ -36,6 +36,11 @@ const availableFinancialStates = [
   financialStateMachine.states[States.sentDebit].key,
 ]
 
+export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60) // 48 hours in milliseconds
+export const REYKJAVIK_FLIGHT_CODES = ['RKV', 'REK']
+export const AKUREYRI_FLIGHT_CODES = ['AEY']
+export const ALLOWED_CONNECTING_FLIGHT_CODES = ['VPN', 'GRY', 'THO']
+
 @Injectable()
 export class FlightService {
   constructor(
@@ -62,6 +67,107 @@ export class FlightService {
     return false
   }
 
+  hasConnectingFlightPotentialFromFlightLegs(
+    firstFlight: FlightLeg,
+    secondFlight: FlightLeg,
+  ): boolean {
+    // If neither flight is connected to Reykjavik in any way
+    // then it is not eligible
+    if (
+      !REYKJAVIK_FLIGHT_CODES.includes(firstFlight.destination) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(firstFlight.origin) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.destination) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin)
+    ) {
+      return false
+    }
+
+    // If neither flight is connected to the allowed connecting flight places
+    // then it is not eligible
+    if (
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(firstFlight.destination) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(firstFlight.origin) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(secondFlight.destination) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(secondFlight.origin)
+    ) {
+      return false
+    }
+
+    // Both flights need to touch Akureyri in some way, that is to say,
+    // Akureyri has to be a common point, ex: Reykjavik-Akureyri > Akureyri-Grimsey
+    // Logic: If not (Akureyri in destination or origin of strictly both flights) return false
+    if (
+      !(
+        AKUREYRI_FLIGHT_CODES.includes(firstFlight.destination) ||
+        AKUREYRI_FLIGHT_CODES.includes(firstFlight.origin)
+      ) ||
+      !(
+        AKUREYRI_FLIGHT_CODES.includes(secondFlight.destination) ||
+        AKUREYRI_FLIGHT_CODES.includes(secondFlight.origin)
+      )
+    ) {
+      return false
+    }
+
+    let delta = secondFlight.date.getTime() - firstFlight.date.getTime()
+
+    // The order must be flipped if we subtract the first intended chronological leg
+    // from the second intended chronological leg
+    if (
+      REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin) ||
+      REYKJAVIK_FLIGHT_CODES.includes(firstFlight.destination)
+    ) {
+      delta = -delta
+    }
+
+    if (delta >= 0 && delta <= CONNECTING_FLIGHT_GRACE_PERIOD) {
+      return true
+    }
+    return false
+  }
+
+  async isFlightLegConnectingFlight(
+    existingFlightId: string,
+    incomingLeg: FlightLeg,
+  ): Promise<boolean> {
+    // Get the corresponding flight for the connection discount code
+    const existingFlight = await this.flightModel.findOne({
+      where: {
+        id: existingFlightId,
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
+
+    if (!existingFlight) {
+      return false
+    }
+
+    // If a user flightLeg exists such that the incoming flightLeg makes a valid connection
+    // pair, return true
+    for (const flightLeg of existingFlight.flightLegs) {
+      if (
+        this.hasConnectingFlightPotentialFromFlightLegs(flightLeg, incomingLeg)
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  async findThisYearsConnectableFlightsByNationalId(
+    nationalId: string,
+  ): Promise<Flight[]> {
+    const flights = await this.findThisYearsFlightsByNationalId(nationalId)
+    // Filter out non-Reykjavík and non-Akureyri flights
+    return flights.filter((flight) => flight.connectable)
+  }
+
   async countThisYearsFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {
@@ -86,7 +192,10 @@ export class FlightService {
       include: [
         {
           model: this.flightLegModel,
-          where: { financialState: availableFinancialStates },
+          where: {
+            financialState: availableFinancialStates,
+            isConnectingFlight: false,
+          },
         },
       ],
     })
@@ -114,7 +223,6 @@ export class FlightService {
     return this.flightLegModel.findAll({
       where: {
         ...(body.airline ? { airline: body.airline } : {}),
-        ...(body.cooperation ? { cooperation: body.cooperation } : {}),
         ...(body.state && body.state.length > 0
           ? { financialState: body.state }
           : {}),
@@ -177,6 +285,13 @@ export class FlightService {
 
   findThisYearsFlightsByNationalId(nationalId: string): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
+    return this.findFlightsByYearAndNationalId(nationalId, currentYear)
+  }
+
+  findFlightsByYearAndNationalId(
+    nationalId: string,
+    year: string,
+  ): Promise<Flight[]> {
     return this.flightModel.findAll({
       where: Sequelize.and(
         Sequelize.where(
@@ -185,7 +300,7 @@ export class FlightService {
             'year',
             Sequelize.fn('date', Sequelize.col('booking_date')),
           ),
-          currentYear,
+          year,
         ),
         { nationalId },
       ),
@@ -202,14 +317,29 @@ export class FlightService {
     flight: CreateFlightBody,
     user: NationalRegistryUser,
     airline: ValueOf<typeof Airlines>,
+    isConnectable: boolean,
+    connectingId?: string,
   ): Promise<Flight> {
     const nationalId = user.nationalId
+
+    if (!isConnectable && connectingId) {
+      this.flightModel.update(
+        {
+          connectable: false,
+        },
+        {
+          where: { id: connectingId },
+        },
+      )
+    }
+
     return this.flightModel.create(
       {
         ...flight,
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
           airline,
+          isConnectingFlight: !isConnectable && Boolean(connectingId),
         })),
         nationalId,
         userInfo: {
@@ -217,6 +347,7 @@ export class FlightService {
           gender: user.gender,
           postalCode: user.postalcode,
         },
+        connectable: isConnectable,
       },
       { include: [this.flightLegModel] },
     )

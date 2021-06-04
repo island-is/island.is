@@ -4,19 +4,19 @@ import { Asset as ContentfulAsset } from 'contentful'
 @ObjectType()
 export class Asset {
   @Field()
-  typename: string
+  typename!: string
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  url: string
+  url?: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  contentType: string
+  contentType?: string
 }
 
 export const mapAsset = ({ sys, fields }: ContentfulAsset): Asset => ({

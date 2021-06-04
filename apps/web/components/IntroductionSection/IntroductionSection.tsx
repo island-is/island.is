@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import Illustration from './TempIllustration'
 import {
   GridContainer,
@@ -35,7 +35,7 @@ interface Props {
   linkUrl: LinkResolverResponse
 }
 
-export const IntroductionSection: FC<Props> = ({
+export const IntroductionSection = ({
   subtitle,
   title,
   titleId,
@@ -43,7 +43,7 @@ export const IntroductionSection: FC<Props> = ({
   text,
   linkUrl,
   linkText,
-}) => {
+}: Props) => {
   const titleProps = titleId ? { id: titleId } : {}
   return (
     <GridContainer>
@@ -82,8 +82,8 @@ export const IntroductionSection: FC<Props> = ({
               <Button
                 icon="arrowForward"
                 iconType="filled"
-                type="button"
                 variant="text"
+                as="span"
               >
                 {linkText}
               </Button>

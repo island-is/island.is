@@ -34,7 +34,7 @@ jobs:
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "parameters": {
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-' | tr '[:upper:]' '[:lower:]')"
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
             }
           }
           BODY

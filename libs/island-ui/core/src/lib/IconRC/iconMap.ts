@@ -5,6 +5,7 @@ export type Icon =
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
+  | 'arrowDown'
   | 'attach'
   | 'business'
   | 'calendar'
@@ -23,9 +24,12 @@ export type Icon =
   | 'closeCircle'
   | 'close'
   | 'copy'
+  | 'document'
   | 'documents'
   | 'download'
   | 'ellipse'
+  | 'ellipsisHorizontal'
+  | 'ellipsisVertical'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -41,12 +45,15 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'print'
   | 'reader'
   | 'receipt'
   | 'removeCircle'
   | 'school'
   | 'search'
   | 'settings'
+  | 'time'
+  | 'trash'
   | 'wallet'
   | 'warning'
   | 'reload'
@@ -58,6 +65,7 @@ export default {
     add: 'Add',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
+    arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
@@ -77,9 +85,12 @@ export default {
     closeCircle: 'CloseCircle',
     close: 'Close',
     copy: 'Copy',
+    document: 'Document',
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
+    ellipsisHorizontal: 'EllipsisHorizontal',
+    ellipsisVertical: 'EllipsisVertical',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -95,23 +106,27 @@ export default {
     people: 'People',
     person: 'Person',
     playCircle: 'PlayCircle',
+    print: 'Print',
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
     school: 'School',
     search: 'Search',
     settings: 'Settings',
+    trash: 'Trash',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
     remove: 'Remove',
+    time: 'Time',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
-    arrowForward: 'ArrowForwardOutline',
-    arrowBack: 'ArrowBackOutline',
-    arrowUp: 'ArrowUpOutline',
+    arrowForward: 'ArrowForward',
+    arrowBack: 'ArrowBack',
+    arrowDown: 'ArrowDown',
+    arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
@@ -123,16 +138,19 @@ export default {
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
-    chevronBack: 'ChevronBackOutline',
-    chevronUp: 'ChevronUpOutline',
-    chevronDown: 'ChevronDownOutline',
-    chevronForward: 'ChevronForwardOutline',
+    chevronBack: 'ChevronBack',
+    chevronUp: 'ChevronUp',
+    chevronDown: 'ChevronDown',
+    chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircleOutline',
-    close: 'CloseOutline',
+    close: 'Close',
     copy: 'CopyOutline',
+    document: 'DocumentOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
+    ellipsisHorizontal: 'EllipsisHorizontalOutline',
+    ellipsisVertical: 'EllipsisVerticalOutline',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',
@@ -148,15 +166,18 @@ export default {
     people: 'PeopleOutline',
     person: 'PersonOutline',
     playCircle: 'PlayCircleOutline',
+    print: 'PrintOutline',
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',
     school: 'SchoolOutline',
     search: 'SearchOutline',
     settings: 'SettingsOutline',
+    trash: 'TrashOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
-    remove: 'RemoveOutline',
+    remove: 'Remove',
+    time: 'TimeOutline',
   },
 }

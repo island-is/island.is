@@ -9,6 +9,7 @@ export interface ApplicationUIState {
   nationalRegistryId: string
   screens: FormScreen[]
   sections: Section[]
+  historyReason: 'initial' | 'navigate' | 'pop'
 }
 
 export enum ActionTypes {
@@ -18,6 +19,7 @@ export enum ActionTypes {
   PREV_SCREEN = 'PREV_SCREEN',
   ADD_EXTERNAL_DATA = 'ADD_EXTERNAL_DATA',
   GO_TO_SCREEN = 'GO_TO_SCREEN',
+  HISTORY_POP = 'HISTORY_POP',
 }
 
 export interface Action {

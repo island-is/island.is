@@ -1,5 +1,7 @@
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import { ForbiddenException } from '@nestjs/common'
+
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {

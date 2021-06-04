@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { maxDaysToGiveOrReceive, defaultMonths, maxMonths } from '../../config'
@@ -26,12 +26,14 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   )
 
   const daysStringKey =
-    chosenRequestDays > 1 ? m.requestRightsDays : m.requestRightsDay
+    chosenRequestDays > 1
+      ? parentalLeaveFormMessages.shared.requestRightsDays
+      : parentalLeaveFormMessages.shared.requestRightsDay
 
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...m.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -45,7 +47,7 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box marginBottom={6}>
       <Text marginBottom={4} variant="h3">
-        {formatMessage(m.requestRightsDaysTitle)}
+        {formatMessage(parentalLeaveFormMessages.shared.requestRightsDaysTitle)}
       </Text>
       <Box marginBottom={12}>
         <Controller
@@ -54,8 +56,8 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
           render={({ onChange, value }) => (
             <Slider
               label={{
-                singular: formatMessage(m.day),
-                plural: formatMessage(m.days),
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
               }}
               min={1}
               max={maxDays}

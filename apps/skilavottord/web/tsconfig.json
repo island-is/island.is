@@ -11,10 +11,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [],
   "exclude": ["node_modules"],
   "files": [],
   "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
     {
       "path": "./tsconfig.spec.json"
     }

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Box } from '../Box/Box'
-import { Button } from '../Button/Button'
-import { Stack } from '../Stack/Stack'
+import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
@@ -10,20 +9,27 @@ import {
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.treat'
+import { Icon } from '../IconRC/Icon'
 
 type ActionCardProps = {
-  heading: string
+  date?: string
+  heading?: string
   text?: string
   tag?: {
     label: string
     variant?: TagVariant
+    outlined?: boolean
   }
   cta: {
     label: string
-    /**
-     * 'primary' renders a button, 'secondary' renders a text button
-     */
-    variant?: 'primary' | 'secondary'
+    variant?: ButtonTypes['variant']
+    size?: ButtonSizes
+    icon?: 'arrowForward'
+    onClick?: () => void
+  }
+  secondaryCta?: {
+    label: string
+    icon?: 'arrowForward'
     onClick?: () => void
   }
   progressMeter?: {
@@ -40,11 +46,13 @@ type ActionCardProps = {
 
 const defaultCta = {
   variant: 'primary',
+  icon: 'arrowForward',
   onClick: () => null,
 } as const
 
 const defaultTag = {
   variant: 'blue',
+  outlined: true,
   label: '',
 } as const
 
@@ -61,9 +69,11 @@ const defaultUnavailable = {
 } as const
 
 export const ActionCard: React.FC<ActionCardProps> = ({
+  date,
   heading,
   text,
   cta: _cta,
+  secondaryCta,
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
@@ -75,6 +85,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const renderDisabled = () => {
     const { label, message } = unavailable
+
     return (
       <Box display="flex">
         <Text variant="small">{label}&nbsp;</Text>
@@ -83,53 +94,111 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
-  const renderDefault = () => {
-    const hasCTA = cta.label && !progressMeter.active
+  const renderDate = () => {
+    if (!date) {
+      return null
+    }
 
     return (
-      <Stack space="gutter">
-        {tag.label && (
-          <Tag outlined variant={tag.variant}>
-            {tag.label}
-          </Tag>
-        )}
-        {hasCTA && (
-          <Button
-            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
-            size="small"
-            onClick={cta.onClick}
+      <Box
+        alignItems={['flexStart', 'center']}
+        display="flex"
+        flexDirection={['column', 'row']}
+        justifyContent="spaceBetween"
+        marginBottom={1}
+      >
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <Box marginRight="smallGutter">
+            <Icon size="small" icon="time" type="outline" color="blue400" />
+          </Box>
+
+          <Text variant="small">{date}</Text>
+        </Box>
+
+        {renderTag()}
+      </Box>
+    )
+  }
+
+  const renderTag = () => {
+    if (!tag.label) {
+      return null
+    }
+
+    return (
+      <Box paddingTop={[1, 1, 0]}>
+        <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+          {tag.label}
+        </Tag>
+      </Box>
+    )
+  }
+
+  const renderDefault = () => {
+    const hasCTA = cta.label && !progressMeter.active
+    const hasSecondaryCTA =
+      hasCTA && secondaryCta?.label && !progressMeter.active
+
+    return (
+      <>
+        {!date && renderTag()}
+
+        {!!hasCTA && (
+          <Box
+            paddingTop={tag.label ? 'gutter' : 0}
+            display="flex"
+            justifyContent={['flexStart', 'flexEnd']}
+            alignItems="center"
+            flexDirection="row"
           >
-            {cta.label}
-          </Button>
+            {hasSecondaryCTA && (
+              <Box paddingRight={4} paddingLeft={2}>
+                <Button
+                  variant="text"
+                  onClick={secondaryCta?.onClick}
+                  icon={'document'}
+                >
+                  {secondaryCta?.label}
+                </Button>
+              </Box>
+            )}
+            <Box>
+              <Button variant={cta.variant} size="small" onClick={cta.onClick}>
+                {cta.label}
+              </Button>
+            </Box>
+          </Box>
         )}
-      </Stack>
+      </>
     )
   }
 
   const renderProgressMeter = () => {
     const { variant, progress } = progressMeter
+    const paddingWithDate = date ? 0 : 1
+    const alignWithDate = date ? 'flexEnd' : 'center'
+
     return (
       <Box
         width="full"
-        paddingTop={2}
+        paddingTop={[1, 1, 1, paddingWithDate]}
         display="flex"
-        alignItems={['flexStart', 'flexStart', 'center']}
+        alignItems={['flexStart', 'flexStart', alignWithDate]}
         flexDirection={['column', 'column', 'row']}
+        className={date ? styles.progressMeterWithDate : undefined}
       >
         <ProgressMeter
           variant={variant}
           progress={progress}
           className={styles.progressMeter}
         />
-        <Box
-          display="inlineFlex"
-          marginLeft={[0, 0, 'auto']}
-          paddingTop={[2, 2, 0]}
-        >
+
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button
-            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            variant={cta.variant}
             onClick={cta.onClick}
-            icon="arrowForward"
+            icon={cta.icon}
+            size={cta.size}
           >
             {cta.label}
           </Button>
@@ -143,26 +212,35 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       display="flex"
       flexDirection="column"
       borderColor="blue200"
-      borderRadius="standard"
+      borderRadius="large"
       borderWidth="standard"
-      paddingX={4}
+      paddingX={[3, 3, 4]}
       paddingY={3}
     >
-      <Box alignItems="center" display="flex">
-        <Box>
+      {renderDate()}
+
+      <Box
+        alignItems={['flexStart', 'center']}
+        display="flex"
+        flexDirection={['column', 'row']}
+      >
+        <Box marginRight={[0, 3]}>
           <Text variant="h3">{heading}</Text>
-          <Text paddingTop={1}>{text}</Text>
+          <Text paddingTop={heading ? 1 : 0}>{text}</Text>
         </Box>
 
         <Box
-          alignItems="flexEnd"
           display="flex"
+          alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
-          marginLeft="auto"
+          flexShrink={0}
+          marginTop={['gutter', 0]}
+          marginLeft={[0, 'auto']}
         >
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
+
       {progressMeter.active && renderProgressMeter()}
     </Box>
   )

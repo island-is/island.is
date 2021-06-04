@@ -2,18 +2,18 @@ import { UseGuards } from '@nestjs/common'
 import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
 import * as kennitala from 'kennitala'
 
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { NationalRegistryUser } from './models'
+import { NationalRegistryUser, Citizenship } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryUser)
 export class UserResolver {
   constructor(
@@ -28,9 +28,9 @@ export class UserResolver {
     return this.nationalRegistryService.getUser(user.nationalId)
   }
 
-  @ResolveField('citizenship', () => String)
-  resolveCitizenship(@Parent() user: User): string {
-    return user.citizenship.name
+  @ResolveField('citizenship', () => Citizenship)
+  resolveCitizenship(@Parent() user: User): Citizenship {
+    return user.citizenship
   }
 
   @ResolveField('legalResidence', () => String)

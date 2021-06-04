@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 export const template = {
   order: 0,
   index_patterns: ['island-en-*'],
@@ -76,6 +75,9 @@ export const template = {
       },
       externalLinks: {
         type: 'integer',
+      },
+      popularityScore: {
+        type: 'double',
       },
       termPool: {
         type: 'completion',

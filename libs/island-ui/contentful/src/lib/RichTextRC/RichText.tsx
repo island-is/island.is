@@ -4,6 +4,8 @@ import {
   documentToReactComponents,
   Options,
 } from '@contentful/rich-text-react-renderer'
+import { Locale } from '@island.is/shared/types'
+
 import { ImageProps } from '../Image/Image'
 import { FaqListProps } from '../FaqList/FaqList'
 import { StatisticsProps } from '../Statistics/Statistics'
@@ -104,7 +106,7 @@ type RichText = (
         }
       }
     | { renderNode?: {}; renderMark?: {}; renderComponent?: {} },
-  locale?: 'is' | 'en',
+  locale?: Locale,
 ) => React.ReactNode
 
 export const richText: RichText = (
@@ -113,6 +115,11 @@ export const richText: RichText = (
   locale = 'is',
 ) => {
   const options = {
+    renderText: (text) => {
+      return text.split('\n').reduce((children, textSegment, index) => {
+        return [...children, index > 0 && <br key={index} />, textSegment]
+      }, [])
+    },
     renderNode: { ...defaultRenderNode, ...opt.renderNode },
     renderMark: { ...defaultRenderMark, ...opt.renderMark },
   }

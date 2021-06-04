@@ -1,22 +1,22 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   ContactUs as ContactUsForm,
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
-import { CONTACT_US_MUTATION } from '@island.is/web/screens/queries'
+import { CONTACT_US_ZENDESK_TICKET_MUTATION } from '@island.is/web/screens/queries'
 import { MutationResult, useMutation } from '@apollo/client/react'
 import {
-  ContactUsMutation,
-  ContactUsMutationVariables,
+  ContactUsZendeskTicketMutation,
+  ContactUsZendeskTicketMutationVariables,
 } from '@island.is/web/graphql/schema'
 
 const getState = (
-  data: MutationResult<ContactUsMutation>['data'],
+  data: MutationResult<ContactUsZendeskTicketMutation>['data'],
   loading: MutationResult['loading'],
   error: MutationResult['error'],
 ) => {
-  if (data?.contactUs?.sent === true) return 'success'
-  if (data?.contactUs?.sent === false) return 'error'
+  if (data?.contactUsZendeskTicket?.sent === true) return 'success'
+  if (data?.contactUsZendeskTicket?.sent === false) return 'error'
   if (loading) return 'submitting'
   if (error) return 'error'
   return 'edit'
@@ -26,11 +26,11 @@ const getState = (
 interface ContactUsProps
   extends Omit<ContactUsFormProps, 'state' | 'onSubmit'> {}
 
-export const ContactUs: FC<ContactUsProps> = (props) => {
+export const ContactUs = (props: ContactUsProps) => {
   const [submit, { data, loading, error }] = useMutation<
-    ContactUsMutation,
-    ContactUsMutationVariables
-  >(CONTACT_US_MUTATION)
+    ContactUsZendeskTicketMutation,
+    ContactUsZendeskTicketMutationVariables
+  >(CONTACT_US_ZENDESK_TICKET_MUTATION)
   return (
     <ContactUsForm
       {...props}

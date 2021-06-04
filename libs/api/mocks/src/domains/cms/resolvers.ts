@@ -68,11 +68,7 @@ export const resolvers: Resolvers = {
       )
     },
 
-    getFrontpageSliderList: () => ({
-      items: store.frontPageSliders,
-    }),
-
-    getHomepage: () => store.homepage,
+    getFrontpage: () => store.frontpage,
 
     getNamespace: (parent, args) => {
       return {

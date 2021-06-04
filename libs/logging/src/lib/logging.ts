@@ -6,6 +6,7 @@ import { SentryTransport } from './transports'
 // Default log settings for debug mode
 let logLevel = 'debug'
 let logFormat = format.combine(
+  format.errors({ stack: true }),
   format.timestamp(),
   utilities.format.nestLike('App'),
 )
@@ -13,7 +14,11 @@ let logFormat = format.combine(
 // Production overrides
 if (process.env.NODE_ENV === 'production') {
   logLevel = process.env.LOG_LEVEL || 'info'
-  logFormat = format.combine(format.timestamp(), format.json())
+  logFormat = format.combine(
+    format.errors({ stack: true }),
+    format.timestamp(),
+    format.json(),
+  )
 }
 
 const logTransports = [new transports.Console(), new SentryTransport()]

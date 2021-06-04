@@ -5,6 +5,7 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -49,6 +50,8 @@ const Schema = z.object({
       return !isNaN(asNumber) && asNumber >= 0
     }),
     users: z.enum(['companies', 'individuals', 'both']),
+  }),
+  serviceFields: z.object({
     digital: z.enum(['yes', 'no']),
     link: z.string().url().optional(),
   }),
@@ -56,7 +59,7 @@ const Schema = z.object({
     z.object({
       name: z.string(),
       publisher: z.string(),
-      acceptsPayment: z.enum(['yes', 'no']),
+      download: z.enum(['yes', 'no']),
     }),
   ),
   payment: z.object({
@@ -83,6 +86,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -107,6 +111,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Í vinnslu',
           progress: 0.66,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'reviewer',
@@ -139,6 +144,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Samþykkt',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -154,6 +160,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       rejected: {
         meta: {
           name: 'Hafnað',
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -164,6 +171,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
       },
     },
   },

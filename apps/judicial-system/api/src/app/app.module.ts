@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { logger } from '@island.is/logging'
-
-// Must import this before the shared auth module in local development
-import { environment } from '../environments'
-// Log the environment in local development
-!environment.production &&
-  logger.debug(JSON.stringify({ environment }, null, 4))
-
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
+import { environment } from '../environments'
 import { BackendAPI } from '../services'
-import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
+import {
+  AuthModule,
+  UserModule,
+  CaseModule,
+  FileModule,
+  InstitutionModule,
+  CourtModule,
+  FeatureModule,
+} from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -31,12 +32,18 @@ const autoSchemaFile = environment.production
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
-    SharedAuthModule,
-    AuditTrailModule,
+    SharedAuthModule.register({
+      jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
+    }),
+    AuditTrailModule.register(environment.auditTrail),
     AuthModule,
     UserModule,
     CaseModule,
     FileModule,
+    InstitutionModule,
+    CourtModule,
+    FeatureModule,
   ],
   providers: [BackendAPI],
 })

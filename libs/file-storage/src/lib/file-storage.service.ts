@@ -1,25 +1,36 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import AmazonS3URI from 'amazon-s3-uri'
 
-const uploadBucket = 'testing-islandis' // TODO get from env and update to correct bucket
+import type { FileStorageConfig } from './file-storage.configuration'
+import { FILE_STORAGE_CONFIG } from './file-storage.configuration'
 
-AWS.config.update({ region: 'eu-west-1' })
+const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
+const SIGNED_GET_EXPIRES = 10 * 60
 
 @Injectable()
 export class FileStorageService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
+  constructor(
+    @Inject(FILE_STORAGE_CONFIG)
+    private readonly config: FileStorageConfig,
+  ) {}
+
   generatePresignedPost(filename: string): Promise<AWS.S3.PresignedPost> {
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
+    }
+
     const fileId = uuid()
-    console.log('generatePresignedPost with id: ', `${filename}_${fileId}`)
+    const key = `${fileId}_${filename}`
 
     const params = {
-      Bucket: uploadBucket,
-      Expires: 10000000, //time to expire in seconds, TODO select length
-
+      Bucket: this.config.uploadBucket,
+      Expires: PRESIGNED_POST_EXPIRES,
       Fields: {
-        key: `${fileId}_${filename}`,
+        key,
       },
       conditions: [['content-length-range', 0, 10000000]], // Max 10MB
     }
@@ -35,28 +46,29 @@ export class FileStorageService {
     })
   }
 
+  public generateSignedUrl(url: string, key: string): Promise<string> {
+    const { bucket } = AmazonS3URI(url)
+    const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
+    return this.s3.getSignedUrlPromise('getObject', params)
+  }
+
   async copyObjectFromUploadBucket(
-    key: string,
+    sourceKey: string,
     destinationBucket: string,
-    region: string,
-    sourceBucket: string,
+    destinationKey: string,
   ): Promise<string> {
-    const params = {
-      Key: key,
-      Bucket: destinationBucket,
-      CopySource: `${sourceBucket}/${key}`,
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
     }
 
-    return new Promise((resolve, reject) => {
-      this.s3.copyObject(params, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          const url = `https://${destinationBucket}.s3-${region}.amazonaws.com/${key}`
+    const params = {
+      Key: destinationKey,
+      Bucket: destinationBucket,
+      CopySource: `${this.config.uploadBucket}/${sourceKey}`,
+    }
+    const region = this.s3.config.region
 
-          resolve(url)
-        }
-      })
-    })
+    await this.s3.copyObject(params).promise()
+    return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
 }

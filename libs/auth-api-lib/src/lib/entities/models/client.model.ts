@@ -434,6 +434,46 @@ export class Client extends Model<Client> {
   })
   contactEmail!: string
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  supportsDelegation!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  supportsLegalGuardians!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  supportsProcuringHolders!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  promptDelegations!: boolean
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

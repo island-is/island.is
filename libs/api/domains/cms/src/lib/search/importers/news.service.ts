@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { INews } from '../../generated/contentfulTypes'
 import { mapNews } from '../../models/news.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
@@ -26,7 +22,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
     )
   }
 
-  doMapping(entries: doMappingInput<INews>) {
+  doMapping(entries: INews[]) {
     logger.info('Mapping news', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
@@ -48,7 +44,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
               },
               ...mapped.genericTags.map((tag) => ({
                 // add all tags as meta data to this document so we can query by it later
-                key: tag.id,
+                key: tag.slug,
                 type: 'genericTag',
                 value: tag.title,
               })),

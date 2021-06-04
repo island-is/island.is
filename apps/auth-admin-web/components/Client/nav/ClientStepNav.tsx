@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ClientStep } from '../../../entities/common/ClientStep'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { Localization } from '../../../entities/common/Localization'
 
 interface Props {
   handleStepChange: (step: ClientStep) => void
@@ -11,6 +13,9 @@ const ClientStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
+  const [localization] = useState<Localization>(
+    LocalizationUtils.getLocalization(),
+  )
   return (
     <div>
       <nav className="client-step-nav">
@@ -21,7 +26,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
-              Client Settings
+              {localization.navigations['clientSteps'].items['client'].text}
             </button>
           </li>
           <li>
@@ -32,7 +37,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientRedirectUri ? 'active' : ''
               }
             >
-              Redirect Uri
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientRedirectUri'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -43,7 +52,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientIdpRestrictions ? 'active' : ''
               }
             >
-              Idp Restricions
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientIdpRestrictions'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -58,7 +71,11 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Post Logout Uris
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientPostLogoutRedirectUri'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -73,7 +90,11 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Allowed Cors Origins
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientAllowedCorsOrigin'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -84,7 +105,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientGrantTypes ? 'active' : ''
               }
             >
-              Grant types
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientGrantTypes'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -95,7 +120,11 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientAllowedScopes ? 'active' : ''
               }
             >
-              Allowed Scopes
+              {
+                localization.navigations['clientSteps'].items[
+                  'clientAllowedScopes'
+                ].text
+              }
             </button>
           </li>
           <li>
@@ -104,7 +133,10 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientClaims)}
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
-              Client claims
+              {
+                localization.navigations['clientSteps'].items['clientClaims']
+                  .text
+              }
             </button>
           </li>
           <li>
@@ -113,7 +145,10 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientSecret)}
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
-              Client secret
+              {
+                localization.navigations['clientSteps'].items['clientSecret']
+                  .text
+              }
             </button>
           </li>
         </ul>

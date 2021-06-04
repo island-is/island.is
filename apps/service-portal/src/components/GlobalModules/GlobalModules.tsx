@@ -4,9 +4,10 @@ import {
 } from '@island.is/service-portal/core'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { User } from 'oidc-client'
-import React, { FC, Suspense, useEffect, useMemo, useState } from 'react'
+import React, { FC, Suspense, useState } from 'react'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
+import { useDeepCompareEffect } from 'react-use'
 
 const GlobalComponent: FC<{
   component: ServicePortalGlobalComponent
@@ -36,7 +37,7 @@ const ModuleLoader: FC<{
 
   async function loadComponents(modules: ServicePortalModule[]) {
     const components = await Promise.all(
-      modules.reduce((prev, curr) => {
+      Object.values(modules).reduce((prev, curr) => {
         if (!curr.global) return prev
 
         const moduleComponents = curr.global({ userInfo, client })
@@ -52,7 +53,8 @@ const ModuleLoader: FC<{
     )
   }
 
-  useEffect(() => {
+  // Use a deep compare of all modules to determine whether to reload them
+  useDeepCompareEffect(() => {
     loadComponents(modules)
   }, [modules])
 
@@ -71,10 +73,14 @@ const ModuleLoader: FC<{
 }
 
 export const GlobalModules: FC = () => {
-  const [{ modules }] = useStore()
+  const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
 
-  return userInfo ? (
-    <ModuleLoader modules={modules} userInfo={userInfo} client={client} />
+  return userInfo && !modulesPending ? (
+    <ModuleLoader
+      modules={Object.values(modules)}
+      userInfo={userInfo}
+      client={client}
+    />
   ) : null
 }

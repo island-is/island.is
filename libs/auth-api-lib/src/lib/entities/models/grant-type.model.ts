@@ -38,6 +38,15 @@ export class GrantType extends Model<GrantType> {
   })
   description!: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived?: Date
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

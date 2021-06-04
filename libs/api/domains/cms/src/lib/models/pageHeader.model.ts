@@ -6,25 +6,25 @@ import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 @ObjectType()
 export class PageHeader {
   @Field()
-  typename: string
+  typename!: string
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  introduction: string
+  introduction?: string
 
   @Field()
-  navigationText: string
+  navigationText!: string
 
   @Field(() => [Link])
-  links: Link[]
+  links?: Link[]
 
   @Field(() => [TimelineSlice])
-  slices: Array<TimelineSlice>
+  slices!: Array<TimelineSlice>
 }
 
 export const mapPageHeader = (entry: IPageHeader): PageHeader => {

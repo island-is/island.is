@@ -1,23 +1,28 @@
 import { Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { api } from '@island.is/judicial-system-web/src/services'
-import * as styles from './PdfButton.treat'
+
 interface Props {
   caseId: string
+  title: string
+  pdfType: 'ruling' | 'request'
+  disabled?: boolean
 }
 
-const PdfButton: React.FC<Props> = ({ caseId }: Props) => {
+const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
   return (
-    <a
-      className={styles.pdfLink}
-      href={`${api.apiUrl}/api/case/${caseId}/ruling`}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Button
+      variant="ghost"
+      size="small"
+      icon="open"
+      iconType="outline"
+      disabled={disabled}
+      onClick={() =>
+        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_ blank')
+      }
     >
-      <Button variant="ghost" size="small" icon="open" iconType="outline">
-        Sjá PDF af þingbók og úrskurði
-      </Button>
-    </a>
+      {title}
+    </Button>
   )
 }
 

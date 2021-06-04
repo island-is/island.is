@@ -4,5 +4,5 @@ import { AdgerdirPage } from './adgerdirPage.model'
 @ObjectType()
 export class AdgerdirPages {
   @Field(() => [AdgerdirPage])
-  items: AdgerdirPage[]
+  items!: AdgerdirPage[]
 }

@@ -3,8 +3,8 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
-  CaseTransition,
   CaseType,
 } from '@island.is/judicial-system/types'
 
@@ -61,8 +61,14 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
   _95_2: '2. mgr. 95. gr.',
+  _98_2: '2. mgr. 98. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
   _100_1: '1. mgr. 100. gr. sml.',
+}
+
+export const caseTypes = {
+  CUSTODY: 'gæsluvarðhald',
+  TRAVEL_BAN: 'farbann',
 }
 
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -76,7 +82,7 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
     case CaseCustodyRestrictions.VISITAION:
       return 'C - Heimsóknarbann'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
-      return 'Tilkynningaskilda'
+      return 'Tilkynningaskylda'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
       return 'Afhending vegabréfs'
   }
@@ -265,7 +271,7 @@ export const formatRequestedCustodyRestrictions = (
     ? requestedCustodyRestrictions &&
       requestedCustodyRestrictions.reduce(
         (acc, restriction, index) =>
-          `${acc}${index > 0 ? ', ' : ''}${getRestrictionByValue(restriction)}`,
+          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
         '',
       )
     : ''
@@ -278,6 +284,36 @@ export const formatRequestedCustodyRestrictions = (
     : ''
 
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
+}
+
+export function formatProsecutorDemands(
+  type: CaseType,
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  requestedCustodyEndDate: Date | string,
+  isolation: boolean,
+  isExtension: boolean,
+  previousDecision?: CaseDecision,
+): string {
+  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
+    accusedNationalId,
+  )}, sæti${
+    isExtension && previousDecision === CaseDecision.ACCEPTING
+      ? ' áframhaldandi'
+      : ''
+  } ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
+  } með úrskurði ${court?.replace(
+    'Héraðsdómur',
+    'Héraðsdóms',
+  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}${
+    type === CaseType.CUSTODY && isolation
+      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+      : ''
+  }.`
 }
 
 export function formatGender(gender?: CaseGender): string {

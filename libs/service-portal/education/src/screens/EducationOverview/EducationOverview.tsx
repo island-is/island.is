@@ -1,7 +1,8 @@
 import React from 'react'
 import {
-  InfoScreen,
+  NavigationOverviewScreen,
   ServicePortalModuleComponent,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
@@ -10,60 +11,55 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.education')
 
   return (
-    <InfoScreen
+    <NavigationOverviewScreen
       title={defineMessage({
-        id: 'sp.education:title',
-        defaultMessage: 'Menntun',
+        id: 'sp.education:navigation-title',
+        defaultMessage: 'Menntunin mín',
       })}
       intro={defineMessage({
-        id: 'sp.education:intro',
-        defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fjármál á næstunni.`,
+        id: 'sp.education:navigation-intro',
+        defaultMessage: `Yfirlit yfir menntun og starfsréttindi.`,
       })}
-      list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
-        items: [
-          defineMessage({
-            id: 'sp.education:inc-1',
-            defaultMessage: ' ',
+      navigation={[
+        {
+          title: defineMessage({
+            id: 'sp.education:license-title',
+            defaultMessage: 'Starfsleyfi',
           }),
-          defineMessage({
-            id: 'sp.education:inc-2',
-            defaultMessage: ' ',
+          intro: defineMessage({
+            id: 'sp.education:license-intro',
+            defaultMessage:
+              'Hér getur þú fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda.',
           }),
-          defineMessage({
-            id: 'sp.education:inc-3',
-            defaultMessage: ' ',
+          image: './assets/images/educationLicense.svg',
+          link: {
+            title: defineMessage({
+              id: 'sp.education:license-link-title',
+              defaultMessage: 'Skoða starfsleyfin mín',
+            }),
+            href: ServicePortalPath.EducationLicense,
+          },
+        },
+        {
+          title: defineMessage({
+            id: 'sp.education:grades-title',
+            defaultMessage: 'Námsferill',
           }),
-        ],
-      }}
-      institutionTitle={defineMessage({
-        id: 'service.portal:digital-iceland',
-        defaultMessage: 'Stafrænt Ísland',
-      })}
-      institutionSubtitle={defineMessage({
-        id: 'service.portal:incoming',
-        defaultMessage: 'Á döfinni',
-      })}
-      institutionDescription={defineMessage({
-        id: 'service.portal:vision-segment',
-        defaultMessage: `
-          Markmið ríkisstjórnarinnar er að stafræn samskipti
-          verði megin samskiptaleið fólks og fyrirtækja við hið opinbera.
-          Þannig má einfalda líf þeirra sem búa og starfa á Íslandi.
-          Stafrænt Ísland, sem heyrir undir fjármála- og efnahagsráðuneytið,
-          vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
-        `,
-      })}
-      institutionHref="https://island.is/stafraent-island"
-      institutionLinkTitle={defineMessage({
-        id: 'service.portal:timeline-link-title',
-        defaultMessage: 'Sjá tímalínu',
-      })}
-      figure="/assets/images/bus.svg"
+          intro: defineMessage({
+            id: 'sp.education:grades-intro',
+            defaultMessage:
+              'Hér getur þú fundið yfirlit yfir einkunnir, námsmat og niðurstöður úr samræmdum könnunarprófum.',
+          }),
+          image: './assets/images/educationGrades.svg',
+          link: {
+            title: defineMessage({
+              id: 'sp.education:grades-link-title',
+              defaultMessage: 'Skoða námsferilinn minn',
+            }),
+            href: ServicePortalPath.EducationCareer,
+          },
+        },
+      ]}
     />
   )
 }

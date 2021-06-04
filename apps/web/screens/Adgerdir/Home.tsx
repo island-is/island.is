@@ -17,7 +17,6 @@ import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   RichText,
   HeadWithSocialSharing,
-  ChatPanel,
   Header,
   Main,
 } from '@island.is/web/components'
@@ -51,7 +50,7 @@ import {
   QueryGetArticleCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
-import { Locale } from '../../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -253,7 +252,6 @@ const Home: Screen<HomeProps> = ({
             })}
           </Stack>
         </Box>
-        <ChatPanel />
       </Main>
     </>
   )

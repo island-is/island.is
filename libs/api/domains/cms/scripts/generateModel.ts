@@ -78,16 +78,16 @@ const contentfulTypeToTsType = (
     }
 
     case 'Array': {
-      const types = getFirstLevelContentType(field.items.validations).map(
+      const types = getFirstLevelContentType(field.items!.validations).map(
         upperFirst,
       )
 
       // If validations is empty, it means we are having an array of string
-      if (types.length <= 0 && !field.items.linkType) {
+      if (types.length <= 0 && !field.items!.linkType) {
         return [`Array<string>`, `[String]`]
       }
 
-      if (field.items.linkType === 'Asset') {
+      if (field.items!.linkType === 'Asset') {
         return ['Array<Image>', '[Image]']
       }
 

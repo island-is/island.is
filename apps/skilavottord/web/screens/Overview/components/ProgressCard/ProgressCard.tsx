@@ -9,13 +9,15 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import ProgressBar from '../ProgressBar/ProgressBar'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { Car } from '@island.is/skilavottord-web/types'
 import { formatYear } from '@island.is/skilavottord-web/utils'
+import { dateFormat } from '@island.is/shared/constants'
+
+import ProgressBar from '../ProgressBar/ProgressBar'
 
 interface ProgressCardProps {
   onClick?: () => void
@@ -34,7 +36,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
   const isMobile = width < theme.breakpoints.md
   const justifyContent = isMobile ? 'flexStart' : 'flexEnd'
   const textAlign = isMobile ? 'left' : 'right'
-  const modelYear = formatYear(firstRegDate, 'dd.MM.yyyy')
+  const modelYear = formatYear(firstRegDate, dateFormat.is)
 
   return (
     <OutlinedBox paddingY={4} paddingX={4}>
@@ -60,7 +62,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   <Box>
                     <Tag
                       variant={
-                        status === 'pendingRecycle' ? 'rose' : 'darkerMint'
+                        status === 'pendingRecycle' ? 'rose' : 'blueberry'
                       }
                       outlined
                     >

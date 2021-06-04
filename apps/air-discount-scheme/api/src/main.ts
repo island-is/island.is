@@ -1,7 +1,6 @@
 import { bootstrap } from '@island.is/infra-nest-server'
 import * as Sentry from '@sentry/node'
 
-import '@island.is/infra-tracing'
 import { SentryInterceptor } from '@island.is/infra-monitoring'
 import { AppModule } from './app/app.module'
 import { environment } from './environments'

@@ -13,6 +13,7 @@ All feedback is welcomed and encouraged to help make the guide better so please 
 - [Once-Only](once-only.md)
 - [Resource Oriented Design](resource-oriented-design.md)
 - [Naming Conventions](naming-conventions.md)
+- [GraphQL Naming Conventions](graphql-naming-conventions.md)
 - [Data Definitions](data-definitions.md)
 - [Methods](methods.md)
 - [HTTP Status Codes](http-status-codes.md)

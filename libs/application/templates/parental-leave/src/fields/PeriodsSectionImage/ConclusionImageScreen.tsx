@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
@@ -11,9 +11,15 @@ const ConclusionSectionImage: FC<FieldBaseProps> = () => {
     <Box>
       <Box>
         <BulletList type="ul">
-          <Bullet>{formatMessage(mm.finalScreen.step1)}</Bullet>
-          <Bullet>{formatMessage(mm.finalScreen.step2)}</Bullet>
-          <Bullet>{formatMessage(mm.finalScreen.step3)}</Bullet>
+          <Bullet>
+            {formatMessage(parentalLeaveFormMessages.finalScreen.step1)}
+          </Bullet>
+          <Bullet>
+            {formatMessage(parentalLeaveFormMessages.finalScreen.step2)}
+          </Bullet>
+          <Bullet>
+            {formatMessage(parentalLeaveFormMessages.finalScreen.step3)}
+          </Bullet>
         </BulletList>
       </Box>
       <Box

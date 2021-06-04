@@ -1,7 +1,8 @@
-import TimeInputField from './TimeInputField'
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import TimeInputField from './TimeInputField'
 
 describe('TimeInputField', () => {
   test('should add a : character when the user enters two digits', async () => {

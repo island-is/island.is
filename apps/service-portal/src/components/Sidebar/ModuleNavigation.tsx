@@ -42,8 +42,6 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
     }
   }
 
-  const notifications = routes.find((r) => r.path === nav.path)?.notifications
-
   return (
     <Box>
       {nav.heading && (
@@ -66,7 +64,6 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         icon={nav.icon}
         active={isModuleActive}
         external={nav.external}
-        notifications={notifications}
         onClick={() => {
           handleRootItemClick(nav.external)
         }}

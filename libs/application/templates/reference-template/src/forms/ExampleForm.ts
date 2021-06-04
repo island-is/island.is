@@ -12,9 +12,10 @@ import {
   Form,
   FormModes,
   FormValue,
-  buildRepeater,
+  buildFileUploadField,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { ApiActions } from '../shared'
+import { m } from '../lib/messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -22,21 +23,22 @@ export const ExampleForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'conditions',
+      title: m.conditionsSection,
+      children: [],
+    }),
+    buildSection({
       id: 'intro',
       title: m.introSection,
       children: [
-        buildTextField({
-          id: 'person.name',
-          title: m.name,
-        }),
         buildDescriptionField({
           id: 'field',
           title: m.introField,
           description: (application) => ({
             ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            values: { name: application.answers.person?.name },
+            values: { name: application.answers.name },
           }),
         }),
         buildMultiField({
@@ -44,20 +46,28 @@ export const ExampleForm: Form = buildForm({
           title: m.about,
           children: [
             buildTextField({
+              id: 'person.name',
+              title: m.name,
+            }),
+            buildTextField({
               id: 'person.nationalId',
               title: m.nationalId,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.age',
               title: m.age,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.email',
               title: m.email,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.phoneNumber',
               title: m.phoneNumber,
+              width: 'half',
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -66,6 +76,12 @@ export const ExampleForm: Form = buildForm({
               },
             }),
           ],
+        }),
+        buildFileUploadField({
+          id: 'attachments',
+          title: 'Viðhengi',
+          introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
+          uploadMultiple: true,
         }),
       ],
     }),
@@ -140,7 +156,24 @@ export const ExampleForm: Form = buildForm({
         buildDescriptionField({
           id: 'final',
           title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+          description: (application) => {
+            const sendApplicationActionResult =
+              application.externalData[ApiActions.createApplication]
+
+            let id = 'unknown'
+            if (sendApplicationActionResult) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              id = sendApplicationActionResult.data.id
+            }
+
+            return {
+              ...m.outroMessage,
+              values: {
+                id,
+              },
+            }
+          },
         }),
       ],
     }),

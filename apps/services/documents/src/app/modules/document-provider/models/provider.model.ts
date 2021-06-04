@@ -7,14 +7,18 @@ import {
   UpdatedAt,
   BelongsTo,
   ForeignKey,
+  AfterCreate,
+  AfterUpdate,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Organisation } from './organisation.model'
+import { EntityTypes } from '../enums/EntityTypes'
+import { Changelog } from './changelog.model'
 
 @Table({ tableName: 'provider' })
 export class Provider extends Model<Provider> {
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
@@ -23,7 +27,10 @@ export class Provider extends Model<Provider> {
   id!: string
 
   @ForeignKey(() => Organisation)
-  @Column
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
   organisationId!: string
 
   @BelongsTo(() => Organisation)
@@ -54,7 +61,23 @@ export class Provider extends Model<Provider> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  createdBy?: string
+  modifiedBy?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  xroad!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+  })
+  @ApiProperty()
+  externalProviderId?: string
 
   @CreatedAt
   @ApiProperty()
@@ -63,4 +86,17 @@ export class Provider extends Model<Provider> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @AfterCreate
+  @AfterUpdate
+  static addChangelog(instance: Provider) {
+    const obj = {
+      organisationId: instance.organisationId,
+      entityId: instance.id,
+      entityType: EntityTypes.PROVIDER,
+      data: instance,
+    }
+
+    Changelog.create(obj)
+  }
 }

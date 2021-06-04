@@ -1,18 +1,16 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
-#---------------------------------------------------------------------------------------------------------------#
-#--- Script for creating secrets (SecureString) in the AWS parameter store using the path /k8s/[secret-name]----#
-#---------------------------------------------------------------------------------------------------------------#
+export AWS_PAGER=""
 
-#-------------------COLORS--------------------------#
 BLUE=$'\e[1;34m'
 RED=$'\e[1;31m'
 GREEN=$'\e[1;32m'
 YELLOW=$'\e[1;33m'
 RESET=$'\x1b[0m'
 
-#-------------------REGEX PATTERNS--------------------------#
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 # Parameter store prefix
 SSM_PREFIX="/k8s/"
 
@@ -20,81 +18,70 @@ SSM_PREFIX="/k8s/"
 MIN_LENGTH="{6,128}"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9\/_-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
 
 # Atleast one valid char
 ONE_OR_MORE="+$"
-END="$"
+# END="$"
 # Exclude whitespaces
-ILLEGAL_CHARS="\s"
+ILLEGAL_CHARS="*[[:space:]]*"
 HAS_SLASH_END="[^\/]"
 
 # Complete pattern
-PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
+# PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
 
-
-function test_func() {
-  local -n _TEST_ASSERT_PASS=$1
-  local -n _TEST_ASSERT_FAIL=$2
-
-  for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
-    do
-      [[ $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: FAILED -> "$TEST_PATTERN || echo "TEST: PASSED -> "$TEST_PATTERN
-    done
-  for TEST_PATTERN in "${_TEST_ASSERT_FAIL[@]}";
-    do
-      [[ ! $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: PASSED -> "$TEST_PATTERN || echo "TEST: FAILED -> "$TEST_PATTERN
-    done
-  for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
-    do
-      echo "TEST FUNCTION: validate_whitespace  -> "$TEST_PATTERN
-      validate_whitespace $TEST_PATTERN
-      echo "TEST FUNCTION: validate_chars  -> "$TEST_PATTERN
-      validate_chars $TEST_PATTERN
-      validate_length $TEST_PATTERN
-    done
+__error_exit () {
+  # printf "${RED}[ERROR]: $*${NOSTYLE}" >&2; exit 1;
+  printf "%s[ERROR]: $*%s" "$RED" "$RESET" >&2; exit 1;
 }
 
-function error_empty() {
-  echo $RED'No empty values'
+die () {
+  printf >&2 "$@"
+  exit 1
+}
+
+error_empty () {
+  printf "%sNo empty values %s\n" "$RED" "$RESET"
   exit 0
 }
-function validate_whitespace() {
+
+validate_empty () {
+  [[ -d $1 ]] || { printf "%sNo empty values%s" "$RED" "$RESET" >&2; exit 1; }
+}
+
+validate_slash () {
+  [[ ! $1 =~ $HAS_SLASH_END ]]
+  printf "%sNo ending slash: Ok!%s" "$GREEN" "$RESET"
+}
+
+validate_whitespace () {
   if [ ! ${1+x} ]
   then
     error_empty
   fi
   # No whitespace
-  if [[ $1 =~ $ILLEGAL_CHARS ]]
+  if [[ $1 = $ILLEGAL_CHARS ]]
   then
-    echo $RED"Whitespaces are not allowed"$RESET
+    printf "%sWhitespaces are not allowed%s\n" "$RED" "$RESET"
     exit 0
   fi
-}
+ }
 
-
-function validate_chars() {
+validate_chars () {
   if [ ! ${1+x} ]
   then
     error_empty
   fi
   if [[ $1 =~ $ALPHANUMERIC_DASH$ONE_OR_MORE ]]
   then
-    echo $GREEN"Name: Ok!"$RESET
+    printf "%sName: Ok! %s\n" "$GREEN" "$RESET"
   else
-    echo $RED"Secret name can only contain letters, numbers, hyphens and underscores"$RESET
+    printf "%sSecret name can only contain letters, numbers, hyphens and underscores %s\n" "$RED" "$RESET"
     exit 0
-  fi
-  if [[ ! $1 =~ $HAS_SLASH_END ]]
-  then
-    echo $RED"Secret name cannot end with /"$RESET
-    exit 0
-  else
-    echo $GREEN"No ending slash: Ok!"$RESET
   fi
 }
 
-function validate_length() {
+validate_length () {
   # Unset parameter is an empty user input
   if [ ! ${1+x} ]
   then
@@ -104,69 +91,74 @@ function validate_length() {
   # Validate minimum length
   if [[ $1 =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
   then
-    echo $GREEN'Length: Ok!'$RESET
+    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
   else
-    echo $RED'To short, should be 6-256 characters long.'$RESET
+    printf "%sTo short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
     exit 0
   fi
 }
 
 #-------------------CREATE SECRET--------------------------#
-function prepare_secret () {
+prepare_secret () {
   # Prompt user for secret name
-  read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
-  echo $SECRET_NAME
+  read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
 
   # Prompt user for secret value
-  read -p $BLUE'Secret value: '$RESET SECRET_VALUE
+  read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
   validate_whitespace "$SECRET_VALUE"
   validate_length "$SECRET_VALUE"
 
+  # Prompt user for secret type
+  read -erp "${BLUE}SecureString [Y/n]? ${RESET}"
+  if [[ $REPLY =~ ^[Nn]$ ]]
+  then
+    SECRET_TYPE="String"
+  else
+    SECRET_TYPE="SecureString"
+  fi
+  printf "%s$SECRET_TYPE selected%s\n" "$GREEN" "$RESET"
 
-  read -p $YELLOW"Are you sure [y/n]? "$RESET -r
+  # Prompt user for adding tags
+  TAGS=""
+  read -erp "${BLUE}Add tags? [y/N]? ${RESET}"
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
-    echo # newline
-    echo $GREEN"Creating secret...."$RESET
-    create_secret $SECRET_NAME $SECRET_VALUE
+    read -erp "${YELLOW}Example: Key=Foo,Value=Bar Key=Another,Value=Tag: ${RESET}" TAGS
+  fi
+  read -erp "${YELLOW}Are you sure [Y/n]? ${RESET}"
+  if [[ $REPLY =~ ^[Nn]$ ]]
+  then
+    printf "%sAborting...%s" "$RED" "$RESET"
   else
-    echo $RED"Aborting..."$RESET
+    printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
+    create_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
   fi
 }
 
-function create_secret () {
+create_secret () {
   SECRET_NAME=$1
   SECRET_VALUE=$2
-  aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type SecureString
-  echo $GREEN"Done!"$RESET
+  SECRET_TYPE=$3
+  TAGS=$4
+  CMD="aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type $SECRET_TYPE"
+
+  if [ -n "$TAGS" ]
+  then
+    CMD="$CMD --tags $TAGS"
+  fi
+  eval "$CMD"
+  printf "%sDone!%s" "$GREEN" "$RESET"
 }
 
+case $1 in
+    validate_length) "$@"; exit;;
+    validate_chars) "$@"; exit;;
+    validate_whitespace) "$@"; exit;;
+    validate_empty) "$@"; exit;;
+    __error_exit) "$@"; exit;;
+esac
 
-#-------------------TESTS--------------------------#
-# To enable tests set env ISLANDIS_CREATE_SECRET_TEST=1
-
-if [ ${ISLANDIS_CREATE_SECRET_TEST+x} ]
-then
-  TEST_ASSERT_PASS=(
-    "some/path/to/secretname01_"
-    "some/path/to/secretname01"
-    "some/path/to/secret-name-01-"
-    "some/path/to/secret-name-01-_"
-  )
-  TEST_ASSERT_FAIL=(
-    "" # no empty
-    " " # no whitespace
-    "toshrt" # too short
-    "no/forward/slash/suffix/" # no forward slash suffix
-    "this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long" # too long
-    "some/path/to/}#!%" # no symbols
-    "some/path/to/secret-name-01.some-name" # no dots
-  )
-  test_func TEST_ASSERT_PASS TEST_ASSERT_FAIL
-else
-  #-------------------MAIN SCOPE--------------------------#
-  prepare_secret
-fi
+prepare_secret

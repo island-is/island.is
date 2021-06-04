@@ -4,6 +4,8 @@ import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import { IdpProviderService } from './../../../services/IdpProviderService'
 import IdpProviderCreateForm from './../../../components/Admin/form/IdpProviderCreateForm'
+import { AdminTab } from './../../../entities/common/AdminTab'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -20,6 +22,7 @@ const Index: React.FC = () => {
       }
     }
     loadIdp()
+    document.title = LocalizationUtils.getPageTitle('admin.idp-provider.[idp]')
   }, [idpProviderName])
 
   const getIdpProvider = async (idpName: string) => {
@@ -30,12 +33,12 @@ const Index: React.FC = () => {
   }
 
   const handleCancel = () => {
-    router.push('/admin/?tab=2')
+    router.push(`/admin/?tab=${AdminTab.IdpProviders}`)
   }
 
   const handleIdpSaved = (idpSaved: IdpProvider) => {
     if (idpSaved) {
-      router.push('/admin/?tab=2')
+      router.push(`/admin/?tab=${AdminTab.IdpProviders}`)
     }
   }
 

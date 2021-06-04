@@ -6,9 +6,9 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 export class GetSingleMenuInput {
   @Field()
   @IsString()
-  id?: string
+  id!: string
 
   @Field(() => String)
   @IsString()
-  lang: ElasticsearchIndexLocale
+  lang: ElasticsearchIndexLocale = 'is'
 }

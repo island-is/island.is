@@ -27,6 +27,7 @@ import {
 } from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
+import { dateFormat } from '@island.is/shared/constants'
 
 export const skilavottordRecyclingRequestQuery = gql`
   query skilavottordRecyclingRequestQuery($permno: String!) {
@@ -162,7 +163,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
                 <CarDetailsBox
                   vehicleId={car.permno}
                   vehicleType={car.type}
-                  modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
+                  modelYear={formatYear(car.firstRegDate, dateFormat.is)}
                 />
               </Stack>
               {sortedRequests.length > 0 ? (

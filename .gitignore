@@ -5,6 +5,14 @@
 /tmp
 /out-tsc
 
+# Contentful extensions
+libs/contentful-extensions/translation/build
+libs/contentful-extensions/translation/.cache
+libs/contentful-extensions/mideind-translation/build
+libs/contentful-extensions/mideind-translation/.cache
+libs/contentful-extensions/parent-slug/build
+libs/contentful-extensions/parent-slug/.cache
+
 # dependencies
 node_modules/
 
@@ -19,7 +27,7 @@ node_modules/
 TODO
 *.todo
 .env
-
+.nvmrc
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -52,7 +60,7 @@ helm/**/*.tgz
 /cache*
 
 # Extracted strings for localization
-/libs/localization/messages.json
+libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz

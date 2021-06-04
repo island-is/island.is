@@ -5,11 +5,11 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const isEmpty = style({})
 
 const buttonBase = {
-  display: 'flex',
   alignItems: 'center',
   fontWeight: theme.typography.semiBold,
   borderRadius: 8,
   outline: 'none',
+  cursor: 'pointer',
   transition: 'box-shadow .25s, color .25s, background-color .25s',
   ':focus': {
     color: theme.color.dark400,
@@ -18,6 +18,9 @@ const buttonBase = {
   ':active': {
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
+  ':disabled': {
+    cursor: 'normal',
+  },
 }
 
 const textBase = {
@@ -25,7 +28,6 @@ const textBase = {
   outline: 'none',
   cursor: 'pointer',
   transition: 'box-shadow .25s, color .25s, background-color .25s',
-
   ':focus': {
     color: theme.color.dark400,
     backgroundColor: theme.color.mint400,
@@ -416,7 +418,6 @@ export const colors = {
 }
 
 export const circle = style({
-  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '50%',

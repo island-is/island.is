@@ -15,6 +15,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { Car } from '@island.is/skilavottord-web/types'
 import { formatYear } from '@island.is/skilavottord-web/utils'
+import { dateFormat } from '@island.is/shared/constants'
 
 interface ActionCardProps {
   onContinue: () => void
@@ -40,7 +41,7 @@ export const ActionCard: FC<ActionCardProps> = ({
     </>
   )
 
-  const modelYear = formatYear(firstRegDate, 'dd.MM.yyyy')
+  const modelYear = formatYear(firstRegDate, dateFormat.is)
 
   return (
     <OutlinedBox backgroundColor="white">

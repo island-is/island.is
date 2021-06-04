@@ -1,15 +1,17 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './ScreenFooter.treat'
 import {
   Application,
   formatText,
   FormModes,
   SubmitField,
+  coreMessages,
+  CallToAction,
 } from '@island.is/application/core'
 
+import * as styles from './ScreenFooter.treat'
 interface FooterProps {
   application: Application
   mode?: FormModes
@@ -20,6 +22,34 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+}
+
+interface SubmitButton {
+  colorScheme: ButtonTypes['colorScheme']
+  variant: ButtonTypes['variant']
+  icon?: 'checkmark' | 'close' | 'pencil'
+}
+
+const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
+  primary: {
+    icon: 'checkmark',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  sign: {
+    icon: 'pencil',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  subtle: {
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
+  reject: {
+    icon: 'close',
+    colorScheme: 'destructive',
+    variant: 'primary',
+  },
 }
 
 export const ScreenFooter: FC<FooterProps> = ({
@@ -38,9 +68,12 @@ export const ScreenFooter: FC<FooterProps> = ({
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = activeScreenIndex > 0 && !isLastScreen
+
   if (
     (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.REVIEW && mode !== FormModes.APPLYING)
+    (mode !== FormModes.REVIEW &&
+      mode !== FormModes.APPLYING &&
+      mode !== FormModes.EDITING)
   ) {
     return null
   }
@@ -52,42 +85,23 @@ export const ScreenFooter: FC<FooterProps> = ({
           disabled={!canProceed || loading}
           type="submit"
         >
-          {formatText(
-            {
-              id: 'application.system:button.submit',
-              defaultMessage: 'Submit',
-              description: 'Submit button text',
-            },
-            application,
-            formatMessage,
-          )}
+          {formatText(coreMessages.buttonSubmit, application, formatMessage)}
         </Button>
       )
     }
     return (
       <>
         {submitField?.actions.map(({ event, type, name }) => {
+          const buttonConfig = submitButtonConfig[type]
           return (
             <Box key={`cta-${event}`} marginX={1}>
               <Button
                 type="submit"
                 disabled={!canProceed || loading}
-                colorScheme={
-                  type === 'reject'
-                    ? 'destructive'
-                    : type === 'subtle'
-                    ? 'light'
-                    : 'default'
-                }
+                colorScheme={buttonConfig.colorScheme}
                 id={typeof event === 'object' ? event.type : event}
-                variant={type === 'subtle' ? 'ghost' : 'primary'}
-                icon={
-                  type === 'primary'
-                    ? 'checkmarkCircle'
-                    : type === 'reject'
-                    ? 'closeCircle'
-                    : undefined
-                }
+                variant={buttonConfig.variant}
+                icon={buttonConfig.icon}
               >
                 {formatText(name, application, formatMessage)}
               </Button>
@@ -101,8 +115,8 @@ export const ScreenFooter: FC<FooterProps> = ({
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
       <GridColumn
-        span={['12/12', '12/12', '7/9', '7/9']}
-        offset={['0', '0', '1/9']}
+        span={['12/12', '12/12', '10/12', '7/9']}
+        offset={['0', '0', '1/12', '1/9']}
       >
         <Box
           display="flex"
@@ -136,11 +150,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   icon="arrowForward"
                   type="submit"
                 >
-                  {formatMessage({
-                    id: 'application.system:button.next',
-                    defaultMessage: 'Continue',
-                    description: 'Next button text',
-                  })}
+                  {formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
             )}
@@ -148,11 +158,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
               <Button variant="ghost" onClick={goBack}>
-                {formatMessage({
-                  id: 'application.system:button.back',
-                  defaultMessage: 'Back',
-                  description: 'Back button text',
-                })}
+                {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
           </Box>

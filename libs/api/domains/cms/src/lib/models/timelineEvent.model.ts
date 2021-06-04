@@ -5,31 +5,31 @@ import { Html, mapHtml } from './html.model'
 @ObjectType()
 export class TimelineEvent {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  date: string
+  date!: string
 
   @Field(() => Int, { nullable: true })
-  numerator?: number
+  numerator?: number | null
 
   @Field(() => Int, { nullable: true })
-  denominator?: number
+  denominator?: number | null
 
   @Field()
-  label: string
+  label?: string
 
   @Field(() => Html, { nullable: true })
-  body?: Html
+  body?: Html | null
 
   @Field(() => [String], { nullable: true })
   tags?: Array<string>
 
   @Field()
-  link: string
+  link?: string
 }
 
 export const mapTimelineEvent = ({

@@ -7,14 +7,13 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { renderHtml } from '../richTextRendering'
-
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 export interface FaqListProps {
   title: string
   questions: {
     id: string
     question: string
-    answer?: { document: Document }
+    answer?: SliceType[]
   }[]
 }
 
@@ -26,11 +25,9 @@ export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
       </Text>
       <Accordion>
         {questions.map(({ id, question, answer }) => {
-          if (!answer?.document) return null
-
           return (
             <AccordionItem key={id} id={`faq_${id}`} label={question}>
-              {renderHtml(answer.document)}
+              {richText(answer as SliceType[], undefined)}
             </AccordionItem>
           )
         })}

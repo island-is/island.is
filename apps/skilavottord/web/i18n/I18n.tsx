@@ -1,12 +1,11 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta from 'rosetta'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage } from '@island.is/shared/constants'
 
 import { Translation } from './locales/translation'
 
 const i18n = rosetta()
-
-export type Locale = 'is' | 'en'
-export const defaultLanguage = 'is'
 
 interface I18nContextType {
   activeLocale: Locale
@@ -22,7 +21,6 @@ interface PropTypes {
 
 export const I18nContext = createContext<I18nContextType | null>(null)
 
-// default language
 i18n.locale(defaultLanguage)
 
 function I18n({ children, locale, translations }: PropTypes) {

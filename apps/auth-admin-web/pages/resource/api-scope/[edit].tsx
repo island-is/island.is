@@ -10,6 +10,8 @@ import StepEnd from '../../../components/common/StepEnd'
 import { ApiScopeStep } from '../../../entities/common/ApiScopeStep'
 import ApiScopeUserClaimsForm from '../../../components/Resource/forms/ApiScopeUserClaimsForm'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import LocalizationUtils from '../../../utils/localization.utils'
+import ApiScopeResourceForm from './../../../components/Resource/forms/ApiScopeResourceForm'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -32,6 +34,7 @@ const Index: React.FC = () => {
     }
     loadResource()
     setStep(1)
+    document.title = LocalizationUtils.getPageTitle('resource.api-scope.[edit]')
   }, [apiScopeName])
 
   const getApiScope = async (apiScopeName: string) => {
@@ -68,6 +71,11 @@ const Index: React.FC = () => {
     }
   }
 
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(apiScopeName as string)
+    await getApiScope(decode)
+  }
+
   switch (step) {
     case ApiScopeStep.ApiScope: {
       return (
@@ -101,6 +109,25 @@ const Index: React.FC = () => {
               handleChanges={changesMade}
               handleNext={handleNext}
               handleBack={handleBack}
+              handleNewClaimsAdded={refreshClaims}
+            />
+          </ApiScopeStepNav>
+        </ContentWrapper>
+      )
+    }
+
+    case ApiScopeStep.ApiResource: {
+      return (
+        <ContentWrapper>
+          <ResourcesTabsNav />
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiScopeResourceForm
+              apiScope={apiScope}
+              handleSave={handleNext}
+              handleCancel={handleBack}
             />
           </ApiScopeStepNav>
         </ContentWrapper>
@@ -116,11 +143,20 @@ const Index: React.FC = () => {
             handleStepChange={handleStepChange}
           >
             <StepEnd
-              buttonText="Go back"
-              title="Steps completed"
+              buttonText={
+                LocalizationUtils.getPage('resource.api-scope.[edit]').endStep
+                  .buttonText
+              }
+              title={
+                LocalizationUtils.getPage('resource.api-scope.[edit]').endStep
+                  .title
+              }
               handleButtonFinishedClick={() => setStep(1)}
             >
-              The steps needed, to create the Api Scope, have been completed
+              {
+                LocalizationUtils.getPage('resource.api-scope.[edit]').endStep
+                  .infoTitle
+              }
             </StepEnd>
           </ApiScopeStepNav>
         </ContentWrapper>

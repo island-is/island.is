@@ -1,7 +1,8 @@
 import React, { FC, useRef } from 'react'
-import { useStore } from '../../store/stateProvider'
 import { Box, Button, Hidden } from '@island.is/island-ui/core'
-import { useClickAway } from 'react-use'
+import { useAuth } from '@island.is/auth/react'
+
+import { useStore } from '../../store/stateProvider'
 import { ActionType, MenuState } from '../../store/actions'
 import UserMenu from '../UserMenu/UserMenu'
 
@@ -27,15 +28,8 @@ const UserMenuTrigger: FC<{}> = () => {
   const handleClick = () =>
     setMenuState(userMenuState === 'open' ? 'closed' : 'open')
 
-  useClickAway(ref, () =>
-    userMenuState === 'open' ? setMenuState('closed') : null,
-  )
+  const { userInfo } = useAuth()
 
-  const [{ userInfo }] = useStore()
-
-  useClickAway(ref, () =>
-    userMenuState === 'open' ? setMenuState('closed') : null,
-  )
   return (
     <Box display="flex" position="relative" height="full" ref={ref}>
       <Hidden below="md">
@@ -43,6 +37,7 @@ const UserMenuTrigger: FC<{}> = () => {
           {userInfo?.profile.name}
         </Button>
       </Hidden>
+
       <Hidden above="sm">
         <Button
           variant="utility"
@@ -53,6 +48,7 @@ const UserMenuTrigger: FC<{}> = () => {
           iconType="outline"
         />
       </Hidden>
+
       {userInfo && (
         <UserMenu
           state={userMenuState}

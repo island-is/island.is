@@ -17,26 +17,19 @@ means your service will be packaged as a NextJS Docker container image. We have 
 - `docker-next`: suitable for [NextJS](https://nextjs.org/) services.
 - `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
 - `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+- `docker-cypress`, suitable for running cypress tests in docker.
 
 If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 
-That's it.
-
 When you push this change to `main` your Docker image will get built and pushed to our private central Docker registry
+
+{% hint style="info" %}
+To dockerize a NextJS project, you additionally need to configure it to use [our custom server](./next-server.md#setup-in-new-project).
+{% endhint %}
 
 ## Can I create a secret in the aws parameters store for services to consume?
 
-Yes you can!
-
-You can run the `yarn create-secret` or `./scripts/create-secret.sh` and you will be prompted for input.
-
-```bash
-./scripts/create-secret
-```
-
-You will be prompted for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-32 characters long. Only alphanumeric characters, `/` and `-` are allowed.
-
-Make sure your AWS credentials are set up in your shell before you create a secret.
+Yes you can! Find out about it on the [AWS Secrets documentation](../../repository/aws-secrets.md).
 
 ## Troubleshooting
 

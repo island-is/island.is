@@ -7,13 +7,13 @@ import { Link, mapLink } from './link.model'
 @ObjectType()
 export class LinkGroup {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  name: string
+  name!: string
 
   @Field(() => Link)
-  primaryLink: Link
+  primaryLink!: Link | null
 
   @Field(() => [Link])
   childrenLinks?: Array<Link>

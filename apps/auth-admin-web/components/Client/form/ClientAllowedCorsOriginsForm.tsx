@@ -6,7 +6,9 @@ import { ClientAllowedCorsOriginDTO } from '../../../entities/dtos/client-allowe
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
-
+import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   clientId: string
   defaultOrigin?: string
@@ -21,15 +23,21 @@ interface FormOutput {
 }
 
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientAllowedCorsOriginDTO
-  >()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientAllowedCorsOriginDTO>()
   const { isSubmitting } = formState
   const [defaultOrigin, setDefaultOrigin] = useState(
     !props.origins || props.origins.length === 0 ? props.defaultOrigin : '',
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('')
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientAllowedCorsOriginsForm'),
+  )
 
   const add = async (data: FormOutput) => {
     const allowedCorsOrigin = new ClientAllowedCorsOriginDTO()
@@ -75,8 +83,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this cors origin:{' '}
-        <span>{corsOriginToRemove}</span>
+        {localization.removeConfirmation}:<span>{corsOriginToRemove}</span>
       </p>
     )
   }
@@ -86,49 +93,56 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
       <div className="client-allowed-cors-origin">
         <div className="client-allowed-cors-origin__wrapper">
           <div className="client-allowed-cors-origin__container">
-            <h1>Enter allowed cors origins</h1>
+            <h1>{localization.title}</h1>
             <div className="client-allowed-cors-origin__container__form">
               <div className="client-allowed-cors-origin__help">
-                Cross-Origin Resource Sharing (CORS) is an HTTP-header based
-                mechanism that allows a server to indicate any other origins
-                (domain, scheme, or port) than its own from which a browser
-                should permit loading of resources.
+                {localization.help}
               </div>
               <form id="corsForm" onSubmit={handleSubmit(add)}>
                 <div className="client-allowed-cors-origin__container__fields">
                   <div className="client-allowed-cors-origin__container__field">
-                    <label className="client-allowed-cors-origin__label">
-                      Allow cors origin
+                    <label
+                      className="client-allowed-cors-origin__label"
+                      htmlFor="origin"
+                    >
+                      {localization.fields['origin'].label}
                     </label>
                     <input
+                      id="origin"
                       type="text"
                       name="origin"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateCorsOrigin,
+                      })}
                       defaultValue={defaultOrigin}
                       className="client-allowed-cors-origin__input"
-                      placeholder="https://localhost:4200"
-                      title="Enter an allowed cors origin"
+                      placeholder={localization.fields['origin'].placeholder}
+                      title={localization.fields['origin'].helpText}
                     />
-                    <HelpBox helpText="Enter an allowed cors origin" />
+                    <HelpBox
+                      helpText={localization.fields['origin'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="origin"
-                      message="Cors origin is required"
+                      message={localization.fields['origin'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-allowed-cors-origin__button__add"
                       disabled={isSubmitting}
-                      value="Add"
+                      title={localization.buttons['add'].helpText}
+                      value={localization.buttons['add'].text}
                     />
                   </div>
                 </div>
 
                 <NoActiveConnections
-                  title="No active cors origins"
+                  title={localization.noActiveConnections?.title}
                   show={!props.origins || props.origins.length === 0}
-                  helpText="Define a cors origin and push the Add button to add a cors origin"
+                  helpText={localization.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div
@@ -138,7 +152,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       : 'hidden'
                   }`}
                 >
-                  <h3>Allowed cors origins</h3>
+                  <h3>{localization.sections['active'].title}</h3>
                   {props.origins?.map((origin: string) => {
                     return (
                       <div
@@ -151,10 +165,10 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                             type="button"
                             onClick={() => confirmRemove(origin)}
                             className="client-allowed-cors-origin__container__list__button__remove"
-                            title="Remove"
+                            title={localization.buttons['remove'].helpText}
                           >
                             <i className="icon__delete"></i>
-                            <span>Remove</span>
+                            <span>{localization.buttons['remove'].text}</span>
                           </button>
                         </div>
                       </div>
@@ -168,8 +182,9 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client-allowed-cors-origin__button__cancel"
                       onClick={props.handleBack}
+                      title={localization.buttons['cancel'].helpText}
                     >
-                      Back
+                      {localization.buttons['cancel'].text}
                     </button>
                   </div>
                   <div className="client-allowed-cors-origin__button__container">
@@ -177,8 +192,9 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client-allowed-cors-origin__button__save"
                       onClick={props.handleNext}
+                      title={localization.buttons['save'].helpText}
                     >
-                      Next
+                      {localization.buttons['save'].text}
                     </button>
                   </div>
                 </div>
@@ -192,7 +208,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

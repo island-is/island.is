@@ -5,20 +5,20 @@ import { Image } from './image.model'
 @ObjectType()
 export class AdgerdirGroup {
   @Field()
-  id: string
+  id!: string
 
   @Field({ nullable: true })
   subtitle?: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
-  description?: string
+  description!: string
 
   @Field(() => Image, { nullable: true })
   image?: Image
 
   @Field(() => [AdgerdirPage])
-  pages: AdgerdirPage[]
+  pages!: AdgerdirPage[]
 }

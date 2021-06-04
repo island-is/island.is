@@ -27,7 +27,15 @@ globalStyle('strong', {
   fontWeight: theme.typography.semiBold,
 })
 
-globalStyle('ol, ul', {
+// NOTE: DO NOT reset `ol[type]` <-- !!!!!
+// Since CSS attribute selectors for most standard HTML attributes
+// are case-insensitive it becomes impossible to reapply the
+// default styles for `<ol type="A">` and `<ol type="a">`
+// ...and `<ol type="I">` and `<ol type="i">`
+// This is important because the ol[type] attribute is semantic,
+// not presentational, as text content may use wording such as
+// "see item C below" or "according to item viii above"
+globalStyle('ol:not([type]), ul', {
   listStyle: 'none',
 })
 
@@ -49,6 +57,8 @@ globalStyle('button, input, optgroup, select, textarea', {
   margin: 0,
   fontFamily: 'inherit',
   fontSize: 'inherit',
+  fontWeight: 'inherit',
+  color: 'inherit',
   lineHeight: 'inherit',
 })
 

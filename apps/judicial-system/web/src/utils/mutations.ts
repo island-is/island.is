@@ -34,10 +34,16 @@ export const CreateCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
-      court
+      defenderPhoneNumber
+      sendRequestToDefender
+      court {
+        id
+        type
+        name
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
@@ -49,21 +55,30 @@ export const CreateCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      additionToConclusion
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -74,13 +89,27 @@ export const CreateCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
+        name
+        title
+      }
+      registrar {
         name
         title
       }
       parentCase {
         id
       }
+    }
+  }
+`
+
+export const CreateCourtCaseMutation = gql`
+  mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
+    createCourtCase(input: $input) {
+      courtCaseNumber
     }
   }
 `
@@ -95,20 +124,15 @@ export const CasesQuery = gql`
       policeCaseNumber
       accusedNationalId
       accusedName
-      isCourtDateInThePast
       custodyEndDate
       decision
       isCustodyEndDateInThePast
-    }
-  }
-`
-
-export const UsersQuery = gql`
-  query UsersQuery {
-    users {
-      id
-      name
-      role
+      courtCaseNumber
+      rulingDate
+      courtEndTime
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -128,10 +152,16 @@ export const ExtendCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
-      court
+      defenderPhoneNumber
+      sendRequestToDefender
+      court {
+        id
+        type
+        name
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
@@ -143,21 +173,30 @@ export const ExtendCaseMutation = gql`
       investigationProgress
       legalArguments
       comments
+      caseFilesComments
       prosecutor {
         name
         title
       }
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      additionToConclusion
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
       custodyEndDate
@@ -168,6 +207,8 @@ export const ExtendCaseMutation = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -175,6 +216,84 @@ export const ExtendCaseMutation = gql`
       parentCase {
         id
       }
+    }
+  }
+`
+export const CreateUserMutation = gql`
+  mutation CreateUserMutation($input: CreateUserInput!) {
+    createUser(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        type
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        type
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UserQuery = gql`
+  query UserQuery($input: UserQueryInput!) {
+    user(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        type
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UpdateUserMutation = gql`
+  mutation UpdateUserMutation($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      id
+      modified
+    }
+  }
+`
+
+export const InstitutionsQuery = gql`
+  query InstitutionsQuery {
+    institutions {
+      id
+      type
+      name
     }
   }
 `

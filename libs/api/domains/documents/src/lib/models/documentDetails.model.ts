@@ -1,5 +1,5 @@
+import { DocumentDTO } from '@island.is/clients/documents'
 import { ObjectType, Field } from '@nestjs/graphql'
-import { DocumentDTO } from '../client/models'
 
 @ObjectType()
 export class DocumentDetails {

@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { maxDaysToGiveOrReceive, defaultMonths, minMonths } from '../../config'
@@ -20,11 +20,14 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
 
   const { clearErrors } = useFormContext()
   const [chosenGiveDays, setChosenGiveDays] = useState<number>(currentAnswer)
-  const daysStringKey = chosenGiveDays > 1 ? m.giveRightsDays : m.giveRightsDay
+  const daysStringKey =
+    chosenGiveDays > 1
+      ? parentalLeaveFormMessages.shared.giveRightsDays
+      : parentalLeaveFormMessages.shared.giveRightsDay
   const yourRightsWithGivenDaysStringKey =
     maxDaysToGiveOrReceive - chosenGiveDays === 1
-      ? m.yourRightsInMonthsAndDay
-      : m.yourRightsInMonthsAndDays
+      ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
+      : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
@@ -45,7 +48,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box marginBottom={6}>
       <Text marginBottom={4} variant="h3">
-        {formatMessage(m.giveRightsDaysTitle)}
+        {formatMessage(parentalLeaveFormMessages.shared.giveRightsDaysTitle)}
       </Text>
       <Box marginBottom={12}>
         <Controller
@@ -54,8 +57,8 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
           render={({ onChange, value }) => (
             <Slider
               label={{
-                singular: formatMessage(m.day),
-                plural: formatMessage(m.days),
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
               }}
               min={1}
               max={maxDaysToGiveOrReceive}

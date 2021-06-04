@@ -3,13 +3,10 @@ import { NextComponentType } from 'next'
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-
+import { defaultLanguage, supportedLocales } from '@island.is/shared/constants'
 import gql from 'graphql-tag'
-import {
-  defaultLanguage,
-  supportedLocales,
-  LocaleContext,
-} from './LocaleContext'
+
+import { LocaleContext } from './LocaleContext'
 import { polyfill } from './polyfills'
 
 export const GET_TRANSLATIONS = gql`

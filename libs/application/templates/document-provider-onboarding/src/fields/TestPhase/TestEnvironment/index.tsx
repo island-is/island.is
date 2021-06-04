@@ -25,7 +25,7 @@ export const createTestProviderMutation = gql`
 `
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   interface Key {
     name: string
     value: string
@@ -35,12 +35,14 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
 
   const [keys, setKeys] = useState<Key[]>([])
   const [currentAnswer, setCurrentAnswer] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
-  const [createTestProvider] = useMutation(createTestProviderMutation)
+  const [createTestProvider, { loading }] = useMutation(
+    createTestProviderMutation,
+  )
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -89,11 +91,11 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
             ...application.answers,
           },
         },
+        locale,
       },
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers
     })
-
     clearErrors('testProviderId')
   }
 
@@ -130,6 +132,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           disabled={currentAnswer !== ''}
           onClick={() => {
             onRegister()

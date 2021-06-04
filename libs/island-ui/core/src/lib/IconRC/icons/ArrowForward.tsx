@@ -8,7 +8,8 @@ const SvgArrowForward = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="arrow-forward_svg__ionicon"
+      xmlns="http://www.w3.org/2000/svg"
+      className="ArrowForward_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
@@ -19,7 +20,7 @@ const SvgArrowForward = ({
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={48}
+        strokeWidth={32}
         d="M268 112l144 144-144 144m124-144H100"
       />
     </svg>

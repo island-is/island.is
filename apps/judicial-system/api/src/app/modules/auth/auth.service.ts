@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'
+import fetch from 'isomorphic-fetch'
 
 import { Injectable } from '@nestjs/common'
 
@@ -9,7 +9,12 @@ import { environment } from '../../../environments'
 @Injectable()
 export class AuthService {
   async findUser(nationalId: string): Promise<User | undefined> {
-    const res = await fetch(`${environment.backendUrl}/api/user/${nationalId}`)
+    const res = await fetch(
+      `${environment.backend.url}/api/user/?nationalId=${nationalId}`,
+      {
+        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+      },
+    )
 
     if (!res.ok) {
       return undefined
@@ -18,7 +23,7 @@ export class AuthService {
     return await res.json()
   }
 
-  validateUser(user?: User): boolean {
-    return Boolean(user?.active)
+  validateUser(user: User): boolean {
+    return user.active
   }
 }

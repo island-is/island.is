@@ -1,38 +1,30 @@
-import {
-  Accordion,
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   Modal,
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
-  TimeInputField,
   PdfButton,
   CaseNumbers,
   PageLayout,
+  FormContentContainer,
+  CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   getConclusion,
   getAppealDecisionText,
-  isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
-  TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AppealDecisionRole,
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -46,28 +38,20 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useHistory, useParams } from 'react-router-dom'
-import * as style from './Confirmation.treat'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  getTimeFromDate,
-  validateAndSendTimeToServer,
-  validateAndSetTime,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
+import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
   workingCase: Case
@@ -82,7 +66,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   requestSignatureResponse,
   setModalVisible,
 }) => {
-  const history = useHistory()
+  const router = useRouter()
   const [
     signatureConfirmationResponse,
     setSignatureConfirmationResponse,
@@ -133,11 +117,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
         setWorkingCase({
           ...workingCase,
           state: resCase.state,
-          judge: resCase.judge,
         })
       } catch (e) {
-        console.log(e)
-
         // TODO: Handle error
       }
 
@@ -180,8 +161,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // TODO: Handle error
       }
     } catch (e) {
-      console.log(e)
-
       // TODO: Handle error
     }
   }, [sendNotificationMutation, workingCase.id])
@@ -240,7 +219,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -250,15 +229,14 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={
-        signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
-      }
+      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
       handlePrimaryButtonClick={() => {
-        history.push(Constants.FEEDBACK_FORM_ROUTE)
+        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(Constants.REQUEST_LIST_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.REQUEST_LIST_ROUTE)
+          router.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -267,44 +245,21 @@ const SigningModal: React.FC<SigningModalProps> = ({
   )
 }
 
-interface CaseData {
-  case?: Case
-}
-
 export const Confirmation: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
-  const [requestSignatureResponse, setRequestSignatureResponse] = useState<
-    RequestSignatureResponse
-  >()
+    requestSignatureResponse,
+    setRequestSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
 
-  const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -315,19 +270,6 @@ export const Confirmation: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: getTimeFromDate(workingCase?.courtEndTime) || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, isStepIllegal])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -377,242 +319,223 @@ export const Confirmation: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
-          <Box marginBottom={1}>
-            <Text as="h1" variant="h1">
-              Yfirlit úrskurðar
-            </Text>
-          </Box>
-          <Box display="flex" marginBottom={10}>
-            <Box marginRight={2}>
-              <Text variant="small">{`Krafa stofnuð: ${formatDate(
-                workingCase.created,
+          <FormContentContainer>
+            <Box marginBottom={1}>
+              <Text as="h1" variant="h1">
+                Yfirlit úrskurðar
+              </Text>
+            </Box>
+            <Box display="flex" marginBottom={10}>
+              <Box marginRight={2}>
+                <Text variant="small">{`Krafa stofnuð: ${formatDate(
+                  workingCase.created,
+                  'P',
+                )}`}</Text>
+              </Box>
+              <Text variant="small">{`Þinghald: ${formatDate(
+                workingCase.courtStartDate,
                 'P',
               )}`}</Text>
             </Box>
-            <Text variant="small">{`Þinghald: ${formatDate(
-              workingCase.courtStartTime,
-              'P',
-            )}`}</Text>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Text
-              variant="h2"
-              as="h2"
-            >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <CaseNumbers workingCase={workingCase} />
-          </Box>
-          <Box marginBottom={9}>
-            <Accordion>
-              <PoliceRequestAccordionItem workingCase={workingCase} />
-              <CourtRecordAccordionItem workingCase={workingCase} />
-            </Accordion>
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Úrskurður Héraðsdóms
-              </Text>
+            <Box component="section" marginBottom={7}>
+              <Text
+                variant="h2"
+                as="h2"
+              >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+              <CaseNumbers workingCase={workingCase} />
             </Box>
-            <Box marginBottom={7}>
-              <Text variant="eyebrow" color="blue400">
-                Niðurstaða úrskurðar
-              </Text>
+            <Box marginBottom={9}>
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <CourtCaseFactsAndLegalArgumentsAccordionItem
+                  workingCase={workingCase}
+                />
+              </Accordion>
+            </Box>
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Úrskurður Héraðsdóms
+                </Text>
+              </Box>
+              <Box marginBottom={7}>
+                <Text variant="eyebrow" color="blue400">
+                  Niðurstaða
+                </Text>
+                <Text>
+                  <span className={style.breakSpaces}>
+                    {workingCase.ruling}
+                  </span>
+                </Text>
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Úrskurðarorð
+                </Text>
+              </Box>
+              <Box marginBottom={3}>
+                {getConclusion(workingCase, true)}
+                {workingCase.additionToConclusion && (
+                  <Box marginTop={1}>
+                    <Text variant="intro">
+                      {workingCase.additionToConclusion}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text variant="h3">
+                  {workingCase.judge
+                    ? `${workingCase.judge.name} ${workingCase.judge.title}`
+                    : `Enginn dómari skráður`}
+                </Text>
+              </Box>
               <Text>
-                <span className={style.breakSpaces}>{workingCase.ruling}</span>
+                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>
             </Box>
-          </Box>
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Úrskurðarorð
-              </Text>
-            </Box>
-            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={1}>
-              <Text variant="h3">
-                {workingCase.judge
-                  ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
-              </Text>
-            </Box>
-            <Text>
-              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={1}>
-              <Text as="h3" variant="h3">
-                Ákvörðun um kæru
-              </Text>
-            </Box>
-            <Box marginBottom={1}>
-              <Text>
-                Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-                þennan til Landsréttar innan þriggja sólarhringa.
-              </Text>
-            </Box>
-            <Box marginBottom={1}>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Ákvörðun um kæru
+                </Text>
+              </Box>
+              <Box marginBottom={1}>
+                <Text>
+                  Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
+                  úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                </Text>
+              </Box>
+              <Box marginBottom={1}>
+                <Text variant="h4">
+                  {getAppealDecisionText(
+                    AppealDecisionRole.ACCUSED,
+                    workingCase.accusedAppealDecision,
+                    workingCase.accusedGender,
+                  )}
+                </Text>
+              </Box>
               <Text variant="h4">
                 {getAppealDecisionText(
-                  AppealDecisionRole.ACCUSED,
-                  workingCase.accusedAppealDecision,
+                  AppealDecisionRole.PROSECUTOR,
+                  workingCase.prosecutorAppealDecision,
                   workingCase.accusedGender,
                 )}
               </Text>
-            </Box>
-            <Text variant="h4">
-              {getAppealDecisionText(
-                AppealDecisionRole.PROSECUTOR,
-                workingCase.prosecutorAppealDecision,
-                workingCase.accusedGender,
+              {(workingCase.accusedAppealAnnouncement ||
+                workingCase.prosecutorAppealAnnouncement) && (
+                <Box component="section" marginTop={3}>
+                  {workingCase.accusedAppealAnnouncement &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.APPEAL && (
+                      <Box>
+                        <Text variant="eyebrow" color="blue400">
+                          Yfirlýsing um kæru kærða
+                        </Text>
+                        <Text>{workingCase.accusedAppealAnnouncement}</Text>
+                      </Box>
+                    )}
+                  {workingCase.prosecutorAppealAnnouncement &&
+                    workingCase.prosecutorAppealDecision ===
+                      CaseAppealDecision.APPEAL && (
+                      <Box marginTop={2}>
+                        <Text variant="eyebrow" color="blue400">
+                          Yfirlýsing um kæru sækjanda
+                        </Text>
+                        <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
+                      </Box>
+                    )}
+                </Box>
               )}
-            </Text>
-            {(workingCase.accusedAppealAnnouncement ||
-              workingCase.prosecutorAppealAnnouncement) && (
-              <Box component="section" marginTop={3}>
-                {workingCase.accusedAppealAnnouncement &&
-                  workingCase.accusedAppealDecision ===
-                    CaseAppealDecision.APPEAL && (
-                    <Box>
-                      <Text variant="eyebrow" color="blue400">
-                        Yfirlýsing um kæru kærða
-                      </Text>
-                      <Text>{workingCase.accusedAppealAnnouncement}</Text>
-                    </Box>
-                  )}
-                {workingCase.prosecutorAppealAnnouncement &&
-                  workingCase.prosecutorAppealDecision ===
-                    CaseAppealDecision.APPEAL && (
-                    <Box marginTop={2}>
-                      <Text variant="eyebrow" color="blue400">
-                        Yfirlýsing um kæru sækjanda
-                      </Text>
-                      <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-                    </Box>
-                  )}
-              </Box>
-            )}
-          </Box>
-          {workingCase.decision === CaseDecision.ACCEPTING &&
-            workingCase.type == CaseType.CUSTODY && (
+            </Box>
+            {workingCase.decision === CaseDecision.ACCEPTING &&
+              workingCase.type === CaseType.CUSTODY && (
+                <Box marginBottom={7}>
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      Tilhögun gæsluvarðhalds
+                    </Text>
+                  </Box>
+                  <Box marginBottom={2}>
+                    <Text>
+                      {formatCustodyRestrictions(
+                        workingCase.accusedGender,
+                        workingCase.custodyRestrictions,
+                      )}
+                    </Text>
+                  </Box>
+                  <Text>
+                    Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt
+                    að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
+                    dómara.
+                  </Text>
+                </Box>
+              )}
+            {(workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              (workingCase.type === CaseType.TRAVEL_BAN &&
+                workingCase.decision === CaseDecision.ACCEPTING)) && (
               <Box marginBottom={7}>
                 <Box marginBottom={1}>
                   <Text as="h3" variant="h3">
-                    Tilhögun gæsluvarðhalds
+                    Tilhögun farbanns
                   </Text>
                 </Box>
                 <Box marginBottom={2}>
                   <Text>
-                    {formatCustodyRestrictions(
+                    {formatAlternativeTravelBanRestrictions(
                       workingCase.accusedGender,
                       workingCase.custodyRestrictions,
-                    )}
+                      workingCase.otherRestrictions,
+                    )
+                      .split('\n')
+                      .map((str, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{str}</Text>
+                          </div>
+                        )
+                      })}
                   </Text>
                 </Box>
                 <Text>
                   Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                  bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
-                  dómara.
+                  bera atriði er lúta að framkvæmd farbannsins undir dómara.
                 </Text>
               </Box>
             )}
-          {(workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            (workingCase.type == CaseType.TRAVEL_BAN &&
-              workingCase.decision === CaseDecision.ACCEPTING)) && (
-            <Box marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Tilhögun farbanns
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <Text>
-                  {formatAlternativeTravelBanRestrictions(
-                    workingCase.accusedGender,
-                    workingCase.custodyRestrictions,
-                    workingCase.otherRestrictions,
-                  )
-                    .split('\n')
-                    .map((str) => (
-                      <Text>{str}</Text>
-                    ))}
-                </Text>
-              </Box>
-              <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd farbannsins undir dómara.
-              </Text>
+            <Box marginBottom={15}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF þingbók og úrskurð"
+                pdfType="ruling"
+              />
             </Box>
-          )}
-          <Box className={style.courtEndTimeContainer}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Þinghald
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                <GridColumn>
-                  <TimeInputField
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'courtEndTime',
-                        new Date().toString(),
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        courtDocumentEndErrorMessage,
-                        setCourtDocumentEndErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'courtEndTime',
-                        new Date().toString(),
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCourtDocumentEndErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="courtEndTime"
-                      name="courtEndTime"
-                      label="Þinghaldi lauk"
-                      placeholder="Veldu tíma"
-                      defaultValue={formatDate(
-                        workingCase.courtEndTime,
-                        TIME_FORMAT,
-                      )}
-                      errorMessage={courtDocumentEndErrorMessage}
-                      hasError={courtDocumentEndErrorMessage !== ''}
-                      required
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
-          <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
-          </Box>
-          <FormFooter
-            nextUrl={Constants.REQUEST_LIST_ROUTE}
-            nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={isStepIllegal}
-            onNextButtonClick={handleNextButtonClick}
-            nextIsLoading={isRequestingSignature}
-          />
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+              nextUrl={Constants.REQUEST_LIST_ROUTE}
+              nextButtonText="Staðfesta og hefja undirritun"
+              onNextButtonClick={handleNextButtonClick}
+              nextIsLoading={isRequestingSignature}
+              hideNextButton={workingCase.judge?.id !== user?.id}
+              infoBoxText={
+                workingCase.judge?.id !== user?.id
+                  ? 'Einungis skráður dómari getur undirritað úrskurð'
+                  : undefined
+              }
+            />
+          </FormContentContainer>
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}

@@ -1,0 +1,42 @@
+{
+  "data": {
+    "users": [
+      {
+        "id": "1338",
+        "name": "Dóra Dómari",
+        "nationalId": "0000000000",
+        "mobileNumber": "0000000",
+        "role": "JUDGE",
+        "title": "Aðaldómari",
+        "email": "dora@explorer.is",
+        "institution": "Bráðabirgðadómari",
+        "active": true,
+        "__typename": "User"
+      },
+      {
+        "id": "1339",
+        "name": "Dómhildur",
+        "nationalId": "1111111111",
+        "mobileNumber": "1111111",
+        "role": "JUDGE",
+        "title": "aðstoðardómari",
+        "email": "skelli@bjalla.is",
+        "institution": "Dómarisamfélagið",
+        "active": true,
+        "__typename": "User"
+      },
+      {
+        "id": "1339",
+        "name": "Dómritarahildigunnur",
+        "nationalId": "1111111111",
+        "mobileNumber": "1111111",
+        "role": "REGISTRAR",
+        "title": "aðstoðardómritarinn",
+        "email": "skelli@bjallakallar.is",
+        "institution": "Dómritarafélagið",
+        "active": true,
+        "__typename": "User"
+      }
+    ]
+  }
+}

@@ -7,9 +7,7 @@ import { FilterInput, financialStateOptions } from './consts'
 
 const getAirlinesAvailableForCSVDownload = (filters: FilterInput) =>
   Object.keys(Airlines).filter(
-    (airline) =>
-      airline !== Airlines.norlandair &&
-      (!filters.airline?.value || filters.airline?.value === airline),
+    (airline) => !filters.airline?.value || filters.airline?.value === airline,
   )
 
 export const isCSVAvailable = (filters: FilterInput) =>
@@ -26,12 +24,10 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       'Afsláttur',
       'FlugID',
       'FlugLeggjaID',
+      'Kyn',
+      'Aldur',
     ]
-    const data = getFilteredFlightLegs(
-      airline === Airlines.norlandair ? Airlines.icelandair : airline,
-      filters.airline?.value,
-      flightLegs,
-    ).map((flightLeg) => [
+    const data = getFilteredFlightLegs(airline, flightLegs).map((flightLeg) => [
       flightLeg.travel,
       flightLeg.flight.bookingDate,
       (
@@ -44,6 +40,8 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       flightLeg.originalPrice - flightLeg.discountPrice,
       flightLeg.flight.id,
       flightLeg.id,
+      flightLeg.flight.userInfo.gender,
+      flightLeg.flight.userInfo.age,
     ])
     data.unshift(header)
 
@@ -61,18 +59,7 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
 
 export const getFilteredFlightLegs = (
   airline: string,
-  filteredAirline: string,
   flightLegs: FlightLeg[],
 ): FlightLeg[] => {
-  if (filteredAirline === Airlines.norlandair) {
-    return flightLegs.filter(
-      (flightLeg) =>
-        flightLeg.airline === airline &&
-        flightLeg.cooperation === filteredAirline,
-    )
-  }
-  return flightLegs.filter(
-    (flightLeg) =>
-      flightLeg.airline === airline || flightLeg.cooperation === airline,
-  )
+  return flightLegs.filter((flightLeg) => flightLeg.airline === airline)
 }

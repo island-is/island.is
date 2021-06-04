@@ -3,7 +3,8 @@ import cn from 'classnames'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Text } from '../Text/Text'
-import { Box, BoxProps } from '../Box/Box'
+import { Box } from '../Box/Box'
+import { BoxProps } from '../Box/types'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
 
@@ -300,6 +301,7 @@ interface MobileButtonProps {
 const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   return (
     <Box
+      component="span"
       display="flex"
       justifyContent="spaceBetween"
       alignItems="center"
@@ -315,6 +317,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
       </Text>
 
       <Box
+        component="span"
         position="absolute"
         right={0}
         marginRight={2}
@@ -363,6 +366,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 href={href}
                 borderRadius="large"
                 paddingLeft={isChildren ? 2 : 3}
+                paddingRight={2}
                 paddingY={isChildren ? 'smallGutter' : 1}
                 className={styles.link}
                 onClick={linkOnClick}
@@ -401,6 +405,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 expand={expand}
                 renderLink={renderLink}
                 menuState={menuState}
+                linkOnClick={linkOnClick}
               />
             ) : null}
           </li>

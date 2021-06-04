@@ -1,10 +1,11 @@
-import React, { createContext, FC, ReactNode, useState } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import Head from 'next/head'
 import { Header } from '../../components'
 
 import { Page, GridContainer } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { User } from '@island.is/skilavottord-web/types'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 interface LayoutProps {
   children: ReactNode
@@ -37,7 +38,7 @@ export const AppLayout: FC<LayoutProps> = ({
             sizes="16x16"
             href="/favicon-16x16.png"
           />
-          <link rel="manifest" href="/site.webmanifest" />
+          <link rel="manifest" href={`${BASE_PATH}/site.webmanifest`} />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />

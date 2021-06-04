@@ -13,34 +13,34 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 @ObjectType()
 export class AboutSubPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field()
-  url: string
+  url!: string
 
   @Field()
-  description: string
+  description?: string
 
   @Field()
-  subDescription: string
+  subDescription?: string
 
   @Field(() => Html, { nullable: true })
-  intro: Html
+  intro?: Html | null
 
   @Field(() => [SliceUnion])
-  slices: Array<typeof SliceUnion>
+  slices: Array<typeof SliceUnion> = []
 
   @Field(() => [SliceUnion])
-  bottomSlices: Array<typeof SliceUnion>
+  bottomSlices: Array<typeof SliceUnion | null> = [] // safelyMapSliceUnion can return null
 
   @Field(() => AboutPage, { nullable: true })
-  parent?: { lang: ElasticsearchIndexLocale; id: string }
+  parent?: { lang: ElasticsearchIndexLocale; id: string } | null
 }
 
 export const mapAboutSubPage = ({

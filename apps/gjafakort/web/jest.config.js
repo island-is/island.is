@@ -1,8 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  name: 'gjafakort-web',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
     '^.+\\.[tj]sx?$': 'ts-jest',
@@ -14,4 +13,5 @@ module.exports = {
   coverageDirectory: '../../../coverage/apps/gjafakort/web',
   setupFiles: ['./jest.setup.js'],
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'gjafakort-web',
 }

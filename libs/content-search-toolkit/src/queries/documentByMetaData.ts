@@ -6,7 +6,7 @@ import { tagQuery } from './tagQuery'
 export const documentByMetaDataQuery = ({
   types = [],
   tags = [],
-  sort = {},
+  sort = [],
   page = 1,
   size = 10,
   date,
@@ -38,16 +38,14 @@ export const documentByMetaDataQuery = ({
     })
   }
 
-  const query = {
+  return {
     query: {
       bool: {
         must,
       },
     },
-    sort: Object.entries(sort).map(([key, value]) => ({ [key]: value })), // elastic wants sorts as array of object with single keys
+    sort,
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-
-  return query
 }

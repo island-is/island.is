@@ -6,16 +6,16 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class LogoListSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  body: string
+  body?: string
 
   @Field(() => [Image])
-  images: Image[]
+  images?: Image[]
 }
 
 export const mapLogoListSlice = ({

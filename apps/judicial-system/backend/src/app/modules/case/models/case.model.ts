@@ -20,8 +20,10 @@ import {
   CaseGender,
   CaseDecision,
   CaseType,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
+import { Institution } from '../../institution'
 import { User } from '../../user'
 
 @Table({
@@ -116,7 +118,32 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  court: string
+  defenderPhoneNumber: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  sendRequestToDefender: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtId: string
+
+  @BelongsTo(() => Institution, 'courtId')
+  @ApiProperty({ type: Institution })
+  court: Institution
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  leadInvestigator: string
 
   @Column({
     type: DataType.DATE,
@@ -131,13 +158,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   requestedCourtDate: Date
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  alternativeTravelBan: boolean
 
   @Column({
     type: DataType.DATE,
@@ -204,6 +224,13 @@ export class Case extends Model<Case> {
   @ApiProperty()
   comments: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseFilesComments: string
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
@@ -215,6 +242,18 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'prosecutorId')
   @ApiProperty({ type: User })
   prosecutor: User
+
+  @ForeignKey(() => Institution)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  sharedWithProsecutorsOfficeId: string
+
+  @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
+  @ApiProperty({ type: Institution })
+  sharedWithProsecutorsOffice: Institution
 
   @Column({
     type: DataType.STRING,
@@ -242,7 +281,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtStartTime: Date
+  courtStartDate: Date
 
   @Column({
     type: DataType.DATE,
@@ -277,7 +316,22 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  accusedPlea: string
+  additionToConclusion: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AccusedPleaDecision),
+  })
+  @ApiProperty({ enum: AccusedPleaDecision })
+  accusedPleaDecision: AccusedPleaDecision
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedPleaAnnouncement: string
 
   @Column({
     type: DataType.STRING,
@@ -285,6 +339,20 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   litigationPresentations: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtCaseFacts: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLegalArguments: string
 
   @Column({
     type: DataType.STRING,
@@ -324,6 +392,13 @@ export class Case extends Model<Case> {
   otherRestrictions: string
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isolationTo: Date
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),
@@ -353,6 +428,27 @@ export class Case extends Model<Case> {
   @ApiProperty()
   prosecutorAppealAnnouncement: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulingDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedPostponedAppealDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorPostponedAppealDate: Date
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
@@ -364,6 +460,18 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  registrarId: string
+
+  @BelongsTo(() => User, 'registrarId')
+  @ApiProperty({ type: User })
+  registrar: User
 
   @ForeignKey(() => Case)
   @Column({

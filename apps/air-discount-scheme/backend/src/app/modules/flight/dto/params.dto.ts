@@ -1,4 +1,4 @@
-import { IsString, IsUUID, Length } from 'class-validator'
+import { IsISO8601, IsString, IsUUID, Length } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class GetFlightParams {
@@ -14,6 +14,13 @@ export class DeleteFlightParams {
 }
 
 export class CreateFlightParams {
+  @IsString()
+  @Length(8, 8)
+  @ApiProperty()
+  readonly discountCode!: string
+}
+
+export class CheckFlightParams {
   @IsString()
   @Length(8, 8)
   @ApiProperty()

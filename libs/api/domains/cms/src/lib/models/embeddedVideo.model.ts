@@ -5,13 +5,13 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class EmbeddedVideo {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  url: string
+  url!: string
 }
 
 export const mapEmbeddedVideo = ({

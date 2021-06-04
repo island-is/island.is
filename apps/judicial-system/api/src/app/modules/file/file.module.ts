@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 
-import { AuthModule } from '../auth'
 import { FileController } from './file.controller'
+import { FileResolver } from './file.resolver'
 
 @Module({
-  imports: [AuthModule],
   controllers: [FileController],
+  providers: [FileResolver],
 })
 export class FileModule {}

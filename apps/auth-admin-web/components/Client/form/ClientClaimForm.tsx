@@ -1,5 +1,5 @@
 import { ErrorMessage } from '@hookform/error-message'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ClientClaim } from '../../../entities/models/client-claim.model'
 import { ClientClaimDTO } from '../../../entities/dtos/client-claim.dto'
@@ -7,7 +7,9 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
-
+import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   clientId: string
   claims?: ClientClaim[]
@@ -17,12 +19,18 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientClaimDTO
-  >()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientClaimDTO>()
   const { isSubmitting } = formState
-  const [modalIsOpen, setIsOpen] = React.useState(false)
-  const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
+  const [modalIsOpen, setIsOpen] = useState(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientClaimForm'),
+  )
+  const [claimToRemove, setClaimToRemove] = useState<ClientClaimDTO>(
     new ClientClaimDTO(),
   )
 
@@ -71,8 +79,8 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this claim:{' '}
-        <span>{claimToRemove.type}</span> - <span>{claimToRemove.value}</span>
+        {localization.removeConfirmation}:<span>{claimToRemove.type}</span>-
+        <span>{claimToRemove.value}</span>
       </p>
     )
   }
@@ -81,66 +89,74 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     <div className="client-claim">
       <div className="client-claim__wrapper">
         <div className="client-claim__container">
-          <h1>Add claims for the Client</h1>
+          <h1>{localization.title}</h1>
           <form id="claimForm" onSubmit={handleSubmit(add)}>
             <div className="client-claim__container__form">
-              <div className="client-claim__help">
-                Allows settings claims for the client (will be included in the
-                access token).
-              </div>
+              <div className="client-claim__help">{localization.help}</div>
               <div className="client-claim__container__fields">
                 <div className="client-claim__container__field">
-                  <label className="client-claim__label">
-                    Claim type (key)
+                  <label className="client-claim__label" htmlFor="type">
+                    {localization.fields['type'].label}
                   </label>
                   <input
+                    id="type"
                     type="text"
                     name="type"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     defaultValue={''}
                     className="client-claim__input"
-                    placeholder="exampleClaim"
-                    title="The key that represents this claim"
+                    placeholder={localization.fields['type'].placeholder}
+                    title={localization.fields['type'].helpText}
                   />
-                  <HelpBox helpText="The key that represents this claim" />
+                  <HelpBox helpText={localization.fields['type'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="type"
-                    message="Claim type is required"
+                    message={localization.fields['type'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="client-claim__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    value={localization.buttons['add'].text}
+                    title={localization.buttons['add'].helpText}
                   />
                 </div>
                 <div className="client-claim__container__field">
-                  <label className="client-claim__label">Claim value</label>
+                  <label className="client-claim__label" htmlFor="value">
+                    {localization.fields['value'].label}
+                  </label>
                   <input
+                    id="value"
                     type="text"
                     name="value"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     defaultValue={''}
                     className="client-claim__input"
-                    placeholder="exampleClaim"
-                    title="The value of the claim"
+                    placeholder={localization.fields['value'].placeholder}
+                    title={localization.fields['value'].helpText}
                   />
-                  <HelpBox helpText="The value of the claim" />
+                  <HelpBox helpText={localization.fields['value'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="value"
-                    message="Value is required"
+                    message={localization.fields['value'].errorMessage}
                   />
                 </div>
               </div>
 
               <NoActiveConnections
-                title="No active claims"
+                title={localization.noActiveConnections?.title}
                 show={!props.claims || props.claims.length === 0}
-                helpText="Fill out the form and push the Add button to add a claim"
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -148,7 +164,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   props.claims && props.claims.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active client claims</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.claims?.map((claim: ClientClaim) => {
                   return (
                     <div
@@ -162,10 +178,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(claim)}
                           className="client-claim__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -178,8 +194,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-claim__button__cancel"
                     onClick={props.handleBack}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Back
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client-claim__button__container">
@@ -187,9 +204,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-claim__button__save"
                     onClick={props.handleNext}
-                    value="Next"
+                    title={localization.buttons['save'].helpText}
                   >
-                    Next
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -202,7 +219,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

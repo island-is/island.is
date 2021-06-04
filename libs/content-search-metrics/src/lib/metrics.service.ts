@@ -148,9 +148,11 @@ export class MetricsService {
   }
 
   async getCMSRankEvaluation({ index, display }: MetricInput) {
-    const response = await this.elasticService.getRankEvaluation<
-      searchTermsUnion
-    >(index, this.rankedDataService.getTermRatings(index), this.metrics)
+    const response = await this.elasticService.getRankEvaluation<searchTermsUnion>(
+      index,
+      this.rankedDataService.getTermRatings(index),
+      this.metrics,
+    )
     return this.formatRankEvaluationResponse(response, display)
   }
 }

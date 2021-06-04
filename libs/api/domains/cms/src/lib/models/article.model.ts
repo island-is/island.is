@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IArticle } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
@@ -13,13 +14,13 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class Article {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
   shortTitle?: string
@@ -28,28 +29,28 @@ export class Article {
   intro?: string
 
   @Field({ nullable: true })
-  importance: number
+  importance?: number
 
   @Field(() => [SliceUnion])
-  body: Array<typeof SliceUnion>
+  body: Array<typeof SliceUnion> = []
 
   @Field(() => ProcessEntry, { nullable: true })
-  processEntry?: ProcessEntry
+  processEntry?: ProcessEntry | null
 
   @Field(() => ArticleCategory, { nullable: true })
-  category?: ArticleCategory
+  category?: ArticleCategory | null
 
   @Field(() => [ArticleCategory], { nullable: true })
   otherCategories?: Array<ArticleCategory>
 
   @Field(() => ArticleGroup, { nullable: true })
-  group?: ArticleGroup
+  group?: ArticleGroup | null
 
   @Field(() => [ArticleGroup], { nullable: true })
   otherGroups?: Array<ArticleGroup>
 
   @Field(() => ArticleSubgroup, { nullable: true })
-  subgroup?: ArticleSubgroup
+  subgroup?: ArticleSubgroup | null
 
   @Field(() => [ArticleSubgroup], { nullable: true })
   otherSubgroups?: Array<ArticleSubgroup>
@@ -57,14 +58,23 @@ export class Article {
   @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
+  @Field(() => [Organization], { nullable: true })
+  relatedOrganization?: Array<Organization>
+
+  @Field(() => [Organization], { nullable: true })
+  responsibleParty?: Array<Organization>
+
   @Field(() => [SubArticle])
-  subArticles: Array<SubArticle>
+  subArticles: Array<SubArticle> = []
 
   @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
 
+  @Field(() => [Link], { nullable: true })
+  relatedContent?: Array<Link>
+
   @Field(() => Image, { nullable: true })
-  featuredImage?: Image
+  featuredImage?: Image | null
 
   @Field({ nullable: true })
   showTableOfContents?: boolean
@@ -96,10 +106,23 @@ export const mapArticle = ({
       (organization) => organization.fields?.title && organization.fields?.slug,
     )
     .map(mapOrganization),
+  relatedOrganization: (fields.relatedOrganization ?? [])
+    .filter(
+      (relatedOrganization) =>
+        relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
+    )
+    .map(mapOrganization),
+  responsibleParty: (fields.responsibleParty ?? [])
+    .filter(
+      (responsibleParty) =>
+        responsibleParty.fields?.title && responsibleParty.fields?.slug,
+    )
+    .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
-  featuredImage: mapImage(fields.featuredImage),
+  relatedContent: (fields.relatedContent ?? []).map(mapLink),
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   showTableOfContents: fields.showTableOfContents ?? false,
 })

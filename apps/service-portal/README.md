@@ -2,7 +2,7 @@
 
 ## About
 
-TODO
+The service portal is the user personal pages where it will be able to find all the information relative to itself, family, finances, applications and so on.
 
 ## Docs
 
@@ -15,6 +15,10 @@ TODO
 - [Production](https://island.is/minarsidur)
 
 ## Getting started
+
+Before running the service portal, you will need to setup the user-profile service. Follow [these steps](../services/user-profile/README.md#initial-setup) first.
+
+You can then proceed and start [the GraphQL API](../api/README.md#getting-started) and the service portal:
 
 ```bash
 yarn start service-portal

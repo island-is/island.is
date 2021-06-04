@@ -1,13 +1,14 @@
 import React from 'react'
 import { Offices } from '@island.is/web/graphql/schema'
 import {
+  AccordionCard,
   Box,
-  GridColumn,
+  ContentBlock,
   GridContainer,
-  GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { OfficeCard } from '@island.is/web/components'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import * as styles from './OfficesSlice.treat'
 
 interface SliceProps {
   slice: Offices
@@ -31,23 +32,21 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
           >
             {slice.title}
           </Text>
-          <GridContainer>
-            <GridRow>
-              {slice.offices.map((office) => (
-                <GridColumn
-                  span={['12/12', '12/12', '12/12', '6/12']}
-                  paddingBottom={1}
+          <ContentBlock>
+            {slice.offices.map((office, index) => (
+              <Box paddingY={1}>
+                <AccordionCard
+                  id={office.id}
+                  label={office.name}
+                  startExpanded={slice.offices.length === 1}
                 >
-                  <OfficeCard
-                    name={office.name}
-                    address={office.address}
-                    city={office.city}
-                    openingHours={office.openingHours}
-                  />
-                </GridColumn>
-              ))}
-            </GridRow>
-          </GridContainer>
+                  <Box className={styles.accordionBox}>
+                    {richText(office.content as SliceType[])}
+                  </Box>
+                </AccordionCard>
+              </Box>
+            ))}
+          </ContentBlock>
         </Box>
       </GridContainer>
     </section>

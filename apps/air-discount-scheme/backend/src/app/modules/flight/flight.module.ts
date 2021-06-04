@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { Flight, FlightLeg } from './flight.model'
@@ -13,7 +13,7 @@ import { NationalRegistryModule } from '../nationalRegistry'
 @Module({
   imports: [
     SequelizeModule.forFeature([Flight, FlightLeg]),
-    DiscountModule,
+    forwardRef(() => DiscountModule),
     NationalRegistryModule,
   ],
   controllers: [PublicFlightController, PrivateFlightController],

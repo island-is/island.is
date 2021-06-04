@@ -5,10 +5,10 @@ import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 @ObjectType()
 export class MenuLink {
   @Field()
-  title: string
+  title!: string
 
   @Field(() => ReferenceLink)
-  link: ReferenceLink
+  link?: ReferenceLink | null
 }
 
 export const mapMenuLink = ({ fields }: IMenuLink): MenuLink => ({

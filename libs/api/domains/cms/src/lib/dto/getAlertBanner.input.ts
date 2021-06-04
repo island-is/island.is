@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetAlertBannerInput {
   @Field()
   @IsString()
-  id: string
+  id!: string // Used in the main layout with an explicit id in the input
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

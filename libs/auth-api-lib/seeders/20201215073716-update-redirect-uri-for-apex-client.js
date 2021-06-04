@@ -1,15 +1,14 @@
 'use strict'
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      "UPDATE client_redirect_uri SET redirect_uri = 'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/apex_authentication.callback' WHERE client_id IN ('apex-auth_client') and redirect_uri IN ('https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/apex_authentication_callback')",
-    )
+    return Promise.resolve([1])
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      "UPDATE client_redirect_uri SET redirect_uri = 'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/apex_authentication_callback' WHERE client_id IN ('apex-auth_client') and redirect_uri IN ('https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/apex_authentication.callback')",
-    )
+    return Promise.resolve([1])
   },
 }

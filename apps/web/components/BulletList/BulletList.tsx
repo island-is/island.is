@@ -46,7 +46,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
             <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
               <Link href={bullet.url}>
-                <Button variant="text" icon="arrowForward">
+                <Button as="span" variant="text" icon="arrowForward">
                   {bullet.linkText}
                 </Button>
               </Link>
@@ -87,7 +87,11 @@ const Row: FC<{ left: ReactNode }> = ({ left, children }) => (
   </Box>
 )
 
-const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
+type NumberSectionProps = {
+  group: NumberBulletGroup
+}
+
+const NumberSection = ({ group }: NumberSectionProps) => {
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpand = () => setExpanded(!expanded)

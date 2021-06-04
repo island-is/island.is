@@ -21,8 +21,19 @@
 .api-resource-scope-form,
 .api-resource-user-claims,
 .client-basic,
-.admin-user-create-form,
-.idp-provider-create-form {
+.api-scope-user-create-form,
+.idp-provider-create-form,
+.grant-type-create-form,
+.language-create-form,
+.translation-create-form,
+.user-claim-create-form,
+.translation-create-form,
+.translation-create-form-dropdown,
+.api-scope-resource-form,
+.api-scope-group-create-form,
+.domain-create-form {
+  position: relative;
+
   &__help {
     padding: 0 10px 20px 10px;
 
@@ -30,6 +41,11 @@
       font-weight: $weight-semi-bold;
       margin-bottom: 30px;
     }
+  }
+
+  &__saved__message {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
   }
 
   &__wrapper {
@@ -49,6 +65,18 @@
     padding: 44px 40px;
     background: $color-bg-content;
     border-radius: $border-radius;
+  }
+
+  section {
+    border: solid 2px #9a9191;
+    padding: 10px 0 30px 0;
+    margin: 20px 0;
+    border-left: none;
+    border-right: none;
+    h3 {
+      margin-left: 18px;
+      font-size: 1rem;
+    }
   }
 
   &__container__field,
@@ -72,13 +100,22 @@
       font-size: 0.9rem;
     }
 
-    span // validation
-    {
+    // validation
+    span {
       position: absolute;
       left: 60%;
       color: $color-error;
       text-shadow: 0 0 $color-shadow;
+      margin-left: -60px;
+      padding-right: 120px;
     }
+
+    @media only screen and (max-width: 1066px) {
+      span {
+        margin-left: -30px;
+      }
+    }
+    // end validation
 
     &__available {
       position: absolute;
@@ -141,6 +178,14 @@
     padding: 13px;
     font-size: 0.8rem;
     display: flex;
+    flex-wrap: wrap;
+
+    h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      flex: 0 0 100%;
+      color: $color-link;
+    }
 
     .selected-item-property {
       flex: 1;

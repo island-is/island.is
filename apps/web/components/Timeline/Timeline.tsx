@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {
   ReactNode,
   useState,
@@ -94,15 +93,14 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
     index: number,
     behavior: 'smooth' | 'auto' = 'smooth',
   ) => {
+    const child = entriesParentRef.current.children[index] as HTMLElement
     frameRef.current.scrollTo({
-      top: entriesParentRef.current.children[index].offsetTop,
+      top: child.offsetTop,
       behavior,
     })
-    const scrollReachedTop =
-      entriesParentRef.current.children[index].offsetTop <= 0
+    const scrollReachedTop = child.offsetTop <= 0
     const scrollReachedBottom =
-      frameRef.current.scrollHeight -
-        entriesParentRef.current.children[index].offsetTop <=
+      frameRef.current.scrollHeight - child.offsetTop <=
       frameRef.current.clientHeight
 
     setPrevButtonDisabled(scrollReachedTop)
@@ -118,12 +116,14 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       const today = new Date()
       const year = today.getFullYear()
       const month = today.getMonth()
+
       // find current month
-      const { currentMonthIndex, currentMonth } = [
-        ...entriesParentRef.current.children,
-      ].reduce<{
+      const months = Array.from(
+        entriesParentRef.current.children,
+      ) as Array<HTMLElement>
+      const { currentMonthIndex, currentMonth } = months.reduce<{
         currentMonthIndex: number
-        currentMonth: Element | null
+        currentMonth: HTMLElement | null
       }>(
         (acc, current, index) => {
           if (current.dataset.date === `${year}/${month}`) {
@@ -134,7 +134,7 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
         },
         {
           currentMonthIndex: 0,
-          currentMonth,
+          currentMonth: null,
         },
       )
       // padding based on mobile gutter
@@ -333,21 +333,22 @@ const EventBar = forwardRef(
     return (
       <button onClick={onClick} className={eventStyles.eventBar} ref={ref}>
         <Box
+          component="span"
           className={eventStyles.eventBarTitle}
           background="purple100"
           display="flex"
         >
-          <Box className={eventStyles.eventBarIcon}>
+          <Box component="span" className={eventStyles.eventBarIcon}>
             <Icon type="filled" icon="person" color="purple400" size="medium" />
           </Box>
-          <Box paddingLeft={2} paddingRight={3}>
-            <Text variant="h5" color="purple400">
+          <Box component="span" paddingLeft={2} paddingRight={3}>
+            <Text as="span" variant="h5" color="purple400">
               {event.title}
             </Text>
           </Box>
         </Box>
         {!!event.value && (
-          <div className={eventStyles.eventBarStats}>
+          <span className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
@@ -366,7 +367,7 @@ const EventBar = forwardRef(
                 </Fragment>
               ))}
             </span>
-          </div>
+          </span>
         )}
       </button>
     )
@@ -446,7 +447,7 @@ const EventModal = forwardRef(
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (
-                  <Tag key={index} label variant="purple" outlined>
+                  <Tag key={index} variant="purple" outlined>
                     {label}
                   </Tag>
                 ))}

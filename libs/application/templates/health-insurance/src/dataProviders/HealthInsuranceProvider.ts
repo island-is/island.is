@@ -8,7 +8,7 @@ import {
 export class HealthInsuranceProvider extends BasicDataProvider {
   type = 'HealthInsuranceProvider'
 
-  provide(application: Application): Promise<string> {
+  provide(application: Application): Promise<boolean> {
     const query = `query HealthInsuranceIsHealthInsured {
       healthInsuranceIsHealthInsured 
     }`
@@ -17,17 +17,18 @@ export class HealthInsuranceProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError()
+          return this.handleError(response.errors)
         }
 
         return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
       })
-      .catch(() => {
-        return this.handleError()
+      .catch((error) => {
+        return this.handleError(error)
       })
   }
 
-  handleError() {
+  handleError(error: any) {
+    console.log('Provider error - HealthInsurance:', error)
     return Promise.resolve({})
   }
 

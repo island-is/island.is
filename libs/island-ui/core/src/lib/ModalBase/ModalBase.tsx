@@ -77,6 +77,30 @@ export type ModalBaseProps = {
    * Aria label for the modal
    */
   modalLabel?: string
+  /**
+   * Remove the modal from dom when closed
+   */
+  removeOnClose?: boolean
+  /**
+   * toggle visibility, useful for controlling visibility from useState. Should be used with onVisibilityChange
+   */
+  isVisible?: boolean
+  /**
+   * Clicking outside the Dialog closes it unless hideOnClickOutside is set to false.
+   */
+  hideOnClickOutside?: boolean
+  /**
+   * When there is no focusable element in the dialog the tabIndex should be set to 0.
+   */
+  tabIndex?: number
+  /**
+   * When enabled, the dialog can be closed by pressing Escape. Enabled by default.
+   */
+  hideOnEsc?: boolean
+  /**
+   * When enabled, user can't scroll on body when the dialog is visible. This option doesn't work if the dialog isn't modal.
+   */
+  preventBodyScroll?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -90,6 +114,12 @@ export const ModalBase: FC<ModalBaseProps> = ({
   renderDisclosure = (disclosure) => disclosure,
   backdropWhite,
   modalLabel,
+  removeOnClose,
+  isVisible,
+  hideOnClickOutside,
+  tabIndex,
+  hideOnEsc,
+  preventBodyScroll,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -104,12 +134,22 @@ export const ModalBase: FC<ModalBaseProps> = ({
   }, [toggleClose])
 
   useEffect(() => {
+    if (isVisible) {
+      modal.show()
+    } else if (isVisible === false) {
+      modal.hide()
+    }
+  }, [isVisible])
+
+  useEffect(() => {
     onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
 
+  const renderModal = !removeOnClose || (removeOnClose && modal.visible)
+
   return (
     <>
-      {disclosure ? (
+      {disclosure && (
         <DialogDisclosure {...modal} {...disclosure.props}>
           {(disclosureProps: DisclosureProps) =>
             renderDisclosure(
@@ -118,16 +158,29 @@ export const ModalBase: FC<ModalBaseProps> = ({
             )
           }
         </DialogDisclosure>
-      ) : null}
-      <DialogBackdrop {...modal} as={BackdropDiv} backdropWhite={backdropWhite}>
-        <BaseDialog
+      )}
+
+      {renderModal && (
+        <DialogBackdrop
           {...modal}
-          className={cn(styles.modal, className)}
-          aria-label={modalLabel}
+          as={BackdropDiv}
+          backdropWhite={backdropWhite}
         >
-          {typeof children === 'function' ? children({ closeModal }) : children}
-        </BaseDialog>
-      </DialogBackdrop>
+          <BaseDialog
+            {...modal}
+            className={cn(styles.modal, className)}
+            aria-label={modalLabel}
+            hideOnClickOutside={hideOnClickOutside}
+            tabIndex={tabIndex}
+            hideOnEsc={hideOnEsc}
+            preventBodyScroll={preventBodyScroll}
+          >
+            {typeof children === 'function'
+              ? children({ closeModal })
+              : children}
+          </BaseDialog>
+        </DialogBackdrop>
+      )}
     </>
   )
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 export const template = {
   order: 0,
   index_patterns: ['island-is-*'],
@@ -13,6 +12,10 @@ export const template = {
           type: 'stop',
           stopwords_path: 'analyzers/{STOPWORDS}',
         },
+        icelandicAutocompleteStop: {
+          type: 'stop',
+          stopwords_path: 'analyzers/{AUTOCOMPLETESTOP}',
+        },
         icelandicKeyword: {
           type: 'keyword_marker',
           ignore_case: true,
@@ -24,9 +27,8 @@ export const template = {
           synonyms_path: 'analyzers/{SYNONYMS}',
         },
         icelandicDeCompounded: {
-          type: 'hyphenation_decompounder',
+          type: 'dictionary_decompounder',
           word_list_path: 'analyzers/{HYPHENWHITELIST}',
-          hyphenation_patterns_path: 'analyzers/{HYPHENPATTERNS}',
           max_subword_size: 18,
           min_subword_size: 4,
         },
@@ -58,7 +60,12 @@ export const template = {
         termIcelandic: {
           type: 'custom',
           tokenizer: 'standard',
-          filter: ['lowercase', 'icelandicSynonym', 'icelandicStop'],
+          filter: [
+            'lowercase',
+            'icelandicSynonym',
+            'icelandicStop',
+            'icelandicAutocompleteStop',
+          ],
         },
       },
     },
@@ -136,6 +143,9 @@ export const template = {
       },
       externalLinks: {
         type: 'integer',
+      },
+      popularityScore: {
+        type: 'double',
       },
       termPool: {
         type: 'completion',

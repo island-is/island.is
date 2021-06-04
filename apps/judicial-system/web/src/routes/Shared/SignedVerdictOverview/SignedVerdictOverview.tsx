@@ -1,45 +1,53 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
-import {
-  TIME_FORMAT,
-  formatDate,
-  getShortRestrictionByValue,
-} from '@island.is/judicial-system/formatters'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
-  PdfButton,
   PageLayout,
-  InfoCard,
-  PoliceRequestAccordionItem,
-  RulingAccordionItem,
-  CourtRecordAccordionItem,
+  FormContentContainer,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { useHistory } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-
-interface CaseData {
-  case?: Case
-}
+import { useRouter } from 'next/router'
+import {
+  parseNull,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import formatISO from 'date-fns/formatISO'
+import {
+  CaseData,
+  ReactSelectOption,
+} from '@island.is/judicial-system-web/src/types'
+import { ValueType } from 'react-select/src/types'
+import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
+import { Text } from '@island.is/island-ui/core'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [shareCaseModal, setSharedCaseModal] = useState<{
+    open: boolean
+    title: string
+    text: ReactNode
+  }>()
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
 
-  const history = useHistory()
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -62,7 +70,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (workingCase?.childCase) {
-      history.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+      router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
     } else {
       const { data } = await extendCaseMutation({
         variables: {
@@ -73,68 +81,147 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       if (data) {
-        history.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
+        router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
       }
     }
   }
 
-  /**
-   * If the case is not rejected it must be accepted because
-   * this screen is only rendered if the case is either accepted
-   * or rejected. Here we are first handling the case where a case
-   * is rejected, then the case where a case is accepted and the
-   * custody end date is in the past and then we assume that
-   * the case is accepted and the custody end date has not come yet.
-   * For accepted cases, we first handle the case where the judge
-   * decided only accept an alternative travel ban and finally we
-   * assume that the actual custody was accepted.
-   */
-
-  const titleForCase = (theCase: Case) => {
-    if (theCase.decision === CaseDecision.REJECTING) {
-      return 'Kröfu hafnað'
+  const getInfoText = (workingCase: Case): string | undefined => {
+    if (user?.role !== UserRole.PROSECUTOR) {
+      // Only prosecutors should see the explanation.
+      return undefined
+    } else if (workingCase.decision === CaseDecision.REJECTING) {
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem var hafnað.`
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+    } else if (workingCase.childCase) {
+      return 'Framlengingarkrafa hefur þegar verið útbúin.'
+    } else if (workingCase.isCustodyEndDateInThePast) {
+      // This must be after the rejected and alternatice decision cases as the custody
+      // end date only applies to cases that were accepted by the judge. This must also
+      // be after the already extended case as the custody end date may expire after
+      // the case has been extended.
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem er lokið.`
+    } else {
+      return undefined
     }
-
-    const isTravelBan =
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
-
-    if (theCase.isCustodyEndDateInThePast) {
-      return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
-    }
-
-    return isTravelBan ? 'Farbann virkt' : 'Gæsluvarðhald virkt'
   }
 
-  const subtitleForCase = (theCase: Case) => {
-    if (theCase.decision === CaseDecision.REJECTING) {
-      return `Úrskurðað ${formatDate(
-        theCase.courtEndTime,
-        'PPP',
-      )} kl. ${formatDate(theCase.courtEndTime, TIME_FORMAT)}`
+  const setAccusedAppealDate = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: formatISO(date),
+      })
+
+      updateCase(
+        workingCase.id,
+        parseString('accusedPostponedAppealDate', formatISO(date)),
+      )
     }
+  }
 
-    const isTravelBan =
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+  const setProsecutorAppealDate = (date?: Date) => {
+    if (workingCase && date) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
 
-    if (theCase.isCustodyEndDateInThePast) {
-      return `${
-        isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-      } rann út ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
-        theCase.custodyEndDate,
-        TIME_FORMAT,
-      )}`
+      updateCase(
+        workingCase.id,
+        parseString('prosecutorPostponedAppealDate', formatISO(date)),
+      )
     }
+  }
 
-    return `${
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-        ? 'Farbann'
-        : 'Gæsla' // ACCEPTING
-    } til ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
-      theCase.custodyEndDate,
-      TIME_FORMAT,
-    )}`
+  const withdrawAccusedAppealDate = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        accusedPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+    }
+  }
+
+  const withdrawProsecutorAppealDate = () => {
+    if (workingCase) {
+      setWorkingCase({
+        ...workingCase,
+        prosecutorPostponedAppealDate: undefined,
+      })
+
+      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
+    }
+  }
+
+  const shareCaseWithAnotherInstitution = (
+    institution?: ValueType<ReactSelectOption>,
+  ) => {
+    if (workingCase) {
+      if (workingCase.sharedWithProsecutorsOffice) {
+        setSharedCaseModal({
+          open: true,
+          title: `Mál ${workingCase.courtCaseNumber} er nú lokað öðrum en upprunalegu embætti`,
+          text: (
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {workingCase.sharedWithProsecutorsOffice.name}
+              </Text>{' '}
+              hefur ekki lengur aðgang að málinu.
+            </Text>
+          ),
+        })
+
+        setWorkingCase({
+          ...workingCase,
+          sharedWithProsecutorsOffice: undefined,
+        })
+        setSelectedSharingInstitutionId(null)
+
+        updateCase(workingCase.id, parseNull('sharedWithProsecutorsOfficeId'))
+      } else {
+        setSharedCaseModal({
+          open: true,
+          title: `Mál ${workingCase.courtCaseNumber} hefur verið opnað fyrir öðru embætti`,
+          text: (
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {(institution as ReactSelectOption).label}
+              </Text>{' '}
+              hefur nú fengið aðgang að málinu.
+            </Text>
+          ),
+        })
+
+        setWorkingCase({
+          ...workingCase,
+          sharedWithProsecutorsOffice: {
+            id: (institution as ReactSelectOption).value as string,
+            name: (institution as ReactSelectOption).label,
+            type: InstitutionType.PROSECUTORS_OFFICE,
+            created: new Date().toString(),
+            modified: new Date().toString(),
+          },
+        })
+
+        updateCase(
+          workingCase.id,
+          parseString(
+            'sharedWithProsecutorsOfficeId',
+            (institution as ReactSelectOption).value as string,
+          ),
+        )
+      }
+    }
   }
 
   /**
@@ -155,6 +242,7 @@ export const SignedVerdictOverview: React.FC = () => {
    * 3. Accepted and the custody end date is not in the past
    *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate > today
    */
+
   return (
     <PageLayout
       activeSection={2}
@@ -166,129 +254,43 @@ export const SignedVerdictOverview: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={5}>
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                preTextIcon="arrowBack"
-                onClick={() => history.push(Constants.REQUEST_LIST_ROUTE)}
-              >
-                Til baka
-              </Button>
-            </Box>
-            <Box display="flex" justifyContent="spaceBetween">
-              <Box>
-                <Box marginBottom={1}>
-                  <Text as="h1" variant="h1">
-                    {titleForCase(workingCase)}
-                  </Text>
-                </Box>
-                <Text as="h5" variant="h5">
-                  {subtitleForCase(workingCase)}
-                </Text>
-              </Box>
-              <Box display="flex" flexDirection="column">
-                {
-                  // Custody restrictions
-                  workingCase.decision === CaseDecision.ACCEPTING &&
-                    workingCase.type === CaseType.CUSTODY &&
-                    workingCase.custodyRestrictions
-                      ?.filter((restriction) =>
-                        [
-                          CaseCustodyRestrictions.ISOLATION,
-                          CaseCustodyRestrictions.VISITAION,
-                          CaseCustodyRestrictions.COMMUNICATION,
-                          CaseCustodyRestrictions.MEDIA,
-                        ].includes(restriction),
-                      )
-                      ?.map((custodyRestriction, index) => (
-                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                          <Tag
-                            variant={getRestrictionTagVariant(
-                              custodyRestriction,
-                            )}
-                            outlined
-                            disabled
-                          >
-                            {getShortRestrictionByValue(custodyRestriction)}
-                          </Tag>
-                        </Box>
-                      ))
-                }
-                {
-                  // Alternative travel ban restrictions
-                  (workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                    (CaseType.TRAVEL_BAN &&
-                      workingCase.decision === CaseDecision.ACCEPTING)) &&
-                    workingCase.custodyRestrictions
-                      ?.filter((restriction) =>
-                        [
-                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-                        ].includes(restriction),
-                      )
-                      ?.map((custodyRestriction, index) => (
-                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                          <Tag
-                            variant={getRestrictionTagVariant(
-                              custodyRestriction,
-                            )}
-                            outlined
-                            disabled
-                          >
-                            {getShortRestrictionByValue(custodyRestriction)}
-                          </Tag>
-                        </Box>
-                      ))
-                }
-              </Box>
-            </Box>
-          </Box>
-          <Box marginBottom={5}>
-            <InfoCard
-              data={[
-                {
-                  title: 'LÖKE málsnúmer',
-                  value: workingCase.policeCaseNumber,
-                },
-                {
-                  title: 'Málsnúmer héraðsdóms',
-                  value: workingCase.courtCaseNumber,
-                },
-                { title: 'Embætti', value: 'Lögreglan á Höfuðborgarsvæðinu' },
-                { title: 'Dómstóll', value: workingCase.court },
-                { title: 'Ákærandi', value: workingCase.prosecutor?.name },
-                { title: 'Dómari', value: workingCase.judge?.name },
-              ]}
-              accusedName={workingCase.accusedName}
-              accusedNationalId={workingCase.accusedNationalId}
-              accusedAddress={workingCase.accusedAddress}
-              defender={{
-                name: workingCase.defenderName || '',
-                email: workingCase.defenderEmail,
-              }}
-            />
-          </Box>
-          <Box marginBottom={5}>
-            <Accordion>
-              <PoliceRequestAccordionItem workingCase={workingCase} />
-              <CourtRecordAccordionItem workingCase={workingCase} />
-              <RulingAccordionItem workingCase={workingCase} />
-            </Accordion>
-          </Box>
-          <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
-          </Box>
-          <FormFooter
-            hideNextButton={
-              workingCase.decision === CaseDecision.REJECTING ||
-              user?.role !== UserRole.PROSECUTOR
-            }
-            nextButtonText="Framlengja gæslu"
-            onNextButtonClick={() => handleNextButtonClick()}
-            nextIsLoading={isCreatingExtension}
+          <SignedVerdictOverviewForm
+            workingCase={workingCase}
+            setAccusedAppealDate={setAccusedAppealDate}
+            setProsecutorAppealDate={setProsecutorAppealDate}
+            withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+            withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
+            shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
+            selectedSharingInstitutionId={selectedSharingInstitutionId}
+            setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
           />
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={Constants.REQUEST_LIST_ROUTE}
+              hideNextButton={
+                user?.role !== UserRole.PROSECUTOR ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                workingCase.decision === CaseDecision.REJECTING ||
+                workingCase.isCustodyEndDateInThePast ||
+                Boolean(workingCase.childCase)
+              }
+              nextButtonText={`Framlengja ${
+                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+              }`}
+              onNextButtonClick={() => handleNextButtonClick()}
+              nextIsLoading={isCreatingExtension}
+              infoBoxText={getInfoText(workingCase)}
+            />
+          </FormContentContainer>
+          {shareCaseModal?.open && (
+            <Modal
+              title={shareCaseModal.title}
+              text={shareCaseModal.text}
+              primaryButtonText="Loka glugga"
+              handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

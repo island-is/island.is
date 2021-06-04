@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 
-import { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
+import type { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
 import { Authorize, AuthService } from '../auth'
 import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
 import { FlightLeg } from './flightLeg.model'

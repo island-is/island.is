@@ -1,14 +1,21 @@
 import * as z from 'zod'
+import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import { Application, ExternalData, FormValue } from '../types/Application'
+import {
+  Application,
+  ApplicationStatus,
+  ExternalData,
+  FormValue,
+} from '../types/Application'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
 } from '../types/StateMachine'
-import { buildForm } from '@island.is/application/core'
+import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
 
 const createMockApplication = (
   data: {
@@ -28,19 +35,16 @@ const createMockApplication = (
   attachments: {},
   answers: data.answers || {},
   externalData: data.externalData || {},
+  status: ApplicationStatus.IN_PROGRESS,
 })
-
-const mockApiTemplateUtils = {
-  performAction: () => Promise.resolve(''),
-}
 
 type TestEvents = { type: 'APPROVE' } | { type: 'REJECT' } | { type: 'SUBMIT' }
 
-const testApplicationTemplate: ApplicationTemplate<
+const createTestApplicationTemplate = (): ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<TestEvents>,
   TestEvents
-> = {
+> => ({
   mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
@@ -63,6 +67,7 @@ const testApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -90,6 +95,7 @@ const testApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -113,12 +119,14 @@ const testApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          lifecycle: DefaultStateLifeCycle,
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -129,7 +137,9 @@ const testApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-}
+})
+
+const testApplicationTemplate = createTestApplicationTemplate()
 
 describe('ApplicationTemplate', () => {
   const application = createMockApplication()
@@ -162,25 +172,16 @@ describe('ApplicationTemplate', () => {
 
   describe('changeState', () => {
     it('should be able to change from draft to inReview on SUBMIT', () => {
-      const [hasChanged, newState] = templateHelper.changeState(
-        'SUBMIT',
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState] = templateHelper.changeState('SUBMIT')
       expect(newState).toBe('inReview')
       expect(hasChanged).toBe(true)
     })
     it('should return the same state if passing an event that cannot progress the application to any other state', () => {
-      const [hasChanged, newState] = templateHelper.changeState(
-        'APPROVE',
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState] = templateHelper.changeState('APPROVE')
       expect(newState).toBe('draft')
       expect(hasChanged).toBe(false)
 
-      const anotherState = templateHelper.changeState(
-        'REJECT',
-        mockApiTemplateUtils,
-      )
+      const anotherState = templateHelper.changeState('REJECT')
       expect(anotherState[0]).toBe(false)
       expect(anotherState[1]).toBe('draft')
     })
@@ -309,6 +310,84 @@ describe('ApplicationTemplate', () => {
       expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
       expect(templateHelper.getApplicationProgress('approved')).toBe(1)
       expect(templateHelper.getApplicationProgress('rejected')).toBe(0)
+    })
+  })
+
+  describe('getting template api actions', () => {
+    let template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<TestEvents>,
+      TestEvents
+    >
+    beforeEach(() => {
+      template = createTestApplicationTemplate()
+    })
+
+    it('should return onEntry action with expected default values', () => {
+      const expectedAction: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'testAction',
+        shouldPersistToExternalData: true,
+        throwOnError: true,
+      }
+
+      const testActionConfig: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+      }
+
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onEntry',
+        testActionConfig,
+      )
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onExit',
+        testActionConfig,
+      )
+
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication(),
+        template,
+      )
+
+      expect(helper.getOnEntryStateAPIAction('draft')).toEqual(expectedAction)
+      expect(helper.getOnExitStateAPIAction('draft')).toEqual(expectedAction)
+    })
+
+    it('should not overwrite custom values with default values', () => {
+      const expectedAction: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
+        throwOnError: false,
+      }
+
+      const testActionConfig: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
+        throwOnError: false,
+      }
+
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onEntry',
+        testActionConfig,
+      )
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onExit',
+        testActionConfig,
+      )
+
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication(),
+        template,
+      )
+
+      expect(helper.getOnEntryStateAPIAction('draft')).toEqual(expectedAction)
+      expect(helper.getOnExitStateAPIAction('draft')).toEqual(expectedAction)
     })
   })
 })

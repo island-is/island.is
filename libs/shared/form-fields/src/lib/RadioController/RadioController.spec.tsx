@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { RadioController } from './RadioController'
 
 const Wrapper: React.FC = ({ children }) => {
@@ -14,13 +14,13 @@ describe('RadioController', () => {
       { label: 'some checkbox', value: 'off' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
         <RadioController id="values" options={options} />
       </Wrapper>,
     )
-    expect(getByText('some checkbox')).toBeInTheDocument()
-    expect(getByText('another checkbox')).toBeInTheDocument()
+    expect(screen.getByText('some checkbox')).toBeInTheDocument()
+    expect(screen.getByText('another checkbox')).toBeInTheDocument()
   })
 
   it('should render an error message', () => {
@@ -28,12 +28,12 @@ describe('RadioController', () => {
       { label: 'some checkbox', value: 'off' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
         <RadioController id="values" error="error indeed" options={options} />
       </Wrapper>,
     )
-    expect(getByText('error indeed')).toBeInTheDocument()
+    expect(screen.getByText('error indeed')).toBeInTheDocument()
   })
 
   it('should render a tooltip next to an option if wished', () => {
@@ -41,11 +41,37 @@ describe('RadioController', () => {
       { label: 'some checkbox', value: 'off', tooltip: 'nice tooltip' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    render(
       <Wrapper>
-        <RadioController id="values" error="error indeed" options={options} />
+        <RadioController id="values" options={options} />
       </Wrapper>,
     )
-    expect(getByText('nice tooltip')).toBeInTheDocument()
+    expect(screen.getByText('nice tooltip')).toBeInTheDocument()
+  })
+
+  it('should render a sublabel below an option if wished and largeButtons is set to true', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    render(
+      <Wrapper>
+        <RadioController id="values" options={options} />
+      </Wrapper>,
+    )
+    expect(screen.getByText('nice sublabel')).toBeInTheDocument()
+  })
+
+  it('should not render a sublabel below an option if wished and largeButtons is set to false', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    render(
+      <Wrapper>
+        <RadioController id="values" largeButtons={false} options={options} />
+      </Wrapper>,
+    )
+    expect(screen.queryByText('nice sublabel')).not.toBeInTheDocument()
   })
 })

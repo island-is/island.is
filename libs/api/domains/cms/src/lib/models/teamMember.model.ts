@@ -5,13 +5,13 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class TeamMember {
   @Field()
-  name: string
+  name!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => Image)
-  image: Image
+  image!: Image
 }
 
 export const mapTeamMember = ({ fields }: ITeamMember): TeamMember => ({

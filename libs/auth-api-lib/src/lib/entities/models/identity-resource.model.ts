@@ -59,6 +59,56 @@ export class IdentityResource extends Model<IdentityResource> {
   })
   showInDiscoveryDocument!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToLegalGuardians!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToProcuringHolders!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  allowExplicitDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  automaticDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  alsoForDelegatedUser!: boolean
+
   @HasMany(() => IdentityResourceUserClaim)
   @ApiProperty()
   userClaims?: IdentityResourceUserClaim[]

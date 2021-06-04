@@ -1,18 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  NotFoundException,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { NotificationType, UserRole } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
+import { UserRole, NotificationType } from '@island.is/judicial-system/types'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRule,
@@ -20,11 +12,19 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { UserService } from '../user'
 import { CaseService } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
+
+// Allows prosecutors to perform any action
+const prosecutorRule = UserRole.PROSECUTOR as RolesRule
+
+// Allows judges to perform any action
+const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows registrars to perform any action
+const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to send heads-up and ready-for-court notifications
 const prosecutorNotificationRule = {
@@ -46,43 +46,39 @@ const judgeNotificationRule = {
   dtoFieldValues: [NotificationType.COURT_DATE, NotificationType.RULING],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
-@Controller('api/case/:id')
-@ApiTags('cases')
+// Allows registrars to send court-date
+const registrarNotificationRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [NotificationType.COURT_DATE],
+} as RolesRule
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('api/case/:caseId')
+@ApiTags('notifications')
 export class NotificationController {
   constructor(
-    @Inject(NotificationService)
-    private readonly notificationService: NotificationService,
-    @Inject(UserService)
-    private readonly userService: UserService,
-    @Inject(CaseService)
     private readonly caseService: CaseService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly notificationService: NotificationService,
   ) {}
 
-  private async findCaseById(id: string) {
-    const existingCase = await this.caseService.findById(id)
-
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
-    }
-
-    return existingCase
-  }
-
-  @RolesRules(prosecutorNotificationRule, judgeNotificationRule)
+  @RolesRules(
+    prosecutorNotificationRule,
+    judgeNotificationRule,
+    registrarNotificationRule,
+  )
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
     description: 'Sends a new notification for an existing case',
   })
-  async sendNotificationByCaseId(
-    @Param('id') id: string,
+  async sendCaseNotification(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.notificationService.sendCaseNotification(
       notification,
@@ -90,16 +86,22 @@ export class NotificationController {
     )
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,
     isArray: true,
     description: 'Gets all existing notifications for an existing case',
   })
-  async getAllNotificationsById(
-    @Param('id') id: string,
+  async getAllCaseNotifications(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

@@ -13,7 +13,6 @@ import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
-import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -22,7 +21,6 @@ import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
-import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
@@ -55,9 +53,7 @@ import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
 import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
-import { GetHomepageInput } from './dto/getHomepage.input'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
-import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
@@ -73,6 +69,11 @@ import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPage } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
+import { GetAuctionsInput } from './dto/getAuctions.input'
+import { Auction } from './models/auction.model'
+import { GetAuctionInput } from './dto/getAuction.input'
+import { Frontpage } from './models/frontpage.model'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
 
 const { cacheTime } = environment
 
@@ -181,9 +182,9 @@ export class CmsResolver {
   getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(
-      input.slug,
-      input?.lang ?? 'is-IS',
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webOrganizationPage', slug: input.slug },
     )
   }
 
@@ -192,11 +193,29 @@ export class CmsResolver {
   getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    return this.cmsContentfulService.getOrganizationSubpage(
-      input.organizationSlug,
-      input.slug,
-      input?.lang ?? 'is-IS',
+    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
+      getElasticsearchIndex(input.lang),
+      { ...input },
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Auction])
+  getAuctions(
+    @Args('input') input: GetAuctionsInput,
+  ): Promise<Auction[] | null> {
+    return this.cmsContentfulService.getAuctions(
+      input.lang,
+      input.organization,
+      input.year,
+      input.month,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Auction)
+  getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
+    return this.cmsContentfulService.getAuction(input.id, input.lang)
   }
 
   @Directive(cacheControlDirective())
@@ -229,16 +248,6 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationTagsInput,
   ): Promise<OrganizationTags | null> {
     return this.cmsContentfulService.getOrganizationTags(input?.lang ?? 'is-IS')
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => FrontpageSliderList, { nullable: true })
-  getFrontpageSliderList(
-    @Args('input') input: GetFrontpageSliderListInput,
-  ): Promise<FrontpageSliderList | null> {
-    return this.cmsContentfulService.getFrontpageSliderList(
-      input?.lang ?? 'is-IS',
-    )
   }
 
   @Directive(cacheControlDirective())
@@ -296,9 +305,14 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Homepage)
-  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
-    return this.cmsContentfulService.getHomepage(input)
+  @Query(() => Frontpage, { nullable: true })
+  getFrontpage(
+    @Args('input') input: GetFrontpageInput,
+  ): Promise<Frontpage | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webFrontpage', slug: input.pageIdentifier },
+    )
   }
 
   @Directive(cacheControlDirective())

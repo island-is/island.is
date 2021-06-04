@@ -6,8 +6,9 @@ import {
   StateSchema,
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
-import { Form, FormText } from './Form'
-import { Application } from './Application'
+
+import { Form, FormText, StaticText } from './Form'
+import { Application, ActionCardTag } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -42,13 +43,48 @@ export interface ApplicationContext {
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
-  type: 'primary' | 'subtle' | 'reject' | string
+  type: 'primary' | 'subtle' | 'reject' | 'sign'
 }
+
+export interface ApplicationTemplateAPIAction {
+  // Name of the action that will be run on the API
+  // these actions are exported are found in:
+  // /libs/application/template-api-modules
+  apiModuleAction: string
+  // If response/error should be written to application.externalData, defaults to true
+  shouldPersistToExternalData?: boolean
+  // Id inside application.externalData, value of apiModuleAction is used by default
+  externalDataId?: string
+  // Should the state transition be blocked if this action errors out
+  // defaults to true
+  throwOnError?: boolean
+}
+
+export type StateLifeCycle =
+  | {
+      // Controls visibility from my pages + /umsoknir/:type when in current state
+      shouldBeListed: boolean
+      shouldBePruned: false
+    }
+  | {
+      shouldBeListed: boolean
+      shouldBePruned: true
+      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+      whenToPrune: number | ((application: Application) => Date)
+    }
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
+  lifecycle: StateLifeCycle
+  actionCard?: {
+    title?: StaticText
+    description?: StaticText
+    tag?: { label?: StaticText; variant?: ActionCardTag }
+  }
   progress?: number
   roles?: RoleInState<T>[]
+  onExit?: ApplicationTemplateAPIAction
+  onEntry?: ApplicationTemplateAPIAction
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

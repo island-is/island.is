@@ -1,24 +1,39 @@
 import * as React from 'react'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
 import * as styles from './NewsletterSignup.treat'
 import { Box } from '../Box/Box'
+import { Hidden } from '../Hidden/Hidden'
+import { AlertMessage } from '../AlertMessage/AlertMessage'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'
+
+interface ErrorMessageProps {
+  errorMessage?: string
+}
+
+const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => (
+  <Text variant="eyebrow" fontWeight="medium" color="red600" paddingTop={1}>
+    {errorMessage}
+  </Text>
+)
 
 interface Props {
   heading: string
   text: string
   id?: string
+  name?: string
   placeholder: string
   label: string
   buttonText: string
   variant?: ColorVariant
   state?: State
-  errorMessage?: string
+  errorMessage: string
+  successTitle: string
+  successMessage: string
   onChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
@@ -30,6 +45,7 @@ export const NewsletterSignup: React.FC<Props> = ({
   heading,
   text,
   id = 'newsletter',
+  name = 'newsletter',
   placeholder,
   label,
   buttonText,
@@ -39,39 +55,64 @@ export const NewsletterSignup: React.FC<Props> = ({
   onSubmit,
   value,
   errorMessage,
+  successTitle,
+  successMessage,
 }) => {
   return (
     <Box className={styles.variants[variant]}>
-      <Typography variant="h3" as="h3" color="blue400" paddingBottom={1}>
+      <Text variant="h3" as="h3" color="blue400" paddingBottom={1}>
         {heading}
-      </Typography>
-      <Typography variant="p" paddingBottom={3}>
-        {text}
-      </Typography>
-      <Box display="flex" flexDirection={['column', 'column', 'row']}>
-        <Box className={styles.inputWrap}>
-          <Input
-            id={id}
-            name={id}
-            value={value}
-            placeholder={placeholder}
-            label={label}
-            backgroundColor={variant === 'white' ? 'blue' : 'white'}
-            hasError={state === 'error'}
-            errorMessage={errorMessage}
-            onChange={onChange}
+      </Text>
+      {state === 'success' ? (
+        <Box className={styles.successBox} marginTop={2}>
+          <AlertMessage
+            type="success"
+            title={successTitle}
+            message={successMessage}
           />
         </Box>
-        <Box
-          className={styles.buttonWrap}
-          paddingTop={[3, 2, 1]}
-          marginLeft={[0, 0, 8]}
-        >
-          <Button onClick={onSubmit} variant="text" icon="arrowForward">
-            {buttonText}
-          </Button>
+      ) : (
+        <Box>
+          <Text variant="default" paddingBottom={3}>
+            {text}
+          </Text>
+          <Box display="flex" flexDirection={['column', 'column', 'row']}>
+            <Box className={styles.inputWrap}>
+              <Input
+                id={id}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                label={label}
+                type="email"
+                hasError={state === 'error'}
+                onChange={onChange}
+              />
+              <Hidden above="sm">
+                {state === 'error' && (
+                  <ErrorMessage errorMessage={errorMessage} />
+                )}
+              </Hidden>
+            </Box>
+            <Box
+              display="flex"
+              alignItems="center"
+              className={styles.buttonWrap}
+              paddingTop={[3, 2, 0]}
+              marginLeft={[0, 0, 8]}
+            >
+              <Box>
+                <Button as="span" onClick={onSubmit} variant="text">
+                  {buttonText}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
         </Box>
-      </Box>
+      )}
+      <Hidden below="md">
+        {state === 'error' && <ErrorMessage errorMessage={errorMessage} />}
+      </Hidden>
     </Box>
   )
 }

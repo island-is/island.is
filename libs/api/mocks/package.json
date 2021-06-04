@@ -1,5 +1,5 @@
 {
   "sideEffects": [
-    "./src/index"
+    "./src/index.ts"
   ]
 }

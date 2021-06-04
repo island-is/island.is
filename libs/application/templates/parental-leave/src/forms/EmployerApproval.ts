@@ -7,23 +7,25 @@ import {
   buildSubmitField,
   Form,
   FormModes,
+  coreMessages,
 } from '@island.is/application/core'
+
 import Logo from '../assets/Logo'
+import { employerFormMessages } from '../lib/messages'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
-  title: 'Employer approval for parental leave application',
+  title: employerFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      title: 'Employer approval',
+      title: employerFormMessages.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          title:
-            'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
+          title: employerFormMessages.reviewMultiTitle,
           children: [
             buildCustomField(
               {
@@ -37,20 +39,27 @@ export const EmployerApproval: Form = buildForm({
             ),
             buildSubmitField({
               id: 'submit',
-              title: 'submit',
+              title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
-                { name: 'Reject', type: 'reject', event: 'REJECT' },
-                { name: 'Approve', type: 'primary', event: 'APPROVE' },
+                {
+                  name: coreMessages.buttonReject,
+                  type: 'reject',
+                  event: 'REJECT',
+                },
+                {
+                  name: coreMessages.buttonApprove,
+                  type: 'primary',
+                  event: 'APPROVE',
+                },
               ],
             }),
           ],
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Takk fyrir',
-          description:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

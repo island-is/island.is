@@ -42,8 +42,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.ApplicationIntroduction,
-
+        path: ServicePortalPath.ApplicationRoot,
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
@@ -74,53 +73,97 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'people',
         },
       },
+
+      // Menntun
+      {
+        name: defineMessage({
+          id: 'service.portal:education',
+          defaultMessage: 'Menntun',
+        }),
+        path: ServicePortalPath.EducationRoot,
+        icon: {
+          type: 'outline',
+          icon: 'school',
+        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:educationLicense',
+              defaultMessage: 'Starfsleyfi',
+            }),
+            path: ServicePortalPath.EducationLicense,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:educationCareer',
+              defaultMessage: 'Námsferill',
+            }),
+            path: ServicePortalPath.EducationCareer,
+          },
+        ],
+      },
       {
         name: defineMessage({
           id: 'service.portal:document-provider',
-          defaultMessage: 'Skjalaveita',
+          defaultMessage: 'Skjalaveitur',
         }),
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
           type: 'outline',
           icon: 'receipt',
         },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:document-provider-document-providers',
-              defaultMessage: 'Skjalaveitendur',
-            }),
-            path: ServicePortalPath.DocumentProviderDocumentProviders,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:document-provider-my-categories',
-              defaultMessage: 'Mínar flokkar',
-            }),
-            path: ServicePortalPath.DocumentProviderMyCategories,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:document-provider-settings',
-              defaultMessage: 'Stillingar',
-            }),
-            path: ServicePortalPath.DocumentProviderSettingsRoot,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:document-provider-technical-info',
-              defaultMessage: 'Tæknilegar upplýsingar',
-            }),
-            path: ServicePortalPath.DocumentProviderTechnicalInfo,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:document-provider-statistics',
-              defaultMessage: 'Tölfræði',
-            }),
-            path: ServicePortalPath.DocumentProviderStatistics,
-          },
-        ],
+        // The first release will only contain "Skjalaveitur" and only for the project owners.
+        // Therefore 'children' are temporarily disabled to enhance the UX of the owners.
+        // children: [
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:document-provider-document-providers',
+        //       defaultMessage: 'Skjalaveitendur',
+        //     }),
+        //     path: ServicePortalPath.DocumentProviderDocumentProviders,
+        //   },
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:document-provider-my-categories',
+        //       defaultMessage: 'Mínar flokkar',
+        //     }),
+        //     path: ServicePortalPath.DocumentProviderMyCategories,
+        //   },
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:document-provider-settings',
+        //       defaultMessage: 'Stillingar',
+        //     }),
+        //     path: ServicePortalPath.DocumentProviderSettingsRoot,
+        //   },
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:document-provider-technical-info',
+        //       defaultMessage: 'Tæknilegar upplýsingar',
+        //     }),
+        //     path: ServicePortalPath.DocumentProviderTechnicalInfo,
+        //   },
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:document-provider-statistics',
+        //       defaultMessage: 'Tölfræði',
+        //     }),
+        //     path: ServicePortalPath.DocumentProviderStatistics,
+        //   },
+        // ],
+      },
+
+      // Mannanafnaskrá
+      {
+        name: defineMessage({
+          id: 'service.portal:icelandic-names-registry',
+          defaultMessage: 'Mannanafnaskrá',
+        }),
+        path: ServicePortalPath.IcelandicNamesRegistryRoot,
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
+        },
       },
 
       // Stillingar
@@ -129,12 +172,27 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.UserProfileRoot,
-        divider: true,
+        path: ServicePortalPath.SettingsRoot,
         icon: {
           type: 'outline',
           icon: 'settings',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:personalInformation',
+              defaultMessage: 'Persónuupplýsingar',
+            }),
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:accessControl',
+              defaultMessage: 'Aðgangsstýring',
+            }),
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+        ],
       },
     ],
   },
@@ -161,21 +219,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'cellular',
-        },
-      },
-
-      // Menntun
-      {
-        name: defineMessage({
-          id: 'service.portal:education',
-          defaultMessage: 'Menntun',
-        }),
-        path: ServicePortalPath.EducationExternal,
-        external: true,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'school',
         },
       },
 

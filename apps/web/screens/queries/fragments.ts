@@ -23,6 +23,7 @@ export const slices = gql`
     __typename
     id
     title
+    intro
     events {
       id
       title
@@ -45,6 +46,7 @@ export const slices = gql`
     description
     inputLabel
     buttonText
+    signupUrl
   }
 
   fragment StoryFields on StorySlice {
@@ -70,6 +72,7 @@ export const slices = gql`
     __typename
     id
     title
+    tag
     news {
       id
       title
@@ -80,7 +83,12 @@ export const slices = gql`
       image {
         ...ImageFields
       }
+      genericTags {
+        id
+        title
+      }
     }
+    readMoreText
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -148,7 +156,7 @@ export const slices = gql`
       id
       question
       answer {
-        ...HtmlFields
+        ...BaseSlices
       }
     }
   }
@@ -345,19 +353,27 @@ export const slices = gql`
         id
       }
     }
+    link {
+      text
+      url
+    }
   }
 
   fragment TwoColumnTextFields on TwoColumnText {
     __typename
     id
     rightTitle
-    rightContent
+    rightContent {
+      ...HtmlFields
+    }
     rightLink {
       text
       url
     }
     leftTitle
-    leftContent
+    leftContent {
+      ...HtmlFields
+    }
     leftLink {
       text
       url
@@ -374,6 +390,9 @@ export const slices = gql`
       address
       email
       openingHours
+      content {
+        ...HtmlFields
+      }
     }
   }
 
@@ -381,14 +400,55 @@ export const slices = gql`
     __typename
     id
     title
-    content
+    link {
+      text
+      url
+    }
+    content {
+      ...HtmlFields
+    }
+  }
+
+  fragment AccordionSliceFields on AccordionSlice {
+    __typename
+    id
+    title
+    accordionItems {
+      title
+      content {
+        ...HtmlFields
+      }
+    }
+  }
+
+  fragment OverviewLinksField on OverviewLinks {
+    __typename
+    id
+    overviewLinks {
+      title
+      intro {
+        ...HtmlFields
+      }
+      linkTitle
+      link {
+        type
+        slug
+      }
+      leftImage
+      image {
+        title
+        url
+        width
+        height
+      }
+    }
     link {
       text
       url
     }
   }
 
-  fragment AllSlices on Slice {
+  fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
     ...StoryFields
@@ -397,7 +457,6 @@ export const slices = gql`
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
-    ...FaqListFields
     ...StatisticsFields
     ...ProcessEntryFields
     ...HtmlFields
@@ -416,5 +475,12 @@ export const slices = gql`
     ...TwoColumnTextFields
     ...OfficesSlice
     ...OneColumnTextFields
+    ...AccordionSliceFields
+    ...OverviewLinksField
+  }
+
+  fragment AllSlices on Slice {
+    ...BaseSlices
+    ...FaqListFields
   }
 `

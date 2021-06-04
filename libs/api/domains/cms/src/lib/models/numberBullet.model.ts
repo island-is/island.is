@@ -4,13 +4,13 @@ import { INumberBullet } from '../generated/contentfulTypes'
 @ObjectType()
 export class NumberBullet {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  body: string
+  body!: string
 }
 
 export const mapNumberBullet = ({

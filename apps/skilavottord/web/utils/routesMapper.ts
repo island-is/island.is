@@ -1,6 +1,7 @@
 import { isObject } from 'util'
+import { Locale } from '@island.is/shared/types'
+
 import { Translation } from '../i18n/locales'
-import { Locale } from '../i18n/I18n'
 
 const locales = {} as any
 
@@ -36,4 +37,18 @@ export const getRoutefromLocale = async (
     }, '')
   }
   return findPath(fromLocale.routes, toLocale.routes, path)
+}
+
+export const getBaseUrl = () => {
+  const isLocalhost = window.location.origin.includes('localhost')
+  const isDev = window.location.origin.includes('dev01.devland.is')
+  const isStaging = window.location.origin.includes('staging01.devland.is')
+
+  if (isStaging) {
+    return 'https://beta.staging01.devland.is'
+  } else if (isDev || isLocalhost) {
+    return 'https://beta.dev01.devland.is'
+  } else {
+    return 'https://island.is'
+  }
 }

@@ -1,0 +1,486 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "GoPro.JusticePortal.Rest",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://foris.gopro.net/hdrel/justiceportal"
+    }
+  ],
+  "paths": {
+    "/Authenticate": {
+      "get": {
+        "tags": ["Authenticate"],
+        "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods.",
+        "operationId": "Authenticate",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/CreateCase": {
+      "post": {
+        "tags": ["CreateCase"],
+        "summary": "Creates case and returns the case number.",
+        "operationId": "CreateCase",
+        "requestBody": {
+          "description": "Data needed for the creation of the case.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "createCaseData"
+      }
+    },
+    "/CreateCustodyCase": {
+      "post": {
+        "tags": ["CreateCustodyCase"],
+        "summary": "Creates Custody case and returns the case number.",
+        "operationId": "CreateCustodyCase",
+        "parameters": [
+          {
+            "name": "basedOn",
+            "in": "query",
+            "description": "Possible values: 'Almannahagsmunir', 'Annað', 'Rannsóknarhagsmunir', 'Síbrotagæsla'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceNumber",
+            "in": "query",
+            "description": "The source number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by Authenticate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/CreateDocument": {
+      "post": {
+        "tags": ["CreateDocument"],
+        "summary": "Creates document and returns document identificator (Guid)",
+        "operationId": "CreateDocument",
+        "requestBody": {
+          "description": "Data needed for the creation of the document",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "createDocumentData"
+      }
+    },
+    "/CreateThingbok": {
+      "post": {
+        "tags": ["CreateThingbok"],
+        "summary": "Creates Thingbok and returns document identificator (Guid)",
+        "operationId": "CreateThingbok",
+        "parameters": [
+          {
+            "name": "caseNumber",
+            "in": "query",
+            "description": "The case number.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "The document subject.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fileName",
+            "in": "query",
+            "description": "Name of the file.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "streamID",
+            "in": "query",
+            "description": "The container identifier. Returned by UploadStream",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by Authenticate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/GetCaseSubtypes": {
+      "post": {
+        "tags": ["GetCaseSubtypes"],
+        "summary": "Returns the subtypes for given case type.",
+        "operationId": "GetCaseSubtypes",
+        "parameters": [
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by Authenticate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "caseType",
+            "in": "query",
+            "description": "Possible values: 'A - Aðfarabeiðnir', 'Æ - Aðfinnslur við skiptastjóra', 'B - Bráðabirgðaforsjá og farbann', 'C - Beiðni um fjárhagslega endurskipulagningu', 'D - Opinber skipti', 'E - Einkamál', 'F - Beiðni um flýtimeðferð', 'G - Gjaldþrotaskipti', 'H - Horfnir menn', 'I - Beiðni um endurupptöku', 'J - Greiðslustöðvunarbeiðnir', 'K - Ágreiningsmál v/kyrrsetningar og lögbanns', 'L - Lögræðismál', 'M - Matsmál', 'N - Nauðasamningar', 'N - Nauðasamningsumleitanir', 'Ö - Annað', 'P - Sjópróf', 'Q - Ágreiningsmál v/ opinberra skipta', 'R - Rannsóknarmál', 'R - Rannsóknarmál önnur aðild', 'S - Ákærumál', 'S - Sektarboð', 'T - Ágreiningsmál v/þinglýsingar', 'U - Barnaverndarmál', 'V - Vitnamál', 'X - Ágreiningsmál v/gjaldþrotaskipta', 'Y - Ágreiningsmál v/aðfarargerða', 'Z - Ágreiningsmál v/nauðungarsölu'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi3/docs/v1": {
+      "get": {
+        "tags": ["OpenApi"],
+        "summary": "Returns the JSON for OpenApi 3.",
+        "operationId": "OpenApi_GetOpenApi3Json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SearchBankruptcyHistory": {
+      "post": {
+        "tags": ["SearchBankruptcyHistory"],
+        "summary": "Returns \"0\" or JSON with Case number, Case status, Outcome date and Organization/court name.",
+        "operationId": "SearchBankruptcyHistory",
+        "parameters": [
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by Authenticate",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idNumber",
+            "in": "query",
+            "description": "Defendant SSN/Kennitala - 10 digit number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BankruptcyHistoryResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BankruptcyHistoryResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCaseData": {
+        "required": ["authenticationToken", "caseType", "receivalDate"],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by Authenticate"
+          },
+          "caseType": {
+            "type": "string",
+            "description": "Possible values: 'A - Aðfarabeiðnir', 'Æ - Aðfinnslur við skiptastjóra', 'B - Bráðabirgðaforsjá og farbann', 'C - Beiðni um fjárhagslega endurskipulagningu', 'D - Opinber skipti', 'E - Einkamál', 'F - Beiðni um flýtimeðferð', 'G - Gjaldþrotaskipti', 'H - Horfnir menn', 'I - Beiðni um endurupptöku', 'J - Greiðslustöðvunarbeiðnir', 'K - Ágreiningsmál v/kyrrsetningar og lögbanns', 'L - Lögræðismál', 'M - Matsmál', 'N - Nauðasamningar', 'N - Nauðasamningsumleitanir', 'Ö - Annað', 'P - Sjópróf', 'Q - Ágreiningsmál v/ opinberra skipta', 'R - Rannsóknarmál', 'R - Rannsóknarmál önnur aðild', 'S - Ákærumál', 'S - Sektarboð', 'T - Ágreiningsmál v/þinglýsingar', 'U - Barnaverndarmál', 'V - Vitnamál', 'X - Ágreiningsmál v/gjaldþrotaskipta', 'Y - Ágreiningsmál v/aðfarargerða', 'Z - Ágreiningsmál v/nauðungarsölu'"
+          },
+          "status": {
+            "type": "string",
+            "description": "All of the case types have the value 'Skráð' in the status list. E.g. possible values for case type 'D - Opinber skipti' are: 'Ágreiningur (Q mál)', 'Í fresti', 'Skráð', 'Tekið til úrskurðar'; possible values for case type 'H - Horfnir menn' are only these two: 'Í fresti', 'Skráð'"
+          },
+          "receivalDate": {
+            "type": "string",
+            "description": "Receival date"
+          },
+          "subtype": {
+            "type": "string",
+            "description": "Sub type. If you don't know what value to provide here - use GetCaseSubtypes method to see possible values"
+          },
+          "basedOn": {
+            "type": "string",
+            "description": "Only for 'R - Rannsóknarmál' and 'R - Rannsóknarmál önnur aðild' case types. Possible values: 'Almannahagsmunir', 'Annað', 'Rannsóknarhagsmunir', 'Síbrotagæsla'"
+          },
+          "sourceNumber": {
+            "type": "string",
+            "description": "The source number"
+          },
+          "defaultOrVerbal": {
+            "type": "string",
+            "description": "Only for 'E - Einkamál' case type. Possible values: 'Munnlegt' and 'Útivist'"
+          }
+        }
+      },
+      "CreateDocumentData": {
+        "required": [
+          "authenticationToken",
+          "caseFolder",
+          "caseNumber",
+          "fileName",
+          "streamID",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by Authenticate"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "The case number"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The document subject"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "Name of the file"
+          },
+          "streamID": {
+            "type": "string",
+            "description": "The container identifier. Returned by UploadStream"
+          },
+          "caseFolder": {
+            "type": "string",
+            "description": "Folder name. If not exist it will be created."
+          }
+        }
+      },
+      "BankruptcyHistoryResult": {
+        "type": "object",
+        "properties": {
+          "caseNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "outcomeDate": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

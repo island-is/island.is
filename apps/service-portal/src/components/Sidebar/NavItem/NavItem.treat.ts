@@ -29,8 +29,3 @@ export const dot = style({
     },
   },
 })
-
-export const notification = style({
-  width: 24,
-  height: 24,
-})

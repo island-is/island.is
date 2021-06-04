@@ -1,96 +1,79 @@
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Accordion,
+  AccordionItem,
   Box,
-  DatePicker,
-  GridColumn,
-  GridRow,
   Input,
-  RadioButton,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
   PageLayout,
   PoliceRequestAccordionItem,
-  TimeInputField,
   BlueBox,
   CaseNumbers,
+  FormContentContainer,
+  CaseFileList,
+  Decision,
+  RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@apollo/client'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
-import {
+  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
-  validateAndSetTime,
-  setAndSendToServer,
   setCheckboxAndSendToServer,
+  newSetAndSendDateToServer,
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
-
-interface CaseData {
-  case?: Case
-}
+import { useRouter } from 'next/router'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RulingStepOne: React.FC = () => {
-  const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
-  const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
-    '',
+  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState<boolean>(
+    true,
   )
-  const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
-    '',
-  )
-  const { id } = useParams<{ id: string }>()
+  const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
+  const [
+    courtCaseFactsErrorMessage,
+    setCourtCaseFactsErrorMessage,
+  ] = useState<string>('')
+  const [
+    courtLegalArgumentsErrorMessage,
+    setCourtLegalArgumentsErrorMessage,
+  ] = useState<string>('')
+
+  const router = useRouter()
+  const id = router.query.id
+
+  const { user } = useContext(UserContext)
+  const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = useCallback(
-    async (id: string, updateCase: UpdateCase) => {
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-      const resCase = data?.updateCase
-      if (resCase) {
-        // Do something with the result. In particular, we want th modified timestamp passed between
-        // the client and the backend so that we can handle multiple simultanious updates.
-      }
-      return resCase
-    },
-    [updateCaseMutation],
-  )
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
@@ -115,40 +98,46 @@ export const RulingStepOne: React.FC = () => {
         )
       }
 
-      if (!theCase.custodyEndDate) {
-        theCase = {
-          ...theCase,
-          custodyEndDate: theCase.requestedCustodyEndDate,
-        }
+      if (theCase.requestedCustodyEndDate) {
+        autofill('custodyEndDate', theCase.requestedCustodyEndDate, theCase)
+      }
 
-        updateCase(
-          theCase.id,
-          parseString('custodyEndDate', theCase.requestedCustodyEndDate || ''),
-        )
+      if (theCase.custodyEndDate) {
+        autofill('isolationTo', theCase.custodyEndDate, theCase)
+      }
+
+      if (theCase.caseFacts) {
+        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      }
+
+      if (theCase.legalArguments) {
+        autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data, updateCase, autofill])
 
+  /**
+   * Prefills the ruling of extension cases with the parent case ruling
+   * if this case descition is ACCEPTING.
+   */
   useEffect(() => {
-    let requiredFields: { value: string; validations: Validation[] }[] = [
-      { value: workingCase?.ruling || '', validations: ['empty'] },
-    ]
-    if (workingCase?.decision !== CaseDecision.REJECTING) {
-      requiredFields = requiredFields.concat([
-        { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
-        {
-          value: custodyEndTimeRef.current?.value || '',
-          validations: ['empty', 'time-format'],
-        },
-      ])
+    if (
+      workingCase?.parentCase &&
+      workingCase?.decision === CaseDecision.ACCEPTING &&
+      !workingCase.ruling
+    ) {
+      updateCase(
+        workingCase.id,
+        parseString('ruling', workingCase.parentCase.ruling || ''),
+      )
+      setWorkingCase({
+        ...workingCase,
+        ruling: workingCase.parentCase.ruling,
+      })
     }
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.decision)
-    }
-  }, [workingCase, isStepIllegal])
+  }, [workingCase, updateCase, setWorkingCase])
 
   return (
     <PageLayout
@@ -160,270 +149,276 @@ export const RulingStepOne: React.FC = () => {
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
+      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
-          <Box marginBottom={7}>
-            <Text as="h1" variant="h1">
-              Úrskurður
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <CaseNumbers workingCase={workingCase} />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Accordion>
-              <PoliceRequestAccordionItem workingCase={workingCase} />
-            </Accordion>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Úrskurður{' '}
-                <Text as="span" fontWeight="semiBold" color="red600">
-                  *
-                </Text>
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                Úrskurður
               </Text>
             </Box>
-            <Box marginBottom={5}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    name="case-decision"
-                    id="case-decision-accepting"
-                    label={`Krafa um ${
-                      workingCase.type === CaseType.CUSTODY
-                        ? 'gæsluvarðhald'
-                        : 'farbann'
-                    } samþykkt`}
-                    checked={workingCase.decision === CaseDecision.ACCEPTING}
-                    onChange={() => {
-                      setAndSendToServer(
-                        'decision',
-                        CaseDecision.ACCEPTING,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    filled
-                  />
-                </Box>
-                <Box
-                  marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}
+            <Box component="section" marginBottom={5}>
+              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+              <CaseNumbers workingCase={workingCase} />
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <AccordionItem
+                  id="caseFileList"
+                  label={`Rannsóknargögn (${workingCase.files?.length || 0})`}
+                  labelVariant="h3"
                 >
-                  <RadioButton
-                    name="case-decision"
-                    id="case-decision-rejecting"
-                    label={`Kröfu um ${
-                      workingCase.type === CaseType.CUSTODY
-                        ? 'gæsluvarðhald'
-                        : 'farbann'
-                    } hafnað`}
-                    checked={workingCase.decision === CaseDecision.REJECTING}
-                    onChange={() => {
-                      setAndSendToServer(
-                        'decision',
-                        CaseDecision.REJECTING,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    filled
-                  />
-                </Box>
-                {workingCase.type === CaseType.CUSTODY && (
-                  <RadioButton
-                    name="case-decision"
-                    id="case-decision-accepting-alternative-travel-ban"
-                    label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
-                    checked={
-                      workingCase.decision ===
-                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                  <CaseFileList
+                    caseId={workingCase.id}
+                    files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
                     }
-                    onChange={() => {
-                      setAndSendToServer(
-                        'decision',
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    filled
                   />
-                )}
-              </BlueBox>
+                </AccordionItem>
+              </Accordion>
             </Box>
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Niðurstaða úrskurðar
-              </Text>
-            </Box>
-            <Input
-              data-testid="ruling"
-              name="ruling"
-              label="Niðurstaða úrskurðar"
-              placeholder="Hver er niðurstaðan að mati dómara?"
-              defaultValue={workingCase.ruling}
-              rows={16}
-              errorMessage={rulingErrorMessage}
-              hasError={rulingErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'ruling',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  rulingErrorMessage,
-                  setRulingErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'ruling',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setRulingErrorMessage,
-                )
-              }
-              textarea
-              required
-            />
-          </Box>
-          {workingCase.decision !== CaseDecision.REJECTING && (
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  {workingCase.type === CaseType.CUSTODY &&
-                  workingCase.decision === CaseDecision.ACCEPTING
-                    ? 'Gæsluvarðhald'
-                    : 'Farbann'}
+                  Greinargerð um málsatvik{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
                 </Text>
               </Box>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <DatePicker
-                    id="custodyEndDate"
-                    label={
-                      workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
-                        ? 'Gæsluvarðhald til'
-                        : 'Farbann til'
-                    }
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={
-                      workingCase.custodyEndDate
-                        ? parseISO(workingCase.custodyEndDate?.toString())
-                        : null
-                    }
-                    errorMessage={custodyEndDateErrorMessage}
-                    hasError={custodyEndDateErrorMessage !== ''}
-                    handleCloseCalendar={(date) =>
-                      setAndSendDateToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        date,
-                        workingCase,
-                        true,
-                        setWorkingCase,
-                        updateCase,
-                        setCustodyEndDateErrorMessage,
-                      )
-                    }
-                    required
-                  />
-                </GridColumn>
-                <GridColumn span="5/12">
-                  <TimeInputField
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        custodyEndTimeErrorMessage,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="custodyEndTime"
-                      name="custodyEndTime"
-                      label="Tímasetning"
-                      ref={custodyEndTimeRef}
-                      defaultValue={
-                        workingCase.custodyEndDate?.includes('T')
-                          ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                          : workingCase.requestedCustodyEndDate?.includes('T')
-                          ? formatDate(
-                              workingCase.requestedCustodyEndDate,
-                              TIME_FORMAT,
-                            )
-                          : undefined
-                      }
-                      hasError={custodyEndTimeErrorMessage !== ''}
-                      errorMessage={custodyEndTimeErrorMessage}
-                      required
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtCaseFacts"
+                  name="courtCaseFacts"
+                  label="Málsatvik"
+                  defaultValue={workingCase.courtCaseFacts}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtCaseFacts',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtCaseFactsErrorMessage,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtCaseFacts',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtCaseFactsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtCaseFactsErrorMessage}
+                  hasError={courtCaseFactsErrorMessage !== ''}
+                  textarea
+                  rows={16}
+                  required
+                />
+              </Box>
             </Box>
-          )}
-          {workingCase.type === CaseType.CUSTODY &&
-            workingCase.decision === CaseDecision.ACCEPTING && (
-              <Box component="section" marginBottom={8}>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Greinargerð um lagarök{' '}
+                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Input
+                  data-testid="courtLegalArguments"
+                  name="courtLegalArguments"
+                  label="Lagarök"
+                  defaultValue={workingCase.courtLegalArguments}
+                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLegalArguments',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtLegalArgumentsErrorMessage,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLegalArguments',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLegalArgumentsErrorMessage,
+                    )
+                  }
+                  errorMessage={courtLegalArgumentsErrorMessage}
+                  hasError={courtLegalArgumentsErrorMessage !== ''}
+                  textarea
+                  rows={16}
+                  required
+                />
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Úrskurður{' '}
+                  <Text as="span" fontWeight="semiBold" color="red600">
+                    *
+                  </Text>
+                </Text>
+              </Box>
+              <Box marginBottom={5}>
+                <Decision
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Niðurstaða
+                </Text>
+              </Box>
+              <RulingInput
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                isRequired
+              />
+            </Box>
+            {workingCase.decision !== CaseDecision.REJECTING && (
+              <Box
+                component="section"
+                marginBottom={7}
+                data-testid="caseDecisionSection"
+              >
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    Takmarkanir á gæslu
+                    {workingCase.type === CaseType.CUSTODY &&
+                    workingCase.decision === CaseDecision.ACCEPTING
+                      ? 'Gæsluvarðhald'
+                      : 'Farbann'}
                   </Text>
                 </Box>
-                <Box marginBottom={1}>
-                  <CheckboxList
-                    checkboxes={isolation}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </Box>
+                <DateTime
+                  name="custodyEndDate"
+                  datepickerLabel={
+                    workingCase.type === CaseType.CUSTODY &&
+                    workingCase.decision === CaseDecision.ACCEPTING
+                      ? 'Gæsluvarðhald til'
+                      : 'Farbann til'
+                  }
+                  selectedDate={
+                    workingCase.custodyEndDate
+                      ? new Date(workingCase.custodyEndDate)
+                      : undefined
+                  }
+                  minDate={new Date()}
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    newSetAndSendDateToServer(
+                      'custodyEndDate',
+                      date,
+                      valid,
+                      workingCase,
+                      setWorkingCase,
+                      setCustodyEndDateIsValid,
+                      updateCase,
+                    )
+                  }}
+                  required
+                />
               </Box>
             )}
-          <FormFooter
-            nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-            nextIsDisabled={isStepIllegal}
-          />
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.decision === CaseDecision.ACCEPTING && (
+                <Box component="section" marginBottom={8}>
+                  <Box marginBottom={2}>
+                    <Text as="h3" variant="h3">
+                      Takmarkanir á gæslu
+                    </Text>
+                  </Box>
+                  <BlueBox>
+                    <Box marginBottom={3}>
+                      <CheckboxList
+                        checkboxes={isolation}
+                        selected={workingCase.custodyRestrictions}
+                        onChange={(id) =>
+                          setCheckboxAndSendToServer(
+                            'custodyRestrictions',
+                            id,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                        fullWidth
+                      />
+                    </Box>
+                    <DateTime
+                      name="isolationTo"
+                      datepickerLabel="Einangrun til"
+                      selectedDate={
+                        workingCase.isolationTo
+                          ? new Date(workingCase.isolationTo)
+                          : workingCase.custodyEndDate
+                          ? new Date(workingCase.custodyEndDate)
+                          : undefined
+                      }
+                      // Isolation can never be set in the past.
+                      minDate={new Date()}
+                      maxDate={
+                        workingCase.custodyEndDate
+                          ? new Date(workingCase.custodyEndDate)
+                          : undefined
+                      }
+                      onChange={(date: Date | undefined, valid: boolean) => {
+                        newSetAndSendDateToServer(
+                          'isolationTo',
+                          date,
+                          valid,
+                          workingCase,
+                          setWorkingCase,
+                          setIsolationToIsValid,
+                          updateCase,
+                        )
+                      }}
+                      blueBox={false}
+                      backgroundColor={
+                        workingCase.custodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                          ? 'white'
+                          : 'blue'
+                      }
+                    />
+                  </BlueBox>
+                </Box>
+              )}
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
+              nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
+              nextIsDisabled={
+                !workingCase.courtCaseFacts ||
+                !workingCase.courtLegalArguments ||
+                !workingCase.decision ||
+                !validate(workingCase.ruling || '', 'empty').isValid ||
+                (workingCase.decision !== CaseDecision.REJECTING &&
+                  (!custodyEndDateIsValid || !isolationToIsValid))
+              }
+            />
+          </FormContentContainer>
         </>
       ) : null}
     </PageLayout>

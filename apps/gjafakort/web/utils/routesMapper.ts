@@ -1,6 +1,7 @@
 import { isObject } from 'util'
+import { Locale } from '@island.is/shared/types'
+
 import { Translation } from '../i18n/locales'
-import { Locale } from '../i18n/I18n'
 
 const locales = {}
 export const getLocale = async (locale: Locale): Promise<Translation> => {

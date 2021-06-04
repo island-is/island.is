@@ -10,6 +10,7 @@ import {
   buildForm,
   buildDescriptionField,
   Form,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { initializeClient } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
@@ -28,6 +29,7 @@ describe(' FormShell', () => {
     state: 'draft',
     modified: new Date(),
     created: new Date(),
+    status: ApplicationStatus.IN_PROGRESS,
   }
   const form: Form = buildForm({
     id: 'ParentalLeaveForm',
@@ -63,7 +65,7 @@ describe(' FormShell', () => {
 
   it('should render the application title', async () => {
     await act(async () => {
-      await render(
+      render(
         <ApolloProvider client={initializeClient('')}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
@@ -76,6 +78,9 @@ describe(' FormShell', () => {
         </ApolloProvider>,
       )
     })
-    expect(screen.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
+
+    expect(
+      await screen.findByText(`Umsókn um fæðingarorlof`),
+    ).toBeInTheDocument()
   })
 })

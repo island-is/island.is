@@ -10,4 +10,5 @@ export const environment = {
   },
   awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE,
   awsRoleName: process.env.AWS_ROLE_ARN,
+  popularityFactor: 0.004,
 }

@@ -5,8 +5,9 @@ import {
   GridRow,
   GridColumn,
   Checkbox,
+  ResponsiveProp,
+  GridColumns,
 } from '@island.is/island-ui/core'
-
 interface CheckboxInfo {
   title: string
   id: string
@@ -17,20 +18,28 @@ interface Props {
   checkboxes: CheckboxInfo[]
   selected: string[] | undefined
   onChange: (id: string) => void
+  fullWidth?: boolean
 }
 
 const CheckboxList: React.FC<Props> = ({
   checkboxes,
   selected,
   onChange,
+  fullWidth,
 }: Props) => {
   return (
     <GridContainer>
       <GridRow>
         {checkboxes.map((checkbox, index) => {
           return (
-            <GridColumn span="6/12" key={index}>
+            <GridColumn
+              span={
+                `${fullWidth ? '12' : '6'}/12` as ResponsiveProp<GridColumns>
+              }
+              key={index}
+            >
               <Box
+                data-testid="checkbox"
                 marginBottom={
                   // Do not add margins to the last two items
                   index < checkboxes.length - 2 ? 3 : 0

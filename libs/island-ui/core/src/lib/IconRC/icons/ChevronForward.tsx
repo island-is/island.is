@@ -8,7 +8,8 @@ const SvgChevronForward = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="chevron-forward_svg__ionicon"
+      xmlns="http://www.w3.org/2000/svg"
+      className="ChevronForward_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
@@ -19,7 +20,7 @@ const SvgChevronForward = ({
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={48}
+        strokeWidth={32}
         d="M184 112l144 144-144 144"
       />
     </svg>

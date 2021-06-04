@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen, SetBeforeSubmitCallback } from '../types'
+import { useMutation } from '@apollo/client'
+import { Controller, useFormContext } from 'react-hook-form'
+import Markdown from 'markdown-to-jsx'
+
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Icon,
@@ -13,11 +17,15 @@ import {
   ExternalData,
   FormValue,
   getValueViaPath,
+  coreMessages,
+  RecordObject,
+  SetBeforeSubmitCallback,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
-import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+
+import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
 const ProviderItem: FC<{
@@ -26,17 +34,31 @@ const ProviderItem: FC<{
 }> = ({ dataProviderResult = {}, provider }) => {
   const { subTitle, title } = provider
   const { formatMessage } = useLocale()
+
   return (
     <Box marginBottom={3}>
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
-      {subTitle && <Text>{formatMessage(subTitle)}</Text>}
+
+      {subTitle && (
+        <Text>
+          <Markdown>{formatMessage(subTitle)}</Markdown>
+        </Text>
+      )}
+
       {provider.type && dataProviderResult?.status === 'failure' && (
-        <InputError
-          errorMessage={dataProviderResult?.reason}
-          id={provider.id}
-        />
+        <Box marginTop={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            message={
+              typeof dataProviderResult?.reason === 'object'
+                ? formatMessage(dataProviderResult?.reason)
+                : dataProviderResult?.reason
+            }
+          />
+        </Box>
       )}
     </Box>
   )
@@ -60,6 +82,7 @@ const FormExternalDataProvider: FC<{
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
+  errors: RecordObject
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,
@@ -67,17 +90,29 @@ const FormExternalDataProvider: FC<{
   externalData,
   externalDataProvider,
   formValue,
+  errors,
 }) => {
-  const { setValue } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
+  const { setValue, clearErrors } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
     },
   })
 
-  const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
+  const {
+    id,
+    dataProviders,
+    subTitle,
+    description,
+    checkboxLabel,
+  } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
+
+  // If id is undefined then the error won't be attached to the field with id
+  const error = getValueViaPath(errors, id ?? '', undefined) as
+    | string
+    | undefined
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
@@ -91,6 +126,7 @@ const FormExternalDataProvider: FC<{
                 type,
               })),
             },
+            locale,
           },
         })
 
@@ -114,21 +150,23 @@ const FormExternalDataProvider: FC<{
 
   return (
     <Box>
-      <Box
-        marginTop={2}
-        marginBottom={5}
-        display="flex"
-        alignItems="center"
-        justifyContent="flexStart"
-      >
-        <Box marginRight={1}>
-          <Icon icon="download" size="medium" color="blue400" type="outline" />
+      <Box marginTop={2} marginBottom={5}>
+        <Box display="flex" alignItems="center" justifyContent="flexStart">
+          <Box marginRight={1}>
+            <Icon
+              icon="fileTrayFull"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">
+            {subTitle
+              ? formatMessage(subTitle)
+              : formatMessage(coreMessages.externalDataTitle)}
+          </Text>
         </Box>
-        <Text variant="h4">
-          {subTitle
-            ? formatMessage(subTitle)
-            : 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
-        </Text>
+        {description && <Text marginTop={4}>{formatMessage(description)}</Text>}
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (
@@ -146,29 +184,30 @@ const FormExternalDataProvider: FC<{
         render={({ value, onChange }) => {
           return (
             <>
-              <Box
-                background="blue100"
-                display="flex"
-                padding={4}
-                borderRadius="large"
-                marginTop={1}
-                key={`${id}`}
-              >
-                <Checkbox
-                  onChange={(e) => {
-                    const isChecked = e.target.checked
-                    setValue(id as string, isChecked)
-                    onChange(isChecked)
-                    activateBeforeSubmitCallback(isChecked)
-                  }}
-                  checked={value}
-                  name={`${id}`}
-                  label={
-                    checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'
-                  }
-                  value={id}
-                />
-              </Box>
+              <Checkbox
+                large={true}
+                onChange={(e) => {
+                  const isChecked = e.target.checked
+                  clearErrors(id)
+                  setValue(id as string, isChecked)
+                  onChange(isChecked)
+                  activateBeforeSubmitCallback(isChecked)
+                }}
+                checked={value}
+                hasError={error !== undefined}
+                backgroundColor="blue"
+                name={`${id}`}
+                label={
+                  <Markdown>
+                    {checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)}
+                  </Markdown>
+                }
+                value={id}
+              />
+
+              {error !== undefined && <InputError errorMessage={error} />}
             </>
           )
         }}

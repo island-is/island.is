@@ -7,12 +7,16 @@ import {
   UpdatedAt,
   HasMany,
   HasOne,
+  AfterCreate,
+  AfterUpdate,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Provider } from './provider.model'
 import { TechnicalContact } from './technicalContact.model'
 import { AdministrativeContact } from './administrativeContact.model'
 import { Helpdesk } from './helpdesk.model'
+import { Changelog } from './changelog.model'
+import { EntityTypes } from '../enums/EntityTypes'
 
 @Table({
   tableName: 'organisation',
@@ -66,20 +70,26 @@ export class Organisation extends Model<Organisation> {
   phoneNumber?: string
 
   @HasMany(() => Provider)
-  @ApiProperty()
+  @ApiPropertyOptional({ type: [Provider] })
   providers?: Provider[]
 
   @HasOne(() => AdministrativeContact)
-  @ApiProperty()
+  @ApiPropertyOptional()
   administrativeContact?: AdministrativeContact
 
   @HasOne(() => TechnicalContact)
-  @ApiProperty()
+  @ApiPropertyOptional()
   technicalContact?: TechnicalContact
 
   @HasOne(() => Helpdesk)
+  @ApiPropertyOptional()
+  helpdesk?: Helpdesk
+
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty()
-  helpDesk?: Helpdesk
+  modifiedBy?: string
 
   @CreatedAt
   @ApiProperty()
@@ -88,4 +98,17 @@ export class Organisation extends Model<Organisation> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @AfterCreate
+  @AfterUpdate
+  static addChangelog(instance: Organisation) {
+    const obj = {
+      organisationId: instance.id,
+      entityId: instance.id,
+      entityType: EntityTypes.ORGANISATION,
+      data: instance,
+    }
+
+    Changelog.create(obj)
+  }
 }

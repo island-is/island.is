@@ -10,12 +10,12 @@ The documentation works in two different ways:
 
 - `README.md` which are all the readmes from the `apps` and `libs` directories contained in the sub folders. The same goes for the README.md. Simply add your content using markdown. We only recommend one thing, is to use [this template](../misc/gitbook-template.md) when you create a new app in the `apps` directory.
 
-### Root `README.md` withing `handbook` directory
+### Root `README.md` within `handbook` directory
 
-`README.md` files from each directories inside the `handbook` directory are used to create the navigation structure when running the `yarn gitbook` command.
+`README.md` files from directories inside the [`handbook/` directory](../) are used to create the navigation structure when running the `yarn gitbook` command.
 
 {% hint style="warning" %}
-Don't forget to create it, and add a [heading to it](https://github.com/island-is/island.is/blob/main/handbook/technical-overview/auth/README.md). Apart from the required heading, you can leave it empty and GitBook will automatically display the [sub files](https://docs.devland.is/handbook/technical-overview/auth) structure.
+You MUST create a `README.md` with a `H1` heading ([example](https://raw.githubusercontent.com/island-is/island.is/main/handbook/technical-overview/auth/README.md)) — but apart from that, you may leave it empty and GitBook will automatically display the [sub file structure](../technical-overview/auth).
 {% endhint %}
 
 ### Links
@@ -41,5 +41,5 @@ The script will also format the README.md's title to follow the [APA style conve
 After your commit get merged into `main`, it will take a few minutes before your changes appears on [docs.devland.is](https://docs.devland.is).
 
 {% hint style="info" %}
-For some reason, if you don't want your markdown file to be part of the `SUMMARY.md` file and included inside the GitBook, you can add the following html comment `<!-- gitbook-ignore -->` at the first line of the file.
+For some reason, if you don't want your markdown file to be part of the `SUMMARY.md` file and included inside the GitBook, you can add the following html comment `<!-- gitbook-ignore -->` as the first line of the file.
 {% endhint %}

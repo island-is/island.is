@@ -5,10 +5,10 @@ import { Link, mapLink } from './link.model'
 @ObjectType()
 export class LinkList {
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [Link])
-  links: Array<Link>
+  links!: Array<Link>
 }
 
 export const mapLinkList = ({ fields }: ILinkList): LinkList => ({

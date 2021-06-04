@@ -1,14 +1,15 @@
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import formatISO from 'date-fns/formatISO'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   padTimeWithZero,
   parseArray,
+  parseNull,
   parseString,
   parseTime,
   replaceTabs,
 } from './formatters'
 import { validate, Validation } from './validate'
-import formatISO from 'date-fns/formatISO'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const removeTabsValidateAndSet = (
   field: string,
@@ -140,6 +141,41 @@ export const setAndSendDateToServer = async (
   }
 }
 
+export const newSetAndSendDateToServer = async (
+  field: string,
+  date: Date | undefined,
+  isValid: boolean,
+  theCase: Case,
+  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setIsValid: (value: React.SetStateAction<boolean>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+) => {
+  setIsValid(isValid)
+
+  if (!isValid) {
+    return
+  }
+
+  let formattedDate = null
+
+  if (date !== undefined) {
+    formattedDate = formatISO(date, {
+      representation: 'complete',
+    })
+  }
+
+  setCase({
+    ...theCase,
+    [field]: formattedDate,
+  })
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, {
+      [field]: formattedDate,
+    })
+  }
+}
+
 export const validateAndSendToServer = async (
   field: string,
   value: string,
@@ -193,18 +229,25 @@ export const validateAndSendTimeToServer = async (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean,
+  value: string | boolean | null,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
+  let stringValue = ''
+
   setCase({
     ...theCase,
     [field]: value,
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    if (typeof value === 'string') {
+      stringValue = value
+      updateCase(theCase.id, parseString(field, stringValue))
+    } else {
+      updateCase(theCase.id, parseNull(field))
+    }
   }
 }
 

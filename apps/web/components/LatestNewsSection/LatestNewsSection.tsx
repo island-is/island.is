@@ -7,16 +7,14 @@ import {
   Link,
   Button,
   Box,
-  Swiper,
-  Hidden,
 } from '@island.is/island-ui/core'
+import { NewsCard } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
-import { NewsCard } from '../NewsCard'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -25,14 +23,28 @@ interface LatestNewsProps {
   label: string
   labelId?: string
   items: GetNewsQuery['getNews']['items']
+  linkType?: LinkType
+  overview?: LinkType
+  parameters?: Array<string>
+  newsTag?: string
+  readMoreText?: string
+  itemMaxDisplayedCount?: number
+  variant?: 'default' | 'bigCards'
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   items = [],
   label,
   labelId = '',
+  linkType = 'news',
+  overview = 'newsoverview',
+  parameters = [],
+  newsTag,
+  readMoreText = '',
+  itemMaxDisplayedCount = 3,
+  variant = 'default',
 }) => {
-  const newsItems = items.slice(0, 3)
+  const newsItems = items.slice(0, itemMaxDisplayedCount)
   const { t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
@@ -49,60 +61,54 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Text variant="h5" as="p" paddingBottom={2}>
-              <Link {...linkResolver('newsoverview')} skipTab>
+            <Link
+              href={{
+                pathname: linkResolver(overview, parameters).href,
+                ...(!!newsTag && { query: { tag: newsTag } }),
+              }}
+              skipTab
+            >
+              <Text variant="h5" as="p" paddingBottom={2}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
-                  type="button"
                   variant="text"
+                  as="span"
                 >
-                  {n('seeMore')}
+                  {readMoreText ?? n('seeMore')}
                 </Button>
-              </Link>
-            </Text>
+              </Text>
+            </Link>
           </Box>
         </GridColumn>
       </GridRow>
-      <Hidden below="lg">
-        <GridRow>
-          {newsItems.map((newsItem) => {
-            return (
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '4/12']}
-                key={newsItem.slug}
-              >
-                <NewsCard
-                  title={newsItem.title}
-                  subtitle={newsItem.subtitle}
-                  introduction={newsItem.intro}
-                  slug={newsItem.slug}
-                  readMoreText={t.readMore}
-                  image={newsItem.image}
-                  tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  href={linkResolver('news', [newsItem.slug]).href}
-                />
-              </GridColumn>
-            )
-          })}
-        </GridRow>
-      </Hidden>
-      <Hidden above="md">
-        <Swiper>
-          {newsItems.map((newsItem) => (
-            <NewsCard
+      <GridRow>
+        {newsItems.map((newsItem) => {
+          return (
+            <GridColumn
+              span={[
+                '12/12',
+                '12/12',
+                '12/12',
+                '12/12',
+                variant === 'default' ? '4/12' : '6/12',
+              ]}
               key={newsItem.slug}
-              title={newsItem.title}
-              subtitle={newsItem.subtitle}
-              introduction={newsItem.intro}
-              slug={newsItem.slug}
-              image={newsItem.image}
-              tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              href={linkResolver('news', [newsItem.slug]).href}
-            />
-          ))}
-        </Swiper>
-      </Hidden>
+              paddingBottom={2}
+            >
+              <NewsCard
+                title={newsItem.title}
+                introduction={newsItem.intro}
+                readMoreText={t.readMore}
+                image={newsItem.image}
+                href={
+                  linkResolver(linkType, [...parameters, newsItem.slug]).href
+                }
+              />
+            </GridColumn>
+          )
+        })}
+      </GridRow>
     </GridContainer>
   )
 }

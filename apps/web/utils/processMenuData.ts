@@ -1,9 +1,10 @@
+import { Locale } from '@island.is/shared/types'
+
 import {
   ArticleCategory,
   MenuLinkWithChildren,
   MenuLink,
 } from '../graphql/schema'
-import { Locale } from '../i18n/I18n'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 
 export const formatMegaMenuLinks = (

@@ -1,14 +1,15 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationOffice } from '../generated/contentfulTypes'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationOffice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
-  name?: string
+  name!: string
 
   @Field({ nullable: true })
   city?: string
@@ -24,6 +25,9 @@ export class OrganizationOffice {
 
   @Field({ nullable: true })
   openingHours?: string
+
+  @Field(() => [SliceUnion], { nullable: true })
+  content?: Array<typeof SliceUnion>
 }
 
 export const mapOrganizationOffice = ({
@@ -37,4 +41,7 @@ export const mapOrganizationOffice = ({
   email: fields.email ?? '',
   phoneNumber: fields.phoneNumber ?? '',
   openingHours: fields.openingHours ?? '',
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
+    : [],
 })

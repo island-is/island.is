@@ -1,32 +1,30 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import Overview from './Overview'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import Overview from './Overview'
 
 describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
+
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -38,20 +36,19 @@ describe('/stofna-krofu/yfirlit', () => {
 
   test('should display the custody end date of the parent case of an extended case', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_8' },
+    }))
+
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id_8`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 

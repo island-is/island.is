@@ -2,10 +2,8 @@ import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
-import {
-  DocumentProviderClientConfig,
-  DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
-} from './documentProviderClientConfig'
+import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
+import { DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST } from './documentProviderClientConfig'
 import { ClientCredentials, AudienceAndScope, TestResult } from './models'
 
 @Injectable()
@@ -79,8 +77,9 @@ export class DocumentProviderClientTest {
   async updateEndpoint(
     providerId: string,
     endpoint: string,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
-    const requestRoute = `/api/DocumentProvider/updateendpoint?providerId=${providerId}&endpoint=${endpoint}`
+    const requestRoute = `/api/DocumentProvider/updateendpoint?providerId=${providerId}&endpoint=${endpoint}&xroad=${xroad}`
     return await this.postRequest<AudienceAndScope>(requestRoute)
   }
 

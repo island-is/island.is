@@ -6,6 +6,7 @@ import {
   formatText,
   getValueViaPath,
   RadioField,
+  buildFieldOptions,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -13,8 +14,8 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { buildOptions } from '../utils'
-import { useDefaultValue } from '../useDefaultValue'
+
+import { getDefaultValue } from '../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -32,18 +33,17 @@ const RadioFormField: FC<Props> = ({
     description,
     options,
     width,
-    emphasize,
     largeButtons,
   } = field
   const { formatMessage } = useLocale()
 
-  const finalOptions = useMemo(() => buildOptions(options, application), [
-    options,
-    application,
-  ])
+  const finalOptions = useMemo(
+    () => buildFieldOptions(options, application, field),
+    [options, application],
+  )
 
   return (
-    <div>
+    <Box>
       {showFieldName && (
         <Text variant={'h4'}>
           {formatText(title, application, formatMessage)}
@@ -56,22 +56,18 @@ const RadioFormField: FC<Props> = ({
         />
       )}
 
-      <Box
-        background={emphasize ? 'blue100' : undefined}
-        padding={emphasize ? 3 : undefined}
-        marginTop={3}
-      >
+      <Box marginTop={3}>
         <RadioController
           largeButtons={largeButtons}
-          emphasize={emphasize}
           id={id}
           disabled={disabled}
           error={error}
           split={width === 'half' ? '1/2' : '1/1'}
-          name={`${id}`}
+          name={id}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
-            useDefaultValue(field, application)
+            getDefaultValue(field, application) ??
+            ''
           }
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
@@ -84,7 +80,7 @@ const RadioFormField: FC<Props> = ({
           }))}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
 

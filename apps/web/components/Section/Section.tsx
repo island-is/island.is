@@ -1,7 +1,7 @@
-import React, { ElementType, useState } from 'react'
+import React, { ElementType } from 'react'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
+import { useWindowSize } from 'react-use'
 
 type BackgroundBleed = {
   fromColor: keyof typeof theme.color
@@ -9,7 +9,6 @@ type BackgroundBleed = {
   bleedDirection: 'top' | 'bottom'
   bleedAmount: number
   mobileBleedAmount?: number
-  bleedInMobile?: boolean
 }
 
 interface SectionProps {
@@ -28,38 +27,31 @@ export const Section: React.FC<SectionProps> = ({
   paddingTop,
   paddingBottom,
   background,
-  backgroundBleed = {
-    bleedInMobile: false,
-    mobileBleedAmount: 50,
-  },
+  backgroundBleed,
   ...rest
 }) => {
   const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
 
-  useIsomorphicLayoutEffect(() => {
-    if (!backgroundBleed.bleedInMobile && width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const hasMobileBleedAmount = backgroundBleed?.mobileBleedAmount >= 0
+  const hasBleedAmount =
+    backgroundBleed?.bleedAmount >= 0 || hasMobileBleedAmount
 
   const generateBackgroundBleed = () => {
-    //Background bleed is not available on mobile.
-    if (!backgroundBleed.bleedAmount || isMobile) {
-      return null
-    }
+    if (hasBleedAmount) {
+      const amount =
+        hasMobileBleedAmount && width < theme.breakpoints.md
+          ? backgroundBleed.mobileBleedAmount
+          : backgroundBleed.bleedAmount
 
-    const amount = backgroundBleed.bleedInMobile
-      ? backgroundBleed.mobileBleedAmount
-      : backgroundBleed.bleedAmount
-
-    return {
-      backgroundImage: `linear-gradient(to ${backgroundBleed.bleedDirection}, ${
-        theme.color[backgroundBleed.fromColor]
-      } calc(100% - ${amount}px), ${
-        theme.color[backgroundBleed.toColor]
-      } calc(100% - ${amount}px))`,
+      return {
+        backgroundImage: `linear-gradient(to ${
+          backgroundBleed.bleedDirection
+        }, ${
+          theme.color[backgroundBleed.fromColor]
+        } calc(100% - ${amount}px), ${
+          theme.color[backgroundBleed.toColor]
+        } calc(100% - ${amount}px))`,
+      }
     }
   }
 
@@ -70,7 +62,9 @@ export const Section: React.FC<SectionProps> = ({
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       background={background}
-      style={generateBackgroundBleed()}
+      {...(hasBleedAmount && {
+        style: generateBackgroundBleed(),
+      })}
       {...rest}
     >
       {children}

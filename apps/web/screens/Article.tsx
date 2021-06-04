@@ -20,11 +20,16 @@ import {
   TableOfContents,
   Button,
   Tag,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
   InstitutionPanel,
+  InstitutionsPanel,
+  OrganizationFooter,
+  OrganizationChatPanel,
   Sticky,
+  AppendedArticleComponents,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -38,6 +43,7 @@ import {
   AllSlicesFragment as Slice,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
+  Organization,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -48,7 +54,9 @@ import {
   LinkType,
   useLinkResolver,
 } from '../hooks/useLinkResolver'
-import { Locale } from '../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
+import { useScrollPosition } from '../hooks/useScrollPosition'
+import { scrollTo } from '../hooks/useScrollSpy'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -92,7 +100,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: linkResolver('article', [article.slug, subArticle.slug]).href,
+      url: linkResolver('article', subArticle.slug.split('/')).href,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -110,13 +118,26 @@ const createArticleNavigation = (
   return nav
 }
 
-const RelatedArticles: FC<{
+const RelatedContent: FC<{
   title: string
-  articles: Array<{ slug: string; title: string }>
-}> = ({ title, articles }) => {
+  articles: Array<{ title: string; slug: string }>
+  otherContent: Array<{ text: string; url: string }>
+}> = ({ title, articles, otherContent }) => {
   const { linkResolver } = useLinkResolver()
 
-  if (articles.length === 0) return null
+  if (articles.length < 1 && otherContent.length < 1) return null
+
+  const relatedLinks = (articles ?? [])
+    .map((article) => ({
+      title: article.title,
+      url: linkResolver('article', [article.slug]).href,
+    }))
+    .concat(
+      (otherContent ?? []).map((article) => ({
+        title: article.text,
+        url: article.url,
+      })),
+    )
 
   return (
     <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
@@ -124,14 +145,10 @@ const RelatedArticles: FC<{
         <Text variant="eyebrow" as="h2">
           {title}
         </Text>
-        {articles.map((article) => (
-          <Link
-            key={article.slug}
-            {...linkResolver('article', [article.slug])}
-            underline="normal"
-          >
-            <Text key={article.slug} as="span">
-              {article.title}
+        {relatedLinks.map((link) => (
+          <Link key={link.url} href={link.url} underline="normal">
+            <Text key={link.url} as="span">
+              {link.title}
             </Text>
           </Link>
         ))}
@@ -158,11 +175,7 @@ const TOC: FC<{
           headingTitle: text,
           headingId: id,
         }))}
-        onClick={(id) =>
-          document.getElementById(id).scrollIntoView({
-            behavior: 'smooth',
-          })
-        }
+        onClick={(id) => scrollTo(id, { smooth: true })}
       />
     </Box>
   )
@@ -180,7 +193,9 @@ const ArticleNavigation: FC<
         activeItemTitle={
           !activeSlug
             ? article.shortTitle || article.title
-            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+            : article.subArticles.find(
+                (sub) => activeSlug === sub.slug.split('/').pop(),
+              ).title
         }
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
@@ -200,8 +215,8 @@ const ArticleNavigation: FC<
           ...article.subArticles.map((item) => ({
             title: item.title,
             typename: item.__typename,
-            slug: [article.slug, item.slug],
-            active: activeSlug === item.slug,
+            slug: item.slug.split('/'),
+            active: activeSlug === item.slug.split('/').pop(),
           })),
         ]}
       />
@@ -221,6 +236,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+
   return (
     <Stack space={3}>
       {!!article.category && (
@@ -251,12 +267,11 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
       {article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      {article.relatedArticles.length > 0 && (
-        <RelatedArticles
-          title={n('relatedMaterial')}
-          articles={article.relatedArticles}
-        />
-      )}
+      <RelatedContent
+        title={n('relatedMaterial')}
+        articles={article.relatedArticles}
+        otherContent={article.relatedContent}
+      />
     </Stack>
   )
 }
@@ -269,9 +284,12 @@ export interface ArticleProps {
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
+  const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
     portalRef.current = document.querySelector('#__next')
+    processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
   useContentfulId(article.id)
@@ -279,8 +297,31 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { query } = useRouter()
   const { linkResolver } = useLinkResolver()
 
+  useScrollPosition(
+    ({ currPos }) => {
+      let px = -600
+
+      if (typeof window !== `undefined`) {
+        px = window.innerHeight * -1
+      }
+
+      const elementPosition =
+        processEntryRef && processEntryRef.current
+          ? processEntryRef?.current.getBoundingClientRect().bottom +
+            (px - currPos.y)
+          : 0
+
+      const canShow = elementPosition + currPos.y >= 0
+      setIsVisible(canShow)
+    },
+    [setIsVisible],
+    null,
+    false,
+    150,
+  )
+
   const subArticle = article.subArticles.find((sub) => {
-    return sub.slug === query.subSlug
+    return sub.slug.split('/').pop() === query.subSlug
   })
 
   const contentOverviewOptions = useMemo(() => {
@@ -308,6 +349,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
+  const categoryHref = linkResolver('articlecategory', [article.category.slug])
+    .href
+  const organizationTitle = article.organization[0]?.title
+  const organizationShortTitle = article.organization[0]?.shortTitle
 
   return (
     <>
@@ -378,34 +423,44 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         >
           {!!article.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-              <Text truncate>
-                <Link
-                  href={linkResolver('articlecategory', [
-                    article.category.slug,
-                  ])}
-                >
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
-                    {article.category.title}
-                  </Button>
-                </Link>
-              </Text>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link href={href} pureChildren skipTab>
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Text truncate>
+                  <a href={categoryHref}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
+                      {article.category.title}
+                    </Button>
+                  </a>
+                </Text>
+              </LinkContext.Provider>
             </Box>
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Tag
-                variant="purple"
-                truncate
-                href={article.organization[0].link}
-              >
-                {article.organization[0].title}
-              </Tag>
+              {article.organization[0].link ? (
+                <Link href={article.organization[0].link} skipTab>
+                  <Tag variant="purple" truncate>
+                    {organizationShortTitle || organizationTitle}
+                  </Tag>
+                </Link>
+              ) : (
+                <Tag variant="purple" truncate disabled>
+                  {organizationShortTitle || organizationTitle}
+                </Tag>
+              )}
             </Box>
           )}
         </Box>
@@ -450,19 +505,62 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
-          <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+          <Box paddingTop={2}>
+            <AppendedArticleComponents article={article} />
+          </Box>
+          <Box
+            id="processRef"
+            display={['block', 'block', 'none']}
+            marginTop={7}
+            printHidden
+          >
             {!!processEntry && <ProcessEntry {...processEntry} />}
-            <Box marginTop={3}>
-              <ArticleSidebar
-                article={article}
-                n={n}
-                activeSlug={query.subSlug}
+          </Box>
+          {article.organization.length > 0 && (
+            <Box
+              marginTop={[3, 3, 3, 10, 20]}
+              marginBottom={[3, 3, 3, 10, 20]}
+              printHidden
+            >
+              <InstitutionsPanel
+                img={article.organization[0].logo?.url ?? ''}
+                institution={{
+                  title: article.organization[0].title,
+                  label: n('organization'),
+                  href: article.organization[0].link,
+                }}
+                responsibleParty={article.responsibleParty.map(
+                  (responsibleParty) => ({
+                    title: responsibleParty.title,
+                    label: n('responsibleParty'),
+                    href: responsibleParty.link,
+                  }),
+                )}
+                relatedInstitution={article.relatedOrganization.map(
+                  (relatedOrganization) => ({
+                    title: relatedOrganization.title,
+                    label: n('relatedOrganization'),
+                    href: relatedOrganization.link,
+                  }),
+                )}
+                locale={activeLocale}
+                contactText="Hafa samband"
               />
             </Box>
+          )}
+          <Box display={['block', 'block', 'none']} printHidden>
+            {article.relatedArticles.length > 0 && (
+              <RelatedContent
+                title={n('relatedMaterial')}
+                articles={article.relatedArticles}
+                otherContent={article.relatedContent}
+              />
+            )}
           </Box>
         </Box>
         {!!processEntry &&
           mounted &&
+          isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               <ProcessEntry fixed {...processEntry} />
@@ -470,6 +568,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
+      <OrganizationChatPanel
+        slugs={article.organization.map((x) => x.slug)}
+        pushUp={isVisible}
+      />
+      <OrganizationFooter
+        organizations={article.organization as Organization[]}
+      />
     </>
   )
 }
@@ -506,7 +611,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article/sub-article is found
-  const subArticle = article?.subArticles.find((a) => a.slug === query.subSlug)
+  const subArticle = article?.subArticles.find(
+    (a) => a.slug.split('/').pop() === query.subSlug,
+  )
   if (!article || (query.subSlug && !subArticle)) {
     throw new CustomNextError(404, 'Article not found')
   }

@@ -5,22 +5,22 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class Image {
   @Field(() => ID)
-  id: string
+  id?: string
 
   @Field()
-  url: string
+  url?: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  contentType: string
+  contentType?: string
 
   @Field(() => Int)
-  width: number
+  width?: number
 
   @Field(() => Int)
-  height: number
+  height?: number
 }
 
 export const mapImage = (entry: Asset): SystemMetadata<Image> => {

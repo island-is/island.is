@@ -7,16 +7,16 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class SectionWithImage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field({ nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field(() => Html)
-  html: Html
+  html!: Html //fields.body is required in the contentful validation on the content model
 }
 
 export const mapSectionWithImage = ({

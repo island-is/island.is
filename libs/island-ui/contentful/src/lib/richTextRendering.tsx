@@ -154,6 +154,7 @@ const renderConnectedComponent = (slice) => {
 
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
+      break
     default:
       break
   }

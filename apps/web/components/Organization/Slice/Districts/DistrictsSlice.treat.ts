@@ -1,23 +1,20 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const districtsList = style({
   columnGap: 30,
   ...themeUtils.responsiveStyle({
     xs: {
       columnCount: 1,
-      marginTop: theme.spacing[5],
-      marginBottom: theme.spacing[5],
+    },
+    sm: {
+      columnCount: 2,
     },
     md: {
-      columnCount: 2,
-      marginTop: theme.spacing[9],
+      columnCount: 1,
     },
-    lg: { columnCount: 3 },
-    xl: { columnCount: 3 },
+    lg: {
+      columnCount: 2,
+    },
   }),
-})
-
-export const districtsListItem = style({
-  marginBottom: theme.spacing[4],
 })

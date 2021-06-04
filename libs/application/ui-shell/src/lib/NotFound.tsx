@@ -1,8 +1,7 @@
 import React, { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { defineMessage } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import { StaticText } from '@island.is/application/core'
+import { StaticText, coreMessages } from '@island.is/application/core'
 
 interface Props {
   title?: StaticText
@@ -26,21 +25,10 @@ export const NotFound: FC<Props> = ({ title, subTitle }) => {
             404
           </Text>
           <Text variant="h1" as="h1" marginBottom={3}>
-            {formatMessage(
-              title ||
-                defineMessage({
-                  id: 'application.system:not-found',
-                  defaultMessage: 'Umsókn finnst ekki',
-                }),
-            )}
+            {formatMessage(title ?? coreMessages.notFoundTitle)}
           </Text>
           <Text variant="intro" as="p">
-            {formatMessage(
-              subTitle || {
-                id: 'application.system:not-found-message',
-                defaultMessage: 'Engin umsókn fannst á þessari slóð.',
-              },
-            )}
+            {formatMessage(subTitle ?? coreMessages.notFoundSubTitle)}
           </Text>
         </Box>
       </GridColumn>

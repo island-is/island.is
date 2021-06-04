@@ -8,7 +8,10 @@ import {
   MaritalStatus,
   FamilyRelation,
 } from './types'
-import { NationalRegistryApi, ISLFjolskyldan } from './soap'
+import {
+  NationalRegistryApi,
+  ISLFjolskyldan,
+} from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class NationalRegistryService {

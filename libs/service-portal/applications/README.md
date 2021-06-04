@@ -1,9 +1,19 @@
-<!-- gitbook-ignore -->
+# Service Portal Applications
 
-# service-portal-applications
+## Usage
 
-This library was generated with [Nx](https://nx.dev).
+To be able to show the list of applications, you will need to run the `application-system-api`. Additionally, you can run the `application-system-form` to open the applications to their respective form.
 
-## Running unit tests
+To do so, first run the api
 
-Run `nx test service-portal-applications` to execute the unit tests via [Jest](https://jestjs.io).
+```bash
+yarn start application-system-api
+```
+
+and then, run the form
+
+```bash
+yarn start application-system-form
+```
+
+you will then be able to access it under `localhost:4242`.

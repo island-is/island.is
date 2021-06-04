@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -6,7 +7,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'resource',
@@ -17,28 +17,28 @@ import { ApiProperty } from '@nestjs/swagger'
   ],
 })
 export class Resource extends Model<Resource> {
+  @ApiProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
-  id: string
+  id!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
-  @ApiProperty()
-  nationalId: string
+  nationalId!: string
 
+  @ApiProperty()
   @CreatedAt
-  @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
-  @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  @UpdatedAt
+  readonly modified!: Date
 }

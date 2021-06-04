@@ -56,13 +56,40 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      secondaryMenu {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
       organization {
+        title
+        slug
         logo {
           url
+        }
+        footerItems {
+          title
+          content {
+            ...HtmlFields
+          }
+          link {
+            text
+            url
+          }
         }
       }
       slices {
         ...AllSlices
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      newsTag {
+        id
+        title
+        slug
       }
       featuredImage {
         url
@@ -70,13 +97,19 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         width
         height
       }
-      footerItems {
+      sidebarCards {
         title
         content
+        type
         link {
           text
           url
         }
+      }
+      theme
+      themeProperties {
+        gradientStartColor
+        gradientEndColor
       }
     }
   }
@@ -88,7 +121,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
     getOrganizationSubpage(input: $input) {
       title
       slug
-      description
+      description {
+        ...AllSlices
+      }
       links {
         text
         url
@@ -96,6 +131,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      sliceCustomRenderer
+      sliceExtraText
+      parentSubpage
       featuredImage {
         url
         title
@@ -107,6 +145,26 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   ${slices}
 `
 
+export const GET_ORGANIZATION_SERVICES_QUERY = gql`
+  query GetOrganizationServices($input: GetArticlesInput!) {
+    getArticles(input: $input) {
+      title
+      slug
+      processEntry {
+        id
+      }
+      category {
+        slug
+        title
+      }
+      group {
+        slug
+        title
+      }
+    }
+  }
+`
+
 export const GET_ORGANIZATION_TAGS_QUERY = gql`
   query GetOrganizationTags($input: GetOrganizationTagsInput!) {
     getOrganizationTags(input: $input) {
@@ -114,6 +172,22 @@ export const GET_ORGANIZATION_TAGS_QUERY = gql`
         id
         title
       }
+    }
+  }
+`
+
+export const GET_HOMESTAYS_QUERY = gql`
+  query GetHomestays($input: GetHomestaysInput!) {
+    getHomestays(input: $input) {
+      registrationNumber
+      address
+      name
+      city
+      manager
+      guests
+      rooms
+      propertyId
+      apartmentId
     }
   }
 `

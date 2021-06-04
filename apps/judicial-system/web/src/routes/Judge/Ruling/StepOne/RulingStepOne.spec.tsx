@@ -1,25 +1,28 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { RulingStepOne } from './RulingStepOne'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MemoryRouter, Route } from 'react-router-dom'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import { RulingStepOne } from './RulingStepOne'
 
 describe('/domari-krafa/urskurdur', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
 
     // Act and Assert
     render(
@@ -27,46 +30,51 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_3',
-              ruling:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              custodyEndDate: '2020-10-24T12:31:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              custodyEndDate: '2020-10-24T12:31:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              decision: CaseDecision.ACCEPTING,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                courtCaseFacts: 'Court Case Facts',
+              } as UpdateCase,
+              {
+                courtLegalArguments: 'Court Legal Arguments',
+              } as UpdateCase,
+              {
+                ruling:
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
+              } as UpdateCase,
+              {
+                custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+              } as UpdateCase,
+              {
+                custodyEndDate: '2020-10-24T12:31:00Z',
+              } as UpdateCase,
+              {
+                decision: CaseDecision.ACCEPTING,
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
     userEvent.type(
-      await screen.findByLabelText('Niðurstaða úrskurðar *'),
+      await screen.findByLabelText('Málsatvik *'),
+      'Court Case Facts',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Lagarök *'),
+      'Court Legal Arguments',
+    )
+
+    userEvent.type(
+      await screen.findByLabelText('Efni úrskurðar *'),
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
     )
 
@@ -82,8 +90,6 @@ describe('/domari-krafa/urskurdur', () => {
       }),
     )
 
-    userEvent.type(await screen.findByLabelText('Tímasetning *'), '12:31')
-
     expect(
       await screen.findByRole('button', {
         name: /Halda áfram/i,
@@ -93,6 +99,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not have a disabled continue button by default if case data is valid', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     /**
@@ -104,27 +114,29 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              custodyRestrictions: [
-                CaseCustodyRestrictions.ISOLATION,
-                CaseCustodyRestrictions.MEDIA,
-              ],
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                custodyRestrictions: [
+                  CaseCustodyRestrictions.ISOLATION,
+                  CaseCustodyRestrictions.MEDIA,
+                ],
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -138,6 +150,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not display the isolation checkbox if the case decision is REJECTING', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -145,24 +161,26 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              decision: CaseDecision.REJECTING,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                decision: CaseDecision.REJECTING,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -183,6 +201,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not display the isolation checkbox if the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -190,24 +212,26 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-            } as UpdateCase,
-          ]),
+          ...mockUpdateCaseMutation(
+            [
+              {
+                decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+              } as UpdateCase,
+              {
+                courtCaseFacts: 'string',
+              },
+              {
+                courtLegalArguments: 'string',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
