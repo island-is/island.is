@@ -14,7 +14,7 @@ export class PartyLetterRegistryService {
     private readonly partyLetterRegistryApi: PartyLetterRegistryApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
-  private async handleError(error: any) {
+  private async handleError(error: any): Promise<never> {
     this.logger.error(JSON.stringify(error))
 
     if (error.json) {

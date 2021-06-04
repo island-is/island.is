@@ -25,6 +25,11 @@ type CreateEndorsementListResponse =
     }
   | ErrorResponse
 
+interface PartyLetterData {
+  partyName: string
+  partyLetter: string
+}
+
 const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
   [Constituencies.NORTH_EAST]:
     EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
@@ -74,21 +79,25 @@ export class PartyApplicationService {
     const constituencyTag =
       constituencyMapper[application.answers.constituency as Constituencies]
     const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation {
-        endorsementSystemCreateEndorsementList(input: {
-          title: "${application.answers.partyName}",
-          description: "${application.answers.partyLetter}",
-          endorsementMeta: [fullName, address, signedTags],
-          tags: [${constituencyTag}],
-          validationRules: [],
-        }) {
+      mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
+        endorsementSystemCreateEndorsementList(input: $input) {
           id
         }
       }
     `
 
+    const partyLetter = application.externalData.partyLetterRegistry
+      ?.data as PartyLetterData
     const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
+      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+        input: {
+          title: partyLetter.partyName,
+          description: partyLetter.partyLetter,
+          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: [constituencyTag],
+          validationRules: [],
+        },
+      })
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
