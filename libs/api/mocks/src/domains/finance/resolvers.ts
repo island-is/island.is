@@ -21,6 +21,12 @@ export const resolvers: Resolvers = {
     getCustomerRecords: () => {
       return store.customerRecords
     },
+    getBillReceipts: () => {
+      return store.billReceipts
+    },
+    getFinanceDocument: () => {
+      return store.financeDocuments
+    },
     getExcelDocument: () => {
       return store.excelDocument
     },
