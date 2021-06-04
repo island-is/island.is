@@ -15,9 +15,9 @@ type FieldProps = {
     }
   }
 }
-type PeriodsRepeaterProps = RepeaterProps & FieldProps
+type ScreenProps = RepeaterProps & FieldProps
 
-const PeriodsRepeater: FC<PeriodsRepeaterProps> = ({
+const PeriodsRepeater: FC<ScreenProps> = ({
   removeRepeaterItem,
   application,
   expandRepeater,
