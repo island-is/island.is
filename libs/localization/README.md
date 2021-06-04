@@ -82,7 +82,8 @@ export default Home
 
 ## Message Declaration
 
-To declare a message you have to provide an `id` and a `defaultMessage`, `description` is optional but recommended.
+To declare a message you have to provide a unique `id`. The `defaultMessage` and `description` fields are optional, but recommended.
+
 You can declare a message by:
 
 - Using `formatMessage` method from the `useLocale` hook
@@ -124,28 +125,35 @@ return (
 - Pre-declaring using `defineMessage` or `defineMessages` for later consumption
 
 ```typescript
-const message = defineMessage({
-  id: 'global:title',
-  defaultMessage: 'Default title',
-  description: 'This is a default title in the global namespace',
+const greeting = defineMessage({
+  id: 'global:greeting',
+  defaultMessage: 'Default greeting',
+  description: 'This is a default greeting in the global namespace',
 })
 
 const messages = defineMessages([
-  {
+  header: {
     id: 'global:title',
     defaultMessage: 'Default title',
     description: 'This is a default title in the global namespace',
   },
-  {
+  summary: {
     id: 'global:description',
     defaultMessage: 'Default description',
     description: 'This is a default description in the global namespace',
   },
 ])
 
-const { formatMessage } = useLocale()
-
-return <div>{formatMessage(message)}</div>
+const MyComponent = () => {
+  const { formatMessage } = useLocale()
+  return (
+    <div>
+      <p>{formatMessage(greeting)}</p>
+      <h1>{formatMessage(messages.title)}</h1>
+      <p>{formatMessage(messages.summary)}</p>
+    </div>
+  )
+}
 ```
 
 ## Markdown support
@@ -171,7 +179,7 @@ const message = defineMessage({
 
 ## Message Extraction
 
-Add the `extract-strings` script to `workspace.json`. Running this script will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.
+Add the `extract-strings` script to `workspace.json`.
 
 ```json
 {
@@ -189,3 +197,13 @@ Add the `extract-strings` script to `workspace.json`. Running this script will e
   }
 }
 ```
+
+Running `yarn nx run your-project:extract-strings` will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.
+
+**Notes**:
+
+- Adding a new id automatically creates it in Contentful.
+- Removing an id from the project will automatically remove that id from the Contentful Namespace entry.
+- `defaultMessage` will be used as the initial "Icelandic" translation.
+- Updating or removing a `defaultMessage` **does not** affect the "Icelandic" translation that was initially based on it.
+- If multiple instances of the same id are found, but with different defaults/description, the script throws an error.
