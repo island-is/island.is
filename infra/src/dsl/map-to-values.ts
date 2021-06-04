@@ -47,8 +47,16 @@ export const serializeService: SerializeMethod = (
       }`,
     },
     healthCheck: {
-      liveness: { path: serviceDef.liveness },
-      readiness: { path: serviceDef.readiness },
+      liveness: {
+        path: serviceDef.liveness.path,
+        initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
+        timeoutSeconds: serviceDef.liveness.timeoutSeconds,
+      },
+      readiness: {
+        path: serviceDef.readiness.path,
+        initialDelaySeconds: serviceDef.readiness.initialDelaySeconds,
+        timeoutSeconds: serviceDef.readiness.timeoutSeconds,
+      },
     },
     securityContext,
   }
@@ -284,9 +292,10 @@ function serializeIngress(
       `Missing ingress host info for service:${serviceDef.name}, ingress:${ingressName} in env:${env.type}`,
     )
   }
-  const hosts = (typeof ingress === 'string'
-    ? [ingressConf.host[env.type] as string]
-    : (ingressConf.host[env.type] as string[])
+  const hosts = (
+    typeof ingress === 'string'
+      ? [ingressConf.host[env.type] as string]
+      : (ingressConf.host[env.type] as string[])
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)

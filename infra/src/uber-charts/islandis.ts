@@ -31,11 +31,13 @@ const appSystemForm = appSystemFormSetup({})
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+const endorsement = endorsementServiceSetup()
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
+  servicesEndorsementApi: endorsement,
 })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
@@ -49,7 +51,6 @@ const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
-const endorsement = endorsementServiceSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -102,6 +103,7 @@ export const Services: EnvironmentServices = {
     contentfulTranslationExtension,
     downloadService,
     nameRegistryBackend,
+    endorsement,
   ],
 }
 

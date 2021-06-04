@@ -35,7 +35,6 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-storage-application-system',
         prod: 'island-is-prod-storage-application-system',
       },
-      AUDIT_GROUP_NAME: 'k8s/island-is/audit-log',
       SYSLUMENN_HOST: {
         dev: 'https://api.syslumenn.is/dev',
         staging: 'https://api.syslumenn.is/dev',
@@ -109,17 +108,15 @@ export const serviceSetup = (services: {
         staging: 'Gunnar Ingi',
         prod: 'Stafrænt Ísland',
       },
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
+      LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
+        dev: 'gunnar.ingi@fjr.is',
+        staging: 'gunnar.ingi@fjr.is',
+        prod: 'island@island.is',
       },
-      IDENTITY_SERVER_JWKS_URI: {
-        dev:
-          'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
-        staging:
-          'https://identity-server.staging01.devland.is/.well-known/openid-configuration/jwks',
-        prod: 'https://innskra.island.is/.well-known/openid-configuration/jwks',
+      LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: {
+        dev: 'Gunnar Ingi',
+        staging: 'Gunnar Ingi',
+        prod: 'Stafrænt Ísland',
       },
       NOVA_URL: {
         dev: 'https://smsapi.devnova.is',

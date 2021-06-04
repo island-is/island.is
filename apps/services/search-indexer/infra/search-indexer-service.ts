@@ -89,6 +89,16 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       },
     })
+    .resources({
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+      limits: {
+        cpu: '400m',
+        memory: '1024Mi',
+      },
+    })
     .ingress({
       primary: {
         host: {

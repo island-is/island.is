@@ -34,10 +34,26 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       },
       S3_TIME_TO_LIVE_POST: '15',
       S3_TIME_TO_LIVE_GET: '5',
+      XROAD_BASE_PATH_WITH_ENV: {
+        dev: 'https://securityserver.dev01.devland.is/r1/IS-DEV',
+        staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
+        prod: 'https://securityserver.island.is/r1/IS',
+      },
+      XROAD_CLIENT_ID: {
+        dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
+        staging: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client',
+        prod: 'IS/GOV/5804170510/Rettarvorslugatt-Client',
+      },
+      XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
+      XROAD_COURT_MEMBER_CODE: {
+        dev: '10019',
+        staging: '4707171140',
+        prod: '4707171140',
+      },
     })
     .secrets({
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
-      COURT_MOBILE_NUMBERS: '/k8s/judicial-system/COURT_MOBILE_NUMBERS',
+      COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME',
@@ -47,6 +63,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
+      COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+      XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
+      XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
+      XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
     })
     .initContainer({

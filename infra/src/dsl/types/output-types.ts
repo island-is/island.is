@@ -23,9 +23,13 @@ export interface ServiceHelm {
   healthCheck: {
     liveness: {
       path: string
+      initialDelaySeconds: number
+      timeoutSeconds: number
     }
     readiness: {
       path: string
+      initialDelaySeconds: number
+      timeoutSeconds: number
     }
   }
 

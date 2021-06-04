@@ -11,6 +11,7 @@ import {
   ReplicaCount,
   PostgresInfo,
   OpsEnv,
+  HealthProbe,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -19,12 +20,20 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
   serviceDef: ServiceDefinition
-  liveness(path: string) {
-    this.serviceDef.liveness = path
+  liveness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.liveness.path = path
+    } else {
+      this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
+    }
     return this
   }
-  readiness(path: string) {
-    this.serviceDef.readiness = path
+  readiness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.readiness.path = path
+    } else {
+      this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
+    }
     return this
   }
   targetPort(port: number) {
@@ -34,8 +43,8 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   constructor(name: string) {
     this.serviceDef = {
-      liveness: '/',
-      readiness: '/',
+      liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
+      readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
       name: name,
       grantNamespaces: [],

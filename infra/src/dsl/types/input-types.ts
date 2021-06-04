@@ -20,9 +20,15 @@ export type PostgresInfo = {
   passwordSecret?: string
 }
 
+export type HealthProbe = {
+  path: string
+  initialDelaySeconds: number
+  timeoutSeconds: number
+}
+
 export type ServiceDefinition = {
-  liveness: string
-  readiness: string
+  liveness: HealthProbe
+  readiness: HealthProbe
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables

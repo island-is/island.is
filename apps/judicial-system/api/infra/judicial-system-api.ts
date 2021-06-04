@@ -17,7 +17,7 @@ export const serviceSetup = (services: {
         staging: ref((h) => `judicial-system.${h.env.domain}`),
         prod: 'rettarvorslugatt.island.is',
       },
-      ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'false', prod: 'false' },
+      ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'true', prod: 'false' },
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
       AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
@@ -38,11 +38,6 @@ export const serviceSetup = (services: {
         staging: '4707171140',
         prod: '4707171140',
       },
-      COURT_USERNAME: {
-        dev: 'rvg',
-        staging: 'rvg',
-        prod: 'rvgrvk',
-      },
       HIDDEN_FEATURES: {
         dev: '',
         staging: '',
@@ -51,7 +46,7 @@ export const serviceSetup = (services: {
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
-      COURT_PASSWORD: '/k8s/judicial-system/COURT_PASSWORD',
+      COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
       XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
       XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
       XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',

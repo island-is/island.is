@@ -23,20 +23,6 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
       ],
       postgres: postgresInfo,
     })
-    .env({
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      IDENTITY_SERVER_JWKS_URI: {
-        prod: 'https://innskra.island.is/.well-known/openid-configuration/jwks',
-        dev:
-          'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
-        staging:
-          'https://identity-server.staging01.devland.is/.well-known/openid-configuration/jwks',
-      },
-    })
     .secrets({
       ALLOWED_NATIONAL_IDS:
         '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS',

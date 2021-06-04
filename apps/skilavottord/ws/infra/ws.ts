@@ -15,7 +15,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       postgres: postgresInfo,
     })
     .env({
-      AUDIT_GROUP_NAME: 'k8s/island-is/audit-log',
       SAML_ENTRY_POINT: {
         dev: 'https://innskraning.island.is/?id=sv_citizen.dev',
         staging: 'https://innskraning.island.is/?id=sv_citizen.staging&qaa=4',

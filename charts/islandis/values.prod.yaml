@@ -7,7 +7,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: http://web-application-system-api.application-system.svc.cluster.local
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
+    AUTH_PUBLIC_API_URL: https://innskra.island.is/public
     CONTACT_US_EMAIL: island@island.is
     CONTENTFUL_HOST: cdn.contentful.com
     DOCUMENT_PROVIDER_BASE_PATH: https://documentprovidermanagement-island-is.azurewebsites.net
@@ -16,13 +16,12 @@ api:
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: https://test-identity-island-is.azurewebsites.net/connect/token
     DOWNLOAD_SERVICE_BASE_PATH: https://api.island.is
     ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/
+    ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-prod-download-cache-api
     FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
     HEALTH_INSURANCE_XROAD_WSDLURL: https://huld.sjukra.is/islandrg?wsdl
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: >-
       http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local
-    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
-    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
     REGULATIONS_API_URL: https://reglugerdir-api.herokuapp.com/api/v1
     SEND_FROM_EMAIL: island@island.is
     SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
@@ -37,6 +36,8 @@ api:
     XROAD_HEALTH_INSURANCE_ID: IS/GOV/4804080550/SJUKRA-Protected
     XROAD_MMS_GRADE_SERVICE_ID: IS/EDU/5708150320/MMS-Protected/grade-api-v1
     XROAD_MMS_LICENSE_SERVICE_ID: IS/EDU/5708150320/MMS-Protected/license-api-v1
+    XROAD_TJODSKRA_API_PATH: /SKRA-Protected/Einstaklingar-v1
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_VMST_API_PATH: /VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1
     XROAD_VMST_MEMBER_CODE: '7005942039'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: digitaliceland
@@ -47,9 +48,13 @@ api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /health
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/api
   ingress:
@@ -103,7 +108,6 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: island-is-prod-storage-application-system
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
     CLIENT_LOCATION_ORIGIN: https://island.is/umsoknir
     CONTENTFUL_HOST: cdn.contentful.com
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
@@ -117,10 +121,10 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     GRAPHQL_API_URL: http://web-api.islandis.svc.cluster.local
     HEALTH_INSURANCE_XROAD_WSDLURL: https://huld.sjukra.is/islandrg?wsdl
-    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
-    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     INSTITUTION_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
+    LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
+    LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_URL: https://smsapi.nova.is
     NOVA_USERNAME: IslandIs_User_Production
     REDIS_URL_NODE_01: >-
@@ -139,9 +143,13 @@ application-system-api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api
   initContainer:
@@ -200,9 +208,13 @@ application-system-form:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form
   ingress:
@@ -233,9 +245,13 @@ contentful-translation-extension:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: >-
       821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension
@@ -259,19 +275,19 @@ contentful-translation-extension:
     privileged: false
 download-service:
   enabled: true
-  env:
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
-    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
-    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
   grantNamespaces:
     - islandis
     - nginx-ingress-external
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: download/v1/liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: download/v1/readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service
   ingress:
@@ -298,7 +314,9 @@ download-service:
     privileged: false
 global:
   env:
+    AUDIT_GROUP_NAME: /island-is/audit-log
     AWS_REGION: eu-west-1
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
     PORT: '3333'
     name: prod
   image:
@@ -312,16 +330,18 @@ icelandic-names-registry-backend:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: icelandic_names_registry_backend
     DB_USER: icelandic_names_registry_backend
-    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
-    IDENTITY_SERVER_JWKS_URI: https://innskra.island.is/.well-known/openid-configuration/jwks
   grantNamespaces:
     - islandis
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: >-
       821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend
@@ -364,9 +384,13 @@ island-ui-storybook:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook
   ingress:
@@ -400,9 +424,13 @@ search-indexer-service:
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer
   ingress:
@@ -470,6 +498,13 @@ search-indexer-service:
     default: 1
     max: 1
     min: 1
+  resources:
+    limits:
+      cpu: 400m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   secrets:
     API_CMS_SYNC_TOKEN: /k8s/search-indexer/API_CMS_SYNC_TOKEN
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
@@ -493,9 +528,13 @@ service-portal:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal
   ingress:
@@ -523,7 +562,6 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: service_portal_api
     DB_USER: service_portal_api
@@ -536,9 +574,13 @@ service-portal-api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile
   initContainer:
@@ -582,7 +624,6 @@ service-portal-api:
 services-documents:
   enabled: true
   env:
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: services_documents
     DB_USER: services_documents
@@ -592,9 +633,13 @@ services-documents:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents
   initContainer:
@@ -630,9 +675,13 @@ skilavottord-web:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web
   ingress:
@@ -659,7 +708,6 @@ skilavottord-web:
 skilavottord-ws:
   enabled: true
   env:
-    AUDIT_GROUP_NAME: k8s/island-is/audit-log
     AUTH_AUDIENCE: island.is
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: skilavottord
@@ -678,9 +726,13 @@ skilavottord-ws:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws
   ingress:
@@ -740,9 +792,13 @@ web:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/web
   ingress:
@@ -780,9 +836,13 @@ xroad-collector:
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector
   namespace: xroad-collector

@@ -6,6 +6,7 @@ export const serviceSetup = (services: {
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
+  servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -17,7 +18,6 @@ export const serviceSetup = (services: {
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
       ),
-      AUDIT_GROUP_NAME: 'k8s/island-is/audit-log',
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
       ),
@@ -26,17 +26,10 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-upload-api',
         prod: 'island-is-prod-upload-api',
       },
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      IDENTITY_SERVER_JWKS_URI: {
-        prod: 'https://innskra.island.is/.well-known/openid-configuration/jwks',
-        dev:
-          'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
-        staging:
-          'https://identity-server.staging01.devland.is/.well-known/openid-configuration/jwks',
+      AUTH_PUBLIC_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is/public',
+        staging: 'https://identity-server.staging01.devland.is/public',
+        prod: 'https://innskra.island.is/public',
       },
       ELASTIC_NODE: {
         dev:
@@ -154,7 +147,20 @@ export const serviceSetup = (services: {
         dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
+      XROAD_TJODSKRA_MEMBER_CODE: {
+        prod: '10001',
+        dev: '10001',
+        staging: '10001',
+      },
+      XROAD_TJODSKRA_API_PATH: {
+        prod: '/SKRA-Protected/Einstaklingar-v1',
+        dev: '/SKRA-Protected/Einstaklingar-v1',
+        staging: '/SKRA-Protected/Einstaklingar-v1',
+      },
       REGULATIONS_API_URL: 'https://reglugerdir-api.herokuapp.com/api/v1',
+      ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
+        (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
     })
 
     .secrets({

@@ -11,9 +11,13 @@ air-discount-scheme-api:
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api
   ingress:
@@ -60,9 +64,13 @@ air-discount-scheme-backend:
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend
   ingress:
@@ -112,9 +120,13 @@ air-discount-scheme-web:
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
+      initialDelaySeconds: 3
       path: /liveness
+      timeoutSeconds: 3
     readiness:
+      initialDelaySeconds: 3
       path: /readiness
+      timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web
   ingress:
@@ -141,7 +153,9 @@ air-discount-scheme-web:
     privileged: false
 global:
   env:
+    AUDIT_GROUP_NAME: /island-is/audit-log
     AWS_REGION: eu-west-1
+    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
     PORT: '3333'
     name: prod
   image:

@@ -6,7 +6,6 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
     .image('services-user-profile')
     .serviceAccount('service-portal-api')
     .env({
-      AUDIT_GROUP_NAME: 'k8s/island-is/audit-log',
       SERVICE_PORTAL_BASE_URL: {
         dev: 'https://beta.dev01.devland.is/minarsidur',
         staging: 'https://beta.staging01.devland.is/minarsidur',
