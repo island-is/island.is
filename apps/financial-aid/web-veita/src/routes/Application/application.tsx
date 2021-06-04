@@ -22,9 +22,14 @@ import {
 } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
-import { calcAgeOfApplication, insertAt, calcAge } from '../../utils/formHelper'
+import { calcDifferenceInDate, insertAt, calcAge } from '../../utils/formHelper'
 
-import { GeneratedProfile, GenerateName, Profile } from '../../components'
+import {
+  GeneratedProfile,
+  GenerateName,
+  Profile,
+  Files,
+} from '../../components'
 
 interface ApplicantData {
   application: Application
@@ -40,7 +45,6 @@ const ApplicationProfile = () => {
   })
 
   if (data?.application) {
-    console.log(data.application)
     const applicationArr = [
       {
         title: 'Tímabil',
@@ -141,6 +145,8 @@ const ApplicationProfile = () => {
       },
     ]
 
+    const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
+
     return (
       <Box marginY={10}>
         <Box>
@@ -201,13 +207,20 @@ const ApplicationProfile = () => {
             </Text>
           </Box>
           <Text variant="small">
-            {calcAgeOfApplication(data.application.created)}
+            {calcDifferenceInDate(data.application.created)}
           </Text>
         </Box>
 
         <Profile heading="Umsókn" info={applicationArr} />
         <Profile heading="Umsækjandi" info={applicant} />
         <Profile heading="Aðrar upplýsingar" info={applicantMoreInfo} />
+
+        <>
+          <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+            Gögn frá umsækjanda
+          </Text>
+          <Files heading="Tekjugögn" filesArr={filesTest} />
+        </>
       </Box>
     )
   }

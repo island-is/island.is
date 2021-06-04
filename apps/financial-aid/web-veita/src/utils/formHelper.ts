@@ -3,7 +3,7 @@ import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 
-export const calcAgeOfApplication = (dateCreated: string | undefined) => {
+export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   if (dateCreated) {
     if (differenceInMinutes(new Date(), new Date(dateCreated)) < 60) {
       return differenceInMinutes(new Date(), new Date(dateCreated)) + ' min'
@@ -48,4 +48,8 @@ export const calcAge = (ssn: string) => {
   )
 
   return differenceInYears(new Date(), birtDay)
+}
+
+export const getFileType = (fileName: string) => {
+  return fileName.substring(fileName.lastIndexOf('.') + 1)
 }

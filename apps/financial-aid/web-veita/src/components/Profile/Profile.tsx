@@ -38,7 +38,7 @@ const Profile: React.FC<Props> = ({ heading, info }) => {
         {info.map((item) => {
           return (
             <Box>
-              <Text fontWeight="semiBold" marginBottom={1}>
+              <Text variant="eyebrow" marginBottom={1}>
                 {item.title}
               </Text>
 
