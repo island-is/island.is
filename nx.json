@@ -103,6 +103,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-freshdesk": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
