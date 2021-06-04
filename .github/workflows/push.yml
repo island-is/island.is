@@ -69,7 +69,7 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK::branch-created"
+                  echo "::set-output name=PRE_CHECK::push"
                   exit 0
                 fi
             done
@@ -340,7 +340,8 @@ jobs:
   helm-docker-build:
     needs:
       - prepare
-    if: needs.prepare.outputs.IMAGES
+      - pre-checks
+    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     steps:
@@ -408,11 +409,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-20.04
-    if: always() && needs.retag-unaffected.result == 'success'
+    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
       - pre-checks
       - prepare
+      - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
