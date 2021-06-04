@@ -29,7 +29,7 @@ import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
-@Controller('delegations')
+@Controller('public/delegations')
 export class DelegationsController {
   constructor(private readonly delegationsService: DelegationsService) {}
 
@@ -75,7 +75,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('custom/delete/from/:id')
+  @Delete('public/delegations/custom/delete/from/:id')
   @ApiCreatedResponse()
   async deleteFrom(
     @CurrentUser() user: User,
@@ -85,7 +85,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('custom/delete/to/:id')
+  @Delete('public/delegations/custom/delete/to/:id')
   @ApiCreatedResponse()
   async deleteTo(
     @CurrentUser() user: User,
@@ -95,7 +95,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('custom/findone/:id')
+  @Get('public/delegations/custom/findone/:id')
   @ApiOkResponse({ type: DelegationDTO })
   async findOne(
     @CurrentUser() user: User,
@@ -105,7 +105,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('custom/to')
+  @Get('public/delegations/custom/to')
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomTo(
     @CurrentUser() user: User,
@@ -114,7 +114,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('custom/from')
+  @Get('public/delegations/custom/from')
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomFrom(
     @CurrentUser() user: User,
