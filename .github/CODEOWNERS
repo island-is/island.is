@@ -58,6 +58,8 @@
 /libs/clients/vmst/                                                                           @island-is/aranja-applications
 /libs/shared/form-fields/                                                                     @island-is/aranja-applications
 
+/apps/native/                                                                                 @island-is/aranja-app
+
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change    @island-is/kolibri-modern-family
