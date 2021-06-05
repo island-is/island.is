@@ -1,5 +1,7 @@
 import AWS from 'aws-sdk'
 import yargs from 'yargs'
+import { OpsEnv } from './dsl/types/input-types'
+import { charts, OpsEnvNames } from './uber-charts/all-charts'
 const { hideBin } = require('yargs/helpers')
 
 interface GetArguments {
@@ -20,6 +22,20 @@ const config = {
 
 const ssm = new AWS.SSM(config)
 yargs(hideBin(process.argv))
+  .command(
+    'get-all-required-secrets',
+    'get all required secrets from all charts',
+    { env: { type: 'string', demand: true, choices: OpsEnvNames } },
+    (p) => {
+      console.log(
+        Object.values(charts)
+          .map((chart) => chart[p.env as OpsEnv])
+          .flatMap((s) => s)
+          .flatMap((s) => Object.values(s.serviceDef.secrets))
+          .join('\n'),
+      )
+    },
+  )
   .command(
     'get <key>',
     'get secret',

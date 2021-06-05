@@ -1,0 +1,111 @@
+name: Config values
+
+on:
+  push:
+    paths:
+      - 'charts/**'
+      - 'infra/**'
+      - '**/infra/**'
+
+env:
+  DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
+  AWS_MAX_ATTEMPTS: 10
+jobs:
+  prepare:
+    runs-on: ubuntu-20.04
+    outputs:
+      ENVS: ${{ steps.select_envs.outputs.ENVS }}
+    steps:
+      - name: Select secret envs to check
+        id: select_envs
+        run: |
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          ENVS=("dev" "staging")
+          if [[ $GIT_BRANCH =~ ^release\/ ]]; then
+            echo "Adding prod environments to test set"
+            ENVS+=("prod")
+          fi
+          ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
+          echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
+
+  helm-values-validation:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache for NodeJS dependencies
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: infra/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        working-directory: infra
+        run: yarn install --frozen-lock
+
+      - name: Run unit tests
+        run: ./infra/scripts/ci/test-unit.sh
+
+      - name: Check chart values are up-to-date
+        run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
+
+  check-secrets:
+    needs:
+      - prepare
+      - helm-values-validation # waiting on this job so the cache would be prepared
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache for NodeJS dependencies
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: infra/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        working-directory: infra
+        run: yarn install --frozen-lock
+
+      - name: Install yq
+        run: sudo snap install yq
+      - name: Select role
+        env:
+          prod: arn:aws:iam::251502586493:role/list-ssm-parameters
+          dev: arn:aws:iam::013313053092:role/list-ssm-parameters
+          staging: arn:aws:iam::261174024191:role/list-ssm-parameters
+        run: echo "ROLE=$${{ matrix.env }}" >> $GITHUB_ENV
+      - name: Get local secrets
+        working-directory: infra
+        run: ./node_modules/.bin/ts-node src/secrets.ts get-all-required-secrets --env=${{ matrix.env }} >> LOCAL_SECRETS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-to-assume: ${{ env.ROLE }}
+          role-duration-seconds: 900
+          role-session-name: DescribeSSM
+      - name: Get secrets in AWS
+        env:
+          AWS_RETRY_MODE: standard
+          AWS_MAX_ATTEMPTS: '6'
+        run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
+      - name: Compare secrets
+        shell: /bin/bash {0}
+        run: |
+          missing=$(grep -vxFf CLOUD_SECRETS LOCAL_SECRETS)
+          if [[ "$missing" != "" ]]; then
+            echo "Required secrets not available in environment ${{ matrix.env }}:"
+            while IFS= read -r secret ; do echo $secret; done <<< "$missing"
+            exit 1
+          fi

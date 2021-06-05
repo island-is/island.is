@@ -6,7 +6,7 @@ ROOT="$DIR/../.."
 export PATH=$ROOT/node_modules/.bin:$PATH
 
 case "$1" in
-    "islandis" | "judicial-system")
+    "islandis" | "judicial-system" | "air-discount-scheme")
         ENVS=("dev" "staging" "prod")
         for env in ${ENVS[@]}; do
           ts-node --dir $ROOT $ROOT/src/render-env --chart="$1" --env=${env} | diff $ROOT/../charts/$1/values.${env}.yaml -
