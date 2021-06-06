@@ -1015,11 +1015,15 @@ export class ApplicationController {
   @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<CreatePaymentResponseDto>({
+    resources: (app) => app.id,
+  })
   async paymentApplication(
     @Body()
     application: CreatePaymentDto,
     @CurrentUser()
     user: User,
+    @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<CreatePaymentResponseDto> {
     const { applicationId } = application
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
@@ -1039,7 +1043,7 @@ export class ApplicationController {
 
     const paymentDto: Pick<
       Payment,
-       'id',
+      | 'id',
       | 'applicationId'
       | 'fulfilled'
       | 'referenceId'
@@ -1047,12 +1051,12 @@ export class ApplicationController {
       | 'definition'
       | 'amount'
       | 'expiresAt'
-    > = {
-      id: application.id,
+      > = {
+      id: id,
       applicationId: application.applicationId,
       fulfilled: false,
-      referenceId: "mad ID - Where is this generated???",
-      user4: "gief url",
+      referenceId: "",
+      user4: "",
       definition: {},
       amount: application.amount,
       expiresAt: application.expiresAt,
