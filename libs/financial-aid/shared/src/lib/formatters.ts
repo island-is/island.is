@@ -15,3 +15,6 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
   CannotWork: 'Ég er ekki vinnufær',
   Other: 'Ekkert að ofan lýsir mínum aðstæðum',
 }
+
+export const insertAt = (str: string, sub: string, pos: number) =>
+  `${str.slice(0, pos)}${sub}${str.slice(pos)}`

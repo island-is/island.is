@@ -19,10 +19,11 @@ import {
   HomeCircumstances,
   getEmploymentStatus,
   Employment,
+  insertAt,
 } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
-import { calcDifferenceInDate, insertAt, calcAge } from '../../utils/formHelper'
+import { calcDifferenceInDate, calcAge } from '../../utils/formHelper'
 
 import {
   GeneratedProfile,
