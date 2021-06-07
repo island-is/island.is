@@ -36,6 +36,7 @@ module.exports = {
         },
         amount: {
           type: Sequelize.STRING,
+          allowNull: false,
         },
         /// maybe remove.
         expiresAt: {

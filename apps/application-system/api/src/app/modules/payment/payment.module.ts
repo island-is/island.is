@@ -17,7 +17,6 @@ import {
   PAYMENT_CONFIG,
   PaymentConfig,
 } from './payment.configuration'
-import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -58,7 +57,6 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as PaymentConfig,
     },
     AwsService,
-    ApplicationAccessService,
   ],
 })
 export class PaymentModule {}
