@@ -38,6 +38,9 @@ export class ApplicationModel implements Application {
   @Field()
   readonly student!: boolean
 
+  @Field({ nullable: true })
+  readonly studentCustom?: string
+
   @Field(() => String)
   readonly employment!: Employment
 

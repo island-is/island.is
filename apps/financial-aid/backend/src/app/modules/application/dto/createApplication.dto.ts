@@ -56,6 +56,11 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly student: boolean
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly studentCustom: string
+
   @IsNotEmpty()
   @IsBoolean()
   @ApiProperty()

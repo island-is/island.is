@@ -99,6 +99,13 @@ export class ApplicationModel extends Model<ApplicationModel> {
   student: boolean
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  studentCustom: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })

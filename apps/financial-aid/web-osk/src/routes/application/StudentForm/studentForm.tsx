@@ -25,20 +25,15 @@ const StudentForm = () => {
   ) as NavigationProps
 
   const [error, setError] = useState(false)
-  const [customEducation, setCustomEducation] = useState(
-    form?.student && form?.student.includes('Yes')
-      ? form?.student.replace('Yes', '')
-      : '',
-  )
 
   const options = [
     {
       label: 'Nei',
-      value: 'No',
+      value: 0,
     },
     {
       label: 'Já',
-      value: 'Yes',
+      value: 1,
     },
   ]
 
@@ -56,10 +51,10 @@ const StudentForm = () => {
           <RadioButtonContainer
             options={options}
             error={error && form?.student === undefined}
-            isChecked={(value: string) => {
-              return form?.student && form?.student.includes(value)
+            isChecked={(value: number | boolean) => {
+              return value === form?.student
             }}
-            onChange={(value: string) => {
+            onChange={(value: number | boolean) => {
               updateForm({ ...form, student: value })
               if (error) {
                 setError(false)
@@ -82,8 +77,7 @@ const StudentForm = () => {
           marginTop={1}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]:
-              form?.student && form?.student.includes('Yes'),
+            [`${styles.inputAppear}`]: form?.student,
           })}
         >
           <Input
@@ -91,12 +85,12 @@ const StudentForm = () => {
             label="Hvaða námi?"
             name="education"
             placeholder="Dæmi: Viðskiptafræði í HR"
-            value={customEducation}
-            hasError={error && form?.student === 'Yes'}
+            value={form?.studentCustom}
+            hasError={error && form?.studentCustom === undefined}
             errorMessage="Þú þarft að fylla út"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => setCustomEducation(event.target.value)}
+            ) => updateForm({ ...form, studentCustom: event.target.value })}
           />
         </Box>
       </FormContentContainer>
@@ -106,17 +100,16 @@ const StudentForm = () => {
         nextUrl={navigation?.nextUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.student !== undefined) {
-            if (form?.student === 'Yes') {
-              if (customEducation === '') {
+            if (form?.student) {
+              if (form?.studentCustom === '') {
                 setError(true)
               } else {
                 router.push(navigation?.nextUrl ?? '/')
-                updateForm({
-                  ...form,
-                  student: 'Yes ' + customEducation,
-                })
               }
             } else {
+              if (form?.studentCustom) {
+                updateForm({ ...form, studentCustom: '' })
+              }
               router.push(navigation?.nextUrl ?? '/')
             }
           } else {

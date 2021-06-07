@@ -18,3 +18,28 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
 
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
+
+export const aidCalculator = (
+  homeCircumstances: HomeCircumstances,
+  aid: {
+    ownApartmentOrLease: number
+    withOthersOrUnknow: number
+    withParents: number
+  },
+): number => {
+  switch (homeCircumstances) {
+    case 'OwnPlace':
+      return aid.ownApartmentOrLease
+    case 'RegisteredLease':
+      return aid.ownApartmentOrLease
+    case 'WithOthers':
+      return aid.withOthersOrUnknow
+    case 'Other':
+    case 'Unknown':
+      return aid.withOthersOrUnknow
+    case 'WithParents':
+      return aid.withParents
+    default:
+      return aid.withParents
+  }
+}

@@ -39,6 +39,10 @@ export class CreateApplicationInput implements CreateApplication {
   readonly student!: boolean
 
   @Allow()
+  @Field({ nullable: true })
+  readonly studentCustom?: string
+
+  @Allow()
   @Field(() => String)
   readonly employment!: Employment
 

@@ -8,7 +8,8 @@ export interface Form {
   customPostalCode?: number
   homeCircumstances?: HomeCircumstances
   homeCircumstancesCustom?: string
-  student?: string
+  student?: boolean
+  studentCustom?: string
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean

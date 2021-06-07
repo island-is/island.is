@@ -65,15 +65,15 @@ const AddressForm = () => {
 
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            {bulletPoints.map((item) => {
-              return <Bullet>{item}</Bullet>
+            {bulletPoints.map((item, index) => {
+              return <Bullet key={'bulletpoints-' + index}>{item}</Bullet>
             })}
             <Bullet>
               Áður en þú sækir um fjárhagsaðstoð skaltu athuga hvort þú eigir
               rétt á annarskonar aðstoð. Dæmi um önnur úrræði eru{' '}
               {suggestedLinks.map((item, index) => {
                 return (
-                  <>
+                  <span key={'suggestedLinks-' + index}>
                     <Link
                       href={item.url}
                       color="blue400"
@@ -83,7 +83,7 @@ const AddressForm = () => {
                       {item.text}
                     </Link>
                     {index !== suggestedLinks.length - 1 ? ', ' : ' '}
-                  </>
+                  </span>
                 )
               })}
               og sjúkrasjóðir stéttarfélaga.

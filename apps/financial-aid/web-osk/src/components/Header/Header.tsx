@@ -17,8 +17,6 @@ const Header: React.FC = () => {
   const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 
-  console.log(isAuthenticated, user)
-
   return (
     <GridContainer>
       <header className={`${styles.header}`}>

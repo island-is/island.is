@@ -37,6 +37,7 @@ import {
   getEmploymentStatus,
   CreateApplication,
   insertAt,
+  aidCalculator,
 } from '@island.is/financial-aid/shared'
 
 interface MunicipalityData {
@@ -76,7 +77,8 @@ const SummaryForm = () => {
           email: form?.emailAddress,
           homeCircumstances: form?.homeCircumstances,
           homeCircumstancesCustom: form?.homeCircumstancesCustom,
-          student: form?.student === 'Yes' ? true : false,
+          student: Boolean(form?.student),
+          studentCustom: form?.studentCustom,
           hasIncome: Boolean(form?.hasIncome),
           usePersonalTaxCredit: Boolean(form?.usePersonalTaxCredit),
           bankNumber: form?.bankNumber,
@@ -89,31 +91,6 @@ const SummaryForm = () => {
       },
     })
     return data
-  }
-
-  const aidCalculator = (
-    homeCircumstances: HomeCircumstances,
-    aid: {
-      ownApartmentOrLease: number
-      withOthersOrUnknow: number
-      withParents: number
-    },
-  ): number => {
-    switch (homeCircumstances) {
-      case 'OwnPlace':
-        return aid.ownApartmentOrLease
-      case 'RegisteredLease':
-        return aid.ownApartmentOrLease
-      case 'WithOthers':
-        return aid.withOthersOrUnknow
-      case 'Other':
-      case 'Unknown':
-        return aid.withOthersOrUnknow
-      case 'WithParents':
-        return aid.withParents
-      default:
-        return aid.withParents
-    }
   }
 
   const aidAmount = useMemo(() => {
@@ -360,7 +337,14 @@ const SummaryForm = () => {
         nextButtonText="Senda umsókn"
         onNextButtonClick={() => {
           createApplication()
-            .then(() => router.push(navigation?.nextUrl ?? '/'))
+            .then((el) => {
+              router.push(navigation?.nextUrl ?? '/')
+
+              // router.events.on('routeChangeComplete', (url) => {
+              //   //Clear session storage
+              //   updateForm({ submitted: false, incomeFiles: [] })
+              // })
+            })
             .catch((err) =>
               setFormError({
                 status: true,

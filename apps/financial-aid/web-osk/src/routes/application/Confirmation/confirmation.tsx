@@ -47,6 +47,10 @@ const Confirmation = () => {
     },
   ]
 
+  useEffect(() => {
+    document.title = 'Umsókn um fjárhagsaðstoð'
+  }, [])
+
   return (
     <FormLayout activeSection={navigation?.activeSectionIndex}>
       <FormContentContainer>
@@ -66,8 +70,8 @@ const Confirmation = () => {
         </Text>
         <Box marginBottom={[4, 4, 5]}>
           <BulletList type={'ul'} space={2}>
-            {nextSteps.map((item) => {
-              return <Bullet>{item}</Bullet>
+            {nextSteps.map((item, index) => {
+              return <Bullet key={'nextSteps-' + index}>{item}</Bullet>
             })}
           </BulletList>
         </Box>
@@ -77,9 +81,9 @@ const Confirmation = () => {
         </Text>
         <Box marginBottom={[4, 4, 5]}>
           <BulletList type={'ul'} space={2}>
-            {otherOptions.map((item) => {
+            {otherOptions.map((item, index) => {
               return (
-                <Bullet>
+                <Bullet key={'options-' + index}>
                   <Button
                     colorScheme="default"
                     iconType="filled"

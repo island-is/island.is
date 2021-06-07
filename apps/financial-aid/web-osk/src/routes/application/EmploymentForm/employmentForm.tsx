@@ -104,7 +104,9 @@ const EmploymentForm = () => {
           if (form?.employment) {
             if (form?.employment !== 'Other') {
               //Validation
-              updateForm({ ...form, employmentCustom: '' })
+              if (form?.employmentCustom) {
+                updateForm({ ...form, employmentCustom: '' })
+              }
               router.push(navigation?.nextUrl ?? '/')
             } else {
               if (Boolean(form?.employmentCustom)) {

@@ -112,7 +112,10 @@ const HomeCircumstancesForm = () => {
           if (form?.homeCircumstances && navigation?.nextUrl) {
             if (form?.homeCircumstances !== 'Other') {
               //Validation
-              updateForm({ ...form, homeCircumstancesCustom: '' })
+              if (form?.homeCircumstancesCustom) {
+                updateForm({ ...form, homeCircumstancesCustom: '' })
+              }
+
               router.push(navigation?.nextUrl)
             } else {
               if (Boolean(form?.homeCircumstancesCustom)) {
