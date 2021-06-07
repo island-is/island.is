@@ -448,13 +448,15 @@ export function buildKeyValueField(data: {
   label: FormText
   value: FormText | FormTextArray
   width?: FieldWidth
+  condition?: Condition
 }): KeyValueField {
-  const { label, value, width = 'full' } = data
+  const { label, value, condition, width = 'full' } = data
 
   return {
     id: '',
     title: '',
     children: undefined,
+    condition,
     width,
     label,
     value,

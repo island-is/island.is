@@ -7,6 +7,7 @@ module.exports = {
     {
       ...getGenericPartyLetterRegistry(),
       owner: '0101302989',
+      party_letter: 'W',
     },
   ],
 }
