@@ -14,7 +14,8 @@ import {
   Req,
 } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   User,
@@ -80,7 +81,7 @@ export class AuthController {
     this.logger.debug(`Received login request with return url ${returnUrl}`)
 
     // Local development
-    if (environment.auth.allowAuthBypass && nationalId) {
+    if (environment.auth.allowFakeUsers && nationalId) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
 
       const fakeUser = this.authService.fakeUser(nationalId)

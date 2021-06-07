@@ -3329,7 +3329,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/financial-aid/api",
             "main": "apps/financial-aid/api/src/main.ts",
@@ -3341,13 +3341,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/financial-aid/api/src/environments/environment.ts",
-                  "with": "apps/financial-aid/api/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -3427,7 +3421,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/financial-aid/backend",
             "main": "apps/financial-aid/backend/src/main.ts",
@@ -3455,13 +3449,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/financial-aid/backend/src/environments/environment.ts",
-                  "with": "apps/financial-aid/backend/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           },
           "outputs": ["{options.outputPath}"]

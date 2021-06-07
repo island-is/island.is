@@ -16,7 +16,7 @@ import { ApplicationModel } from './models'
 import { CreateApplicationDto } from './dto'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
-import { User, Application } from '@island.is/financial-aid/shared'
+import type { User } from '@island.is/financial-aid/shared'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')

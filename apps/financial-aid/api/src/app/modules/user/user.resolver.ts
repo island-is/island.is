@@ -1,8 +1,9 @@
 import { Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/financial-aid/shared'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { User } from '@island.is/financial-aid/shared'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
