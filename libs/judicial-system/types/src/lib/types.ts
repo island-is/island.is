@@ -273,6 +273,8 @@ export interface UpdateCase {
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   caseFacts?: string
   legalArguments?: string
+  requestProsecutorOnlySession?: boolean
+  prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
   prosecutorId?: string

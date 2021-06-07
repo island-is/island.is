@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -8,6 +8,7 @@ import {
 import { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
+  setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -58,7 +59,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             </Text>
           </BlueBox>
         </Box>
-        <Box component="section" marginBottom={7}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Greinargerð um málsatvik{' '}
@@ -69,43 +70,41 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               />
             </Text>
           </Box>
-          <Box marginBottom={3}>
-            <Input
-              data-testid="caseFacts"
-              name="caseFacts"
-              label="Málsatvik"
-              placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
-              errorMessage={caseFactsEM}
-              hasError={caseFactsEM !== ''}
-              defaultValue={workingCase?.caseFacts}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'caseFacts',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  caseFactsEM,
-                  setCaseFactsEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'caseFacts',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCaseFactsEM,
-                )
-              }
-              required
-              rows={14}
-              textarea
-            />
-          </Box>
+          <Input
+            data-testid="caseFacts"
+            name="caseFacts"
+            label="Málsatvik"
+            placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+            errorMessage={caseFactsEM}
+            hasError={caseFactsEM !== ''}
+            defaultValue={workingCase?.caseFacts}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'caseFacts',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                caseFactsEM,
+                setCaseFactsEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'caseFacts',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setCaseFactsEM,
+              )
+            }
+            required
+            rows={14}
+            textarea
+          />
         </Box>
-        <Box component="section" marginBottom={7}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Greinargerð um lagarök{' '}
@@ -116,7 +115,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               />
             </Text>
           </Box>
-          <Box marginBottom={7}>
+          <Box marginBottom={5}>
             <Input
               data-testid="legalArguments"
               name="legalArguments"
@@ -151,7 +150,56 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               rows={14}
             />
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={5}>
+            <BlueBox>
+              <Box marginBottom={2}>
+                <Checkbox
+                  name="request-prosecutor-only-session"
+                  label="Beiðni um dómþing að varnaraðila fjarstöddum"
+                  tooltip="TODO"
+                  checked={workingCase.requestProsecutorOnlySession}
+                  onChange={(evt) => {
+                    setWorkingCase({
+                      ...workingCase,
+                      requestProsecutorOnlySession: evt.target.checked,
+                    })
+                    updateCase(workingCase.id, {
+                      requestProsecutorOnlySession: evt.target.checked,
+                    })
+                  }}
+                  filled
+                  large
+                />
+              </Box>
+              <Input
+                name="prosecutor-only-session-request"
+                label="Beiðni"
+                placeholder="TODO"
+                defaultValue={workingCase.prosecutorOnlySessionRequest}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'prosecutorOnlySessionRequest',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'prosecutorOnlySessionRequest',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+                textarea
+                rows={7}
+              />
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={10}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Athugasemdir vegna málsmeðferðar{' '}
@@ -162,34 +210,32 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 />
               </Text>
             </Box>
-            <Box marginBottom={3}>
-              <Input
-                name="comments"
-                label="Athugasemdir"
-                placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
-                defaultValue={workingCase?.comments}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'comments',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'comments',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-              />
-            </Box>
+            <Input
+              name="comments"
+              label="Athugasemdir"
+              placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
+              defaultValue={workingCase?.comments}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'comments',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'comments',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              textarea
+              rows={7}
+            />
           </Box>
         </Box>
       </FormContentContainer>
