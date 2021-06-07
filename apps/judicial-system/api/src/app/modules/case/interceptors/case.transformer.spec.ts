@@ -72,7 +72,7 @@ describe('transformCase', () => {
     })
   })
 
-  describe('isCustodyEndDateInThePast', () => {
+  describe('isValidToDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {
       // Arrange
       const theCase = {} as Case
@@ -81,33 +81,33 @@ describe('transformCase', () => {
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isCustodyEndDateInThePast).toBeUndefined()
+      expect(res.isValidToDateInThePast).toBeUndefined()
     })
 
     it('should set custody end date in the past to false if custody end date in the future', () => {
       // Arrange
-      const custodyEndDate = new Date()
-      custodyEndDate.setSeconds(custodyEndDate.getSeconds() + 1)
-      const theCase = { custodyEndDate: custodyEndDate.toISOString() } as Case
+      const validToDate = new Date()
+      validToDate.setSeconds(validToDate.getSeconds() + 1)
+      const theCase = { validToDate: validToDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isCustodyEndDateInThePast).toBe(false)
+      expect(res.isValidToDateInThePast).toBe(false)
     })
 
     it('should set custody end date in the past to true if custody end date in the past', () => {
       // Arrange
-      const custodyEndDate = new Date()
-      custodyEndDate.setSeconds(custodyEndDate.getSeconds() - 1)
-      const theCase = { custodyEndDate: custodyEndDate.toISOString() } as Case
+      const validToDate = new Date()
+      validToDate.setSeconds(validToDate.getSeconds() - 1)
+      const theCase = { validToDate: validToDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.isCustodyEndDateInThePast).toBe(true)
+      expect(res.isValidToDateInThePast).toBe(true)
     })
   })
 

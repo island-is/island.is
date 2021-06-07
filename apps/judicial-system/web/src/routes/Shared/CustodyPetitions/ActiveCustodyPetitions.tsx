@@ -206,7 +206,7 @@ const ActiveCustodyPetitions: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
-                    c.isCustodyEndDateInThePast,
+                    c.isValidToDateInThePast,
                   ).color
                 }
                 outlined
@@ -216,7 +216,7 @@ const ActiveCustodyPetitions: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
-                    c.isCustodyEndDateInThePast,
+                    c.isValidToDateInThePast,
                   ).text
                 }
               </Tag>

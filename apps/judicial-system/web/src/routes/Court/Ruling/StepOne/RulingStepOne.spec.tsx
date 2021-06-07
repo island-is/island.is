@@ -46,7 +46,7 @@ describe('/domari-krafa/urskurdur', () => {
                 custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
               } as UpdateCase,
               {
-                custodyEndDate: '2020-10-24T12:31:00Z',
+                validToDate: '2020-10-24T12:31:00Z',
               } as UpdateCase,
               {
                 decision: CaseDecision.ACCEPTING,
@@ -106,8 +106,8 @@ describe('/domari-krafa/urskurdur', () => {
 
     // Act
     /**
-     * TODO: Use test mock with custodyEndDate: null to make sure it's being autofilled with
-     * requestedCustodyEndDate
+     * TODO: Use test mock with validToDate: null to make sure it's being autofilled with
+     * requestedValidToDate
      */
     render(
       <MockedProvider

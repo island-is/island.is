@@ -17,8 +17,8 @@ export const StepThree: React.FC = () => {
   const id = router.query.id
 
   const [
-    requestedCustodyEndDateIsValid,
-    setRequestedCustodyEndDateIsValid,
+    requestedValidToDateIsValid,
+    setRequestedValidToDateIsValid,
   ] = useState(false)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -34,7 +34,7 @@ export const StepThree: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && resCase) {
-      setRequestedCustodyEndDateIsValid(resCase.requestedCustodyEndDate != null)
+      setRequestedValidToDateIsValid(resCase.requestedValidToDate != null)
 
       setWorkingCase(resCase)
     }
@@ -57,8 +57,8 @@ export const StepThree: React.FC = () => {
         <StepThreeForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          requestedCustodyEndDateIsValid={requestedCustodyEndDateIsValid}
-          setRequestedCustodyEndDateIsValid={setRequestedCustodyEndDateIsValid}
+          requestedValidToDateIsValid={requestedValidToDateIsValid}
+          setRequestedValidToDateIsValid={setRequestedValidToDateIsValid}
         />
       ) : null}
     </PageLayout>

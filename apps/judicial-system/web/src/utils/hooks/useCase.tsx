@@ -20,7 +20,7 @@ type autofillProperties = Pick<
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
-  | 'custodyEndDate'
+  | 'validToDate'
   | 'isolationTo'
 >
 

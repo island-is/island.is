@@ -100,7 +100,7 @@ const PastCustodyPetitions: React.FC<Props> = (props) => {
         disableSortBy: true,
         Cell: (row: {
           row: {
-            original: { state: CaseState; isCustodyEndDateInThePast: boolean }
+            original: { state: CaseState; isValidToDateInThePast: boolean }
           }
         }) => {
           return (
@@ -109,7 +109,7 @@ const PastCustodyPetitions: React.FC<Props> = (props) => {
                 mapCaseStateToTagVariant(
                   row.row.original.state,
                   isCourtRole,
-                  row.row.original.isCustodyEndDateInThePast,
+                  row.row.original.isValidToDateInThePast,
                 ).text
               }
             </Tag>
@@ -124,14 +124,14 @@ const PastCustodyPetitions: React.FC<Props> = (props) => {
           row: {
             original: {
               rulingDate: string
-              custodyEndDate: string
+              validToDate: string
               courtEndTime: string
               state: CaseState
             }
           }
         }) => {
           const rulingDate = row.row.original.rulingDate
-          const custodyEndDate = row.row.original.custodyEndDate
+          const validToDate = row.row.original.validToDate
           const courtEndDate = row.row.original.courtEndTime
           const state = row.row.original.state
 
@@ -139,16 +139,16 @@ const PastCustodyPetitions: React.FC<Props> = (props) => {
             return null
           } else if (rulingDate) {
             return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
-              parseISO(custodyEndDate),
+              parseISO(validToDate),
               'd.M.y',
             )}`
           } else if (courtEndDate) {
             return `${formatDate(
               parseISO(courtEndDate),
               'd.M.y',
-            )} - ${formatDate(parseISO(custodyEndDate), 'd.M.y')}`
+            )} - ${formatDate(parseISO(validToDate), 'd.M.y')}`
           } else {
-            return formatDate(parseISO(custodyEndDate), 'd.M.y')
+            return formatDate(parseISO(validToDate), 'd.M.y')
           }
         },
       },

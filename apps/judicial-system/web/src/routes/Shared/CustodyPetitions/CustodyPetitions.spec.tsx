@@ -30,7 +30,7 @@ const mockCasesQuery = [
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
             accusedName: 'Jon Harring Sr.',
-            custodyEndDate: null,
+            validToDate: null,
             parentCase: {
               id: '1337',
             },
@@ -43,7 +43,7 @@ const mockCasesQuery = [
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
             accusedName: 'Jon Harring',
-            custodyEndDate: null,
+            validToDate: null,
           },
           {
             id: 'test_id_3',
@@ -53,7 +53,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Mikki Refur',
-            custodyEndDate: '2020-11-11T12:31:00.000Z',
+            validToDate: '2020-11-11T12:31:00.000Z',
           },
           {
             id: 'test_id_4',
@@ -63,7 +63,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Erlingur L Kristinsson',
-            custodyEndDate: '2020-11-11T12:31:00.000Z',
+            validToDate: '2020-11-11T12:31:00.000Z',
           },
           {
             id: 'test_id_5',
@@ -73,7 +73,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Erlingur L Kristinsson',
-            custodyEndDate: '2020-11-11T12:31:00.000Z',
+            validToDate: '2020-11-11T12:31:00.000Z',
           },
           {
             id: 'test_id_6',
@@ -83,7 +83,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'D. M. Kil',
-            custodyEndDate: '2020-11-11T12:31:00.000Z',
+            validToDate: '2020-11-11T12:31:00.000Z',
           },
           {
             id: 'test_id_7',
@@ -93,7 +93,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Moe',
-            custodyEndDate: '2020-11-11T12:31:00.000Z',
+            validToDate: '2020-11-11T12:31:00.000Z',
           },
         ],
       },

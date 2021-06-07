@@ -4,7 +4,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 export const mapCaseStateToTagVariant = (
   state: CaseState,
   isCourtRole: boolean,
-  isCustodyEndDateInThePast?: boolean,
+  isValidToDateInThePast?: boolean,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
@@ -18,7 +18,7 @@ export const mapCaseStateToTagVariant = (
     case CaseState.RECEIVED:
       return { color: 'blueberry', text: 'Krafa móttekin' }
     case CaseState.ACCEPTED:
-      if (isCustodyEndDateInThePast) {
+      if (isValidToDateInThePast) {
         return {
           color: 'darkerBlue',
           text: 'Lokið',

@@ -95,7 +95,7 @@ function constructRequestPdf(existingCase: Case) {
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court?.name,
-        existingCase.requestedCustodyEndDate,
+        existingCase.requestedValidToDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),

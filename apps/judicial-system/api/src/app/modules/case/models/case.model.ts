@@ -77,7 +77,7 @@ export class Case implements TCase {
   readonly requestedCourtDate?: string
 
   @Field({ nullable: true })
-  readonly requestedCustodyEndDate?: string
+  readonly requestedValidToDate?: string
 
   @Field({ nullable: true })
   readonly otherDemands?: string
@@ -173,10 +173,10 @@ export class Case implements TCase {
   readonly decision?: CaseDecision
 
   @Field({ nullable: true })
-  readonly custodyEndDate?: string
+  readonly validToDate?: string
 
   @Field({ nullable: true })
-  isCustodyEndDateInThePast?: boolean
+  isValidToDateInThePast?: boolean
 
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]

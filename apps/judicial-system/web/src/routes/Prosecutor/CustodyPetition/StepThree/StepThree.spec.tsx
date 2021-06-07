@@ -48,7 +48,7 @@ describe('Custody petition, step three', () => {
                 custodyProvisions: [CaseCustodyProvisions._95_1_C],
               } as UpdateCase,
               {
-                requestedCustodyEndDate: formatISO(lastDateOfTheMonth),
+                requestedValidToDate: formatISO(lastDateOfTheMonth),
               } as UpdateCase,
             ],
             'test_id_2',

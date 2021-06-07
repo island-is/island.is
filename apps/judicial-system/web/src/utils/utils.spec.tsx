@@ -203,7 +203,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
+      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
 
     test('should be valid given just the first six digits', () => {
@@ -227,7 +227,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
+      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
 
     test('should not be valid given an invalid month', () => {
@@ -239,7 +239,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
+      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
   })
 
@@ -391,7 +391,7 @@ describe('Step helper', () => {
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
         accusedGender: CaseGender.MALE,
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        validToDate: '2020-10-22T12:31:00.000Z',
       }
 
       // Act
@@ -427,7 +427,7 @@ describe('Step helper', () => {
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
         accusedGender: CaseGender.MALE,
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        validToDate: '2020-10-22T12:31:00.000Z',
         type: CaseType.CUSTODY,
         isolationTo: '2020-10-22T12:31:00.000Z',
       }
@@ -463,7 +463,7 @@ describe('Step helper', () => {
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        validToDate: '2020-10-22T12:31:00.000Z',
         accusedGender: CaseGender.MALE,
       }
 
@@ -498,7 +498,7 @@ describe('Step helper', () => {
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        validToDate: '2020-10-22T12:31:00.000Z',
         accusedGender: CaseGender.MALE,
         parentCase: {
           id: 'TEST_EXTENSION',
@@ -537,7 +537,7 @@ describe('Step helper', () => {
         decision: CaseDecision.ACCEPTING,
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        validToDate: '2020-10-22T12:31:00.000Z',
         accusedGender: CaseGender.MALE,
         parentCase: {
           id: 'TEST_EXTENSION',
@@ -572,7 +572,7 @@ describe('Step helper', () => {
   })
 
   describe('constructPoliceDemands', () => {
-    test('should render a message if requestedCustodyEndDate is not set', async () => {
+    test('should render a message if requestedValidToDate is not set', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -583,8 +583,8 @@ describe('Step helper', () => {
         ],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-11-26T12:31:00.000Z',
-        requestedCustodyEndDate: undefined,
+        validToDate: '2020-11-26T12:31:00.000Z',
+        requestedValidToDate: undefined,
       }
 
       // Act
@@ -623,8 +623,8 @@ describe('Step helper', () => {
         ],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-11-26T12:31:00.000Z',
-        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        validToDate: '2020-11-26T12:31:00.000Z',
+        requestedValidToDate: '2020-11-26T12:31:00.000Z',
         court: mockCourt,
         parentCase: {
           id: 'TEST_EXTENSION',
@@ -669,8 +669,8 @@ describe('Step helper', () => {
         ],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-11-26T12:31:00.000Z',
-        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        validToDate: '2020-11-26T12:31:00.000Z',
+        requestedValidToDate: '2020-11-26T12:31:00.000Z',
         court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }
@@ -712,8 +712,8 @@ describe('Step helper', () => {
         ],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
-        custodyEndDate: '2020-11-26T12:31:00.000Z',
-        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        validToDate: '2020-11-26T12:31:00.000Z',
+        requestedValidToDate: '2020-11-26T12:31:00.000Z',
         court: mockCourt,
         otherDemands: 'Lorem ipsum.',
       }

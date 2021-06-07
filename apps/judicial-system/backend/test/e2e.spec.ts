@@ -136,7 +136,7 @@ function remainingProsecutorCaseData() {
   return {
     arrestDate: '2020-09-08T08:00:00.000Z',
     requestedCourtDate: '2020-09-08T11:30:00.000Z',
-    requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+    requestedValidToDate: '2020-09-29T12:00:00.000Z',
     otherDemands: 'Other Demands',
     lawsBroken: 'Broken Laws',
     custodyProvisions: [
@@ -174,7 +174,7 @@ function remainingJudgeCaseData() {
     courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
-    custodyEndDate: '2021-09-28T12:00:00.000Z',
+    validToDate: '2021-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
     isolationTo: '2021-09-10T12:00:00.000Z',
@@ -258,9 +258,9 @@ function caseToCCase(dbCase: Case) {
     arrestDate: theCase.arrestDate && theCase.arrestDate.toISOString(),
     requestedCourtDate:
       theCase.requestedCourtDate && theCase.requestedCourtDate.toISOString(),
-    requestedCustodyEndDate:
-      theCase.requestedCustodyEndDate &&
-      theCase.requestedCustodyEndDate.toISOString(),
+    requestedValidToDate:
+      theCase.requestedValidToDate &&
+      theCase.requestedValidToDate.toISOString(),
     prosecutor: theCase.prosecutor && userToCUser(theCase.prosecutor),
     sharedWithProsecutorsOffice:
       theCase.sharedWithProsecutorsOffice &&
@@ -269,8 +269,7 @@ function caseToCCase(dbCase: Case) {
     courtStartDate:
       theCase.courtStartDate && theCase.courtStartDate.toISOString(),
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
-    custodyEndDate:
-      theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    validToDate: theCase.validToDate && theCase.validToDate.toISOString(),
     isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
     rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
     accusedPostponedAppealDate:
@@ -338,8 +337,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCourtDate || null).toBe(
     caseTwo.requestedCourtDate || null,
   )
-  expect(caseOne.requestedCustodyEndDate || null).toBe(
-    caseTwo.requestedCustodyEndDate || null,
+  expect(caseOne.requestedValidToDate || null).toBe(
+    caseTwo.requestedValidToDate || null,
   )
   expect(caseOne.otherDemands || null).toBe(caseTwo.otherDemands || null)
   expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
@@ -392,7 +391,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.ruling || null).toBe(caseTwo.ruling || null)
   expect(caseOne.decision || null).toBe(caseTwo.decision || null)
-  expect(caseOne.custodyEndDate || null).toBe(caseTwo.custodyEndDate || null)
+  expect(caseOne.validToDate || null).toBe(caseTwo.validToDate || null)
   expect(caseOne.custodyRestrictions || null).toStrictEqual(
     caseTwo.custodyRestrictions || null,
   )

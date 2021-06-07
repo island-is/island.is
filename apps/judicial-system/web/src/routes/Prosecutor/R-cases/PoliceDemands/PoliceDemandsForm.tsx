@@ -36,7 +36,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   }
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
-  const [, setRequestedCustodyEndDateIsValid] = useState<boolean>(true)
+  const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [policeDemandsEM, setPoliceDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
@@ -60,22 +60,22 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <DateTime
-            name="reqCustodyEndDate"
+            name="reqValidToDate"
             datepickerLabel="Heimild gildir til:"
             minDate={new Date()}
             selectedDate={
-              workingCase.requestedCustodyEndDate
-                ? new Date(workingCase.requestedCustodyEndDate)
+              workingCase.requestedValidToDate
+                ? new Date(workingCase.requestedValidToDate)
                 : undefined
             }
             onChange={(date: Date | undefined, valid: boolean) => {
               newSetAndSendDateToServer(
-                'requestedCustodyEndDate',
+                'requestedValidToDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCustodyEndDateIsValid,
+                setRequestedValidToDateIsValid,
                 updateCase,
               )
             }}

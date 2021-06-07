@@ -260,12 +260,12 @@ export const JudgeOverview: React.FC = () => {
                     value: workingCase.parentCase
                       ? `${capitalize(
                           formatDate(
-                            workingCase.parentCase.custodyEndDate,
+                            workingCase.parentCase.validToDate,
                             'PPPP',
                             true,
                           ) || '',
                         )} kl. ${formatDate(
-                          workingCase.parentCase.custodyEndDate,
+                          workingCase.parentCase.validToDate,
                           TIME_FORMAT,
                         )}`
                       : workingCase.arrestDate

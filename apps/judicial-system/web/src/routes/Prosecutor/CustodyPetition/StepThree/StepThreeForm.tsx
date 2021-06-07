@@ -30,18 +30,16 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  requestedCustodyEndDateIsValid: boolean
-  setRequestedCustodyEndDateIsValid: React.Dispatch<
-    React.SetStateAction<boolean>
-  >
+  requestedValidToDateIsValid: boolean
+  setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
-    requestedCustodyEndDateIsValid,
-    setRequestedCustodyEndDateIsValid,
+    requestedValidToDateIsValid,
+    setRequestedValidToDateIsValid,
   } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
@@ -72,7 +70,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   } var/er til `}
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
-                      workingCase.parentCase.custodyEndDate,
+                      workingCase.parentCase.validToDate,
                       'PPPPp',
                     )?.replace('dagur,', 'dagsins')}
                   </Text>
@@ -81,7 +79,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </Box>
           <DateTime
-            name="reqCustodyEndDate"
+            name="reqValidToDate"
             datepickerLabel={`${
               workingCase.type === CaseType.CUSTODY
                 ? 'Gæsluvarðhald'
@@ -89,18 +87,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
             } til`}
             minDate={new Date()}
             selectedDate={
-              workingCase.requestedCustodyEndDate
-                ? new Date(workingCase.requestedCustodyEndDate)
+              workingCase.requestedValidToDate
+                ? new Date(workingCase.requestedValidToDate)
                 : undefined
             }
             onChange={(date: Date | undefined, valid: boolean) => {
               newSetAndSendDateToServer(
-                'requestedCustodyEndDate',
+                'requestedValidToDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCustodyEndDateIsValid,
+                setRequestedValidToDateIsValid,
                 updateCase,
               )
             }}
@@ -264,7 +262,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             !validate(workingCase.lawsBroken || '', 'empty').isValid ||
-            !requestedCustodyEndDateIsValid ||
+            !requestedValidToDateIsValid ||
             !workingCase.custodyProvisions ||
             workingCase.custodyProvisions?.length === 0
           }

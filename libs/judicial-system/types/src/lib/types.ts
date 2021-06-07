@@ -164,7 +164,7 @@ export interface Case {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
-  requestedCustodyEndDate?: string
+  requestedValidToDate?: string
   otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
@@ -196,8 +196,8 @@ export interface Case {
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
-  custodyEndDate?: string
-  isCustodyEndDateInThePast?: boolean
+  validToDate?: string
+  isValidToDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
   isolationTo?: string
@@ -267,7 +267,7 @@ export interface UpdateCase {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
-  requestedCustodyEndDate?: string
+  requestedValidToDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -295,7 +295,7 @@ export interface UpdateCase {
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
-  custodyEndDate?: string
+  validToDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
   isolationTo?: string

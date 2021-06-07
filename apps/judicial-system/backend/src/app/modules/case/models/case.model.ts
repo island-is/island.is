@@ -171,7 +171,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedCustodyEndDate: Date
+  requestedValidToDate: Date
 
   @Column({
     type: DataType.STRING,
@@ -395,7 +395,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  custodyEndDate: Date
+  validToDate: Date
 
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
