@@ -7,8 +7,8 @@ import {
   Form,
   FormModes,
   coreMessages,
-  buildTextField,
   Application,
+  buildKeyValueField,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
@@ -18,61 +18,51 @@ import { getApplicationAnswers } from '../parentalLeaveUtils'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
-  // title: otherParentApprovalFormMessages.formTitle,
-  title: 'Tilfærsla réttinda',
+  title: otherParentApprovalFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      // title: otherParentApprovalFormMessages.reviewSection,
-      title: 'Samþykki',
+      title: otherParentApprovalFormMessages.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          // title: title: otherParentApprovalFormMessages.multiTitle,
-          title: 'Samþykki á tilfærslu réttinda',
+          title: otherParentApprovalFormMessages.multiTitle,
           children: [
             buildDescriptionField({
               id: 'intro',
               title: '',
-              // description: otherParentApprovalFormMessages.introDescription,
-              description:
-                'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir tilfærslu á réttindum frá þér til sín. Óskað er eftir tilfærslu á eftirfærandi réttindum:',
+              description: otherParentApprovalFormMessages.introDescription,
             }),
-            buildTextField({
-              id: 'requestingRights',
-              title: 'Fjöldi daga sem óskað er eftir',
-              description:
-                'Að nýta daga af þínum rétti til töku fæðingarorlofs, við það minnkar hámarksréttur þinn',
+
+            buildKeyValueField({
+              label: otherParentApprovalFormMessages.labelDays,
+              width: 'half',
               condition: (answers) =>
                 getApplicationAnswers(answers).isRequestingRights === YES,
               // TODO: update when requested days are no longer a binary choice
               // defaultValue: (application: Application) => getApplicationAnswers(application.answers).requestDays
-              defaultValue: 45,
-              disabled: true,
+              value: '45',
             }),
-            buildTextField({
-              id: 'requestingPersonalDiscount',
-              title: 'Hlutfall sem óskað er eftir',
-              description:
-                'Að nýta persónuafslátt þinn á meðan á fæðingarorlofi stendur',
+            buildKeyValueField({
+              label: otherParentApprovalFormMessages.labelPersonalDiscount,
+              width: 'half',
               condition: (answers) =>
                 getApplicationAnswers(answers)
                   .usePersonalAllowanceFromSpouse === YES,
-              defaultValue: (application: Application) => {
+              value: (application: Application) => {
                 const {
                   spouseUseAsMuchAsPossible,
                   spouseUsage,
                 } = getApplicationAnswers(application.answers)
 
-                if (spouseUseAsMuchAsPossible) {
+                if (spouseUseAsMuchAsPossible === YES) {
                   return '100%'
                 }
 
                 return `${spouseUsage}%`
               },
-              disabled: true,
             }),
             buildSubmitField({
               id: 'submit',

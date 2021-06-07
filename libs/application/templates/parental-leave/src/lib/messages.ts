@@ -1344,6 +1344,16 @@ export const otherParentApprovalFormMessages = defineMessages({
     description:
       'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
   },
+  labelDays: {
+    id: 'pl.application:otherParent.label.days',
+    defaultMessage: 'Fjöldi umbeðinna daga',
+    description: 'Number of requested days',
+  },
+  labelPersonalDiscount: {
+    id: 'pl.application:otherParent.label.personalDiscount',
+    defaultMessage: 'Nýting á þínum persónuafslætti',
+    description: 'Usage of your personald discount',
+  },
   finalTitle: {
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',

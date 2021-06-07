@@ -312,10 +312,11 @@ export const calculatePeriodPercentage = (
   return Math.min(100, Math.round((months / difference) * 100))
 }
 
-type OtherParent = typeof NO | typeof MANUAL | undefined
-
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(answers, 'otherParent') as OtherParent
+  const otherParent = getValueViaPath(
+    answers,
+    'otherParent',
+  ) as SchemaFormValues['otherParent']
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
