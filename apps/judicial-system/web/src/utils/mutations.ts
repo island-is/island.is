@@ -48,6 +48,7 @@ export const CreateCaseMutation = gql`
       requestedValidToDate
       otherDemands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
@@ -170,6 +171,7 @@ export const ExtendCaseMutation = gql`
       requestedValidToDate
       otherDemands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions

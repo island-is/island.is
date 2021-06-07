@@ -227,6 +227,7 @@ export interface Case {
   requestedValidToDate?: string
   otherDemands?: string
   lawsBroken?: string
+  legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
@@ -329,6 +330,7 @@ export interface UpdateCase {
   requestedCourtDate?: string
   requestedValidToDate?: string
   lawsBroken?: string
+  legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   caseFacts?: string

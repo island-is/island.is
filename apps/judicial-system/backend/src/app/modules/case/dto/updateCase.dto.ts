@@ -110,6 +110,11 @@ export class UpdateCaseDto {
   readonly lawsBroken?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly legalBasis?: string
+
+  @IsOptional()
   @IsEnum(CaseCustodyProvisions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
   readonly custodyProvisions?: CaseCustodyProvisions[]

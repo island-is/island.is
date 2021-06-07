@@ -188,6 +188,13 @@ export class Case extends Model<Case> {
   lawsBroken: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  legalBasis: string
+
+  @Column({
     type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,
     values: Object.values(CaseCustodyProvisions),

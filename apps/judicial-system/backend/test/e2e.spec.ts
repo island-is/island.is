@@ -140,6 +140,7 @@ function remainingProsecutorCaseData() {
     requestedValidToDate: '2020-09-29T12:00:00.000Z',
     otherDemands: 'Other Demands',
     lawsBroken: 'Broken Laws',
+    legalBasis: 'Legal Basis',
     custodyProvisions: [
       CaseCustodyProvisions._95_1_A,
       CaseCustodyProvisions._99_1_B,
@@ -346,6 +347,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.otherDemands || null).toBe(caseTwo.otherDemands || null)
   expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
+  expect(caseOne.legalBasis || null).toBe(caseTwo.legalBasis || null)
   expect(caseOne.custodyProvisions || null).toStrictEqual(
     caseTwo.custodyProvisions || null,
   )

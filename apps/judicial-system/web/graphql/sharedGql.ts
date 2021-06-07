@@ -29,6 +29,7 @@ export const CaseQuery = gql`
       requestedValidToDate
       otherDemands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions

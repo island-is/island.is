@@ -85,6 +85,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly lawsBroken?: string
 
+  @Field({ nullable: true })
+  readonly legalBasis?: string
+
   @Field(() => [String], { nullable: true })
   readonly custodyProvisions?: CaseCustodyProvisions[]
 

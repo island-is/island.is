@@ -77,6 +77,7 @@ const prosecutorUpdateRule = {
     'requestedValidToDate',
     'otherDemands',
     'lawsBroken',
+    'legalBasis',
     'custodyProvisions',
     'requestedCustodyRestrictions',
     'requestedOtherRestrictions',

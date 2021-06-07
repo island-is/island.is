@@ -92,6 +92,10 @@ export class UpdateCaseInput implements UpdateCase {
   readonly lawsBroken?: string
 
   @Allow()
+  @Field({ nullable: true })
+  readonly legalBasis?: string
+
+  @Allow()
   @Field(() => [String], { nullable: true })
   readonly custodyProvisions?: CaseCustodyProvisions[]
 
