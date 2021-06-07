@@ -1,18 +1,10 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useMemo,
-  useCallback,
-} from 'react'
+import React, { useState, useContext, useMemo } from 'react'
 import {
   Text,
   Divider,
   Box,
   Button,
-  AccordionCard,
-  ContentBlock,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -28,6 +20,7 @@ import {
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 
 import * as styles from './summaryForm.treat'
@@ -43,6 +36,7 @@ import {
   Employment,
   getEmploymentStatus,
   CreateApplication,
+  insertAt,
 } from '@island.is/financial-aid/shared'
 
 interface MunicipalityData {
@@ -52,6 +46,7 @@ interface MunicipalityData {
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const { data, error, loading } = useQuery<MunicipalityData>(
     GetMunicipalityQuery,
@@ -75,9 +70,9 @@ const SummaryForm = () => {
     const { data } = await creatApplicationMutation({
       variables: {
         input: {
-          nationalId: '2305952249',
-          name: 'Nafn Nafnsson',
-          phoneNumber: '6973345',
+          nationalId: user?.nationalId,
+          name: user?.name,
+          phoneNumber: user?.phoneNumber,
           email: form?.emailAddress,
           homeCircumstances: form?.homeCircumstances,
           homeCircumstancesCustom: form?.homeCircumstancesCustom,
@@ -195,9 +190,15 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Text as="h2" variant="h3" marginBottom={2}>
-          Áætluð aðstoð
-        </Text>
+        <Box display="flex" alignItems="center" marginBottom={1}>
+          <Box marginRight={1}>
+            <Text as="h2" variant="h3" marginBottom={1}>
+              Áætluð aðstoð
+            </Text>
+          </Box>
+
+          <Text variant="small">(til útgreiðslu í byrjun júní)</Text>
+        </Box>
 
         <Text marginBottom={[2, 2, 3]}>
           Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
@@ -211,7 +212,7 @@ const SummaryForm = () => {
           <>
             {calculation.map((item, index) => {
               return (
-                <>
+                <span key={'calculation-' + index}>
                   <Box
                     display="flex"
                     justifyContent="spaceBetween"
@@ -223,7 +224,7 @@ const SummaryForm = () => {
                   </Box>
 
                   <Divider />
-                </>
+                </span>
               )
             })}
             <Box
@@ -245,7 +246,7 @@ const SummaryForm = () => {
         )}
         {loading && (
           <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
-            <LoadingIcon animate size={50} />
+            <LoadingDots large />
           </Box>
         )}
         <Box marginTop={[4, 4, 5]}>
@@ -262,15 +263,23 @@ const SummaryForm = () => {
         >
           <Box className={styles.mainInfo}>
             <Text fontWeight="semiBold">Nafn</Text>
-            <Text marginBottom={3}>Nafn Nafnsson</Text>
+            <Text marginBottom={3}>{user?.name}</Text>
 
             <Text fontWeight="semiBold">Kennitala</Text>
-            <Text>190379-5829</Text>
+            {user?.nationalId && (
+              <Text>
+                {insertAt(user.nationalId.replace('-', ''), '-', 6) || '-'}
+              </Text>
+            )}
           </Box>
 
           <Box className={styles.contactInfo}>
             <Text fontWeight="semiBold">Sími</Text>
-            <Text marginBottom={3}>697-3345</Text>
+            {user?.phoneNumber && (
+              <Text marginBottom={3}>
+                {insertAt(user.phoneNumber.replace('-', ''), '-', 3) || '-'}
+              </Text>
+            )}
 
             <Text fontWeight="semiBold">Netfang</Text>
             <Text>{form?.emailAddress}</Text>
@@ -278,7 +287,7 @@ const SummaryForm = () => {
         </Box>
         {overview.map((item, index) => {
           return (
-            <>
+            <span key={'overview-' + index}>
               <Divider />
 
               <Box
@@ -305,7 +314,7 @@ const SummaryForm = () => {
                   </Button>
                 )}
               </Box>
-            </>
+            </span>
           )
         })}
         <Divider />
@@ -348,7 +357,6 @@ const SummaryForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        // nextUrl={navigation?.nextUrl ?? '/'}
         nextButtonText="Senda umsókn"
         onNextButtonClick={() => {
           createApplication()

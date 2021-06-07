@@ -10,10 +10,14 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import * as styles from './Header.treat'
+import { api } from '@island.is/financial-aid-web/osk/src/services'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const Header: React.FC = () => {
   const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
+  const { isAuthenticated, setUser, user } = useContext(UserContext)
+
+  console.log(isAuthenticated, user)
 
   return (
     <GridContainer>
@@ -59,40 +63,24 @@ const Header: React.FC = () => {
         </Box>
 
         <Box className={styles.userButton}>
-          <Button
-            icon="chevronDown"
-            iconType="filled"
-            onClick={() => {
-              console.log('hel')
-              // api.logOut()
-              // setUser && setUser(undefined)
-            }}
-            data-testid="logout-button"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="utility"
-          >
-            {/* <img src="/placeholder.jpg" className={styles.userProfileImage} /> */}
-            Nafn Nafndóttir
-          </Button>
+          {isAuthenticated && (
+            <Button
+              icon="chevronDown"
+              iconType="filled"
+              onClick={() => {
+                api.logOut()
+                setUser && setUser(undefined)
+              }}
+              data-testid="logout-button"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="utility"
+            >
+              {user?.name}
+            </Button>
+          )}
         </Box>
-
-        {/* {isAuthenticated && (
-        <Button
-          variant="ghost"
-          icon="logOut"
-          iconType="outline"
-          size="small"
-          onClick={() => {
-            api.logOut()
-            setUser && setUser(undefined)
-          }}
-          data-testid="logout-button"
-        >
-          {user?.name}
-        </Button>
-      )} */}
       </header>
     </GridContainer>
   )
