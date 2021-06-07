@@ -51,6 +51,10 @@ class ValidationUtils {
     return regex.test(input)
   }
 
+  public static validateUri(input: string): boolean {
+    return input.includes('://')
+  }
+
   public static validateBaseUrl(input: string): boolean {
     if (input.length === 0) {
       return true
