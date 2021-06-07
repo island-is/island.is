@@ -70,17 +70,19 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning ? (
+          {endorsement.hasWarning || endorsement.bulkImported ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.address}
               <Box marginLeft={2}>
-                <Tooltip
-                  color="blue400"
-                  iconSize="medium"
-                  text={formatMessage(
-                    m.endorsementListSubmission.invalidEndorsement,
-                  )}
-                />
+                {endorsement.hasWarning && (
+                  <Tooltip
+                    color="blue400"
+                    iconSize="medium"
+                    text={formatMessage(
+                      m.endorsementListSubmission.invalidEndorsement,
+                    )}
+                  />
+                )}
                 {endorsement.bulkImported && (
                   <Icon icon="attach" color="blue400" />
                 )}

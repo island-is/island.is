@@ -110,26 +110,28 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
           {bulkUploadDone && (
             <Box marginY={5}>
               <AlertBanner
-                title={formatMessage(m.bulkUpload.uploadSuccess)}
+                title={formatMessage(m.collectEndorsements.uploadSuccess)}
                 variant="success"
               />
             </Box>
           )}
 
-          <InputFileUpload
-            fileList={[]}
-            header={formatMessage(m.collectEndorsements.fileUploadHeader)}
-            description={formatMessage(m.collectEndorsements.uploadDescription)}
-            buttonLabel={formatMessage(m.collectEndorsements.uploadButtonLabel)}
-            accept=".xlsx"
-            onChange={onChange}
-            onRemove={() => {}}
-            errorMessage={
-              bulkUploadFailed
-                ? formatMessage(m.bulkUpload.uploadFail)
-                : undefined
-            }
-          />
+          <Box marginY={5}>
+            <InputFileUpload
+              fileList={[]}
+              header={formatMessage(m.collectEndorsements.fileUploadHeader)}
+              description={formatMessage(m.collectEndorsements.uploadDescription)}
+              buttonLabel={formatMessage(m.collectEndorsements.uploadButtonLabel)}
+              accept=".xlsx"
+              onChange={onChange}
+              onRemove={() => {}}
+              errorMessage={
+                bulkUploadFailed
+                  ? formatMessage(m.collectEndorsements.uploadFail)
+                  : undefined
+              }
+            />
+          </Box>
         </>
       )}
 
