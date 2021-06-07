@@ -80,4 +80,8 @@ export enum ServicePortalPath {
   // DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
   // DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
   // DocumentProviderStatistics = '/skjalaveita/tolfraedi',
+
+  RegulationsAdminRoot = '/reglugerdir-admin',
+  RegulationsAdminNew = '/reglugerdir-admin/edit/new',
+  RegulationsAdminEdit = '/reglugerdir-admin/edit/:id(\\d+)',
 }

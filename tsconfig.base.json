@@ -337,6 +337,9 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
+      "@island.is/service-portal/regulations-admin": [
+        "libs/service-portal/regulations-admin/src/index.ts"
+      ],
       "@island.is/service-portal/settings/access-control": [
         "libs/service-portal/settings/access-control/src/index.ts"
       ],

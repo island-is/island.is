@@ -5875,6 +5875,35 @@
         }
       }
     },
+    "service-portal-regulations-admin": {
+      "root": "libs/service-portal/regulations-admin",
+      "sourceRoot": "libs/service-portal/regulations-admin/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/regulations-admin/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/regulations-admin"],
+          "options": {
+            "jestConfig": "libs/service-portal/regulations-admin/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/regulations-admin/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "service-portal-settings-access-control": {
       "root": "libs/service-portal/settings/access-control",
       "sourceRoot": "libs/service-portal/settings/access-control/src",
