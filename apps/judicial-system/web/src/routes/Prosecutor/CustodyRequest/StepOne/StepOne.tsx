@@ -57,7 +57,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         id: '',
         created: '',
         modified: '',
-        type: type,
+        type,
         state: CaseState.NEW,
         policeCaseNumber: '',
         accusedNationalId: '',

@@ -262,7 +262,7 @@ export const formatAlternativeTravelBanRestrictions = (
 
 // Formats the requested restrictions from the prosecutor
 export const formatRequestedCustodyRestrictions = (
-  type?: CaseType,
+  type: CaseType,
   requestedCustodyRestrictions?: CaseCustodyRestrictions[],
   requestedOtherRestrictions?: string,
 ) => {
@@ -298,7 +298,7 @@ export const formatRequestedCustodyRestrictions = (
 }
 
 export function formatProsecutorDemands(
-  type: CaseType | undefined,
+  type: CaseType,
   accusedNationalId: string,
   accusedName: string,
   court: string,

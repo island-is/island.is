@@ -211,7 +211,7 @@ export interface Case {
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
-  type?: CaseType
+  type: CaseType
   description?: string
   accusedName?: string
   accusedAddress?: string
