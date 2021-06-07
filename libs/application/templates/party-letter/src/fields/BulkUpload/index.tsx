@@ -3,7 +3,7 @@ import {
   Box,
   Text,
   Button,
-  LoadingIcon,
+  LoadingDots,
   Checkbox,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -120,7 +120,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
             {formatMessage(m.bulkUpload.fileFormatText)}
           </Text>
           <Box marginTop={4}>
-            {bulkUploading && <LoadingIcon animate size={35} />}
+            {bulkUploading && <LoadingDots />}
             {bulkUploadDone && (
               <Text variant="h4">
                 {formatMessage(m.bulkUpload.uploadSuccess)}
