@@ -1,5 +1,11 @@
 import React, { FC } from 'react'
-import { Box, Table as T, Tooltip, Checkbox, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Table as T,
+  Tooltip,
+  Checkbox,
+  Icon,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
