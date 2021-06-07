@@ -90,12 +90,18 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/party-letter-registry": [
+        "libs/api/domains/party-letter-registry/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
+      ],
+      "@island.is/api/domains/temporary-voter-registry": [
+        "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
@@ -278,6 +284,7 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/service-portal/applications": [
@@ -318,6 +325,9 @@
       ],
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"
+      ],
+      "@island.is/service-portal/endorsements": [
+        "libs/service-portal/endorsements/src/index.ts"
       ],
       "@island.is/service-portal/family": [
         "libs/service-portal/family/src/index.ts"

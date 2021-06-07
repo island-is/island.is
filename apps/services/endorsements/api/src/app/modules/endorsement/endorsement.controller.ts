@@ -164,7 +164,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<unknown> {
+  ): Promise<undefined> {
     // we pass audit manually since we need a request parameter
     this.auditService.audit({
       user,

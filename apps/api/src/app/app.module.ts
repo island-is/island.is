@@ -27,6 +27,8 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
+import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -155,6 +157,9 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),
+    TemporaryVoterRegistryModule.register({
+      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
+    }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
     }),
@@ -163,6 +168,9 @@ const autoSchemaFile = environment.production
       xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
       xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
       xRoadClientId: environment.nationalRegistryXRoad.clientId,
+    }),
+    PartyLetterRegistryModule.register({
+      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
     }),
   ],
 })
