@@ -16,7 +16,9 @@ import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
+import { ILicenseDataField } from '../../graphql/fragments/license.fragment'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { FormattedDate } from 'react-intl'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -49,6 +51,61 @@ const {
   },
 )
 
+const FieldRender = ({ data, level = 1 }: any) => {
+  return (
+    <>
+      {(data || []).map(
+        (
+          { type, name, label, value, fields }: ILicenseDataField,
+          i: number,
+        ) => {
+          const key = `field-${type}-${i}`
+
+          switch (type) {
+            case 'Value':
+              if (level === 1) {
+                return (
+                  <FieldGroup key={key}>
+                    <FieldRow>
+                      <Field label={label} value={value} />
+                    </FieldRow>
+                  </FieldGroup>
+                )
+              } else {
+                return <Field key={key} label={label} value={value} />
+              }
+
+            case 'Group':
+              if (label) {
+                return (
+                  <View key={key} style={{ marginTop: 24, paddingBottom: 4 }}>
+                    <FieldLabel>{label}</FieldLabel>
+                    {FieldRender({ data: fields, level: 2 })}
+                  </View>
+                )
+              }
+              return (
+                <FieldGroup key={key}>
+                  <FieldRow>{FieldRender({ data: fields, level: 2 })}</FieldRow>
+                </FieldGroup>
+              )
+
+            case 'Category':
+              return (
+                <FieldCard key={key} code={name} title={label}>
+                  <FieldRow>{FieldRender({ data: fields, level: 3 })}</FieldRow>
+                </FieldCard>
+              )
+
+            default:
+              return <Field key={key} label={label} value={value} />
+          }
+        },
+      )}
+    </>
+  )
+}
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   item?: any
@@ -60,12 +117,41 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     gql`
       query getLicense($id: ID!) {
         License(id: $id) @client {
-          id
-          title
-          serviceProvider
-          type
-          status
-          dateTime
+          nationalId
+          license {
+            type
+            provider {
+              id
+            }
+            pkpass
+            timeout
+            status
+          }
+          fetch {
+            status
+            updated
+          }
+          payload {
+            data {
+              type
+              name
+              label
+              value
+              fields {
+                type
+                name
+                label
+                value
+                fields {
+                  type
+                  name
+                  label
+                  value
+                }
+              }
+            }
+            rawData
+          }
         }
       }
     `,
@@ -85,46 +171,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
-          <FieldGroup>
-            <FieldRow>
-              <Field
-                compact
-                size="large"
-                label="2. Eiginnafn"
-                value="Svanur"
-                style={{ marginRight: 8 }}
-              />
-              <Field
-                compact
-                size="large"
-                label="1. Kenninafn"
-                value="Örn Svanberg"
-              />
-            </FieldRow>
-            <Field label="4d. Kennitala" value="010171-3389" />
-          </FieldGroup>
-          <FieldGroup>
-            <FieldRow>
-              <Field label="4a. Útgáfudagur" value="12.03.1990" />
-              <Field label="4b. Gildir til" value="01.01.2041" />
-              <Field label="5. Númer" value="36001475" />
-            </FieldRow>
-          </FieldGroup>
-          <View style={{ marginTop: 24, paddingBottom: 4 }}>
-            <FieldLabel>9. Réttindaflokkar</FieldLabel>
-            <FieldCard code="B" title="Fólksbíll">
-              <FieldRow>
-                <Field label="Útgáfudagur" value="12.03.1990" />
-                <Field label="Gildir til" value="01.01.2041" />
-              </FieldRow>
-            </FieldCard>
-            <FieldCard code="BE" title="Kerra">
-              <FieldRow>
-                <Field label="Útgáfudagur" value="12.03.1990" />
-                <Field label="Gildir til" value="01.01.2041" />
-              </FieldRow>
-            </FieldCard>
-          </View>
+
+          <FieldRender data={data?.payload.data} />
+
         </SafeAreaView>
         <View style={{ height: 60 }} />
       </Information>
@@ -140,11 +189,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         }}
       >
         <LicenceCard
-          nativeID={`license-${id}_destination`}
-          title={data?.title}
-          type={data?.type}
-          status={data?.status}
-          date={data?.dateTime}
+          nativeID={`license-${data?.license.type}_destination`}
+          title={data?.license.type}
+          type={data?.license.type}
+          date={data?.fetch.updated}
+          status={data?.license.status}
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>

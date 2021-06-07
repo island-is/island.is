@@ -1,7 +1,9 @@
+import { object } from '@storybook/addon-knobs'
 import React from 'react'
 import styled from 'styled-components/native'
 import { font } from '../../utils/font'
 import { Skeleton } from '../Skeleton/Skeleton'
+import { FormattedDate } from 'react-intl'
 
 const Host = styled.View<{ compact?: boolean }>`
   ${(props) => (props.compact ? '' : 'flex: 1;')}
@@ -44,6 +46,9 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
+  const d = value && new Date(value)
+  const isDate = value && d instanceof Date && !isNaN(d as any)
+
   return (
     <Host compact={compact} style={style}>
       <Content>
@@ -51,7 +56,9 @@ export function Field({
         {loading ? (
           <Skeleton active />
         ) : (
-          <Value size={size}>{value ?? ''}</Value>
+          <Value size={size}>
+            {isDate ? <FormattedDate value={d} /> : value ?? ''}
+          </Value>
         )}
       </Content>
     </Host>

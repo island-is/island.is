@@ -8,7 +8,11 @@
       },
       "pkpass": true,
       "timeout": 1,
-      "status": "HasLicense"
+      "status": "VALID"
+    },
+    "fetch": {
+      "status": "UPDATED",
+      "updated": "16.06.2021"
     },
     "payload": {
       "data": [
@@ -27,18 +31,33 @@
           "fields": null
         },
         {
-          "type": "Value",
+          "type": "Group",
           "name": null,
-          "label": "4a. Útgáfudagur",
-          "value": "2000-04-11T00:00:00",
-          "fields": null
-        },
-        {
-          "type": "Value",
-          "name": null,
-          "label": "4b. Lokadagur",
-          "value": "2050-05-22T23:59:59",
-          "fields": null
+          "label": null,
+          "value": null,
+          "fields": [
+            {
+              "type": "Value",
+              "name": null,
+              "label": "4a. Útgáfudagur",
+              "value": "2000-04-11T00:00:00",
+              "fields": null
+            },
+            {
+              "type": "Value",
+              "name": null,
+              "label": "4b. Lokadagur",
+              "value": "2050-05-22T23:59:59",
+              "fields": null
+            },
+            {
+              "type": "Value",
+              "name": null,
+              "label": "5. Númer",
+              "value": "12345678",
+              "fields": null
+            }
+          ]
         },
         {
           "type": "Value",
@@ -52,13 +71,6 @@
           "name": null,
           "label": "4d. Kennitala",
           "value": "1234567890",
-          "fields": null
-        },
-        {
-          "type": "Value",
-          "name": null,
-          "label": "5. Númer",
-          "value": "12345678",
           "fields": null
         },
         {
