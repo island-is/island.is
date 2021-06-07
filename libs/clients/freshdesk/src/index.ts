@@ -1,1 +1,1 @@
-export * from './lib/freshdesk'
+export * from './lib/freshdesk.api'

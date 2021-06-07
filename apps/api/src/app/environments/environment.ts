@@ -106,6 +106,10 @@ const devConfig = {
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
   },
+  freshdesk: {
+    domain: process.env.FRESHDESK_DOMAIN ?? '',
+    key: process.env.FRESHDESK_KEY ?? '',
+  },
 }
 
 const prodConfig = {
@@ -207,6 +211,10 @@ const prodConfig = {
   },
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
+  freshdesk: {
+    domain: process.env.FRESHDESK_DOMAIN ?? '',
+    key: process.env.FRESHDESK_KEY ?? '',
   },
 }
 
