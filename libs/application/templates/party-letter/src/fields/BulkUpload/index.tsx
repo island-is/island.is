@@ -1,15 +1,17 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
-  Text,
-  Button,
   LoadingDots,
   Checkbox,
+  InputFileUpload,
+  fileToObject,
+  UploadFile,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { BulkEndorse } from '../../graphql/mutations'
-import * as XLSX from 'xlsx'
+import { read, utils } from 'xlsx'
 import { useMutation } from '@apollo/client'
 import FileUploadDisclaimer from '../FileUploadDisclaimer'
 import { Application } from '@island.is/application/core'
@@ -19,16 +21,21 @@ interface BulkUploadProps {
   onSuccess: () => void
 }
 
-const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
+const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
   const { formatMessage } = useLocale()
   const [usePapers, setUsePapers] = useState(false)
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
   const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
-  const hiddenFileInput = React.createRef<HTMLInputElement>()
-  const [createBulkEndorsements, { loading: submitLoad }] = useMutation(
-    BulkEndorse,
-  )
+  const [createBulkEndorsements] = useMutation(BulkEndorse)
+
+  const onChange = (newFiles: File[]) => {
+    const newUploadFiles = newFiles.map((f) => fileToObject(f))
+    setBulkUploadFailed(false)
+    newUploadFiles.forEach((f: UploadFile) => {
+      uploadFile(f)
+    })
+  }
 
   const onBulkUpload = async (array: string[]) => {
     setBulkUploadDone(false)
@@ -53,37 +60,44 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
     setBulkUploading(false)
   }
 
-  const onImportExcel = (file: any) => {
-    const { files } = file.target
+  const uploadFile = (file: UploadFile) => {
+    const formData = new FormData()
+    formData.append('file', file.originalFileObj || '', file.name)
+
     const fileReader: FileReader = new FileReader()
     fileReader.onload = () => {
       try {
-        const workbook = XLSX.read(fileReader.result, { type: 'binary' })
-        let data = [] as object[]
+        const workbook = read(fileReader.result, { type: 'binary' })
+        let data: object[] = []
         for (const sheet in workbook.Sheets) {
           if (workbook.Sheets.hasOwnProperty(sheet)) {
-            data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
+            const workSheet = workbook.Sheets[sheet]
+            /** Converts a worksheet object to an array of JSON objects */
+            const jsonSheet = utils.sheet_to_json(workSheet)
+            data = data.concat(jsonSheet)
           }
         }
-
-        var mapArray: string[] = []
+        let mapArray: string[] = []
         data.map((d: any) => {
-          mapArray.push(d.nationalIds)
+          /**  Getting the value of the first column from the JSON object */
+          const nationalId = d[Object.keys(d)[0]]
+          mapArray.push(nationalId.toString())
         })
-
         onBulkUpload(mapArray)
       } catch (e) {
         setBulkUploadFailed(true)
       }
     }
-    fileReader.readAsBinaryString(files[0])
+    if (file.originalFileObj) {
+      fileReader.readAsBinaryString(file.originalFileObj)
+    }
   }
 
   return (
     <Box>
       <Box marginY={3}>
         <Checkbox
-          label={'ég ætla að skila inn pappirsmeðmælum'}
+          label={formatMessage(m.fileUpload.includePapers)}
           checked={usePapers}
           onChange={() => {
             setUsePapers(!usePapers)
@@ -91,47 +105,44 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
         />
       </Box>
       <FileUploadDisclaimer />
-      {usePapers && (
+      {usePapers && !bulkUploading && (
+        <>
+          {bulkUploadDone && (
+            <Box marginY={5}>
+              <AlertBanner
+                title={formatMessage(m.fileUpload.uploadSuccess)}
+                variant="success"
+              />
+            </Box>
+          )}
+
+          <Box marginY={5}>
+            <InputFileUpload
+              fileList={[]}
+              header={formatMessage(m.fileUpload.fileUploadHeader)}
+              description={formatMessage(m.fileUpload.uploadDescription)}
+              buttonLabel={formatMessage(m.fileUpload.uploadButtonLabel)}
+              accept=".xlsx"
+              onChange={onChange}
+              onRemove={() => {}}
+              errorMessage={
+                bulkUploadFailed
+                  ? formatMessage(m.fileUpload.uploadFail)
+                  : undefined
+              }
+            />
+          </Box>
+        </>
+      )}
+
+      {bulkUploading && (
         <Box
+          marginY={5}
           display="flex"
-          flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          borderRadius="standard"
-          textAlign="center"
-          padding={4}
         >
-          <Button
-            variant="ghost"
-            icon="attach"
-            onClick={() => hiddenFileInput?.current?.click()}
-          >
-            {formatMessage(m.bulkUpload.uploadButton)}
-          </Button>
-          <input
-            ref={hiddenFileInput}
-            type="file"
-            id="selectedFile"
-            style={{ display: 'none' }}
-            accept=".xlsx"
-            onChange={onImportExcel}
-          />
-          <Text marginTop={2} variant="small">
-            {formatMessage(m.bulkUpload.fileFormatText)}
-          </Text>
-          <Box marginTop={4}>
-            {bulkUploading && <LoadingDots />}
-            {bulkUploadDone && (
-              <Text variant="h4">
-                {formatMessage(m.bulkUpload.uploadSuccess)}
-              </Text>
-            )}
-            {bulkUploadFailed && (
-              <Text variant="h4" color="red400">
-                {formatMessage(m.bulkUpload.uploadFail)}
-              </Text>
-            )}
-          </Box>
+          <LoadingDots />
         </Box>
       )}
     </Box>

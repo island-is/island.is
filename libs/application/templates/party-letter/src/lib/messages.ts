@@ -114,28 +114,6 @@ export const m: MessageDir = {
       description: 'Table header address',
     },
   }),
-  bulkUpload: defineMessages({
-    uploadButton: {
-      id: 'pa.application:uploadButton.buttonTitle',
-      defaultMessage: 'Bæta við pappírsmeðmælum',
-      description: 'Button title',
-    },
-    fileFormatText: {
-      id: 'pa.application:uploadButton.fileFormatText',
-      defaultMessage: 'Tekið er við skjölum með endingu: .xlsx',
-      description: 'File format text',
-    },
-    uploadSuccess: {
-      id: 'pa.application:uploadButton.uploadSuccess',
-      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
-      description: 'Upload succeeded text',
-    },
-    uploadFail: {
-      id: 'pa.application:uploadButton.uploadSuccess',
-      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
-      description: 'Upload failed text',
-    },
-  }),
   fileUpload: defineMessages({
     includePapers: {
       id: 'pa.application:file.upload.includePapers',
@@ -168,6 +146,16 @@ export const m: MessageDir = {
       id: 'ple.application:file.upload.label',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
+    },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
     },
   }),
   selectNationalId: defineMessages({

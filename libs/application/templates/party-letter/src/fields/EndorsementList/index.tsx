@@ -5,13 +5,14 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Endorsement, PartyLetter } from '../../lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import BulkUpload from '../BulkUpload'
+import gql from 'graphql-tag'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -45,6 +46,20 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       set(answers, 'endorsements', cloneDeep(newEndorsements))
     })
   }
+
+  const USER_VOTER_REGION = gql`
+    query getVoterRegion {
+      temporaryVoterRegistryGetVoterRegion {
+        regionNumber
+        regionName
+        id
+        nationalId
+      }
+    }
+  `
+
+  const { data: voterRegion } = useQuery(USER_VOTER_REGION)
+  console.log('region', voterRegion)
 
   useEffect(() => {
     const mapToEndorsementList: Endorsement[] | undefined =
