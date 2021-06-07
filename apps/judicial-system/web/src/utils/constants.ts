@@ -22,6 +22,7 @@ export const R_CASE_HEARING_ARRANGEMENTS_ROUTE =
 export const R_CASE_POLICE_DEMANDS_ROUTE =
   '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi'
 export const R_CASE_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
+export const R_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'
