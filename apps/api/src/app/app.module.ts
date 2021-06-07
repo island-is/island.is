@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
@@ -55,6 +56,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
+    AuthDomainModule.register(environment.authPublicApi),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({

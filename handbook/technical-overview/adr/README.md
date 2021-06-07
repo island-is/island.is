@@ -19,5 +19,5 @@ For new ADRs, please use [template.md](template.md) as basis. More information o
 - [ADR-0010](0010-cms.md) - CMS
 - [ADR-0011](0011-open-source-license.md) - Open source license
 - [ADR-0012](0012-chart-library.md) - Chart library
-- [What Feature Flag Service/application Should We Use at Island.is?](handbook/technical-overview/adr/0013-feature-flags.md)
+- [ADR-0013](0013-feature-flags.md) - What Feature Flag Service/application Should We Use at Island.is?
 - [ADR-0014](0014-logging-apm-monitoring.md) - Logging, monitoring and APM platform
