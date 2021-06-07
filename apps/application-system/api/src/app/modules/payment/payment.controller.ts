@@ -16,7 +16,7 @@ import {
   ApiHeader,
 } from '@nestjs/swagger'
 import {
-  Payment as BasePayment,
+  PaymentType as BasePayment,
 } from '@island.is/application/core'
 import type { User } from '@island.is/auth-nest-tools'
 import {

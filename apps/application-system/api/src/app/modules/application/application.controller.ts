@@ -37,7 +37,6 @@ import {
   PdfTypes,
   ApplicationStatus,
   CustomTemplateFindQuery,
-  Payment as BasePayment,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
@@ -68,8 +67,6 @@ import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
-import { CreatePaymentDto } from './dto/createPayment.dto'
-import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -98,7 +95,7 @@ import {
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
-import { Application, Payment } from './application.model'
+import { Application } from './application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
