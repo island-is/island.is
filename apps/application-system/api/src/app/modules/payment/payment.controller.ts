@@ -32,7 +32,6 @@ import { PaymentService } from './payment.service'
 import { CreatePaymentDto } from './dto/createPayment.dto'
 import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
-import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -49,7 +48,6 @@ export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly auditService: AuditService,
-    private readonly applicationAccessService: ApplicationAccessService,
   ) {}
   @Scopes(ApplicationScope.write)
   @ApiParam({
@@ -73,16 +71,13 @@ export class PaymentController {
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<CreatePaymentResponseDto> {
     const { applicationId } = application
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      applicationId,
-      user.nationalId,
-    )
 
-    if (existingApplication === null) {
-      throw new BadRequestException(
-        `No application found for application id: ${applicationId}`,
-      )
-    }
+    // FIGURE SOME CHECK FOR LEGIT PAYMENT
+    // if (existingApplication === null) {
+    //   throw new BadRequestException(
+    //     `No application found for application id: ${applicationId}`,
+    //   )
+    // }
 
     // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
 

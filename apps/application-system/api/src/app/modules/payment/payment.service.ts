@@ -11,7 +11,7 @@ import { CreatePaymentDto } from './dto/createPayment.dto'
 @Injectable()
 export class PaymentService {
   constructor(
-    @InjectModel(Application)
+    @InjectModel(Payment)
     private paymentModel: typeof Payment
   ) {}
 
