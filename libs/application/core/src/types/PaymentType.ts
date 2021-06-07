@@ -1,4 +1,4 @@
-export interface Payment {
+export interface PaymentType {
   id: string,
   applicationId: string,
   fulfilled: boolean,
