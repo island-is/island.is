@@ -21,5 +21,5 @@ export class DomainDTO {
   @ApiProperty({
     example: '0123456789',
   })
-  readonly national_id!: string
+  readonly nationalId!: string
 }

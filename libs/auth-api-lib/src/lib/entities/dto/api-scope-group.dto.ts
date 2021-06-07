@@ -12,6 +12,13 @@ export class ApiScopeGroupDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
+    example: 'Finance Heading',
+  })
+  readonly displayName!: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
     example: 'Description about the Finance Group',
   })
   readonly description!: string

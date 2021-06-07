@@ -22,8 +22,8 @@ export const EditOrAddPeriods: Form = buildForm({
   mode: FormModes.EDITING,
   children: [
     buildSection({
-      id: 'editOrAddPeropds',
-      title: '',
+      id: 'editOrAddPeriods',
+      title: parentalLeaveFormMessages.leavePlan.title,
       children: [
         buildRepeater({
           id: 'periods',
@@ -91,7 +91,7 @@ export const EditOrAddPeriods: Form = buildForm({
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              title: '',
+              title: parentalLeaveFormMessages.confirmation.title,
               component: 'EditPeriodsReview',
             }),
             buildSubmitField({

@@ -6,7 +6,9 @@ import { client } from '@island.is/service-portal/graphql'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { FeatureFlagProvider } from '@island.is/feature-flags'
 
+import { environment } from '../environments'
 import { StateProvider } from '../store/stateProvider'
 import * as store from '../store/store'
 import Dashboard from '../screens/Dashboard/Dashboard'
@@ -29,18 +31,20 @@ export const App = () => {
             <ApplicationErrorBoundary>
               <Router basename="/minarsidur">
                 <Authenticator>
-                  <UserProfileLocale />
-                  <Layout>
-                    <Switch>
-                      <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                        <Dashboard />
-                      </Route>
-                      <Route>
-                        <Modules />
-                      </Route>
-                    </Switch>
-                    <GlobalModules />
-                  </Layout>
+                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                    <UserProfileLocale />
+                    <Layout>
+                      <Switch>
+                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                      <GlobalModules />
+                    </Layout>
+                  </FeatureFlagProvider>
                 </Authenticator>
               </Router>
             </ApplicationErrorBoundary>

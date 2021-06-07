@@ -39,7 +39,7 @@ function Accesses(): JSX.Element {
           <Box display="flex" justifyContent="flexEnd">
             <Button onClick={() => history.push(`${pathname}/veita`)}>
               {formatMessage({
-                id: 'service.portal:access-control-grant-access',
+                id: 'service.portal.settings.accessControl:home-grant-access',
                 defaultMessage: 'Veita aðgang',
               })}
             </Button>
@@ -51,7 +51,7 @@ function Accesses(): JSX.Element {
           ) : accesses.length === 0 ? (
             <EmptyState
               title={defineMessage({
-                id: 'service.portal:accesses-no-data',
+                id: 'service.portal.settings.accessControl:home-no-data',
                 defaultMessage: 'Engin gögn fundust',
               })}
             />

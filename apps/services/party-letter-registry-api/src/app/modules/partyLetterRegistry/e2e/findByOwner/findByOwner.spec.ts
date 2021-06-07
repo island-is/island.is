@@ -10,10 +10,10 @@ beforeAll(async () => {
 })
 
 describe('FindByOwnerPartyLetterRegistry', () => {
-  it('GET /party-letter-registry should return error when national id is invalid', async () => {
+  it('GET /party-letter-registry/owner should return error when national id is invalid', async () => {
     const nationalId = '0000000001'
     const response = await request(app.getHttpServer())
-      .get(`/party-letter-registry?owner=${nationalId}`)
+      .get(`/party-letter-registry/owner?owner=${nationalId}`)
       .send()
       .expect(400)
 
@@ -22,10 +22,10 @@ describe('FindByOwnerPartyLetterRegistry', () => {
       statusCode: 400,
     })
   })
-  it('GET /party-letter-registry should return not found error when national owns no letters', async () => {
+  it('GET /party-letter-registry/owner should return not found error when national owns no letters', async () => {
     const nationalId = '0101302209'
     const response = await request(app.getHttpServer())
-      .get(`/party-letter-registry?owner=${nationalId}`)
+      .get(`/party-letter-registry/owner?owner=${nationalId}`)
       .send()
       .expect(404)
 
@@ -34,10 +34,10 @@ describe('FindByOwnerPartyLetterRegistry', () => {
       statusCode: 404,
     })
   })
-  it('GET /party-letter-registry should return a party letter entry', async () => {
+  it('GET /party-letter-registry/owner should return a party letter entry', async () => {
     const nationalId = '0101302989'
     const response = await request(app.getHttpServer())
-      .get(`/party-letter-registry?owner=${nationalId}`)
+      .get(`/party-letter-registry/owner?owner=${nationalId}`)
       .send()
       .expect(200)
 
