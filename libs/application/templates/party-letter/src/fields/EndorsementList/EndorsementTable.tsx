@@ -33,7 +33,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         <T.Data
           key={endorsement.id + endorsement.date}
           box={{
-            background: rowBackground
+            background: rowBackground,
           }}
         >
           {formatDate(endorsement.date)}
@@ -41,7 +41,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         <T.Data
           key={endorsement.id + endorsement.name}
           box={{
-            background: rowBackground
+            background: rowBackground,
           }}
         >
           {endorsement.name}
@@ -49,7 +49,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         <T.Data
           key={endorsement.id + endorsement.nationalId}
           box={{
-            background: rowBackground
+            background: rowBackground,
           }}
         >
           {formatKennitala(endorsement.nationalId)}
