@@ -29,13 +29,8 @@ export const OtherParentApproval: Form = buildForm({
         buildMultiField({
           id: 'multi',
           title: otherParentApprovalFormMessages.multiTitle,
+          description: otherParentApprovalFormMessages.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'intro',
-              title: otherParentApprovalFormMessages.multiTitle,
-              description: otherParentApprovalFormMessages.introDescription,
-            }),
-
             buildKeyValueField({
               label: otherParentApprovalFormMessages.labelDays,
               width: 'half',
