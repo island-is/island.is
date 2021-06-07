@@ -25,7 +25,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
 }
 
-export const StepFiveForm: React.FC<Props> = (props) => {
+const CaseFilesForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
 
   const {
@@ -128,16 +128,12 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextUrl={`${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
-              ? Constants.STEP_SIX_ROUTE
-              : Constants.R_CASE_POLICE_CONFIRMATION_ROUTE
-          }/${workingCase.id}`}
+          previousUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.R_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={false}
         />
       </FormContentContainer>
     </>
   )
 }
+export default CaseFilesForm

@@ -94,14 +94,14 @@ export const getRCaseProsecutorSection = (
             ? `${Constants.R_CASE_POLICE_REPORT_ROUTE}/${caseId}`
             : undefined,
       },
-      // {
-      //   type: 'SUB_SECTION',
-      //   name: 'Rannsóknargögn',
-      //   href:
-      //     activeSubSection && activeSubSection > 4
-      //       ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
-      //       : undefined,
-      // },
+      {
+        type: 'SUB_SECTION',
+        name: 'Rannsóknargögn',
+        href:
+          activeSubSection && activeSubSection > 4
+            ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+            : undefined,
+      },
       {
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
