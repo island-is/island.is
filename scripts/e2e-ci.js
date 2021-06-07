@@ -1,8 +1,6 @@
 const yargs = require('yargs')
-const { spawn, exec } = require('child_process')
-const { promisify } = require('util')
-
-const pexec = promisify(exec)
+const { spawn } = require('child_process')
+const { exec } = require('./utils')
 
 // Setup command line args
 // prettier-ignore
@@ -63,24 +61,11 @@ const target = argv.name.replace('-e2e', '')
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
   EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
-  SERVE_NEXT: [
-    `${argv.dist}/main.js`
-  ],
-  SERVE_REACT: [
-    'scripts/static-serve.js',
-    '-p', argv.port,
-    '-d', argv.dist,
-    '-b', argv['base-path']
-  ],
-  TEST: `yarn nx run ${argv.name}:e2e:production --headless --production${
-      argv.ci ?
-        ` --record --group=${argv.name}` :
-        ''
-    }${
-      argv['skip-cache'] ?
-        ' --skip-nx-cache' :
-        ''
-    }`,
+  SERVE_NEXT: [ `${argv.dist}/main.js` ],
+  SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
+  TEST: `yarn nx run ${argv.name}:e2e:production --headless --production ${
+    argv.ci ? `--record --group=${argv.name}` : ''}${
+    argv['skip-cache'] ? ' --skip-nx-cache' : ''}` 
 }
 
 const ENV = {
@@ -92,12 +77,10 @@ const build = async () => {
   const start = new Date().getTime()
 
   try {
-    const buildResult = await pexec(CMD.BUILD)
-    console.log(buildResult.stdout)
+    await exec(CMD.BUILD)
   } catch (err) {
-    console.log(err.stdout)
-    console.log(err.stderr)
-    process.exit(1)
+    console.log(err)
+    process.exit(err.code)
   }
 
   const end = new Date().getTime()
@@ -108,69 +91,86 @@ const extractEnv = async () => {
   console.log(`Extracting environment for ${target}...`)
 
   try {
-    const result = await pexec(CMD.EXTRACT_ENV, {
+    await exec(CMD.EXTRACT_ENV, {
       env: { ...process.env, ...ENV },
     })
-    console.log(result.stdout)
   } catch (err) {
-    console.log(err.stdout)
-    console.log(err.stderr)
-    process.exit(1)
+    console.log(err)
+    process.exit(err.code)
   }
 }
 
 const serve = () => {
   console.log(`Starting serve for ${argv.type} app in a child process...`)
   // Start static-serve
-  let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`])
+  let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`], {
+    stdio: 'inherit',
+  })
   console.log(`Serving target project in a child process: ${child.pid}`)
-
-  child.stdout.on('data', (data) => {
-    console.log(`Child process ${child.pid} output: ${data}`)
-  })
-
-  child.stderr.on('data', (data) => {
-    console.log(`Child process ${child.pid} error: ${data}`)
-  })
-
-  child.on('close', (code) => {
-    console.log(`Child process exited with code ${code}`)
-  })
 
   return child
 }
 
+const test = () => {
+  return new Promise((resolve, reject) => {
+    console.log(`Starting test command \n${CMD.TEST}`)
+    let successful = false
+
+    try {
+      let child = spawn(CMD.TEST, { stdio: 'pipe', shell: true })
+
+      child.stdout.on('data', (data) => {
+        // Tests can fail but the command still exits normally
+        // So to be sure that all tests where successful we check
+        // for the string 'All specs passed!' written to stdout by cypress runner.
+        console.log(`${data}`)
+        if (data.includes('All specs passed!')) {
+          successful = true
+        }
+      })
+
+      child.stderr.on('data', (data) => {
+        console.log(`${data}`)
+      })
+
+      child.on('close', (code, signal) => {
+        if (successful) {
+          resolve()
+        } else {
+          reject('Some tests failed!')
+        }
+      })
+
+      child.on('error', (err) => {
+        reject(err)
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 const main = async () => {
   let exitCode = 0
-  await build()
-  await extractEnv()
-  let serveChild = serve()
-
-  console.log(`Starting test command \n${CMD.TEST}`)
+  let serveChild
 
   try {
-    const testResult = await pexec(CMD.TEST)
-    console.log(testResult.stdout)
-    console.log(testResult.stderr)
-
-    // Tests can fail without the command exiting with code 1
-    // So to be sure that all tests where successful we check
-    // for the string 'All specs passed!'
-    if (!testResult.stdout.includes('All specs passed!')) {
-      console.log('Tests have failed. See output above for further details.')
-      exitCode = 1
-    }
+    await build()
+    await extractEnv()
+    serveChild = serve()
+    await test()
   } catch (err) {
     exitCode = 1
-    console.log(err.stdout)
-    console.log(err.stderr)
+    console.log(err)
   }
 
   if (serveChild) {
     console.log('Clean up serve process...')
-    serveChild.kill()
+    let killed = serveChild.kill()
+    console.log(`Child process cleaned up successfully: ${killed}`)
   }
 
+  console.log(`Exiting main process with code ${exitCode}`)
   process.exit(exitCode)
 }
 
