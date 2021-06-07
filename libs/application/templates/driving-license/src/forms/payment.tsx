@@ -16,8 +16,6 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
-import { m } from '../lib/messages'
 
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
@@ -32,7 +30,7 @@ export const payment: Form = buildForm({
         // TODO: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: 'Greiðsla',
           description: (application) => {
             const createCharge = application.externalData.createCharge.data as { error: '', data: { paymentUrl: string } }
             if (!createCharge.error)

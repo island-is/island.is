@@ -85,7 +85,7 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: 'Skilyrði sem umsækjandi þarf að uppfylla',
           children: [
             buildCustomField({
               title: 'XXYYZZ',
@@ -103,7 +103,7 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: m.pickupLocationTitle,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -262,7 +262,7 @@ export const application: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
+                  name: 'Halda áfram',
                   type: 'primary',
                 },
               ],
@@ -321,7 +321,8 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewTeacher,
-              value: ({ answers: { teacher } }) => teacher as string,
+              value: 'Arnór Heiðar Sigurðsson',
+              // value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({}),
             buildCheckboxField({

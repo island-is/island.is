@@ -66,7 +66,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
+                  name: 'Halda áfram',
                   type: 'primary',
                 },
               ],

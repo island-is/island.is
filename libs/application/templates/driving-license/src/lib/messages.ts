@@ -136,10 +136,10 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
-    defaultMessage: 'Upplýsingar',
+    defaultMessage: 'Afhending',
     description: 'Information',
   },
-  informationMultiFieldTitle: {
+  pickupLocationTitle: {
     id: 'dl.application:pickuplocation',
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
@@ -350,7 +350,7 @@ export const m = defineMessages({
   },
   requirementUnmetDeniedByServiceTitle: {
     id: 'dl.application:requirementunmet.deniedbyservicetitle',
-    defaultMessage: 'Ökuskilríkjaskrá',
+    defaultMessage: 'Ökuskírteinaskrá',
     description: 'requirement unmet api returned false',
   },
   requirementUnmetDeniedByServiceDescription: {
